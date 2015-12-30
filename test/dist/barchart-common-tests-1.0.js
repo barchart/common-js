@@ -12785,8 +12785,8 @@ describe('When using the "compareStrings" comparator', function() {
     'use strict';
 
     var first = ''
-    var second = 'Hi there';
-    var third = 'hi There';
+    var second = 'Bye now';
+    var third = 'Hi there';
 
     describe('to sort an array of strings', function() {
         var arrayToSort;
