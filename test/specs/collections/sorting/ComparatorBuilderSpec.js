@@ -1,4 +1,4 @@
-var ComparatorBuilder = require('../../../../../lib/common/collections/sorting/ComparatorBuilder');
+var ComparatorBuilder = require('./../../../../collections/sorting/ComparatorBuilder');
 
 describe('When a ComparatorBuilder is composed with two comparators', function() {
     'use strict';

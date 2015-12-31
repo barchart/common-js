@@ -1,6 +1,6 @@
 var _ = require('lodash');
 
-var assert = require('./../../../lang/assert');
+var assert = require('./../../lang/assert');
 
 module.exports = function() {
     'use strict';

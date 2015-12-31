@@ -1,4 +1,4 @@
-var comparators = require('../../../../../lib/common/collections/sorting/comparators');
+var comparators = require('./../../../../collections/sorting/comparators');
 
 describe('When using the "compareDates" comparator', function() {
     'use strict';
@@ -37,7 +37,7 @@ describe('When using the "compareDates" comparator', function() {
 describe('When using the "compareNumbers" comparator', function() {
     'use strict';
 
-    var first = -1
+    var first = -1;
     var second = Math.E;
     var third = Math.PI;
 
@@ -71,7 +71,7 @@ describe('When using the "compareNumbers" comparator', function() {
 describe('When using the "compareStrings" comparator', function() {
     'use strict';
 
-    var first = ''
+    var first = '';
     var second = 'Bye now';
     var third = 'Hi there';
 

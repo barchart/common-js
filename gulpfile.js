@@ -11,7 +11,6 @@ var jshint = require('gulp-jshint');
 var rename = require('gulp-rename');
 var runSequence = require('run-sequence');
 var source = require('vinyl-source-stream');
-var transform = require('vinyl-transform');
 var uglify = require('gulp-uglify');
 var util = require('gulp-util');
 
@@ -65,7 +64,7 @@ gulp.task('create-tag', function (cb) {
 });
 
 gulp.task('build-browser', function() {
-    return browserify('./lib/index.js', { standalone: 'Barchart' }).bundle()
+    return browserify('./index.js', { standalone: 'Barchart.Common' }).bundle()
         .pipe(source('barchart-common-' + getVersionForComponent() + '.js'))
         .pipe(buffer())
         .pipe(gulp.dest('./dist'))
@@ -91,7 +90,7 @@ gulp.task('execute-browser-tests', function () {
 });
 
 gulp.task('execute-node-tests', function () {
-    return gulp.src(['lib/index.js', 'test/specs/**/*.js'])
+    return gulp.src(['index.js', 'test/specs/**/*.js'])
         .pipe(jasmine());
 });
 
@@ -132,9 +131,9 @@ gulp.task('release', function (callback) {
             callback(error);
         });
 });
-gulp
+
 gulp.task('lint', function() {
-    return gulp.src([ './lib/**/*.js', './test/specs/**/*.js' ])
+    return gulp.src([ './**/*.js', './test/specs/**/*.js' ])
         .pipe(jshint())
         .pipe(jshint.reporter('default'));
 });

@@ -1,6 +1,6 @@
 var Class = require('class.extend');
 
-var assert = require('./../../../lang/assert');
+var assert = require('./../../lang/assert');
 var comparators = require('./comparators');
 
 module.exports = function() {

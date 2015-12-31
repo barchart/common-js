@@ -1,7 +1,7 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var Class = require('class.extend');
 
-var assert = require('./../../../lang/assert');
+var assert = require('./../../lang/assert');
 var comparators = require('./comparators');
 
 module.exports = function() {
@@ -80,10 +80,10 @@ module.exports = function() {
 
     return ComparatorBuilder;
 }();
-},{"./../../../lang/assert":3,"./comparators":2,"class.extend":4}],2:[function(require,module,exports){
+},{"./../../lang/assert":3,"./comparators":2,"class.extend":4}],2:[function(require,module,exports){
 var _ = require('lodash');
 
-var assert = require('./../../../lang/assert');
+var assert = require('./../../lang/assert');
 
 module.exports = function() {
     'use strict';
@@ -117,7 +117,7 @@ module.exports = function() {
 
     return comparators;
 }();
-},{"./../../../lang/assert":3,"lodash":5}],3:[function(require,module,exports){
+},{"./../../lang/assert":3,"lodash":5}],3:[function(require,module,exports){
 var _ = require('lodash');
 
 module.exports = function() {
@@ -12629,7 +12629,7 @@ module.exports = function() {
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],6:[function(require,module,exports){
-var ComparatorBuilder = require('../../../../../lib/common/collections/sorting/ComparatorBuilder');
+var ComparatorBuilder = require('./../../../../collections/sorting/ComparatorBuilder');
 
 describe('When a ComparatorBuilder is composed with two comparators', function() {
     'use strict';
@@ -12710,8 +12710,8 @@ describe('When a ComparatorBuilder is composed with two comparators', function()
         });
     });
 });
-},{"../../../../../lib/common/collections/sorting/ComparatorBuilder":1}],7:[function(require,module,exports){
-var comparators = require('../../../../../lib/common/collections/sorting/comparators');
+},{"./../../../../collections/sorting/ComparatorBuilder":1}],7:[function(require,module,exports){
+var comparators = require('./../../../../collections/sorting/comparators');
 
 describe('When using the "compareDates" comparator', function() {
     'use strict';
@@ -12750,7 +12750,7 @@ describe('When using the "compareDates" comparator', function() {
 describe('When using the "compareNumbers" comparator', function() {
     'use strict';
 
-    var first = -1
+    var first = -1;
     var second = Math.E;
     var third = Math.PI;
 
@@ -12784,7 +12784,7 @@ describe('When using the "compareNumbers" comparator', function() {
 describe('When using the "compareStrings" comparator', function() {
     'use strict';
 
-    var first = ''
+    var first = '';
     var second = 'Bye now';
     var third = 'Hi there';
 
@@ -12814,4 +12814,4 @@ describe('When using the "compareStrings" comparator', function() {
         });
     });
 });
-},{"../../../../../lib/common/collections/sorting/comparators":2}]},{},[6,7]);
+},{"./../../../../collections/sorting/comparators":2}]},{},[6,7]);
