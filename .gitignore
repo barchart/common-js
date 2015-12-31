@@ -1,0 +1,6 @@
+.gitignore
+.idea
+node_modules
+aws/
+app/public/newsletter/
+.DS_Store
