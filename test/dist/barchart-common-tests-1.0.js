@@ -1,6 +1,50 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var Class = require('class.extend');
 
+module.exports = function() {
+    'use strict';
+
+    var Stack = Class.extend({
+        init: function() {
+            this._array = [ ];
+        },
+
+        push: function(item) {
+            this._array.unshift(item);
+
+            return item;
+        },
+
+        pop: function() {
+            if (this.empty()) {
+                throw new Error('Stack is empty');
+            }
+
+            return this._array.shift();
+        },
+
+        peek: function() {
+            if (this.empty()) {
+                throw new Error('Stack is empty');
+            }
+
+            return this._array[0];
+        },
+
+        empty: function() {
+            return this._array.length === 0;
+        },
+
+        toString: function() {
+            return '[Stack]';
+        }
+    });
+
+    return Stack;
+}();
+},{"class.extend":7}],2:[function(require,module,exports){
+var Class = require('class.extend');
+
 var assert = require('./../../lang/assert');
 var comparators = require('./comparators');
 
@@ -80,7 +124,7 @@ module.exports = function() {
 
     return ComparatorBuilder;
 }();
-},{"./../../lang/assert":3,"./comparators":2,"class.extend":4}],2:[function(require,module,exports){
+},{"./../../lang/assert":5,"./comparators":3,"class.extend":7}],3:[function(require,module,exports){
 var _ = require('lodash');
 
 var assert = require('./../../lang/assert');
@@ -117,7 +161,60 @@ module.exports = function() {
 
     return comparators;
 }();
-},{"./../../lang/assert":3,"lodash":5}],3:[function(require,module,exports){
+},{"./../../lang/assert":5,"lodash":8}],4:[function(require,module,exports){
+var Class = require('class.extend');
+
+var assert = require('./assert');
+
+module.exports = function() {
+    'use strict';
+
+    var Disposable = Class.extend({
+        init: function() {
+			this._super();
+
+            this._disposed = false;
+        },
+
+        dispose: function() {
+            if (this._disposed) {
+                return;
+            }
+
+            this._disposed = true;
+
+            this._onDispose();
+        },
+
+        _onDispose: function() {
+            return;
+        },
+
+        getIsDisposed: function() {
+            return this._disposed || false;
+        }
+    });
+
+    var DisposableAction = Disposable.extend({
+        init: function(disposeAction) {
+            this._disposeAction = disposeAction;
+        },
+
+        _onDispose: function() {
+            this._disposeAction();
+            this._disposeAction = null;
+        }
+    });
+
+    Disposable.fromAction = function(disposeAction) {
+        assert.argumentIsRequired(disposeAction, 'disposeAction', Function);
+
+        return new DisposableAction(disposeAction);
+    };
+
+    return Disposable;
+}();
+},{"./assert":5,"class.extend":7}],5:[function(require,module,exports){
 var _ = require('lodash');
 
 module.exports = function() {
@@ -201,7 +298,87 @@ module.exports = function() {
 
     return assert;
 }();
-},{"lodash":5}],4:[function(require,module,exports){
+},{"lodash":8}],6:[function(require,module,exports){
+var _ = require('lodash');
+
+var assert = require('./assert');
+
+module.exports = function() {
+    'use strict';
+
+    var attributes = {
+        has: function(target, propertyNames) {
+            assert.argumentIsRequired(target, 'target', Object);
+            assert.argumentIsRequired(propertyNames, 'propertyNames', String);
+
+            var propertyNameArray = getPropertyNameArray(propertyNames);
+            var propertyTarget = getPropertyTarget(target, propertyNameArray, false);
+
+            return propertyTarget !== null && _.has(propertyTarget, _.last(propertyNameArray));
+        },
+
+        read: function(target, propertyNames) {
+            assert.argumentIsRequired(target, 'target', Object);
+            assert.argumentIsRequired(propertyNames, 'propertyNames', String);
+
+            var propertyNameArray = getPropertyNameArray(propertyNames);
+            var propertyTarget = getPropertyTarget(target, propertyNameArray, false);
+
+            var returnRef;
+
+            if (propertyTarget) {
+                var propertyName = _.last(propertyNameArray);
+
+                returnRef = propertyTarget[propertyName];
+            } else {
+                returnRef = undefined;
+            }
+
+            return returnRef;
+        },
+
+        write: function(target, propertyNames, value) {
+            assert.argumentIsRequired(target, 'target', Object);
+            assert.argumentIsRequired(propertyNames, 'propertyNames', String);
+
+            var propertyNameArray = getPropertyNameArray(propertyNames);
+            var propertyTarget = getPropertyTarget(target, propertyNameArray, true);
+
+            var propertyName = _.last(propertyNameArray);
+
+            propertyTarget[propertyName] = value;
+        }
+    };
+
+    function getPropertyNameArray(propertyNames) {
+        return propertyNames.split('.');
+    }
+
+    function getPropertyTarget(target, propertyNameArray, create) {
+        var returnRef;
+
+        var propertyTarget = target;
+
+        for (var i = 0; i < (propertyNameArray.length - 1); i++) {
+            var propertyName = propertyNameArray[i];
+
+            if (_.has(propertyTarget, propertyName)) {
+                propertyTarget = propertyTarget[propertyName];
+            } else if (create) {
+                propertyTarget = propertyTarget[propertyName] = { };
+            } else {
+                propertyTarget = null;
+
+                break;
+            }
+        }
+
+        return propertyTarget;
+    }
+
+    return attributes;
+}();
+},{"./assert":5,"lodash":8}],7:[function(require,module,exports){
 (function(){
   var initializing = false, fnTest = /xyz/.test(function(){xyz;}) ? /\b_super\b/ : /.*/;
 
@@ -273,7 +450,7 @@ module.exports = function() {
   module.exports = Class;
 })();
 
-},{}],5:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -12628,7 +12805,123 @@ module.exports = function() {
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],6:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
+var Stack = require('./../../../collections/Stack');
+
+describe('When a Stack is constructed', function() {
+	'use strict';
+
+	var stack;
+
+	beforeEach(function() {
+		stack = new Stack();
+	});
+
+	it('should be empty', function() {
+		expect(stack.empty()).toEqual(true);
+	});
+
+	it('should throw if "peek" is called', function() {
+		expect(function() {
+			stack.peek();
+		}).toThrow(new Error('Stack is empty'));
+	});
+
+	it('should throw if "pop" is called', function() {
+		expect(function() {
+			stack.peek();
+		}).toThrow(new Error('Stack is empty'));
+	});
+
+	describe('and an object is pushed onto the stack', function() {
+		var first = 1;
+
+		beforeEach(function() {
+			stack.push(first);
+		});
+
+		it('should not be empty', function() {
+			expect(stack.empty()).toEqual(false);
+		});
+
+		describe('and we peek at the top of the stack', function() {
+			var peek;
+
+			beforeEach(function() {
+				peek = stack.peek();
+			});
+
+			it('the peek result the item pushed onto the stack', function() {
+				expect(peek).toBe(first);
+			});
+
+			it('should not be empty', function() {
+				expect(stack.empty()).toEqual(false);
+			});
+		});
+
+		describe('and an object is popped from the stack', function() {
+			var pop;
+
+			beforeEach(function() {
+				pop = stack.pop();
+			});
+
+			it('the pop result the item pushed onto the stack', function() {
+				expect(pop).toBe(first);
+			});
+
+			it('should be empty', function() {
+				expect(stack.empty()).toEqual(true);
+			});
+		});
+
+		describe('and a second object is pushed onto the stack', function() {
+			var second = { name: "second" };
+
+			beforeEach(function() {
+				stack.push(second);
+			});
+
+			it('should not be empty', function() {
+				expect(stack.empty()).toEqual(false);
+			});
+
+			describe('and we peek at the top of the stack', function() {
+				var peek;
+
+				beforeEach(function() {
+					peek = stack.peek();
+				});
+
+				it('the peek result the second item pushed onto the stack', function() {
+					expect(peek).toBe(second);
+				});
+
+				it('should not be empty', function() {
+					expect(stack.empty()).toEqual(false);
+				});
+			});
+
+			describe('and an object is popped from the stack', function() {
+				var pop;
+
+				beforeEach(function() {
+					pop = stack.pop();
+				});
+
+				it('the pop result the second item pushed onto the stack', function() {
+					expect(pop).toBe(second);
+				});
+
+				it('should be empty', function() {
+					expect(stack.empty()).toEqual(false);
+				});
+			});
+		});
+	});
+});
+},{"./../../../collections/Stack":1}],10:[function(require,module,exports){
 var ComparatorBuilder = require('./../../../../collections/sorting/ComparatorBuilder');
 
 describe('When a ComparatorBuilder is composed with two comparators', function() {
@@ -12710,7 +13003,7 @@ describe('When a ComparatorBuilder is composed with two comparators', function()
         });
     });
 });
-},{"./../../../../collections/sorting/ComparatorBuilder":1}],7:[function(require,module,exports){
+},{"./../../../../collections/sorting/ComparatorBuilder":2}],11:[function(require,module,exports){
 var comparators = require('./../../../../collections/sorting/comparators');
 
 describe('When using the "compareDates" comparator', function() {
@@ -12814,4 +13107,310 @@ describe('When using the "compareStrings" comparator', function() {
         });
     });
 });
-},{"./../../../../collections/sorting/comparators":2}]},{},[6,7]);
+},{"./../../../../collections/sorting/comparators":3}],12:[function(require,module,exports){
+var Disposable = require('./../../../lang/Disposable');
+
+describe('When a Disposable is extended', function() {
+	'use strict';
+
+	var TestDisposable = Disposable.extend({
+		init: function() {
+			this._disposeSpy = jasmine.createSpy('disposeAction');
+		},
+
+		getDisposeSpy: function() {
+			return this._disposeSpy;
+		},
+
+		_onDispose: function() {
+			this._disposeSpy();
+		}
+	});
+
+	var testDisposable;
+
+	beforeEach(function() {
+		testDisposable = new TestDisposable();
+	});
+
+	it('should not indicate that it has been disposed', function() {
+		expect(testDisposable.getIsDisposed()).toEqual(false);
+	});
+
+	it('should not have triggered the dispose action', function() {
+		expect(testDisposable.getDisposeSpy()).not.toHaveBeenCalled();
+	});
+
+	describe("and the instance is disposed", function() {
+		beforeEach(function() {
+			testDisposable.dispose();
+		});
+
+		it('should not indicate that it has been disposed', function() {
+			expect(testDisposable.getIsDisposed()).toEqual(true);
+		});
+
+		it('should have triggered the dispose action', function() {
+			expect(testDisposable.getDisposeSpy().calls.count()).toEqual(1);
+		});
+
+		describe("and the instance is disposed again", function() {
+			beforeEach(function() {
+				testDisposable.dispose();
+			});
+
+			it('should not indicate that it has been disposed', function() {
+				expect(testDisposable.getIsDisposed()).toEqual(true);
+			});
+
+			it('should not dispose action again', function() {
+				expect(testDisposable.getDisposeSpy().calls.count()).toEqual(1);
+			});
+		});
+	});
+});
+
+describe('When a Disposable.fromAction creates a Disposable', function() {
+	'use strict';
+
+	var testDisposable;
+	var testDisposableSpy;
+
+	beforeEach(function() {
+		testDisposable = Disposable.fromAction(testDisposableSpy = jasmine.createSpy('testDisposableSpy'));
+	});
+
+	it('should be an instance of Disposable', function() {
+		expect(testDisposable instanceof Disposable).toEqual(true);
+	});
+
+	it('should not indicate that it has been disposed', function() {
+		expect(testDisposable.getIsDisposed()).toEqual(false);
+	});
+
+	it('should not have triggered the dispose action', function() {
+		expect(testDisposableSpy).not.toHaveBeenCalled();
+	});
+
+	describe("and the instance is disposed", function() {
+		beforeEach(function() {
+			testDisposable.dispose();
+		});
+
+		it('should not indicate that it has been disposed', function() {
+			expect(testDisposable.getIsDisposed()).toEqual(true);
+		});
+
+		it('should have triggered the dispose action', function() {
+			expect(testDisposableSpy.calls.count()).toEqual(1);
+		});
+
+		describe("and the instance is disposed again", function() {
+			beforeEach(function() {
+				testDisposable.dispose();
+			});
+
+			it('should not indicate that it has been disposed', function() {
+				expect(testDisposable.getIsDisposed()).toEqual(true);
+			});
+
+			it('should not dispose action again', function() {
+				expect(testDisposableSpy.calls.count()).toEqual(1);
+			});
+		});
+	});
+});
+},{"./../../../lang/Disposable":4}],13:[function(require,module,exports){
+var attributes = require('./../../../lang/attributes');
+
+describe('When "attributes.has" is used to check a top-level property', function() {
+	'use strict';
+
+	var target;
+
+	beforeEach(function() {
+		target = {
+			test: 123
+		};
+	});
+
+	describe("and the property exists", function() {
+		it("should return true", function() {
+			expect(attributes.has(target, "test")).toEqual(true);
+		});
+	});
+
+	describe("and the property does not exist", function() {
+		it("should return true", function() {
+			expect(attributes.has(target, "name")).toEqual(false);
+		});
+	});
+});
+
+describe('When "attributes.has" is used to check a second-level property', function() {
+	'use strict';
+
+	var target;
+
+	beforeEach(function() {
+		target = {
+			nested: {
+				test: 123
+			}
+		};
+	});
+
+	describe("and the property exists", function() {
+		it("should return true", function() {
+			expect(attributes.has(target, "nested.test")).toEqual(true);
+		});
+	});
+
+	describe("and the property does not exist", function() {
+		it("should return true", function() {
+			expect(attributes.has(target, "nested.name")).toEqual(false);
+		});
+	});
+
+	describe("and the top-level property does not exist", function() {
+		it("should return true", function() {
+			expect(attributes.has(target, "wrong.name")).toEqual(false);
+		});
+	});
+});
+
+describe('When "attributes.read" is used to get a top-level property', function() {
+	'use strict';
+
+	var target;
+
+	beforeEach(function() {
+		target = {
+			nested: {
+				test: 123
+			}
+		};
+	});
+
+
+	describe("and the property exists", function() {
+		it("should return the property value", function() {
+			expect(attributes.read(target, "nested.test")).toEqual(123);
+		});
+	});
+
+	describe("and the property does not exist", function() {
+		it("should be undefined", function() {
+			expect(attributes.read(target, "nested.name")).toBe(undefined);
+		});
+	});
+});
+
+describe('When "attributes.read" is used to get a second-level property', function() {
+	'use strict';
+
+	var target;
+
+	beforeEach(function() {
+		target = {
+			nested: {
+				test: 123
+			}
+		};
+	});
+
+	describe("and the property exists", function() {
+		it("should return the property value", function() {
+			expect(attributes.read(target, "nested.test")).toEqual(123);
+		});
+	});
+
+	describe("and the property does not exist", function() {
+		it("should be undefined", function() {
+			expect(attributes.read(target, "nested.name")).toBe(undefined);
+		});
+	});
+
+	describe("and the top-level property does not exist", function() {
+		it("should be undefined", function() {
+			expect(attributes.read(target, "wrong.name")).toBe(undefined);
+		});
+	});
+});
+
+describe('When "attributes.write" is used to set a top-level property', function() {
+	'use strict';
+
+	var target;
+
+	beforeEach(function() {
+		target = {
+			test: 123
+		};
+	});
+
+	describe("and the property exists", function() {
+		beforeEach(function() {
+			attributes.write(target, "test", "four-five-six");
+		});
+
+		it("the property value should be overwritten", function() {
+			expect(target.test).toEqual("four-five-six");
+		});
+	});
+
+	describe("and the property does not exist", function() {
+		beforeEach(function() {
+			attributes.write(target, "name", "Alice");
+		});
+
+		it("the property value should be created and set", function() {
+			expect(target.name).toEqual("Alice");
+		});
+	});
+});
+
+describe('When "attributes.write" is used to set a second-level property', function() {
+	'use strict';
+
+	var target;
+
+	beforeEach(function() {
+		target = {
+			nested: {
+				test: 123
+			}
+		};
+	});
+
+	describe("and the property exists", function() {
+		beforeEach(function() {
+			attributes.write(target, "nested.test", "four-five-six");
+		});
+
+		it("the property value should be overwritten", function() {
+			expect(target.nested.test).toEqual("four-five-six");
+		});
+	});
+
+	describe("and the second-level property does not exist", function() {
+		beforeEach(function() {
+			attributes.write(target, "nested.name", "Alice");
+		});
+
+		it("the property value should be created and set", function() {
+			expect(target.nested.name).toEqual("Alice");
+		});
+	});
+
+	describe("and the top-level property does not exist", function() {
+		beforeEach(function() {
+			attributes.write(target, "x.y", "z");
+		});
+
+		it("the top-level and second properties value should be created and set", function() {
+			expect(target.x.y).toEqual("z");
+		});
+	});
+});
+},{"./../../../lang/attributes":6}]},{},[9,10,11,12,13]);
