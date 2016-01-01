@@ -2,7 +2,7 @@ var _ = require('lodash');
 
 var assert = require('./assert');
 
-modules.export = function() {
+module.exports = function() {
     'use strict';
 
     var converters = {
