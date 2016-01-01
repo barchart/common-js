@@ -1,4 +1,51 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}(g.Barchart || (g.Barchart = {})).Common = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+var Class = require('class.extend');
+
+module.exports = function() {
+    'use strict';
+
+    var Stack = Class.extend({
+        init: function() {
+            this._array = [ ];
+        },
+
+        push: function(item) {
+            this._array.unshift(item);
+
+            return item;
+        },
+
+        pop: function() {
+            if (this.empty()) {
+                throw new Error('Stack is empty');
+            }
+
+            return this._array.shift();
+        },
+
+        peek: function() {
+            if (this.empty()) {
+                throw new Error('Stack is empty');
+            }
+
+            return this._array[0];
+        },
+
+        empty: function() {
+            return this._array.length === 0;
+        },
+
+        toString: function() {
+            return '[Stack]';
+        }
+    });
+
+    return Stack;
+}();
+},{"class.extend":11}],2:[function(require,module,exports){
+var Stack = require('./Stack');
+var DisposableStack = require('./specialized/DisposableStack');
+
 var ComparatorBuilder = require('./sorting/ComparatorBuilder');
 var comparators = require('./sorting/comparators');
 
@@ -6,13 +53,17 @@ module.exports = function() {
     'use strict';
 
     return {
+		Stack: Stack,
+		Specialized: {
+			DisposableStack: DisposableStack
+		},
         Sorting: {
             ComparatorBuilder: ComparatorBuilder,
             comparators: comparators
         }
     };
 }();
-},{"./sorting/ComparatorBuilder":2,"./sorting/comparators":3}],2:[function(require,module,exports){
+},{"./Stack":1,"./sorting/ComparatorBuilder":3,"./sorting/comparators":4,"./specialized/DisposableStack":5}],3:[function(require,module,exports){
 var Class = require('class.extend');
 
 var assert = require('./../../lang/assert');
@@ -94,7 +145,7 @@ module.exports = function() {
 
     return ComparatorBuilder;
 }();
-},{"./../../lang/assert":5,"./comparators":3,"class.extend":7}],3:[function(require,module,exports){
+},{"./../../lang/assert":8,"./comparators":4,"class.extend":11}],4:[function(require,module,exports){
 var _ = require('lodash');
 
 var assert = require('./../../lang/assert');
@@ -131,7 +182,42 @@ module.exports = function() {
 
     return comparators;
 }();
-},{"./../../lang/assert":5,"lodash":8}],4:[function(require,module,exports){
+},{"./../../lang/assert":8,"lodash":12}],5:[function(require,module,exports){
+var Stack = require('./../Stack');
+
+var assert = require('./../../lang/assert');
+var Disposable = require('./../../lang/Disposable');
+
+module.exports = function() {
+    'use strict';
+
+    var DisposableStack = Disposable.extend({
+        init: function() {
+			this._super();
+
+            this._stack = new Stack();
+        },
+
+        push: function(disposable) {
+            assert.argumentIsRequired(disposable, 'disposable', Disposable, 'Disposable');
+
+            this._stack.push(disposable);
+        },
+
+        _onDispose: function() {
+            while (!this._stack.empty()) {
+                this._stack.pop().dispose();
+            }
+        },
+
+        toString: function() {
+            return '[Stack]';
+        }
+    });
+
+    return DisposableStack;
+}();
+},{"./../../lang/Disposable":7,"./../../lang/assert":8,"./../Stack":1}],6:[function(require,module,exports){
 var _ = require('lodash');
 
 var collections = require('./collections/index');
@@ -146,7 +232,60 @@ module.exports = function() {
 
     return _.merge(lang, namespaces);
 }();
-},{"./collections/index":1,"./lang/index":6,"lodash":8}],5:[function(require,module,exports){
+},{"./collections/index":2,"./lang/index":10,"lodash":12}],7:[function(require,module,exports){
+var Class = require('class.extend');
+
+var assert = require('./assert');
+
+module.exports = function() {
+    'use strict';
+
+    var Disposable = Class.extend({
+        init: function() {
+			this._super();
+
+            this._disposed = false;
+        },
+
+        dispose: function() {
+            if (this._disposed) {
+                return;
+            }
+
+            this._disposed = true;
+
+            this._onDispose();
+        },
+
+        _onDispose: function() {
+            return;
+        },
+
+        getIsDisposed: function() {
+            return this._disposed || false;
+        }
+    });
+
+    var DisposableAction = Disposable.extend({
+        init: function(disposeAction) {
+            this._disposeAction = disposeAction;
+        },
+
+        _onDispose: function() {
+            this._disposeAction();
+            this._disposeAction = null;
+        }
+    });
+
+    Disposable.fromAction = function(disposeAction) {
+        assert.argumentIsRequired(disposeAction, 'disposeAction', Function);
+
+        return new DisposableAction(disposeAction);
+    };
+
+    return Disposable;
+}();
+},{"./assert":8,"class.extend":11}],8:[function(require,module,exports){
 var _ = require('lodash');
 
 module.exports = function() {
@@ -230,17 +369,101 @@ module.exports = function() {
 
     return assert;
 }();
-},{"lodash":8}],6:[function(require,module,exports){
+},{"lodash":12}],9:[function(require,module,exports){
+var _ = require('lodash');
+
 var assert = require('./assert');
 
 module.exports = function() {
     'use strict';
 
+    var attributes = {
+        has: function(target, propertyNames) {
+            assert.argumentIsRequired(target, 'target', Object);
+            assert.argumentIsRequired(propertyNames, 'propertyNames', String);
+
+            var propertyNameArray = getPropertyNameArray(propertyNames);
+            var propertyTarget = getPropertyTarget(target, propertyNameArray, false);
+
+            return propertyTarget !== null && _.has(propertyTarget, _.last(propertyNameArray));
+        },
+
+        read: function(target, propertyNames) {
+            assert.argumentIsRequired(target, 'target', Object);
+            assert.argumentIsRequired(propertyNames, 'propertyNames', String);
+
+            var propertyNameArray = getPropertyNameArray(propertyNames);
+            var propertyTarget = getPropertyTarget(target, propertyNameArray, false);
+
+            var returnRef;
+
+            if (propertyTarget) {
+                var propertyName = _.last(propertyNameArray);
+
+                returnRef = propertyTarget[propertyName];
+            } else {
+                returnRef = undefined;
+            }
+
+            return returnRef;
+        },
+
+        write: function(target, propertyNames, value) {
+            assert.argumentIsRequired(target, 'target', Object);
+            assert.argumentIsRequired(propertyNames, 'propertyNames', String);
+
+            var propertyNameArray = getPropertyNameArray(propertyNames);
+            var propertyTarget = getPropertyTarget(target, propertyNameArray, true);
+
+            var propertyName = _.last(propertyNameArray);
+
+            propertyTarget[propertyName] = value;
+        }
+    };
+
+    function getPropertyNameArray(propertyNames) {
+        return propertyNames.split('.');
+    }
+
+    function getPropertyTarget(target, propertyNameArray, create) {
+        var returnRef;
+
+        var propertyTarget = target;
+
+        for (var i = 0; i < (propertyNameArray.length - 1); i++) {
+            var propertyName = propertyNameArray[i];
+
+            if (_.has(propertyTarget, propertyName)) {
+                propertyTarget = propertyTarget[propertyName];
+            } else if (create) {
+                propertyTarget = propertyTarget[propertyName] = { };
+            } else {
+                propertyTarget = null;
+
+                break;
+            }
+        }
+
+        return propertyTarget;
+    }
+
+    return attributes;
+}();
+},{"./assert":8,"lodash":12}],10:[function(require,module,exports){
+var assert = require('./assert');
+var attributes = require('./attributes');
+var Disposable = require('./Disposable');
+
+module.exports = function() {
+    'use strict';
+
     return {
-        assert: assert
+        assert: assert,
+		attributes: attributes,
+		Disposable: Disposable
     };
 }();
-},{"./assert":5}],7:[function(require,module,exports){
+},{"./Disposable":7,"./assert":8,"./attributes":9}],11:[function(require,module,exports){
 (function(){
   var initializing = false, fnTest = /xyz/.test(function(){xyz;}) ? /\b_super\b/ : /.*/;
 
@@ -312,7 +535,7 @@ module.exports = function() {
   module.exports = Class;
 })();
 
-},{}],8:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -12667,5 +12890,5 @@ module.exports = function() {
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}]},{},[4])(4)
+},{}]},{},[6])(6)
 });
