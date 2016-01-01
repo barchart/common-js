@@ -171,8 +171,6 @@ module.exports = function() {
 
     var Disposable = Class.extend({
         init: function() {
-			this._super();
-
             this._disposed = false;
         },
 
