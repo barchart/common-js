@@ -556,6 +556,10 @@ module.exports = function() {
         _onDispose: function() {
             this._transactionCommit.dispose();
             this._transactionCommit = null;
+        },
+
+        toString: function() {
+            return '[Model]';
         }
     });
 
@@ -21282,7 +21286,6 @@ describe('When an Model is constructed with "firstName" and "lastName" propertie
                 expect(argsOne[0].firstName).toEqual('Bryan');
                 expect(argsOne[0].lastName).toEqual('Ingle');
                 expect(argsOne[0].sequence).toEqual(0);
-
 
                 expect(argsOne[1]).toBe(model);
             });
