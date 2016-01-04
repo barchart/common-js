@@ -133,7 +133,7 @@ gulp.task('release', function (callback) {
 });
 
 gulp.task('lint', function() {
-    return gulp.src([ './**/*.js', './test/specs/**/*.js' ])
+    return gulp.src([ './**/*.js', './test/specs/**/*.js', '!./node_modules/**', '!./dist/**', '!./test/dist/**' ])
         .pipe(jshint())
         .pipe(jshint.reporter('default'));
 });

@@ -16,6 +16,10 @@ module.exports = function() {
         push: function(disposable) {
             assert.argumentIsRequired(disposable, 'disposable', Disposable, 'Disposable');
 
+            if (this.getIsDisposed()) {
+                throw new Error('Unable to push item onto DisposableStack because it has been disposed.');
+            }
+
             this._stack.push(disposable);
         },
 
@@ -26,7 +30,7 @@ module.exports = function() {
         },
 
         toString: function() {
-            return '[Stack]';
+            return '[DisposableStack]';
         }
     });
 

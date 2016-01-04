@@ -25,7 +25,9 @@
   ],
   "dependencies": {
     "class.extend": "^0.9.1",
-    "lodash": "^3.10.1"
+    "lodash": "^3.10.1",
+    "log4js": "^0.6.29",
+    "when": "^3.7.7"
   },
   "devDependencies": {
     "browserify": "~11.2.0",

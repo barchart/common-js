@@ -26,6 +26,10 @@ module.exports = function() {
 
         getIsDisposed: function() {
             return this._disposed || false;
+        },
+
+        toString: function() {
+            return '[Disposable]';
         }
     });
 
@@ -37,6 +41,10 @@ module.exports = function() {
         _onDispose: function() {
             this._disposeAction();
             this._disposeAction = null;
+        },
+
+        toString: function() {
+            return '[DisposableAction]';
         }
     });
 
