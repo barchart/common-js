@@ -262,7 +262,7 @@ module.exports = function() {
         assert.argumentIsRequired(commandHandler, 'commandHandler', CommandHandler, 'CommandHandler');
 
         return function(data) {
-            commandHandler.process(data);
+            return commandHandler.process(data);
         };
     };
 
@@ -350,9 +350,15 @@ module.exports = function() {
             var handlerName = this._nameExtractor(data);
             var handler = this._handlerMap[handlerName] || this._defaultHandler;
 
+            var returnRef;
+
             if (handler) {
-                handler.process(data);
+                returnRef = handler.process(data);
+            } else {
+                returnRef = null;
             }
+
+            return returnRef;
         },
 
         toString: function() {
