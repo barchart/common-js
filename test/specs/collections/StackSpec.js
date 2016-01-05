@@ -106,7 +106,7 @@ describe('When a Stack is constructed', function() {
 					expect(pop).toBe(second);
 				});
 
-				it('should be empty', function() {
+				it('should not be empty', function() {
 					expect(stack.empty()).toEqual(false);
 				});
 			});

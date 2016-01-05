@@ -38,7 +38,7 @@ module.exports = function() {
         assert.argumentIsRequired(commandHandler, 'commandHandler', CommandHandler, 'CommandHandler');
 
         return function(data) {
-            commandHandler.process(data);
+            return commandHandler.process(data);
         };
     };
 
