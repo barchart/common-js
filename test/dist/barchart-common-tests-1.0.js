@@ -2,45 +2,45 @@
 var Class = require('class.extend');
 
 module.exports = function() {
-    'use strict';
+	'use strict';
 
-    var Stack = Class.extend({
-        init: function() {
-            this._array = [ ];
-        },
+	var Stack = Class.extend({
+		init: function() {
+			this._array = [];
+		},
 
-        push: function(item) {
-            this._array.unshift(item);
+		push: function(item) {
+			this._array.unshift(item);
 
-            return item;
-        },
+			return item;
+		},
 
-        pop: function() {
-            if (this.empty()) {
-                throw new Error('Stack is empty');
-            }
+		pop: function() {
+			if (this.empty()) {
+				throw new Error('Stack is empty');
+			}
 
-            return this._array.shift();
-        },
+			return this._array.shift();
+		},
 
-        peek: function() {
-            if (this.empty()) {
-                throw new Error('Stack is empty');
-            }
+		peek: function() {
+			if (this.empty()) {
+				throw new Error('Stack is empty');
+			}
 
-            return this._array[0];
-        },
+			return this._array[0];
+		},
 
-        empty: function() {
-            return this._array.length === 0;
-        },
+		empty: function() {
+			return this._array.length === 0;
+		},
 
-        toString: function() {
-            return '[Stack]';
-        }
-    });
+		toString: function() {
+			return '[Stack]';
+		}
+	});
 
-    return Stack;
+	return Stack;
 }();
 },{"class.extend":15}],2:[function(require,module,exports){
 var Class = require('class.extend');
@@ -49,80 +49,80 @@ var assert = require('./../../lang/assert');
 var comparators = require('./comparators');
 
 module.exports = function() {
-    'use strict';
+	'use strict';
 
-    var ComparatorBuilder = Class.extend({
-        init: function(comparator, invert, previous) {
-            assert.argumentIsRequired(comparator, 'comparator', Function);
-            assert.argumentIsOptional(invert, 'invert', Boolean);
+	var ComparatorBuilder = Class.extend({
+		init: function(comparator, invert, previous) {
+			assert.argumentIsRequired(comparator, 'comparator', Function);
+			assert.argumentIsOptional(invert, 'invert', Boolean);
 
-            this._comparator = comparator;
-            this._invert = invert || false;
-            this._previous = previous || null;
-        },
+			this._comparator = comparator;
+			this._invert = invert || false;
+			this._previous = previous || null;
+		},
 
-        thenBy: function(comparator, invert) {
-            assert.argumentIsRequired(comparator, 'comparator', Function);
-            assert.argumentIsOptional(invert, 'invert', Boolean);
+		thenBy: function(comparator, invert) {
+			assert.argumentIsRequired(comparator, 'comparator', Function);
+			assert.argumentIsOptional(invert, 'invert', Boolean);
 
-            return new ComparatorBuilder(comparator, invert, this);
-        },
+			return new ComparatorBuilder(comparator, invert, this);
+		},
 
-        invert: function() {
-            var previous;
+		invert: function() {
+			var previous;
 
-            if (this._previous) {
-                previous = this._previous.invert();
-            } else {
-                previous = null;
-            }
+			if (this._previous) {
+				previous = this._previous.invert();
+			} else {
+				previous = null;
+			}
 
-            return new ComparatorBuilder(this._comparator, !this._invert, previous);
-        },
+			return new ComparatorBuilder(this._comparator, !this._invert, previous);
+		},
 
-        toComparator: function() {
-            var that = this;
+		toComparator: function() {
+			var that = this;
 
-            var previousComparator;
+			var previousComparator;
 
-            if (that._previous) {
-                previousComparator = that._previous.toComparator();
-            } else {
-                previousComparator = comparators.empty;
-            }
+			if (that._previous) {
+				previousComparator = that._previous.toComparator();
+			} else {
+				previousComparator = comparators.empty;
+			}
 
-            return function(a, b) {
-                var result = previousComparator(a, b);
+			return function(a, b) {
+				var result = previousComparator(a, b);
 
-                if (result === 0) {
-                    var sortA;
-                    var sortB;
+				if (result === 0) {
+					var sortA;
+					var sortB;
 
-                    if (that._invert) {
-                        sortA = b;
-                        sortB = a;
-                    } else {
-                        sortA = a;
-                        sortB = b;
-                    }
+					if (that._invert) {
+						sortA = b;
+						sortB = a;
+					} else {
+						sortA = a;
+						sortB = b;
+					}
 
-                    result = that._comparator(sortA, sortB);
-                }
+					result = that._comparator(sortA, sortB);
+				}
 
-                return result;
-            };
-        },
+				return result;
+			};
+		},
 
-        toString: function() {
-            return '[ComparatorBuilder]';
-        }
-    });
+		toString: function() {
+			return '[ComparatorBuilder]';
+		}
+	});
 
-    ComparatorBuilder.startWith = function(comparator, invert) {
-        return new ComparatorBuilder(comparator, invert);
-    };
+	ComparatorBuilder.startWith = function(comparator, invert) {
+		return new ComparatorBuilder(comparator, invert);
+	};
 
-    return ComparatorBuilder;
+	return ComparatorBuilder;
 }();
 },{"./../../lang/assert":8,"./comparators":3,"class.extend":15}],3:[function(require,module,exports){
 var _ = require('lodash');
@@ -130,36 +130,36 @@ var _ = require('lodash');
 var assert = require('./../../lang/assert');
 
 module.exports = function() {
-    'use strict';
+	'use strict';
 
-    var comparators = {
-        compareDates: function(a, b) {
-            assert.argumentIsRequired(a, 'a', Date);
-            assert.argumentIsRequired(b, 'b', Date);
+	var comparators = {
+		compareDates: function(a, b) {
+			assert.argumentIsRequired(a, 'a', Date);
+			assert.argumentIsRequired(b, 'b', Date);
 
-            return a - b;
-        },
+			return a - b;
+		},
 
-        compareNumbers: function(a, b) {
-            assert.argumentIsRequired(a, 'a', Number);
-            assert.argumentIsRequired(b, 'b', Number);
+		compareNumbers: function(a, b) {
+			assert.argumentIsRequired(a, 'a', Number);
+			assert.argumentIsRequired(b, 'b', Number);
 
-            return a - b;
-        },
+			return a - b;
+		},
 
-        compareStrings: function(a, b) {
-            assert.argumentIsRequired(a, 'a', String);
-            assert.argumentIsRequired(b, 'b', String);
+		compareStrings: function(a, b) {
+			assert.argumentIsRequired(a, 'a', String);
+			assert.argumentIsRequired(b, 'b', String);
 
-            return a.localeCompare(b);
-        },
+			return a.localeCompare(b);
+		},
 
-        empty: function(a, b) {
-            return 0;
-        }
-    };
+		empty: function(a, b) {
+			return 0;
+		}
+	};
 
-    return comparators;
+	return comparators;
 }();
 },{"./../../lang/assert":8,"lodash":18}],4:[function(require,module,exports){
 var Class = require('class.extend');
@@ -167,80 +167,80 @@ var Class = require('class.extend');
 var assert = require('./../lang/assert');
 
 module.exports = function() {
-    'use strict';
+	'use strict';
 
-    var CommandHandler = Class.extend({
-        init: function() {
-        },
+	var CommandHandler = Class.extend({
+		init: function() {
+		},
 
-        process: function(data) {
-            return this._process(data);
-        },
+		process: function(data) {
+			return this._process(data);
+		},
 
-        _process: function(data) {
-            return true;
-        },
+		_process: function(data) {
+			return true;
+		},
 
-        toString: function() {
-            return '[CommandHandler]';
-        }
-    });
+		toString: function() {
+			return '[CommandHandler]';
+		}
+	});
 
-    var DelegateCommandHandler = CommandHandler.extend({
-        init: function(handler) {
-            this._super();
+	var DelegateCommandHandler = CommandHandler.extend({
+		init: function(handler) {
+			this._super();
 
-            this._handler = handler;
-        },
+			this._handler = handler;
+		},
 
-        _process: function(data) {
-            return this._handler(data);
-        }
-    });
+		_process: function(data) {
+			return this._handler(data);
+		}
+	});
 
-    CommandHandler.toFunction = function(commandHandler) {
-        assert.argumentIsRequired(commandHandler, 'commandHandler', CommandHandler, 'CommandHandler');
+	CommandHandler.toFunction = function(commandHandler) {
+		assert.argumentIsRequired(commandHandler, 'commandHandler', CommandHandler, 'CommandHandler');
 
-        return function(data) {
-            return commandHandler.process(data);
-        };
-    };
+		return function(data) {
+			return commandHandler.process(data);
+		};
+	};
 
-    CommandHandler.fromFunction = function(handler) {
-        assert.argumentIsRequired(handler, 'handler', Function);
+	CommandHandler.fromFunction = function(handler) {
+		assert.argumentIsRequired(handler, 'handler', Function);
 
-        return new DelegateCommandHandler(handler);
-    };
+		return new DelegateCommandHandler(handler);
+	};
 
-    return CommandHandler;
+	return CommandHandler;
 }();
 },{"./../lang/assert":8,"class.extend":15}],5:[function(require,module,exports){
 var assert = require('./../lang/assert');
 var CommandHandler = require('./CommandHandler');
 
 module.exports = function() {
-    'use strict';
+	'use strict';
 
-    var CompositeCommandHandler = CommandHandler.extend({
-        init: function(commandHandlerA, commandHandlerB) {
-            assert.argumentIsRequired(commandHandlerA, 'commandHandlerA', CommandHandler, 'CommandHandler');
-            assert.argumentIsRequired(commandHandlerB, 'commandHandlerB', CommandHandler, 'CommandHandler');
-            assert.areNotEqual(commandHandlerA, commandHandlerB, 'commandHandlerA', 'commandHandlerB');
+	var CompositeCommandHandler = CommandHandler.extend({
+		init: function(commandHandlerA, commandHandlerB) {
+			assert.argumentIsRequired(commandHandlerA, 'commandHandlerA', CommandHandler, 'CommandHandler');
+			assert.argumentIsRequired(commandHandlerB, 'commandHandlerB', CommandHandler, 'CommandHandler');
+			assert.areNotEqual(commandHandlerA, commandHandlerB, 'commandHandlerA', 'commandHandlerB');
 
-            this._commandHandlerA = commandHandlerA;
-            this._commandHandlerB = commandHandlerB;
-        },
+			this._commandHandlerA = commandHandlerA;
+			this._commandHandlerB = commandHandlerB;
+		},
 
-        _process: function(data) {
-            return this._commandHandlerA.process(data) && this._commandHandlerB.process(data);
-        },
+		_process: function(data) {
+			return this._commandHandlerA.process(data) && this._commandHandlerB.process(data);
+		},
 
-        toString: function() {
-            return '[CompositeCommandHandler]';
-        }
-    });
+		toString: function() {
+			return '[CompositeCommandHandler]';
+		}
+	});
 
-    return CompositeCommandHandler;
+	return CompositeCommandHandler;
 }();
 },{"./../lang/assert":8,"./CommandHandler":4}],6:[function(require,module,exports){
 var _ = require('lodash');
@@ -249,64 +249,64 @@ var assert = require('./../lang/assert');
 var CommandHandler = require('./CommandHandler');
 
 module.exports = function() {
-    'use strict';
+	'use strict';
 
-    var MappedCommandHandler = CommandHandler.extend({
-        init: function(nameExtractor) {
-            assert.argumentIsRequired(nameExtractor, 'nameFunction', Function);
+	var MappedCommandHandler = CommandHandler.extend({
+		init: function(nameExtractor) {
+			assert.argumentIsRequired(nameExtractor, 'nameFunction', Function);
 
-            this._handlerMap = { };
-            this._defaultHandler = null;
+			this._handlerMap = {};
+			this._defaultHandler = null;
 
-            this._nameExtractor = nameExtractor;
-        },
+			this._nameExtractor = nameExtractor;
+		},
 
-        addCommandHandler: function(name, commandHandler) {
-            assert.argumentIsRequired(name, 'name', String);
-            assert.argumentIsRequired(commandHandler, 'commandHandler', CommandHandler, 'CommandHandler');
+		addCommandHandler: function(name, commandHandler) {
+			assert.argumentIsRequired(name, 'name', String);
+			assert.argumentIsRequired(commandHandler, 'commandHandler', CommandHandler, 'CommandHandler');
 
-            if (_.has(this._handlerMap, name)) {
-                throw new Error('A handler with the same name already exists in the map');
-            }
+			if (_.has(this._handlerMap, name)) {
+				throw new Error('A handler with the same name already exists in the map');
+			}
 
-            if (commandHandler === this) {
-                throw new Error('Recursive use of mapped command handlers is prohibited');
-            }
+			if (commandHandler === this) {
+				throw new Error('Recursive use of mapped command handlers is prohibited');
+			}
 
-            this._handlerMap[name] = commandHandler;
+			this._handlerMap[name] = commandHandler;
 
-            return this;
-        },
+			return this;
+		},
 
-        setDefaultCommandHandler: function(commandHandler) {
-            assert.argumentIsRequired(commandHandler, 'commandHandler', CommandHandler, 'CommandHandler');
+		setDefaultCommandHandler: function(commandHandler) {
+			assert.argumentIsRequired(commandHandler, 'commandHandler', CommandHandler, 'CommandHandler');
 
-            this._defaultHandler = commandHandler;
+			this._defaultHandler = commandHandler;
 
-            return this;
-        },
+			return this;
+		},
 
-        _process: function(data) {
-            var handlerName = this._nameExtractor(data);
-            var handler = this._handlerMap[handlerName] || this._defaultHandler;
+		_process: function(data) {
+			var handlerName = this._nameExtractor(data);
+			var handler = this._handlerMap[handlerName] || this._defaultHandler;
 
-            var returnRef;
+			var returnRef;
 
-            if (handler) {
-                returnRef = handler.process(data);
-            } else {
-                returnRef = null;
-            }
+			if (handler) {
+				returnRef = handler.process(data);
+			} else {
+				returnRef = null;
+			}
 
-            return returnRef;
-        },
+			return returnRef;
+		},
 
-        toString: function() {
-            return '[MappedCommandHandler]';
-        }
-    });
+		toString: function() {
+			return '[MappedCommandHandler]';
+		}
+	});
 
-    return MappedCommandHandler;
+	return MappedCommandHandler;
 }();
 },{"./../lang/assert":8,"./CommandHandler":4,"lodash":18}],7:[function(require,module,exports){
 var Class = require('class.extend');
@@ -314,142 +314,142 @@ var Class = require('class.extend');
 var assert = require('./assert');
 
 module.exports = function() {
-    'use strict';
+	'use strict';
 
-    var Disposable = Class.extend({
-        init: function() {
-            this._disposed = false;
-        },
+	var Disposable = Class.extend({
+		init: function() {
+			this._disposed = false;
+		},
 
-        dispose: function() {
-            if (this._disposed) {
-                return;
-            }
+		dispose: function() {
+			if (this._disposed) {
+				return;
+			}
 
-            this._disposed = true;
+			this._disposed = true;
 
-            this._onDispose();
-        },
+			this._onDispose();
+		},
 
-        _onDispose: function() {
-            return;
-        },
+		_onDispose: function() {
+			return;
+		},
 
-        getIsDisposed: function() {
-            return this._disposed || false;
-        },
+		getIsDisposed: function() {
+			return this._disposed || false;
+		},
 
-        toString: function() {
-            return '[Disposable]';
-        }
-    });
+		toString: function() {
+			return '[Disposable]';
+		}
+	});
 
-    var DisposableAction = Disposable.extend({
-        init: function(disposeAction) {
-            this._disposeAction = disposeAction;
-        },
+	var DisposableAction = Disposable.extend({
+		init: function(disposeAction) {
+			this._disposeAction = disposeAction;
+		},
 
-        _onDispose: function() {
-            this._disposeAction();
-            this._disposeAction = null;
-        },
+		_onDispose: function() {
+			this._disposeAction();
+			this._disposeAction = null;
+		},
 
-        toString: function() {
-            return '[DisposableAction]';
-        }
-    });
+		toString: function() {
+			return '[DisposableAction]';
+		}
+	});
 
-    Disposable.fromAction = function(disposeAction) {
-        assert.argumentIsRequired(disposeAction, 'disposeAction', Function);
+	Disposable.fromAction = function(disposeAction) {
+		assert.argumentIsRequired(disposeAction, 'disposeAction', Function);
 
-        return new DisposableAction(disposeAction);
-    };
+		return new DisposableAction(disposeAction);
+	};
 
-    return Disposable;
+	return Disposable;
 }();
 },{"./assert":8,"class.extend":15}],8:[function(require,module,exports){
 var _ = require('lodash');
 
 module.exports = function() {
-    'use strict';
+	'use strict';
 
-    var assert = {
-        argumentIsRequired: function(variable, variableName, type, typeDescription) {
-            checkArgumentType(variable, variableName, type, typeDescription);
-        },
+	var assert = {
+		argumentIsRequired: function(variable, variableName, type, typeDescription) {
+			checkArgumentType(variable, variableName, type, typeDescription);
+		},
 
-        argumentIsOptional: function(variable, variableName, type, typeDescription) {
-            if (_.isNull(variable) || _.isUndefined(variable)) {
-                return;
-            }
+		argumentIsOptional: function(variable, variableName, type, typeDescription) {
+			if (_.isNull(variable) || _.isUndefined(variable)) {
+				return;
+			}
 
-            checkArgumentType(variable, variableName, type, typeDescription);
-        },
+			checkArgumentType(variable, variableName, type, typeDescription);
+		},
 
-        argumentIsArray: function(variable, variableName, itemType, itemTypeDescription) {
-            assert.argumentIsRequired(variable, variableName, Array);
+		argumentIsArray: function(variable, variableName, itemType, itemTypeDescription) {
+			assert.argumentIsRequired(variable, variableName, Array);
 
-            for (var i = 0; i < variable.length; i++) {
-                checkArgumentType(variable[i], variableName, itemType, itemTypeDescription, i);
-            }
-        },
+			for (var i = 0; i < variable.length; i++) {
+				checkArgumentType(variable[i], variableName, itemType, itemTypeDescription, i);
+			}
+		},
 
-        areEqual: function(a, b, descriptionA, descriptionB) {
-            if (a !== b) {
-                throw new Error('The objects must be equal ([' + (descriptionA || a.toString()) + ' and ' + (descriptionB || n.toString()));
-            }
-        },
+		areEqual: function(a, b, descriptionA, descriptionB) {
+			if (a !== b) {
+				throw new Error('The objects must be equal ([' + (descriptionA || a.toString()) + ' and ' + (descriptionB || n.toString()));
+			}
+		},
 
-        areNotEqual: function(a, b, descriptionA, descriptionB) {
-            if (a === b) {
-                throw new Error('The objects cannot be equal ([' + (descriptionA || a.toString()) + ' and ' + (descriptionB || n.toString()));
-            }
-        }
-    };
+		areNotEqual: function(a, b, descriptionA, descriptionB) {
+			if (a === b) {
+				throw new Error('The objects cannot be equal ([' + (descriptionA || a.toString()) + ' and ' + (descriptionB || n.toString()));
+			}
+		}
+	};
 
-    function checkArgumentType(variable, variableName, type, typeDescription, index) {
-        if (type === String) {
-            if (!_.isString(variable)) {
-                throwInvalidTypeError(variableName, 'string', index);
-            }
-        } else if (type === Number) {
-            if (!_.isNumber(variable)) {
-                throwInvalidTypeError(variableName, 'number', index);
-            }
-        } else if (type === Function) {
-            if (!_.isFunction(variable)) {
-                throwInvalidTypeError(variableName, 'function', index);
-            }
-        } else if (type === Boolean) {
-            if (!_.isBoolean(variable)) {
-                throwInvalidTypeError(variableName, 'boolean', index);
-            }
-        } else if (type === Date) {
-            if (!_.isDate(variable)) {
-                throwInvalidTypeError(variableName, 'date', index);
-            }
-        } else if (type === Array) {
-            if (!_.isArray(variable)) {
-                throwInvalidTypeError(variableName, 'array', index);
-            }
-        } else if (!(variable instanceof (type || Object))) {
-            throwInvalidTypeError(variableName, typeDescription, index);
-        }
-    }
+	function checkArgumentType(variable, variableName, type, typeDescription, index) {
+		if (type === String) {
+			if (!_.isString(variable)) {
+				throwInvalidTypeError(variableName, 'string', index);
+			}
+		} else if (type === Number) {
+			if (!_.isNumber(variable)) {
+				throwInvalidTypeError(variableName, 'number', index);
+			}
+		} else if (type === Function) {
+			if (!_.isFunction(variable)) {
+				throwInvalidTypeError(variableName, 'function', index);
+			}
+		} else if (type === Boolean) {
+			if (!_.isBoolean(variable)) {
+				throwInvalidTypeError(variableName, 'boolean', index);
+			}
+		} else if (type === Date) {
+			if (!_.isDate(variable)) {
+				throwInvalidTypeError(variableName, 'date', index);
+			}
+		} else if (type === Array) {
+			if (!_.isArray(variable)) {
+				throwInvalidTypeError(variableName, 'array', index);
+			}
+		} else if (!(variable instanceof (type || Object))) {
+			throwInvalidTypeError(variableName, typeDescription, index);
+		}
+	}
 
-    function throwInvalidTypeError(variableName, typeDescription, index) {
-        var message;
+	function throwInvalidTypeError(variableName, typeDescription, index) {
+		var message;
 
-        if (_.isNumber(index)) {
-            message = 'The argument [' + (variableName || 'unspecified') + '], at index [' + index.toString() + '] must be a ' + (typeDescription || 'unknown');
-        } else {
-            message = 'The argument [' + (variableName || 'unspecified') + '] must be a ' + (typeDescription || 'Object');
-        }
+		if (_.isNumber(index)) {
+			message = 'The argument [' + (variableName || 'unspecified') + '], at index [' + index.toString() + '] must be a ' + (typeDescription || 'unknown');
+		} else {
+			message = 'The argument [' + (variableName || 'unspecified') + '] must be a ' + (typeDescription || 'Object');
+		}
 
-        throw new Error(message);
-    }
+		throw new Error(message);
+	}
 
-    return assert;
+	return assert;
 }();
 },{"lodash":18}],9:[function(require,module,exports){
 var _ = require('lodash');
@@ -538,79 +538,79 @@ var assert = require('./../lang/assert');
 var Disposable = require('./../lang/Disposable');
 
 module.exports = function() {
-    'use strict';
+	'use strict';
 
-    var Event = Disposable.extend({
-        init: function(sender) {
-            this._sender = sender || null;
+	var Event = Disposable.extend({
+		init: function(sender) {
+			this._sender = sender || null;
 
-            this._observers = [ ];
-        },
+			this._observers = [];
+		},
 
-        register: function(handler) {
-            assert.argumentIsRequired(handler, 'handler', Function);
+		register: function(handler) {
+			assert.argumentIsRequired(handler, 'handler', Function);
 
-            if (this.getIsDisposed()) {
-                throw new Error('The event has been disposed.');
-            }
+			if (this.getIsDisposed()) {
+				throw new Error('The event has been disposed.');
+			}
 
-            var that = this;
+			var that = this;
 
-            addRegistration.call(that, handler);
+			addRegistration.call(that, handler);
 
-            return Disposable.fromAction(function() {
-                if (that._disposed) {
-                    return;
-                }
+			return Disposable.fromAction(function() {
+				if (that._disposed) {
+					return;
+				}
 
-                removeRegistration.call(that, handler);
-            });
-        },
+				removeRegistration.call(that, handler);
+			});
+		},
 
-        fire: function(data) {
-            if (this.getIsDisposed()) {
-                throw new Error('The event has been disposed.');
-            }
+		fire: function(data) {
+			if (this.getIsDisposed()) {
+				throw new Error('The event has been disposed.');
+			}
 
-            var observers = this._observers;
+			var observers = this._observers;
 
-            for (var i = 0; i < observers.length; i++) {
-                var observer = observers[i];
+			for (var i = 0; i < observers.length; i++) {
+				var observer = observers[i];
 
-                observer(data, this._sender);
-            }
-        },
+				observer(data, this._sender);
+			}
+		},
 
-        _onDispose: function() {
-            this._observers = null;
-        }
-    });
+		_onDispose: function() {
+			this._observers = null;
+		}
+	});
 
-    function addRegistration(handler) {
-        var copiedObservers = this._observers.slice();
+	function addRegistration(handler) {
+		var copiedObservers = this._observers.slice();
 
-        copiedObservers.push(handler);
+		copiedObservers.push(handler);
 
-        this._observers = copiedObservers;
-    }
+		this._observers = copiedObservers;
+	}
 
-    function removeRegistration(handler) {
-        for (var i = 0; i < this._observers.length; i++) {
-            var candidate = this._observers[i];
+	function removeRegistration(handler) {
+		for (var i = 0; i < this._observers.length; i++) {
+			var candidate = this._observers[i];
 
-            if (candidate === handler) {
-                var copiedObservers = this._observers.slice();
+			if (candidate === handler) {
+				var copiedObservers = this._observers.slice();
 
-                copiedObservers.splice(i, 1);
+				copiedObservers.splice(i, 1);
 
-                this._observers = copiedObservers;
+				this._observers = copiedObservers;
 
-                break;
-            }
-        }
-    }
+				break;
+			}
+		}
+	}
 
-    return Event;
+	return Event;
 }();
 },{"./../lang/Disposable":7,"./../lang/assert":8,"lodash":18}],11:[function(require,module,exports){
 var _ = require('lodash');
@@ -620,129 +620,129 @@ var Disposable = require('./../lang/Disposable');
 var Event = require('./../messaging/Event');
 
 module.exports = function() {
-    var Model = Disposable.extend({
-        init: function(propertyNames) {
-            this._propertyNames = propertyNames;
+	var Model = Disposable.extend({
+		init: function(propertyNames) {
+			this._propertyNames = propertyNames;
 
-            this._transactionCommit = new Event(this);
+			this._transactionCommit = new Event(this);
 
-            this._transactionOpen = false;
-            this._transactionData = null;
+			this._transactionOpen = false;
+			this._transactionData = null;
 
-            this._sequence = 0;
+			this._sequence = 0;
 
-            for (var i = 0; i < this._propertyNames.length; i++) {
-                createProperty.call(this, propertyNames[i]);
-            }
-        },
+			for (var i = 0; i < this._propertyNames.length; i++) {
+				createProperty.call(this, propertyNames[i]);
+			}
+		},
 
-        beginTransaction: function() {
-            if (this._transactionOpen) {
-                return;
-            }
+		beginTransaction: function() {
+			if (this._transactionOpen) {
+				return;
+			}
 
-            this._transactionOpen = true;
-        },
+			this._transactionOpen = true;
+		},
 
-        endTransaction: function() {
-            if (!this._transactionOpen) {
-                return;
-            }
+		endTransaction: function() {
+			if (!this._transactionOpen) {
+				return;
+			}
 
-            if (this.getIsDisposed()) {
-                return;
-            }
+			if (this.getIsDisposed()) {
+				return;
+			}
 
-            this._transactionOpen = false;
+			this._transactionOpen = false;
 
-            if (this._transactionData !== null) {
-                this._formatTransactionData(this._transactionData);
+			if (this._transactionData !== null) {
+				this._formatTransactionData(this._transactionData);
 
-                this._transactionData.sequence = this._sequence++;
+				this._transactionData.sequence = this._sequence++;
 
-                this._transactionCommit.fire(this._transactionData);
+				this._transactionCommit.fire(this._transactionData);
 
-                this._transactionData = null;
-            }
-        },
+				this._transactionData = null;
+			}
+		},
 
-        _formatTransactionData: function(transactionData) {
-            return;
-        },
+		_formatTransactionData: function(transactionData) {
+			return;
+		},
 
-        executeTransaction: function(processor) {
-            assert.argumentIsRequired(processor, 'processor', Function);
+		executeTransaction: function(processor) {
+			assert.argumentIsRequired(processor, 'processor', Function);
 
-            this.beginTransaction();
-            processor(this);
-            this.endTransaction();
-        },
+			this.beginTransaction();
+			processor(this);
+			this.endTransaction();
+		},
 
-        onTransactionCommitted: function(observer) {
-            if (this.getIsDisposed()) {
-                return;
-            }
+		onTransactionCommitted: function(observer) {
+			if (this.getIsDisposed()) {
+				return;
+			}
 
-            return this._transactionCommit.register(observer);
-        },
+			return this._transactionCommit.register(observer);
+		},
 
-        getSnapshot: function() {
-            var snapshot = { };
+		getSnapshot: function() {
+			var snapshot = {};
 
-            for (var i = 0; i < this._propertyNames.length; i++) {
-                var propertyName = this._propertyNames[i];
+			for (var i = 0; i < this._propertyNames.length; i++) {
+				var propertyName = this._propertyNames[i];
 
-                snapshot[propertyName] = this[propertyName];
-            }
+				snapshot[propertyName] = this[propertyName];
+			}
 
-            snapshot.sequence = this._sequence;
+			snapshot.sequence = this._sequence;
 
-            return snapshot;
-        },
+			return snapshot;
+		},
 
-        _onDispose: function() {
-            this._transactionCommit.dispose();
-            this._transactionCommit = null;
-        },
+		_onDispose: function() {
+			this._transactionCommit.dispose();
+			this._transactionCommit = null;
+		},
 
-        toString: function() {
-            return '[Model]';
-        }
-    });
+		toString: function() {
+			return '[Model]';
+		}
+	});
 
-    function createProperty(propertyName) {
-        var that = this;
+	function createProperty(propertyName) {
+		var that = this;
 
-        var propertyValue;
+		var propertyValue;
 
-        Object.defineProperty(that, propertyName, {
-            get: function() {
-                return propertyValue;
-            },
-            set: function(value) {
-                if (propertyValue === value) {
-                    return;
-                }
+		Object.defineProperty(that, propertyName, {
+			get: function() {
+				return propertyValue;
+			},
+			set: function(value) {
+				if (propertyValue === value) {
+					return;
+				}
 
-                propertyValue = value;
+				propertyValue = value;
 
-                var implicit = !this._transactionOpen;
+				var implicit = !this._transactionOpen;
 
-                if (implicit) {
-                    that.beginTransaction();
-                }
+				if (implicit) {
+					that.beginTransaction();
+				}
 
-                that._transactionData = that._transactionData || { };
-                that._transactionData[propertyName] = propertyValue;
+				that._transactionData = that._transactionData || {};
+				that._transactionData[propertyName] = propertyValue;
 
-                if (implicit) {
-                    that.endTransaction();
-                }
-            }
-        });
-    }
+				if (implicit) {
+					that.endTransaction();
+				}
+			}
+		});
+	}
 
-    return Model;
+	return Model;
 }();
 },{"./../lang/Disposable":7,"./../lang/assert":8,"./../messaging/Event":10,"lodash":18}],12:[function(require,module,exports){
 (function (process){
@@ -20648,7 +20648,7 @@ describe('When a Stack is constructed', function() {
 		});
 
 		describe('and a second object is pushed onto the stack', function() {
-			var second = { name: "second" };
+			var second = {name: "second"};
 
 			beforeEach(function() {
 				stack.push(second);
@@ -20778,105 +20778,105 @@ describe('When a ComparatorBuilder is composed with two comparators', function()
 var comparators = require('./../../../../collections/sorting/comparators');
 
 describe('When using the "compareDates" comparator', function() {
-    'use strict';
+	'use strict';
 
-    var first = new Date(2015, 12, 1);
-    var second = new Date(2015, 12, 31);
-    var third = new Date(2016, 1, 31);
+	var first = new Date(2015, 12, 1);
+	var second = new Date(2015, 12, 31);
+	var third = new Date(2016, 1, 31);
 
-    describe('to sort an array of Date instances', function() {
-        var arrayToSort;
+	describe('to sort an array of Date instances', function() {
+		var arrayToSort;
 
-        beforeEach(function() {
-            arrayToSort = [ second, first, third ];
+		beforeEach(function() {
+			arrayToSort = [second, first, third];
 
-            arrayToSort.sort(comparators.compareDates);
-        });
+			arrayToSort.sort(comparators.compareDates);
+		});
 
-        it('the array should be in the correct order', function() {
-            expect(arrayToSort[0]).toBe(first);
-            expect(arrayToSort[1]).toBe(second);
-            expect(arrayToSort[2]).toBe(third);
-        });
-    });
+		it('the array should be in the correct order', function() {
+			expect(arrayToSort[0]).toBe(first);
+			expect(arrayToSort[1]).toBe(second);
+			expect(arrayToSort[2]).toBe(third);
+		});
+	});
 
-    describe('to sort an array that contains something other than Date instances', function() {
-        it('an error should be thrown', function() {
-            expect(function() {
-                var arrayToSort = [ second, first, third, '1-1-2017' ];
+	describe('to sort an array that contains something other than Date instances', function() {
+		it('an error should be thrown', function() {
+			expect(function() {
+				var arrayToSort = [second, first, third, '1-1-2017'];
 
-                arrayToSort.sort(comparators.compareDates);
-            }).toThrow();
-        });
-    });
+				arrayToSort.sort(comparators.compareDates);
+			}).toThrow();
+		});
+	});
 });
 
 describe('When using the "compareNumbers" comparator', function() {
-    'use strict';
+	'use strict';
 
-    var first = -1;
-    var second = Math.E;
-    var third = Math.PI;
+	var first = -1;
+	var second = Math.E;
+	var third = Math.PI;
 
-    describe('to sort an array of numbers', function() {
-        var arrayToSort;
+	describe('to sort an array of numbers', function() {
+		var arrayToSort;
 
-        beforeEach(function() {
-            arrayToSort = [ second, first, third ];
+		beforeEach(function() {
+			arrayToSort = [second, first, third];
 
-            arrayToSort.sort(comparators.compareNumbers);
-        });
+			arrayToSort.sort(comparators.compareNumbers);
+		});
 
-        it('the array should be in the correct order', function() {
-            expect(arrayToSort[0]).toBe(first);
-            expect(arrayToSort[1]).toBe(second);
-            expect(arrayToSort[2]).toBe(third);
-        });
-    });
+		it('the array should be in the correct order', function() {
+			expect(arrayToSort[0]).toBe(first);
+			expect(arrayToSort[1]).toBe(second);
+			expect(arrayToSort[2]).toBe(third);
+		});
+	});
 
-    describe('to sort an array that contains something other than numbers', function() {
-        it('an error should be thrown', function() {
-            expect(function() {
-                var arrayToSort = [ second, first, third, null ];
+	describe('to sort an array that contains something other than numbers', function() {
+		it('an error should be thrown', function() {
+			expect(function() {
+				var arrayToSort = [second, first, third, null];
 
-                arrayToSort.sort(comparators.compareNumbers);
-            }).toThrow();
-        });
-    });
+				arrayToSort.sort(comparators.compareNumbers);
+			}).toThrow();
+		});
+	});
 });
 
 describe('When using the "compareStrings" comparator', function() {
-    'use strict';
+	'use strict';
 
-    var first = '';
-    var second = 'Bye now';
-    var third = 'Hi there';
+	var first = '';
+	var second = 'Bye now';
+	var third = 'Hi there';
 
-    describe('to sort an array of strings', function() {
-        var arrayToSort;
+	describe('to sort an array of strings', function() {
+		var arrayToSort;
 
-        beforeEach(function() {
-            arrayToSort = [ third, first, second ];
+		beforeEach(function() {
+			arrayToSort = [third, first, second];
 
-            arrayToSort.sort(comparators.compareStrings);
-        });
+			arrayToSort.sort(comparators.compareStrings);
+		});
 
-        it('the array should be in the correct order', function() {
-            expect(arrayToSort[0]).toBe(first);
-            expect(arrayToSort[1]).toBe(second);
-            expect(arrayToSort[2]).toBe(third);
-        });
-    });
+		it('the array should be in the correct order', function() {
+			expect(arrayToSort[0]).toBe(first);
+			expect(arrayToSort[1]).toBe(second);
+			expect(arrayToSort[2]).toBe(third);
+		});
+	});
 
-    describe('to sort an array that contains something other than strings', function() {
-        it('an error should be thrown', function() {
-            expect(function() {
-                var arrayToSort = [ second, first, third, 7 ];
+	describe('to sort an array that contains something other than strings', function() {
+		it('an error should be thrown', function() {
+			expect(function() {
+				var arrayToSort = [second, first, third, 7];
 
-                arrayToSort.sort(comparators.compareStrings);
-            }).toThrow();
-        });
-    });
+				arrayToSort.sort(comparators.compareStrings);
+			}).toThrow();
+		});
+	});
 });
 },{"./../../../../collections/sorting/comparators":3}],52:[function(require,module,exports){
 var CommandHandler = require('./../../../commands/CommandHandler');
@@ -20901,7 +20901,7 @@ describe('When a CommandHandler is created from a function', function() {
 		var commandResult;
 
 		beforeEach(function() {
-			commandResult = commandHandler.process(commandData = { });
+			commandResult = commandHandler.process(commandData = {});
 		});
 
 		it('should invoke the wrapped function', function() {
@@ -20929,7 +20929,7 @@ describe('When a CommandHandler is created from a function', function() {
 			var commandResult;
 
 			beforeEach(function() {
-				commandResult = commandFunction(commandData = { });
+				commandResult = commandFunction(commandData = {});
 			});
 
 			it('should invoke the wrapped function', function() {
@@ -20961,10 +20961,14 @@ describe('When a CompositeCommandHandler is created', function() {
 		resultTwo = true;
 
 		commandHandler = new CompositeCommandHandler
-			(
-				CommandHandler.fromFunction(spyOne = jasmine.createSpy('spyOne').and.callFake(function() { return resultOne; })),
-				CommandHandler.fromFunction(spyTwo = jasmine.createSpy('spyTwo').and.callFake(function() { return resultTwo; }))
-			);
+		(
+			CommandHandler.fromFunction(spyOne = jasmine.createSpy('spyOne').and.callFake(function() {
+				return resultOne;
+			})),
+			CommandHandler.fromFunction(spyTwo = jasmine.createSpy('spyTwo').and.callFake(function() {
+				return resultTwo;
+			}))
+		);
 	});
 
 	describe('and the command is executed', function() {
@@ -20972,7 +20976,7 @@ describe('When a CompositeCommandHandler is created', function() {
 		var commandResult;
 
 		beforeEach(function() {
-			commandResult = commandHandler.process(commandData = { });
+			commandResult = commandHandler.process(commandData = {});
 		});
 
 		it('should invoke the wrapped functions', function() {
@@ -20989,7 +20993,7 @@ describe('When a CompositeCommandHandler is created', function() {
 			resultOne = false;
 			resultTwo = false;
 
-			commandResult = commandHandler.process(commandData = { });
+			commandResult = commandHandler.process(commandData = {});
 		});
 
 		it('should invoke the first command', function() {
@@ -21006,75 +21010,79 @@ var CommandHandler = require('./../../../commands/CommandHandler');
 var MappedCommandHandler = require('./../../../commands/MappedCommandHandler');
 
 describe('When a MappedCommandHandler is created with two mapped commands', function() {
-    'use strict';
+	'use strict';
 
-    var commandHandler;
+	var commandHandler;
 
-    var spyOne;
-    var spyTwo;
+	var spyOne;
+	var spyTwo;
 
-    var selectorOne;
-    var selectorTwo;
+	var selectorOne;
+	var selectorTwo;
 
-    var resultOne;
-    var resultTwo;
+	var resultOne;
+	var resultTwo;
 
-    beforeEach(function() {
-        selectorOne = 'one';
-        selectorTwo = 'two';
+	beforeEach(function() {
+		selectorOne = 'one';
+		selectorTwo = 'two';
 
-        resultOne = 'a';
-        resultTwo = 'b';
+		resultOne = 'a';
+		resultTwo = 'b';
 
-        commandHandler = new MappedCommandHandler(function(data) {
-            return data.commandType || null;
-        });
+		commandHandler = new MappedCommandHandler(function(data) {
+			return data.commandType || null;
+		});
 
-        commandHandler.addCommandHandler(selectorOne, CommandHandler.fromFunction(spyOne = jasmine.createSpy('spyOne').and.callFake(function() { return resultOne; })));
-        commandHandler.addCommandHandler(selectorTwo, CommandHandler.fromFunction(spyTwo = jasmine.createSpy('spyTwo').and.callFake(function() { return resultTwo; })));
-    });
+		commandHandler.addCommandHandler(selectorOne, CommandHandler.fromFunction(spyOne = jasmine.createSpy('spyOne').and.callFake(function() {
+			return resultOne;
+		})));
+		commandHandler.addCommandHandler(selectorTwo, CommandHandler.fromFunction(spyTwo = jasmine.createSpy('spyTwo').and.callFake(function() {
+			return resultTwo;
+		})));
+	});
 
-    describe('and the command is process with data for the first handler', function() {
-        var commandData;
-        var commandResult;
+	describe('and the command is process with data for the first handler', function() {
+		var commandData;
+		var commandResult;
 
-        beforeEach(function() {
-            commandResult = commandHandler.process(commandData = { commandType: selectorOne });
-        });
+		beforeEach(function() {
+			commandResult = commandHandler.process(commandData = {commandType: selectorOne});
+		});
 
-        it('should invoke wrapped function for the first handler', function() {
-            expect(spyOne).toHaveBeenCalledWith(commandData);
-        });
+		it('should invoke wrapped function for the first handler', function() {
+			expect(spyOne).toHaveBeenCalledWith(commandData);
+		});
 
-        it('should return the result from the first handler', function() {
-            expect(commandResult).toEqual(resultOne);
-        });
+		it('should return the result from the first handler', function() {
+			expect(commandResult).toEqual(resultOne);
+		});
 
-        it('should not invoke wrapped function for the secoond handler', function() {
-            expect(spyTwo).not.toHaveBeenCalledWith(commandData);
-        });
-    });
+		it('should not invoke wrapped function for the secoond handler', function() {
+			expect(spyTwo).not.toHaveBeenCalledWith(commandData);
+		});
+	});
 
-    describe('and the command is process with data for the second handler', function() {
-        var commandData;
-        var commandResult;
+	describe('and the command is process with data for the second handler', function() {
+		var commandData;
+		var commandResult;
 
-        beforeEach(function() {
-            commandResult = commandHandler.process(commandData = { commandType: selectorTwo });
-        });
+		beforeEach(function() {
+			commandResult = commandHandler.process(commandData = {commandType: selectorTwo});
+		});
 
-        it('should invoke wrapped function for the second handler', function() {
-            expect(spyTwo).toHaveBeenCalledWith(commandData);
-        });
+		it('should invoke wrapped function for the second handler', function() {
+			expect(spyTwo).toHaveBeenCalledWith(commandData);
+		});
 
-        it('should return the result from the second handler', function() {
-            expect(commandResult).toEqual(resultTwo);
-        });
+		it('should return the result from the second handler', function() {
+			expect(commandResult).toEqual(resultTwo);
+		});
 
-        it('should not invoke wrapped function for the first handler', function() {
-            expect(spyOne).not.toHaveBeenCalledWith(commandData);
-        });
-    });
+		it('should not invoke wrapped function for the first handler', function() {
+			expect(spyOne).not.toHaveBeenCalledWith(commandData);
+		});
+	});
 });
 },{"./../../../commands/CommandHandler":4,"./../../../commands/MappedCommandHandler":6}],55:[function(require,module,exports){
 var Disposable = require('./../../../lang/Disposable');
@@ -21387,311 +21395,319 @@ var Disposable = require('./../../../lang/Disposable');
 var Event = require('./../../../messaging/Event');
 
 describe('When an Event is constructed', function() {
-    'use strict';
+	'use strict';
 
-    var event;
-    var context;
+	var event;
+	var context;
 
-    beforeEach(function() {
-        event = new Event(context = { });
-    });
+	beforeEach(function() {
+		event = new Event(context = {});
+	});
 
-    describe('and an event handler is registered', function() {
-        var spyOne;
-        var bindingOne;
+	describe('and an event handler is registered', function() {
+		var spyOne;
+		var bindingOne;
 
-        beforeEach(function() {
-            bindingOne = event.register(spyOne = jasmine.createSpy('spyOne'));
-        });
+		beforeEach(function() {
+			bindingOne = event.register(spyOne = jasmine.createSpy('spyOne'));
+		});
 
-        it('should return a Disposable instance', function() {
-            expect(bindingOne instanceof Disposable).toEqual(true);
-        });
+		it('should return a Disposable instance', function() {
+			expect(bindingOne instanceof Disposable).toEqual(true);
+		});
 
-        describe('and the event fires', function() {
-            var data;
+		describe('and the event fires', function() {
+			var data;
 
-            beforeEach(function() {
-                event.fire(data = { });
-            });
+			beforeEach(function() {
+				event.fire(data = {});
+			});
 
-            it('should notify the observer', function() {
-                expect(spyOne).toHaveBeenCalledWith(context, data);
-            });
-        });
+			it('should notify the observer', function() {
+				expect(spyOne).toHaveBeenCalledWith(context, data);
+			});
+		});
 
-        describe('and another event handler is registered', function() {
-            var spyTwo;
-            var bindingTwo;
+		describe('and another event handler is registered', function() {
+			var spyTwo;
+			var bindingTwo;
 
-            beforeEach(function() {
-                bindingTwo = event.register(spyTwo = jasmine.createSpy('spyTwo'));
-            });
+			beforeEach(function() {
+				bindingTwo = event.register(spyTwo = jasmine.createSpy('spyTwo'));
+			});
 
-            it('should return a Disposable instance', function() {
-                expect(bindingTwo instanceof Disposable).toEqual(true);
-            });
+			it('should return a Disposable instance', function() {
+				expect(bindingTwo instanceof Disposable).toEqual(true);
+			});
 
-            describe('and the event fires', function() {
-                var data;
+			describe('and the event fires', function() {
+				var data;
 
-                beforeEach(function() {
-                    event.fire(data = { });
-                });
+				beforeEach(function() {
+					event.fire(data = {});
+				});
 
-                it('should notify both observers', function() {
-                    expect(spyOne).toHaveBeenCalledWith(context, data);
-                    expect(spyTwo).toHaveBeenCalledWith(context, data);
-                });
-            });
+				it('should notify both observers', function() {
+					expect(spyOne).toHaveBeenCalledWith(context, data);
+					expect(spyTwo).toHaveBeenCalledWith(context, data);
+				});
+			});
 
-            describe('and the first observer is disposed ', function() {
-                var data;
+			describe('and the first observer is disposed ', function() {
+				var data;
 
-                beforeEach(function() {
-                    bindingOne.dispose();
-                });
+				beforeEach(function() {
+					bindingOne.dispose();
+				});
 
-                describe('and the event fires', function() {
-                    var data;
+				describe('and the event fires', function() {
+					var data;
 
-                    beforeEach(function() {
-                        event.fire(data = { });
-                    });
+					beforeEach(function() {
+						event.fire(data = {});
+					});
 
-                    it('should not notify the first observer', function() {
-                        expect(spyOne).not.toHaveBeenCalledWith(context, data);
-                    });
+					it('should not notify the first observer', function() {
+						expect(spyOne).not.toHaveBeenCalledWith(context, data);
+					});
 
-                    it('should notify the second observer', function() {
-                        expect(spyTwo).toHaveBeenCalledWith(context, data);
-                    });
-                });
-            });
-        });
-    });
+					it('should notify the second observer', function() {
+						expect(spyTwo).toHaveBeenCalledWith(context, data);
+					});
+				});
+			});
+		});
+	});
 
-    describe('and multiple observers are added which dispose themselves', function() {
-        var spyOne;
-        var spyTwo;
+	describe('and multiple observers are added which dispose themselves', function() {
+		var spyOne;
+		var spyTwo;
 
-        var bindingOne;
-        var bindingTwo;
+		var bindingOne;
+		var bindingTwo;
 
-        beforeEach(function() {
-            bindingOne = event.register(spyOne = jasmine.createSpy('spyOne').and.callFake(function() { bindingOne.dispose(); }));
-            bindingTwo = event.register(spyTwo = jasmine.createSpy('spyTwo').and.callFake(function() { bindingTwo.dispose(); }));
-        });
+		beforeEach(function() {
+			bindingOne = event.register(spyOne = jasmine.createSpy('spyOne').and.callFake(function() {
+				bindingOne.dispose();
+			}));
+			bindingTwo = event.register(spyTwo = jasmine.createSpy('spyTwo').and.callFake(function() {
+				bindingTwo.dispose();
+			}));
+		});
 
-        describe('and the event fires', function() {
-            var data;
+		describe('and the event fires', function() {
+			var data;
 
-            beforeEach(function() {
-                event.fire(data = { });
-            });
+			beforeEach(function() {
+				event.fire(data = {});
+			});
 
-            it('should notify both observer', function() {
-                expect(spyOne).toHaveBeenCalledWith(context, data);
-                expect(spyTwo).toHaveBeenCalledWith(context, data);
-            });
+			it('should notify both observer', function() {
+				expect(spyOne).toHaveBeenCalledWith(context, data);
+				expect(spyTwo).toHaveBeenCalledWith(context, data);
+			});
 
-            describe('and the event fires again', function() {
-                var data;
+			describe('and the event fires again', function() {
+				var data;
 
-                beforeEach(function() {
-                    spyOne.calls.reset();
-                    spyTwo.calls.reset();
+				beforeEach(function() {
+					spyOne.calls.reset();
+					spyTwo.calls.reset();
 
-                    event.fire(data = { });
-                });
+					event.fire(data = {});
+				});
 
-                it('should not notify either observer', function() {
-                    expect(spyOne).not.toHaveBeenCalledWith(context, data);
-                    expect(spyTwo).not.toHaveBeenCalledWith(context, data);
-                });
-            });
-        });
-    });
+				it('should not notify either observer', function() {
+					expect(spyOne).not.toHaveBeenCalledWith(context, data);
+					expect(spyTwo).not.toHaveBeenCalledWith(context, data);
+				});
+			});
+		});
+	});
 
-    describe('and two observers are added which dispose each other', function() {
-        var spyOne;
-        var spyTwo;
+	describe('and two observers are added which dispose each other', function() {
+		var spyOne;
+		var spyTwo;
 
-        var bindingOne;
-        var bindingTwo;
+		var bindingOne;
+		var bindingTwo;
 
-        beforeEach(function() {
-            bindingOne = event.register(spyOne = jasmine.createSpy('spyOne').and.callFake(function() { bindingTwo.dispose(); }));
-            bindingTwo = event.register(spyTwo = jasmine.createSpy('spyTwo').and.callFake(function() { bindingOne.dispose(); }));
-        });
+		beforeEach(function() {
+			bindingOne = event.register(spyOne = jasmine.createSpy('spyOne').and.callFake(function() {
+				bindingTwo.dispose();
+			}));
+			bindingTwo = event.register(spyTwo = jasmine.createSpy('spyTwo').and.callFake(function() {
+				bindingOne.dispose();
+			}));
+		});
 
-        describe('and the event fires', function() {
-            var data;
+		describe('and the event fires', function() {
+			var data;
 
-            beforeEach(function() {
-                event.fire(data = { });
-            });
+			beforeEach(function() {
+				event.fire(data = {});
+			});
 
-            it('should notify both observer', function() {
-                expect(spyOne).toHaveBeenCalledWith(context, data);
-                expect(spyTwo).toHaveBeenCalledWith(context, data);
-            });
+			it('should notify both observer', function() {
+				expect(spyOne).toHaveBeenCalledWith(context, data);
+				expect(spyTwo).toHaveBeenCalledWith(context, data);
+			});
 
-            describe('and the event fires again', function() {
-                var data;
+			describe('and the event fires again', function() {
+				var data;
 
-                beforeEach(function() {
-                    spyOne.calls.reset();
-                    spyTwo.calls.reset();
+				beforeEach(function() {
+					spyOne.calls.reset();
+					spyTwo.calls.reset();
 
-                    event.fire(data = { });
-                });
+					event.fire(data = {});
+				});
 
-                it('should not notify either observer', function() {
-                    expect(spyOne).not.toHaveBeenCalledWith(context, data);
-                    expect(spyTwo).not.toHaveBeenCalledWith(context, data);
-                });
-            });
-        });
-    });
+				it('should not notify either observer', function() {
+					expect(spyOne).not.toHaveBeenCalledWith(context, data);
+					expect(spyTwo).not.toHaveBeenCalledWith(context, data);
+				});
+			});
+		});
+	});
 });
 },{"./../../../lang/Disposable":7,"./../../../messaging/Event":10}],58:[function(require,module,exports){
 var Disposable = require('./../../../lang/Disposable');
 var Model = require('./../../../models/Model');
 
 describe('When an Model is constructed with "firstName" and "lastName" properties', function() {
-    'use strict';
+	'use strict';
 
-    var model;
+	var model;
 
-    beforeEach(function() {
-        model = new Model([ 'firstName', 'lastName' ]);
-    });
+	beforeEach(function() {
+		model = new Model(['firstName', 'lastName']);
+	});
 
-    describe('and a transaction observer is registered', function() {
-        var spy;
-        var binding;
+	describe('and a transaction observer is registered', function() {
+		var spy;
+		var binding;
 
-        beforeEach(function() {
-            binding = model.onTransactionCommitted(spy = jasmine.createSpy('spy'));
-        });
+		beforeEach(function() {
+			binding = model.onTransactionCommitted(spy = jasmine.createSpy('spy'));
+		});
 
-        it('should return a Disposable instance', function() {
-            expect(binding instanceof Disposable).toEqual(true);
-        });
+		it('should return a Disposable instance', function() {
+			expect(binding instanceof Disposable).toEqual(true);
+		});
 
-        describe('and both properties are updated', function() {
-            var data;
+		describe('and both properties are updated', function() {
+			var data;
 
-            beforeEach(function() {
-                model.firstName = 'Bryan';
-                model.lastName = 'Ingle';
-            });
+			beforeEach(function() {
+				model.firstName = 'Bryan';
+				model.lastName = 'Ingle';
+			});
 
-            it('two transactions should be occur', function() {
-                expect(spy.calls.count()).toEqual(2);
-            });
+			it('two transactions should be occur', function() {
+				expect(spy.calls.count()).toEqual(2);
+			});
 
-            it('the first transaction should have updated the "first name" property', function() {
-                var argsOne = spy.calls.argsFor(0);
+			it('the first transaction should have updated the "first name" property', function() {
+				var argsOne = spy.calls.argsFor(0);
 
-                expect(argsOne[0].firstName).toEqual('Bryan');
-                expect(argsOne[0].sequence).toEqual(0);
+				expect(argsOne[0].firstName).toEqual('Bryan');
+				expect(argsOne[0].sequence).toEqual(0);
 
-                expect(argsOne[1]).toBe(model);
-            });
+				expect(argsOne[1]).toBe(model);
+			});
 
-            it('the first transaction should have updated the "last name" property', function() {
-                var argsOne = spy.calls.argsFor(1);
+			it('the first transaction should have updated the "last name" property', function() {
+				var argsOne = spy.calls.argsFor(1);
 
-                expect(argsOne[0].lastName).toEqual('Ingle');
-                expect(argsOne[0].sequence).toEqual(1);
+				expect(argsOne[0].lastName).toEqual('Ingle');
+				expect(argsOne[0].sequence).toEqual(1);
 
-                expect(argsOne[1]).toBe(model);
-            });
-        });
+				expect(argsOne[1]).toBe(model);
+			});
+		});
 
-        describe('and both properties are updated with an explicit transaction', function() {
-            var data;
+		describe('and both properties are updated with an explicit transaction', function() {
+			var data;
 
-            beforeEach(function() {
-                model.executeTransaction(function(m) {
-                    m.firstName = 'Bryan';
-                    m.lastName = 'Ingle';
-                });
-            });
+			beforeEach(function() {
+				model.executeTransaction(function(m) {
+					m.firstName = 'Bryan';
+					m.lastName = 'Ingle';
+				});
+			});
 
-            it('one transactions should be occur', function() {
-                expect(spy.calls.count()).toEqual(1);
-            });
+			it('one transactions should be occur', function() {
+				expect(spy.calls.count()).toEqual(1);
+			});
 
-            it('the first transaction should have updated the "first name" property', function() {
-                var argsOne = spy.calls.argsFor(0);
+			it('the first transaction should have updated the "first name" property', function() {
+				var argsOne = spy.calls.argsFor(0);
 
-                expect(argsOne[0].firstName).toEqual('Bryan');
-                expect(argsOne[0].lastName).toEqual('Ingle');
-                expect(argsOne[0].sequence).toEqual(0);
+				expect(argsOne[0].firstName).toEqual('Bryan');
+				expect(argsOne[0].lastName).toEqual('Ingle');
+				expect(argsOne[0].sequence).toEqual(0);
 
-                expect(argsOne[1]).toBe(model);
-            });
-        });
-    });
+				expect(argsOne[1]).toBe(model);
+			});
+		});
+	});
 });
 },{"./../../../lang/Disposable":7,"./../../../models/Model":11}],59:[function(require,module,exports){
 var Scheduler = require('./../../../timing/Scheduler');
 
 describe('When a Scheduler is constructed', function() {
-    'use strict';
+	'use strict';
 
-    var scheduler;
+	var scheduler;
 
-    beforeEach(function() {
-        scheduler = new Scheduler();
-    });
+	beforeEach(function() {
+		scheduler = new Scheduler();
+	});
 
-    describe('and task is scheduled', function() {
-        var spy;
-        var milliseconds;
-        var promise;
+	describe('and task is scheduled', function() {
+		var spy;
+		var milliseconds;
+		var promise;
 
-        beforeEach(function() {
-            promise = scheduler.schedule(spy = jasmine.createSpy('spy'), milliseconds = 10, 'A scheduled task');
-        });
+		beforeEach(function() {
+			promise = scheduler.schedule(spy = jasmine.createSpy('spy'), milliseconds = 10, 'A scheduled task');
+		});
 
-        it('should not execute the task synchronously', function() {
-            expect(spy).not.toHaveBeenCalled();
-        });
+		it('should not execute the task synchronously', function() {
+			expect(spy).not.toHaveBeenCalled();
+		});
 
-        it('should execute the task asynchronously', function(done) {
-            promise
-                .then(function() {
-                    expect(spy).toHaveBeenCalled();
-                })
-                .finally(function() {
-                    done();
-                });
-        });
+		it('should execute the task asynchronously', function(done) {
+			promise
+				.then(function() {
+					expect(spy).toHaveBeenCalled();
+				})
+				.finally(function() {
+					done();
+				});
+		});
 
-        afterAll(function() {
-            expect(spy.calls.count).toEqual(1);
-        });
-    });
+		afterAll(function() {
+			expect(spy.calls.count).toEqual(1);
+		});
+	});
 
-    describe('and is disposed', function() {
-        var spy;
+	describe('and is disposed', function() {
+		var spy;
 
-        beforeEach(function() {
-            spy = jasmine.createSpy('spy');
+		beforeEach(function() {
+			spy = jasmine.createSpy('spy');
 
-            scheduler.dispose();
-        });
+			scheduler.dispose();
+		});
 
-        it('should throw if an attempt is made to schedule a task', function() {
-            expect(function() {
-                scheduler.schedule(spy, 100, 'A scheduled task');
-            }).toThrow(new Error('The Scheduler has been disposed.'));
-        });
-    });
+		it('should throw if an attempt is made to schedule a task', function() {
+			expect(function() {
+				scheduler.schedule(spy, 100, 'A scheduled task');
+			}).toThrow(new Error('The Scheduler has been disposed.'));
+		});
+	});
 });
 },{"./../../../timing/Scheduler":60}],60:[function(require,module,exports){
 var _ = require('lodash');
