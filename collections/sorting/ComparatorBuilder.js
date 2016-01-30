@@ -4,78 +4,78 @@ var assert = require('./../../lang/assert');
 var comparators = require('./comparators');
 
 module.exports = function() {
-    'use strict';
+	'use strict';
 
-    var ComparatorBuilder = Class.extend({
-        init: function(comparator, invert, previous) {
-            assert.argumentIsRequired(comparator, 'comparator', Function);
-            assert.argumentIsOptional(invert, 'invert', Boolean);
+	var ComparatorBuilder = Class.extend({
+		init: function(comparator, invert, previous) {
+			assert.argumentIsRequired(comparator, 'comparator', Function);
+			assert.argumentIsOptional(invert, 'invert', Boolean);
 
-            this._comparator = comparator;
-            this._invert = invert || false;
-            this._previous = previous || null;
-        },
+			this._comparator = comparator;
+			this._invert = invert || false;
+			this._previous = previous || null;
+		},
 
-        thenBy: function(comparator, invert) {
-            assert.argumentIsRequired(comparator, 'comparator', Function);
-            assert.argumentIsOptional(invert, 'invert', Boolean);
+		thenBy: function(comparator, invert) {
+			assert.argumentIsRequired(comparator, 'comparator', Function);
+			assert.argumentIsOptional(invert, 'invert', Boolean);
 
-            return new ComparatorBuilder(comparator, invert, this);
-        },
+			return new ComparatorBuilder(comparator, invert, this);
+		},
 
-        invert: function() {
-            var previous;
+		invert: function() {
+			var previous;
 
-            if (this._previous) {
-                previous = this._previous.invert();
-            } else {
-                previous = null;
-            }
+			if (this._previous) {
+				previous = this._previous.invert();
+			} else {
+				previous = null;
+			}
 
-            return new ComparatorBuilder(this._comparator, !this._invert, previous);
-        },
+			return new ComparatorBuilder(this._comparator, !this._invert, previous);
+		},
 
-        toComparator: function() {
-            var that = this;
+		toComparator: function() {
+			var that = this;
 
-            var previousComparator;
+			var previousComparator;
 
-            if (that._previous) {
-                previousComparator = that._previous.toComparator();
-            } else {
-                previousComparator = comparators.empty;
-            }
+			if (that._previous) {
+				previousComparator = that._previous.toComparator();
+			} else {
+				previousComparator = comparators.empty;
+			}
 
-            return function(a, b) {
-                var result = previousComparator(a, b);
+			return function(a, b) {
+				var result = previousComparator(a, b);
 
-                if (result === 0) {
-                    var sortA;
-                    var sortB;
+				if (result === 0) {
+					var sortA;
+					var sortB;
 
-                    if (that._invert) {
-                        sortA = b;
-                        sortB = a;
-                    } else {
-                        sortA = a;
-                        sortB = b;
-                    }
+					if (that._invert) {
+						sortA = b;
+						sortB = a;
+					} else {
+						sortA = a;
+						sortB = b;
+					}
 
-                    result = that._comparator(sortA, sortB);
-                }
+					result = that._comparator(sortA, sortB);
+				}
 
-                return result;
-            };
-        },
+				return result;
+			};
+		},
 
-        toString: function() {
-            return '[ComparatorBuilder]';
-        }
-    });
+		toString: function() {
+			return '[ComparatorBuilder]';
+		}
+	});
 
-    ComparatorBuilder.startWith = function(comparator, invert) {
-        return new ComparatorBuilder(comparator, invert);
-    };
+	ComparatorBuilder.startWith = function(comparator, invert) {
+		return new ComparatorBuilder(comparator, invert);
+	};
 
-    return ComparatorBuilder;
+	return ComparatorBuilder;
 }();

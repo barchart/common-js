@@ -3,11 +3,11 @@ var CompositeCommandHandler = require('./CompositeCommandHandler');
 var MappedCommandHandler = require('./MappedCommandHandler');
 
 module.exports = function() {
-    'use strict';
+	'use strict';
 
-    return {
-        CommandHandler: CommandHandler,
-        CompositeCommandHandler: CompositeCommandHandler,
-        MappedCommandHandler: MappedCommandHandler
-    };
+	return {
+		CommandHandler: CommandHandler,
+		CompositeCommandHandler: CompositeCommandHandler,
+		MappedCommandHandler: MappedCommandHandler
+	};
 }();

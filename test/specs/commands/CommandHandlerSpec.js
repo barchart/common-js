@@ -20,7 +20,7 @@ describe('When a CommandHandler is created from a function', function() {
 		var commandResult;
 
 		beforeEach(function() {
-			commandResult = commandHandler.process(commandData = { });
+			commandResult = commandHandler.process(commandData = {});
 		});
 
 		it('should invoke the wrapped function', function() {
@@ -48,7 +48,7 @@ describe('When a CommandHandler is created from a function', function() {
 			var commandResult;
 
 			beforeEach(function() {
-				commandResult = commandFunction(commandData = { });
+				commandResult = commandFunction(commandData = {});
 			});
 
 			it('should invoke the wrapped function', function() {

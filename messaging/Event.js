@@ -4,77 +4,77 @@ var assert = require('./../lang/assert');
 var Disposable = require('./../lang/Disposable');
 
 module.exports = function() {
-    'use strict';
+	'use strict';
 
-    var Event = Disposable.extend({
-        init: function(sender) {
-            this._sender = sender || null;
+	var Event = Disposable.extend({
+		init: function(sender) {
+			this._sender = sender || null;
 
-            this._observers = [ ];
-        },
+			this._observers = [];
+		},
 
-        register: function(handler) {
-            assert.argumentIsRequired(handler, 'handler', Function);
+		register: function(handler) {
+			assert.argumentIsRequired(handler, 'handler', Function);
 
-            if (this.getIsDisposed()) {
-                throw new Error('The event has been disposed.');
-            }
+			if (this.getIsDisposed()) {
+				throw new Error('The event has been disposed.');
+			}
 
-            var that = this;
+			var that = this;
 
-            addRegistration.call(that, handler);
+			addRegistration.call(that, handler);
 
-            return Disposable.fromAction(function() {
-                if (that._disposed) {
-                    return;
-                }
+			return Disposable.fromAction(function() {
+				if (that._disposed) {
+					return;
+				}
 
-                removeRegistration.call(that, handler);
-            });
-        },
+				removeRegistration.call(that, handler);
+			});
+		},
 
-        fire: function(data) {
-            if (this.getIsDisposed()) {
-                throw new Error('The event has been disposed.');
-            }
+		fire: function(data) {
+			if (this.getIsDisposed()) {
+				throw new Error('The event has been disposed.');
+			}
 
-            var observers = this._observers;
+			var observers = this._observers;
 
-            for (var i = 0; i < observers.length; i++) {
-                var observer = observers[i];
+			for (var i = 0; i < observers.length; i++) {
+				var observer = observers[i];
 
-                observer(data, this._sender);
-            }
-        },
+				observer(data, this._sender);
+			}
+		},
 
-        _onDispose: function() {
-            this._observers = null;
-        }
-    });
+		_onDispose: function() {
+			this._observers = null;
+		}
+	});
 
-    function addRegistration(handler) {
-        var copiedObservers = this._observers.slice();
+	function addRegistration(handler) {
+		var copiedObservers = this._observers.slice();
 
-        copiedObservers.push(handler);
+		copiedObservers.push(handler);
 
-        this._observers = copiedObservers;
-    }
+		this._observers = copiedObservers;
+	}
 
-    function removeRegistration(handler) {
-        for (var i = 0; i < this._observers.length; i++) {
-            var candidate = this._observers[i];
+	function removeRegistration(handler) {
+		for (var i = 0; i < this._observers.length; i++) {
+			var candidate = this._observers[i];
 
-            if (candidate === handler) {
-                var copiedObservers = this._observers.slice();
+			if (candidate === handler) {
+				var copiedObservers = this._observers.slice();
 
-                copiedObservers.splice(i, 1);
+				copiedObservers.splice(i, 1);
 
-                this._observers = copiedObservers;
+				this._observers = copiedObservers;
 
-                break;
-            }
-        }
-    }
+				break;
+			}
+		}
+	}
 
-    return Event;
+	return Event;
 }();

@@ -16,10 +16,14 @@ describe('When a CompositeCommandHandler is created', function() {
 		resultTwo = true;
 
 		commandHandler = new CompositeCommandHandler
-			(
-				CommandHandler.fromFunction(spyOne = jasmine.createSpy('spyOne').and.callFake(function() { return resultOne; })),
-				CommandHandler.fromFunction(spyTwo = jasmine.createSpy('spyTwo').and.callFake(function() { return resultTwo; }))
-			);
+		(
+			CommandHandler.fromFunction(spyOne = jasmine.createSpy('spyOne').and.callFake(function() {
+				return resultOne;
+			})),
+			CommandHandler.fromFunction(spyTwo = jasmine.createSpy('spyTwo').and.callFake(function() {
+				return resultTwo;
+			}))
+		);
 	});
 
 	describe('and the command is executed', function() {
@@ -27,7 +31,7 @@ describe('When a CompositeCommandHandler is created', function() {
 		var commandResult;
 
 		beforeEach(function() {
-			commandResult = commandHandler.process(commandData = { });
+			commandResult = commandHandler.process(commandData = {});
 		});
 
 		it('should invoke the wrapped functions', function() {
@@ -44,7 +48,7 @@ describe('When a CompositeCommandHandler is created', function() {
 			resultOne = false;
 			resultTwo = false;
 
-			commandResult = commandHandler.process(commandData = { });
+			commandResult = commandHandler.process(commandData = {});
 		});
 
 		it('should invoke the first command', function() {

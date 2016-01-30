@@ -5,127 +5,127 @@ var Disposable = require('./../lang/Disposable');
 var Event = require('./../messaging/Event');
 
 module.exports = function() {
-    var Model = Disposable.extend({
-        init: function(propertyNames) {
-            this._propertyNames = propertyNames;
+	var Model = Disposable.extend({
+		init: function(propertyNames) {
+			this._propertyNames = propertyNames;
 
-            this._transactionCommit = new Event(this);
+			this._transactionCommit = new Event(this);
 
-            this._transactionOpen = false;
-            this._transactionData = null;
+			this._transactionOpen = false;
+			this._transactionData = null;
 
-            this._sequence = 0;
+			this._sequence = 0;
 
-            for (var i = 0; i < this._propertyNames.length; i++) {
-                createProperty.call(this, propertyNames[i]);
-            }
-        },
+			for (var i = 0; i < this._propertyNames.length; i++) {
+				createProperty.call(this, propertyNames[i]);
+			}
+		},
 
-        beginTransaction: function() {
-            if (this._transactionOpen) {
-                return;
-            }
+		beginTransaction: function() {
+			if (this._transactionOpen) {
+				return;
+			}
 
-            this._transactionOpen = true;
-        },
+			this._transactionOpen = true;
+		},
 
-        endTransaction: function() {
-            if (!this._transactionOpen) {
-                return;
-            }
+		endTransaction: function() {
+			if (!this._transactionOpen) {
+				return;
+			}
 
-            if (this.getIsDisposed()) {
-                return;
-            }
+			if (this.getIsDisposed()) {
+				return;
+			}
 
-            this._transactionOpen = false;
+			this._transactionOpen = false;
 
-            if (this._transactionData !== null) {
-                this._formatTransactionData(this._transactionData);
+			if (this._transactionData !== null) {
+				this._formatTransactionData(this._transactionData);
 
-                this._transactionData.sequence = this._sequence++;
+				this._transactionData.sequence = this._sequence++;
 
-                this._transactionCommit.fire(this._transactionData);
+				this._transactionCommit.fire(this._transactionData);
 
-                this._transactionData = null;
-            }
-        },
+				this._transactionData = null;
+			}
+		},
 
-        _formatTransactionData: function(transactionData) {
-            return;
-        },
+		_formatTransactionData: function(transactionData) {
+			return;
+		},
 
-        executeTransaction: function(processor) {
-            assert.argumentIsRequired(processor, 'processor', Function);
+		executeTransaction: function(processor) {
+			assert.argumentIsRequired(processor, 'processor', Function);
 
-            this.beginTransaction();
-            processor(this);
-            this.endTransaction();
-        },
+			this.beginTransaction();
+			processor(this);
+			this.endTransaction();
+		},
 
-        onTransactionCommitted: function(observer) {
-            if (this.getIsDisposed()) {
-                return;
-            }
+		onTransactionCommitted: function(observer) {
+			if (this.getIsDisposed()) {
+				return;
+			}
 
-            return this._transactionCommit.register(observer);
-        },
+			return this._transactionCommit.register(observer);
+		},
 
-        getSnapshot: function() {
-            var snapshot = { };
+		getSnapshot: function() {
+			var snapshot = {};
 
-            for (var i = 0; i < this._propertyNames.length; i++) {
-                var propertyName = this._propertyNames[i];
+			for (var i = 0; i < this._propertyNames.length; i++) {
+				var propertyName = this._propertyNames[i];
 
-                snapshot[propertyName] = this[propertyName];
-            }
+				snapshot[propertyName] = this[propertyName];
+			}
 
-            snapshot.sequence = this._sequence;
+			snapshot.sequence = this._sequence;
 
-            return snapshot;
-        },
+			return snapshot;
+		},
 
-        _onDispose: function() {
-            this._transactionCommit.dispose();
-            this._transactionCommit = null;
-        },
+		_onDispose: function() {
+			this._transactionCommit.dispose();
+			this._transactionCommit = null;
+		},
 
-        toString: function() {
-            return '[Model]';
-        }
-    });
+		toString: function() {
+			return '[Model]';
+		}
+	});
 
-    function createProperty(propertyName) {
-        var that = this;
+	function createProperty(propertyName) {
+		var that = this;
 
-        var propertyValue;
+		var propertyValue;
 
-        Object.defineProperty(that, propertyName, {
-            get: function() {
-                return propertyValue;
-            },
-            set: function(value) {
-                if (propertyValue === value) {
-                    return;
-                }
+		Object.defineProperty(that, propertyName, {
+			get: function() {
+				return propertyValue;
+			},
+			set: function(value) {
+				if (propertyValue === value) {
+					return;
+				}
 
-                propertyValue = value;
+				propertyValue = value;
 
-                var implicit = !this._transactionOpen;
+				var implicit = !this._transactionOpen;
 
-                if (implicit) {
-                    that.beginTransaction();
-                }
+				if (implicit) {
+					that.beginTransaction();
+				}
 
-                that._transactionData = that._transactionData || { };
-                that._transactionData[propertyName] = propertyValue;
+				that._transactionData = that._transactionData || {};
+				that._transactionData[propertyName] = propertyValue;
 
-                if (implicit) {
-                    that.endTransaction();
-                }
-            }
-        });
-    }
+				if (implicit) {
+					that.endTransaction();
+				}
+			}
+		});
+	}
 
-    return Model;
+	return Model;
 }();

@@ -3,56 +3,56 @@ var Class = require('class.extend');
 var assert = require('./assert');
 
 module.exports = function() {
-    'use strict';
+	'use strict';
 
-    var Disposable = Class.extend({
-        init: function() {
-            this._disposed = false;
-        },
+	var Disposable = Class.extend({
+		init: function() {
+			this._disposed = false;
+		},
 
-        dispose: function() {
-            if (this._disposed) {
-                return;
-            }
+		dispose: function() {
+			if (this._disposed) {
+				return;
+			}
 
-            this._disposed = true;
+			this._disposed = true;
 
-            this._onDispose();
-        },
+			this._onDispose();
+		},
 
-        _onDispose: function() {
-            return;
-        },
+		_onDispose: function() {
+			return;
+		},
 
-        getIsDisposed: function() {
-            return this._disposed || false;
-        },
+		getIsDisposed: function() {
+			return this._disposed || false;
+		},
 
-        toString: function() {
-            return '[Disposable]';
-        }
-    });
+		toString: function() {
+			return '[Disposable]';
+		}
+	});
 
-    var DisposableAction = Disposable.extend({
-        init: function(disposeAction) {
-            this._disposeAction = disposeAction;
-        },
+	var DisposableAction = Disposable.extend({
+		init: function(disposeAction) {
+			this._disposeAction = disposeAction;
+		},
 
-        _onDispose: function() {
-            this._disposeAction();
-            this._disposeAction = null;
-        },
+		_onDispose: function() {
+			this._disposeAction();
+			this._disposeAction = null;
+		},
 
-        toString: function() {
-            return '[DisposableAction]';
-        }
-    });
+		toString: function() {
+			return '[DisposableAction]';
+		}
+	});
 
-    Disposable.fromAction = function(disposeAction) {
-        assert.argumentIsRequired(disposeAction, 'disposeAction', Function);
+	Disposable.fromAction = function(disposeAction) {
+		assert.argumentIsRequired(disposeAction, 'disposeAction', Function);
 
-        return new DisposableAction(disposeAction);
-    };
+		return new DisposableAction(disposeAction);
+	};
 
-    return Disposable;
+	return Disposable;
 }();

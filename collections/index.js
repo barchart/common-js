@@ -5,16 +5,16 @@ var ComparatorBuilder = require('./sorting/ComparatorBuilder');
 var comparators = require('./sorting/comparators');
 
 module.exports = function() {
-    'use strict';
+	'use strict';
 
-    return {
+	return {
 		Stack: Stack,
 		Specialized: {
 			DisposableStack: DisposableStack
 		},
-        Sorting: {
-            ComparatorBuilder: ComparatorBuilder,
-            comparators: comparators
-        }
-    };
+		Sorting: {
+			ComparatorBuilder: ComparatorBuilder,
+			comparators: comparators
+		}
+	};
 }();

@@ -4,12 +4,12 @@ var converters = require('./converters');
 var Disposable = require('./Disposable');
 
 module.exports = function() {
-    'use strict';
+	'use strict';
 
-    return {
-        assert: assert,
+	return {
+		assert: assert,
 		attributes: attributes,
-        converters: converters,
+		converters: converters,
 		Disposable: Disposable
-    };
+	};
 }();

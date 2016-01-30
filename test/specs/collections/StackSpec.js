@@ -69,7 +69,7 @@ describe('When a Stack is constructed', function() {
 		});
 
 		describe('and a second object is pushed onto the stack', function() {
-			var second = { name: "second" };
+			var second = {name: "second"};
 
 			beforeEach(function() {
 				stack.push(second);

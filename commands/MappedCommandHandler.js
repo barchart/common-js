@@ -4,62 +4,62 @@ var assert = require('./../lang/assert');
 var CommandHandler = require('./CommandHandler');
 
 module.exports = function() {
-    'use strict';
+	'use strict';
 
-    var MappedCommandHandler = CommandHandler.extend({
-        init: function(nameExtractor) {
-            assert.argumentIsRequired(nameExtractor, 'nameFunction', Function);
+	var MappedCommandHandler = CommandHandler.extend({
+		init: function(nameExtractor) {
+			assert.argumentIsRequired(nameExtractor, 'nameFunction', Function);
 
-            this._handlerMap = { };
-            this._defaultHandler = null;
+			this._handlerMap = {};
+			this._defaultHandler = null;
 
-            this._nameExtractor = nameExtractor;
-        },
+			this._nameExtractor = nameExtractor;
+		},
 
-        addCommandHandler: function(name, commandHandler) {
-            assert.argumentIsRequired(name, 'name', String);
-            assert.argumentIsRequired(commandHandler, 'commandHandler', CommandHandler, 'CommandHandler');
+		addCommandHandler: function(name, commandHandler) {
+			assert.argumentIsRequired(name, 'name', String);
+			assert.argumentIsRequired(commandHandler, 'commandHandler', CommandHandler, 'CommandHandler');
 
-            if (_.has(this._handlerMap, name)) {
-                throw new Error('A handler with the same name already exists in the map');
-            }
+			if (_.has(this._handlerMap, name)) {
+				throw new Error('A handler with the same name already exists in the map');
+			}
 
-            if (commandHandler === this) {
-                throw new Error('Recursive use of mapped command handlers is prohibited');
-            }
+			if (commandHandler === this) {
+				throw new Error('Recursive use of mapped command handlers is prohibited');
+			}
 
-            this._handlerMap[name] = commandHandler;
+			this._handlerMap[name] = commandHandler;
 
-            return this;
-        },
+			return this;
+		},
 
-        setDefaultCommandHandler: function(commandHandler) {
-            assert.argumentIsRequired(commandHandler, 'commandHandler', CommandHandler, 'CommandHandler');
+		setDefaultCommandHandler: function(commandHandler) {
+			assert.argumentIsRequired(commandHandler, 'commandHandler', CommandHandler, 'CommandHandler');
 
-            this._defaultHandler = commandHandler;
+			this._defaultHandler = commandHandler;
 
-            return this;
-        },
+			return this;
+		},
 
-        _process: function(data) {
-            var handlerName = this._nameExtractor(data);
-            var handler = this._handlerMap[handlerName] || this._defaultHandler;
+		_process: function(data) {
+			var handlerName = this._nameExtractor(data);
+			var handler = this._handlerMap[handlerName] || this._defaultHandler;
 
-            var returnRef;
+			var returnRef;
 
-            if (handler) {
-                returnRef = handler.process(data);
-            } else {
-                returnRef = null;
-            }
+			if (handler) {
+				returnRef = handler.process(data);
+			} else {
+				returnRef = null;
+			}
 
-            return returnRef;
-        },
+			return returnRef;
+		},
 
-        toString: function() {
-            return '[MappedCommandHandler]';
-        }
-    });
+		toString: function() {
+			return '[MappedCommandHandler]';
+		}
+	});
 
-    return MappedCommandHandler;
+	return MappedCommandHandler;
 }();
