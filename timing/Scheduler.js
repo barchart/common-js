@@ -106,15 +106,21 @@ module.exports = function() {
 
             var scheduleBackoff = function(failureCount) {
                 if (maximumAttempts > 0 && failureCount > maximumAttempts) {
-                    logger.warn('An backoff action (' + (actionDescription || 'with no description') + ') has been permanently aborted');
+                    logger.warn('A backoff action (' + (actionDescription || 'with no description') + ') has been permanently aborted');
 
                     return when.reject();
                 }
 
-                var backoffDelay = millisecondDelay * Math.pow(2, failureCount);
+                var backoffDelay;
+
+                if (failureCount === 0) {
+                    backoffDelay = millisecondDelay;
+                } else {
+                    backoffDelay = (millisecondDelay || 1000) * Math.pow(2, failureCount);
+                }
 
                 if (failureCount > 0) {
-                    logger.warn('An backoff action (' + (actionDescription || 'with no description') + ') will be retried in ' + backoffDelay + ' milliseconds');
+                    logger.warn('A backoff action (' + (actionDescription || 'with no description') + ') will be retried in ' + backoffDelay + ' milliseconds');
                 }
 
                 return that.schedule(actionToBackoff, backoffDelay, (actionDescription || 'unspecified') + ', attempt ' + (failureCount + 1))
@@ -126,6 +132,8 @@ module.exports = function() {
                         }
                     })
                     .catch(function(e) {
+                        logger.error('A scheduled action (' + (actionDescription || 'with no description') + ') threw an unhandled error', e);
+
                         return scheduleBackoff(++failureCount);
                     });
             };
