@@ -20807,7 +20807,7 @@ module.exports = function() {
 		},
 
 		_evaluate: function(data) {
-			return this._specification(this._translator(data));
+			return this._specification.evaluate(this._translator(data));
 		},
 
 		toString: function() {
