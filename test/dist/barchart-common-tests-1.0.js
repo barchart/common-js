@@ -457,79 +457,97 @@ var _ = require('lodash');
 var assert = require('./assert');
 
 module.exports = function() {
-    'use strict';
+	'use strict';
 
-    var attributes = {
-        has: function(target, propertyNames) {
-            assert.argumentIsRequired(target, 'target', Object);
-            assert.argumentIsRequired(propertyNames, 'propertyNames', String);
+	var attributes = {
+		has: function(target, propertyNames) {
+			assert.argumentIsRequired(target, 'target', Object);
+			assert.argumentIsRequired(propertyNames, 'propertyNames', String);
 
-            var propertyNameArray = getPropertyNameArray(propertyNames);
-            var propertyTarget = getPropertyTarget(target, propertyNameArray, false);
+			var propertyNameArray = getPropertyNameArray(propertyNames);
+			var propertyTarget = getPropertyTarget(target, propertyNameArray, false);
 
-            return propertyTarget !== null && _.has(propertyTarget, _.last(propertyNameArray));
-        },
+			return propertyTarget !== null && _.has(propertyTarget, _.last(propertyNameArray));
+		},
 
-        read: function(target, propertyNames) {
-            assert.argumentIsRequired(target, 'target', Object);
-            assert.argumentIsRequired(propertyNames, 'propertyNames', String);
+		read: function(target, propertyNames) {
+			assert.argumentIsRequired(target, 'target', Object);
 
-            var propertyNameArray = getPropertyNameArray(propertyNames);
-            var propertyTarget = getPropertyTarget(target, propertyNameArray, false);
+			if (_.isArray(propertyNames)) {
+				assert.argumentIsArray(propertyNames, 'propertyNames', String);
+			} else {
+				assert.argumentIsRequired(propertyNames, 'propertyNames', String);
+			}
 
-            var returnRef;
+			var propertyNameArray = getPropertyNameArray(propertyNames);
+			var propertyTarget = getPropertyTarget(target, propertyNameArray, false);
 
-            if (propertyTarget) {
-                var propertyName = _.last(propertyNameArray);
+			var returnRef;
 
-                returnRef = propertyTarget[propertyName];
-            } else {
-                returnRef = undefined;
-            }
+			if (propertyTarget) {
+				var propertyName = _.last(propertyNameArray);
 
-            return returnRef;
-        },
+				returnRef = propertyTarget[propertyName];
+			} else {
+				returnRef = undefined;
+			}
 
-        write: function(target, propertyNames, value) {
-            assert.argumentIsRequired(target, 'target', Object);
-            assert.argumentIsRequired(propertyNames, 'propertyNames', String);
+			return returnRef;
+		},
 
-            var propertyNameArray = getPropertyNameArray(propertyNames);
-            var propertyTarget = getPropertyTarget(target, propertyNameArray, true);
+		write: function(target, propertyNames, value) {
+			assert.argumentIsRequired(target, 'target', Object);
 
-            var propertyName = _.last(propertyNameArray);
+			if (_.isArray(propertyNames)) {
+				assert.argumentIsArray(propertyNames, 'propertyNames', String);
+			} else {
+				assert.argumentIsRequired(propertyNames, 'propertyNames', String);
+			}
 
-            propertyTarget[propertyName] = value;
-        }
-    };
+			var propertyNameArray = getPropertyNameArray(propertyNames);
+			var propertyTarget = getPropertyTarget(target, propertyNameArray, true);
 
-    function getPropertyNameArray(propertyNames) {
-        return propertyNames.split('.');
-    }
+			var propertyName = _.last(propertyNameArray);
 
-    function getPropertyTarget(target, propertyNameArray, create) {
-        var returnRef;
+			propertyTarget[propertyName] = value;
+		}
+	};
 
-        var propertyTarget = target;
+	function getPropertyNameArray(propertyNames) {
+		var returnRef;
 
-        for (var i = 0; i < (propertyNameArray.length - 1); i++) {
-            var propertyName = propertyNameArray[i];
+		if (_.isArray(propertyNames)) {
+			returnRef = propertyNames;
+		} else {
+			returnRef = propertyNames.split('.');
+		}
 
-            if (_.has(propertyTarget, propertyName)) {
-                propertyTarget = propertyTarget[propertyName];
-            } else if (create) {
-                propertyTarget = propertyTarget[propertyName] = { };
-            } else {
-                propertyTarget = null;
+		return returnRef;
+	}
 
-                break;
-            }
-        }
+	function getPropertyTarget(target, propertyNameArray, create) {
+		var returnRef;
 
-        return propertyTarget;
-    }
+		var propertyTarget = target;
 
-    return attributes;
+		for (var i = 0; i < (propertyNameArray.length - 1); i++) {
+			var propertyName = propertyNameArray[i];
+
+			if (_.has(propertyTarget, propertyName)) {
+				propertyTarget = propertyTarget[propertyName];
+			} else if (create) {
+				propertyTarget = propertyTarget[propertyName] = {};
+			} else {
+				propertyTarget = null;
+
+				break;
+			}
+		}
+
+		return propertyTarget;
+	}
+
+	return attributes;
 }();
 },{"./assert":8,"lodash":18}],10:[function(require,module,exports){
 var _ = require('lodash');
@@ -21818,15 +21836,21 @@ module.exports = function() {
 
             var scheduleBackoff = function(failureCount) {
                 if (maximumAttempts > 0 && failureCount > maximumAttempts) {
-                    logger.warn('An backoff action (' + (actionDescription || 'with no description') + ') has been permanently aborted');
+                    logger.warn('A backoff action (' + (actionDescription || 'with no description') + ') has been permanently aborted');
 
                     return when.reject();
                 }
 
-                var backoffDelay = millisecondDelay * Math.pow(2, failureCount);
+                var backoffDelay;
+
+                if (failureCount === 0) {
+                    backoffDelay = millisecondDelay;
+                } else {
+                    backoffDelay = (millisecondDelay || 1000) * Math.pow(2, failureCount);
+                }
 
                 if (failureCount > 0) {
-                    logger.warn('An backoff action (' + (actionDescription || 'with no description') + ') will be retried in ' + backoffDelay + ' milliseconds');
+                    logger.warn('A backoff action (' + (actionDescription || 'with no description') + ') will be retried in ' + backoffDelay + ' milliseconds');
                 }
 
                 return that.schedule(actionToBackoff, backoffDelay, (actionDescription || 'unspecified') + ', attempt ' + (failureCount + 1))
@@ -21838,6 +21862,8 @@ module.exports = function() {
                         }
                     })
                     .catch(function(e) {
+                        logger.error('A scheduled action (' + (actionDescription || 'with no description') + ') threw an unhandled error', e);
+
                         return scheduleBackoff(++failureCount);
                     });
             };

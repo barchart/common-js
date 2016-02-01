@@ -389,6 +389,7 @@ var collections = require('./collections/index');
 var commands = require('./commands/index');
 var lang = require('./lang/index');
 var messaging = require('./messaging/index');
+var specifications = require('./specifications/index');
 var timing = require('./timing/index');
 
 module.exports = function() {
@@ -398,12 +399,13 @@ module.exports = function() {
 		Collections: collections,
 		Commands: commands,
 		Messaging: messaging,
-		Timing: timing
+		Timing: timing,
+		Specifications: specifications
 	};
 
 	return _.merge(lang, namespaces);
 }();
-},{"./collections/index":2,"./commands/index":9,"./lang/index":15,"./messaging/index":17,"./timing/index":56,"lodash":24}],11:[function(require,module,exports){
+},{"./collections/index":2,"./commands/index":9,"./lang/index":15,"./messaging/index":17,"./specifications/index":63,"./timing/index":65,"lodash":24}],11:[function(require,module,exports){
 var Class = require('class.extend');
 
 var assert = require('./assert');
@@ -552,79 +554,97 @@ var _ = require('lodash');
 var assert = require('./assert');
 
 module.exports = function() {
-    'use strict';
+	'use strict';
 
-    var attributes = {
-        has: function(target, propertyNames) {
-            assert.argumentIsRequired(target, 'target', Object);
-            assert.argumentIsRequired(propertyNames, 'propertyNames', String);
+	var attributes = {
+		has: function(target, propertyNames) {
+			assert.argumentIsRequired(target, 'target', Object);
+			assert.argumentIsRequired(propertyNames, 'propertyNames', String);
 
-            var propertyNameArray = getPropertyNameArray(propertyNames);
-            var propertyTarget = getPropertyTarget(target, propertyNameArray, false);
+			var propertyNameArray = getPropertyNameArray(propertyNames);
+			var propertyTarget = getPropertyTarget(target, propertyNameArray, false);
 
-            return propertyTarget !== null && _.has(propertyTarget, _.last(propertyNameArray));
-        },
+			return propertyTarget !== null && _.has(propertyTarget, _.last(propertyNameArray));
+		},
 
-        read: function(target, propertyNames) {
-            assert.argumentIsRequired(target, 'target', Object);
-            assert.argumentIsRequired(propertyNames, 'propertyNames', String);
+		read: function(target, propertyNames) {
+			assert.argumentIsRequired(target, 'target', Object);
 
-            var propertyNameArray = getPropertyNameArray(propertyNames);
-            var propertyTarget = getPropertyTarget(target, propertyNameArray, false);
+			if (_.isArray(propertyNames)) {
+				assert.argumentIsArray(propertyNames, 'propertyNames', String);
+			} else {
+				assert.argumentIsRequired(propertyNames, 'propertyNames', String);
+			}
 
-            var returnRef;
+			var propertyNameArray = getPropertyNameArray(propertyNames);
+			var propertyTarget = getPropertyTarget(target, propertyNameArray, false);
 
-            if (propertyTarget) {
-                var propertyName = _.last(propertyNameArray);
+			var returnRef;
 
-                returnRef = propertyTarget[propertyName];
-            } else {
-                returnRef = undefined;
-            }
+			if (propertyTarget) {
+				var propertyName = _.last(propertyNameArray);
 
-            return returnRef;
-        },
+				returnRef = propertyTarget[propertyName];
+			} else {
+				returnRef = undefined;
+			}
 
-        write: function(target, propertyNames, value) {
-            assert.argumentIsRequired(target, 'target', Object);
-            assert.argumentIsRequired(propertyNames, 'propertyNames', String);
+			return returnRef;
+		},
 
-            var propertyNameArray = getPropertyNameArray(propertyNames);
-            var propertyTarget = getPropertyTarget(target, propertyNameArray, true);
+		write: function(target, propertyNames, value) {
+			assert.argumentIsRequired(target, 'target', Object);
 
-            var propertyName = _.last(propertyNameArray);
+			if (_.isArray(propertyNames)) {
+				assert.argumentIsArray(propertyNames, 'propertyNames', String);
+			} else {
+				assert.argumentIsRequired(propertyNames, 'propertyNames', String);
+			}
 
-            propertyTarget[propertyName] = value;
-        }
-    };
+			var propertyNameArray = getPropertyNameArray(propertyNames);
+			var propertyTarget = getPropertyTarget(target, propertyNameArray, true);
 
-    function getPropertyNameArray(propertyNames) {
-        return propertyNames.split('.');
-    }
+			var propertyName = _.last(propertyNameArray);
 
-    function getPropertyTarget(target, propertyNameArray, create) {
-        var returnRef;
+			propertyTarget[propertyName] = value;
+		}
+	};
 
-        var propertyTarget = target;
+	function getPropertyNameArray(propertyNames) {
+		var returnRef;
 
-        for (var i = 0; i < (propertyNameArray.length - 1); i++) {
-            var propertyName = propertyNameArray[i];
+		if (_.isArray(propertyNames)) {
+			returnRef = propertyNames;
+		} else {
+			returnRef = propertyNames.split('.');
+		}
 
-            if (_.has(propertyTarget, propertyName)) {
-                propertyTarget = propertyTarget[propertyName];
-            } else if (create) {
-                propertyTarget = propertyTarget[propertyName] = { };
-            } else {
-                propertyTarget = null;
+		return returnRef;
+	}
 
-                break;
-            }
-        }
+	function getPropertyTarget(target, propertyNameArray, create) {
+		var returnRef;
 
-        return propertyTarget;
-    }
+		var propertyTarget = target;
 
-    return attributes;
+		for (var i = 0; i < (propertyNameArray.length - 1); i++) {
+			var propertyName = propertyNameArray[i];
+
+			if (_.has(propertyTarget, propertyName)) {
+				propertyTarget = propertyTarget[propertyName];
+			} else if (create) {
+				propertyTarget = propertyTarget[propertyName] = {};
+			} else {
+				propertyTarget = null;
+
+				break;
+			}
+		}
+
+		return propertyTarget;
+	}
+
+	return attributes;
 }();
 },{"./assert":12,"lodash":24}],14:[function(require,module,exports){
 var _ = require('lodash');
@@ -20586,6 +20606,242 @@ define(function (require) {
 })(typeof define === 'function' && define.amd ? define : function (factory) { module.exports = factory(require); });
 
 },{"./lib/Promise":37,"./lib/TimeoutError":39,"./lib/apply":40,"./lib/decorators/array":41,"./lib/decorators/flow":42,"./lib/decorators/fold":43,"./lib/decorators/inspect":44,"./lib/decorators/iterate":45,"./lib/decorators/progress":46,"./lib/decorators/timed":47,"./lib/decorators/unhandledRejection":48,"./lib/decorators/with":49}],55:[function(require,module,exports){
+var assert = require('./../lang/assert');
+
+var Specification = require('./Specification');
+
+module.exports = function() {
+	var AndSpecification = Specification.extend({
+		init: function(specificationOne, specificationTwo) {
+			assert.argumentIsRequired(specificationOne, 'specificationOne', Specification, 'Specification');
+			assert.argumentIsRequired(specificationTwo, 'specificationTwo', Specification, 'Specification');
+
+			this._specificationOne = specificationOne;
+			this._specificationTwo = specificationTwo;
+		},
+
+		_evaluate: function(data) {
+			return this._specificationOne(data) && this._specificationTwo(data);
+		},
+
+		toString: function() {
+			return '[AndSpecification]';
+		}
+	});
+
+	return AndSpecification;
+}();
+},{"./../lang/assert":12,"./Specification":60}],56:[function(require,module,exports){
+var Specification = require('./Specification');
+
+module.exports = function() {
+	var EqualsSpecification = Specification.extend({
+		init: function(value) {
+			this._value = value;
+		},
+
+		_evaluate: function(data) {
+			return data === this._value;
+		},
+
+		toString: function() {
+			return '[EqualsSpecification]';
+		}
+	});
+
+	return EqualsSpecification;
+}();
+},{"./Specification":60}],57:[function(require,module,exports){
+var assert = require('./../lang/assert');
+
+var Specification = require('./Specification');
+
+module.exports = function() {
+	var GreaterThanSpecification = Specification.extend({
+		init: function(value) {
+			assert.argumentIsRequired(value, 'value', Number);
+
+			this._value = value;
+		},
+
+		_evaluate: function(data) {
+			assert.argumentIsRequired(data, 'data', Number);
+
+			return data > this._value;
+		},
+
+		toString: function() {
+			return '[GreaterThanSpecification]';
+		}
+	});
+
+	return GreaterThanSpecification;
+}();
+},{"./../lang/assert":12,"./Specification":60}],58:[function(require,module,exports){
+var assert = require('./../lang/assert');
+
+var Specification = require('./Specification');
+
+module.exports = function() {
+	var LessThanSpecification = Specification.extend({
+		init: function(value) {
+			assert.argumentIsRequired(value, 'value', Number);
+
+			this._value = value;
+		},
+
+		_evaluate: function(data) {
+			assert.argumentIsRequired(data, 'data', Number);
+
+			return data < this._value;
+		},
+
+		toString: function() {
+			return '[LessThanSpecification]';
+		}
+	});
+
+	return LessThanSpecification;
+}();
+},{"./../lang/assert":12,"./Specification":60}],59:[function(require,module,exports){
+var assert = require('./../lang/assert');
+
+var Specification = require('./Specification');
+
+module.exports = function() {
+	var OrSpecification = Specification.extend({
+		init: function(specificationOne, specificationTwo) {
+			assert.argumentIsRequired(specificationOne, 'specificationOne', Specification, 'Specification');
+			assert.argumentIsRequired(specificationTwo, 'specificationTwo', Specification, 'Specification');
+
+			this._specificationOne = specificationOne;
+			this._specificationTwo = specificationTwo;
+		},
+
+		_evaluate: function(data) {
+			return this._specificationOne(data) || this._specificationTwo(data);
+		},
+
+		toString: function() {
+			return '[OrSpecification]';
+		}
+	});
+
+	return OrSpecification;
+}();
+},{"./../lang/assert":12,"./Specification":60}],60:[function(require,module,exports){
+var Class = require('class.extend');
+
+module.exports = function() {
+	var Specification = Class.extend({
+		init: function() {
+
+		},
+
+		evaluate: function(data) {
+			return this._evaluate(data);
+		},
+
+		_evaluate: function(data) {
+			return false;
+		},
+
+		toString: function() {
+			return '[Specification]';
+		}
+	});
+
+	return Specification;
+}();
+},{"class.extend":21}],61:[function(require,module,exports){
+var assert = require('./../lang/assert');
+
+var Specification = require('./Specification');
+var AndSpecification = require('./AndSpecification');
+var OrSpecification = require('./OrSpecification');
+
+module.exports = function() {
+	var SpecificationBuilder = Class.extend({
+		init: function(specification) {
+			assert.argumentIsRequired(specification, 'specification', Specification, 'Specification');
+
+			this._specification = specification;
+		},
+
+		and: function(other) {
+			return new SpecificationBuilder(AndSpecificationBuilder(this._specification , other));
+		},
+
+		or: function(other) {
+			return new SpecificationBuilder(OrSpecificationBuilder(this._specification , other));
+		},
+
+		build: function() {
+			return this._specification;
+		},
+
+		toString: function() {
+			return '[SpecificationBuilder]';
+		}
+	});
+
+	SpecificationBuilder.startWith = function(specification) {
+		return new SpecificationBuilder(specification);
+	};
+
+	return SpecificationBuilder;
+}();
+},{"./../lang/assert":12,"./AndSpecification":55,"./OrSpecification":59,"./Specification":60}],62:[function(require,module,exports){
+var assert = require('./../lang/assert');
+
+var Specification = require('./Specification');
+
+module.exports = function() {
+	var TranslateSpecification = Specification.extend({
+		init: function(specification, translator) {
+			assert.argumentIsRequired(specification, 'specification', Specification, 'Specification');
+			assert.argumentIsRequired(translator, 'translator', Function);
+
+			this._specification = specification;
+			this._translator = translator;
+		},
+
+		_evaluate: function(data) {
+			return this._specification(this._translator(data));
+		},
+
+		toString: function() {
+			return '[TranslateSpecification]';
+		}
+	});
+
+	return TranslateSpecification;
+}();
+},{"./../lang/assert":12,"./Specification":60}],63:[function(require,module,exports){
+var AndSpecification = require('./AndSpecification');
+var EqualsSpecification = require('./EqualsSpecification');
+var GreaterThanSpecification = require('./GreaterThanSpecification');
+var LessThanSpecification = require('./LessThanSpecification');
+var OrSpecification = require('./OrSpecification');
+var Specification = require('./Specification');
+var SpecificationBuilder = require('./SpecificationBuilder');
+var TranslateSpecification = require('./TranslateSpecification');
+
+module.exports = function() {
+	'use strict';
+
+	return {
+		AndSpecification: AndSpecification,
+		EqualsSpecification: EqualsSpecification,
+		GreaterThanSpecification: GreaterThanSpecification,
+		LessThanSpecification: LessThanSpecification,
+		OrSpecification: OrSpecification,
+		Specification: Specification,
+		SpecificationBuilder: SpecificationBuilder,
+		TranslateSpecification: TranslateSpecification
+	};
+}();
+},{"./AndSpecification":55,"./EqualsSpecification":56,"./GreaterThanSpecification":57,"./LessThanSpecification":58,"./OrSpecification":59,"./Specification":60,"./SpecificationBuilder":61,"./TranslateSpecification":62}],64:[function(require,module,exports){
 var _ = require('lodash');
 var log4js = require('log4js');
 var when = require('when');
@@ -20694,15 +20950,21 @@ module.exports = function() {
 
             var scheduleBackoff = function(failureCount) {
                 if (maximumAttempts > 0 && failureCount > maximumAttempts) {
-                    logger.warn('An backoff action (' + (actionDescription || 'with no description') + ') has been permanently aborted');
+                    logger.warn('A backoff action (' + (actionDescription || 'with no description') + ') has been permanently aborted');
 
                     return when.reject();
                 }
 
-                var backoffDelay = millisecondDelay * Math.pow(2, failureCount);
+                var backoffDelay;
+
+                if (failureCount === 0) {
+                    backoffDelay = millisecondDelay;
+                } else {
+                    backoffDelay = (millisecondDelay || 1000) * Math.pow(2, failureCount);
+                }
 
                 if (failureCount > 0) {
-                    logger.warn('An backoff action (' + (actionDescription || 'with no description') + ') will be retried in ' + backoffDelay + ' milliseconds');
+                    logger.warn('A backoff action (' + (actionDescription || 'with no description') + ') will be retried in ' + backoffDelay + ' milliseconds');
                 }
 
                 return that.schedule(actionToBackoff, backoffDelay, (actionDescription || 'unspecified') + ', attempt ' + (failureCount + 1))
@@ -20714,6 +20976,8 @@ module.exports = function() {
                         }
                     })
                     .catch(function(e) {
+                        logger.error('A scheduled action (' + (actionDescription || 'with no description') + ') threw an unhandled error', e);
+
                         return scheduleBackoff(++failureCount);
                     });
             };
@@ -20741,7 +21005,7 @@ module.exports = function() {
 
     return Scheduler;
 }();
-},{"./../lang/Disposable":11,"./../lang/assert":12,"lodash":24,"log4js":30,"when":54}],56:[function(require,module,exports){
+},{"./../lang/Disposable":11,"./../lang/assert":12,"lodash":24,"log4js":30,"when":54}],65:[function(require,module,exports){
 var Scheduler = require('./Scheduler');
 
 module.exports = function() {
@@ -20751,5 +21015,5 @@ module.exports = function() {
 		Scheduler: Scheduler
 	};
 }();
-},{"./Scheduler":55}]},{},[10])(10)
+},{"./Scheduler":64}]},{},[10])(10)
 });
