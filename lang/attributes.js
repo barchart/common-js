@@ -18,7 +18,12 @@ module.exports = function() {
 
 		read: function(target, propertyNames) {
 			assert.argumentIsRequired(target, 'target', Object);
-			assert.argumentIsRequired(propertyNames, 'propertyNames', String);
+
+			if (_.isArray(propertyNames)) {
+				assert.argumentIsArray(propertyNames, 'propertyNames', String);
+			} else {
+				assert.argumentIsRequired(propertyNames, 'propertyNames', String);
+			}
 
 			var propertyNameArray = getPropertyNameArray(propertyNames);
 			var propertyTarget = getPropertyTarget(target, propertyNameArray, false);
@@ -38,7 +43,12 @@ module.exports = function() {
 
 		write: function(target, propertyNames, value) {
 			assert.argumentIsRequired(target, 'target', Object);
-			assert.argumentIsRequired(propertyNames, 'propertyNames', String);
+
+			if (_.isArray(propertyNames)) {
+				assert.argumentIsArray(propertyNames, 'propertyNames', String);
+			} else {
+				assert.argumentIsRequired(propertyNames, 'propertyNames', String);
+			}
 
 			var propertyNameArray = getPropertyNameArray(propertyNames);
 			var propertyTarget = getPropertyTarget(target, propertyNameArray, true);
@@ -50,7 +60,15 @@ module.exports = function() {
 	};
 
 	function getPropertyNameArray(propertyNames) {
-		return propertyNames.split('.');
+		var returnRef;
+
+		if (_.isArray(propertyNames)) {
+			returnRef = propertyNames;
+		} else {
+			returnRef = propertyNames.split('.');
+		}
+
+		return returnRef;
 	}
 
 	function getPropertyTarget(target, propertyNameArray, create) {
