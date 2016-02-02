@@ -13,7 +13,11 @@ module.exports = function() {
 		_evaluate: function(data) {
 			assert.argumentIsRequired(data, 'data', Number);
 
-			return data > this._value;
+			var returnVal = data > this._value;
+
+			console.log(data + ' ' + (returnVal ? 'is' : 'is not') + ' greater than ' + this._value);
+
+			return returnVal;
 		},
 
 		toString: function() {
