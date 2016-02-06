@@ -35,6 +35,8 @@ module.exports = function() {
 
 	var DisposableAction = Disposable.extend({
 		init: function(disposeAction) {
+			this._super();
+			
 			this._disposeAction = disposeAction;
 		},
 
