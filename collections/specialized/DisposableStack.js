@@ -34,5 +34,17 @@ module.exports = function() {
 		}
 	});
 
+	DisposableStack.fromArray = function(bindings) {
+		assert.argumentIsArray(bindings, 'bindings', Disposable, 'Disposable');
+
+		var returnRef = new DisposableStack();
+
+		for (var i = 0; i < bindings.length; i++) {
+			returnRef.push(bindings[i]);
+		}
+
+		return returnRef;
+	};
+
 	return DisposableStack;
 }();

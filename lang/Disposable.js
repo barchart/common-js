@@ -36,7 +36,7 @@ module.exports = function() {
 	var DisposableAction = Disposable.extend({
 		init: function(disposeAction) {
 			assert.argumentIsRequired(disposeAction, 'disposeAction', Function);
-			
+
 			this._super();
 
 			this._disposeAction = disposeAction;
