@@ -6,7 +6,7 @@ var Event = require('./../messaging/Event');
 
 module.exports = function() {
 	var Model = Disposable.extend({
-		init: function(propertyNames) {
+		init: function(propertyNames, propertyObservers) {
 			this._propertyNames = propertyNames;
 
 			this._transactionCommit = new Event(this);
@@ -16,8 +16,12 @@ module.exports = function() {
 
 			this._sequence = 0;
 
+			var observers = propertyObservers || { };
+
 			for (var i = 0; i < this._propertyNames.length; i++) {
-				createProperty.call(this, propertyNames[i]);
+				var propertyName = propertyNames[i];
+
+				createProperty.call(this, propertyName, observers[propertyName] || emptyFunction);
 			}
 		},
 
@@ -95,7 +99,11 @@ module.exports = function() {
 		}
 	});
 
-	function createProperty(propertyName) {
+	function emptyFunction() {
+		return;
+	}
+
+	function createProperty(propertyName, propertyObserver) {
 		var that = this;
 
 		var propertyValue;
@@ -119,6 +127,8 @@ module.exports = function() {
 
 				that._transactionData = that._transactionData || {};
 				that._transactionData[propertyName] = propertyValue;
+
+				propertyObserver();
 
 				if (implicit) {
 					that.endTransaction();
