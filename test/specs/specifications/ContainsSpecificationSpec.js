@@ -14,7 +14,7 @@ describe('When a ContainsSpecification is constructed', function() {
 		var result;
 
 		beforeEach(function() {
-			result = specification.evaluate(['abc', 'def', specificationValue, 1, 2, 3])
+			result = specification.evaluate(['abc', 'def', specificationValue, 1, 2, 3]);
 		});
 
 		it('should pass', function() {
@@ -26,7 +26,7 @@ describe('When a ContainsSpecification is constructed', function() {
 		var result;
 
 		beforeEach(function() {
-			result = specification.evaluate(['abc', 'def', 1, 2, 3])
+			result = specification.evaluate(['abc', 'def', 1, 2, 3]);
 		});
 
 		it('should fail', function() {
@@ -38,7 +38,7 @@ describe('When a ContainsSpecification is constructed', function() {
 		var result;
 
 		beforeEach(function() {
-			result = specification.evaluate({ abc: 'xyz', xyz: 'abc' })
+			result = specification.evaluate({ abc: 'xyz', xyz: 'abc' });
 		});
 
 		it('should fail', function() {
