@@ -56,6 +56,19 @@ module.exports = function() {
 			var propertyName = _.last(propertyNameArray);
 
 			propertyTarget[propertyName] = value;
+		},
+
+		erase: function(target, propertyNames) {
+			if (!attributes.has(target, propertyNames)) {
+				return;
+			}
+
+			var propertyNameArray = getPropertyNameArray(propertyNames);
+			var propertyTarget = getPropertyTarget(target, propertyNameArray, true);
+
+			var propertyName = _.last(propertyNameArray);
+
+			delete propertyTarget[propertyName];
 		}
 	};
 

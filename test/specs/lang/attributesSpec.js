@@ -190,3 +190,83 @@ describe('When "attributes.write" is used to set a second-level property', funct
 		});
 	});
 });
+
+describe('When "attributes.erase" is used to remove a top-level property', function() {
+	'use strict';
+
+	var target;
+
+	beforeEach(function() {
+		target = {
+			test: 123
+		};
+	});
+
+	describe("and the property exists", function() {
+		beforeEach(function() {
+			attributes.erase(target, "test");
+		});
+
+		it("the property value not exist", function() {
+			expect(target.hasOwnProperty("test")).toEqual(false);
+		});
+	});
+
+	describe("and the property does not exist", function() {
+		beforeEach(function() {
+			attributes.erase(target, "name");
+		});
+
+		it("the target should be unaffected", function() {
+			expect(target.hasOwnProperty("test")).toEqual(true);
+		});
+	});
+});
+
+describe('When "attributes.erase" is used to remove a second-level property', function() {
+	'use strict';
+
+	var target;
+
+	beforeEach(function() {
+		target = {
+			nested: {
+				test: 123
+			}
+		};
+	});
+
+
+	describe("and the property exists", function() {
+		beforeEach(function() {
+			attributes.erase(target, "nested.test");
+		});
+
+		it("the property value not exist", function() {
+			expect(target.hasOwnProperty("nested")).toEqual(true);
+			expect(target.nested.hasOwnProperty("test")).toEqual(false);
+		});
+	});
+
+	describe("and the second-level property does not exist", function() {
+		beforeEach(function() {
+			attributes.erase(target, "nested.name");
+		});
+
+		it("the target should be unaffected", function() {
+			expect(target.hasOwnProperty("nested")).toEqual(true);
+			expect(target.nested.hasOwnProperty("test")).toEqual(true);
+		});
+	});
+
+	describe("and the top-level property does not exist", function() {
+		beforeEach(function() {
+			attributes.erase(target, "x.y");
+		});
+
+		it("the target should be unaffected", function() {
+			expect(target.hasOwnProperty("nested")).toEqual(true);
+			expect(target.nested.hasOwnProperty("test")).toEqual(true);
+		});
+	});
+});
