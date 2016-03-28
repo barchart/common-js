@@ -103,6 +103,66 @@ describe('When a RateLimiter is constructed (1 execution per 25 milliseconds)', 
 				});
 		});
 	});
+
+	describe('and failing tasks are scheduled', function() {
+		var spies;
+		var promises;
+		var error;
+
+		var start;
+
+		beforeEach(function() {
+			start = new Date();
+
+			spies = [ ];
+			promises = [ ];
+
+			error = new Error('oops');
+
+			for (var i = 0; i < 2; i++) {
+				var spy = jasmine.createSpy('spy').and.callFake(function() {
+					throw error;
+				});
+
+				spies.push(spy);
+
+				promises.push(limiter.enqueue(spy));
+			}
+		});
+
+		it('each task should be executed', function(done) {
+			var promise = null;
+
+			var getValidatedPromise = function(promise, index) {
+				return promise.catch(function(error) {
+					var end = new Date();
+					var duration = end.getTime() - start.getTime();
+
+					var shortestPossibleDuration = Math.floor(index / windowMaximumCount) * windowDurationMilliseconds;
+
+					expect(duration).not.toBeLessThan(shortestPossibleDuration);
+					expect(error).toBe(error);
+				});
+			};
+
+			for (var i = 0; i < promises.length; i++) {
+				var p = getValidatedPromise(promises[i], i);
+
+				if (promise === null) {
+					promise = p;
+				} else {
+					promise = promise.finally(function() {
+						return p;
+					});
+				}
+			}
+
+			promise
+				.finally(function() {
+					done();
+				});
+		});
+	});
 });
 
 describe('When a RateLimiter is constructed (2 execution per 25 milliseconds)', function() {

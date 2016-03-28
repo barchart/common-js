@@ -47,6 +47,8 @@ module.exports = function() {
 					return actionToEnqueue();
 				}).then(function(result) {
 					deferred.resolve(result);
+				}).catch(function(error) {
+					deferred.reject(error);
 				});
 			});
 
@@ -98,7 +100,7 @@ module.exports = function() {
 
 			var actionToExecute = that._workQueue.dequeue();
 
-			actionToExecute().then(function() {
+			actionToExecute().finally(function() {
 				checkStart.call(that);
 			});
 		}
