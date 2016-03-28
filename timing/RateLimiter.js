@@ -1,7 +1,6 @@
 var _ = require('lodash');
 var log4js = require('log4js');
 var when = require('when');
-var guard = require('when/guard');
 
 var assert = require('./../lang/assert');
 var Disposable = require('./../lang/Disposable');
