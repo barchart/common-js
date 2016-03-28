@@ -25,15 +25,11 @@ describe('When a Scheduler is constructed', function() {
 		it('should execute the task asynchronously', function(done) {
 			promise
 				.then(function() {
-					expect(spy).toHaveBeenCalled();
+					expect(spy.calls.count()).toEqual(1);
 				})
 				.finally(function() {
 					done();
 				});
-		});
-
-		afterAll(function() {
-			expect(spy.calls.count).toEqual(1);
 		});
 	});
 
