@@ -15842,80 +15842,6 @@ function hasOwnProperty(obj, prop) {
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./support/isBuffer":28,"_process":27,"inherits":17}],30:[function(require,module,exports){
-/** @license MIT License (c) copyright 2011-2013 original author or authors */
-
-/**
- * Generalized promise concurrency guard
- * Adapted from original concept by Sakari Jokinen (Rocket Pack, Ltd.)
- *
- * @author Brian Cavalier
- * @author John Hann
- * @contributor Sakari Jokinen
- */
-(function(define) {
-define(function(require) {
-
-	var when = require('./when');
-	var slice = Array.prototype.slice;
-
-	guard.n = n;
-
-	return guard;
-
-	/**
-	 * Creates a guarded version of f that can only be entered when the supplied
-	 * condition allows.
-	 * @param {function} condition represents a critical section that may only
-	 *  be entered when allowed by the condition
-	 * @param {function} f function to guard
-	 * @returns {function} guarded version of f
-	 */
-	function guard(condition, f) {
-		return function() {
-			var args = slice.call(arguments);
-
-			return when(condition()).withThis(this).then(function(exit) {
-				return when(f.apply(this, args))['finally'](exit);
-			});
-		};
-	}
-
-	/**
-	 * Creates a condition that allows only n simultaneous executions
-	 * of a guarded function
-	 * @param {number} allowed number of allowed simultaneous executions
-	 * @returns {function} condition function which returns a promise that
-	 *  fulfills when the critical section may be entered.  The fulfillment
-	 *  value is a function ("notifyExit") that must be called when the critical
-	 *  section has been exited.
-	 */
-	function n(allowed) {
-		var count = 0;
-		var waiting = [];
-
-		return function enter() {
-			return when.promise(function(resolve) {
-				if(count < allowed) {
-					resolve(exit);
-				} else {
-					waiting.push(resolve);
-				}
-				count += 1;
-			});
-		};
-
-		function exit() {
-			count = Math.max(count - 1, 0);
-			if(waiting.length > 0) {
-				waiting.shift()(exit);
-			}
-		}
-	}
-
-});
-}(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(require); }));
-
-},{"./when":48}],31:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -15934,7 +15860,7 @@ define(function (require) {
 });
 })(typeof define === 'function' && define.amd ? define : function (factory) { module.exports = factory(require); });
 
-},{"./Scheduler":32,"./env":44,"./makePromise":46}],32:[function(require,module,exports){
+},{"./Scheduler":31,"./env":43,"./makePromise":45}],31:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -16016,7 +15942,7 @@ define(function() {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
-},{}],33:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -16044,7 +15970,7 @@ define(function() {
 	return TimeoutError;
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
-},{}],34:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -16101,7 +16027,7 @@ define(function() {
 
 
 
-},{}],35:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -16392,7 +16318,7 @@ define(function(require) {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(require); }));
 
-},{"../apply":34,"../state":47}],36:[function(require,module,exports){
+},{"../apply":33,"../state":46}],35:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -16554,7 +16480,7 @@ define(function() {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
-},{}],37:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -16583,7 +16509,7 @@ define(function() {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
-},{}],38:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -16605,7 +16531,7 @@ define(function(require) {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(require); }));
 
-},{"../state":47}],39:[function(require,module,exports){
+},{"../state":46}],38:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -16672,7 +16598,7 @@ define(function() {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
-},{}],40:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -16698,7 +16624,7 @@ define(function() {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
-},{}],41:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -16778,7 +16704,7 @@ define(function(require) {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(require); }));
 
-},{"../TimeoutError":33,"../env":44}],42:[function(require,module,exports){
+},{"../TimeoutError":32,"../env":43}],41:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -16866,7 +16792,7 @@ define(function(require) {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(require); }));
 
-},{"../env":44,"../format":45}],43:[function(require,module,exports){
+},{"../env":43,"../format":44}],42:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -16906,7 +16832,7 @@ define(function() {
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
 
-},{}],44:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 (function (process){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
@@ -16983,7 +16909,7 @@ define(function(require) {
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(require); }));
 
 }).call(this,require('_process'))
-},{"_process":27}],45:[function(require,module,exports){
+},{"_process":27}],44:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -17041,7 +16967,7 @@ define(function() {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
-},{}],46:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 (function (process){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
@@ -17972,7 +17898,7 @@ define(function() {
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
 }).call(this,require('_process'))
-},{"_process":27}],47:[function(require,module,exports){
+},{"_process":27}],46:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -18009,7 +17935,7 @@ define(function() {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
-},{}],48:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 
 /**
@@ -18239,7 +18165,7 @@ define(function (require) {
 });
 })(typeof define === 'function' && define.amd ? define : function (factory) { module.exports = factory(require); });
 
-},{"./lib/Promise":31,"./lib/TimeoutError":33,"./lib/apply":34,"./lib/decorators/array":35,"./lib/decorators/flow":36,"./lib/decorators/fold":37,"./lib/decorators/inspect":38,"./lib/decorators/iterate":39,"./lib/decorators/progress":40,"./lib/decorators/timed":41,"./lib/decorators/unhandledRejection":42,"./lib/decorators/with":43}],49:[function(require,module,exports){
+},{"./lib/Promise":30,"./lib/TimeoutError":32,"./lib/apply":33,"./lib/decorators/array":34,"./lib/decorators/flow":35,"./lib/decorators/fold":36,"./lib/decorators/inspect":37,"./lib/decorators/iterate":38,"./lib/decorators/progress":39,"./lib/decorators/timed":40,"./lib/decorators/unhandledRejection":41,"./lib/decorators/with":42}],48:[function(require,module,exports){
 var _ = require('lodash');
 
 var Specification = require('./Specification');
@@ -18261,7 +18187,7 @@ module.exports = function() {
 
 	return ContainsSpecification;
 }();
-},{"./Specification":50,"lodash":18}],50:[function(require,module,exports){
+},{"./Specification":49,"lodash":18}],49:[function(require,module,exports){
 var Class = require('class.extend');
 
 module.exports = function() {
@@ -18285,7 +18211,7 @@ module.exports = function() {
 
 	return Specification;
 }();
-},{"class.extend":15}],51:[function(require,module,exports){
+},{"class.extend":15}],50:[function(require,module,exports){
 var Stack = require('./../../../collections/Stack');
 
 describe('When a Stack is constructed', function() {
@@ -18401,7 +18327,7 @@ describe('When a Stack is constructed', function() {
 		});
 	});
 });
-},{"./../../../collections/Stack":2}],52:[function(require,module,exports){
+},{"./../../../collections/Stack":2}],51:[function(require,module,exports){
 var ComparatorBuilder = require('./../../../../collections/sorting/ComparatorBuilder');
 
 describe('When a ComparatorBuilder is composed with two comparators', function() {
@@ -18483,7 +18409,7 @@ describe('When a ComparatorBuilder is composed with two comparators', function()
         });
     });
 });
-},{"./../../../../collections/sorting/ComparatorBuilder":3}],53:[function(require,module,exports){
+},{"./../../../../collections/sorting/ComparatorBuilder":3}],52:[function(require,module,exports){
 var comparators = require('./../../../../collections/sorting/comparators');
 
 describe('When using the "compareDates" comparator', function() {
@@ -18587,7 +18513,7 @@ describe('When using the "compareStrings" comparator', function() {
 		});
 	});
 });
-},{"./../../../../collections/sorting/comparators":4}],54:[function(require,module,exports){
+},{"./../../../../collections/sorting/comparators":4}],53:[function(require,module,exports){
 var CommandHandler = require('./../../../commands/CommandHandler');
 
 describe('When a CommandHandler is created from a function', function() {
@@ -18651,7 +18577,7 @@ describe('When a CommandHandler is created from a function', function() {
 		});
 	});
 });
-},{"./../../../commands/CommandHandler":5}],55:[function(require,module,exports){
+},{"./../../../commands/CommandHandler":5}],54:[function(require,module,exports){
 var CommandHandler = require('./../../../commands/CommandHandler');
 var CompositeCommandHandler = require('./../../../commands/CompositeCommandHandler');
 
@@ -18714,7 +18640,7 @@ describe('When a CompositeCommandHandler is created', function() {
 		});
 	});
 });
-},{"./../../../commands/CommandHandler":5,"./../../../commands/CompositeCommandHandler":6}],56:[function(require,module,exports){
+},{"./../../../commands/CommandHandler":5,"./../../../commands/CompositeCommandHandler":6}],55:[function(require,module,exports){
 var CommandHandler = require('./../../../commands/CommandHandler');
 var MappedCommandHandler = require('./../../../commands/MappedCommandHandler');
 
@@ -18793,7 +18719,7 @@ describe('When a MappedCommandHandler is created with two mapped commands', func
 		});
 	});
 });
-},{"./../../../commands/CommandHandler":5,"./../../../commands/MappedCommandHandler":7}],57:[function(require,module,exports){
+},{"./../../../commands/CommandHandler":5,"./../../../commands/MappedCommandHandler":7}],56:[function(require,module,exports){
 var Disposable = require('./../../../lang/Disposable');
 
 describe('When a Disposable is extended', function() {
@@ -18906,7 +18832,7 @@ describe('When a Disposable.fromAction creates a Disposable', function() {
 		});
 	});
 });
-},{"./../../../lang/Disposable":8}],58:[function(require,module,exports){
+},{"./../../../lang/Disposable":8}],57:[function(require,module,exports){
 var attributes = require('./../../../lang/attributes');
 
 describe('When "attributes.has" is used to check a top-level property', function() {
@@ -19179,7 +19105,7 @@ describe('When "attributes.erase" is used to remove a second-level property', fu
 		});
 	});
 });
-},{"./../../../lang/attributes":10}],59:[function(require,module,exports){
+},{"./../../../lang/attributes":10}],58:[function(require,module,exports){
 var Disposable = require('./../../../lang/Disposable');
 var Event = require('./../../../messaging/Event');
 
@@ -19360,7 +19286,7 @@ describe('When an Event is constructed', function() {
 		});
 	});
 });
-},{"./../../../lang/Disposable":8,"./../../../messaging/Event":11}],60:[function(require,module,exports){
+},{"./../../../lang/Disposable":8,"./../../../messaging/Event":11}],59:[function(require,module,exports){
 var Disposable = require('./../../../lang/Disposable');
 var Model = require('./../../../models/Model');
 
@@ -19442,7 +19368,7 @@ describe('When an Model is constructed with "firstName" and "lastName" propertie
 		});
 	});
 });
-},{"./../../../lang/Disposable":8,"./../../../models/Model":12}],61:[function(require,module,exports){
+},{"./../../../lang/Disposable":8,"./../../../models/Model":12}],60:[function(require,module,exports){
 var ContainsSpecification = require('./../../../specifications/ContainsSpecification');
 
 describe('When a ContainsSpecification is constructed', function() {
@@ -19491,7 +19417,7 @@ describe('When a ContainsSpecification is constructed', function() {
 		});
 	});
 });
-},{"./../../../specifications/ContainsSpecification":49}],62:[function(require,module,exports){
+},{"./../../../specifications/ContainsSpecification":48}],61:[function(require,module,exports){
 var RateLimiter = require('./../../../timing/RateLimiter');
 
 describe('When a RateLimiter is constructed (1 execution per 25 milliseconds)', function() {
@@ -19666,7 +19592,7 @@ describe('When a RateLimiter is constructed (2 execution per 25 milliseconds)', 
 		});
 	});
 });
-},{"./../../../timing/RateLimiter":64}],63:[function(require,module,exports){
+},{"./../../../timing/RateLimiter":63}],62:[function(require,module,exports){
 var Scheduler = require('./../../../timing/Scheduler');
 
 describe('When a Scheduler is constructed', function() {
@@ -19718,11 +19644,10 @@ describe('When a Scheduler is constructed', function() {
 		});
 	});
 });
-},{"./../../../timing/Scheduler":65}],64:[function(require,module,exports){
+},{"./../../../timing/Scheduler":64}],63:[function(require,module,exports){
 var _ = require('lodash');
 var log4js = require('log4js');
 var when = require('when');
-var guard = require('when/guard');
 
 var assert = require('./../lang/assert');
 var Disposable = require('./../lang/Disposable');
@@ -19736,12 +19661,11 @@ module.exports = function() {
 	var logger = log4js.getLogger('common/timing/RateLimiter');
 
 	var RateLimiter = Disposable.extend({
-		init: function(windowMaximumCount, windowDurationMilliseconds, concurrency) {
+		init: function(windowMaximumCount, windowDurationMilliseconds) {
 			this._super();
 
 			assert.argumentIsRequired(windowMaximumCount, 'windowMaximumCount', Number);
 			assert.argumentIsRequired(windowDurationMilliseconds, 'windowDurationMilliseconds', Number);
-			assert.argumentIsOptional(concurrency, 'concurrency', Number);
 
 			this._windowMaximumCount = windowMaximumCount;
 			this._windowDurationMilliseconds = windowDurationMilliseconds;
@@ -19752,20 +19676,6 @@ module.exports = function() {
 
 			this._windowStart = null;
 			this._windowCounter = 0;
-
-			var executor;
-
-			if (_.isNumber(concurrency) && concurrency > 0) {
-				executor = guard(guard.n(concurrency), function(actionToExecute) {
-					return actionToExecute();
-				});
-			} else {
-				executor = function(actionToExecute) {
-					return actionToExecute();
-				};
-			}
-
-			this._executor = executor;
 		},
 
 		enqueue: function(actionToEnqueue) {
@@ -19781,10 +19691,6 @@ module.exports = function() {
 
 			that._workQueue.enqueue(function() {
 				return when.try(function() {
-					checkWindow.call(that);
-
-					that._windowCounter = that._windowCounter + 1;
-
 					return actionToEnqueue();
 				}).then(function(result) {
 					deferred.resolve(result);
@@ -19818,45 +19724,36 @@ module.exports = function() {
 			return;
 		}
 
-		checkWindow.call(that);
+		if (that._windowStart === null) {
+			var timestamp = new Date();
+
+			that._windowStart = timestamp.getTime();
+			that._windowCounter = 0;
+
+			var resetWindow = function() {
+				that._windowStart = null;
+				that._windowCounter = 0;
+
+				checkStart.call(that);
+			};
+
+			that._scheduler.schedule(resetWindow, that._windowDurationMilliseconds, 'Rate Limiter Window Reset');
+		}
 
 		if (that._windowCounter < this._windowMaximumCount) {
-			that._executor(that._workQueue.dequeue())
-				.then(function() {
-					checkStart.call(that);
-				});
+			that._windowCounter = that._windowCounter + 1;
+
+			var actionToExecute = that._workQueue.dequeue();
+
+			actionToExecute().then(function() {
+				checkStart.call(that);
+			});
 		}
 	}
 
-	var checkWindow = function() {
-		var that = this;
-
-		if (that.getIsDisposed()) {
-			return;
-		}
-
-		if (that._windowStart !== null) {
-			return;
-		}
-
-		var timestamp = new Date();
-
-		that._windowStart = timestamp.getTime();
-		that._windowCounter = 0;
-
-		var resetWindow = function() {
-			that._windowStart = null;
-			that._windowCounter = 0;
-
-			checkStart.call(that);
-		};
-
-		that._scheduler.schedule(resetWindow, that._windowDurationMilliseconds, 'Rate Limiter Window Reset');
-	};
-
 	return RateLimiter;
 }();
-},{"./../collections/Queue":1,"./../lang/Disposable":8,"./../lang/assert":9,"./Scheduler":65,"lodash":18,"log4js":24,"when":48,"when/guard":30}],65:[function(require,module,exports){
+},{"./../collections/Queue":1,"./../lang/Disposable":8,"./../lang/assert":9,"./Scheduler":64,"lodash":18,"log4js":24,"when":47}],64:[function(require,module,exports){
 var _ = require('lodash');
 var log4js = require('log4js');
 var when = require('when');
@@ -20020,4 +19917,4 @@ module.exports = function() {
 
     return Scheduler;
 }();
-},{"./../lang/Disposable":8,"./../lang/assert":9,"lodash":18,"log4js":24,"when":48}]},{},[51,52,53,54,55,56,57,58,59,60,61,62,63]);
+},{"./../lang/Disposable":8,"./../lang/assert":9,"lodash":18,"log4js":24,"when":47}]},{},[50,51,52,53,54,55,56,57,58,59,60,61,62]);
