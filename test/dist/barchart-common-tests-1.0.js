@@ -14284,20 +14284,12 @@ function Level(level, levelStr) {
  * @type Log4js.Level
  */
 function toLevel(sArg, defaultLevel) {
-
   if (!sArg) {
     return defaultLevel;
   }
-
-  if (typeof sArg == "string") {
-    var s = sArg.toUpperCase();
-    if (module.exports[s]) {
-      return module.exports[s];
-    } else {
-      return defaultLevel;
-    }
+  if (typeof sArg === "string") {
+    return module.exports[sArg.toUpperCase()] || defaultLevel;
   }
-
   return toLevel(sArg.toString());
 }
 
@@ -14327,15 +14319,15 @@ Level.prototype.isEqualTo = function(otherLevel) {
 };
 
 module.exports = {
-  ALL: new Level(Number.MIN_VALUE, "ALL"), 
-  TRACE: new Level(5000, "TRACE"), 
-  DEBUG: new Level(10000, "DEBUG"), 
-  INFO: new Level(20000, "INFO"), 
-  WARN: new Level(30000, "WARN"), 
-  ERROR: new Level(40000, "ERROR"), 
-  FATAL: new Level(50000, "FATAL"), 
+  ALL: new Level(Number.MIN_VALUE, "ALL"),
+  TRACE: new Level(5000, "TRACE"),
+  DEBUG: new Level(10000, "DEBUG"),
+  INFO: new Level(20000, "INFO"),
+  WARN: new Level(30000, "WARN"),
+  ERROR: new Level(40000, "ERROR"),
+  FATAL: new Level(50000, "FATAL"),
   MARK: new Level(9007199254740992, "MARK"), // 2^53
-  OFF: new Level(Number.MAX_VALUE, "OFF"), 
+  OFF: new Level(Number.MAX_VALUE, "OFF"),
   toLevel: toLevel
 };
 
@@ -14787,6 +14779,9 @@ function shutdown(cb) {
       shutdownFcts.push(appenderShutdowns[category]);
     }
   }
+  if (!shutdownFcts.length) {
+    return cb();
+  }
   shutdownFcts.forEach(function(shutdownFct) { shutdownFct(complete); });
 }
 
@@ -14854,7 +14849,7 @@ function LoggingEvent (categoryName, level, data, logger) {
  */
 function Logger (name, level) {
   this.category = name || DEFAULT_CATEGORY;
-  
+
   if (level) {
     this.setLevel(level);
   }
@@ -14872,13 +14867,16 @@ Logger.prototype.removeLevel = function() {
 };
 
 Logger.prototype.log = function() {
-  var args = Array.prototype.slice.call(arguments)
-  , logLevel = levels.toLevel(args.shift(), levels.INFO)
-  , loggingEvent;
-  if (this.isLevelEnabled(logLevel)) {
-    loggingEvent = new LoggingEvent(this.category, logLevel, args, this);
-    this.emit("log", loggingEvent);
+  var logLevel = levels.toLevel(arguments[0], levels.INFO);
+  if (!this.isLevelEnabled(logLevel)) {
+    return;
   }
+  var numArgs = arguments.length - 1;
+  var args = new Array(numArgs);
+  for (var i = 0; i < numArgs; i++) {
+    args[i] = arguments[i + 1];
+  }
+  this._log(logLevel, args);
 };
 
 Logger.prototype.isLevelEnabled = function(otherLevel) {
@@ -14891,16 +14889,24 @@ Logger.prototype.isLevelEnabled = function(otherLevel) {
     Logger.prototype['is'+levelString+'Enabled'] = function() {
       return this.isLevelEnabled(level);
     };
-    
+
     Logger.prototype[levelString.toLowerCase()] = function () {
       if (logWritesEnabled && this.isLevelEnabled(level)) {
-        var args = Array.prototype.slice.call(arguments);
-        args.unshift(level);
-        Logger.prototype.log.apply(this, args);
+        var numArgs = arguments.length;
+        var args = new Array(numArgs);
+        for (var i = 0; i < numArgs; i++) {
+          args[i] = arguments[i];
+        }
+        this._log(level, args);
       }
     };
   }
 );
+
+Logger.prototype._log = function(level, data) {
+  var loggingEvent = new LoggingEvent(this.category, level, data, this);
+  this.emit('log', loggingEvent);
+};
 
 /**
  * Disable all log writes.
