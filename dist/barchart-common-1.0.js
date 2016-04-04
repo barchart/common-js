@@ -18195,6 +18195,8 @@ module.exports = function() {
 			assert.argumentIsRequired(specificationOne, 'specificationOne', Specification, 'Specification');
 			assert.argumentIsRequired(specificationTwo, 'specificationTwo', Specification, 'Specification');
 
+			this._super();
+
 			this._specificationOne = specificationOne;
 			this._specificationTwo = specificationTwo;
 		},
@@ -18216,6 +18218,8 @@ var Specification = require('./Specification');
 module.exports = function() {
 	var EqualsSpecification = Specification.extend({
 		init: function(value) {
+			this._super();
+
 			this._value = value;
 		},
 
@@ -18239,6 +18243,8 @@ module.exports = function() {
 	var GreaterThanSpecification = Specification.extend({
 		init: function(value) {
 			assert.argumentIsRequired(value, 'value', Number);
+
+			this._super();
 
 			this._value = value;
 		},
@@ -18266,6 +18272,8 @@ module.exports = function() {
 		init: function(value) {
 			assert.argumentIsRequired(value, 'value', Number);
 
+			this._super();
+
 			this._value = value;
 		},
 
@@ -18292,6 +18300,8 @@ module.exports = function() {
 		init: function(specificationOne, specificationTwo) {
 			assert.argumentIsRequired(specificationOne, 'specificationOne', Specification, 'Specification');
 			assert.argumentIsRequired(specificationTwo, 'specificationTwo', Specification, 'Specification');
+
+			this._super();
 
 			this._specificationOne = specificationOne;
 			this._specificationTwo = specificationTwo;
@@ -18348,11 +18358,11 @@ module.exports = function() {
 		},
 
 		and: function(other) {
-			return new SpecificationBuilder(AndSpecificationBuilder(this._specification , other));
+			return new SpecificationBuilder(AndSpecification(this._specification , other));
 		},
 
 		or: function(other) {
-			return new SpecificationBuilder(OrSpecificationBuilder(this._specification , other));
+			return new SpecificationBuilder(OrSpecification(this._specification , other));
 		},
 
 		build: function() {
@@ -18380,6 +18390,8 @@ module.exports = function() {
 		init: function(specification, translator) {
 			assert.argumentIsRequired(specification, 'specification', Specification, 'Specification');
 			assert.argumentIsRequired(translator, 'translator', Function);
+
+			this._super();
 
 			this._specification = specification;
 			this._translator = translator;
