@@ -13,11 +13,11 @@ module.exports = function() {
 		},
 
 		and: function(other) {
-			return new SpecificationBuilder(AndSpecificationBuilder(this._specification , other));
+			return new SpecificationBuilder(AndSpecification(this._specification , other));
 		},
 
 		or: function(other) {
-			return new SpecificationBuilder(OrSpecificationBuilder(this._specification , other));
+			return new SpecificationBuilder(OrSpecification(this._specification , other));
 		},
 
 		build: function() {

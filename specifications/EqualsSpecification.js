@@ -3,6 +3,8 @@ var Specification = require('./Specification');
 module.exports = function() {
 	var EqualsSpecification = Specification.extend({
 		init: function(value) {
+			this._super();
+
 			this._value = value;
 		},
 

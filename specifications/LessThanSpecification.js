@@ -7,6 +7,8 @@ module.exports = function() {
 		init: function(value) {
 			assert.argumentIsRequired(value, 'value', Number);
 
+			this._super();
+
 			this._value = value;
 		},
 

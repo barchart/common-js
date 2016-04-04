@@ -5,6 +5,8 @@ var Specification = require('./Specification');
 module.exports = function() {
 	var ContainsSpecification = Specification.extend({
 		init: function(value) {
+			this._super();
+
 			this._value = value;
 		},
 

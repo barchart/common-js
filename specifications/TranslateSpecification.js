@@ -8,6 +8,8 @@ module.exports = function() {
 			assert.argumentIsRequired(specification, 'specification', Specification, 'Specification');
 			assert.argumentIsRequired(translator, 'translator', Function);
 
+			this._super();
+
 			this._specification = specification;
 			this._translator = translator;
 		},
