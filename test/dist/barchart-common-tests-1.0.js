@@ -18195,7 +18195,51 @@ module.exports = function() {
 
 	return ContainsSpecification;
 }();
-},{"./Specification":49,"lodash":18}],49:[function(require,module,exports){
+},{"./Specification":51,"lodash":18}],49:[function(require,module,exports){
+var assert = require('./../lang/assert');
+
+var Specification = require('./Specification');
+
+module.exports = function() {
+	var FailSpecification = Specification.extend({
+		init: function(value) {
+			this._super();
+		},
+
+		_evaluate: function(data) {
+			return false;
+		},
+
+		toString: function() {
+			return '[FailSpecification]';
+		}
+	});
+
+	return FailSpecification;
+}();
+},{"./../lang/assert":9,"./Specification":51}],50:[function(require,module,exports){
+var assert = require('./../lang/assert');
+
+var Specification = require('./Specification');
+
+module.exports = function() {
+	var PassSpecification = Specification.extend({
+		init: function(value) {
+			this._super();
+		},
+
+		_evaluate: function(data) {
+			return true;
+		},
+
+		toString: function() {
+			return '[PassSpecification]';
+		}
+	});
+
+	return PassSpecification;
+}();
+},{"./../lang/assert":9,"./Specification":51}],51:[function(require,module,exports){
 var Class = require('class.extend');
 
 module.exports = function() {
@@ -18219,7 +18263,7 @@ module.exports = function() {
 
 	return Specification;
 }();
-},{"class.extend":15}],50:[function(require,module,exports){
+},{"class.extend":15}],52:[function(require,module,exports){
 var Stack = require('./../../../collections/Stack');
 
 describe('When a Stack is constructed', function() {
@@ -18335,7 +18379,7 @@ describe('When a Stack is constructed', function() {
 		});
 	});
 });
-},{"./../../../collections/Stack":2}],51:[function(require,module,exports){
+},{"./../../../collections/Stack":2}],53:[function(require,module,exports){
 var ComparatorBuilder = require('./../../../../collections/sorting/ComparatorBuilder');
 
 describe('When a ComparatorBuilder is composed with two comparators', function() {
@@ -18417,7 +18461,7 @@ describe('When a ComparatorBuilder is composed with two comparators', function()
         });
     });
 });
-},{"./../../../../collections/sorting/ComparatorBuilder":3}],52:[function(require,module,exports){
+},{"./../../../../collections/sorting/ComparatorBuilder":3}],54:[function(require,module,exports){
 var comparators = require('./../../../../collections/sorting/comparators');
 
 describe('When using the "compareDates" comparator', function() {
@@ -18521,7 +18565,7 @@ describe('When using the "compareStrings" comparator', function() {
 		});
 	});
 });
-},{"./../../../../collections/sorting/comparators":4}],53:[function(require,module,exports){
+},{"./../../../../collections/sorting/comparators":4}],55:[function(require,module,exports){
 var CommandHandler = require('./../../../commands/CommandHandler');
 
 describe('When a CommandHandler is created from a function', function() {
@@ -18585,7 +18629,7 @@ describe('When a CommandHandler is created from a function', function() {
 		});
 	});
 });
-},{"./../../../commands/CommandHandler":5}],54:[function(require,module,exports){
+},{"./../../../commands/CommandHandler":5}],56:[function(require,module,exports){
 var CommandHandler = require('./../../../commands/CommandHandler');
 var CompositeCommandHandler = require('./../../../commands/CompositeCommandHandler');
 
@@ -18648,7 +18692,7 @@ describe('When a CompositeCommandHandler is created', function() {
 		});
 	});
 });
-},{"./../../../commands/CommandHandler":5,"./../../../commands/CompositeCommandHandler":6}],55:[function(require,module,exports){
+},{"./../../../commands/CommandHandler":5,"./../../../commands/CompositeCommandHandler":6}],57:[function(require,module,exports){
 var CommandHandler = require('./../../../commands/CommandHandler');
 var MappedCommandHandler = require('./../../../commands/MappedCommandHandler');
 
@@ -18727,7 +18771,7 @@ describe('When a MappedCommandHandler is created with two mapped commands', func
 		});
 	});
 });
-},{"./../../../commands/CommandHandler":5,"./../../../commands/MappedCommandHandler":7}],56:[function(require,module,exports){
+},{"./../../../commands/CommandHandler":5,"./../../../commands/MappedCommandHandler":7}],58:[function(require,module,exports){
 var Disposable = require('./../../../lang/Disposable');
 
 describe('When a Disposable is extended', function() {
@@ -18840,7 +18884,7 @@ describe('When a Disposable.fromAction creates a Disposable', function() {
 		});
 	});
 });
-},{"./../../../lang/Disposable":8}],57:[function(require,module,exports){
+},{"./../../../lang/Disposable":8}],59:[function(require,module,exports){
 var attributes = require('./../../../lang/attributes');
 
 describe('When "attributes.has" is used to check a top-level property', function() {
@@ -19113,7 +19157,7 @@ describe('When "attributes.erase" is used to remove a second-level property', fu
 		});
 	});
 });
-},{"./../../../lang/attributes":10}],58:[function(require,module,exports){
+},{"./../../../lang/attributes":10}],60:[function(require,module,exports){
 var Disposable = require('./../../../lang/Disposable');
 var Event = require('./../../../messaging/Event');
 
@@ -19294,7 +19338,7 @@ describe('When an Event is constructed', function() {
 		});
 	});
 });
-},{"./../../../lang/Disposable":8,"./../../../messaging/Event":11}],59:[function(require,module,exports){
+},{"./../../../lang/Disposable":8,"./../../../messaging/Event":11}],61:[function(require,module,exports){
 var Disposable = require('./../../../lang/Disposable');
 var Model = require('./../../../models/Model');
 
@@ -19376,7 +19420,7 @@ describe('When an Model is constructed with "firstName" and "lastName" propertie
 		});
 	});
 });
-},{"./../../../lang/Disposable":8,"./../../../models/Model":12}],60:[function(require,module,exports){
+},{"./../../../lang/Disposable":8,"./../../../models/Model":12}],62:[function(require,module,exports){
 var ContainsSpecification = require('./../../../specifications/ContainsSpecification');
 
 describe('When a ContainsSpecification is constructed', function() {
@@ -19425,7 +19469,105 @@ describe('When a ContainsSpecification is constructed', function() {
 		});
 	});
 });
-},{"./../../../specifications/ContainsSpecification":48}],61:[function(require,module,exports){
+},{"./../../../specifications/ContainsSpecification":48}],63:[function(require,module,exports){
+var FailSpecification = require('./../../../specifications/FailSpecification');
+
+describe('When a FailSpecification is constructed', function() {
+	'use strict';
+
+	var specification;
+	var specificationValue;
+
+	beforeEach(function() {
+		specification = new FailSpecification(specificationValue = 'ignored');
+	});
+
+	describe('and a string is evaluated', function() {
+		var result;
+
+		beforeEach(function() {
+			result = specification.evaluate('abc');
+		});
+
+		it('should not pass', function() {
+			expect(result).toEqual(false);
+		});
+	});
+
+	describe('and a null value is evaluated', function() {
+		var result;
+
+		beforeEach(function() {
+			result = specification.evaluate(null);
+		});
+
+		it('should not pass', function() {
+			expect(result).toEqual(false);
+		});
+	});
+
+	describe('and an undefined value is evaluated', function() {
+		var result;
+
+		beforeEach(function() {
+			result = specification.evaluate(undefined);
+		});
+
+		it('should not pass', function() {
+			expect(result).toEqual(false);
+		});
+	});
+});
+},{"./../../../specifications/FailSpecification":49}],64:[function(require,module,exports){
+var PassSpecification = require('./../../../specifications/PassSpecification');
+
+describe('When a PassSpecification is constructed', function() {
+	'use strict';
+
+	var specification;
+	var specificationValue;
+
+	beforeEach(function() {
+		specification = new PassSpecification(specificationValue = 'ignored');
+	});
+
+	describe('and a string is evaluated', function() {
+		var result;
+
+		beforeEach(function() {
+			result = specification.evaluate('abc');
+		});
+
+		it('should pass', function() {
+			expect(result).toEqual(true);
+		});
+	});
+
+	describe('and a null value is evaluated', function() {
+		var result;
+
+		beforeEach(function() {
+			result = specification.evaluate(null);
+		});
+
+		it('should pass', function() {
+			expect(result).toEqual(true);
+		});
+	});
+
+	describe('and an undefined value is evaluated', function() {
+		var result;
+
+		beforeEach(function() {
+			result = specification.evaluate(undefined);
+		});
+
+		it('should pass', function() {
+			expect(result).toEqual(true);
+		});
+	});
+});
+},{"./../../../specifications/PassSpecification":50}],65:[function(require,module,exports){
 var RateLimiter = require('./../../../timing/RateLimiter');
 
 describe('When a RateLimiter is constructed (1 execution per 25 milliseconds)', function() {
@@ -19660,7 +19802,7 @@ describe('When a RateLimiter is constructed (2 execution per 25 milliseconds)', 
 		});
 	});
 });
-},{"./../../../timing/RateLimiter":63}],62:[function(require,module,exports){
+},{"./../../../timing/RateLimiter":67}],66:[function(require,module,exports){
 var Scheduler = require('./../../../timing/Scheduler');
 
 describe('When a Scheduler is constructed', function() {
@@ -19712,7 +19854,7 @@ describe('When a Scheduler is constructed', function() {
 		});
 	});
 });
-},{"./../../../timing/Scheduler":64}],63:[function(require,module,exports){
+},{"./../../../timing/Scheduler":68}],67:[function(require,module,exports){
 var _ = require('lodash');
 var log4js = require('log4js');
 var when = require('when');
@@ -19823,7 +19965,7 @@ module.exports = function() {
 
 	return RateLimiter;
 }();
-},{"./../collections/Queue":1,"./../lang/Disposable":8,"./../lang/assert":9,"./Scheduler":64,"lodash":18,"log4js":24,"when":47}],64:[function(require,module,exports){
+},{"./../collections/Queue":1,"./../lang/Disposable":8,"./../lang/assert":9,"./Scheduler":68,"lodash":18,"log4js":24,"when":47}],68:[function(require,module,exports){
 var _ = require('lodash');
 var log4js = require('log4js');
 var when = require('when');
@@ -19987,4 +20129,4 @@ module.exports = function() {
 
     return Scheduler;
 }();
-},{"./../lang/Disposable":8,"./../lang/assert":9,"lodash":18,"log4js":24,"when":47}]},{},[50,51,52,53,54,55,56,57,58,59,60,61,62]);
+},{"./../lang/Disposable":8,"./../lang/assert":9,"lodash":18,"log4js":24,"when":47}]},{},[52,53,54,55,56,57,58,59,60,61,62,63,64,65,66]);
