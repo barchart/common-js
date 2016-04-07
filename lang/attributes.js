@@ -8,7 +8,12 @@ module.exports = function() {
 	var attributes = {
 		has: function(target, propertyNames) {
 			assert.argumentIsRequired(target, 'target', Object);
-			assert.argumentIsRequired(propertyNames, 'propertyNames', String);
+
+			if (_.isArray(propertyNames)) {
+				assert.argumentIsArray(propertyNames, 'propertyNames', String);
+			} else {
+				assert.argumentIsRequired(propertyNames, 'propertyNames', String);
+			}
 
 			var propertyNameArray = getPropertyNameArray(propertyNames);
 			var propertyTarget = getPropertyTarget(target, propertyNameArray, false);
