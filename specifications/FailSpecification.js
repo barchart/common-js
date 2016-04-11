@@ -1,5 +1,3 @@
-var assert = require('./../lang/assert');
-
 var Specification = require('./Specification');
 
 module.exports = function() {

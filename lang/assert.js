@@ -19,8 +19,10 @@ module.exports = function() {
 		argumentIsArray: function(variable, variableName, itemType, itemTypeDescription) {
 			assert.argumentIsRequired(variable, variableName, Array);
 
-			for (var i = 0; i < variable.length; i++) {
-				checkArgumentType(variable[i], variableName, itemType, itemTypeDescription, i);
+			if (!_.isUndefined(itemType)) {
+				for (var i = 0; i < variable.length; i++) {
+					checkArgumentType(variable[i], variableName, itemType, itemTypeDescription, i);
+				}
 			}
 		},
 
