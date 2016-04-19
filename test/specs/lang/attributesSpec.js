@@ -572,7 +572,6 @@ describe('When "attributes.erase" is used to remove a second-level property (usi
 		};
 	});
 
-
 	describe("and the property exists", function() {
 		beforeEach(function() {
 			attributes.erase(target, [ "nested", "test" ]);
