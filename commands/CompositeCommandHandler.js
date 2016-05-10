@@ -10,6 +10,8 @@ module.exports = function() {
 			assert.argumentIsRequired(commandHandlerB, 'commandHandlerB', CommandHandler, 'CommandHandler');
 			assert.areNotEqual(commandHandlerA, commandHandlerB, 'commandHandlerA', 'commandHandlerB');
 
+			this._super();
+
 			this._commandHandlerA = commandHandlerA;
 			this._commandHandlerB = commandHandlerB;
 		},

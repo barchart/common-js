@@ -10,6 +10,8 @@ module.exports = function() {
 		init: function(nameExtractor) {
 			assert.argumentIsRequired(nameExtractor, 'nameFunction', Function);
 
+			this._super();
+
 			this._handlerMap = {};
 			this._defaultHandler = null;
 
