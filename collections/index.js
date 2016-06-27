@@ -1,4 +1,6 @@
+var Queue = require('./Queue');
 var Stack = require('./Stack');
+var Tree = require('./Tree');
 var DisposableStack = require('./specialized/DisposableStack');
 
 var ComparatorBuilder = require('./sorting/ComparatorBuilder');
@@ -8,13 +10,15 @@ module.exports = function() {
 	'use strict';
 
 	return {
-		Stack: Stack,
-		Specialized: {
-			DisposableStack: DisposableStack
-		},
+		Queue: Queue,
 		Sorting: {
 			ComparatorBuilder: ComparatorBuilder,
 			comparators: comparators
-		}
+		},
+		Specialized: {
+			DisposableStack: DisposableStack
+		},
+		Stack: Stack,
+		Tree: Tree
 	};
 }();
