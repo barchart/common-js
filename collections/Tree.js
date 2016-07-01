@@ -13,11 +13,11 @@ module.exports = function() {
 
 		getParent: function() {
 			return this._parent;
-		}
+		},
 
 		getChildren: function() {
 			return this._children;
-		}
+		},
 
 		add: function(item) {
 			this._children.push(new Tree(this, item));
@@ -38,7 +38,7 @@ module.exports = function() {
 		find: function(predicate, childrenFirst) {
 			var returnRef = null;
 
-			if (!chilrenFirst && predicate(this.getItem()) {
+			if (!chilrenFirst && predicate(this.getItem())) {
 				returnRef = this;
 			}
 
@@ -51,7 +51,7 @@ module.exports = function() {
 					}
 				}
 
-				if (childrenFirst && returnRef === null && predicate(this.getItem()) {
+				if (childrenFirst && returnRef === null && predicate(this.getItem())) {
 					returnRef = this;
 				}
 			}
