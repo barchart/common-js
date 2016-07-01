@@ -42,7 +42,7 @@ module.exports = function() {
 
 	return Queue;
 }();
-},{"class.extend":15}],2:[function(require,module,exports){
+},{"class.extend":16}],2:[function(require,module,exports){
 var Class = require('class.extend');
 
 module.exports = function() {
@@ -86,7 +86,7 @@ module.exports = function() {
 
 	return Stack;
 }();
-},{"class.extend":15}],3:[function(require,module,exports){
+},{"class.extend":16}],3:[function(require,module,exports){
 var Class = require('class.extend');
 
 var assert = require('./../../lang/assert');
@@ -168,7 +168,7 @@ module.exports = function() {
 
 	return ComparatorBuilder;
 }();
-},{"./../../lang/assert":9,"./comparators":4,"class.extend":15}],4:[function(require,module,exports){
+},{"./../../lang/assert":10,"./comparators":4,"class.extend":16}],4:[function(require,module,exports){
 var _ = require('lodash');
 
 var assert = require('./../../lang/assert');
@@ -205,7 +205,88 @@ module.exports = function() {
 
 	return comparators;
 }();
-},{"./../../lang/assert":9,"lodash":18}],5:[function(require,module,exports){
+},{"./../../lang/assert":10,"lodash":19}],5:[function(require,module,exports){
+var Class = require('class.extend');
+var assert = require('./../../lang/assert');
+
+module.exports = function() {
+	'use strict';
+
+	var EvictingList = Class.extend({
+		init: function(capacity) {
+			assert.argumentIsOptional(capacity, 'capacity', Number);
+
+			this._capacity = Math.max((capacity || 0), 0) || 10;
+
+			this._array = [ ];
+
+			for (var i = 0; i < this._capacity; i++) {
+				this._array[i] = empty;
+			}
+
+			this._head = null;
+		},
+
+		add: function(item) {
+			this._array[this._head = getNextIndex(this._head, this._capacity)] = item;
+		},
+
+		empty: function() {
+			return this._head === null;
+		},
+
+		getCapacity: function() {
+			return this._capacity;
+		},
+
+		toArray: function() {
+			var returnRef = [ ];
+
+			if (!this.empty()) {
+				var current = this._head;
+
+				for (var i = 0; i < this._capacity; i++) {
+					var item = this._array[current];
+
+					if (item === empty) {
+						break;
+					}
+
+					returnRef.push(item);
+
+					current = getNextIndex(current, this._capacity);
+				}
+			}
+
+			return returnRef;
+		},
+
+		toString: function() {
+			return '[Stack]';
+		}
+	});
+
+	var getNextIndex = function(head, capacity) {
+		var returnVal;
+
+		if (head === null) {
+			returnVal = 0;
+		} else {
+			returnVal = head + 1;
+
+			if (returnVal === capacity) {
+				returnVal = 0;
+			}
+		}
+
+		return returnVal;
+	};
+
+	var empty = { };
+
+	return EvictingList;
+}();
+},{"./../../lang/assert":10,"class.extend":16}],6:[function(require,module,exports){
 var Class = require('class.extend');
 
 var assert = require('./../lang/assert');
@@ -258,7 +339,7 @@ module.exports = function() {
 
 	return CommandHandler;
 }();
-},{"./../lang/assert":9,"class.extend":15}],6:[function(require,module,exports){
+},{"./../lang/assert":10,"class.extend":16}],7:[function(require,module,exports){
 var assert = require('./../lang/assert');
 var CommandHandler = require('./CommandHandler');
 
@@ -270,6 +351,8 @@ module.exports = function() {
 			assert.argumentIsRequired(commandHandlerA, 'commandHandlerA', CommandHandler, 'CommandHandler');
 			assert.argumentIsRequired(commandHandlerB, 'commandHandlerB', CommandHandler, 'CommandHandler');
 			assert.areNotEqual(commandHandlerA, commandHandlerB, 'commandHandlerA', 'commandHandlerB');
+
+			this._super();
 
 			this._commandHandlerA = commandHandlerA;
 			this._commandHandlerB = commandHandlerB;
@@ -286,7 +369,7 @@ module.exports = function() {
 
 	return CompositeCommandHandler;
 }();
-},{"./../lang/assert":9,"./CommandHandler":5}],7:[function(require,module,exports){
+},{"./../lang/assert":10,"./CommandHandler":6}],8:[function(require,module,exports){
 var _ = require('lodash');
 
 var assert = require('./../lang/assert');
@@ -298,6 +381,8 @@ module.exports = function() {
 	var MappedCommandHandler = CommandHandler.extend({
 		init: function(nameExtractor) {
 			assert.argumentIsRequired(nameExtractor, 'nameFunction', Function);
+
+			this._super();
 
 			this._handlerMap = {};
 			this._defaultHandler = null;
@@ -352,7 +437,7 @@ module.exports = function() {
 
 	return MappedCommandHandler;
 }();
-},{"./../lang/assert":9,"./CommandHandler":5,"lodash":18}],8:[function(require,module,exports){
+},{"./../lang/assert":10,"./CommandHandler":6,"lodash":19}],9:[function(require,module,exports){
 var Class = require('class.extend');
 
 var assert = require('./assert');
@@ -413,7 +498,7 @@ module.exports = function() {
 
 	return Disposable;
 }();
-},{"./assert":9,"class.extend":15}],9:[function(require,module,exports){
+},{"./assert":10,"class.extend":16}],10:[function(require,module,exports){
 var _ = require('lodash');
 
 module.exports = function() {
@@ -435,8 +520,10 @@ module.exports = function() {
 		argumentIsArray: function(variable, variableName, itemType, itemTypeDescription) {
 			assert.argumentIsRequired(variable, variableName, Array);
 
-			for (var i = 0; i < variable.length; i++) {
-				checkArgumentType(variable[i], variableName, itemType, itemTypeDescription, i);
+			if (!_.isUndefined(itemType)) {
+				for (var i = 0; i < variable.length; i++) {
+					checkArgumentType(variable[i], variableName, itemType, itemTypeDescription, i);
+				}
 			}
 		},
 
@@ -497,7 +584,7 @@ module.exports = function() {
 
 	return assert;
 }();
-},{"lodash":18}],10:[function(require,module,exports){
+},{"lodash":19}],11:[function(require,module,exports){
 var _ = require('lodash');
 
 var assert = require('./assert');
@@ -613,7 +700,7 @@ module.exports = function() {
 
 	return attributes;
 }();
-},{"./assert":9,"lodash":18}],11:[function(require,module,exports){
+},{"./assert":10,"lodash":19}],12:[function(require,module,exports){
 var _ = require('lodash');
 
 var assert = require('./../lang/assert');
@@ -694,7 +781,7 @@ module.exports = function() {
 
 	return Event;
 }();
-},{"./../lang/Disposable":8,"./../lang/assert":9,"lodash":18}],12:[function(require,module,exports){
+},{"./../lang/Disposable":9,"./../lang/assert":10,"lodash":19}],13:[function(require,module,exports){
 var _ = require('lodash');
 
 var assert = require('./../lang/assert');
@@ -836,11 +923,11 @@ module.exports = function() {
 
 	return Model;
 }();
-},{"./../lang/Disposable":8,"./../lang/assert":9,"./../messaging/Event":11,"lodash":18}],13:[function(require,module,exports){
+},{"./../lang/Disposable":9,"./../lang/assert":10,"./../messaging/Event":12,"lodash":19}],14:[function(require,module,exports){
 
-},{}],14:[function(require,module,exports){
-arguments[4][13][0].apply(exports,arguments)
-},{"dup":13}],15:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
+arguments[4][14][0].apply(exports,arguments)
+},{"dup":14}],16:[function(require,module,exports){
 (function(){
   var initializing = false, fnTest = /xyz/.test(function(){xyz;}) ? /\b_super\b/ : /.*/;
 
@@ -912,7 +999,7 @@ arguments[4][13][0].apply(exports,arguments)
   module.exports = Class;
 })();
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -1215,7 +1302,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -1240,7 +1327,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -13595,7 +13682,7 @@ if (typeof Object.create === 'function') {
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 "use strict";
 var layouts = require('../layouts')
 , consoleLog = console.log.bind(console);
@@ -13618,7 +13705,7 @@ function configure(config) {
 exports.appender = consoleAppender;
 exports.configure = configure;
 
-},{"../layouts":22}],20:[function(require,module,exports){
+},{"../layouts":23}],21:[function(require,module,exports){
 "use strict";
 var levels = require("./levels");
 var DEFAULT_FORMAT = ':remote-addr - -' +
@@ -13844,7 +13931,7 @@ function createNoLogCondition(nolog) {
 
 exports.connectLogger = getLogger;
 
-},{"./levels":23}],21:[function(require,module,exports){
+},{"./levels":24}],22:[function(require,module,exports){
 "use strict";
 exports.ISO8601_FORMAT = "yyyy-MM-dd hh:mm:ss.SSS";
 exports.ISO8601_WITH_TZ_OFFSET_FORMAT = "yyyy-MM-ddThh:mm:ssO";
@@ -13918,7 +14005,7 @@ exports.asString = function(/*format,*/ date, timezoneOffset) {
 
 };
 
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 (function (process){
 "use strict";
 var dateFormat = require('./date_format')
@@ -14273,7 +14360,7 @@ module.exports = {
 };
 
 }).call(this,require('_process'))
-},{"./date_format":21,"_process":27,"os":13,"util":29}],23:[function(require,module,exports){
+},{"./date_format":22,"_process":28,"os":14,"util":30}],24:[function(require,module,exports){
 "use strict";
 
 function Level(level, levelStr) {
@@ -14336,7 +14423,7 @@ module.exports = {
   toLevel: toLevel
 };
 
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 (function (process){
 "use strict";
 /*
@@ -14819,7 +14906,7 @@ configure();
 
 
 }).call(this,require('_process'))
-},{"./appenders/console":19,"./connect-logger":20,"./layouts":22,"./levels":23,"./logger":25,"_process":27,"events":16,"fs":14,"path":26,"util":29}],25:[function(require,module,exports){
+},{"./appenders/console":20,"./connect-logger":21,"./layouts":23,"./levels":24,"./logger":26,"_process":28,"events":17,"fs":15,"path":27,"util":30}],26:[function(require,module,exports){
 "use strict";
 var levels = require('./levels')
 , util = require('util')
@@ -14934,7 +15021,7 @@ exports.Logger = Logger;
 exports.disableAllLogWrites = disableAllLogWrites;
 exports.enableAllLogWrites = enableAllLogWrites;
 
-},{"./levels":23,"events":16,"util":29}],26:[function(require,module,exports){
+},{"./levels":24,"events":17,"util":30}],27:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -15162,7 +15249,7 @@ var substr = 'ab'.substr(-1) === 'b'
 ;
 
 }).call(this,require('_process'))
-},{"_process":27}],27:[function(require,module,exports){
+},{"_process":28}],28:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -15255,14 +15342,14 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],28:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],29:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -15852,7 +15939,7 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":28,"_process":27,"inherits":17}],30:[function(require,module,exports){
+},{"./support/isBuffer":29,"_process":28,"inherits":18}],31:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -15871,7 +15958,7 @@ define(function (require) {
 });
 })(typeof define === 'function' && define.amd ? define : function (factory) { module.exports = factory(require); });
 
-},{"./Scheduler":31,"./env":43,"./makePromise":45}],31:[function(require,module,exports){
+},{"./Scheduler":32,"./env":44,"./makePromise":46}],32:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -15953,7 +16040,7 @@ define(function() {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
-},{}],32:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -15981,7 +16068,7 @@ define(function() {
 	return TimeoutError;
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
-},{}],33:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -16038,7 +16125,7 @@ define(function() {
 
 
 
-},{}],34:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -16329,7 +16416,7 @@ define(function(require) {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(require); }));
 
-},{"../apply":33,"../state":46}],35:[function(require,module,exports){
+},{"../apply":34,"../state":47}],36:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -16491,7 +16578,7 @@ define(function() {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
-},{}],36:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -16520,7 +16607,7 @@ define(function() {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
-},{}],37:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -16542,7 +16629,7 @@ define(function(require) {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(require); }));
 
-},{"../state":46}],38:[function(require,module,exports){
+},{"../state":47}],39:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -16609,7 +16696,7 @@ define(function() {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
-},{}],39:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -16635,7 +16722,7 @@ define(function() {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
-},{}],40:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -16715,7 +16802,7 @@ define(function(require) {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(require); }));
 
-},{"../TimeoutError":32,"../env":43}],41:[function(require,module,exports){
+},{"../TimeoutError":33,"../env":44}],42:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -16803,7 +16890,7 @@ define(function(require) {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(require); }));
 
-},{"../env":43,"../format":44}],42:[function(require,module,exports){
+},{"../env":44,"../format":45}],43:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -16843,7 +16930,7 @@ define(function() {
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
 
-},{}],43:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 (function (process){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
@@ -16920,7 +17007,7 @@ define(function(require) {
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(require); }));
 
 }).call(this,require('_process'))
-},{"_process":27}],44:[function(require,module,exports){
+},{"_process":28}],45:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -16978,7 +17065,7 @@ define(function() {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
-},{}],45:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 (function (process){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
@@ -17909,7 +17996,7 @@ define(function() {
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
 }).call(this,require('_process'))
-},{"_process":27}],46:[function(require,module,exports){
+},{"_process":28}],47:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -17946,7 +18033,7 @@ define(function() {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
-},{}],47:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 
 /**
@@ -18176,7 +18263,35 @@ define(function (require) {
 });
 })(typeof define === 'function' && define.amd ? define : function (factory) { module.exports = factory(require); });
 
-},{"./lib/Promise":30,"./lib/TimeoutError":32,"./lib/apply":33,"./lib/decorators/array":34,"./lib/decorators/flow":35,"./lib/decorators/fold":36,"./lib/decorators/inspect":37,"./lib/decorators/iterate":38,"./lib/decorators/progress":39,"./lib/decorators/timed":40,"./lib/decorators/unhandledRejection":41,"./lib/decorators/with":42}],48:[function(require,module,exports){
+},{"./lib/Promise":31,"./lib/TimeoutError":33,"./lib/apply":34,"./lib/decorators/array":35,"./lib/decorators/flow":36,"./lib/decorators/fold":37,"./lib/decorators/inspect":38,"./lib/decorators/iterate":39,"./lib/decorators/progress":40,"./lib/decorators/timed":41,"./lib/decorators/unhandledRejection":42,"./lib/decorators/with":43}],49:[function(require,module,exports){
+var _ = require('lodash');
+
+var assert = require('./../lang/assert');
+
+var Specification = require('./Specification');
+
+module.exports = function() {
+	var ContainedSpecification = Specification.extend({
+		init: function(value) {
+			assert.argumentIsArray(value, 'value');
+
+			this._super();
+
+			this._value = value;
+		},
+
+		_evaluate: function(data) {
+			return _.contains(this._value, data);
+		},
+
+		toString: function() {
+			return '[ContainedSpecification]';
+		}
+	});
+
+	return ContainedSpecification;
+}();
+},{"./../lang/assert":10,"./Specification":53,"lodash":19}],50:[function(require,module,exports){
 var _ = require('lodash');
 
 var Specification = require('./Specification');
@@ -18200,9 +18315,7 @@ module.exports = function() {
 
 	return ContainsSpecification;
 }();
-},{"./Specification":51,"lodash":18}],49:[function(require,module,exports){
-var assert = require('./../lang/assert');
-
+},{"./Specification":53,"lodash":19}],51:[function(require,module,exports){
 var Specification = require('./Specification');
 
 module.exports = function() {
@@ -18222,9 +18335,7 @@ module.exports = function() {
 
 	return FailSpecification;
 }();
-},{"./../lang/assert":9,"./Specification":51}],50:[function(require,module,exports){
-var assert = require('./../lang/assert');
-
+},{"./Specification":53}],52:[function(require,module,exports){
 var Specification = require('./Specification');
 
 module.exports = function() {
@@ -18244,7 +18355,7 @@ module.exports = function() {
 
 	return PassSpecification;
 }();
-},{"./../lang/assert":9,"./Specification":51}],51:[function(require,module,exports){
+},{"./Specification":53}],53:[function(require,module,exports){
 var Class = require('class.extend');
 
 module.exports = function() {
@@ -18268,7 +18379,7 @@ module.exports = function() {
 
 	return Specification;
 }();
-},{"class.extend":15}],52:[function(require,module,exports){
+},{"class.extend":16}],54:[function(require,module,exports){
 var Stack = require('./../../../collections/Stack');
 
 describe('When a Stack is constructed', function() {
@@ -18384,7 +18495,7 @@ describe('When a Stack is constructed', function() {
 		});
 	});
 });
-},{"./../../../collections/Stack":2}],53:[function(require,module,exports){
+},{"./../../../collections/Stack":2}],55:[function(require,module,exports){
 var ComparatorBuilder = require('./../../../../collections/sorting/ComparatorBuilder');
 
 describe('When a ComparatorBuilder is composed with two comparators', function() {
@@ -18466,7 +18577,7 @@ describe('When a ComparatorBuilder is composed with two comparators', function()
         });
     });
 });
-},{"./../../../../collections/sorting/ComparatorBuilder":3}],54:[function(require,module,exports){
+},{"./../../../../collections/sorting/ComparatorBuilder":3}],56:[function(require,module,exports){
 var comparators = require('./../../../../collections/sorting/comparators');
 
 describe('When using the "compareDates" comparator', function() {
@@ -18570,7 +18681,221 @@ describe('When using the "compareStrings" comparator', function() {
 		});
 	});
 });
-},{"./../../../../collections/sorting/comparators":4}],55:[function(require,module,exports){
+},{"./../../../../collections/sorting/comparators":4}],57:[function(require,module,exports){
+var EvictingList = require('./../../../../collections/specialized/EvictingList');
+
+describe('When an EvictingList is constructed (with no capacity)', function() {
+	'use strict';
+
+	var list;
+
+	beforeEach(function() {
+		list = new EvictingList();
+	});
+
+	it('should be empty', function() {
+		expect(list.empty()).toEqual(true);
+	});
+
+	it('should have a capacity of 10', function() {
+		expect(list.getCapacity()).toEqual(10);
+	});
+
+	describe('when dumped to an array', function() {
+		var array;
+
+		beforeEach(function() {
+			array = list.toArray();
+		});
+
+		it('should be empty',function() {
+			expect(array.length).toEqual(0);
+		});
+	});
+});
+
+describe('When an EvictingList is constructed (with a capacity of 1)', function() {
+	'use strict';
+
+	var list;
+
+	beforeEach(function() {
+		list = new EvictingList(1);
+	});
+
+	it('should be empty', function() {
+		expect(list.empty()).toEqual(true);
+	});
+
+	it('should have a capacity of 1', function() {
+		expect(list.getCapacity()).toEqual(1);
+	});
+
+	describe('when dumped to an array', function() {
+		var array;
+
+		beforeEach(function() {
+			array = list.toArray();
+		});
+
+		it('should be empty',function() {
+			expect(array.length).toEqual(0);
+		});
+	});
+
+	describe('when the first item is added to the list', function() {
+		var a;
+
+		beforeEach(function() {
+			list.add(a = { });
+		});
+
+		it('should not be empty',function() {
+			expect(list.empty()).toEqual(false);
+		});
+
+		describe('when dumped to an array', function() {
+			var array;
+
+			beforeEach(function() {
+				array = list.toArray();
+			});
+
+			it('should contain one item',function() {
+				expect(array.length).toEqual(1);
+			});
+
+			it('the first item should be the first item added',function() {
+				expect(array[0]).toEqual(a);
+			});
+		});
+
+		describe('when the second item is added to the list', function() {
+			var b;
+
+			beforeEach(function() {
+				list.add(b = { });
+			});
+
+			it('should not be empty',function() {
+				expect(list.empty()).toEqual(false);
+			});
+
+			describe('when dumped to an array', function() {
+				var array;
+
+				beforeEach(function() {
+					array = list.toArray();
+				});
+
+				it('should contain one item',function() {
+					expect(array.length).toEqual(1);
+				});
+
+				it('the first item should be the first item added',function() {
+					expect(array[0]).toEqual(b);
+				});
+			});
+		})
+	});
+});
+
+describe('When an EvictingList is constructed (with a capacity of 3)', function() {
+	'use strict';
+
+	var list;
+
+	beforeEach(function() {
+		list = new EvictingList(3);
+	});
+
+	it('should be empty', function() {
+		expect(list.empty()).toEqual(true);
+	});
+
+	it('should have a capacity of 1', function() {
+		expect(list.getCapacity()).toEqual(3);
+	});
+
+	describe('and five items are added to the list', function() {
+		var a;
+		var b;
+		var c;
+		var d;
+		var e;
+
+		beforeEach(function() {
+			list.add(a = { });
+			list.add(b = { });
+			list.add(c = { });
+			list.add(d = { });
+			list.add(e = { });
+		});
+
+		it('should not be empty',function() {
+			expect(list.empty()).toEqual(false);
+		});
+
+		describe('when dumped to an array', function() {
+			var array;
+
+			beforeEach(function() {
+				array = list.toArray();
+			});
+
+			it('should contain three items',function() {
+				expect(array.length).toEqual(3);
+			});
+
+			it('the first item should be the last item added',function() {
+				expect(array[0]).toEqual(e);
+			});
+
+			it('the second item should be the second to last item added',function() {
+				expect(array[1]).toEqual(d);
+			});
+
+			it('the third item should be the second to last item added',function() {
+				expect(array[2]).toEqual(c);
+			});
+		});
+
+		describe('and 100 more items are added to the list', function() {
+			var items = [ ];
+
+			beforeEach(function() {
+				for (var i = 0; i < 100; i++) {
+					items[i] = { };
+				}
+			});
+
+			describe('when dumped to an array', function() {
+				var array;
+
+				beforeEach(function() {
+					array = list.toArray();
+				});
+
+				it('should contain three items',function() {
+					expect(array.length).toEqual(3);
+				});
+
+				it('the first item should be the last item added',function() {
+					expect(array[0]).toEqual(items[99]);
+				});
+
+				it('the second item should be the second to last item added',function() {
+					expect(array[1]).toEqual(items[98]);
+				});
+
+				it('the third item should be the second to last item added',function() {
+					expect(array[2]).toEqual(items[97]);
+				});
+			});
+		});
+	});
+});
+},{"./../../../../collections/specialized/EvictingList":5}],58:[function(require,module,exports){
 var CommandHandler = require('./../../../commands/CommandHandler');
 
 describe('When a CommandHandler is created from a function', function() {
@@ -18634,7 +18959,7 @@ describe('When a CommandHandler is created from a function', function() {
 		});
 	});
 });
-},{"./../../../commands/CommandHandler":5}],56:[function(require,module,exports){
+},{"./../../../commands/CommandHandler":6}],59:[function(require,module,exports){
 var CommandHandler = require('./../../../commands/CommandHandler');
 var CompositeCommandHandler = require('./../../../commands/CompositeCommandHandler');
 
@@ -18697,7 +19022,7 @@ describe('When a CompositeCommandHandler is created', function() {
 		});
 	});
 });
-},{"./../../../commands/CommandHandler":5,"./../../../commands/CompositeCommandHandler":6}],57:[function(require,module,exports){
+},{"./../../../commands/CommandHandler":6,"./../../../commands/CompositeCommandHandler":7}],60:[function(require,module,exports){
 var CommandHandler = require('./../../../commands/CommandHandler');
 var MappedCommandHandler = require('./../../../commands/MappedCommandHandler');
 
@@ -18776,7 +19101,7 @@ describe('When a MappedCommandHandler is created with two mapped commands', func
 		});
 	});
 });
-},{"./../../../commands/CommandHandler":5,"./../../../commands/MappedCommandHandler":7}],58:[function(require,module,exports){
+},{"./../../../commands/CommandHandler":6,"./../../../commands/MappedCommandHandler":8}],61:[function(require,module,exports){
 var Disposable = require('./../../../lang/Disposable');
 
 describe('When a Disposable is extended', function() {
@@ -18889,7 +19214,7 @@ describe('When a Disposable.fromAction creates a Disposable', function() {
 		});
 	});
 });
-},{"./../../../lang/Disposable":8}],59:[function(require,module,exports){
+},{"./../../../lang/Disposable":9}],62:[function(require,module,exports){
 var attributes = require('./../../../lang/attributes');
 
 describe('When "attributes.has" is used to check a top-level property', function() {
@@ -19464,7 +19789,6 @@ describe('When "attributes.erase" is used to remove a second-level property (usi
 		};
 	});
 
-
 	describe("and the property exists", function() {
 		beforeEach(function() {
 			attributes.erase(target, [ "nested", "test" ]);
@@ -19498,7 +19822,7 @@ describe('When "attributes.erase" is used to remove a second-level property (usi
 		});
 	});
 });
-},{"./../../../lang/attributes":10}],60:[function(require,module,exports){
+},{"./../../../lang/attributes":11}],63:[function(require,module,exports){
 var Disposable = require('./../../../lang/Disposable');
 var Event = require('./../../../messaging/Event');
 
@@ -19679,7 +20003,7 @@ describe('When an Event is constructed', function() {
 		});
 	});
 });
-},{"./../../../lang/Disposable":8,"./../../../messaging/Event":11}],61:[function(require,module,exports){
+},{"./../../../lang/Disposable":9,"./../../../messaging/Event":12}],64:[function(require,module,exports){
 var Disposable = require('./../../../lang/Disposable');
 var Model = require('./../../../models/Model');
 
@@ -19761,7 +20085,68 @@ describe('When an Model is constructed with "firstName" and "lastName" propertie
 		});
 	});
 });
-},{"./../../../lang/Disposable":8,"./../../../models/Model":12}],62:[function(require,module,exports){
+},{"./../../../lang/Disposable":9,"./../../../models/Model":13}],65:[function(require,module,exports){
+var ContainedSpecification = require('./../../../specifications/ContainedSpecification');
+
+describe('When a ContainedSpecification is constructed', function() {
+	'use strict';
+
+	var specification;
+	var specificationValue;
+
+	beforeEach(function() {
+		specification = new ContainedSpecification(specificationValue = [ 'xyz', 123 ]);
+	});
+
+	describe('and a string, contained in the array, is evaluated', function() {
+		var result;
+
+		beforeEach(function() {
+			result = specification.evaluate('xyz');
+		});
+
+		it('should pass', function() {
+			expect(result).toEqual(true);
+		});
+	});
+
+	describe('and a string, not contained in the array, is evaluated', function() {
+		var result;
+
+		beforeEach(function() {
+			result = specification.evaluate('abc');
+		});
+
+		it('should not pass', function() {
+			expect(result).toEqual(false);
+		});
+	});
+
+	describe('and a number, contained in the array, is evaluated', function() {
+		var result;
+
+		beforeEach(function() {
+			result = specification.evaluate(123);
+		});
+
+		it('should pass', function() {
+			expect(result).toEqual(true);
+		});
+	});
+
+	describe('and a number, not contained in the array, is evaluated', function() {
+		var result;
+
+		beforeEach(function() {
+			result = specification.evaluate(1);
+		});
+
+		it('should not pass', function() {
+			expect(result).toEqual(false);
+		});
+	});
+});
+},{"./../../../specifications/ContainedSpecification":49}],66:[function(require,module,exports){
 var ContainsSpecification = require('./../../../specifications/ContainsSpecification');
 
 describe('When a ContainsSpecification is constructed', function() {
@@ -19810,7 +20195,7 @@ describe('When a ContainsSpecification is constructed', function() {
 		});
 	});
 });
-},{"./../../../specifications/ContainsSpecification":48}],63:[function(require,module,exports){
+},{"./../../../specifications/ContainsSpecification":50}],67:[function(require,module,exports){
 var FailSpecification = require('./../../../specifications/FailSpecification');
 
 describe('When a FailSpecification is constructed', function() {
@@ -19859,7 +20244,7 @@ describe('When a FailSpecification is constructed', function() {
 		});
 	});
 });
-},{"./../../../specifications/FailSpecification":49}],64:[function(require,module,exports){
+},{"./../../../specifications/FailSpecification":51}],68:[function(require,module,exports){
 var PassSpecification = require('./../../../specifications/PassSpecification');
 
 describe('When a PassSpecification is constructed', function() {
@@ -19908,7 +20293,7 @@ describe('When a PassSpecification is constructed', function() {
 		});
 	});
 });
-},{"./../../../specifications/PassSpecification":50}],65:[function(require,module,exports){
+},{"./../../../specifications/PassSpecification":52}],69:[function(require,module,exports){
 var RateLimiter = require('./../../../timing/RateLimiter');
 
 describe('When a RateLimiter is constructed (1 execution per 25 milliseconds)', function() {
@@ -20143,7 +20528,7 @@ describe('When a RateLimiter is constructed (2 execution per 25 milliseconds)', 
 		});
 	});
 });
-},{"./../../../timing/RateLimiter":67}],66:[function(require,module,exports){
+},{"./../../../timing/RateLimiter":71}],70:[function(require,module,exports){
 var Scheduler = require('./../../../timing/Scheduler');
 
 describe('When a Scheduler is constructed', function() {
@@ -20195,7 +20580,7 @@ describe('When a Scheduler is constructed', function() {
 		});
 	});
 });
-},{"./../../../timing/Scheduler":68}],67:[function(require,module,exports){
+},{"./../../../timing/Scheduler":72}],71:[function(require,module,exports){
 var _ = require('lodash');
 var log4js = require('log4js');
 var when = require('when');
@@ -20306,7 +20691,7 @@ module.exports = function() {
 
 	return RateLimiter;
 }();
-},{"./../collections/Queue":1,"./../lang/Disposable":8,"./../lang/assert":9,"./Scheduler":68,"lodash":18,"log4js":24,"when":47}],68:[function(require,module,exports){
+},{"./../collections/Queue":1,"./../lang/Disposable":9,"./../lang/assert":10,"./Scheduler":72,"lodash":19,"log4js":25,"when":48}],72:[function(require,module,exports){
 var _ = require('lodash');
 var log4js = require('log4js');
 var when = require('when');
@@ -20470,4 +20855,4 @@ module.exports = function() {
 
     return Scheduler;
 }();
-},{"./../lang/Disposable":8,"./../lang/assert":9,"lodash":18,"log4js":24,"when":47}]},{},[52,53,54,55,56,57,58,59,60,61,62,63,64,65,66]);
+},{"./../lang/Disposable":9,"./../lang/assert":10,"lodash":19,"log4js":25,"when":48}]},{},[55,56,57,54,58,59,60,62,61,63,64,65,66,67,68,69,70]);
