@@ -112,7 +112,7 @@ describe('When an EvictingList is constructed (with a capacity of 1)', function(
 					expect(array[0]).toEqual(b);
 				});
 			});
-		})
+		});
 	});
 });
 
