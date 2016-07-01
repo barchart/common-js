@@ -175,5 +175,39 @@ describe('When an EvictingList is constructed (with a capacity of 3)', function(
 				expect(array[2]).toEqual(c);
 			});
 		});
+
+		describe('and 100 more items are added to the list', function() {
+			var items = [ ];
+
+			beforeEach(function() {
+				for (var i = 0; i < 100; i++) {
+					items[i] = { };
+				}
+			});
+
+			describe('when dumped to an array', function() {
+				var array;
+
+				beforeEach(function() {
+					array = list.toArray();
+				});
+
+				it('should contain three items',function() {
+					expect(array.length).toEqual(3);
+				});
+
+				it('the first item should be the last item added',function() {
+					expect(array[0]).toEqual(items[99]);
+				});
+
+				it('the second item should be the second to last item added',function() {
+					expect(array[1]).toEqual(items[98]);
+				});
+
+				it('the third item should be the second to last item added',function() {
+					expect(array[2]).toEqual(items[97]);
+				});
+			});
+		});
 	});
 });
