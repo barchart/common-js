@@ -59,11 +59,15 @@ describe('When an EvictingList is constructed (with a capacity of 1)', function(
 		});
 	});
 
-	describe('when the first item is added to the list', function() {
+	describe('when the an item is added to the list', function() {
 		var a;
 
 		beforeEach(function() {
 			list.add(a = { });
+		});
+
+		it('peek should return the item', function() {
+			expect(list.peek()).toBe(a);
 		});
 
 		it('should not be empty',function() {
@@ -81,12 +85,12 @@ describe('When an EvictingList is constructed (with a capacity of 1)', function(
 				expect(array.length).toEqual(1);
 			});
 
-			it('the first item should be the first item added',function() {
+			it('the first item should be the item added',function() {
 				expect(array[0]).toEqual(a);
 			});
 		});
 
-		describe('when the second item is added to the list', function() {
+		describe('when a second item is added to the list', function() {
 			var b;
 
 			beforeEach(function() {
@@ -95,6 +99,10 @@ describe('When an EvictingList is constructed (with a capacity of 1)', function(
 
 			it('should not be empty',function() {
 				expect(list.empty()).toEqual(false);
+			});
+
+			it('peek should return the second item', function() {
+				expect(list.peek()).toBe(b);
 			});
 
 			describe('when dumped to an array', function() {
@@ -108,8 +116,8 @@ describe('When an EvictingList is constructed (with a capacity of 1)', function(
 					expect(array.length).toEqual(1);
 				});
 
-				it('the first item should be the first item added',function() {
-					expect(array[0]).toEqual(b);
+				it('the first item in the array should be the most recent item',function() {
+					expect(array[0]).toBe(b);
 				});
 			});
 		});
@@ -163,16 +171,16 @@ describe('When an EvictingList is constructed (with a capacity of 3)', function(
 				expect(array.length).toEqual(3);
 			});
 
-			it('the first item should be the last item added',function() {
-				expect(array[0]).toEqual(e);
+			it('the first item should be the most recent item added',function() {
+				expect(array[0]).toBe(e);
 			});
 
-			it('the second item should be the second to last item added',function() {
-				expect(array[1]).toEqual(d);
+			it('the second item should be the second most recent item added',function() {
+				expect(array[1]).toBe(d);
 			});
 
-			it('the third item should be the second to last item added',function() {
-				expect(array[2]).toEqual(c);
+			it('the third item should be the third most recent item addedd',function() {
+				expect(array[2]).toBe(c);
 			});
 		});
 
@@ -181,7 +189,7 @@ describe('When an EvictingList is constructed (with a capacity of 3)', function(
 
 			beforeEach(function() {
 				for (var i = 0; i < 100; i++) {
-					items[i] = { };
+					list.add(items[i] = { });
 				}
 			});
 
@@ -196,16 +204,16 @@ describe('When an EvictingList is constructed (with a capacity of 3)', function(
 					expect(array.length).toEqual(3);
 				});
 
-				it('the first item should be the last item added',function() {
-					expect(array[0]).toEqual(items[99]);
+				it('the first item should be the most recent item added',function() {
+					expect(array[0]).toBe(items[99]);
 				});
 
-				it('the second item should be the second to last item added',function() {
-					expect(array[1]).toEqual(items[98]);
+				it('the second item should be the second most recent item added',function() {
+					expect(array[1]).toBe(items[98]);
 				});
 
-				it('the third item should be the second to last item added',function() {
-					expect(array[2]).toEqual(items[97]);
+				it('the third item should be the third most recent item addedd',function() {
+					expect(array[2]).toBe(items[97]);
 				});
 			});
 		});

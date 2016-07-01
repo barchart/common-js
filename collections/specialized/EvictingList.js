@@ -23,6 +23,14 @@ module.exports = function() {
 			this._array[this._head = getNextIndex(this._head, this._capacity)] = item;
 		},
 
+		peek: function() {
+			if (this.empty()) {
+				throw new Error('EvictingList is empty');
+			}
+
+			return this._array[this._head];
+		},
+
 		empty: function() {
 			return this._head === null;
 		},
@@ -46,7 +54,7 @@ module.exports = function() {
 
 					returnRef.push(item);
 
-					current = getNextIndex(current, this._capacity);
+					current = getPreviousIndex(current, this._capacity);
 				}
 			}
 
@@ -58,16 +66,32 @@ module.exports = function() {
 		}
 	});
 
-	var getNextIndex = function(head, capacity) {
+	var getNextIndex = function(current, capacity) {
 		var returnVal;
 
-		if (head === null) {
+		if (current === null) {
 			returnVal = 0;
 		} else {
-			returnVal = head + 1;
+			returnVal = current + 1;
 
 			if (returnVal === capacity) {
 				returnVal = 0;
+			}
+		}
+
+		return returnVal;
+	};
+
+	var getPreviousIndex = function(current, capacity) {
+		var returnVal;
+
+		if (current === null) {
+			returnVal = 0;
+		} else {
+			returnVal = current - 1;
+
+			if (returnVal < 0) {
+				returnVal = capacity -1;
 			}
 		}
 
