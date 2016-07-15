@@ -74,28 +74,48 @@ module.exports = function() {
 			return returnRef;
 		},
 
-		walk: function(walkAction, childrenFirst, includeCurrentNode) {
-			if (childrenFirst && includeCurrentNode) {
-				walkAction(this.getValue(), this);
+		search: function(predicate, childrenFirst, includeCurrentNode) {
+			var returnRef = null;
+
+			if (returnRef === null && childrenFirst && includeCurrentNode && predicate(this.getValue(), this)) {
+				returnRef = this;
 			}
 
 			for (var i = 0; i < this._children.length; i++) {
 				var child = this._children[i];
 
-				if (childrenFirst) {
-					this.walk(walkAction, true, false);
+				if (returnRef === null && childrenFirst) {
+					returnRef = this.search(predicate, true, false);
 				}
 
-				walkAction(child.getValue(), child);
+				if (returnRef === null && predicate(child.getValue(), child)) {
+					returnRef = child;
+				}
 
-				if (!childrenFirst) {
-					this.walk(walkAction, false, false);
+				if (returnRef === null && !childrenFirst) {
+					returnRef = this.search(predicate, false, false);
+				}
+
+				if (returnRef !== null) {
+					break;
 				}
 			}
 
-			if (!childrenFirst && includeCurrentNode) {
-				walkAction(this.getValue(), this);
+			if (returnRef === null && !childrenFirst && includeCurrentNode && predicate(this.getValue(), this)) {
+				returnRef = this;
 			}
+
+			return returnRef;
+		},
+
+		walk: function(walkAction, childrenFirst, includeCurrentNode) {
+			var predicate = function(value, node) {
+				walkAction(value, node);
+
+				return false;
+			};
+
+			this.search(predicate, childrenFirst, includeCurrentNode);
 		},
 
 		climb: function(climbAction, includeCurrentNode) {
