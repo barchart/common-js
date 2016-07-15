@@ -137,7 +137,7 @@ describe('When an EvictingList is constructed (with a capacity of 3)', function(
 		expect(list.empty()).toEqual(true);
 	});
 
-	it('should have a capacity of 1', function() {
+	it('should have a capacity of 3', function() {
 		expect(list.getCapacity()).toEqual(3);
 	});
 

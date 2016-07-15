@@ -98,6 +98,10 @@ module.exports = function() {
 			return this._size === 0;
 		},
 
+		getSize: function() {
+			return this._size;
+		},
+
 		getCapacity: function() {
 			return this._capacity;
 		},
@@ -125,7 +129,7 @@ module.exports = function() {
 		},
 
 		getValue: function() {
-			this._value;
+			return this._value;
 		},
 
 		getNode: function() {
