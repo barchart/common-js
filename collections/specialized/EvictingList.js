@@ -62,7 +62,7 @@ module.exports = function() {
 		},
 
 		toString: function() {
-			return '[Stack]';
+			return '[EvictingList]';
 		}
 	});
 
