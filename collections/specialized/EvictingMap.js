@@ -23,14 +23,16 @@ module.exports = function() {
 		},
 
 		put: function(key, value) {
-			var item = this._map[key];
+			debugger;
 
 			this.remove(key);
 
 			var node;
 
-			if (this._head) {
+			if (this._head !== null) {
 				node = this._head.insertBefore(key);
+
+				this._head = node;
 			} else {
 				node = new Node(key);
 
