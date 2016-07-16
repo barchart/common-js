@@ -23,8 +23,6 @@ module.exports = function() {
 		},
 
 		put: function(key, value) {
-			debugger;
-
 			this.remove(key);
 
 			var node;
