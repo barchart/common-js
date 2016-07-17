@@ -3,19 +3,21 @@ var Disposable = require('./../../../lang/Disposable');
 describe('When a Disposable is extended', function() {
 	'use strict';
 
-	var TestDisposable = Disposable.extend({
-		init: function() {
+	class TestDisposable extends Disposable {
+		constructor() {
+			super();
+
 			this._disposeSpy = jasmine.createSpy('disposeAction');
-		},
+		}
 
-		getDisposeSpy: function() {
+		getDisposeSpy() {
 			return this._disposeSpy;
-		},
+		}
 
-		_onDispose: function() {
+		_onDispose() {
 			this._disposeSpy();
 		}
-	});
+	}
 
 	var testDisposable;
 

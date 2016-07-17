@@ -19,8 +19,8 @@ module.exports = (() => {
 
 			addRegistration.call(this, handler);
 
-			return Disposable.fromAction(function() {
-				if (this._disposed) {
+			return Disposable.fromAction(() => {
+				if (this.getIsDisposed()) {
 					return;
 				}
 

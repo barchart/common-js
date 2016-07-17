@@ -5,6 +5,8 @@ var AndSpecification = require('./AndSpecification');
 var OrSpecification = require('./OrSpecification');
 
 module.exports = (() => {
+	'use strict';
+
 	class SpecificationBuilder {
 		constructor(specification) {
 			assert.argumentIsRequired(specification, 'specification', Specification, 'Specification');

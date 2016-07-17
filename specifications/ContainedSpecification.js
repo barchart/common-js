@@ -1,10 +1,10 @@
-var _ = require('lodash');
-
 var assert = require('./../lang/assert');
 
 var Specification = require('./Specification');
 
 module.exports = (() => {
+	'use strict';
+
 	class ContainedSpecification extends Specification {
 		constructor(value) {
 			super();
@@ -15,7 +15,7 @@ module.exports = (() => {
 		}
 
 		_evaluate(data) {
-			return _.contains(this._value, data);
+			return this._value.some((candidate) => candidate === data);
 		}
 
 		toString() {
