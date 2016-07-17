@@ -1,21 +1,21 @@
 var Specification = require('./Specification');
 
-module.exports = function() {
-	var EqualsSpecification = Specification.extend({
-		init: function(value) {
-			this._super();
+module.exports = (() => {
+	class EqualsSpecification extends Specification {
+		constructor(value) {
+			super();
 
 			this._value = value;
-		},
+		}
 
-		_evaluate: function(data) {
+		_evaluate(data) {
 			return data === this._value;
-		},
+		}
 
-		toString: function() {
+		toString() {
 			return '[EqualsSpecification]';
 		}
-	});
+	}
 
 	return EqualsSpecification;
-}();
+})();

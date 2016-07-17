@@ -1,4 +1,4 @@
-module.exports = function() {
+module.exports = (() => {
 	'use strict';
 
 	var converters = {
@@ -12,4 +12,4 @@ module.exports = function() {
 	};
 
 	return converters;
-}();
+})();

@@ -1,9 +1,9 @@
-var Event = require('./Event');
+var Model = require('./Model');
 
 module.exports = (() => {
 	'use strict';
 
 	return {
-		Event: Event
+		Model: Model
 	};
 })();

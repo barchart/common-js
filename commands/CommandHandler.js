@@ -1,52 +1,50 @@
-var Class = require('class.extend');
-
 var assert = require('./../lang/assert');
 
-module.exports = function() {
+module.exports = (() => {
 	'use strict';
 
-	var CommandHandler = Class.extend({
-		init: function() {
-		},
+	class CommandHandler {
+		constructor() {
+		}
 
-		process: function(data) {
+		process(data) {
 			return this._process(data);
-		},
+		}
 
-		_process: function(data) {
+		_process(data) {
 			return true;
-		},
+		}
 
-		toString: function() {
+		toString() {
 			return '[CommandHandler]';
 		}
-	});
 
-	var DelegateCommandHandler = CommandHandler.extend({
-		init: function(handler) {
-			this._super();
+		static toFunction(commandHandler) {
+			assert.argumentIsRequired(commandHandler, 'commandHandler', CommandHandler, 'CommandHandler');
+
+			return (data) => {
+				return commandHandler.process(data);
+			};
+		}
+
+		static fromFunction(handler) {
+			assert.argumentIsRequired(handler, 'handler', Function);
+
+			return new DelegateCommandHandler(handler);
+		}
+	}
+
+	class DelegateCommandHandler extends CommandHandler {
+		constructor(handler) {
+			super();
 
 			this._handler = handler;
-		},
+		}
 
-		_process: function(data) {
+		_process(data) {
 			return this._handler(data);
 		}
-	});
-
-	CommandHandler.toFunction = function(commandHandler) {
-		assert.argumentIsRequired(commandHandler, 'commandHandler', CommandHandler, 'CommandHandler');
-
-		return function(data) {
-			return commandHandler.process(data);
-		};
-	};
-
-	CommandHandler.fromFunction = function(handler) {
-		assert.argumentIsRequired(handler, 'handler', Function);
-
-		return new DelegateCommandHandler(handler);
-	};
+	}
 
 	return CommandHandler;
-}();
+})();

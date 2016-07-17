@@ -1,42 +1,30 @@
-var _ = require('lodash');
-
 var assert = require('./assert');
 
-module.exports = function() {
+module.exports = (() => {
 	'use strict';
 
-	var attributes = {
-		has: function(target, propertyNames) {
+	const attributes = {
+		has: (target, propertyNames) => {
 			assert.argumentIsRequired(target, 'target', Object);
+			assert.argumentIsRequired(propertyNames, 'propertyNames', String);
 
-			if (_.isArray(propertyNames)) {
-				assert.argumentIsArray(propertyNames, 'propertyNames', String);
-			} else {
-				assert.argumentIsRequired(propertyNames, 'propertyNames', String);
-			}
+			const propertyNameArray = getPropertyNameArray(propertyNames);
+			const propertyTarget = getPropertyTarget(target, propertyNameArray, false);
 
-			var propertyNameArray = getPropertyNameArray(propertyNames);
-			var propertyTarget = getPropertyTarget(target, propertyNameArray, false);
-
-			return propertyTarget !== null && _.has(propertyTarget, _.last(propertyNameArray));
+			return propertyTarget !== null && propertyTarget.hasOwnProperty(last(propertyNameArray));
 		},
 
-		read: function(target, propertyNames) {
+		read: (target, propertyNames) => {
 			assert.argumentIsRequired(target, 'target', Object);
+			assert.argumentIsRequired(propertyNames, 'propertyNames', String);
 
-			if (_.isArray(propertyNames)) {
-				assert.argumentIsArray(propertyNames, 'propertyNames', String);
-			} else {
-				assert.argumentIsRequired(propertyNames, 'propertyNames', String);
-			}
+			const propertyNameArray = getPropertyNameArray(propertyNames);
+			const propertyTarget = getPropertyTarget(target, propertyNameArray, false);
 
-			var propertyNameArray = getPropertyNameArray(propertyNames);
-			var propertyTarget = getPropertyTarget(target, propertyNameArray, false);
-
-			var returnRef;
+			let returnRef;
 
 			if (propertyTarget) {
-				var propertyName = _.last(propertyNameArray);
+				const propertyName = last(propertyNameArray);
 
 				returnRef = propertyTarget[propertyName];
 			} else {
@@ -46,58 +34,32 @@ module.exports = function() {
 			return returnRef;
 		},
 
-		write: function(target, propertyNames, value) {
+		write: (target, propertyNames, value) => {
 			assert.argumentIsRequired(target, 'target', Object);
+			assert.argumentIsRequired(propertyNames, 'propertyNames', String);
 
-			if (_.isArray(propertyNames)) {
-				assert.argumentIsArray(propertyNames, 'propertyNames', String);
-			} else {
-				assert.argumentIsRequired(propertyNames, 'propertyNames', String);
-			}
+			const propertyNameArray = getPropertyNameArray(propertyNames);
+			const propertyTarget = getPropertyTarget(target, propertyNameArray, true);
 
-			var propertyNameArray = getPropertyNameArray(propertyNames);
-			var propertyTarget = getPropertyTarget(target, propertyNameArray, true);
-
-			var propertyName = _.last(propertyNameArray);
+			const propertyName = last(propertyNameArray);
 
 			propertyTarget[propertyName] = value;
-		},
-
-		erase: function(target, propertyNames) {
-			if (!attributes.has(target, propertyNames)) {
-				return;
-			}
-
-			var propertyNameArray = getPropertyNameArray(propertyNames);
-			var propertyTarget = getPropertyTarget(target, propertyNameArray, true);
-
-			var propertyName = _.last(propertyNameArray);
-
-			delete propertyTarget[propertyName];
 		}
 	};
 
 	function getPropertyNameArray(propertyNames) {
-		var returnRef;
-
-		if (_.isArray(propertyNames)) {
-			returnRef = propertyNames;
-		} else {
-			returnRef = propertyNames.split('.');
-		}
-
-		return returnRef;
+		return propertyNames.split('.');
 	}
 
 	function getPropertyTarget(target, propertyNameArray, create) {
-		var returnRef;
+		let returnRef;
 
-		var propertyTarget = target;
+		let propertyTarget = target;
 
-		for (var i = 0; i < (propertyNameArray.length - 1); i++) {
-			var propertyName = propertyNameArray[i];
+		for (let i = 0; i < (propertyNameArray.length - 1); i++) {
+			let propertyName = propertyNameArray[i];
 
-			if (_.has(propertyTarget, propertyName)) {
+			if (propertyTarget.hasOwnProperty(propertyName)) {
 				propertyTarget = propertyTarget[propertyName];
 			} else if (create) {
 				propertyTarget = propertyTarget[propertyName] = {};
@@ -111,5 +73,13 @@ module.exports = function() {
 		return propertyTarget;
 	}
 
+	const last = (array) => {
+		if (array.length !== 0) {
+			return array[array.length - 1];
+		} else {
+			return null;
+		}
+	};
+
 	return attributes;
-}();
+})();
