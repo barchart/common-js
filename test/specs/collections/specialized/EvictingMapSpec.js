@@ -145,3 +145,135 @@ describe('When an EvictingMap is constructed (with a capacity of 1)', function()
 		});
 	});
 });
+
+describe('When an EvictingMap is constructed (with a capacity of 3)', function() {
+	'use strict';
+
+	var map;
+
+	beforeEach(function() {
+		map = new EvictingMap(3);
+	});
+
+	it('should be empty', function() {
+		expect(map.empty()).toEqual(true);
+	});
+
+	it('should have a capacity of 3', function() {
+		expect(map.getCapacity()).toEqual(3);
+	});
+
+	describe('when three items are added to the map', function() {
+		var a;
+		var b;
+		var c;
+
+		beforeEach(function() {
+			a = { key: 'a' };
+			b = { key: 'b' };
+			c = { key: 'c' };
+
+			map.put(a.key, a);
+			map.put(b.key, b);
+			map.put(c.key, c);
+		});
+
+		it('get "a" should return the first item', function() {
+			expect(map.get(a.key)).toBe(a);
+		});
+
+		it('get "b" should return the second item', function() {
+			expect(map.get(b.key)).toBe(b);
+		});
+
+		it('get "c" should return the third item', function() {
+			expect(map.get(c.key)).toBe(c);
+		});
+
+		it('should not be empty',function() {
+			expect(map.empty()).toEqual(false);
+		});
+
+		it('should have three items',function() {
+			expect(map.getSize()).toEqual(3);
+		});
+
+		describe('when a fourth item is added to the map', function() {
+			var d;
+
+			beforeEach(function() {
+				d = { key: 'd' };
+
+				map.put(d.key, d);
+			});
+
+			it('get "a" should not return the first item', function() {
+				expect(map.get(a.key)).toEqual(null);
+			});
+
+			it('get "b" should return the second item', function() {
+				expect(map.get(b.key)).toBe(b);
+			});
+
+			it('get "c" should return the third item', function() {
+				expect(map.get(c.key)).toBe(c);
+			});
+
+			it('get "d" should return the fourth item', function() {
+				expect(map.get(d.key)).toBe(d);
+			});
+
+			it('should not be empty',function() {
+				expect(map.empty()).toEqual(false);
+			});
+
+			it('should have three items',function() {
+				expect(map.getSize()).toEqual(3);
+			});
+
+			describe('after getting item "b" from map', function() {
+				beforeEach(function() {
+					map.get(b.key);
+				});
+
+				describe('when a fifth item is added to the list', function() {
+					var e;
+
+					beforeEach(function() {
+						e = { key: 'e' };
+
+						map.put(e.key, e);
+					});
+
+					it('get "a" should not return the first item', function() {
+						expect(map.get(a.key)).toEqual(null);
+					});
+
+					it('get "b" should return the second item', function() {
+						expect(map.get(b.key)).toBe(b);
+					});
+
+					it('get "c" should not return the third item', function() {
+						expect(map.get(c.key)).toEqual(null);
+					});
+
+					it('get "d" should return the fourth item', function() {
+						expect(map.get(d.key)).toBe(d);
+					});
+
+					it('get "e" should return the fifth item', function() {
+						expect(map.get(e.key)).toBe(e);
+					});
+
+					it('should not be empty',function() {
+						expect(map.empty()).toEqual(false);
+					});
+
+					it('should have three items',function() {
+						expect(map.getSize()).toEqual(3);
+					});
+				});
+			});
+		});
+	});
+});

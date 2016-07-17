@@ -58,6 +58,10 @@ module.exports = function() {
 				var node = item.getNode();
 
 				if (node !== this._head) {
+					if (node === this._tail) {
+						this._tail = node._previous;
+					}
+
 					node.remove();
 
 					this._head = this._head.insertBefore(key);
