@@ -1,6 +1,4 @@
-var _ = require('lodash');
 var log4js = require('log4js');
-var when = require('when');
 
 var assert = require('./../lang/assert');
 var Disposable = require('./../lang/Disposable');
@@ -8,14 +6,14 @@ var Disposable = require('./../lang/Disposable');
 var Queue = require('./../collections/Queue');
 var Scheduler = require('./Scheduler');
 
-module.exports = function() {
+module.exports = (() => {
 	'use strict';
 
-	var logger = log4js.getLogger('common/timing/RateLimiter');
+	const logger = log4js.getLogger('common/timing/RateLimiter');
 
-	var RateLimiter = Disposable.extend({
-		init: function(windowMaximumCount, windowDurationMilliseconds) {
-			this._super();
+	class RateLimiter extends Disposable {
+		constructor(windowMaximumCount, windowDurationMilliseconds) {
+			super();
 
 			assert.argumentIsRequired(windowMaximumCount, 'windowMaximumCount', Number);
 			assert.argumentIsRequired(windowDurationMilliseconds, 'windowDurationMilliseconds', Number);
@@ -29,82 +27,77 @@ module.exports = function() {
 
 			this._windowStart = null;
 			this._windowCounter = 0;
-		},
+		}
 
-		enqueue: function(actionToEnqueue) {
+		enqueue(actionToEnqueue) {
 			assert.argumentIsRequired(actionToEnqueue, 'actionToEnqueue', Function);
 
-			var that = this;
-
-			if (that.getIsDisposed()) {
+			if (this.getIsDisposed()) {
 				throw new Error('Unable to enqueue action, the rate limiter has been disposed.');
 			}
 
-			var deferred = when.defer();
-
-			that._workQueue.enqueue(function() {
-				return when.try(function() {
-					return actionToEnqueue();
-				}).then(function(result) {
-					deferred.resolve(result);
-				}).catch(function(error) {
-					deferred.reject(error);
+			return new Promise((resolveCallback, rejectCallback) => {
+				this._workQueue.enqueue(() => {
+					Promise.resolve()
+						.then(() => {
+							return actionToEnqueue();
+						}).then((result) => {
+							resolveCallback(result);
+						}).catch((error) => {
+							rejectCallback(error);
+						}).then(() => {
+							checkStart.call(this);
+						});
 				});
+
+				checkStart.call(this);
 			});
+		}
 
-			checkStart.call(that);
-
-			return deferred.promise;
-		},
-
-		_onDispose: function() {
+		_onDispose() {
 			this._scheduler.dispose();
 
 			this._workQueue = null;
-		},
+		}
 
-		toString: function() {
+		toString() {
 			return '[RateLimiter]';
 		}
-	});
+	}
 
 	function checkStart() {
-		var that = this;
-
-		if (that.getIsDisposed()) {
+		if (this.getIsDisposed()) {
 			return;
 		}
 
-		if (that._workQueue.empty()) {
+		if (this._workQueue.empty()) {
 			return;
 		}
 
-		if (that._windowStart === null) {
-			var timestamp = new Date();
+		if (this._windowStart === null) {
+			const timestamp = new Date();
 
-			that._windowStart = timestamp.getTime();
-			that._windowCounter = 0;
+			this._windowStart = timestamp.getTime();
+			this._windowCounter = 0;
 
-			var resetWindow = function() {
-				that._windowStart = null;
-				that._windowCounter = 0;
+			const resetWindow = () => {
+				this._windowStart = null;
+				this._windowCounter = 0;
 
-				checkStart.call(that);
+				checkStart.call(this);
 			};
 
-			that._scheduler.schedule(resetWindow, that._windowDurationMilliseconds, 'Rate Limiter Window Reset');
+			this._scheduler.schedule(resetWindow, this._windowDurationMilliseconds, 'Rate Limiter Window Reset');
 		}
 
-		if (that._windowCounter < this._windowMaximumCount) {
-			that._windowCounter = that._windowCounter + 1;
+		if (this._windowCounter < this._windowMaximumCount) {
+			this._windowCounter = this._windowCounter + 1;
 
-			var actionToExecute = that._workQueue.dequeue();
+			const actionToExecute = this._workQueue.dequeue();
 
-			actionToExecute().finally(function() {
-				checkStart.call(that);
-			});
+			actionToExecute();
 		}
 	}
 
 	return RateLimiter;
-}();
+})();

@@ -1,8 +1,4 @@
-var _ = require('lodash');
-
-var assert = require('./assert');
-
-module.exports = function() {
+module.exports = (() => {
 	'use strict';
 
 	var converters = {
@@ -16,4 +12,4 @@ module.exports = function() {
 	};
 
 	return converters;
-}();
+})();

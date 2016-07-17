@@ -1,43 +1,41 @@
-var Class = require('class.extend');
-
 module.exports = function() {
 	'use strict';
 
-	var Stack = Class.extend({
-		init: function() {
+	class Stack {
+		constructor() {
 			this._array = [];
-		},
+		}
 
-		push: function(item) {
+		push(item) {
 			this._array.unshift(item);
 
 			return item;
-		},
+		}
 
-		pop: function() {
+		pop() {
 			if (this.empty()) {
 				throw new Error('Stack is empty');
 			}
 
 			return this._array.shift();
-		},
+		}
 
-		peek: function() {
+		peek() {
 			if (this.empty()) {
 				throw new Error('Stack is empty');
 			}
 
 			return this._array[0];
-		},
+		}
 
-		empty: function() {
+		empty() {
 			return this._array.length === 0;
-		},
+		}
 
-		toString: function() {
+		toString() {
 			return '[Stack]';
 		}
-	});
+	}
 
 	return Stack;
 }();

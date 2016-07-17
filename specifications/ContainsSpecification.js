@@ -1,23 +1,21 @@
-var _ = require('lodash');
-
 var Specification = require('./Specification');
 
-module.exports = function() {
-	var ContainsSpecification = Specification.extend({
-		init: function(value) {
-			this._super();
+module.exports = (() => {
+	class ContainsSpecification extends Specification{
+		constructor(value) {
+			super();
 
 			this._value = value;
-		},
+		}
 
-		_evaluate: function(data) {
-			return _.isArray(data) && _.contains(data, this._value);
-		},
+		_evaluate(data) {
+			return Array.isArray(data) && data.includes(this._value);
+		}
 
-		toString: function() {
+		toString() {
 			return '[ContainsSpecification]';
 		}
-	});
+	}
 
 	return ContainsSpecification;
-}();
+})();

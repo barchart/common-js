@@ -7,7 +7,7 @@ var EvictingList = require('./specialized/EvictingList');
 var ComparatorBuilder = require('./sorting/ComparatorBuilder');
 var comparators = require('./sorting/comparators');
 
-module.exports = function() {
+module.exports = (() => {
 	'use strict';
 
 	return {
@@ -23,4 +23,4 @@ module.exports = function() {
 		Stack: Stack,
 		Tree: Tree
 	};
-}();
+})();

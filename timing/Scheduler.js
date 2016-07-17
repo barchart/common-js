@@ -1,24 +1,18 @@
-var _ = require('lodash');
-var log4js = require('log4js');
-var when = require('when');
-
 var assert = require('./../lang/assert');
 var Disposable = require('./../lang/Disposable');
 
-module.exports = function() {
+module.exports = (() => {
     'use strict';
 
-    var logger = log4js.getLogger('common/timing/Scheduler');
+    class Scheduler extends Disposable {
+        constructor() {
+            super();
 
-    var Scheduler = Disposable.extend({
-        init: function() {
-            this._super();
+            this._timeoutBindings = {};
+            this._intervalBindings = {};
+        }
 
-            this._timeoutBindings = { };
-            this._intervalBindings = { };
-        },
-
-        schedule: function(actionToSchedule, millisecondDelay, actionDescription) {
+        schedule(actionToSchedule, millisecondDelay, actionDescription) {
             assert.argumentIsRequired(actionToSchedule, 'actionToSchedule', Function);
             assert.argumentIsRequired(millisecondDelay, 'millisecondDelay', Number);
             assert.argumentIsOptional(actionDescription, 'actionDescription', String);
@@ -27,38 +21,32 @@ module.exports = function() {
                 throw new Error('The Scheduler has been disposed.');
             }
 
-            var that = this;
+            let token;
 
-            var token = null;
+            const schedulePromise = new Promise((resolveCallback, rejectCallback) => {
+                const wrappedAction = () => {
+                    delete this._timeoutBindings[token];
 
-            var defer = when.defer();
+                    try {
+                        resolveCallback(actionToSchedule());
+                    } catch (e) {
+                        rejectCallback(e);
+                    }
+                };
 
-            var wrappedAction = function() {
-                try {
-                    delete that._timeoutBindings[token];
-
-                    defer.resolve(actionToSchedule());
-                } catch (e) {
-                    logger.error('A scheduled action (' + (actionDescription || 'with no description') + ') threw an unhandled error', e);
-
-                    defer.reject(e);
-                }
-            };
-
-            token = setTimeout(wrappedAction, millisecondDelay);
-
-            var timeoutBinding = Disposable.fromAction(function() {
-                clearTimeout(token);
-
-                delete that._timeoutBindings[token];
+                token = setTimeout(wrappedAction, millisecondDelay);
             });
 
-            that._timeoutBindings[token] = timeoutBinding;
+            this._timeoutBindings[token] = Disposable.fromAction(() => {
+                clearTimeout(token);
 
-            return defer.promise;
-        },
+                delete this._timeoutBindings[token];
+            });
 
-        repeat: function(actionToRepeat, millisecondInterval, actionDescription) {
+            return schedulePromise;
+        }
+
+        repeat(actionToRepeat, millisecondInterval, actionDescription) {
             assert.argumentIsRequired(actionToRepeat, 'actionToRepeat', Function);
             assert.argumentIsRequired(millisecondInterval, 'millisecondInterval', Number);
             assert.argumentIsOptional(actionDescription, 'actionDescription', String);
@@ -67,32 +55,26 @@ module.exports = function() {
                 throw new Error('The Scheduler has been disposed.');
             }
 
-            var that = this;
-
-            var token = null;
-
-            var wrappedAction = function() {
+            const wrappedAction = () => {
                 try {
                     actionToRepeat();
                 } catch (e) {
-                    logger.error('A repeating action (' + (actionDescription || 'with no description') + ') threw an unhandled error', e);
+
                 }
             };
 
-            token = setInterval(wrappedAction, millisecondInterval);
+            const token = setInterval(wrappedAction, millisecondInterval);
 
-            var intervalBinding = Disposable.fromAction(function() {
+            this._intervalBindings[token] = Disposable.fromAction(() => {
                 clearInterval(token);
 
-                delete that._intervalBindings[token];
+                delete this._intervalBindings[token];
             });
 
-            that._intervalBindings[token] = intervalBinding;
+            return this._intervalBindings[token];
+        }
 
-            return intervalBinding;
-        },
-
-        backoff: function(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts) {
+        backoff(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts) {
             assert.argumentIsRequired(actionToBackoff, 'actionToBackoff', Function);
             assert.argumentIsOptional(millisecondDelay, 'millisecondDelay', Number);
             assert.argumentIsOptional(actionDescription, 'actionDescription', String);
@@ -102,16 +84,12 @@ module.exports = function() {
                 throw new Error('The Scheduler has been disposed.');
             }
 
-            var that = this;
-
-            var scheduleBackoff = function(failureCount) {
+            const scheduleBackoff = (failureCount) => {
                 if (maximumAttempts > 0 && failureCount > maximumAttempts) {
-                    logger.warn('A backoff action (' + (actionDescription || 'with no description') + ') has been permanently aborted');
-
-                    return when.reject();
+                    return Promise.reject(`Maximum failures reaacked for ${actionDescription}`);
                 }
 
-                var backoffDelay;
+                let backoffDelay;
 
                 if (failureCount === 0) {
                     backoffDelay = millisecondDelay;
@@ -119,45 +97,38 @@ module.exports = function() {
                     backoffDelay = (millisecondDelay || 1000) * Math.pow(2, failureCount);
                 }
 
-                if (failureCount > 0) {
-                    logger.warn('A backoff action (' + (actionDescription || 'with no description') + ') will be retried in ' + backoffDelay + ' milliseconds');
-                }
-
-                return that.schedule(actionToBackoff, backoffDelay, (actionDescription || 'unspecified') + ', attempt ' + (failureCount + 1))
+                return this.schedule(actionToBackoff, backoffDelay, (actionDescription || 'unspecified') + ', attempt ' + (failureCount + 1))
                     .then(function(result) {
                         if (result) {
-                            return when(result);
+                            return result;
                         } else {
                             return scheduleBackoff(++failureCount);
                         }
-                    })
-                    .catch(function(e) {
-                        logger.error('A scheduled action (' + (actionDescription || 'with no description') + ') threw an unhandled error', e);
-
+                    }).catch(function(e) {
                         return scheduleBackoff(++failureCount);
                     });
             };
 
             return scheduleBackoff(0);
-        },
+        }
 
-        _onDispose: function() {
-            _.forEach(_.values(this._timeoutBindings), function(timeoutBinding) {
-                timeoutBinding.dispose();
+        _onDispose() {
+            Object.keys(this._timeoutBindings).forEach((key) => {
+                this._timeoutBindings[key].dispose();
             });
 
-            _.forEach(_.values(this._intervalBindings), function(intervalBinding) {
-                intervalBinding.dispose();
+            Object.keys(this._intervalBindings).forEach((key) => {
+                this._intervalBindings[key].dispose();
             });
 
             this._timeoutBindings = null;
             this._intervalBindings = null;
-        },
+        }
 
-        toString: function() {
+        toString() {
             return '[Scheduler]';
         }
-    });
+    }
 
     return Scheduler;
-}();
+})();

@@ -4,24 +4,24 @@ var assert = require('./../lang/assert');
 
 var Specification = require('./Specification');
 
-module.exports = function() {
-	var ContainedSpecification = Specification.extend({
-		init: function(value) {
+module.exports = (() => {
+	class ContainedSpecification extends Specification {
+		constructor(value) {
+			super();
+
 			assert.argumentIsArray(value, 'value');
 
-			this._super();
-
 			this._value = value;
-		},
+		}
 
-		_evaluate: function(data) {
+		_evaluate(data) {
 			return _.contains(this._value, data);
-		},
+		}
 
-		toString: function() {
+		toString() {
 			return '[ContainedSpecification]';
 		}
-	});
+	}
 
 	return ContainedSpecification;
-}();
+})();

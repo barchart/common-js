@@ -1,28 +1,27 @@
-var _ = require('lodash');
-
 var assert = require('./../lang/assert');
 var CommandHandler = require('./CommandHandler');
 
-module.exports = function() {
+module.exports = (() => {
 	'use strict';
 
-	var MappedCommandHandler = CommandHandler.extend({
-		init: function(nameExtractor) {
-			assert.argumentIsRequired(nameExtractor, 'nameFunction', Function);
+	class MappedCommandHandler extends CommandHandler {
+		constructor(nameExtractor) {
+			super();
 
-			this._super();
+			assert.argumentIsRequired(nameExtractor, 'nameFunction', Function);
 
 			this._handlerMap = {};
 			this._defaultHandler = null;
 
 			this._nameExtractor = nameExtractor;
-		},
+		}
 
-		addCommandHandler: function(name, commandHandler) {
+		addCommandHandler(name, commandHandler) {
 			assert.argumentIsRequired(name, 'name', String);
 			assert.argumentIsRequired(commandHandler, 'commandHandler', CommandHandler, 'CommandHandler');
 
-			if (_.has(this._handlerMap, name)) {
+
+			if (this._handlerMap.hasOwnProperty(name)) {
 				throw new Error('A handler with the same name already exists in the map');
 			}
 
@@ -33,17 +32,17 @@ module.exports = function() {
 			this._handlerMap[name] = commandHandler;
 
 			return this;
-		},
+		}
 
-		setDefaultCommandHandler: function(commandHandler) {
+		setDefaultCommandHandler(commandHandler) {
 			assert.argumentIsRequired(commandHandler, 'commandHandler', CommandHandler, 'CommandHandler');
 
 			this._defaultHandler = commandHandler;
 
 			return this;
-		},
+		}
 
-		_process: function(data) {
+		_process(data) {
 			var handlerName = this._nameExtractor(data);
 			var handler = this._handlerMap[handlerName] || this._defaultHandler;
 
@@ -56,12 +55,12 @@ module.exports = function() {
 			}
 
 			return returnRef;
-		},
+		}
 
-		toString: function() {
+		toString() {
 			return '[MappedCommandHandler]';
 		}
-	});
+	}
 
 	return MappedCommandHandler;
-}();
+})();

@@ -1,16 +1,14 @@
-var Class = require('class.extend');
-
 var assert = require('./assert');
 
-module.exports = function() {
+module.exports = (() => {
 	'use strict';
 
-	var Disposable = Class.extend({
-		init: function() {
+	class Disposable {
+		constructor() {
 			this._disposed = false;
-		},
+		}
 
-		dispose: function() {
+		dispose() {
 			if (this._disposed) {
 				return;
 			}
@@ -18,43 +16,43 @@ module.exports = function() {
 			this._disposed = true;
 
 			this._onDispose();
-		},
+		}
 
-		_onDispose: function() {
+		_onDispose() {
 			return;
-		},
+		}
 
-		getIsDisposed: function() {
+		getIsDisposed() {
 			return this._disposed || false;
-		},
+		}
 
-		toString: function() {
+		toString() {
 			return '[Disposable]';
 		}
-	});
 
-	var DisposableAction = Disposable.extend({
-		init: function(disposeAction) {
+		static fromAction(disposeAction) {
 			assert.argumentIsRequired(disposeAction, 'disposeAction', Function);
 
-			this._super();
+			return new DisposableAction(disposeAction);
+		}
+	}
+
+	class DisposableAction extends Disposable {
+		constructor(disposeAction) {
+			super(disposeAction);
 
 			this._disposeAction = disposeAction;
-		},
+		}
 
-		_onDispose: function() {
+		_onDispose() {
 			this._disposeAction();
 			this._disposeAction = null;
-		},
+		}
 
-		toString: function() {
+		toString() {
 			return '[DisposableAction]';
 		}
-	});
-
-	Disposable.fromAction = function(disposeAction) {
-		return new DisposableAction(disposeAction);
-	};
+	}
 
 	return Disposable;
-}();
+})();

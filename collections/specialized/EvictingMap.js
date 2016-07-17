@@ -1,11 +1,11 @@
 var Class = require('class.extend');
 var assert = require('./../../lang/assert');
 
-module.exports = function() {
+module.exports = (() => {
 	'use strict';
 
-	var EvictingMap = Class.extend({
-		init: function(capacity) {
+	class EvictingMap {
+		constructor(capacity) {
 			assert.argumentIsOptional(capacity, 'capacity', Number);
 
 			this._capacity = Math.max((capacity || 0), 0) || 10;
@@ -16,16 +16,16 @@ module.exports = function() {
 			this._tail = null;
 
 			this._size = 0;
-		},
+		}
 
-		has: function(key) {
+		has(key) {
 			return this._map.hasOwnProperty(key);
-		},
+		}
 
-		put: function(key, value) {
+		put(key, value) {
 			this.remove(key);
 
-			var node;
+			let node;
 
 			if (this._head !== null) {
 				node = this._head.insertBefore(key);
@@ -45,17 +45,17 @@ module.exports = function() {
 			while (this._size > this._capacity) {
 				this.remove(this._tail.getItem());
 			}
-		},
+		}
 
-		get: function(key) {
-			var returnRef;
+		get(key) {
+			let returnRef;
 
-			var item = this._map[key];
+			const item = this._map[key];
 
 			if (item) {
 				returnRef = item.getValue();
 
-				var node = item.getNode();
+				const node = item.getNode();
 
 				if (node !== this._head) {
 					if (node === this._tail) {
@@ -71,16 +71,16 @@ module.exports = function() {
 			}
 
 			return returnRef;
-		},
+		}
 
-		remove: function(key) {
-			var item = this._map[key];
+		remove(key) {
+			const item = this._map[key];
 
 			if (item) {
-				var node = item.getNode();
+				const node = item.getNode();
 
-				var next = node.getNext();
-				var previous = node.getPrevious();
+				const next = node.getNext();
+				const previous = node.getPrevious();
 
 				node.remove();
 
@@ -96,61 +96,61 @@ module.exports = function() {
 
 				this._size--;
 			}
-		},
+		}
 
-		empty: function() {
+		empty() {
 			return this._size === 0;
-		},
+		}
 
-		getSize: function() {
+		getSize() {
 			return this._size;
-		},
+		}
 
-		getCapacity: function() {
+		getCapacity() {
 			return this._capacity;
-		},
+		}
 
-		toString: function() {
+		toString() {
 			return '[EvictingMap]';
 		}
-	});
+	}
 
-	var Item = Class.extend({
-		init: function(node, key, value) {
+	class Item {
+		constructor(node, key, value) {
 			this._node = node;
 
 			this._key = key;
 			this._value = value;
-		},
+		}
 
-		setItem: function(key, value) {
+		setItem(key, value) {
 			this._key = key;
 			this._value = value;
-		},
+		}
 
-		getKey: function() {
+		getKey() {
 			return this._key;
-		},
+		}
 
-		getValue: function() {
+		getValue() {
 			return this._value;
-		},
+		}
 
-		getNode: function() {
+		getNode() {
 			return this._node;
 		}
-	});
+	}
 
-	var Node = Class.extend({
-		init: function(item) {
+	class Node {
+		constructor(item) {
 			this._item = item;
 
 			this._previous = null;
 			this._next = null;
-		},
+		}
 
-		insertBefore: function(item) {
-			var node = new Node(item);
+		insertBefore(item) {
+			const node = new Node(item);
 
 			node._next = this;
 
@@ -162,10 +162,10 @@ module.exports = function() {
 			this._previous = node;
 
 			return node;
-		},
+		}
 
-		insertAfter: function(item) {
-			var node = new Node(item);
+		insertAfter(item) {
+			const node = new Node(item);
 
 			node._previous = this;
 
@@ -177,11 +177,11 @@ module.exports = function() {
 			this._next = node;
 
 			return node;
-		},
+		}
 
-		remove: function() {
-			var next = this._next;
-			var previous = this._previous;
+		remove() {
+			const next = this._next;
+			const previous = this._previous;
 
 			this._next = null;
 			this._previous = null;
@@ -196,28 +196,28 @@ module.exports = function() {
 			}
 
 			return this;
-		},
+		}
 
-		getItem: function() {
+		getItem() {
 			return this._item;
-		},
+		}
 
-		hasNext: function() {
+		hasNext() {
 			return this._next !== null;
-		},
+		}
 
-		getNext: function() {
+		getNext() {
 			return this._next;
-		},
+		}
 
-		hasPrevious: function() {
+		hasPrevious() {
 			return this._previous !== null;
-		},
+		}
 
-		getPrevious: function() {
+		getPrevious() {
 			return this._previous;
 		}
-	});
+	}
 
 	return EvictingMap;
-}();
+})();

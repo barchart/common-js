@@ -1,52 +1,51 @@
-var Class = require('class.extend');
 var assert = require('./../../lang/assert');
 
-module.exports = function() {
+module.exports = (() => {
 	'use strict';
 
-	var EvictingList = Class.extend({
-		init: function(capacity) {
+	class EvictingList {
+		constructor(capacity) {
 			assert.argumentIsOptional(capacity, 'capacity', Number);
 
 			this._capacity = Math.max((capacity || 0), 0) || 10;
 
 			this._array = [ ];
 
-			for (var i = 0; i < this._capacity; i++) {
+			for (let i = 0; i < this._capacity; i++) {
 				this._array[i] = empty;
 			}
 
 			this._head = null;
-		},
+		}
 
-		add: function(item) {
+		add(item) {
 			this._array[this._head = getNextIndex(this._head, this._capacity)] = item;
-		},
+		}
 
-		peek: function() {
+		peek() {
 			if (this.empty()) {
 				throw new Error('EvictingList is empty');
 			}
 
 			return this._array[this._head];
-		},
+		}
 
-		empty: function() {
+		empty() {
 			return this._head === null;
-		},
+		}
 
-		getCapacity: function() {
+		getCapacity() {
 			return this._capacity;
-		},
+		}
 
-		toArray: function() {
-			var returnRef = [ ];
+		toArray() {
+			let returnRef = [ ];
 
 			if (!this.empty()) {
-				var current = this._head;
+				let current = this._head;
 
-				for (var i = 0; i < this._capacity; i++) {
-					var item = this._array[current];
+				for (let i = 0; i < this._capacity; i++) {
+					const item = this._array[current];
 
 					if (item === empty) {
 						break;
@@ -59,15 +58,15 @@ module.exports = function() {
 			}
 
 			return returnRef;
-		},
+		}
 
-		toString: function() {
+		toString() {
 			return '[EvictingList]';
 		}
-	});
+	}
 
-	var getNextIndex = function(current, capacity) {
-		var returnVal;
+	const getNextIndex = (current, capacity) => {
+		let returnVal;
 
 		if (current === null) {
 			returnVal = 0;
@@ -82,8 +81,8 @@ module.exports = function() {
 		return returnVal;
 	};
 
-	var getPreviousIndex = function(current, capacity) {
-		var returnVal;
+	const getPreviousIndex = (current, capacity) => {
+		let returnVal;
 
 		if (current === null) {
 			returnVal = 0;
@@ -98,7 +97,7 @@ module.exports = function() {
 		return returnVal;
 	};
 
-	var empty = { };
+	const empty = { };
 
 	return EvictingList;
-}();
+})();

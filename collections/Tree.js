@@ -1,51 +1,47 @@
-var Class = require('class.extend');
-
-var assert = require('./../lang/assert');
-
-module.exports = function() {
+module.exports = (() => {
 	'use strict';
 
-	var Tree = Class.extend({
-		init: function(value, parent) {
+	class Tree {
+		constructor(value, parent) {
 			this._value = value;
 
 			this._parent = parent || null;
 			this._children = [ ];
-		},
+		}
 
-		getParent: function() {
+		getParent() {
 			return this._parent;
-		},
+		}
 
-		getChildren: function() {
+		getChildren() {
 			return this._children;
-		},
+		}
 
-		getValue: function() {
+		getValue() {
 			return this._value;
-		},
+		}
 
-		getIsLeaf: function() {
+		getIsLeaf() {
 			return this._children.length === 0;
-		},
+		}
 
-		getIsRoot: function() {
+		getIsRoot() {
 			return this._parent === null;
-		},
+		}
 
-		addChild: function(value) {
-			var returnRef = new Tree(this, value);
+		addChild(value) {
+			const returnRef = new Tree(this, value);
 
 			this._children.push(returnRef);
 
 			return returnRef;
-		},
+		}
 
-		removeChild: function(node) {
+		removeChild(node) {
 			var returnRef = null;
 
-			for (var i = this._children.length - 1; !(i < 0); i--) {
-				var child = this._children[i];
+			for (let i = this._children.length - 1; !(i < 0); i--) {
+				const child = this._children[i];
 
 				if (child === node) {
 					this._children.splice(i, 1);
@@ -56,13 +52,13 @@ module.exports = function() {
 					break;
 				}
 			}
-		},
+		}
 
-		findChild: function(predicate) {
-			var returnRef = null;
+		findChild(predicate) {
+			let returnRef = null;
 
-			for (var i = 0; i < this._children.length; i++) {
-				var child = this._children[i];
+			for (let i = 0; i < this._children.length; i++) {
+				let child = this._children[i];
 
 				if (predicate(child.getValue(), child)) {
 					returnRef = child;
@@ -72,16 +68,16 @@ module.exports = function() {
 			}
 
 			return returnRef;
-		},
+		}
 
-		search: function(predicate, childrenFirst, includeCurrentNode) {
-			var returnRef = null;
+		search(predicate, childrenFirst, includeCurrentNode) {
+			let returnRef = null;
 
 			if (returnRef === null && childrenFirst && includeCurrentNode && predicate(this.getValue(), this)) {
 				returnRef = this;
 			}
 
-			for (var i = 0; i < this._children.length; i++) {
+			for (let i = 0; i < this._children.length; i++) {
 				var child = this._children[i];
 
 				if (returnRef === null && childrenFirst) {
@@ -106,19 +102,19 @@ module.exports = function() {
 			}
 
 			return returnRef;
-		},
+		}
 
-		walk: function(walkAction, childrenFirst, includeCurrentNode) {
-			var predicate = function(value, node) {
+		walk(walkAction, childrenFirst, includeCurrentNode) {
+			const predicate = (value, node) => {
 				walkAction(value, node);
 
 				return false;
 			};
 
 			this.search(predicate, childrenFirst, includeCurrentNode);
-		},
+		}
 
-		climb: function(climbAction, includeCurrentNode) {
+		climb(climbAction, includeCurrentNode) {
 			if (includeCurrentNode)	{
 				climbAction(this.getValue(), this);
 			}
@@ -126,12 +122,12 @@ module.exports = function() {
 			if (this._parent !== null) {
 				this._parent.climb(climbAction, true);
 			}
-		},
+		}
 
-		toString: function() {
+		toString() {
 			return '[Tree]';
 		}
-	});
+	}
 
 	return Tree;
-}();
+})();

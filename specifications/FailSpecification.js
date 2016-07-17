@@ -1,19 +1,19 @@
 var Specification = require('./Specification');
 
-module.exports = function() {
-	var FailSpecification = Specification.extend({
-		init: function(value) {
-			this._super();
-		},
+module.exports = (() => {
+	class FailSpecification extends Specification {
+		constructor(value) {
+			super();
+		}
 
-		_evaluate: function(data) {
+		_evaluate(data) {
 			return false;
-		},
+		}
 
-		toString: function() {
+		toString() {
 			return '[FailSpecification]';
 		}
-	});
+	}
 
 	return FailSpecification;
-}();
+})();

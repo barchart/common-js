@@ -1,43 +1,41 @@
-var Class = require('class.extend');
-
-module.exports = function() {
+module.exports = (() => {
 	'use strict';
 
-	var Queue = Class.extend({
-		init: function() {
+	class Queue {
+		constructor() {
 			this._array = [];
-		},
+		}
 
-		enqueue: function(item) {
+		enqueue(item) {
 			this._array.push(item);
 
 			return item;
-		},
+		}
 
-		dequeue: function() {
+		dequeue() {
 			if (this.empty()) {
 				throw new Error('Queue is empty');
 			}
 
 			return this._array.shift();
-		},
+		}
 
-		peek: function() {
+		peek() {
 			if (this.empty()) {
 				throw new Error('Queue is empty');
 			}
 
 			return this._array[0];
-		},
+		}
 
-		empty: function() {
+		empty() {
 			return this._array.length === 0;
-		},
+		}
 
-		toString: function() {
+		toString() {
 			return '[Queue]';
 		}
-	});
+	}
 
 	return Queue;
-}();
+})();
