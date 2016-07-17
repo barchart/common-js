@@ -1,67 +1,59 @@
-var _ = require('lodash');
-
-module.exports = function() {
+module.exports = (() => {
 	'use strict';
 
-	var assert = {
+	const assert = {
 		argumentIsRequired: function(variable, variableName, type, typeDescription) {
 			checkArgumentType(variable, variableName, type, typeDescription);
 		},
 
 		argumentIsOptional: function(variable, variableName, type, typeDescription) {
-			if (_.isNull(variable) || _.isUndefined(variable)) {
+			if (variable === null || variable === undefined) {
 				return;
 			}
 
 			checkArgumentType(variable, variableName, type, typeDescription);
 		},
 
-		argumentIsArray: function(variable, variableName, itemType, itemTypeDescription) {
+		argumentIsArray: function(variable, variableName, itemConstraint, itemConstraintDescription) {
 			assert.argumentIsRequired(variable, variableName, Array);
 
-			if (!_.isUndefined(itemType)) {
-				for (var i = 0; i < variable.length; i++) {
-					checkArgumentType(variable[i], variableName, itemType, itemTypeDescription, i);
-				}
-			}
-		},
+			let itemValidator;
 
-		areEqual: function(a, b, descriptionA, descriptionB) {
-			if (a !== b) {
-				throw new Error('The objects must be equal ([' + (descriptionA || a.toString()) + ' and ' + (descriptionB || n.toString()));
+			if (typeof(itemConstraint) === 'function') {
+				itemValidator = (value, index) => itemConstraint(value, `${variableName}[${index}]`);
+			} else {
+				itemValidator = (value, index) => checkArgumentType(value, variableName, itemConstraint, itemConstraintDescription, index);
 			}
-		},
 
-		areNotEqual: function(a, b, descriptionA, descriptionB) {
-			if (a === b) {
-				throw new Error('The objects cannot be equal ([' + (descriptionA || a.toString()) + ' and ' + (descriptionB || n.toString()));
-			}
+			variable.forEach((v, i) => {
+				itemValidator(v, i);
+			});
 		}
 	};
 
 	function checkArgumentType(variable, variableName, type, typeDescription, index) {
 		if (type === String) {
-			if (!_.isString(variable)) {
+			if (typeof(variable) !== 'string') {
 				throwInvalidTypeError(variableName, 'string', index);
 			}
 		} else if (type === Number) {
-			if (!_.isNumber(variable)) {
+			if (typeof(variable) !== 'number') {
 				throwInvalidTypeError(variableName, 'number', index);
 			}
 		} else if (type === Function) {
-			if (!_.isFunction(variable)) {
+			if (typeof(variable) !== 'function') {
 				throwInvalidTypeError(variableName, 'function', index);
 			}
 		} else if (type === Boolean) {
-			if (!_.isBoolean(variable)) {
+			if (typeof(variable) !== 'boolean') {
 				throwInvalidTypeError(variableName, 'boolean', index);
 			}
 		} else if (type === Date) {
-			if (!_.isDate(variable)) {
+			if (!(variable instanceof Date)) {
 				throwInvalidTypeError(variableName, 'date', index);
 			}
 		} else if (type === Array) {
-			if (!_.isArray(variable)) {
+			if (!Array.isArray(variable)) {
 				throwInvalidTypeError(variableName, 'array', index);
 			}
 		} else if (!(variable instanceof (type || Object))) {
@@ -70,9 +62,9 @@ module.exports = function() {
 	}
 
 	function throwInvalidTypeError(variableName, typeDescription, index) {
-		var message;
+		let message;
 
-		if (_.isNumber(index)) {
+		if (typeof(index) === 'number') {
 			message = 'The argument [' + (variableName || 'unspecified') + '], at index [' + index.toString() + '] must be a ' + (typeDescription || 'unknown');
 		} else {
 			message = 'The argument [' + (variableName || 'unspecified') + '] must be a ' + (typeDescription || 'Object');
@@ -82,4 +74,4 @@ module.exports = function() {
 	}
 
 	return assert;
-}();
+})();

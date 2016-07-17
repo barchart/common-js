@@ -3,17 +3,17 @@ var Stack = require('./../Stack');
 var assert = require('./../../lang/assert');
 var Disposable = require('./../../lang/Disposable');
 
-module.exports = function() {
+module.exports = (() => {
 	'use strict';
 
-	var DisposableStack = Disposable.extend({
-		init: function() {
+	class DisposableStack {
+		constructor() {
 			this._super();
 
 			this._stack = new Stack();
-		},
+		}
 
-		push: function(disposable) {
+		push(disposable) {
 			assert.argumentIsRequired(disposable, 'disposable', Disposable, 'Disposable');
 
 			if (this.getIsDisposed()) {
@@ -21,30 +21,26 @@ module.exports = function() {
 			}
 
 			this._stack.push(disposable);
-		},
+		}
 
-		_onDispose: function() {
+		_onDispose() {
 			while (!this._stack.empty()) {
 				this._stack.pop().dispose();
 			}
-		},
-
-		toString: function() {
-			return '[DisposableStack]';
-		}
-	});
-
-	DisposableStack.fromArray = function(bindings) {
-		assert.argumentIsArray(bindings, 'bindings', Disposable, 'Disposable');
-
-		var returnRef = new DisposableStack();
-
-		for (var i = 0; i < bindings.length; i++) {
-			returnRef.push(bindings[i]);
 		}
 
-		return returnRef;
-	};
+		static fromArray(bindings) {
+			assert.argumentIsArray(bindings, 'bindings', Disposable, 'Disposable');
+
+			const returnRef = new DisposableStack();
+
+			for (let i = 0; i < bindings.length; i++) {
+				returnRef.push(bindings[i]);
+			}
+
+			return returnRef;
+		}
+	}
 
 	return DisposableStack;
-}();
+})();

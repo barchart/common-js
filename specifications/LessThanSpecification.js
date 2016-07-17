@@ -2,26 +2,26 @@ var assert = require('./../lang/assert');
 
 var Specification = require('./Specification');
 
-module.exports = function() {
-	var LessThanSpecification = Specification.extend({
-		init: function(value) {
+module.exports = (() => {
+	class LessThanSpecification extends Specification {
+		constructor(value) {
+			super();
+
 			assert.argumentIsRequired(value, 'value', Number);
 
-			this._super();
-
 			this._value = value;
-		},
+		}
 
-		_evaluate: function(data) {
+		_evaluate(data) {
 			assert.argumentIsRequired(data, 'data', Number);
 
 			return data < this._value;
-		},
+		}
 
-		toString: function() {
+		toString() {
 			return '[LessThanSpecification]';
 		}
-	});
+	}
 
 	return LessThanSpecification;
-}();
+})();

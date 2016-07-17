@@ -4,34 +4,34 @@ var Specification = require('./Specification');
 var AndSpecification = require('./AndSpecification');
 var OrSpecification = require('./OrSpecification');
 
-module.exports = function() {
-	var SpecificationBuilder = Class.extend({
-		init: function(specification) {
+module.exports = (() => {
+	class SpecificationBuilder {
+		constructor(specification) {
 			assert.argumentIsRequired(specification, 'specification', Specification, 'Specification');
 
 			this._specification = specification;
-		},
+		}
 
-		and: function(other) {
+		and(other) {
 			return new SpecificationBuilder(new AndSpecification(this._specification , other));
-		},
+		}
 
-		or: function(other) {
+		or(other) {
 			return new SpecificationBuilder(new OrSpecification(this._specification , other));
-		},
+		}
 
-		build: function() {
+		build() {
 			return this._specification;
-		},
+		}
 
-		toString: function() {
+		toString() {
 			return '[SpecificationBuilder]';
 		}
-	});
 
-	SpecificationBuilder.startWith = function(specification) {
-		return new SpecificationBuilder(specification);
-	};
+		static startWith(specification) {
+			return new SpecificationBuilder(specification);
+		}
+	}
 
 	return SpecificationBuilder;
-}();
+})();

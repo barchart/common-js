@@ -1,11 +1,11 @@
 var assert = require('./../lang/assert');
 var CommandHandler = require('./CommandHandler');
 
-module.exports = function() {
+module.exports = (() => {
 	'use strict';
 
-	var CompositeCommandHandler = CommandHandler.extend({
-		init: function(commandHandlerA, commandHandlerB) {
+	class CompositeCommandHandler {
+		constructor(commandHandlerA, commandHandlerB) {
 			assert.argumentIsRequired(commandHandlerA, 'commandHandlerA', CommandHandler, 'CommandHandler');
 			assert.argumentIsRequired(commandHandlerB, 'commandHandlerB', CommandHandler, 'CommandHandler');
 			assert.areNotEqual(commandHandlerA, commandHandlerB, 'commandHandlerA', 'commandHandlerB');
@@ -14,16 +14,16 @@ module.exports = function() {
 
 			this._commandHandlerA = commandHandlerA;
 			this._commandHandlerB = commandHandlerB;
-		},
+		}
 
-		_process: function(data) {
+		_process(data) {
 			return this._commandHandlerA.process(data) && this._commandHandlerB.process(data);
-		},
+		}
 
-		toString: function() {
+		toString() {
 			return '[CompositeCommandHandler]';
 		}
-	});
+	}
 
 	return CompositeCommandHandler;
-}();
+})();

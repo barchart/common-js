@@ -1,12 +1,12 @@
-var _ = require('lodash');
-
 var assert = require('./../lang/assert');
 var Disposable = require('./../lang/Disposable');
 var Event = require('./../messaging/Event');
 
-module.exports = function() {
-	var Model = Disposable.extend({
-		init: function(propertyNames, propertyObservers, equalityPredicates) {
+module.exports = (() => {
+	class Model extends Disposable {
+		constructor(propertyNames, propertyObservers, equalityPredicates) {
+			super();
+
 			this._propertyNames = propertyNames;
 
 			this._transactionCommit = new Event(this);
@@ -19,25 +19,25 @@ module.exports = function() {
 
 			this._sequence = 0;
 
-			var observers = propertyObservers || { };
-			var predicates = equalityPredicates || { };
+			const observers = propertyObservers || { };
+			const predicates = equalityPredicates || { };
 
-			for (var i = 0; i < this._propertyNames.length; i++) {
+			for (let i = 0; i < this._propertyNames.length; i++) {
 				var propertyName = propertyNames[i];
 
 				createProperty.call(this, propertyName, observers[propertyName] || emptyFunction, predicates[propertyName] || checkEquals);
 			}
-		},
+		}
 
-		beginTransaction: function() {
+		beginTransaction() {
 			if (this._transactionOpen) {
 				return;
 			}
 
 			this._transactionOpen = true;
-		},
+		}
 
-		endTransaction: function() {
+		endTransaction() {
 			if (!this._transactionOpen) {
 				return;
 			}
@@ -65,37 +65,37 @@ module.exports = function() {
 
 				this._transactionData = null;
 			}
-		},
+		}
 
-		_formatTransactionData: function(transactionData) {
+		_formatTransactionData(transactionData) {
 			return;
-		},
+		}
 
-		executeTransaction: function(processor) {
+		executeTransaction(processor) {
 			assert.argumentIsRequired(processor, 'processor', Function);
 
 			this.beginTransaction();
 			processor(this);
 			this.endTransaction();
-		},
+		}
 
-		onTransactionCommitted: function(observer) {
+		onTransactionCommitted(observer) {
 			if (this.getIsDisposed()) {
 				return;
 			}
 
 			return this._transactionCommit.register(observer);
-		},
+		}
 
-		startTracker: function() {
+		startTracker() {
 			if (this._trackerOpen) {
 				return;
 			}
 
 			this._trackerOpen = true;
-		},
+		}
 
-		resetTracker: function() {
+		resetTracker() {
 			if (!this._trackerOpen) {
 				return null;
 			}
@@ -109,9 +109,9 @@ module.exports = function() {
 			this._trackerData = null;
 
 			return returnRef;
-		},
+		}
 
-		stopTracking: function() {
+		stopTracking() {
 			if (!this._trackerOpen) {
 				return;
 			}
@@ -122,12 +122,12 @@ module.exports = function() {
 
 			this._trackerOpen = false;
 			this._trackerData = null;
-		},
+		}
 
-		getSnapshot: function() {
-			var snapshot = {};
+		getSnapshot() {
+			const snapshot = {};
 
-			for (var i = 0; i < this._propertyNames.length; i++) {
+			for (let i = 0; i < this._propertyNames.length; i++) {
 				var propertyName = this._propertyNames[i];
 
 				snapshot[propertyName] = this[propertyName];
@@ -136,17 +136,17 @@ module.exports = function() {
 			snapshot.sequence = this._sequence;
 
 			return snapshot;
-		},
+		}
 
-		_onDispose: function() {
+		_onDispose() {
 			this._transactionCommit.dispose();
 			this._transactionCommit = null;
-		},
+		}
 
-		toString: function() {
+		toString() {
 			return '[Model]';
 		}
-	});
+	}
 
 	function emptyFunction() {
 		return;
@@ -157,12 +157,10 @@ module.exports = function() {
 	}
 
 	function createProperty(propertyName, propertyObserver, equalityPredicate) {
-		var that = this;
+		let propertyValue;
 
-		var propertyValue;
-
-		Object.defineProperty(that, propertyName, {
-			get: function() {
+		Object.defineProperty(this, propertyName, {
+			get: () => {
 				return propertyValue;
 			},
 			set: function(value) {
@@ -172,23 +170,23 @@ module.exports = function() {
 
 				propertyValue = value;
 
-				var implicit = !this._transactionOpen;
+				const implicit = !this._transactionOpen;
 
 				if (implicit) {
-					that.beginTransaction();
+					this.beginTransaction();
 				}
 
-				that._transactionData = that._transactionData || {};
-				that._transactionData[propertyName] = propertyValue;
+				this._transactionData = this._transactionData || {};
+				this._transactionData[propertyName] = propertyValue;
 
 				propertyObserver();
 
 				if (implicit) {
-					that.endTransaction();
+					this.endTransaction();
 				}
 			}
 		});
 	}
 
 	return Model;
-}();
+})();

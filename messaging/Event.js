@@ -1,59 +1,70 @@
-var _ = require('lodash');
-
-var assert = require('./../lang/assert');
 var Disposable = require('./../lang/Disposable');
 
-module.exports = function() {
+module.exports = (() => {
 	'use strict';
 
-	var Event = Disposable.extend({
-		init: function(sender) {
+	class Event extends Disposable {
+		constructor(sender) {
+			super();
+
 			this._sender = sender || null;
 
 			this._observers = [];
-		},
+		}
 
-		register: function(handler) {
-			assert.argumentIsRequired(handler, 'handler', Function);
-
-			if (this.getIsDisposed()) {
-				throw new Error('The event has been disposed.');
+		register(handler) {
+			if (typeof handler !== 'function') {
+				throw new Error('Event handler must be a function.');
 			}
 
-			var that = this;
-
-			addRegistration.call(that, handler);
+			addRegistration.call(this, handler);
 
 			return Disposable.fromAction(function() {
-				if (that._disposed) {
+				if (this._disposed) {
 					return;
 				}
 
-				removeRegistration.call(that, handler);
+				removeRegistration.call(this, handler);
 			});
-		},
+		}
 
-		fire: function(data) {
-			if (this.getIsDisposed()) {
-				throw new Error('The event has been disposed.');
+		unregister(handler) {
+			if (typeof handler !== 'function') {
+				throw new Error('Event handler must be a function.');
 			}
 
-			var observers = this._observers;
+			removeRegistration.call(this, handler);
+		}
 
-			for (var i = 0; i < observers.length; i++) {
-				var observer = observers[i];
+		clear() {
+			this._observers = [];
+		}
+
+		fire(data) {
+			let observers = this._observers;
+
+			for (let i = 0; i < observers.length; i++) {
+				let observer = observers[i];
 
 				observer(data, this._sender);
 			}
-		},
+		}
 
-		_onDispose: function() {
+		getIsEmpty() {
+			return this._observers.length === 0;
+		}
+
+		_onDispose() {
 			this._observers = null;
 		}
-	});
+
+		toString() {
+			return '[Event]';
+		}
+	}
 
 	function addRegistration(handler) {
-		var copiedObservers = this._observers.slice();
+		let copiedObservers = this._observers.slice();
 
 		copiedObservers.push(handler);
 
@@ -61,20 +72,26 @@ module.exports = function() {
 	}
 
 	function removeRegistration(handler) {
-		for (var i = 0; i < this._observers.length; i++) {
-			var candidate = this._observers[i];
+		const indiciesToRemove = [];
+
+		for (let i = 0; i < this._observers.length; i++) {
+			let candidate = this._observers[i];
 
 			if (candidate === handler) {
-				var copiedObservers = this._observers.slice();
-
-				copiedObservers.splice(i, 1);
-
-				this._observers = copiedObservers;
-
-				break;
+				indiciesToRemove.push(i);
 			}
+		}
+
+		if (indiciesToRemove.length > 0) {
+			const copiedObservers = this._observers.slice();
+
+			for (let j = indiciesToRemove.length - 1; !(j < 0); j--) {
+				copiedObservers.splice(indiciesToRemove[j], 1);
+			}
+
+			this._observers = copiedObservers;
 		}
 	}
 
 	return Event;
-}();
+})();

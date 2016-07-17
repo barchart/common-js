@@ -1,11 +1,13 @@
 var gulp = require('gulp');
 
+var babelify = require('babelify');
 var browserify = require('browserify');
 var buffer = require('vinyl-buffer');
 var bump = require('gulp-bump');
 var git = require('gulp-git');
 var gitModified = require('gulp-gitmodified');
 var glob = require('glob');
+var helpers = require('babelify-external-helpers');
 var jasmine = require('gulp-jasmine');
 var jshint = require('gulp-jshint');
 var rename = require('gulp-rename');
@@ -64,7 +66,9 @@ gulp.task('create-tag', function (cb) {
 });
 
 gulp.task('build-browser', function() {
-    return browserify('./index.js', { standalone: 'Barchart.Common' }).bundle()
+    return browserify('./index.js', { standalone: 'Barchart.Common' })
+        .transform('babelify', {presets: ['es2015']})
+        .bundle()
         .pipe(source('barchart-common-' + getVersionForComponent() + '.js'))
         .pipe(buffer())
         .pipe(gulp.dest('./dist'))
@@ -74,7 +78,9 @@ gulp.task('build-browser', function() {
 });
 
 gulp.task('build-browser-tests', function () {
-    return browserify({ entries: glob.sync('test/specs/**/*.js') }).bundle()
+    return browserify({ entries: glob.sync('test/specs/**/*.js') })
+        .transform('babelify', {presets: ['es2015']})
+        .bundle()
         .pipe(source('barchart-common-tests-' + getVersionForComponent() + '.js'))
         .pipe(buffer())
         .pipe(gulp.dest('test/dist'));
@@ -134,7 +140,7 @@ gulp.task('release', function (callback) {
 
 gulp.task('lint', function() {
     return gulp.src([ './**/*.js', './test/specs/**/*.js', '!./node_modules/**', '!./dist/**', '!./test/dist/**' ])
-        .pipe(jshint())
+        .pipe(jshint({'esversion': 6}))
         .pipe(jshint.reporter('default'));
 });
 

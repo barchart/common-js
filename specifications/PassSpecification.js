@@ -1,19 +1,19 @@
 var Specification = require('./Specification');
 
-module.exports = function() {
-	var PassSpecification = Specification.extend({
-		init: function(value) {
-			this._super();
-		},
+module.exports = (() => {
+	class PassSpecification extends Specification {
+		constructor(value) {
+			super();
+		}
 
-		_evaluate: function(data) {
+		_evaluate(data) {
 			return true;
-		},
+		}
 
-		toString: function() {
+		toString() {
 			return '[PassSpecification]';
 		}
-	});
+	}
 
 	return PassSpecification;
-}();
+})();

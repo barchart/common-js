@@ -1,23 +1,21 @@
-var Class = require('class.extend');
+module.exports = (() => {
+	class Specification {
+		constructor() {
 
-module.exports = function() {
-	var Specification = Class.extend({
-		init: function() {
+		}
 
-		},
-
-		evaluate: function(data) {
+		evaluate(data) {
 			return this._evaluate(data);
-		},
+		}
 
-		_evaluate: function(data) {
+		_evaluate(data) {
 			return false;
-		},
+		}
 
-		toString: function() {
+		toString() {
 			return '[Specification]';
 		}
-	});
+	}
 
 	return Specification;
-}();
+})();

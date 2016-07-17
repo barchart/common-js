@@ -2,7 +2,7 @@ var CommandHandler = require('./CommandHandler');
 var CompositeCommandHandler = require('./CompositeCommandHandler');
 var MappedCommandHandler = require('./MappedCommandHandler');
 
-module.exports = function() {
+module.exports = (() => {
 	'use strict';
 
 	return {
@@ -10,4 +10,4 @@ module.exports = function() {
 		CompositeCommandHandler: CompositeCommandHandler,
 		MappedCommandHandler: MappedCommandHandler
 	};
-}();
+})();

@@ -3,7 +3,7 @@ var attributes = require('./attributes');
 var converters = require('./converters');
 var Disposable = require('./Disposable');
 
-module.exports = function() {
+module.exports = (() => {
 	'use strict';
 
 	return {
@@ -12,4 +12,4 @@ module.exports = function() {
 		converters: converters,
 		Disposable: Disposable
 	};
-}();
+})();
