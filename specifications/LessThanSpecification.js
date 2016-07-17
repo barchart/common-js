@@ -3,6 +3,8 @@ var assert = require('./../lang/assert');
 var Specification = require('./Specification');
 
 module.exports = (() => {
+	'use strict';
+
 	class LessThanSpecification extends Specification {
 		constructor(value) {
 			super();

@@ -27,7 +27,7 @@ describe('When a Scheduler is constructed', function() {
 				.then(function() {
 					expect(spy.calls.count()).toEqual(1);
 				})
-				.finally(function() {
+				.then(function() {
 					done();
 				});
 		});

@@ -1,4 +1,6 @@
 module.exports = (() => {
+	'use strict';
+
 	class Specification {
 		constructor() {
 

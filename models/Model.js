@@ -3,6 +3,8 @@ var Disposable = require('./../lang/Disposable');
 var Event = require('./../messaging/Event');
 
 module.exports = (() => {
+	'use strict';
+
 	class Model extends Disposable {
 		constructor(propertyNames, propertyObservers) {
 			super();

@@ -6,7 +6,12 @@ module.exports = (() => {
 	const attributes = {
 		has: (target, propertyNames) => {
 			assert.argumentIsRequired(target, 'target', Object);
-			assert.argumentIsRequired(propertyNames, 'propertyNames', String);
+
+			if (Array.isArray(propertyNames)) {
+				assert.argumentIsArray(propertyNames, 'propertyNames', String);
+			} else {
+				assert.argumentIsRequired(propertyNames, 'propertyNames', String);
+			}
 
 			const propertyNameArray = getPropertyNameArray(propertyNames);
 			const propertyTarget = getPropertyTarget(target, propertyNameArray, false);
@@ -16,7 +21,12 @@ module.exports = (() => {
 
 		read: (target, propertyNames) => {
 			assert.argumentIsRequired(target, 'target', Object);
-			assert.argumentIsRequired(propertyNames, 'propertyNames', String);
+
+			if (Array.isArray(propertyNames)) {
+				assert.argumentIsArray(propertyNames, 'propertyNames', String);
+			} else {
+				assert.argumentIsRequired(propertyNames, 'propertyNames', String);
+			}
 
 			const propertyNameArray = getPropertyNameArray(propertyNames);
 			const propertyTarget = getPropertyTarget(target, propertyNameArray, false);
@@ -36,7 +46,12 @@ module.exports = (() => {
 
 		write: (target, propertyNames, value) => {
 			assert.argumentIsRequired(target, 'target', Object);
-			assert.argumentIsRequired(propertyNames, 'propertyNames', String);
+
+			if (Array.isArray(propertyNames)) {
+				assert.argumentIsArray(propertyNames, 'propertyNames', String);
+			} else {
+				assert.argumentIsRequired(propertyNames, 'propertyNames', String);
+			}
 
 			const propertyNameArray = getPropertyNameArray(propertyNames);
 			const propertyTarget = getPropertyTarget(target, propertyNameArray, true);
@@ -44,11 +59,32 @@ module.exports = (() => {
 			const propertyName = last(propertyNameArray);
 
 			propertyTarget[propertyName] = value;
+		},
+
+		erase: (target, propertyNames) => {
+			if (!attributes.has(target, propertyNames)) {
+				return;
+			}
+
+			const propertyNameArray = getPropertyNameArray(propertyNames);
+			const propertyTarget = getPropertyTarget(target, propertyNameArray, true);
+
+			const propertyName = last(propertyNameArray);
+
+			delete propertyTarget[propertyName];
 		}
 	};
 
 	function getPropertyNameArray(propertyNames) {
-		return propertyNames.split('.');
+		var returnRef;
+
+		if (Array.isArray(propertyNames)) {
+			returnRef = propertyNames;
+		} else {
+			returnRef = propertyNames.split('.');
+		}
+
+		return returnRef;
 	}
 
 	function getPropertyTarget(target, propertyNameArray, create) {

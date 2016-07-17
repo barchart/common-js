@@ -3,6 +3,8 @@ var assert = require('./../lang/assert');
 var Specification = require('./Specification');
 
 module.exports = (() => {
+	'use strict';
+
 	class OrSpecification extends Specification {
 		constructor(specificationOne, specificationTwo) {
 			assert.argumentIsRequired(specificationOne, 'specificationOne', Specification, 'Specification');
