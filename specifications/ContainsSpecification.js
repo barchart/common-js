@@ -1,6 +1,8 @@
 var Specification = require('./Specification');
 
 module.exports = (() => {
+	'use strict';
+
 	class ContainsSpecification extends Specification{
 		constructor(value) {
 			super();
@@ -9,7 +11,7 @@ module.exports = (() => {
 		}
 
 		_evaluate(data) {
-			return Array.isArray(data) && data.includes(this._value);
+			return Array.isArray(data) && data.some((candidate) => candidate === this._value);
 		}
 
 		toString() {

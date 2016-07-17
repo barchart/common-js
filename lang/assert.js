@@ -2,11 +2,11 @@ module.exports = (() => {
 	'use strict';
 
 	const assert = {
-		argumentIsRequired: function(variable, variableName, type, typeDescription) {
+		argumentIsRequired: (variable, variableName, type, typeDescription) => {
 			checkArgumentType(variable, variableName, type, typeDescription);
 		},
 
-		argumentIsOptional: function(variable, variableName, type, typeDescription) {
+		argumentIsOptional: (variable, variableName, type, typeDescription) => {
 			if (variable === null || variable === undefined) {
 				return;
 			}
@@ -14,20 +14,34 @@ module.exports = (() => {
 			checkArgumentType(variable, variableName, type, typeDescription);
 		},
 
-		argumentIsArray: function(variable, variableName, itemConstraint, itemConstraintDescription) {
+		argumentIsArray: (variable, variableName, itemConstraint, itemConstraintDescription) => {
 			assert.argumentIsRequired(variable, variableName, Array);
 
-			let itemValidator;
+			if (itemConstraint) {
+				let itemValidator;
 
-			if (typeof(itemConstraint) === 'function') {
-				itemValidator = (value, index) => itemConstraint(value, `${variableName}[${index}]`);
-			} else {
-				itemValidator = (value, index) => checkArgumentType(value, variableName, itemConstraint, itemConstraintDescription, index);
+				if (typeof(itemConstraint) === 'function') {
+					itemValidator = (value, index) => itemConstraint(value, `${variableName}[${index}]`);
+				} else {
+					itemValidator = (value, index) => checkArgumentType(value, variableName, itemConstraint, itemConstraintDescription, index);
+				}
+
+				variable.forEach((v, i) => {
+					itemValidator(v, i);
+				});
 			}
+		},
 
-			variable.forEach((v, i) => {
-				itemValidator(v, i);
-			});
+		areEqual: (a, b, descriptionA, descriptionB) => {
+			if (a !== b) {
+				throw new Error('The objects must be equal ([' + (descriptionA || a.toString()) + ' and ' + (descriptionB || b.toString()));
+			}
+		},
+
+		areNotEqual: (a, b, descriptionA, descriptionB) => {
+			if (a === b) {
+				throw new Error('The objects cannot be equal ([' + (descriptionA || a.toString()) + ' and ' + (descriptionB || b.toString()));
+			}
 		}
 	};
 

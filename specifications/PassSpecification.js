@@ -1,6 +1,8 @@
 var Specification = require('./Specification');
 
 module.exports = (() => {
+	'use strict';
+
 	class PassSpecification extends Specification {
 		constructor(value) {
 			super();

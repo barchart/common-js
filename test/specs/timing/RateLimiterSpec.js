@@ -66,7 +66,7 @@ describe('When a RateLimiter is constructed (1 execution per 25 milliseconds)', 
 			}
 
 			promise
-				.finally(function() {
+				.then(function() {
 					done();
 				});
 		});
@@ -98,7 +98,7 @@ describe('When a RateLimiter is constructed (1 execution per 25 milliseconds)', 
 			}
 
 			promise
-				.finally(function() {
+				.then(function() {
 					done();
 				});
 		});
@@ -151,14 +151,14 @@ describe('When a RateLimiter is constructed (1 execution per 25 milliseconds)', 
 				if (promise === null) {
 					promise = p;
 				} else {
-					promise = promise.finally(function() {
+					promise = promise.then(function() {
 						return p;
 					});
 				}
 			}
 
 			promise
-				.finally(function() {
+				.then(function() {
 					done();
 				});
 		});
@@ -226,7 +226,7 @@ describe('When a RateLimiter is constructed (2 execution per 25 milliseconds)', 
 			}
 
 			promise
-				.finally(function() {
+				.then(function() {
 					done();
 				});
 		});

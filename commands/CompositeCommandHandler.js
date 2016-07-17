@@ -4,13 +4,13 @@ var CommandHandler = require('./CommandHandler');
 module.exports = (() => {
 	'use strict';
 
-	class CompositeCommandHandler {
+	class CompositeCommandHandler extends CommandHandler {
 		constructor(commandHandlerA, commandHandlerB) {
+			super();
+
 			assert.argumentIsRequired(commandHandlerA, 'commandHandlerA', CommandHandler, 'CommandHandler');
 			assert.argumentIsRequired(commandHandlerB, 'commandHandlerB', CommandHandler, 'CommandHandler');
 			assert.areNotEqual(commandHandlerA, commandHandlerB, 'commandHandlerA', 'commandHandlerB');
-
-			this._super();
 
 			this._commandHandlerA = commandHandlerA;
 			this._commandHandlerB = commandHandlerB;
