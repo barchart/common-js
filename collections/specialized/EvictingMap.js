@@ -1,4 +1,3 @@
-var Class = require('class.extend');
 var assert = require('./../../lang/assert');
 
 module.exports = (() => {
