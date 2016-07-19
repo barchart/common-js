@@ -14,6 +14,9 @@ module.exports = function() {
 			this._transactionOpen = false;
 			this._transactionData = null;
 
+			this._trackerOpen = false;
+			this._trackerData = null;
+
 			this._sequence = 0;
 
 			var observers = propertyObservers || { };
@@ -49,6 +52,14 @@ module.exports = function() {
 
 				this._transactionData.sequence = this._sequence++;
 
+				if (this._trackerOpen) {
+					this._trackerData = this._trackerData || { };
+
+					for (var propertyName in this._transactionData) {
+						this._trackerData[propertyName] = this._transactionData[propertyName];
+					}
+				}
+
 				this._transactionCommit.fire(this._transactionData);
 
 				this._transactionData = null;
@@ -73,6 +84,43 @@ module.exports = function() {
 			}
 
 			return this._transactionCommit.register(observer);
+		},
+
+		startTracker: function() {
+			if (this._trackerOpen) {
+				return;
+			}
+
+			this._trackerOpen = true;
+		},
+
+		resetTracker: function() {
+			if (!this._trackerOpen) {
+				return null;
+			}
+
+			if (this.getIsDisposed()) {
+				return null;
+			}
+
+			var returnRef = this._trackerData;
+
+			this._trackerData = null;
+
+			return returnRef;
+		},
+
+		stopTracking: function() {
+			if (!this._trackerOpen) {
+				return;
+			}
+
+			if (this.getIsDisposed()) {
+				return;
+			}
+
+			this._trackerOpen = false;
+			this._trackerData = null;
 		},
 
 		getSnapshot: function() {
