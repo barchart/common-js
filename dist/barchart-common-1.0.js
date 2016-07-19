@@ -89,12 +89,14 @@ module.exports = function() {
 },{"class.extend":23}],3:[function(require,module,exports){
 var Class = require('class.extend');
 
+var assert = require('./../lang/assert');
+
 module.exports = function() {
 	'use strict';
 
 	var Tree = Class.extend({
-		init: function(item, parent) {
-			this._item = item;
+		init: function(value, parent) {
+			this._value = value;
 
 			this._parent = parent || null;
 			this._children = [ ];
@@ -108,44 +110,111 @@ module.exports = function() {
 			return this._children;
 		},
 
-		add: function(item) {
-			this._children.push(new Tree(this, item));
+		getValue: function() {
+			return this._value;
 		},
 
-		remove: function(item) {
+		getIsLeaf: function() {
+			return this._children.length === 0;
+		},
+
+		getIsRoot: function() {
+			return this._parent === null;
+		},
+
+		addChild: function(value) {
+			var returnRef = new Tree(this, value);
+
+			this._children.push(returnRef);
+
+			return returnRef;
+		},
+
+		removeChild: function(node) {
+			var returnRef = null;
+
 			for (var i = this._children.length - 1; !(i < 0); i--) {
 				var child = this._children[i];
 
-				if (child.getItem() === item) {
+				if (child === node) {
 					this._children.splice(i, 1);
 
 					child._parent = null;
+					child._children = [ ];
+
+					break;
 				}
 			}
 		},
 
-		find: function(predicate, childrenFirst) {
+		findChild: function(predicate) {
 			var returnRef = null;
 
-			if (!chilrenFirst && predicate(this.getItem())) {
-				returnRef = this;
-			}
+			for (var i = 0; i < this._children.length; i++) {
+				var child = this._children[i];
 
-			if (returnRef === null) {
-				for (var i = 0; i < that._children.length; i++) {
-					returnRef = that._children[i].find(predicate, childrenFirst);
+				if (predicate(child.getValue(), child)) {
+					returnRef = child;
 
-					if (returnRef !== null) {
-						break;
-					}
-				}
-
-				if (childrenFirst && returnRef === null && predicate(this.getItem())) {
-					returnRef = this;
+					break;
 				}
 			}
 
 			return returnRef;
+		},
+
+		search: function(predicate, childrenFirst, includeCurrentNode) {
+			var returnRef = null;
+
+			if (returnRef === null && childrenFirst && includeCurrentNode && predicate(this.getValue(), this)) {
+				returnRef = this;
+			}
+
+			for (var i = 0; i < this._children.length; i++) {
+				var child = this._children[i];
+
+				if (returnRef === null && childrenFirst) {
+					returnRef = this.search(predicate, true, false);
+				}
+
+				if (returnRef === null && predicate(child.getValue(), child)) {
+					returnRef = child;
+				}
+
+				if (returnRef === null && !childrenFirst) {
+					returnRef = this.search(predicate, false, false);
+				}
+
+				if (returnRef !== null) {
+					break;
+				}
+			}
+
+			if (returnRef === null && !childrenFirst && includeCurrentNode && predicate(this.getValue(), this)) {
+				returnRef = this;
+			}
+
+			return returnRef;
+		},
+
+		walk: function(walkAction, childrenFirst, includeCurrentNode) {
+			var predicate = function(value, node) {
+				walkAction(value, node);
+
+				return false;
+			};
+
+			this.search(predicate, childrenFirst, includeCurrentNode);
+		},
+
+		climb: function(climbAction, includeCurrentNode) {
+			if (includeCurrentNode)	{
+				climbAction(this.getValue(), this);
+			}
+
+			if (this._parent !== null) {
+				this._parent.climb(climbAction, true);
+			}
 		},
 
 		toString: function() {
@@ -155,7 +224,7 @@ module.exports = function() {
 
 	return Tree;
 }();
-},{"class.extend":23}],4:[function(require,module,exports){
+},{"./../lang/assert":15,"class.extend":23}],4:[function(require,module,exports){
 var Queue = require('./Queue');
 var Stack = require('./Stack');
 var Tree = require('./Tree');
@@ -378,6 +447,14 @@ module.exports = function() {
 			this._array[this._head = getNextIndex(this._head, this._capacity)] = item;
 		},
 
+		peek: function() {
+			if (this.empty()) {
+				throw new Error('EvictingList is empty');
+			}
+
+			return this._array[this._head];
+		},
+
 		empty: function() {
 			return this._head === null;
 		},
@@ -401,7 +478,7 @@ module.exports = function() {
 
 					returnRef.push(item);
 
-					current = getNextIndex(current, this._capacity);
+					current = getPreviousIndex(current, this._capacity);
 				}
 			}
 
@@ -409,20 +486,36 @@ module.exports = function() {
 		},
 
 		toString: function() {
-			return '[Stack]';
+			return '[EvictingList]';
 		}
 	});
 
-	var getNextIndex = function(head, capacity) {
+	var getNextIndex = function(current, capacity) {
 		var returnVal;
 
-		if (head === null) {
+		if (current === null) {
 			returnVal = 0;
 		} else {
-			returnVal = head + 1;
+			returnVal = current + 1;
 
 			if (returnVal === capacity) {
 				returnVal = 0;
+			}
+		}
+
+		return returnVal;
+	};
+
+	var getPreviousIndex = function(current, capacity) {
+		var returnVal;
+
+		if (current === null) {
+			returnVal = 0;
+		} else {
+			returnVal = current - 1;
+
+			if (returnVal < 0) {
+				returnVal = capacity -1;
 			}
 		}
 
@@ -15341,12 +15434,40 @@ var substr = 'ab'.substr(-1) === 'b'
 // shim for using process in browser
 
 var process = module.exports = {};
+
+// cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
+
+var cachedSetTimeout;
+var cachedClearTimeout;
+
+(function () {
+  try {
+    cachedSetTimeout = setTimeout;
+  } catch (e) {
+    cachedSetTimeout = function () {
+      throw new Error('setTimeout is not defined');
+    }
+  }
+  try {
+    cachedClearTimeout = clearTimeout;
+  } catch (e) {
+    cachedClearTimeout = function () {
+      throw new Error('clearTimeout is not defined');
+    }
+  }
+} ())
 var queue = [];
 var draining = false;
 var currentQueue;
 var queueIndex = -1;
 
 function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
     draining = false;
     if (currentQueue.length) {
         queue = currentQueue.concat(queue);
@@ -15362,7 +15483,7 @@ function drainQueue() {
     if (draining) {
         return;
     }
-    var timeout = setTimeout(cleanUpNextTick);
+    var timeout = cachedSetTimeout(cleanUpNextTick);
     draining = true;
 
     var len = queue.length;
@@ -15379,7 +15500,7 @@ function drainQueue() {
     }
     currentQueue = null;
     draining = false;
-    clearTimeout(timeout);
+    cachedClearTimeout(timeout);
 }
 
 process.nextTick = function (fun) {
@@ -15391,7 +15512,7 @@ process.nextTick = function (fun) {
     }
     queue.push(new Item(fun, args));
     if (queue.length === 1 && !draining) {
-        setTimeout(drainQueue, 0);
+        cachedSetTimeout(drainQueue, 0);
     }
 };
 
