@@ -34,7 +34,7 @@ module.exports = function() {
 		},
 
 		addChild: function(value) {
-			var returnRef = new Tree(this, value);
+			var returnRef = new Tree(value, this);
 
 			this._children.push(returnRef);
 
