@@ -27,7 +27,7 @@ module.exports = (() => {
 			assert.argumentIsOptional(port, 'port', Number);
 			assert.argumentIsOptional(secure, 'secure', Boolean);
 
-			const path = this.getPath(data);
+			const path = this.getPath(data, true);
 
 			if (this.getAction().getQueryIsRequired() && path.length === 0) {
 				throw new Error('Unable to generate REST query path.');
@@ -56,7 +56,7 @@ module.exports = (() => {
 			return returnRef;
 		}
 
-		getPath(data) {
+		getPath(data, skipEncoding) {
 			const path = this._pathProperties.map((pathProperty) => {
 				let pathItem;
 
@@ -64,6 +64,10 @@ module.exports = (() => {
 					pathItem = attributes.read(data, pathProperty);
 				} else {
 					pathItem = pathProperty;
+				}
+
+				if (!skipEncoding) {
+					pathItem = encodeURIComponent(pathItem);
 				}
 
 				return pathItem;
