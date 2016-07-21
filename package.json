@@ -51,7 +51,7 @@
     "watchify": "~3.4.0"
   },
   "browser": {
-    "common/lang/connection.js": "common/lang/browser/connection.js"
+    "./common/lang/connection.js": "./common/lang/browser/connection.js"
   },
   "browserify": {
     "transform": [["babelify", { "presets": ["es2015"] }]]
