@@ -53,6 +53,9 @@
   "browser": {
     "common/lang/connection.js": "common/lang/browser/connection.js"
   },
+  "browserify": {
+    "transform": [["babelify", { "presets": ["es2015"] }]]
+  },
   "license": "UNLICENSED",
   "private": true
 }
