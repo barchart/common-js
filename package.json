@@ -50,7 +50,9 @@
     "vinyl-transform": "^1.0.0",
     "watchify": "~3.4.0"
   },
-  "browser": {},
+  "browser": {
+    "common/lang/connection.js": "common/lang/browser/connection.js"
+  },
   "license": "UNLICENSED",
   "private": true
 }
