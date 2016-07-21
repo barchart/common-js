@@ -23,14 +23,14 @@ module.exports = (() => {
 				}
 
 				let action = endpoint.getAction();
-				let path = endpoint.getPath(data, querystring.stringify);
+				let path = endpoint.getPath(data);
 				let payload = endpoint.getPayload(data);
 
 				if (action.getUseQuerystring()) {
 					var qs = querystring.stringify(payload);
 
 					if (qs) {
-						path = path + '?' + qs;
+						path = path + '?' + encodeURIComponent(qs);
 					}
 				}
 

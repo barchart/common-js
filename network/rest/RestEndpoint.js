@@ -50,13 +50,13 @@ module.exports = (() => {
 					url = url + ':' + port;
 				}
 
-				returnRef = url + '/' + path;
+				returnRef = encodeURI(url + '/' + path);
 			}
 
 			return returnRef;
 		}
 
-		getPath(data, encoder) {
+		getPath(data) {
 			const path = this._pathProperties.map((pathProperty) => {
 				let pathItem;
 
@@ -64,10 +64,6 @@ module.exports = (() => {
 					pathItem = attributes.read(data, pathProperty);
 				} else {
 					pathItem = pathProperty;
-				}
-
-				if (typeof encoder === 'function') {
-					pathItem = encoder(pathItem);
 				}
 
 				return pathItem;
