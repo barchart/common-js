@@ -30,7 +30,7 @@ module.exports = (() => {
 					var qs = querystring.stringify(payload);
 
 					if (qs) {
-						path = path + '?' + encodeURIComponent(qs);
+						path = path + '?' + qs;
 					}
 				}
 
