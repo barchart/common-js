@@ -23,7 +23,8 @@
     "JavaScript"
   ],
   "dependencies": {
-    "log4js": "0.6.33"
+    "log4js": "0.6.33",
+    "xhr": "^2.2.0"
   },
   "devDependencies": {
     "babel-plugin-external-helpers-2": "^6.3.13",
@@ -49,9 +50,6 @@
     "vinyl-source-stream": "^1.1.0",
     "vinyl-transform": "^1.0.0",
     "watchify": "~3.4.0"
-  },
-  "browser": {
-    "./common/lang/connection.js": "./common/lang/browser/connection.js"
   },
   "browserify": {
     "transform": [["babelify", { "presets": ["es2015"] }]]

@@ -3,6 +3,8 @@ var assert = require('./../../lang/assert');
 module.exports = (() => {
 	'use strict';
 
+	const empty = { };
+
 	class EvictingList {
 		constructor(capacity) {
 			assert.argumentIsOptional(capacity, 'capacity', Number);
@@ -96,8 +98,6 @@ module.exports = (() => {
 
 		return returnVal;
 	};
-
-	const empty = { };
 
 	return EvictingList;
 })();
