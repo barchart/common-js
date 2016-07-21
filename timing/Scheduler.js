@@ -125,6 +125,21 @@ module.exports = (() => {
             this._intervalBindings = null;
         }
 
+        static schedule(actionToSchedule, millisecondDelay, actionDescription) {
+            const scheduler = new Scheduler();
+
+            scheduler.schedule(actionToSchedule, millisecondDelay, actionDescription)
+                .then((result) => {
+                    scheduler.dispose();
+
+                    return result;
+                }).catch((e) => {
+                    scheduler.dispose();
+
+                    throw e;
+                });
+        }
+
         toString() {
             return '[Scheduler]';
         }
