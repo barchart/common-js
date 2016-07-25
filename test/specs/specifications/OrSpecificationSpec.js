@@ -4,34 +4,29 @@ var OrSpecification = require('./../../../specifications/OrSpecification');
 describe('When an OrSpecification is constructed', function() {
 	'use strict';
 
-	var SpecPass;
-	var SpecFail;
+	class SpecPass extends Specification {
+		constructor() {
+			super();
 
-	beforeEach(function() {
-		SpecPass = Specification.extend({
-			init: function() {
-				this._super();
+			this._spy = jasmine.createSpy('spyPass').and.returnValue(true);
+		}
 
-				this._spy = jasmine.createSpy('spyPass').and.returnValue(true);
-			},
+		_evaluate(data) {
+			return this._spy (data);
+		}
+	}
 
-			_evaluate: function(data) {
-				return this._spy (data);
-			},
-		});
+	class SpecFail extends Specification {
+		constructor() {
+			super();
 
-		SpecFail = Specification.extend({
-			init: function() {
-				this._super();
+			this._spy = jasmine.createSpy('spyPass').and.returnValue(false);
+		}
 
-				this._spy = jasmine.createSpy('spyPass').and.returnValue(false);
-			},
-
-			_evaluate: function(data) {
-				return this._spy (data);
-			},
-		});
-	});
+		_evaluate(data) {
+			return this._spy (data);
+		}
+	}
 
 	describe('with two specifications that will pass', function() {
 		var specification;
