@@ -15,11 +15,11 @@ module.exports = (() => {
 		}
 
 		and(other) {
-			return new SpecificationBuilder(AndSpecification(this._specification , other));
+			return new SpecificationBuilder(new AndSpecification(this._specification , other));
 		}
 
 		or(other) {
-			return new SpecificationBuilder(OrSpecification(this._specification , other));
+			return new SpecificationBuilder(new OrSpecification(this._specification , other));
 		}
 
 		build() {
