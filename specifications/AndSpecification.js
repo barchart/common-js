@@ -15,7 +15,7 @@ module.exports = function() {
 		},
 
 		_evaluate: function(data) {
-			return this._specificationOne(data) && this._specificationTwo(data);
+			return this._specificationOne.evaluate(data) && this._specificationTwo.evaluate(data);
 		},
 
 		toString: function() {
