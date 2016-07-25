@@ -123,7 +123,7 @@ module.exports = function() {
 		},
 
 		addChild: function(value) {
-			var returnRef = new Tree(this, value);
+			var returnRef = new Tree(value, this);
 
 			this._children.push(returnRef);
 
@@ -18490,7 +18490,7 @@ module.exports = function() {
 		},
 
 		_evaluate: function(data) {
-			return this._specificationOne(data) && this._specificationTwo(data);
+			return this._specificationOne.evaluate(data) && this._specificationTwo.evaluate(data);
 		},
 
 		toString: function() {
@@ -18596,7 +18596,7 @@ module.exports = function() {
 		},
 
 		_evaluate: function(data) {
-			return this._specificationOne(data) || this._specificationTwo(data);
+			return this._specificationOne.evaluate(data) || this._specificationTwo.evaluate(data);
 		},
 
 		toString: function() {
@@ -18646,11 +18646,11 @@ module.exports = function() {
 		},
 
 		and: function(other) {
-			return new SpecificationBuilder(AndSpecification(this._specification , other));
+			return new SpecificationBuilder(new AndSpecification(this._specification , other));
 		},
 
 		or: function(other) {
-			return new SpecificationBuilder(OrSpecification(this._specification , other));
+			return new SpecificationBuilder(new OrSpecification(this._specification , other));
 		},
 
 		build: function() {

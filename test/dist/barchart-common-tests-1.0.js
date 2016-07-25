@@ -18588,6 +18588,34 @@ define(function (require) {
 })(typeof define === 'function' && define.amd ? define : function (factory) { module.exports = factory(require); });
 
 },{"./lib/Promise":32,"./lib/TimeoutError":34,"./lib/apply":35,"./lib/decorators/array":36,"./lib/decorators/flow":37,"./lib/decorators/fold":38,"./lib/decorators/inspect":39,"./lib/decorators/iterate":40,"./lib/decorators/progress":41,"./lib/decorators/timed":42,"./lib/decorators/unhandledRejection":43,"./lib/decorators/with":44}],50:[function(require,module,exports){
+var assert = require('./../lang/assert');
+
+var Specification = require('./Specification');
+
+module.exports = function() {
+	var AndSpecification = Specification.extend({
+		init: function(specificationOne, specificationTwo) {
+			assert.argumentIsRequired(specificationOne, 'specificationOne', Specification, 'Specification');
+			assert.argumentIsRequired(specificationTwo, 'specificationTwo', Specification, 'Specification');
+
+			this._super();
+
+			this._specificationOne = specificationOne;
+			this._specificationTwo = specificationTwo;
+		},
+
+		_evaluate: function(data) {
+			return this._specificationOne.evaluate(data) && this._specificationTwo.evaluate(data);
+		},
+
+		toString: function() {
+			return '[AndSpecification]';
+		}
+	});
+
+	return AndSpecification;
+}();
+},{"./../lang/assert":11,"./Specification":56}],51:[function(require,module,exports){
 var _ = require('lodash');
 
 var assert = require('./../lang/assert');
@@ -18615,7 +18643,7 @@ module.exports = function() {
 
 	return ContainedSpecification;
 }();
-},{"./../lang/assert":11,"./Specification":54,"lodash":20}],51:[function(require,module,exports){
+},{"./../lang/assert":11,"./Specification":56,"lodash":20}],52:[function(require,module,exports){
 var _ = require('lodash');
 
 var Specification = require('./Specification');
@@ -18639,7 +18667,7 @@ module.exports = function() {
 
 	return ContainsSpecification;
 }();
-},{"./Specification":54,"lodash":20}],52:[function(require,module,exports){
+},{"./Specification":56,"lodash":20}],53:[function(require,module,exports){
 var Specification = require('./Specification');
 
 module.exports = function() {
@@ -18659,7 +18687,35 @@ module.exports = function() {
 
 	return FailSpecification;
 }();
-},{"./Specification":54}],53:[function(require,module,exports){
+},{"./Specification":56}],54:[function(require,module,exports){
+var assert = require('./../lang/assert');
+
+var Specification = require('./Specification');
+
+module.exports = function() {
+	var OrSpecification = Specification.extend({
+		init: function(specificationOne, specificationTwo) {
+			assert.argumentIsRequired(specificationOne, 'specificationOne', Specification, 'Specification');
+			assert.argumentIsRequired(specificationTwo, 'specificationTwo', Specification, 'Specification');
+
+			this._super();
+
+			this._specificationOne = specificationOne;
+			this._specificationTwo = specificationTwo;
+		},
+
+		_evaluate: function(data) {
+			return this._specificationOne.evaluate(data) || this._specificationTwo.evaluate(data);
+		},
+
+		toString: function() {
+			return '[OrSpecification]';
+		}
+	});
+
+	return OrSpecification;
+}();
+},{"./../lang/assert":11,"./Specification":56}],55:[function(require,module,exports){
 var Specification = require('./Specification');
 
 module.exports = function() {
@@ -18679,7 +18735,7 @@ module.exports = function() {
 
 	return PassSpecification;
 }();
-},{"./Specification":54}],54:[function(require,module,exports){
+},{"./Specification":56}],56:[function(require,module,exports){
 var Class = require('class.extend');
 
 module.exports = function() {
@@ -18703,7 +18759,7 @@ module.exports = function() {
 
 	return Specification;
 }();
-},{"class.extend":17}],55:[function(require,module,exports){
+},{"class.extend":17}],57:[function(require,module,exports){
 var Stack = require('./../../../collections/Stack');
 
 describe('When a Stack is constructed', function() {
@@ -18819,7 +18875,7 @@ describe('When a Stack is constructed', function() {
 		});
 	});
 });
-},{"./../../../collections/Stack":2}],56:[function(require,module,exports){
+},{"./../../../collections/Stack":2}],58:[function(require,module,exports){
 var ComparatorBuilder = require('./../../../../collections/sorting/ComparatorBuilder');
 
 describe('When a ComparatorBuilder is composed with two comparators', function() {
@@ -18901,7 +18957,7 @@ describe('When a ComparatorBuilder is composed with two comparators', function()
         });
     });
 });
-},{"./../../../../collections/sorting/ComparatorBuilder":3}],57:[function(require,module,exports){
+},{"./../../../../collections/sorting/ComparatorBuilder":3}],59:[function(require,module,exports){
 var comparators = require('./../../../../collections/sorting/comparators');
 
 describe('When using the "compareDates" comparator', function() {
@@ -19005,7 +19061,7 @@ describe('When using the "compareStrings" comparator', function() {
 		});
 	});
 });
-},{"./../../../../collections/sorting/comparators":4}],58:[function(require,module,exports){
+},{"./../../../../collections/sorting/comparators":4}],60:[function(require,module,exports){
 var EvictingList = require('./../../../../collections/specialized/EvictingList');
 
 describe('When an EvictingList is constructed (with no capacity)', function() {
@@ -19227,7 +19283,7 @@ describe('When an EvictingList is constructed (with a capacity of 3)', function(
 		});
 	});
 });
-},{"./../../../../collections/specialized/EvictingList":5}],59:[function(require,module,exports){
+},{"./../../../../collections/specialized/EvictingList":5}],61:[function(require,module,exports){
 var EvictingMap = require('./../../../../collections/specialized/EvictingMap');
 
 describe('When an EvictingMap is constructed (with no capacity)', function() {
@@ -19507,7 +19563,7 @@ describe('When an EvictingMap is constructed (with a capacity of 3)', function()
 		});
 	});
 });
-},{"./../../../../collections/specialized/EvictingMap":6}],60:[function(require,module,exports){
+},{"./../../../../collections/specialized/EvictingMap":6}],62:[function(require,module,exports){
 var CommandHandler = require('./../../../commands/CommandHandler');
 
 describe('When a CommandHandler is created from a function', function() {
@@ -19571,7 +19627,7 @@ describe('When a CommandHandler is created from a function', function() {
 		});
 	});
 });
-},{"./../../../commands/CommandHandler":7}],61:[function(require,module,exports){
+},{"./../../../commands/CommandHandler":7}],63:[function(require,module,exports){
 var CommandHandler = require('./../../../commands/CommandHandler');
 var CompositeCommandHandler = require('./../../../commands/CompositeCommandHandler');
 
@@ -19634,7 +19690,7 @@ describe('When a CompositeCommandHandler is created', function() {
 		});
 	});
 });
-},{"./../../../commands/CommandHandler":7,"./../../../commands/CompositeCommandHandler":8}],62:[function(require,module,exports){
+},{"./../../../commands/CommandHandler":7,"./../../../commands/CompositeCommandHandler":8}],64:[function(require,module,exports){
 var CommandHandler = require('./../../../commands/CommandHandler');
 var MappedCommandHandler = require('./../../../commands/MappedCommandHandler');
 
@@ -19713,7 +19769,7 @@ describe('When a MappedCommandHandler is created with two mapped commands', func
 		});
 	});
 });
-},{"./../../../commands/CommandHandler":7,"./../../../commands/MappedCommandHandler":9}],63:[function(require,module,exports){
+},{"./../../../commands/CommandHandler":7,"./../../../commands/MappedCommandHandler":9}],65:[function(require,module,exports){
 var Disposable = require('./../../../lang/Disposable');
 
 describe('When a Disposable is extended', function() {
@@ -19826,7 +19882,7 @@ describe('When a Disposable.fromAction creates a Disposable', function() {
 		});
 	});
 });
-},{"./../../../lang/Disposable":10}],64:[function(require,module,exports){
+},{"./../../../lang/Disposable":10}],66:[function(require,module,exports){
 var attributes = require('./../../../lang/attributes');
 
 describe('When "attributes.has" is used to check a top-level property', function() {
@@ -20434,7 +20490,7 @@ describe('When "attributes.erase" is used to remove a second-level property (usi
 		});
 	});
 });
-},{"./../../../lang/attributes":12}],65:[function(require,module,exports){
+},{"./../../../lang/attributes":12}],67:[function(require,module,exports){
 var Disposable = require('./../../../lang/Disposable');
 var Event = require('./../../../messaging/Event');
 
@@ -20615,7 +20671,7 @@ describe('When an Event is constructed', function() {
 		});
 	});
 });
-},{"./../../../lang/Disposable":10,"./../../../messaging/Event":13}],66:[function(require,module,exports){
+},{"./../../../lang/Disposable":10,"./../../../messaging/Event":13}],68:[function(require,module,exports){
 var Disposable = require('./../../../lang/Disposable');
 var Model = require('./../../../models/Model');
 
@@ -20697,7 +20753,99 @@ describe('When an Model is constructed with "firstName" and "lastName" propertie
 		});
 	});
 });
-},{"./../../../lang/Disposable":10,"./../../../models/Model":14}],67:[function(require,module,exports){
+},{"./../../../lang/Disposable":10,"./../../../models/Model":14}],69:[function(require,module,exports){
+var Specification = require('./../../../specifications/Specification');
+var AndSpecification = require('./../../../specifications/AndSpecification');
+
+describe('When an AndSpecification is constructed', function() {
+	'use strict';
+
+	var SpecPass;
+	var SpecFail;
+
+	beforeEach(function() {
+		SpecPass = Specification.extend({
+			init: function() {
+				this._super();
+
+				this._spy = jasmine.createSpy('spyPass').and.returnValue(true);
+			},
+
+			_evaluate: function(data) {
+				return this._spy (data);
+			},
+		});
+
+		SpecFail = Specification.extend({
+			init: function() {
+				this._super();
+
+				this._spy = jasmine.createSpy('spyPass').and.returnValue(false);
+			},
+
+			_evaluate: function(data) {
+				return this._spy (data);
+			},
+		});
+	});
+
+	describe('with two specifications that will pass', function() {
+		var specification;
+
+		var specPassOne;
+		var specPassTwo;
+
+		var data;
+		var result;
+
+		beforeEach(function() {
+			specification = new AndSpecification(specPassOne = new SpecPass(), specPassTwo = new SpecPass());
+
+			result = specification.evaluate(data = {});
+		});
+
+		it('should call the first specification', function() {
+			expect(specPassOne._spy).toHaveBeenCalledWith(data);
+		});
+
+		it('should call the second specification', function() {
+			expect(specPassTwo._spy).toHaveBeenCalledWith(data);
+		});
+
+		it('should evaluate to true', function() {
+			expect(result).toEqual(true);
+		});
+	});
+
+	describe('where the first specifications will fail', function() {
+		var specification;
+
+		var specPassOne;
+		var specPassTwo;
+
+		var data;
+		var result;
+
+		beforeEach(function() {
+			specification = new AndSpecification(specPassOne = new SpecFail(), specPassTwo = new SpecPass());
+
+			result = specification.evaluate(data = {});
+		});
+
+		it('should call the first specification', function() {
+			expect(specPassOne._spy).toHaveBeenCalledWith(data);
+		});
+
+		it('should not call the second specification', function() {
+			expect(specPassTwo._spy).not.toHaveBeenCalledWith(data);
+		});
+
+		it('should evaluate to false', function() {
+			expect(result).toEqual(false);
+		});
+	});
+});
+},{"./../../../specifications/AndSpecification":50,"./../../../specifications/Specification":56}],70:[function(require,module,exports){
 var ContainedSpecification = require('./../../../specifications/ContainedSpecification');
 
 describe('When a ContainedSpecification is constructed', function() {
@@ -20758,7 +20906,7 @@ describe('When a ContainedSpecification is constructed', function() {
 		});
 	});
 });
-},{"./../../../specifications/ContainedSpecification":50}],68:[function(require,module,exports){
+},{"./../../../specifications/ContainedSpecification":51}],71:[function(require,module,exports){
 var ContainsSpecification = require('./../../../specifications/ContainsSpecification');
 
 describe('When a ContainsSpecification is constructed', function() {
@@ -20807,7 +20955,7 @@ describe('When a ContainsSpecification is constructed', function() {
 		});
 	});
 });
-},{"./../../../specifications/ContainsSpecification":51}],69:[function(require,module,exports){
+},{"./../../../specifications/ContainsSpecification":52}],72:[function(require,module,exports){
 var FailSpecification = require('./../../../specifications/FailSpecification');
 
 describe('When a FailSpecification is constructed', function() {
@@ -20856,7 +21004,99 @@ describe('When a FailSpecification is constructed', function() {
 		});
 	});
 });
-},{"./../../../specifications/FailSpecification":52}],70:[function(require,module,exports){
+},{"./../../../specifications/FailSpecification":53}],73:[function(require,module,exports){
+var Specification = require('./../../../specifications/Specification');
+var OrSpecification = require('./../../../specifications/OrSpecification');
+
+describe('When an OrSpecification is constructed', function() {
+	'use strict';
+
+	var SpecPass;
+	var SpecFail;
+
+	beforeEach(function() {
+		SpecPass = Specification.extend({
+			init: function() {
+				this._super();
+
+				this._spy = jasmine.createSpy('spyPass').and.returnValue(true);
+			},
+
+			_evaluate: function(data) {
+				return this._spy (data);
+			},
+		});
+
+		SpecFail = Specification.extend({
+			init: function() {
+				this._super();
+
+				this._spy = jasmine.createSpy('spyPass').and.returnValue(false);
+			},
+
+			_evaluate: function(data) {
+				return this._spy (data);
+			},
+		});
+	});
+
+	describe('with two specifications that will pass', function() {
+		var specification;
+
+		var specPassOne;
+		var specPassTwo;
+
+		var data;
+		var result;
+
+		beforeEach(function() {
+			specification = new OrSpecification(specPassOne = new SpecPass(), specPassTwo = new SpecPass());
+
+			result = specification.evaluate(data = {});
+		});
+
+		it('should call the first specification', function() {
+			expect(specPassOne._spy).toHaveBeenCalledWith(data);
+		});
+
+		it('should not call the second specification', function() {
+			expect(specPassTwo._spy).not.toHaveBeenCalledWith(data);
+		});
+
+		it('should evaluate to false', function() {
+			expect(result).toEqual(true);
+		});
+	});
+
+	describe('with two specifications that will fail', function() {
+		var specification;
+
+		var specPassOne;
+		var specPassTwo;
+
+		var data;
+		var result;
+
+		beforeEach(function() {
+			specification = new OrSpecification(specPassOne = new SpecFail(), specPassTwo = new SpecFail());
+
+			result = specification.evaluate(data = {});
+		});
+
+		it('should call the first specification', function() {
+			expect(specPassOne._spy).toHaveBeenCalledWith(data);
+		});
+
+		it('should call the second specification', function() {
+			expect(specPassTwo._spy).toHaveBeenCalledWith(data);
+		});
+
+		it('should evaluate to false', function() {
+			expect(result).toEqual(false);
+		});
+	});
+});
+},{"./../../../specifications/OrSpecification":54,"./../../../specifications/Specification":56}],74:[function(require,module,exports){
 var PassSpecification = require('./../../../specifications/PassSpecification');
 
 describe('When a PassSpecification is constructed', function() {
@@ -20905,7 +21145,7 @@ describe('When a PassSpecification is constructed', function() {
 		});
 	});
 });
-},{"./../../../specifications/PassSpecification":53}],71:[function(require,module,exports){
+},{"./../../../specifications/PassSpecification":55}],75:[function(require,module,exports){
 var RateLimiter = require('./../../../timing/RateLimiter');
 
 describe('When a RateLimiter is constructed (1 execution per 25 milliseconds)', function() {
@@ -21140,7 +21380,7 @@ describe('When a RateLimiter is constructed (2 execution per 25 milliseconds)', 
 		});
 	});
 });
-},{"./../../../timing/RateLimiter":73}],72:[function(require,module,exports){
+},{"./../../../timing/RateLimiter":77}],76:[function(require,module,exports){
 var Scheduler = require('./../../../timing/Scheduler');
 
 describe('When a Scheduler is constructed', function() {
@@ -21192,7 +21432,7 @@ describe('When a Scheduler is constructed', function() {
 		});
 	});
 });
-},{"./../../../timing/Scheduler":74}],73:[function(require,module,exports){
+},{"./../../../timing/Scheduler":78}],77:[function(require,module,exports){
 var _ = require('lodash');
 var log4js = require('log4js');
 var when = require('when');
@@ -21303,7 +21543,7 @@ module.exports = function() {
 
 	return RateLimiter;
 }();
-},{"./../collections/Queue":1,"./../lang/Disposable":10,"./../lang/assert":11,"./Scheduler":74,"lodash":20,"log4js":26,"when":49}],74:[function(require,module,exports){
+},{"./../collections/Queue":1,"./../lang/Disposable":10,"./../lang/assert":11,"./Scheduler":78,"lodash":20,"log4js":26,"when":49}],78:[function(require,module,exports){
 var _ = require('lodash');
 var log4js = require('log4js');
 var when = require('when');
@@ -21467,4 +21707,4 @@ module.exports = function() {
 
     return Scheduler;
 }();
-},{"./../lang/Disposable":10,"./../lang/assert":11,"lodash":20,"log4js":26,"when":49}]},{},[56,57,58,59,55,60,61,62,64,63,65,66,67,68,69,70,71,72]);
+},{"./../lang/Disposable":10,"./../lang/assert":11,"lodash":20,"log4js":26,"when":49}]},{},[58,59,60,61,57,62,63,64,66,65,67,68,69,70,71,72,73,74,75,76]);
