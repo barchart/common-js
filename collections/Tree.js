@@ -84,17 +84,7 @@ module.exports = function() {
 			for (var i = 0; i < this._children.length; i++) {
 				var child = this._children[i];
 
-				if (returnRef === null && childrenFirst) {
-					returnRef = this.search(predicate, true, false);
-				}
-
-				if (returnRef === null && predicate(child.getValue(), child)) {
-					returnRef = child;
-				}
-
-				if (returnRef === null && !childrenFirst) {
-					returnRef = this.search(predicate, false, false);
-				}
+				returnRef = child.search(predicate, childrenFirst, true);
 
 				if (returnRef !== null) {
 					break;
