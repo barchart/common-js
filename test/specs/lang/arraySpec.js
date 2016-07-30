@@ -70,5 +70,48 @@ describe('When grouping an array', function() {
 			}
 		});
 	});
-});
 
+	describe('When indexing an array', function() {
+		'use strict';
+
+		describe('and using objects containing the first three prime numbers', function() {
+			var groups;
+
+			var one;
+			var two;
+			var three;
+
+			beforeEach(function() {
+				groups = array.indexBy([ one = { value: 1 }, two = { value: 2 }, three ={ value: 3 } ], function(item) { return item.value; });
+			});
+
+			it('should contain 3 keys', function() {
+				expect(Object.keys(groups).length).toEqual(3);
+			});
+
+			it('should have a key for number one', function() {
+				expect(groups.hasOwnProperty(1)).toEqual(true);
+			});
+
+			it('should have a key for number two', function() {
+				expect(groups.hasOwnProperty(2)).toEqual(true);
+			});
+
+			it('should have a key for number three', function() {
+				expect(groups.hasOwnProperty(3)).toEqual(true);
+			});
+
+			it('should have the first object at key one', function() {
+				expect(groups[1]).toBe(one);
+			});
+
+			it('should have the first object at key one', function() {
+				expect(groups[2]).toBe(two);
+			});
+
+			it('should have the first object at key one', function() {
+				expect(groups[3]).toBe(three);
+			});
+		});
+	});
+});

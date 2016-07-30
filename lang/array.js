@@ -27,6 +27,23 @@ module.exports = (() => {
 
 				return groups;
 			}, { });
+		},
+
+		indexBy(a, keySelector) {
+			assert.argumentIsArray(a, 'a');
+			assert.argumentIsRequired(keySelector, 'keySelector', Function);
+
+			return a.reduce((map, item) => {
+				const key = keySelector(item);
+
+				if (map.hasOwnProperty(key)) {
+					throw new Error('Unable to index array. A duplicate key exists.');
+				}
+
+				map[key] = item;
+
+				return map;
+			}, { });
 		}
 	};
 })();
