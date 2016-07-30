@@ -1,6 +1,6 @@
 {
   "name": "common",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Library of common javascript utilities",
   "author": {
     "name": "Bryan Ingle",
@@ -53,7 +53,16 @@
     "watchify": "~3.4.0"
   },
   "browserify": {
-    "transform": [["babelify", { "presets": ["es2015"] }]]
+    "transform": [
+      [
+        "babelify",
+        {
+          "presets": [
+            "es2015"
+          ]
+        }
+      ]
+    ]
   },
   "license": "UNLICENSED",
   "private": true
