@@ -3,7 +3,11 @@ module.exports = (() => {
 
 	return {
 		number(candidate) {
-			return typeof(candidate) === 'number';
+			return typeof(candidate) === 'number' && !isNaN(candidate);
+		},
+
+		nan(candidate) {
+			return typeof(candidate) === 'number' && isNaN(candidate);
 		},
 
 		string(candidate) {
