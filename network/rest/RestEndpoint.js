@@ -1,5 +1,6 @@
 var assert = require('./../../lang/assert');
 var attributes = require('./../../lang/attributes');
+var is = require('./../../lang/is');
 
 var RestAction = require('./RestAction');
 
@@ -46,7 +47,7 @@ module.exports = (() => {
 
 				url = url + host;
 
-				if (typeof(port) === 'number' && port !== 80) {
+				if (is.number(port) && port !== 80) {
 					url = url + ':' + port;
 				}
 

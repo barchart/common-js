@@ -1,20 +1,21 @@
 var assert = require('./../assert');
+var is = require('./../is');
 
 module.exports = (() => {
 	'use strict';
 
 	const connection = {
-		getIsSecure: (secure) => {
+		getIsSecure(secure) {
 			let returnVal;
 
-			if (typeof (secure) === 'boolean') {
+			if (is.boolean(secure)) {
 				returnVal = secure;
 			} else {
 				let protocol;
 
-				if (window && window.location && typeof(window.location.protocol) === 'string') {
+				if (window && window.location && is.string(window.location.protocol)) {
 					protocol = window.location.protocol;
-				} else if (document && document.location && typeof(document.location.protocol) === 'string') {
+				} else if (document && document.location && is.string(document.location.protocol)) {
 					protocol = document.location.protocol;
 				} else {
 					protocol = '';
