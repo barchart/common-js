@@ -26,6 +26,10 @@ module.exports = (() => {
 			return typeof(candidate) === 'boolean';
 		},
 
+		object(candidate) {
+			return typeof(candidate) === 'object' && candidate !== null;
+		},
+
 		null(candidate) {
 			return candidate === null;
 		},
