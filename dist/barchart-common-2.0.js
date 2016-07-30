@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}(g.Barchart || (g.Barchart = {})).Common = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
@@ -161,6 +161,197 @@ function _classCallCheck(instance, Constructor) {
 	}
 }
 
+module.exports = function () {
+	'use strict';
+
+	var Tree = function () {
+		function Tree(value, parent) {
+			_classCallCheck(this, Tree);
+
+			this._value = value;
+
+			this._parent = parent || null;
+			this._children = [];
+		}
+
+		_createClass(Tree, [{
+			key: 'getParent',
+			value: function getParent() {
+				return this._parent;
+			}
+		}, {
+			key: 'getChildren',
+			value: function getChildren() {
+				return this._children;
+			}
+		}, {
+			key: 'getValue',
+			value: function getValue() {
+				return this._value;
+			}
+		}, {
+			key: 'getIsLeaf',
+			value: function getIsLeaf() {
+				return this._children.length === 0;
+			}
+		}, {
+			key: 'getIsRoot',
+			value: function getIsRoot() {
+				return this._parent === null;
+			}
+		}, {
+			key: 'addChild',
+			value: function addChild(value) {
+				var returnRef = new Tree(this, value);
+
+				this._children.push(returnRef);
+
+				return returnRef;
+			}
+		}, {
+			key: 'removeChild',
+			value: function removeChild(node) {
+				var returnRef = null;
+
+				for (var i = this._children.length - 1; !(i < 0); i--) {
+					var child = this._children[i];
+
+					if (child === node) {
+						this._children.splice(i, 1);
+
+						child._parent = null;
+						child._children = [];
+
+						break;
+					}
+				}
+			}
+		}, {
+			key: 'findChild',
+			value: function findChild(predicate) {
+				var returnRef = null;
+
+				for (var i = 0; i < this._children.length; i++) {
+					var child = this._children[i];
+
+					if (predicate(child.getValue(), child)) {
+						returnRef = child;
+
+						break;
+					}
+				}
+
+				return returnRef;
+			}
+		}, {
+			key: 'search',
+			value: function search(predicate, childrenFirst, includeCurrentNode) {
+				var returnRef = null;
+
+				if (returnRef === null && childrenFirst && includeCurrentNode && predicate(this.getValue(), this)) {
+					returnRef = this;
+				}
+
+				for (var i = 0; i < this._children.length; i++) {
+					var child = this._children[i];
+
+					returnRef = child.search(predicate, childrenFirst, true);
+
+					if (returnRef !== null) {
+						break;
+					}
+				}
+
+				if (returnRef === null && !childrenFirst && includeCurrentNode && predicate(this.getValue(), this)) {
+					returnRef = this;
+				}
+
+				return returnRef;
+			}
+		}, {
+			key: 'walk',
+			value: function walk(walkAction, childrenFirst, includeCurrentNode) {
+				var predicate = function predicate(value, node) {
+					walkAction(value, node);
+
+					return false;
+				};
+
+				this.search(predicate, childrenFirst, includeCurrentNode);
+			}
+		}, {
+			key: 'climb',
+			value: function climb(climbAction, includeCurrentNode) {
+				if (includeCurrentNode) {
+					climbAction(this.getValue(), this);
+				}
+
+				if (this._parent !== null) {
+					this._parent.climb(climbAction, true);
+				}
+			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[Tree]';
+			}
+		}]);
+
+		return Tree;
+	}();
+
+	return Tree;
+}();
+
+},{}],4:[function(require,module,exports){
+'use strict';
+
+var Queue = require('./Queue');
+var Stack = require('./Stack');
+var Tree = require('./Tree');
+var DisposableStack = require('./specialized/DisposableStack');
+var EvictingList = require('./specialized/EvictingList');
+
+var ComparatorBuilder = require('./sorting/ComparatorBuilder');
+var comparators = require('./sorting/comparators');
+
+module.exports = function () {
+	'use strict';
+
+	return {
+		Queue: Queue,
+		Sorting: {
+			ComparatorBuilder: ComparatorBuilder,
+			comparators: comparators
+		},
+		Specialized: {
+			DisposableStack: DisposableStack,
+			EvictingList: EvictingList
+		},
+		Stack: Stack,
+		Tree: Tree
+	};
+}();
+
+},{"./Queue":1,"./Stack":2,"./Tree":3,"./sorting/ComparatorBuilder":5,"./sorting/comparators":6,"./specialized/DisposableStack":7,"./specialized/EvictingList":8}],5:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () {
+	function defineProperties(target, props) {
+		for (var i = 0; i < props.length; i++) {
+			var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+		}
+	}return function (Constructor, protoProps, staticProps) {
+		if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+	};
+}();
+
+function _classCallCheck(instance, Constructor) {
+	if (!(instance instanceof Constructor)) {
+		throw new TypeError("Cannot call a class as a function");
+	}
+}
+
 var assert = require('./../../lang/assert');
 var comparators = require('./comparators');
 
@@ -252,7 +443,7 @@ module.exports = function () {
 	return ComparatorBuilder;
 }();
 
-},{"./../../lang/assert":11,"./comparators":4}],4:[function(require,module,exports){
+},{"./../../lang/assert":15,"./comparators":6}],6:[function(require,module,exports){
 'use strict';
 
 var assert = require('./../../lang/assert');
@@ -288,7 +479,82 @@ module.exports = function () {
 	};
 }();
 
-},{"./../../lang/assert":11}],5:[function(require,module,exports){
+},{"./../../lang/assert":15}],7:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () {
+	function defineProperties(target, props) {
+		for (var i = 0; i < props.length; i++) {
+			var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+		}
+	}return function (Constructor, protoProps, staticProps) {
+		if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+	};
+}();
+
+function _classCallCheck(instance, Constructor) {
+	if (!(instance instanceof Constructor)) {
+		throw new TypeError("Cannot call a class as a function");
+	}
+}
+
+var Stack = require('./../Stack');
+
+var assert = require('./../../lang/assert');
+var Disposable = require('./../../lang/Disposable');
+
+module.exports = function () {
+	'use strict';
+
+	var DisposableStack = function () {
+		function DisposableStack() {
+			_classCallCheck(this, DisposableStack);
+
+			this._super();
+
+			this._stack = new Stack();
+		}
+
+		_createClass(DisposableStack, [{
+			key: 'push',
+			value: function push(disposable) {
+				assert.argumentIsRequired(disposable, 'disposable', Disposable, 'Disposable');
+
+				if (this.getIsDisposed()) {
+					throw new Error('Unable to push item onto DisposableStack because it has been disposed.');
+				}
+
+				this._stack.push(disposable);
+			}
+		}, {
+			key: '_onDispose',
+			value: function _onDispose() {
+				while (!this._stack.empty()) {
+					this._stack.pop().dispose();
+				}
+			}
+		}], [{
+			key: 'fromArray',
+			value: function fromArray(bindings) {
+				assert.argumentIsArray(bindings, 'bindings', Disposable, 'Disposable');
+
+				var returnRef = new DisposableStack();
+
+				for (var i = 0; i < bindings.length; i++) {
+					returnRef.push(bindings[i]);
+				}
+
+				return returnRef;
+			}
+		}]);
+
+		return DisposableStack;
+	}();
+
+	return DisposableStack;
+}();
+
+},{"./../../lang/Disposable":14,"./../../lang/assert":15,"./../Stack":2}],8:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
@@ -423,287 +689,7 @@ module.exports = function () {
 	return EvictingList;
 }();
 
-},{"./../../lang/assert":11}],6:[function(require,module,exports){
-'use strict';
-
-var _createClass = function () {
-	function defineProperties(target, props) {
-		for (var i = 0; i < props.length; i++) {
-			var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
-		}
-	}return function (Constructor, protoProps, staticProps) {
-		if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
-	};
-}();
-
-function _classCallCheck(instance, Constructor) {
-	if (!(instance instanceof Constructor)) {
-		throw new TypeError("Cannot call a class as a function");
-	}
-}
-
-var assert = require('./../../lang/assert');
-
-module.exports = function () {
-	'use strict';
-
-	var EvictingMap = function () {
-		function EvictingMap(capacity) {
-			_classCallCheck(this, EvictingMap);
-
-			assert.argumentIsOptional(capacity, 'capacity', Number);
-
-			this._capacity = Math.max(capacity || 0, 0) || 10;
-
-			this._map = {};
-
-			this._head = null;
-			this._tail = null;
-
-			this._size = 0;
-		}
-
-		_createClass(EvictingMap, [{
-			key: 'has',
-			value: function has(key) {
-				return this._map.hasOwnProperty(key);
-			}
-		}, {
-			key: 'put',
-			value: function put(key, value) {
-				this.remove(key);
-
-				var node = void 0;
-
-				if (this._head !== null) {
-					node = this._head.insertBefore(key);
-
-					this._head = node;
-				} else {
-					node = new Node(key);
-
-					this._head = node;
-					this._tail = node;
-				}
-
-				this._map[key] = new Item(node, key, value);
-
-				this._size++;
-
-				while (this._size > this._capacity) {
-					this.remove(this._tail.getItem());
-				}
-			}
-		}, {
-			key: 'get',
-			value: function get(key) {
-				var returnRef = void 0;
-
-				var item = this._map[key];
-
-				if (item) {
-					returnRef = item.getValue();
-
-					var node = item.getNode();
-
-					if (node !== this._head) {
-						if (node === this._tail) {
-							this._tail = node._previous;
-						}
-
-						node.remove();
-
-						this._head = this._head.insertBefore(key);
-					}
-				} else {
-					returnRef = null;
-				}
-
-				return returnRef;
-			}
-		}, {
-			key: 'remove',
-			value: function remove(key) {
-				var item = this._map[key];
-
-				if (item) {
-					var node = item.getNode();
-
-					var next = node.getNext();
-					var previous = node.getPrevious();
-
-					node.remove();
-
-					if (this._head === node) {
-						this._head = next;
-					}
-
-					if (this._tail === node) {
-						this._tail = previous;
-					}
-
-					delete this._map[key];
-
-					this._size--;
-				}
-			}
-		}, {
-			key: 'empty',
-			value: function empty() {
-				return this._size === 0;
-			}
-		}, {
-			key: 'getSize',
-			value: function getSize() {
-				return this._size;
-			}
-		}, {
-			key: 'getCapacity',
-			value: function getCapacity() {
-				return this._capacity;
-			}
-		}, {
-			key: 'toString',
-			value: function toString() {
-				return '[EvictingMap]';
-			}
-		}]);
-
-		return EvictingMap;
-	}();
-
-	var Item = function () {
-		function Item(node, key, value) {
-			_classCallCheck(this, Item);
-
-			this._node = node;
-
-			this._key = key;
-			this._value = value;
-		}
-
-		_createClass(Item, [{
-			key: 'setItem',
-			value: function setItem(key, value) {
-				this._key = key;
-				this._value = value;
-			}
-		}, {
-			key: 'getKey',
-			value: function getKey() {
-				return this._key;
-			}
-		}, {
-			key: 'getValue',
-			value: function getValue() {
-				return this._value;
-			}
-		}, {
-			key: 'getNode',
-			value: function getNode() {
-				return this._node;
-			}
-		}]);
-
-		return Item;
-	}();
-
-	var Node = function () {
-		function Node(item) {
-			_classCallCheck(this, Node);
-
-			this._item = item;
-
-			this._previous = null;
-			this._next = null;
-		}
-
-		_createClass(Node, [{
-			key: 'insertBefore',
-			value: function insertBefore(item) {
-				var node = new Node(item);
-
-				node._next = this;
-
-				if (this._previous !== null) {
-					node._previous = this._previous;
-					this._previous._next = node;
-				}
-
-				this._previous = node;
-
-				return node;
-			}
-		}, {
-			key: 'insertAfter',
-			value: function insertAfter(item) {
-				var node = new Node(item);
-
-				node._previous = this;
-
-				if (this._next !== null) {
-					node._next = this._next;
-					this._next._previous = node;
-				}
-
-				this._next = node;
-
-				return node;
-			}
-		}, {
-			key: 'remove',
-			value: function remove() {
-				var next = this._next;
-				var previous = this._previous;
-
-				this._next = null;
-				this._previous = null;
-
-				if (next && previous) {
-					previous._next = next;
-					next._previous = previous;
-				} else if (next) {
-					next._previous = null;
-				} else if (previous) {
-					previous._next = null;
-				}
-
-				return this;
-			}
-		}, {
-			key: 'getItem',
-			value: function getItem() {
-				return this._item;
-			}
-		}, {
-			key: 'hasNext',
-			value: function hasNext() {
-				return this._next !== null;
-			}
-		}, {
-			key: 'getNext',
-			value: function getNext() {
-				return this._next;
-			}
-		}, {
-			key: 'hasPrevious',
-			value: function hasPrevious() {
-				return this._previous !== null;
-			}
-		}, {
-			key: 'getPrevious',
-			value: function getPrevious() {
-				return this._previous;
-			}
-		}]);
-
-		return Node;
-	}();
-
-	return EvictingMap;
-}();
-
-},{"./../../lang/assert":11}],7:[function(require,module,exports){
+},{"./../../lang/assert":15}],9:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
@@ -807,7 +793,7 @@ module.exports = function () {
 	return CommandHandler;
 }();
 
-},{"./../lang/assert":11}],8:[function(require,module,exports){
+},{"./../lang/assert":15}],10:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
@@ -881,7 +867,7 @@ module.exports = function () {
 	return CompositeCommandHandler;
 }();
 
-},{"./../lang/assert":11,"./CommandHandler":7}],9:[function(require,module,exports){
+},{"./../lang/assert":15,"./CommandHandler":9}],11:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
@@ -993,7 +979,52 @@ module.exports = function () {
 	return MappedCommandHandler;
 }();
 
-},{"./../lang/assert":11,"./CommandHandler":7}],10:[function(require,module,exports){
+},{"./../lang/assert":15,"./CommandHandler":9}],12:[function(require,module,exports){
+'use strict';
+
+var CommandHandler = require('./CommandHandler');
+var CompositeCommandHandler = require('./CompositeCommandHandler');
+var MappedCommandHandler = require('./MappedCommandHandler');
+
+module.exports = function () {
+	'use strict';
+
+	return {
+		CommandHandler: CommandHandler,
+		CompositeCommandHandler: CompositeCommandHandler,
+		MappedCommandHandler: MappedCommandHandler
+	};
+}();
+
+},{"./CommandHandler":9,"./CompositeCommandHandler":10,"./MappedCommandHandler":11}],13:[function(require,module,exports){
+'use strict';
+
+var collections = require('./collections/index');
+var commands = require('./commands/index');
+var lang = require('./lang/index');
+var messaging = require('./messaging/index');
+var models = require('./models/index');
+var specifications = require('./specifications/index');
+var timing = require('./timing/index');
+
+module.exports = function () {
+	'use strict';
+
+	var namespaces = {
+		Collections: collections,
+		Commands: commands,
+		Messaging: messaging,
+		Models: models,
+		Timing: timing,
+		Specifications: specifications
+	};
+
+	Object.keys(lang).forEach(function (key) {
+		namespaces[key] = lang[key];
+	});
+}();
+
+},{"./collections/index":4,"./commands/index":12,"./lang/index":18,"./messaging/index":21,"./models/index":23,"./specifications/index":51,"./timing/index":54}],14:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
@@ -1107,7 +1138,7 @@ module.exports = function () {
 	return Disposable;
 }();
 
-},{"./assert":11}],11:[function(require,module,exports){
+},{"./assert":15}],15:[function(require,module,exports){
 'use strict';
 
 var is = require('./is');
@@ -1210,7 +1241,7 @@ module.exports = function () {
 	return assert;
 }();
 
-},{"./is":14}],12:[function(require,module,exports){
+},{"./is":19}],16:[function(require,module,exports){
 'use strict';
 
 var assert = require('./assert');
@@ -1335,57 +1366,47 @@ module.exports = function () {
 	return attributes;
 }();
 
-},{"./assert":11}],13:[function(require,module,exports){
+},{"./assert":15}],17:[function(require,module,exports){
 'use strict';
 
 module.exports = function () {
 	'use strict';
 
-	var utilities = {
-		getShortDay: function getShortDay(date) {
-			var day = date.getDay();
-
-			return days[day].short;
+	var converters = {
+		toDate: function toDate(object) {
+			return new Date(object);
 		},
-		getDate: function getDate(date) {
-			return date.getDate();
-		},
-		getDateOrdinal: function getDateOrdinal(date) {
-			var d = utilities.getDate(date);
-			var remainder = d % 10;
 
-			var returnRef = void 0;
-
-			if (remainder === 1 && d !== 11) {
-				returnRef = 'st';
-			} else if (remainder === 2 && d !== 12) {
-				returnRef = 'nd';
-			} else if (remainder === 3) {
-				returnRef = 'rd';
-			} else {
-				returnRef = 'th';
-			}
-
-			return returnRef;
-		},
-		getShortMonth: function getShortMonth(date) {
-			var month = date.getMonth();
-
-			return months[month].short;
-		},
-		getYear: function getYear(date) {
-			return date.getFullYear();
+		empty: function empty(object) {
+			return object;
 		}
 	};
 
-	var days = [{ short: 'Sun' }, { short: 'Mon' }, { short: 'Tue' }, { short: 'Wed' }, { short: 'Thu' }, { short: 'Fri' }, { short: 'Sat' }];
-
-	var months = [{ short: 'Jan' }, { short: 'Feb' }, { short: 'Mar' }, { short: 'Apr' }, { short: 'May' }, { short: 'Jun' }, { short: 'Jul' }, { short: 'Aug' }, { short: 'Sep' }, { short: 'Oct' }, { short: 'Nov' }, { short: 'Dev' }];
-
-	return utilities;
+	return converters;
 }();
 
-},{}],14:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
+'use strict';
+
+var assert = require('./assert');
+var attributes = require('./attributes');
+var converters = require('./converters');
+var Disposable = require('./Disposable');
+var is = require('./is');
+
+module.exports = function () {
+	'use strict';
+
+	return {
+		assert: assert,
+		attributes: attributes,
+		converters: converters,
+		Disposable: Disposable,
+		is: is
+	};
+}();
+
+},{"./Disposable":14,"./assert":15,"./attributes":16,"./converters":17,"./is":19}],19:[function(require,module,exports){
 'use strict';
 
 module.exports = function () {
@@ -1429,7 +1450,7 @@ module.exports = function () {
 	};
 }();
 
-},{}],15:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
@@ -1578,135 +1599,20 @@ module.exports = function () {
 	return Event;
 }();
 
-},{"./../lang/Disposable":10}],16:[function(require,module,exports){
+},{"./../lang/Disposable":14}],21:[function(require,module,exports){
 'use strict';
 
-var _createClass = function () {
-	function defineProperties(target, props) {
-		for (var i = 0; i < props.length; i++) {
-			var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
-		}
-	}return function (Constructor, protoProps, staticProps) {
-		if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
-	};
-}();
-
-function _classCallCheck(instance, Constructor) {
-	if (!(instance instanceof Constructor)) {
-		throw new TypeError("Cannot call a class as a function");
-	}
-}
-
 var Event = require('./Event');
-var assert = require('./../lang/assert');
 
 module.exports = function () {
 	'use strict';
 
-	var EventMap = function () {
-		function EventMap() {
-			_classCallCheck(this, EventMap);
-
-			this._events = {};
-		}
-
-		_createClass(EventMap, [{
-			key: 'fire',
-			value: function fire(eventName, data) {
-				var event = this._events[eventName];
-
-				if (event) {
-					event.fire(data);
-				}
-			}
-		}, {
-			key: 'register',
-			value: function register(eventName, handler) {
-				assert.argumentIsRequired(eventName, 'eventName', String);
-
-				var event = this._events[eventName];
-
-				if (!event) {
-					event = this._events[eventName] = new Event(this);
-				}
-
-				event.register(handler);
-			}
-		}, {
-			key: 'unregister',
-			value: function unregister(eventName, handler) {
-				assert.argumentIsRequired(eventName, 'eventName', String);
-
-				var event = this._events[eventName];
-
-				if (event) {
-					event.unregister(handler);
-
-					if (event.getIsEmpty()) {
-						delete this._events[eventName];
-					}
-				}
-			}
-		}, {
-			key: 'clear',
-			value: function clear(eventName) {
-				assert.argumentIsRequired(eventName, 'eventName', String);
-
-				var event = this._events[eventName];
-
-				if (event) {
-					event.clear();
-
-					delete this._events[eventName];
-				}
-			}
-		}, {
-			key: 'getIsEmpty',
-			value: function getIsEmpty(eventName) {
-				var event = this._events[eventName];
-
-				var returnVal = void 0;
-
-				if (event) {
-					returnVal = event.getIsEmpty();
-				} else {
-					returnVal = true;
-				}
-
-				return returnVal;
-			}
-		}, {
-			key: 'getKeys',
-			value: function getKeys() {
-				var keys = [];
-
-				for (var key in this._events) {
-					if (this._events.hasOwnProperty(key)) {
-						keys.push(key);
-					}
-				}
-
-				return keys;
-			}
-		}, {
-			key: 'hasKey',
-			value: function hasKey(key) {
-				return this._events.hasOwnProperty(key);
-			}
-		}, {
-			key: 'toString',
-			value: function toString() {
-				return '[EventMap]';
-			}
-		}]);
-
-		return EventMap;
-	}();
-
-	return EventMap;
+	return {
+		Event: Event
+	};
 }();
 
-},{"./../lang/assert":11,"./Event":15}],17:[function(require,module,exports){
+},{"./Event":20}],22:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
@@ -1900,11 +1806,24 @@ module.exports = function () {
 	return Model;
 }();
 
-},{"./../lang/Disposable":10,"./../lang/assert":11,"./../messaging/Event":15}],18:[function(require,module,exports){
+},{"./../lang/Disposable":14,"./../lang/assert":15,"./../messaging/Event":20}],23:[function(require,module,exports){
+'use strict';
 
-},{}],19:[function(require,module,exports){
-arguments[4][18][0].apply(exports,arguments)
-},{"dup":18}],20:[function(require,module,exports){
+var Model = require('./Model');
+
+module.exports = function () {
+	'use strict';
+
+	return {
+		Model: Model
+	};
+}();
+
+},{"./Model":22}],24:[function(require,module,exports){
+
+},{}],25:[function(require,module,exports){
+arguments[4][24][0].apply(exports,arguments)
+},{"dup":24}],26:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -2025,7 +1944,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],21:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -2328,7 +2247,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],22:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -2353,7 +2272,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],23:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 "use strict";
 var layouts = require('../layouts')
 , consoleLog = console.log.bind(console);
@@ -2376,7 +2295,7 @@ function configure(config) {
 exports.appender = consoleAppender;
 exports.configure = configure;
 
-},{"../layouts":26}],24:[function(require,module,exports){
+},{"../layouts":32}],30:[function(require,module,exports){
 "use strict";
 var levels = require("./levels");
 var DEFAULT_FORMAT = ':remote-addr - -' +
@@ -2602,7 +2521,7 @@ function createNoLogCondition(nolog) {
 
 exports.connectLogger = getLogger;
 
-},{"./levels":27}],25:[function(require,module,exports){
+},{"./levels":33}],31:[function(require,module,exports){
 "use strict";
 exports.ISO8601_FORMAT = "yyyy-MM-dd hh:mm:ss.SSS";
 exports.ISO8601_WITH_TZ_OFFSET_FORMAT = "yyyy-MM-ddThh:mm:ssO";
@@ -2676,7 +2595,7 @@ exports.asString = function(/*format,*/ date, timezoneOffset) {
 
 };
 
-},{}],26:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 (function (process){
 "use strict";
 var dateFormat = require('./date_format')
@@ -3031,7 +2950,7 @@ module.exports = {
 };
 
 }).call(this,require('_process'))
-},{"./date_format":25,"_process":20,"os":18,"util":32}],27:[function(require,module,exports){
+},{"./date_format":31,"_process":26,"os":24,"util":38}],33:[function(require,module,exports){
 "use strict";
 
 function Level(level, levelStr) {
@@ -3094,7 +3013,7 @@ module.exports = {
   toLevel: toLevel
 };
 
-},{}],28:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 (function (process){
 "use strict";
 /*
@@ -3577,7 +3496,7 @@ configure();
 
 
 }).call(this,require('_process'))
-},{"./appenders/console":23,"./connect-logger":24,"./layouts":26,"./levels":27,"./logger":29,"_process":20,"events":21,"fs":19,"path":30,"util":32}],29:[function(require,module,exports){
+},{"./appenders/console":29,"./connect-logger":30,"./layouts":32,"./levels":33,"./logger":35,"_process":26,"events":27,"fs":25,"path":36,"util":38}],35:[function(require,module,exports){
 "use strict";
 var levels = require('./levels')
 , util = require('util')
@@ -3692,7 +3611,7 @@ exports.Logger = Logger;
 exports.disableAllLogWrites = disableAllLogWrites;
 exports.enableAllLogWrites = enableAllLogWrites;
 
-},{"./levels":27,"events":21,"util":32}],30:[function(require,module,exports){
+},{"./levels":33,"events":27,"util":38}],36:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -3920,14 +3839,14 @@ var substr = 'ab'.substr(-1) === 'b'
 ;
 
 }).call(this,require('_process'))
-},{"_process":20}],31:[function(require,module,exports){
+},{"_process":26}],37:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],32:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -4517,7 +4436,7 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":31,"_process":20,"inherits":22}],33:[function(require,module,exports){
+},{"./support/isBuffer":37,"_process":26,"inherits":28}],39:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
@@ -4591,7 +4510,7 @@ module.exports = function () {
 	return AndSpecification;
 }();
 
-},{"./../lang/assert":11,"./Specification":39}],34:[function(require,module,exports){
+},{"./../lang/assert":15,"./Specification":48}],40:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
@@ -4665,7 +4584,7 @@ module.exports = function () {
 	return ContainedSpecification;
 }();
 
-},{"./../lang/assert":11,"./Specification":39}],35:[function(require,module,exports){
+},{"./../lang/assert":15,"./Specification":48}],41:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
@@ -4737,7 +4656,75 @@ module.exports = function () {
 	return ContainsSpecification;
 }();
 
-},{"./Specification":39}],36:[function(require,module,exports){
+},{"./Specification":48}],42:[function(require,module,exports){
+'use strict';
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
+var _createClass = function () {
+	function defineProperties(target, props) {
+		for (var i = 0; i < props.length; i++) {
+			var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+		}
+	}return function (Constructor, protoProps, staticProps) {
+		if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+	};
+}();
+
+function _classCallCheck(instance, Constructor) {
+	if (!(instance instanceof Constructor)) {
+		throw new TypeError("Cannot call a class as a function");
+	}
+}
+
+function _possibleConstructorReturn(self, call) {
+	if (!self) {
+		throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+	}return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+}
+
+function _inherits(subClass, superClass) {
+	if (typeof superClass !== "function" && superClass !== null) {
+		throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
+	}subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+}
+
+var Specification = require('./Specification');
+
+module.exports = function () {
+	'use strict';
+
+	var EqualsSpecification = function (_Specification) {
+		_inherits(EqualsSpecification, _Specification);
+
+		function EqualsSpecification(value) {
+			_classCallCheck(this, EqualsSpecification);
+
+			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(EqualsSpecification).call(this));
+
+			_this._value = value;
+			return _this;
+		}
+
+		_createClass(EqualsSpecification, [{
+			key: '_evaluate',
+			value: function _evaluate(data) {
+				return data === this._value;
+			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[EqualsSpecification]';
+			}
+		}]);
+
+		return EqualsSpecification;
+	}(Specification);
+
+	return EqualsSpecification;
+}();
+
+},{"./Specification":48}],43:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
@@ -4802,7 +4789,155 @@ module.exports = function () {
 	return FailSpecification;
 }();
 
-},{"./Specification":39}],37:[function(require,module,exports){
+},{"./Specification":48}],44:[function(require,module,exports){
+'use strict';
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
+var _createClass = function () {
+	function defineProperties(target, props) {
+		for (var i = 0; i < props.length; i++) {
+			var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+		}
+	}return function (Constructor, protoProps, staticProps) {
+		if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+	};
+}();
+
+function _classCallCheck(instance, Constructor) {
+	if (!(instance instanceof Constructor)) {
+		throw new TypeError("Cannot call a class as a function");
+	}
+}
+
+function _possibleConstructorReturn(self, call) {
+	if (!self) {
+		throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+	}return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+}
+
+function _inherits(subClass, superClass) {
+	if (typeof superClass !== "function" && superClass !== null) {
+		throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
+	}subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+}
+
+var assert = require('./../lang/assert');
+
+var Specification = require('./Specification');
+
+module.exports = function () {
+	'use strict';
+
+	var GreaterThanSpecification = function (_Specification) {
+		_inherits(GreaterThanSpecification, _Specification);
+
+		function GreaterThanSpecification(value) {
+			_classCallCheck(this, GreaterThanSpecification);
+
+			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(GreaterThanSpecification).call(this));
+
+			assert.argumentIsRequired(value, 'value', Number);
+
+			_this._value = value;
+			return _this;
+		}
+
+		_createClass(GreaterThanSpecification, [{
+			key: '_evaluate',
+			value: function _evaluate(data) {
+				assert.argumentIsRequired(data, 'data', Number);
+
+				return data > this._value;
+			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[GreaterThanSpecification]';
+			}
+		}]);
+
+		return GreaterThanSpecification;
+	}(Specification);
+
+	return GreaterThanSpecification;
+}();
+
+},{"./../lang/assert":15,"./Specification":48}],45:[function(require,module,exports){
+'use strict';
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
+var _createClass = function () {
+	function defineProperties(target, props) {
+		for (var i = 0; i < props.length; i++) {
+			var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+		}
+	}return function (Constructor, protoProps, staticProps) {
+		if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+	};
+}();
+
+function _classCallCheck(instance, Constructor) {
+	if (!(instance instanceof Constructor)) {
+		throw new TypeError("Cannot call a class as a function");
+	}
+}
+
+function _possibleConstructorReturn(self, call) {
+	if (!self) {
+		throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+	}return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+}
+
+function _inherits(subClass, superClass) {
+	if (typeof superClass !== "function" && superClass !== null) {
+		throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
+	}subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+}
+
+var assert = require('./../lang/assert');
+
+var Specification = require('./Specification');
+
+module.exports = function () {
+	'use strict';
+
+	var LessThanSpecification = function (_Specification) {
+		_inherits(LessThanSpecification, _Specification);
+
+		function LessThanSpecification(value) {
+			_classCallCheck(this, LessThanSpecification);
+
+			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(LessThanSpecification).call(this));
+
+			assert.argumentIsRequired(value, 'value', Number);
+
+			_this._value = value;
+			return _this;
+		}
+
+		_createClass(LessThanSpecification, [{
+			key: '_evaluate',
+			value: function _evaluate(data) {
+				assert.argumentIsRequired(data, 'data', Number);
+
+				return data < this._value;
+			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[LessThanSpecification]';
+			}
+		}]);
+
+		return LessThanSpecification;
+	}(Specification);
+
+	return LessThanSpecification;
+}();
+
+},{"./../lang/assert":15,"./Specification":48}],46:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
@@ -4876,7 +5011,7 @@ module.exports = function () {
 	return OrSpecification;
 }();
 
-},{"./../lang/assert":11,"./Specification":39}],38:[function(require,module,exports){
+},{"./../lang/assert":15,"./Specification":48}],47:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
@@ -4941,7 +5076,7 @@ module.exports = function () {
 	return PassSpecification;
 }();
 
-},{"./Specification":39}],39:[function(require,module,exports){
+},{"./Specification":48}],48:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
@@ -4991,1053 +5126,8 @@ module.exports = function () {
 	return Specification;
 }();
 
-},{}],40:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 'use strict';
-
-var Stack = require('./../../../collections/Stack');
-
-describe('When a Stack is constructed', function () {
-	'use strict';
-
-	var stack;
-
-	beforeEach(function () {
-		stack = new Stack();
-	});
-
-	it('should be empty', function () {
-		expect(stack.empty()).toEqual(true);
-	});
-
-	it('should throw if "peek" is called', function () {
-		expect(function () {
-			stack.peek();
-		}).toThrow(new Error('Stack is empty'));
-	});
-
-	it('should throw if "pop" is called', function () {
-		expect(function () {
-			stack.peek();
-		}).toThrow(new Error('Stack is empty'));
-	});
-
-	describe('and an object is pushed onto the stack', function () {
-		var first = 1;
-
-		beforeEach(function () {
-			stack.push(first);
-		});
-
-		it('should not be empty', function () {
-			expect(stack.empty()).toEqual(false);
-		});
-
-		describe('and we peek at the top of the stack', function () {
-			var peek;
-
-			beforeEach(function () {
-				peek = stack.peek();
-			});
-
-			it('the peek result the item pushed onto the stack', function () {
-				expect(peek).toBe(first);
-			});
-
-			it('should not be empty', function () {
-				expect(stack.empty()).toEqual(false);
-			});
-		});
-
-		describe('and an object is popped from the stack', function () {
-			var pop;
-
-			beforeEach(function () {
-				pop = stack.pop();
-			});
-
-			it('the pop result the item pushed onto the stack', function () {
-				expect(pop).toBe(first);
-			});
-
-			it('should be empty', function () {
-				expect(stack.empty()).toEqual(true);
-			});
-		});
-
-		describe('and a second object is pushed onto the stack', function () {
-			var second = { name: "second" };
-
-			beforeEach(function () {
-				stack.push(second);
-			});
-
-			it('should not be empty', function () {
-				expect(stack.empty()).toEqual(false);
-			});
-
-			describe('and we peek at the top of the stack', function () {
-				var peek;
-
-				beforeEach(function () {
-					peek = stack.peek();
-				});
-
-				it('the peek result the second item pushed onto the stack', function () {
-					expect(peek).toBe(second);
-				});
-
-				it('should not be empty', function () {
-					expect(stack.empty()).toEqual(false);
-				});
-			});
-
-			describe('and an object is popped from the stack', function () {
-				var pop;
-
-				beforeEach(function () {
-					pop = stack.pop();
-				});
-
-				it('the pop result the second item pushed onto the stack', function () {
-					expect(pop).toBe(second);
-				});
-
-				it('should not be empty', function () {
-					expect(stack.empty()).toEqual(false);
-				});
-			});
-		});
-	});
-});
-
-},{"./../../../collections/Stack":2}],41:[function(require,module,exports){
-'use strict';
-
-var ComparatorBuilder = require('./../../../../collections/sorting/ComparatorBuilder');
-
-describe('When a ComparatorBuilder is composed with two comparators', function () {
-    'use strict';
-
-    var comparatorBuilder;
-
-    var comparatorOne;
-    var comparatorTwo;
-
-    var first = { x: 0, y: 0, toString: function toString() {
-            return '[first]';
-        } };
-    var second = { x: 1, y: 0, toString: function toString() {
-            return '[second]';
-        } };
-    var third = { x: 1, y: 1, toString: function toString() {
-            return '[third]';
-        } };
-
-    beforeEach(function () {
-        comparatorOne = jasmine.createSpy('comparatorOne').and.callFake(function (a, b) {
-            return a.x - b.x;
-        });
-
-        comparatorTwo = jasmine.createSpy('comparatorTwo').and.callFake(function (a, b) {
-            return a.y - b.y;
-        });
-
-        comparatorBuilder = ComparatorBuilder.startWith(comparatorOne).thenBy(comparatorTwo);
-    });
-
-    describe('and the ComparatorBuilder sorts an array (which requires both comparators)', function () {
-        var arrayToSort;
-
-        beforeEach(function () {
-            arrayToSort = [third, first, second];
-
-            arrayToSort.sort(comparatorBuilder.toComparator());
-        });
-
-        it('the first comparator should be invoked', function () {
-            expect(comparatorOne).toHaveBeenCalled();
-        });
-
-        it('the second comparator should be invoked', function () {
-            expect(comparatorTwo).toHaveBeenCalled();
-        });
-
-        it('the sorted array should be in the correct order', function () {
-            expect(arrayToSort[0]).toBe(first);
-            expect(arrayToSort[1]).toBe(second);
-            expect(arrayToSort[2]).toBe(third);
-        });
-    });
-
-    describe('and the ComparatorBuilder is inverted', function () {
-        beforeEach(function () {
-            comparatorBuilder = comparatorBuilder.invert();
-        });
-
-        describe('and the ComparatorBuilder sorts an array (which requires both comparators)', function () {
-            var arrayToSort;
-
-            beforeEach(function () {
-                arrayToSort = [third, first, second];
-
-                arrayToSort.sort(comparatorBuilder.toComparator());
-            });
-
-            it('the first comparator should be invoked', function () {
-                expect(comparatorOne).toHaveBeenCalled();
-            });
-
-            it('the second comparator should be invoked', function () {
-                expect(comparatorTwo).toHaveBeenCalled();
-            });
-
-            it('the sorted array should be in the correct order', function () {
-                expect(arrayToSort[0]).toBe(third);
-                expect(arrayToSort[1]).toBe(second);
-                expect(arrayToSort[2]).toBe(first);
-            });
-        });
-    });
-});
-
-},{"./../../../../collections/sorting/ComparatorBuilder":3}],42:[function(require,module,exports){
-'use strict';
-
-var comparators = require('./../../../../collections/sorting/comparators');
-
-describe('When using the "compareDates" comparator', function () {
-	'use strict';
-
-	var first = new Date(2015, 12, 1);
-	var second = new Date(2015, 12, 31);
-	var third = new Date(2016, 1, 31);
-
-	describe('to sort an array of Date instances', function () {
-		var arrayToSort;
-
-		beforeEach(function () {
-			arrayToSort = [second, first, third];
-
-			arrayToSort.sort(comparators.compareDates);
-		});
-
-		it('the array should be in the correct order', function () {
-			expect(arrayToSort[0]).toBe(first);
-			expect(arrayToSort[1]).toBe(second);
-			expect(arrayToSort[2]).toBe(third);
-		});
-	});
-
-	describe('to sort an array that contains something other than Date instances', function () {
-		it('an error should be thrown', function () {
-			expect(function () {
-				var arrayToSort = [second, first, third, '1-1-2017'];
-
-				arrayToSort.sort(comparators.compareDates);
-			}).toThrow();
-		});
-	});
-});
-
-describe('When using the "compareNumbers" comparator', function () {
-	'use strict';
-
-	var first = -1;
-	var second = Math.E;
-	var third = Math.PI;
-
-	describe('to sort an array of numbers', function () {
-		var arrayToSort;
-
-		beforeEach(function () {
-			arrayToSort = [second, first, third];
-
-			arrayToSort.sort(comparators.compareNumbers);
-		});
-
-		it('the array should be in the correct order', function () {
-			expect(arrayToSort[0]).toBe(first);
-			expect(arrayToSort[1]).toBe(second);
-			expect(arrayToSort[2]).toBe(third);
-		});
-	});
-
-	describe('to sort an array that contains something other than numbers', function () {
-		it('an error should be thrown', function () {
-			expect(function () {
-				var arrayToSort = [second, first, third, null];
-
-				arrayToSort.sort(comparators.compareNumbers);
-			}).toThrow();
-		});
-	});
-});
-
-describe('When using the "compareStrings" comparator', function () {
-	'use strict';
-
-	var first = '';
-	var second = 'Bye now';
-	var third = 'Hi there';
-
-	describe('to sort an array of strings', function () {
-		var arrayToSort;
-
-		beforeEach(function () {
-			arrayToSort = [third, first, second];
-
-			arrayToSort.sort(comparators.compareStrings);
-		});
-
-		it('the array should be in the correct order', function () {
-			expect(arrayToSort[0]).toBe(first);
-			expect(arrayToSort[1]).toBe(second);
-			expect(arrayToSort[2]).toBe(third);
-		});
-	});
-
-	describe('to sort an array that contains something other than strings', function () {
-		it('an error should be thrown', function () {
-			expect(function () {
-				var arrayToSort = [second, first, third, 7];
-
-				arrayToSort.sort(comparators.compareStrings);
-			}).toThrow();
-		});
-	});
-});
-
-},{"./../../../../collections/sorting/comparators":4}],43:[function(require,module,exports){
-'use strict';
-
-var EvictingList = require('./../../../../collections/specialized/EvictingList');
-
-describe('When an EvictingList is constructed (with no capacity)', function () {
-	'use strict';
-
-	var list;
-
-	beforeEach(function () {
-		list = new EvictingList();
-	});
-
-	it('should be empty', function () {
-		expect(list.empty()).toEqual(true);
-	});
-
-	it('should have a capacity of 10', function () {
-		expect(list.getCapacity()).toEqual(10);
-	});
-
-	describe('when dumped to an array', function () {
-		var array;
-
-		beforeEach(function () {
-			array = list.toArray();
-		});
-
-		it('should be empty', function () {
-			expect(array.length).toEqual(0);
-		});
-	});
-});
-
-describe('When an EvictingList is constructed (with a capacity of 1)', function () {
-	'use strict';
-
-	var list;
-
-	beforeEach(function () {
-		list = new EvictingList(1);
-	});
-
-	it('should be empty', function () {
-		expect(list.empty()).toEqual(true);
-	});
-
-	it('should have a capacity of 1', function () {
-		expect(list.getCapacity()).toEqual(1);
-	});
-
-	describe('when dumped to an array', function () {
-		var array;
-
-		beforeEach(function () {
-			array = list.toArray();
-		});
-
-		it('should be empty', function () {
-			expect(array.length).toEqual(0);
-		});
-	});
-
-	describe('when the an item is added to the list', function () {
-		var a;
-
-		beforeEach(function () {
-			list.add(a = {});
-		});
-
-		it('peek should return the item', function () {
-			expect(list.peek()).toBe(a);
-		});
-
-		it('should not be empty', function () {
-			expect(list.empty()).toEqual(false);
-		});
-
-		describe('when dumped to an array', function () {
-			var array;
-
-			beforeEach(function () {
-				array = list.toArray();
-			});
-
-			it('should contain one item', function () {
-				expect(array.length).toEqual(1);
-			});
-
-			it('the first item should be the item added', function () {
-				expect(array[0]).toEqual(a);
-			});
-		});
-
-		describe('when a second item is added to the list', function () {
-			var b;
-
-			beforeEach(function () {
-				list.add(b = {});
-			});
-
-			it('should not be empty', function () {
-				expect(list.empty()).toEqual(false);
-			});
-
-			it('peek should return the second item', function () {
-				expect(list.peek()).toBe(b);
-			});
-
-			describe('when dumped to an array', function () {
-				var array;
-
-				beforeEach(function () {
-					array = list.toArray();
-				});
-
-				it('should contain one item', function () {
-					expect(array.length).toEqual(1);
-				});
-
-				it('the first item in the array should be the most recent item', function () {
-					expect(array[0]).toBe(b);
-				});
-			});
-		});
-	});
-});
-
-describe('When an EvictingList is constructed (with a capacity of 3)', function () {
-	'use strict';
-
-	var list;
-
-	beforeEach(function () {
-		list = new EvictingList(3);
-	});
-
-	it('should be empty', function () {
-		expect(list.empty()).toEqual(true);
-	});
-
-	it('should have a capacity of 3', function () {
-		expect(list.getCapacity()).toEqual(3);
-	});
-
-	describe('and five items are added to the list', function () {
-		var a;
-		var b;
-		var c;
-		var d;
-		var e;
-
-		beforeEach(function () {
-			list.add(a = {});
-			list.add(b = {});
-			list.add(c = {});
-			list.add(d = {});
-			list.add(e = {});
-		});
-
-		it('should not be empty', function () {
-			expect(list.empty()).toEqual(false);
-		});
-
-		describe('when dumped to an array', function () {
-			var array;
-
-			beforeEach(function () {
-				array = list.toArray();
-			});
-
-			it('should contain three items', function () {
-				expect(array.length).toEqual(3);
-			});
-
-			it('the first item should be the most recent item added', function () {
-				expect(array[0]).toBe(e);
-			});
-
-			it('the second item should be the second most recent item added', function () {
-				expect(array[1]).toBe(d);
-			});
-
-			it('the third item should be the third most recent item addedd', function () {
-				expect(array[2]).toBe(c);
-			});
-		});
-
-		describe('and 100 more items are added to the list', function () {
-			var items = [];
-
-			beforeEach(function () {
-				for (var i = 0; i < 100; i++) {
-					list.add(items[i] = {});
-				}
-			});
-
-			describe('when dumped to an array', function () {
-				var array;
-
-				beforeEach(function () {
-					array = list.toArray();
-				});
-
-				it('should contain three items', function () {
-					expect(array.length).toEqual(3);
-				});
-
-				it('the first item should be the most recent item added', function () {
-					expect(array[0]).toBe(items[99]);
-				});
-
-				it('the second item should be the second most recent item added', function () {
-					expect(array[1]).toBe(items[98]);
-				});
-
-				it('the third item should be the third most recent item addedd', function () {
-					expect(array[2]).toBe(items[97]);
-				});
-			});
-		});
-	});
-});
-
-},{"./../../../../collections/specialized/EvictingList":5}],44:[function(require,module,exports){
-'use strict';
-
-var EvictingMap = require('./../../../../collections/specialized/EvictingMap');
-
-describe('When an EvictingMap is constructed (with no capacity)', function () {
-	'use strict';
-
-	var map;
-
-	beforeEach(function () {
-		map = new EvictingMap();
-	});
-
-	it('should be empty', function () {
-		expect(map.empty()).toEqual(true);
-	});
-
-	it('should have a capacity of 10', function () {
-		expect(map.getCapacity()).toEqual(10);
-	});
-});
-
-describe('When an EvictingMap is constructed (with a capacity of 1)', function () {
-	'use strict';
-
-	var map;
-
-	beforeEach(function () {
-		map = new EvictingMap(1);
-	});
-
-	it('should be empty', function () {
-		expect(map.empty()).toEqual(true);
-	});
-
-	it('should have a capacity of 1', function () {
-		expect(map.getCapacity()).toEqual(1);
-	});
-
-	describe('when an item is added to the map', function () {
-		var a;
-
-		beforeEach(function () {
-			a = { key: 'a' };
-
-			map.put(a.key, a);
-		});
-
-		it('get should return the item', function () {
-			expect(map.get(a.key)).toBe(a);
-		});
-
-		it('should not be empty', function () {
-			expect(map.empty()).toEqual(false);
-		});
-
-		it('should have one item', function () {
-			expect(map.getSize()).toEqual(1);
-		});
-
-		describe('when a second item is added to the map', function () {
-			var b;
-
-			beforeEach(function () {
-				b = { key: 'b' };
-
-				map.put(b.key, b);
-			});
-
-			it('get should return the second item', function () {
-				expect(map.get(b.key)).toBe(b);
-			});
-
-			it('get should not return the first item', function () {
-				expect(map.get(a.key)).toEqual(null);
-			});
-
-			it('should not be empty', function () {
-				expect(map.empty()).toEqual(false);
-			});
-
-			it('should have one item', function () {
-				expect(map.getSize()).toEqual(1);
-			});
-
-			describe('when a third item is added to the map', function () {
-				var c;
-
-				beforeEach(function () {
-					c = { key: 'c' };
-
-					map.put(c.key, c);
-				});
-
-				it('get should return the third item', function () {
-					expect(map.get(c.key)).toBe(c);
-				});
-
-				it('get should not return the first item', function () {
-					expect(map.get(a.key)).toEqual(null);
-				});
-
-				it('get should not return the second item', function () {
-					expect(map.get(b.key)).toEqual(null);
-				});
-
-				it('should not be empty', function () {
-					expect(map.empty()).toEqual(false);
-				});
-
-				it('should have one item', function () {
-					expect(map.getSize()).toEqual(1);
-				});
-			});
-		});
-
-		describe('when the first item is removed from the map', function () {
-			beforeEach(function () {
-				map.remove('a');
-			});
-
-			it('should be empty', function () {
-				expect(map.empty()).toEqual(true);
-			});
-
-			it('should have zero items', function () {
-				expect(map.getSize()).toEqual(0);
-			});
-
-			describe('when the item is added to the map again', function () {
-				beforeEach(function () {
-					map.put(a.key, a);
-				});
-
-				it('get should return the item', function () {
-					expect(map.get(a.key)).toBe(a);
-				});
-
-				it('should not be empty', function () {
-					expect(map.empty()).toEqual(false);
-				});
-
-				it('should have one item', function () {
-					expect(map.getSize()).toEqual(1);
-				});
-			});
-		});
-	});
-});
-
-describe('When an EvictingMap is constructed (with a capacity of 3)', function () {
-	'use strict';
-
-	var map;
-
-	beforeEach(function () {
-		map = new EvictingMap(3);
-	});
-
-	it('should be empty', function () {
-		expect(map.empty()).toEqual(true);
-	});
-
-	it('should have a capacity of 3', function () {
-		expect(map.getCapacity()).toEqual(3);
-	});
-
-	describe('when three items are added to the map', function () {
-		var a;
-		var b;
-		var c;
-
-		beforeEach(function () {
-			a = { key: 'a' };
-			b = { key: 'b' };
-			c = { key: 'c' };
-
-			map.put(a.key, a);
-			map.put(b.key, b);
-			map.put(c.key, c);
-		});
-
-		it('get "a" should return the first item', function () {
-			expect(map.get(a.key)).toBe(a);
-		});
-
-		it('get "b" should return the second item', function () {
-			expect(map.get(b.key)).toBe(b);
-		});
-
-		it('get "c" should return the third item', function () {
-			expect(map.get(c.key)).toBe(c);
-		});
-
-		it('should not be empty', function () {
-			expect(map.empty()).toEqual(false);
-		});
-
-		it('should have three items', function () {
-			expect(map.getSize()).toEqual(3);
-		});
-
-		describe('when a fourth item is added to the map', function () {
-			var d;
-
-			beforeEach(function () {
-				d = { key: 'd' };
-
-				map.put(d.key, d);
-			});
-
-			it('get "a" should not return the first item', function () {
-				expect(map.get(a.key)).toEqual(null);
-			});
-
-			it('get "b" should return the second item', function () {
-				expect(map.get(b.key)).toBe(b);
-			});
-
-			it('get "c" should return the third item', function () {
-				expect(map.get(c.key)).toBe(c);
-			});
-
-			it('get "d" should return the fourth item', function () {
-				expect(map.get(d.key)).toBe(d);
-			});
-
-			it('should not be empty', function () {
-				expect(map.empty()).toEqual(false);
-			});
-
-			it('should have three items', function () {
-				expect(map.getSize()).toEqual(3);
-			});
-
-			describe('after getting item "b" from map', function () {
-				beforeEach(function () {
-					map.get(b.key);
-				});
-
-				describe('when a fifth item is added to the list', function () {
-					var e;
-
-					beforeEach(function () {
-						e = { key: 'e' };
-
-						map.put(e.key, e);
-					});
-
-					it('get "a" should not return the first item', function () {
-						expect(map.get(a.key)).toEqual(null);
-					});
-
-					it('get "b" should return the second item', function () {
-						expect(map.get(b.key)).toBe(b);
-					});
-
-					it('get "c" should not return the third item', function () {
-						expect(map.get(c.key)).toEqual(null);
-					});
-
-					it('get "d" should return the fourth item', function () {
-						expect(map.get(d.key)).toBe(d);
-					});
-
-					it('get "e" should return the fifth item', function () {
-						expect(map.get(e.key)).toBe(e);
-					});
-
-					it('should not be empty', function () {
-						expect(map.empty()).toEqual(false);
-					});
-
-					it('should have three items', function () {
-						expect(map.getSize()).toEqual(3);
-					});
-				});
-			});
-		});
-	});
-});
-
-},{"./../../../../collections/specialized/EvictingMap":6}],45:[function(require,module,exports){
-'use strict';
-
-var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
-
-var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) {
-	return typeof obj === "undefined" ? "undefined" : _typeof2(obj);
-} : function (obj) {
-	return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof2(obj);
-};
-
-var CommandHandler = require('./../../../commands/CommandHandler');
-
-describe('When a CommandHandler is created from a function', function () {
-	'use strict';
-
-	var commandHandler;
-	var spy;
-	var result;
-
-	beforeEach(function () {
-		commandHandler = CommandHandler.fromFunction(spy = jasmine.createSpy('spy').and.returnValue(result = 123));
-	});
-
-	it('returns a CommandHandler instance', function () {
-		expect(commandHandler instanceof CommandHandler).toEqual(true);
-	});
-
-	describe('and the command is executed', function () {
-		var commandData;
-		var commandResult;
-
-		beforeEach(function () {
-			commandResult = commandHandler.process(commandData = {});
-		});
-
-		it('should invoke the wrapped function', function () {
-			expect(spy).toHaveBeenCalledWith(commandData);
-		});
-
-		it('should return the wrapped function\'s result', function () {
-			expect(commandResult).toEqual(result);
-		});
-	});
-
-	describe('and the command processor is converted to a function', function () {
-		var commandFunction;
-
-		beforeEach(function () {
-			commandFunction = CommandHandler.toFunction(commandHandler);
-		});
-
-		it('returns a function', function () {
-			expect(typeof commandFunction === 'undefined' ? 'undefined' : _typeof(commandFunction)).toEqual('function');
-		});
-
-		describe('and the converted function is invoked', function () {
-			var commandData;
-			var commandResult;
-
-			beforeEach(function () {
-				commandResult = commandFunction(commandData = {});
-			});
-
-			it('should invoke the wrapped function', function () {
-				expect(spy).toHaveBeenCalledWith(commandData);
-			});
-
-			it('should return the wrapped function\'s result', function () {
-				expect(commandResult).toEqual(result);
-			});
-		});
-	});
-});
-
-},{"./../../../commands/CommandHandler":7}],46:[function(require,module,exports){
-'use strict';
-
-var CommandHandler = require('./../../../commands/CommandHandler');
-var CompositeCommandHandler = require('./../../../commands/CompositeCommandHandler');
-
-describe('When a CompositeCommandHandler is created', function () {
-	'use strict';
-
-	var commandHandler;
-	var spyOne;
-	var spyTwo;
-
-	var resultOne;
-	var resultTwo;
-
-	beforeEach(function () {
-		resultOne = true;
-		resultTwo = true;
-
-		commandHandler = new CompositeCommandHandler(CommandHandler.fromFunction(spyOne = jasmine.createSpy('spyOne').and.callFake(function () {
-			return resultOne;
-		})), CommandHandler.fromFunction(spyTwo = jasmine.createSpy('spyTwo').and.callFake(function () {
-			return resultTwo;
-		})));
-	});
-
-	describe('and the command is executed', function () {
-		var commandData;
-		var commandResult;
-
-		beforeEach(function () {
-			commandResult = commandHandler.process(commandData = {});
-		});
-
-		it('should invoke the wrapped functions', function () {
-			expect(spyOne).toHaveBeenCalledWith(commandData);
-			expect(spyTwo).toHaveBeenCalledWith(commandData);
-		});
-	});
-
-	describe('and the command is executed, but the first command fails', function () {
-		var commandData;
-		var commandResult;
-
-		beforeEach(function () {
-			resultOne = false;
-			resultTwo = false;
-
-			commandResult = commandHandler.process(commandData = {});
-		});
-
-		it('should invoke the first command', function () {
-			expect(spyOne).toHaveBeenCalledWith(commandData);
-		});
-
-		it('should not invoke the first command', function () {
-			expect(spyTwo).not.toHaveBeenCalledWith(commandData);
-		});
-	});
-});
-
-},{"./../../../commands/CommandHandler":7,"./../../../commands/CompositeCommandHandler":8}],47:[function(require,module,exports){
-'use strict';
-
-var CommandHandler = require('./../../../commands/CommandHandler');
-var MappedCommandHandler = require('./../../../commands/MappedCommandHandler');
-
-describe('When a MappedCommandHandler is created with two mapped commands', function () {
-	'use strict';
-
-	var commandHandler;
-
-	var spyOne;
-	var spyTwo;
-
-	var selectorOne;
-	var selectorTwo;
-
-	var resultOne;
-	var resultTwo;
-
-	beforeEach(function () {
-		selectorOne = 'one';
-		selectorTwo = 'two';
-
-		resultOne = 'a';
-		resultTwo = 'b';
-
-		commandHandler = new MappedCommandHandler(function (data) {
-			return data.commandType || null;
-		});
-
-		commandHandler.addCommandHandler(selectorOne, CommandHandler.fromFunction(spyOne = jasmine.createSpy('spyOne').and.callFake(function () {
-			return resultOne;
-		})));
-		commandHandler.addCommandHandler(selectorTwo, CommandHandler.fromFunction(spyTwo = jasmine.createSpy('spyTwo').and.callFake(function () {
-			return resultTwo;
-		})));
-	});
-
-	describe('and the command is process with data for the first handler', function () {
-		var commandData;
-		var commandResult;
-
-		beforeEach(function () {
-			commandResult = commandHandler.process(commandData = { commandType: selectorOne });
-		});
-
-		it('should invoke wrapped function for the first handler', function () {
-			expect(spyOne).toHaveBeenCalledWith(commandData);
-		});
-
-		it('should return the result from the first handler', function () {
-			expect(commandResult).toEqual(resultOne);
-		});
-
-		it('should not invoke wrapped function for the secoond handler', function () {
-			expect(spyTwo).not.toHaveBeenCalledWith(commandData);
-		});
-	});
-
-	describe('and the command is process with data for the second handler', function () {
-		var commandData;
-		var commandResult;
-
-		beforeEach(function () {
-			commandResult = commandHandler.process(commandData = { commandType: selectorTwo });
-		});
-
-		it('should invoke wrapped function for the second handler', function () {
-			expect(spyTwo).toHaveBeenCalledWith(commandData);
-		});
-
-		it('should return the result from the second handler', function () {
-			expect(commandResult).toEqual(resultTwo);
-		});
-
-		it('should not invoke wrapped function for the first handler', function () {
-			expect(spyOne).not.toHaveBeenCalledWith(commandData);
-		});
-	});
-});
-
-},{"./../../../commands/CommandHandler":7,"./../../../commands/MappedCommandHandler":9}],48:[function(require,module,exports){
-'use strict';
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
 var _createClass = function () {
 	function defineProperties(target, props) {
@@ -6055,1471 +5145,58 @@ function _classCallCheck(instance, Constructor) {
 	}
 }
 
-function _possibleConstructorReturn(self, call) {
-	if (!self) {
-		throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-	}return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
-}
+var assert = require('./../lang/assert');
 
-function _inherits(subClass, superClass) {
-	if (typeof superClass !== "function" && superClass !== null) {
-		throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
-	}subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
-}
+var Specification = require('./Specification');
+var AndSpecification = require('./AndSpecification');
+var OrSpecification = require('./OrSpecification');
 
-var Disposable = require('./../../../lang/Disposable');
-
-describe('When a Disposable is extended', function () {
+module.exports = function () {
 	'use strict';
 
-	var TestDisposable = function (_Disposable) {
-		_inherits(TestDisposable, _Disposable);
+	var SpecificationBuilder = function () {
+		function SpecificationBuilder(specification) {
+			_classCallCheck(this, SpecificationBuilder);
 
-		function TestDisposable() {
-			_classCallCheck(this, TestDisposable);
+			assert.argumentIsRequired(specification, 'specification', Specification, 'Specification');
 
-			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(TestDisposable).call(this));
-
-			_this._disposeSpy = jasmine.createSpy('disposeAction');
-			return _this;
+			this._specification = specification;
 		}
 
-		_createClass(TestDisposable, [{
-			key: 'getDisposeSpy',
-			value: function getDisposeSpy() {
-				return this._disposeSpy;
+		_createClass(SpecificationBuilder, [{
+			key: 'and',
+			value: function and(other) {
+				return new SpecificationBuilder(new AndSpecification(this._specification, other));
 			}
 		}, {
-			key: '_onDispose',
-			value: function _onDispose() {
-				this._disposeSpy();
+			key: 'or',
+			value: function or(other) {
+				return new SpecificationBuilder(new OrSpecification(this._specification, other));
+			}
+		}, {
+			key: 'build',
+			value: function build() {
+				return this._specification;
+			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[SpecificationBuilder]';
+			}
+		}], [{
+			key: 'startWith',
+			value: function startWith(specification) {
+				return new SpecificationBuilder(specification);
 			}
 		}]);
 
-		return TestDisposable;
-	}(Disposable);
+		return SpecificationBuilder;
+	}();
 
-	var testDisposable;
+	return SpecificationBuilder;
+}();
 
-	beforeEach(function () {
-		testDisposable = new TestDisposable();
-	});
-
-	it('should not indicate that it has been disposed', function () {
-		expect(testDisposable.getIsDisposed()).toEqual(false);
-	});
-
-	it('should not have triggered the dispose action', function () {
-		expect(testDisposable.getDisposeSpy()).not.toHaveBeenCalled();
-	});
-
-	describe("and the instance is disposed", function () {
-		beforeEach(function () {
-			testDisposable.dispose();
-		});
-
-		it('should not indicate that it has been disposed', function () {
-			expect(testDisposable.getIsDisposed()).toEqual(true);
-		});
-
-		it('should have triggered the dispose action', function () {
-			expect(testDisposable.getDisposeSpy().calls.count()).toEqual(1);
-		});
-
-		describe("and the instance is disposed again", function () {
-			beforeEach(function () {
-				testDisposable.dispose();
-			});
-
-			it('should not indicate that it has been disposed', function () {
-				expect(testDisposable.getIsDisposed()).toEqual(true);
-			});
-
-			it('should not dispose action again', function () {
-				expect(testDisposable.getDisposeSpy().calls.count()).toEqual(1);
-			});
-		});
-	});
-});
-
-describe('When a Disposable.fromAction creates a Disposable', function () {
-	'use strict';
-
-	var testDisposable;
-	var testDisposableSpy;
-
-	beforeEach(function () {
-		testDisposable = Disposable.fromAction(testDisposableSpy = jasmine.createSpy('testDisposableSpy'));
-	});
-
-	it('should be an instance of Disposable', function () {
-		expect(testDisposable instanceof Disposable).toEqual(true);
-	});
-
-	it('should not indicate that it has been disposed', function () {
-		expect(testDisposable.getIsDisposed()).toEqual(false);
-	});
-
-	it('should not have triggered the dispose action', function () {
-		expect(testDisposableSpy).not.toHaveBeenCalled();
-	});
-
-	describe("and the instance is disposed", function () {
-		beforeEach(function () {
-			testDisposable.dispose();
-		});
-
-		it('should not indicate that it has been disposed', function () {
-			expect(testDisposable.getIsDisposed()).toEqual(true);
-		});
-
-		it('should have triggered the dispose action', function () {
-			expect(testDisposableSpy.calls.count()).toEqual(1);
-		});
-
-		describe("and the instance is disposed again", function () {
-			beforeEach(function () {
-				testDisposable.dispose();
-			});
-
-			it('should not indicate that it has been disposed', function () {
-				expect(testDisposable.getIsDisposed()).toEqual(true);
-			});
-
-			it('should not dispose action again', function () {
-				expect(testDisposableSpy.calls.count()).toEqual(1);
-			});
-		});
-	});
-});
-
-},{"./../../../lang/Disposable":10}],49:[function(require,module,exports){
-'use strict';
-
-var attributes = require('./../../../lang/attributes');
-
-describe('When "attributes.has" is used to check a top-level property', function () {
-	'use strict';
-
-	var target;
-
-	beforeEach(function () {
-		target = {
-			test: 123
-		};
-	});
-
-	describe("and the property exists", function () {
-		it("should return true", function () {
-			expect(attributes.has(target, "test")).toEqual(true);
-		});
-	});
-
-	describe("and the property does not exist", function () {
-		it("should return true", function () {
-			expect(attributes.has(target, "name")).toEqual(false);
-		});
-	});
-});
-
-describe('When "attributes.has" is used to check a top-level property (with an array)', function () {
-	'use strict';
-
-	var target;
-
-	beforeEach(function () {
-		target = {
-			test: 123
-		};
-	});
-
-	describe("and the property exists", function () {
-		it("should return true", function () {
-			expect(attributes.has(target, ["test"])).toEqual(true);
-		});
-	});
-
-	describe("and the property does not exist", function () {
-		it("should return true", function () {
-			expect(attributes.has(target, ["name"])).toEqual(false);
-		});
-	});
-});
-
-describe('When "attributes.has" is used to check a second-level property', function () {
-	'use strict';
-
-	var target;
-
-	beforeEach(function () {
-		target = {
-			nested: {
-				test: 123
-			}
-		};
-	});
-
-	describe("and the property exists", function () {
-		it("should return true", function () {
-			expect(attributes.has(target, "nested.test")).toEqual(true);
-		});
-	});
-
-	describe("and the property does not exist", function () {
-		it("should return true", function () {
-			expect(attributes.has(target, "nested.name")).toEqual(false);
-		});
-	});
-
-	describe("and the top-level property does not exist", function () {
-		it("should return true", function () {
-			expect(attributes.has(target, "wrong.name")).toEqual(false);
-		});
-	});
-});
-
-describe('When "attributes.has" is used to check a second-level property (with an array)', function () {
-	'use strict';
-
-	var target;
-
-	beforeEach(function () {
-		target = {
-			nested: {
-				test: 123
-			}
-		};
-	});
-
-	describe("and the property exists", function () {
-		it("should return true", function () {
-			expect(attributes.has(target, ["nested", "test"])).toEqual(true);
-		});
-	});
-
-	describe("and the property does not exist", function () {
-		it("should return true", function () {
-			expect(attributes.has(target, ["nested", "name"])).toEqual(false);
-		});
-	});
-
-	describe("and the top-level property does not exist", function () {
-		it("should return true", function () {
-			expect(attributes.has(target, ["wrong", "name"])).toEqual(false);
-		});
-	});
-});
-
-describe('When "attributes.has" is called with an empty string', function () {
-	'use strict';
-
-	var target;
-
-	beforeEach(function () {
-		target = {
-			test: 123
-		};
-	});
-
-	it("should return false", function () {
-		expect(attributes.has(target, "")).toEqual(false);
-	});
-});
-
-describe('When "attributes.has" is called with a zero-length array', function () {
-	'use strict';
-
-	var target;
-
-	beforeEach(function () {
-		target = {
-			test: 123
-		};
-	});
-
-	it("should return false", function () {
-		expect(attributes.has(target, [])).toEqual(false);
-	});
-});
-
-describe('When "attributes.read" is used to get a top-level property', function () {
-	'use strict';
-
-	var target;
-
-	beforeEach(function () {
-		target = {
-			nested: {
-				test: 123
-			}
-		};
-	});
-
-	describe("and the property exists", function () {
-		it("should return the property value", function () {
-			expect(attributes.read(target, "nested.test")).toEqual(123);
-		});
-	});
-
-	describe("and the property does not exist", function () {
-		it("should be undefined", function () {
-			expect(attributes.read(target, "nested.name")).toBe(undefined);
-		});
-	});
-});
-
-describe('When "attributes.read" is used to get a top-level property (with an array)', function () {
-	'use strict';
-
-	var target;
-
-	beforeEach(function () {
-		target = {
-			nested: {
-				test: 123
-			}
-		};
-	});
-
-	describe("and the property exists", function () {
-		it("should return the property value", function () {
-			expect(attributes.read(target, ["nested", "test"])).toEqual(123);
-		});
-	});
-
-	describe("and the property does not exist", function () {
-		it("should be undefined", function () {
-			expect(attributes.read(target, ["nested", "name"])).toBe(undefined);
-		});
-	});
-});
-
-describe('When "attributes.read" is used to get a second-level property', function () {
-	'use strict';
-
-	var target;
-
-	beforeEach(function () {
-		target = {
-			nested: {
-				test: 123
-			}
-		};
-	});
-
-	describe("and the property exists", function () {
-		it("should return the property value", function () {
-			expect(attributes.read(target, "nested.test")).toEqual(123);
-		});
-	});
-
-	describe("and the property does not exist", function () {
-		it("should be undefined", function () {
-			expect(attributes.read(target, "nested.name")).toBe(undefined);
-		});
-	});
-
-	describe("and the top-level property does not exist", function () {
-		it("should be undefined", function () {
-			expect(attributes.read(target, "wrong.name")).toBe(undefined);
-		});
-	});
-});
-
-describe('When "attributes.read" is used to get a second-level property (with an array)', function () {
-	'use strict';
-
-	var target;
-
-	beforeEach(function () {
-		target = {
-			nested: {
-				test: 123
-			}
-		};
-	});
-
-	describe("and the property exists", function () {
-		it("should return the property value", function () {
-			expect(attributes.read(target, ["nested", "test"])).toEqual(123);
-		});
-	});
-
-	describe("and the property does not exist", function () {
-		it("should be undefined", function () {
-			expect(attributes.read(target, ["nested", "name"])).toBe(undefined);
-		});
-	});
-
-	describe("and the top-level property does not exist", function () {
-		it("should be undefined", function () {
-			expect(attributes.read(target, ["wrong", "name"])).toBe(undefined);
-		});
-	});
-});
-
-describe('When "attributes.read" is called with an empty string', function () {
-	'use strict';
-
-	var target;
-
-	beforeEach(function () {
-		target = {
-			test: 123
-		};
-	});
-
-	it("should return an undefined value", function () {
-		expect(attributes.read(target, "")).toBe(undefined);
-	});
-});
-
-describe('When "attributes.read" is called with a zero-length array', function () {
-	'use strict';
-
-	var target;
-
-	beforeEach(function () {
-		target = {
-			test: 123
-		};
-	});
-
-	it("should return an undefined value", function () {
-		expect(attributes.read(target, [])).toBe(undefined);
-	});
-});
-
-describe('When "attributes.write" is used to set a top-level property', function () {
-	'use strict';
-
-	var target;
-
-	beforeEach(function () {
-		target = {
-			test: 123
-		};
-	});
-
-	describe("and the property exists", function () {
-		beforeEach(function () {
-			attributes.write(target, "test", "four-five-six");
-		});
-
-		it("the property value should be overwritten", function () {
-			expect(target.test).toEqual("four-five-six");
-		});
-	});
-
-	describe("and the property does not exist", function () {
-		beforeEach(function () {
-			attributes.write(target, "name", "Alice");
-		});
-
-		it("the property value should be created and set", function () {
-			expect(target.name).toEqual("Alice");
-		});
-	});
-});
-
-describe('When "attributes.write" is used to set a top-level property (with an array)', function () {
-	'use strict';
-
-	var target;
-
-	beforeEach(function () {
-		target = {
-			test: 123
-		};
-	});
-
-	describe("and the property exists", function () {
-		beforeEach(function () {
-			attributes.write(target, ["test"], "four-five-six");
-		});
-
-		it("the property value should be overwritten", function () {
-			expect(target.test).toEqual("four-five-six");
-		});
-	});
-
-	describe("and the property does not exist", function () {
-		beforeEach(function () {
-			attributes.write(target, ["name"], "Alice");
-		});
-
-		it("the property value should be created and set", function () {
-			expect(target.name).toEqual("Alice");
-		});
-	});
-});
-
-describe('When "attributes.write" is used to set a second-level property', function () {
-	'use strict';
-
-	var target;
-
-	beforeEach(function () {
-		target = {
-			nested: {
-				test: 123
-			}
-		};
-	});
-
-	describe("and the property exists", function () {
-		beforeEach(function () {
-			attributes.write(target, "nested.test", "four-five-six");
-		});
-
-		it("the property value should be overwritten", function () {
-			expect(target.nested.test).toEqual("four-five-six");
-		});
-	});
-
-	describe("and the second-level property does not exist", function () {
-		beforeEach(function () {
-			attributes.write(target, "nested.name", "Alice");
-		});
-
-		it("the property value should be created and set", function () {
-			expect(target.nested.name).toEqual("Alice");
-		});
-	});
-
-	describe("and the top-level property does not exist", function () {
-		beforeEach(function () {
-			attributes.write(target, "x.y", "z");
-		});
-
-		it("the top-level and second properties value should be created and set", function () {
-			expect(target.x.y).toEqual("z");
-		});
-	});
-});
-
-describe('When "attributes.write" is used to set a second-level property (using an array)', function () {
-	'use strict';
-
-	var target;
-
-	beforeEach(function () {
-		target = {
-			nested: {
-				test: 123
-			}
-		};
-	});
-
-	describe("and the property exists", function () {
-		beforeEach(function () {
-			attributes.write(target, ["nested", "test"], "four-five-six");
-		});
-
-		it("the property value should be overwritten", function () {
-			expect(target.nested.test).toEqual("four-five-six");
-		});
-	});
-
-	describe("and the second-level property does not exist", function () {
-		beforeEach(function () {
-			attributes.write(target, ["nested", "name"], "Alice");
-		});
-
-		it("the property value should be created and set", function () {
-			expect(target.nested.name).toEqual("Alice");
-		});
-	});
-
-	describe("and the top-level property does not exist", function () {
-		beforeEach(function () {
-			attributes.write(target, ["x", "y"], "z");
-		});
-
-		it("the top-level and second properties value should be created and set", function () {
-			expect(target.x.y).toEqual("z");
-		});
-	});
-});
-
-describe('When "attributes.erase" is used to remove a top-level property', function () {
-	'use strict';
-
-	var target;
-
-	beforeEach(function () {
-		target = {
-			test: 123
-		};
-	});
-
-	describe("and the property exists", function () {
-		beforeEach(function () {
-			attributes.erase(target, "test");
-		});
-
-		it("the property value not exist", function () {
-			expect(target.hasOwnProperty("test")).toEqual(false);
-		});
-	});
-
-	describe("and the property does not exist", function () {
-		beforeEach(function () {
-			attributes.erase(target, "name");
-		});
-
-		it("the target should be unaffected", function () {
-			expect(target.hasOwnProperty("test")).toEqual(true);
-		});
-	});
-});
-
-describe('When "attributes.erase" is used to remove a top-level property (using an array)', function () {
-	'use strict';
-
-	var target;
-
-	beforeEach(function () {
-		target = {
-			test: 123
-		};
-	});
-
-	describe("and the property exists", function () {
-		beforeEach(function () {
-			attributes.erase(target, ["test"]);
-		});
-
-		it("the property value not exist", function () {
-			expect(target.hasOwnProperty("test")).toEqual(false);
-		});
-	});
-
-	describe("and the property does not exist", function () {
-		beforeEach(function () {
-			attributes.erase(target, ["name"]);
-		});
-
-		it("the target should be unaffected", function () {
-			expect(target.hasOwnProperty("test")).toEqual(true);
-		});
-	});
-});
-
-describe('When "attributes.erase" is used to remove a second-level property', function () {
-	'use strict';
-
-	var target;
-
-	beforeEach(function () {
-		target = {
-			nested: {
-				test: 123
-			}
-		};
-	});
-
-	describe("and the property exists", function () {
-		beforeEach(function () {
-			attributes.erase(target, "nested.test");
-		});
-
-		it("the property value not exist", function () {
-			expect(target.hasOwnProperty("nested")).toEqual(true);
-			expect(target.nested.hasOwnProperty("test")).toEqual(false);
-		});
-	});
-
-	describe("and the second-level property does not exist", function () {
-		beforeEach(function () {
-			attributes.erase(target, "nested.name");
-		});
-
-		it("the target should be unaffected", function () {
-			expect(target.hasOwnProperty("nested")).toEqual(true);
-			expect(target.nested.hasOwnProperty("test")).toEqual(true);
-		});
-	});
-
-	describe("and the top-level property does not exist", function () {
-		beforeEach(function () {
-			attributes.erase(target, "x.y");
-		});
-
-		it("the target should be unaffected", function () {
-			expect(target.hasOwnProperty("nested")).toEqual(true);
-			expect(target.nested.hasOwnProperty("test")).toEqual(true);
-		});
-	});
-});
-
-describe('When "attributes.erase" is used to remove a second-level property (using an array)', function () {
-	'use strict';
-
-	var target;
-
-	beforeEach(function () {
-		target = {
-			nested: {
-				test: 123
-			}
-		};
-	});
-
-	describe("and the property exists", function () {
-		beforeEach(function () {
-			attributes.erase(target, ["nested", "test"]);
-		});
-
-		it("the property value not exist", function () {
-			expect(target.hasOwnProperty("nested")).toEqual(true);
-			expect(target.nested.hasOwnProperty("test")).toEqual(false);
-		});
-	});
-
-	describe("and the second-level property does not exist", function () {
-		beforeEach(function () {
-			attributes.erase(target, ["nested", "name"]);
-		});
-
-		it("the target should be unaffected", function () {
-			expect(target.hasOwnProperty("nested")).toEqual(true);
-			expect(target.nested.hasOwnProperty("test")).toEqual(true);
-		});
-	});
-
-	describe("and the top-level property does not exist", function () {
-		beforeEach(function () {
-			attributes.erase(target, ["x", "y"]);
-		});
-
-		it("the target should be unaffected", function () {
-			expect(target.hasOwnProperty("nested")).toEqual(true);
-			expect(target.nested.hasOwnProperty("test")).toEqual(true);
-		});
-	});
-});
-
-},{"./../../../lang/attributes":12}],50:[function(require,module,exports){
-'use strict';
-
-var dateUtilities = require('./../../../lang/date');
-
-describe('When extracting the "short" day of week', function () {
-	'use strict';
-
-	var july = 7 - 1;
-
-	it("07/27/2016 should resove to 'Wed'", function () {
-		expect(dateUtilities.getShortDay(new Date(2016, july, 27))).toEqual('Wed');
-	});
-});
-
-},{"./../../../lang/date":13}],51:[function(require,module,exports){
-'use strict';
-
-var is = require('./../../../lang/is');
-
-describe('When checking the number 3', function () {
-	'use strict';
-
-	var candidate;
-
-	beforeEach(function () {
-		candidate = 3;
-	});
-
-	it("it should be a number", function () {
-		expect(is.number(candidate)).toEqual(true);
-	});
-
-	it("it should not be a string", function () {
-		expect(is.string(candidate)).toEqual(false);
-	});
-
-	it("it should not be a Date", function () {
-		expect(is.date(candidate)).toEqual(false);
-	});
-
-	it("it should not be a function", function () {
-		expect(is.fn(candidate)).toEqual(false);
-	});
-
-	it("it should not be an array", function () {
-		expect(is.array(candidate)).toEqual(false);
-	});
-
-	it("it should not be a boolean", function () {
-		expect(is.boolean(candidate)).toEqual(false);
-	});
-
-	it("it should not be null", function () {
-		expect(is.null(candidate)).toEqual(false);
-	});
-
-	it("it should not be undefined", function () {
-		expect(is.undefined(candidate)).toEqual(false);
-	});
-});
-
-describe('When checking the string "3"', function () {
-	'use strict';
-
-	var candidate;
-
-	beforeEach(function () {
-		candidate = "3";
-	});
-
-	it("it should not be a number", function () {
-		expect(is.number(candidate)).toEqual(false);
-	});
-
-	it("it should be a string", function () {
-		expect(is.string(candidate)).toEqual(true);
-	});
-
-	it("it should not be a Date", function () {
-		expect(is.date(candidate)).toEqual(false);
-	});
-
-	it("it should not be a function", function () {
-		expect(is.fn(candidate)).toEqual(false);
-	});
-
-	it("it should not be an array", function () {
-		expect(is.array(candidate)).toEqual(false);
-	});
-
-	it("it should not be a boolean", function () {
-		expect(is.boolean(candidate)).toEqual(false);
-	});
-
-	it("it should not be null", function () {
-		expect(is.null(candidate)).toEqual(false);
-	});
-
-	it("it should not be undefined", function () {
-		expect(is.undefined(candidate)).toEqual(false);
-	});
-});
-
-describe('When checking the date 08/29/2016', function () {
-	'use strict';
-
-	var candidate;
-
-	beforeEach(function () {
-		candidate = new Date(2016, 7, 29);
-	});
-
-	it("it should not be a number", function () {
-		expect(is.number(candidate)).toEqual(false);
-	});
-
-	it("it should not be a string", function () {
-		expect(is.string(candidate)).toEqual(false);
-	});
-
-	it("it should be a Date", function () {
-		expect(is.date(candidate)).toEqual(true);
-	});
-
-	it("it should not be a function", function () {
-		expect(is.fn(candidate)).toEqual(false);
-	});
-
-	it("it should not be an array", function () {
-		expect(is.array(candidate)).toEqual(false);
-	});
-
-	it("it should not be a boolean", function () {
-		expect(is.boolean(candidate)).toEqual(false);
-	});
-
-	it("it should not be null", function () {
-		expect(is.null(candidate)).toEqual(false);
-	});
-
-	it("it should not be undefined", function () {
-		expect(is.undefined(candidate)).toEqual(false);
-	});
-});
-
-describe('When checking the "expect" function', function () {
-	'use strict';
-
-	var candidate;
-
-	beforeEach(function () {
-		candidate = expect;
-	});
-
-	it("it should not be a number", function () {
-		expect(is.number(candidate)).toEqual(false);
-	});
-
-	it("it should not be a string", function () {
-		expect(is.string(candidate)).toEqual(false);
-	});
-
-	it("it should not be a Date", function () {
-		expect(is.date(candidate)).toEqual(false);
-	});
-
-	it("it should be a function", function () {
-		expect(is.fn(candidate)).toEqual(true);
-	});
-
-	it("it should not be an array", function () {
-		expect(is.array(candidate)).toEqual(false);
-	});
-
-	it("it should not be a boolean", function () {
-		expect(is.boolean(candidate)).toEqual(false);
-	});
-
-	it("it should not be null", function () {
-		expect(is.null(candidate)).toEqual(false);
-	});
-
-	it("it should not be undefined", function () {
-		expect(is.undefined(candidate)).toEqual(false);
-	});
-});
-
-describe('When checking a null value', function () {
-	'use strict';
-
-	var candidate;
-
-	beforeEach(function () {
-		candidate = null;
-	});
-
-	it("it should not be a number", function () {
-		expect(is.number(candidate)).toEqual(false);
-	});
-
-	it("it should not be a string", function () {
-		expect(is.string(candidate)).toEqual(false);
-	});
-
-	it("it should not be a Date", function () {
-		expect(is.date(candidate)).toEqual(false);
-	});
-
-	it("it should not be a function", function () {
-		expect(is.fn(candidate)).toEqual(false);
-	});
-
-	it("it should not be an array", function () {
-		expect(is.array(candidate)).toEqual(false);
-	});
-
-	it("it should not be a boolean", function () {
-		expect(is.boolean(candidate)).toEqual(false);
-	});
-
-	it("it should be null", function () {
-		expect(is.null(candidate)).toEqual(true);
-	});
-
-	it("it should not be undefined", function () {
-		expect(is.undefined(candidate)).toEqual(false);
-	});
-});
-
-describe('When checking an undefined value', function () {
-	'use strict';
-
-	var candidate;
-
-	beforeEach(function () {
-		candidate = undefined;
-	});
-
-	it("it should not be a number", function () {
-		expect(is.number(candidate)).toEqual(false);
-	});
-
-	it("it should not be a string", function () {
-		expect(is.string(candidate)).toEqual(false);
-	});
-
-	it("it should not be a Date", function () {
-		expect(is.date(candidate)).toEqual(false);
-	});
-
-	it("it should not be a function", function () {
-		expect(is.fn(candidate)).toEqual(false);
-	});
-
-	it("it should not be an array", function () {
-		expect(is.array(candidate)).toEqual(false);
-	});
-
-	it("it should not be a boolean", function () {
-		expect(is.boolean(candidate)).toEqual(false);
-	});
-
-	it("it should not be null", function () {
-		expect(is.null(candidate)).toEqual(false);
-	});
-
-	it("it should be undefined", function () {
-		expect(is.undefined(candidate)).toEqual(true);
-	});
-});
-
-},{"./../../../lang/is":14}],52:[function(require,module,exports){
-'use strict';
-
-var EventMap = require('./../../../messaging/EventMap');
-
-describe('When an EventMap is constructed', function () {
-	'use strict';
-
-	var eventMap;
-
-	beforeEach(function () {
-		eventMap = new EventMap();
-	});
-
-	describe('and a handler is registered', function () {
-		var eventName;
-		var eventHandler;
-
-		beforeEach(function () {
-			eventMap.register(eventName = 'hi', eventHandler = jasmine.createSpy('eventHandler'));
-		});
-
-		it('should report the event as not empty', function () {
-			expect(eventMap.getIsEmpty(eventName)).toBe(false);
-		});
-
-		describe('and the event fires', function () {
-			var eventData;
-
-			beforeEach(function () {
-				eventMap.fire(eventName, eventData = {});
-			});
-
-			it('should notify the handler', function () {
-				expect(eventHandler).toHaveBeenCalledWith(eventData, eventMap);
-			});
-		});
-
-		describe('and the an unrelated event fires', function () {
-			var eventData;
-
-			beforeEach(function () {
-				eventMap.fire('blah', eventData = {});
-			});
-
-			it('should not notify the handler', function () {
-				expect(eventHandler).not.toHaveBeenCalled();
-			});
-		});
-
-		describe('and the handler is unregistered', function () {
-			beforeEach(function () {
-				eventMap.unregister(eventName, eventHandler);
-			});
-
-			it('should report the event as empty', function () {
-				expect(eventMap.getIsEmpty(eventName)).toBe(true);
-			});
-		});
-
-		describe('and the handler is unregistered (using the wrong event name)', function () {
-			beforeEach(function () {
-				eventMap.unregister('blah', eventHandler);
-			});
-
-			it('should not report the event as empty', function () {
-				expect(eventMap.getIsEmpty(eventName)).toBe(false);
-			});
-		});
-
-		describe('and the handler is unregistered (using the wrong handler)', function () {
-			beforeEach(function () {
-				eventMap.unregister(eventName, function () {});
-			});
-
-			it('should not report the event as empty', function () {
-				expect(eventMap.getIsEmpty(eventName)).toBe(false);
-			});
-		});
-
-		describe('and another handler is registered', function () {
-			var eventHandlerTwo;
-
-			beforeEach(function () {
-				eventMap.register(eventName, eventHandlerTwo = jasmine.createSpy('eventHandlerTwo'));
-			});
-
-			it('should report the event as not empty', function () {
-				expect(eventMap.getIsEmpty(eventName)).toBe(false);
-			});
-
-			describe('and the event fires', function () {
-				var eventData;
-
-				beforeEach(function () {
-					eventMap.fire(eventName, eventData = {});
-				});
-
-				it('should notify the first handler', function () {
-					expect(eventHandler).toHaveBeenCalledWith(eventData, eventMap);
-				});
-
-				it('should notify the second handler', function () {
-					expect(eventHandlerTwo).toHaveBeenCalledWith(eventData, eventMap);
-				});
-			});
-
-			describe('and the an unrelated event fires', function () {
-				var eventData;
-
-				beforeEach(function () {
-					eventMap.fire('blah', eventData = {});
-				});
-
-				it('should not notify the first handler', function () {
-					expect(eventHandler).not.toHaveBeenCalled();
-				});
-
-				it('should not notify the second handler', function () {
-					expect(eventHandlerTwo).not.toHaveBeenCalled();
-				});
-			});
-
-			describe('and the handler is unregistered', function () {
-				beforeEach(function () {
-					eventMap.unregister(eventName, eventHandler);
-				});
-
-				it('should report the event as empty', function () {
-					expect(eventMap.getIsEmpty(eventName)).toBe(false);
-				});
-
-				describe('and the event fires', function () {
-					var eventData;
-
-					beforeEach(function () {
-						eventMap.fire(eventName, eventData = {});
-					});
-
-					it('should not notify the first handler', function () {
-						expect(eventHandler).not.toHaveBeenCalledWith(eventData, eventMap);
-					});
-
-					it('should notify the second handler', function () {
-						expect(eventHandlerTwo).toHaveBeenCalledWith(eventData, eventMap);
-					});
-				});
-
-				describe('and the second handler is unregistered', function () {
-					beforeEach(function () {
-						eventMap.unregister(eventName, eventHandlerTwo);
-					});
-
-					it('should report the event as empty', function () {
-						expect(eventMap.getIsEmpty(eventName)).toBe(true);
-					});
-
-					describe('and the event fires', function () {
-						var eventData;
-
-						beforeEach(function () {
-							eventMap.fire(eventName, eventData = {});
-						});
-
-						it('should not notify the first handler', function () {
-							expect(eventHandler).not.toHaveBeenCalledWith(eventData, eventMap);
-						});
-
-						it('should not notify the second handler', function () {
-							expect(eventHandlerTwo).not.toHaveBeenCalledWith(eventData, eventMap);
-						});
-					});
-				});
-			});
-		});
-	});
-});
-
-},{"./../../../messaging/EventMap":16}],53:[function(require,module,exports){
-'use strict';
-
-var Disposable = require('./../../../lang/Disposable');
-var Event = require('./../../../messaging/Event');
-
-describe('When an Event is constructed', function () {
-	'use strict';
-
-	var event;
-	var context;
-
-	beforeEach(function () {
-		event = new Event(context = {});
-	});
-
-	describe('and an event handler is registered', function () {
-		var spyOne;
-		var bindingOne;
-
-		beforeEach(function () {
-			bindingOne = event.register(spyOne = jasmine.createSpy('spyOne'));
-		});
-
-		it('should return a Disposable instance', function () {
-			expect(bindingOne instanceof Disposable).toEqual(true);
-		});
-
-		describe('and the event fires', function () {
-			var data;
-
-			beforeEach(function () {
-				event.fire(data = {});
-			});
-
-			it('should notify the observer', function () {
-				expect(spyOne).toHaveBeenCalledWith(context, data);
-			});
-		});
-
-		describe('and another event handler is registered', function () {
-			var spyTwo;
-			var bindingTwo;
-
-			beforeEach(function () {
-				bindingTwo = event.register(spyTwo = jasmine.createSpy('spyTwo'));
-			});
-
-			it('should return a Disposable instance', function () {
-				expect(bindingTwo instanceof Disposable).toEqual(true);
-			});
-
-			describe('and the event fires', function () {
-				var data;
-
-				beforeEach(function () {
-					event.fire(data = {});
-				});
-
-				it('should notify both observers', function () {
-					expect(spyOne).toHaveBeenCalledWith(context, data);
-					expect(spyTwo).toHaveBeenCalledWith(context, data);
-				});
-			});
-
-			describe('and the first observer is disposed ', function () {
-				var data;
-
-				beforeEach(function () {
-					bindingOne.dispose();
-				});
-
-				describe('and the event fires', function () {
-					var data;
-
-					beforeEach(function () {
-						event.fire(data = {});
-					});
-
-					it('should not notify the first observer', function () {
-						expect(spyOne).not.toHaveBeenCalledWith(context, data);
-					});
-
-					it('should notify the second observer', function () {
-						expect(spyTwo).toHaveBeenCalledWith(context, data);
-					});
-				});
-			});
-		});
-	});
-
-	describe('and multiple observers are added which dispose themselves', function () {
-		var spyOne;
-		var spyTwo;
-
-		var bindingOne;
-		var bindingTwo;
-
-		beforeEach(function () {
-			bindingOne = event.register(spyOne = jasmine.createSpy('spyOne').and.callFake(function () {
-				bindingOne.dispose();
-			}));
-			bindingTwo = event.register(spyTwo = jasmine.createSpy('spyTwo').and.callFake(function () {
-				bindingTwo.dispose();
-			}));
-		});
-
-		describe('and the event fires', function () {
-			var data;
-
-			beforeEach(function () {
-				event.fire(data = {});
-			});
-
-			it('should notify both observer', function () {
-				expect(spyOne).toHaveBeenCalledWith(context, data);
-				expect(spyTwo).toHaveBeenCalledWith(context, data);
-			});
-
-			describe('and the event fires again', function () {
-				var data;
-
-				beforeEach(function () {
-					spyOne.calls.reset();
-					spyTwo.calls.reset();
-
-					event.fire(data = {});
-				});
-
-				it('should not notify either observer', function () {
-					expect(spyOne).not.toHaveBeenCalledWith(context, data);
-					expect(spyTwo).not.toHaveBeenCalledWith(context, data);
-				});
-			});
-		});
-	});
-
-	describe('and two observers are added which dispose each other', function () {
-		var spyOne;
-		var spyTwo;
-
-		var bindingOne;
-		var bindingTwo;
-
-		beforeEach(function () {
-			bindingOne = event.register(spyOne = jasmine.createSpy('spyOne').and.callFake(function () {
-				bindingTwo.dispose();
-			}));
-			bindingTwo = event.register(spyTwo = jasmine.createSpy('spyTwo').and.callFake(function () {
-				bindingOne.dispose();
-			}));
-		});
-
-		describe('and the event fires', function () {
-			var data;
-
-			beforeEach(function () {
-				event.fire(data = {});
-			});
-
-			it('should notify both observer', function () {
-				expect(spyOne).toHaveBeenCalledWith(context, data);
-				expect(spyTwo).toHaveBeenCalledWith(context, data);
-			});
-
-			describe('and the event fires again', function () {
-				var data;
-
-				beforeEach(function () {
-					spyOne.calls.reset();
-					spyTwo.calls.reset();
-
-					event.fire(data = {});
-				});
-
-				it('should not notify either observer', function () {
-					expect(spyOne).not.toHaveBeenCalledWith(context, data);
-					expect(spyTwo).not.toHaveBeenCalledWith(context, data);
-				});
-			});
-		});
-	});
-});
-
-},{"./../../../lang/Disposable":10,"./../../../messaging/Event":15}],54:[function(require,module,exports){
-'use strict';
-
-var Disposable = require('./../../../lang/Disposable');
-var Model = require('./../../../models/Model');
-
-describe('When an Model is constructed with "firstName" and "lastName" properties', function () {
-	'use strict';
-
-	var model;
-
-	beforeEach(function () {
-		model = new Model(['firstName', 'lastName']);
-	});
-
-	describe('and a transaction observer is registered', function () {
-		var spy;
-		var binding;
-
-		beforeEach(function () {
-			binding = model.onTransactionCommitted(spy = jasmine.createSpy('spy'));
-		});
-
-		it('should return a Disposable instance', function () {
-			expect(binding instanceof Disposable).toEqual(true);
-		});
-
-		describe('and both properties are updated', function () {
-			var data;
-
-			beforeEach(function () {
-				model.firstName = 'Bryan';
-				model.lastName = 'Ingle';
-			});
-
-			it('two transactions should be occur', function () {
-				expect(spy.calls.count()).toEqual(2);
-			});
-
-			it('the first transaction should have updated the "first name" property', function () {
-				var argsOne = spy.calls.argsFor(0);
-
-				expect(argsOne[0].firstName).toEqual('Bryan');
-				expect(argsOne[0].sequence).toEqual(0);
-
-				expect(argsOne[1]).toBe(model);
-			});
-
-			it('the first transaction should have updated the "last name" property', function () {
-				var argsOne = spy.calls.argsFor(1);
-
-				expect(argsOne[0].lastName).toEqual('Ingle');
-				expect(argsOne[0].sequence).toEqual(1);
-
-				expect(argsOne[1]).toBe(model);
-			});
-		});
-
-		describe('and both properties are updated with an explicit transaction', function () {
-			var data;
-
-			beforeEach(function () {
-				model.executeTransaction(function (m) {
-					m.firstName = 'Bryan';
-					m.lastName = 'Ingle';
-				});
-			});
-
-			it('one transactions should be occur', function () {
-				expect(spy.calls.count()).toEqual(1);
-			});
-
-			it('the first transaction should have updated the "first name" property', function () {
-				var argsOne = spy.calls.argsFor(0);
-
-				expect(argsOne[0].firstName).toEqual('Bryan');
-				expect(argsOne[0].lastName).toEqual('Ingle');
-				expect(argsOne[0].sequence).toEqual(0);
-
-				expect(argsOne[1]).toBe(model);
-			});
-		});
-	});
-});
-
-},{"./../../../lang/Disposable":10,"./../../../models/Model":17}],55:[function(require,module,exports){
+},{"./../lang/assert":15,"./AndSpecification":39,"./OrSpecification":46,"./Specification":48}],50:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
@@ -7552,761 +5229,83 @@ function _inherits(subClass, superClass) {
 	}subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 }
 
-var Specification = require('./../../../specifications/Specification');
-var AndSpecification = require('./../../../specifications/AndSpecification');
+var assert = require('./../lang/assert');
 
-describe('When an AndSpecification is constructed', function () {
+var Specification = require('./Specification');
+
+module.exports = function () {
 	'use strict';
 
-	var SpecPass = function (_Specification) {
-		_inherits(SpecPass, _Specification);
+	var TranslateSpecification = function (_Specification) {
+		_inherits(TranslateSpecification, _Specification);
 
-		function SpecPass() {
-			_classCallCheck(this, SpecPass);
+		function TranslateSpecification(specification, translator) {
+			_classCallCheck(this, TranslateSpecification);
 
-			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(SpecPass).call(this));
+			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(TranslateSpecification).call(this));
 
-			_this._spy = jasmine.createSpy('spyPass').and.returnValue(true);
+			assert.argumentIsRequired(specification, 'specification', Specification, 'Specification');
+			assert.argumentIsRequired(translator, 'translator', Function);
+
+			_this._specification = specification;
+			_this._translator = translator;
 			return _this;
 		}
 
-		_createClass(SpecPass, [{
+		_createClass(TranslateSpecification, [{
 			key: '_evaluate',
 			value: function _evaluate(data) {
-				return this._spy(data);
+				return this._specification.evaluate(this._translator(data));
+			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[TranslateSpecification]';
 			}
 		}]);
 
-		return SpecPass;
+		return TranslateSpecification;
 	}(Specification);
 
-	var SpecFail = function (_Specification2) {
-		_inherits(SpecFail, _Specification2);
+	return TranslateSpecification;
+}();
 
-		function SpecFail() {
-			_classCallCheck(this, SpecFail);
-
-			var _this2 = _possibleConstructorReturn(this, Object.getPrototypeOf(SpecFail).call(this));
-
-			_this2._spy = jasmine.createSpy('spyPass').and.returnValue(false);
-			return _this2;
-		}
-
-		_createClass(SpecFail, [{
-			key: '_evaluate',
-			value: function _evaluate(data) {
-				return this._spy(data);
-			}
-		}]);
-
-		return SpecFail;
-	}(Specification);
-
-	describe('with two specifications that will pass', function () {
-		var specification;
-
-		var specPassOne;
-		var specPassTwo;
-
-		var data;
-		var result;
-
-		beforeEach(function () {
-			specification = new AndSpecification(specPassOne = new SpecPass(), specPassTwo = new SpecPass());
-
-			result = specification.evaluate(data = {});
-		});
-
-		it('should call the first specification', function () {
-			expect(specPassOne._spy).toHaveBeenCalledWith(data);
-		});
-
-		it('should call the second specification', function () {
-			expect(specPassTwo._spy).toHaveBeenCalledWith(data);
-		});
-
-		it('should evaluate to true', function () {
-			expect(result).toEqual(true);
-		});
-	});
-
-	describe('where the first specifications will fail', function () {
-		var specification;
-
-		var specPassOne;
-		var specPassTwo;
-
-		var data;
-		var result;
-
-		beforeEach(function () {
-			specification = new AndSpecification(specPassOne = new SpecFail(), specPassTwo = new SpecPass());
-
-			result = specification.evaluate(data = {});
-		});
-
-		it('should call the first specification', function () {
-			expect(specPassOne._spy).toHaveBeenCalledWith(data);
-		});
-
-		it('should not call the second specification', function () {
-			expect(specPassTwo._spy).not.toHaveBeenCalledWith(data);
-		});
-
-		it('should evaluate to false', function () {
-			expect(result).toEqual(false);
-		});
-	});
-});
-
-},{"./../../../specifications/AndSpecification":33,"./../../../specifications/Specification":39}],56:[function(require,module,exports){
+},{"./../lang/assert":15,"./Specification":48}],51:[function(require,module,exports){
 'use strict';
 
-var ContainedSpecification = require('./../../../specifications/ContainedSpecification');
+var AndSpecification = require('./AndSpecification');
+var ContainedSpecification = require('./ContainedSpecification');
+var ContainsSpecification = require('./ContainsSpecification');
+var EqualsSpecification = require('./EqualsSpecification');
+var FailSpecification = require('./FailSpecification');
+var GreaterThanSpecification = require('./GreaterThanSpecification');
+var LessThanSpecification = require('./LessThanSpecification');
+var OrSpecification = require('./OrSpecification');
+var PassSpecification = require('./PassSpecification');
+var Specification = require('./Specification');
+var SpecificationBuilder = require('./SpecificationBuilder');
+var TranslateSpecification = require('./TranslateSpecification');
 
-describe('When a ContainedSpecification is constructed', function () {
+module.exports = function () {
 	'use strict';
 
-	var specification;
-	var specificationValue;
-
-	beforeEach(function () {
-		specification = new ContainedSpecification(specificationValue = ['xyz', 123]);
-	});
-
-	describe('and a string, contained in the array, is evaluated', function () {
-		var result;
-
-		beforeEach(function () {
-			result = specification.evaluate('xyz');
-		});
-
-		it('should pass', function () {
-			expect(result).toEqual(true);
-		});
-	});
-
-	describe('and a string, not contained in the array, is evaluated', function () {
-		var result;
-
-		beforeEach(function () {
-			result = specification.evaluate('abc');
-		});
-
-		it('should not pass', function () {
-			expect(result).toEqual(false);
-		});
-	});
-
-	describe('and a number, contained in the array, is evaluated', function () {
-		var result;
-
-		beforeEach(function () {
-			result = specification.evaluate(123);
-		});
-
-		it('should pass', function () {
-			expect(result).toEqual(true);
-		});
-	});
-
-	describe('and a number, not contained in the array, is evaluated', function () {
-		var result;
-
-		beforeEach(function () {
-			result = specification.evaluate(1);
-		});
-
-		it('should not pass', function () {
-			expect(result).toEqual(false);
-		});
-	});
-});
-
-},{"./../../../specifications/ContainedSpecification":34}],57:[function(require,module,exports){
-'use strict';
-
-var ContainsSpecification = require('./../../../specifications/ContainsSpecification');
-
-describe('When a ContainsSpecification is constructed', function () {
-	'use strict';
-
-	var specification;
-	var specificationValue;
-
-	beforeEach(function () {
-		specification = new ContainsSpecification(specificationValue = 'xyz');
-	});
-
-	describe('and an array, containing the desired value, is evaluated', function () {
-		var result;
-
-		beforeEach(function () {
-			result = specification.evaluate(['abc', 'def', specificationValue, 1, 2, 3]);
-		});
-
-		it('should pass', function () {
-			expect(result).toEqual(true);
-		});
-	});
-
-	describe('and an array, missing the desired value, is evaluated', function () {
-		var result;
-
-		beforeEach(function () {
-			result = specification.evaluate(['abc', 'def', 1, 2, 3]);
-		});
-
-		it('should fail', function () {
-			expect(result).toEqual(false);
-		});
-	});
-
-	describe('and an object is evaluated', function () {
-		var result;
-
-		beforeEach(function () {
-			result = specification.evaluate({ abc: 'xyz', xyz: 'abc' });
-		});
-
-		it('should fail', function () {
-			expect(result).toEqual(false);
-		});
-	});
-});
-
-},{"./../../../specifications/ContainsSpecification":35}],58:[function(require,module,exports){
-'use strict';
-
-var FailSpecification = require('./../../../specifications/FailSpecification');
-
-describe('When a FailSpecification is constructed', function () {
-	'use strict';
-
-	var specification;
-	var specificationValue;
-
-	beforeEach(function () {
-		specification = new FailSpecification(specificationValue = 'ignored');
-	});
-
-	describe('and a string is evaluated', function () {
-		var result;
-
-		beforeEach(function () {
-			result = specification.evaluate('abc');
-		});
-
-		it('should not pass', function () {
-			expect(result).toEqual(false);
-		});
-	});
-
-	describe('and a null value is evaluated', function () {
-		var result;
-
-		beforeEach(function () {
-			result = specification.evaluate(null);
-		});
-
-		it('should not pass', function () {
-			expect(result).toEqual(false);
-		});
-	});
-
-	describe('and an undefined value is evaluated', function () {
-		var result;
-
-		beforeEach(function () {
-			result = specification.evaluate(undefined);
-		});
-
-		it('should not pass', function () {
-			expect(result).toEqual(false);
-		});
-	});
-});
-
-},{"./../../../specifications/FailSpecification":36}],59:[function(require,module,exports){
-'use strict';
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
-
-var _createClass = function () {
-	function defineProperties(target, props) {
-		for (var i = 0; i < props.length; i++) {
-			var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
-		}
-	}return function (Constructor, protoProps, staticProps) {
-		if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+	return {
+		AndSpecification: AndSpecification,
+		ContainedSpecification: ContainedSpecification,
+		ContainsSpecification: ContainsSpecification,
+		EqualsSpecification: EqualsSpecification,
+		FailSpecification: FailSpecification,
+		GreaterThanSpecification: GreaterThanSpecification,
+		LessThanSpecification: LessThanSpecification,
+		OrSpecification: OrSpecification,
+		PassSpecification: PassSpecification,
+		Specification: Specification,
+		SpecificationBuilder: SpecificationBuilder,
+		TranslateSpecification: TranslateSpecification
 	};
 }();
 
-function _classCallCheck(instance, Constructor) {
-	if (!(instance instanceof Constructor)) {
-		throw new TypeError("Cannot call a class as a function");
-	}
-}
-
-function _possibleConstructorReturn(self, call) {
-	if (!self) {
-		throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-	}return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
-}
-
-function _inherits(subClass, superClass) {
-	if (typeof superClass !== "function" && superClass !== null) {
-		throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
-	}subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
-}
-
-var Specification = require('./../../../specifications/Specification');
-var OrSpecification = require('./../../../specifications/OrSpecification');
-
-describe('When an OrSpecification is constructed', function () {
-	'use strict';
-
-	var SpecPass = function (_Specification) {
-		_inherits(SpecPass, _Specification);
-
-		function SpecPass() {
-			_classCallCheck(this, SpecPass);
-
-			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(SpecPass).call(this));
-
-			_this._spy = jasmine.createSpy('spyPass').and.returnValue(true);
-			return _this;
-		}
-
-		_createClass(SpecPass, [{
-			key: '_evaluate',
-			value: function _evaluate(data) {
-				return this._spy(data);
-			}
-		}]);
-
-		return SpecPass;
-	}(Specification);
-
-	var SpecFail = function (_Specification2) {
-		_inherits(SpecFail, _Specification2);
-
-		function SpecFail() {
-			_classCallCheck(this, SpecFail);
-
-			var _this2 = _possibleConstructorReturn(this, Object.getPrototypeOf(SpecFail).call(this));
-
-			_this2._spy = jasmine.createSpy('spyPass').and.returnValue(false);
-			return _this2;
-		}
-
-		_createClass(SpecFail, [{
-			key: '_evaluate',
-			value: function _evaluate(data) {
-				return this._spy(data);
-			}
-		}]);
-
-		return SpecFail;
-	}(Specification);
-
-	describe('with two specifications that will pass', function () {
-		var specification;
-
-		var specPassOne;
-		var specPassTwo;
-
-		var data;
-		var result;
-
-		beforeEach(function () {
-			specification = new OrSpecification(specPassOne = new SpecPass(), specPassTwo = new SpecPass());
-
-			result = specification.evaluate(data = {});
-		});
-
-		it('should call the first specification', function () {
-			expect(specPassOne._spy).toHaveBeenCalledWith(data);
-		});
-
-		it('should not call the second specification', function () {
-			expect(specPassTwo._spy).not.toHaveBeenCalledWith(data);
-		});
-
-		it('should evaluate to false', function () {
-			expect(result).toEqual(true);
-		});
-	});
-
-	describe('with two specifications that will fail', function () {
-		var specification;
-
-		var specPassOne;
-		var specPassTwo;
-
-		var data;
-		var result;
-
-		beforeEach(function () {
-			specification = new OrSpecification(specPassOne = new SpecFail(), specPassTwo = new SpecFail());
-
-			result = specification.evaluate(data = {});
-		});
-
-		it('should call the first specification', function () {
-			expect(specPassOne._spy).toHaveBeenCalledWith(data);
-		});
-
-		it('should call the second specification', function () {
-			expect(specPassTwo._spy).toHaveBeenCalledWith(data);
-		});
-
-		it('should evaluate to false', function () {
-			expect(result).toEqual(false);
-		});
-	});
-});
-
-},{"./../../../specifications/OrSpecification":37,"./../../../specifications/Specification":39}],60:[function(require,module,exports){
-'use strict';
-
-var PassSpecification = require('./../../../specifications/PassSpecification');
-
-describe('When a PassSpecification is constructed', function () {
-	'use strict';
-
-	var specification;
-	var specificationValue;
-
-	beforeEach(function () {
-		specification = new PassSpecification(specificationValue = 'ignored');
-	});
-
-	describe('and a string is evaluated', function () {
-		var result;
-
-		beforeEach(function () {
-			result = specification.evaluate('abc');
-		});
-
-		it('should pass', function () {
-			expect(result).toEqual(true);
-		});
-	});
-
-	describe('and a null value is evaluated', function () {
-		var result;
-
-		beforeEach(function () {
-			result = specification.evaluate(null);
-		});
-
-		it('should pass', function () {
-			expect(result).toEqual(true);
-		});
-	});
-
-	describe('and an undefined value is evaluated', function () {
-		var result;
-
-		beforeEach(function () {
-			result = specification.evaluate(undefined);
-		});
-
-		it('should pass', function () {
-			expect(result).toEqual(true);
-		});
-	});
-});
-
-},{"./../../../specifications/PassSpecification":38}],61:[function(require,module,exports){
-'use strict';
-
-var RateLimiter = require('./../../../timing/RateLimiter');
-
-describe('When a RateLimiter is constructed (1 execution per 25 milliseconds)', function () {
-	'use strict';
-
-	var limiter;
-
-	var windowMaximumCount;
-	var windowDurationMilliseconds;
-	var concurrency;
-
-	beforeEach(function () {
-		limiter = new RateLimiter(windowMaximumCount = 1, windowDurationMilliseconds = 25, concurrency = null);
-	});
-
-	describe('and tasks are scheduled', function () {
-		var spies;
-		var promises;
-
-		var start;
-
-		beforeEach(function () {
-			start = new Date();
-
-			spies = [];
-			promises = [];
-
-			for (var i = 0; i < 10; i++) {
-				var spy = jasmine.createSpy('spy');
-
-				spies.push(spy);
-
-				promises.push(limiter.enqueue(spy));
-			}
-		});
-
-		it('the tasks should serialized', function (done) {
-			var promise = null;
-
-			var getValidatedPromise = function getValidatedPromise(promise, index) {
-				return promise.then(function () {
-					for (var i = 0; i < spies.length; i++) {
-						var count;
-
-						if (i > index) {
-							count = 0;
-						} else {
-							count = 1;
-						}
-
-						expect(spies[i].calls.count()).toEqual(count);
-					}
-				});
-			};
-
-			for (var i = 0; i < promises.length; i++) {
-				var p = getValidatedPromise(promises[i], i);
-
-				if (promise === null) {
-					promise = p;
-				} else {
-					promise = promise.then(function () {
-						return p;
-					});
-				}
-			}
-
-			promise.then(function () {
-				done();
-			});
-		});
-
-		it('the tasks not finish before the earliest possible moment', function (done) {
-			var promise = null;
-
-			var getValidatedPromise = function getValidatedPromise(promise, index) {
-				return promise.then(function () {
-					var end = new Date();
-					var duration = end.getTime() - start.getTime();
-
-					var shortestPossibleDuration = Math.floor(index / windowMaximumCount) * windowDurationMilliseconds;
-
-					expect(duration).not.toBeLessThan(shortestPossibleDuration);
-				});
-			};
-
-			for (var i = 0; i < promises.length; i++) {
-				var p = getValidatedPromise(promises[i], i);
-
-				if (promise === null) {
-					promise = p;
-				} else {
-					promise = promise.then(function () {
-						return p;
-					});
-				}
-			}
-
-			promise.then(function () {
-				done();
-			});
-		});
-	});
-
-	describe('and failing tasks are scheduled', function () {
-		var spies;
-		var promises;
-		var error;
-
-		var start;
-
-		beforeEach(function () {
-			start = new Date();
-
-			spies = [];
-			promises = [];
-
-			error = new Error('oops');
-
-			for (var i = 0; i < 2; i++) {
-				var spy = jasmine.createSpy('spy').and.callFake(function () {
-					throw error;
-				});
-
-				spies.push(spy);
-
-				promises.push(limiter.enqueue(spy));
-			}
-		});
-
-		it('each task should be executed', function (done) {
-			var promise = null;
-
-			var getValidatedPromise = function getValidatedPromise(promise, index) {
-				return promise.catch(function (error) {
-					var end = new Date();
-					var duration = end.getTime() - start.getTime();
-
-					var shortestPossibleDuration = Math.floor(index / windowMaximumCount) * windowDurationMilliseconds;
-
-					expect(duration).not.toBeLessThan(shortestPossibleDuration);
-					expect(error).toBe(error);
-				});
-			};
-
-			for (var i = 0; i < promises.length; i++) {
-				var p = getValidatedPromise(promises[i], i);
-
-				if (promise === null) {
-					promise = p;
-				} else {
-					promise = promise.then(function () {
-						return p;
-					});
-				}
-			}
-
-			promise.then(function () {
-				done();
-			});
-		});
-	});
-});
-
-describe('When a RateLimiter is constructed (2 execution per 25 milliseconds)', function () {
-	'use strict';
-
-	var limiter;
-
-	var windowMaximumCount;
-	var windowDurationMilliseconds;
-	var concurrency;
-
-	beforeEach(function () {
-		limiter = new RateLimiter(windowMaximumCount = 2, windowDurationMilliseconds = 25, concurrency = null);
-	});
-
-	describe('and tasks are scheduled', function () {
-		var spies;
-		var promises;
-
-		var start;
-
-		beforeEach(function () {
-			start = new Date();
-
-			spies = [];
-			promises = [];
-
-			for (var i = 0; i < 10; i++) {
-				var spy = jasmine.createSpy('spy');
-
-				spies.push(spy);
-
-				promises.push(limiter.enqueue(spy));
-			}
-		});
-
-		it('the tasks not finish before the earliest possible moment', function (done) {
-			var promise = null;
-
-			var getValidatedPromise = function getValidatedPromise(promise, index) {
-				return promise.then(function () {
-					var end = new Date();
-					var duration = end.getTime() - start.getTime();
-
-					var shortestPossibleDuration = Math.floor(index / windowMaximumCount) * windowDurationMilliseconds;
-
-					expect(duration).not.toBeLessThan(shortestPossibleDuration);
-				});
-			};
-
-			for (var i = 0; i < promises.length; i++) {
-				var p = getValidatedPromise(promises[i], i);
-
-				if (promise === null) {
-					promise = p;
-				} else {
-					promise = promise.then(function () {
-						return p;
-					});
-				}
-			}
-
-			promise.then(function () {
-				done();
-			});
-		});
-	});
-});
-
-},{"./../../../timing/RateLimiter":63}],62:[function(require,module,exports){
-'use strict';
-
-var Scheduler = require('./../../../timing/Scheduler');
-
-describe('When a Scheduler is constructed', function () {
-	'use strict';
-
-	var scheduler;
-
-	beforeEach(function () {
-		scheduler = new Scheduler();
-	});
-
-	describe('and task is scheduled', function () {
-		var spy;
-		var milliseconds;
-		var promise;
-
-		beforeEach(function () {
-			promise = scheduler.schedule(spy = jasmine.createSpy('spy'), milliseconds = 10, 'A scheduled task');
-		});
-
-		it('should not execute the task synchronously', function () {
-			expect(spy).not.toHaveBeenCalled();
-		});
-
-		it('should execute the task asynchronously', function (done) {
-			promise.then(function () {
-				expect(spy.calls.count()).toEqual(1);
-			}).then(function () {
-				done();
-			});
-		});
-	});
-
-	describe('and is disposed', function () {
-		var spy;
-
-		beforeEach(function () {
-			spy = jasmine.createSpy('spy');
-
-			scheduler.dispose();
-		});
-
-		it('should throw if an attempt is made to schedule a task', function () {
-			expect(function () {
-				scheduler.schedule(spy, 100, 'A scheduled task');
-			}).toThrow(new Error('The Scheduler has been disposed.'));
-		});
-	});
-});
-
-},{"./../../../timing/Scheduler":64}],63:[function(require,module,exports){
+},{"./AndSpecification":39,"./ContainedSpecification":40,"./ContainsSpecification":41,"./EqualsSpecification":42,"./FailSpecification":43,"./GreaterThanSpecification":44,"./LessThanSpecification":45,"./OrSpecification":46,"./PassSpecification":47,"./Specification":48,"./SpecificationBuilder":49,"./TranslateSpecification":50}],52:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
@@ -8458,7 +5457,7 @@ module.exports = function () {
 	return RateLimiter;
 }();
 
-},{"./../collections/Queue":1,"./../lang/Disposable":10,"./../lang/assert":11,"./Scheduler":64,"log4js":28}],64:[function(require,module,exports){
+},{"./../collections/Queue":1,"./../lang/Disposable":14,"./../lang/assert":15,"./Scheduler":53,"log4js":34}],53:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
@@ -8660,4 +5659,20 @@ module.exports = function () {
     return Scheduler;
 }();
 
-},{"./../lang/Disposable":10,"./../lang/assert":11}]},{},[41,42,43,44,40,45,46,47,49,50,48,51,52,53,54,55,56,57,58,59,60,61,62]);
+},{"./../lang/Disposable":14,"./../lang/assert":15}],54:[function(require,module,exports){
+'use strict';
+
+var RateLimiter = require('./RateLimiter');
+var Scheduler = require('./Scheduler');
+
+module.exports = function () {
+	'use strict';
+
+	return {
+		RateLimiter: RateLimiter,
+		Scheduler: Scheduler
+	};
+}();
+
+},{"./RateLimiter":52,"./Scheduler":53}]},{},[13])(13)
+});
