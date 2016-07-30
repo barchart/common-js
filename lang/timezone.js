@@ -5,11 +5,11 @@ module.exports = (() => {
 	'use strict';
 
 	return {
-		getTimezones: function() {
+		getTimezones() {
 			return moment.tz.names();
 		},
 
-		hasTimezone: function(timezone) {
+		hasTimezone(timezone) {
 			assert.argumentIsRequired(timezone, 'timezone', String);
 
 			return timezone.getTimezones().some((candidate) => {
@@ -17,7 +17,7 @@ module.exports = (() => {
 			});
 		},
 
-		guessTimezone: function() {
+		guessTimezone() {
 			return moment.tz.guess() || null;
 		}
 	};

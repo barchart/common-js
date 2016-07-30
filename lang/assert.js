@@ -1,3 +1,5 @@
+var is = require('./is');
+
 module.exports = (() => {
 	'use strict';
 
@@ -47,27 +49,27 @@ module.exports = (() => {
 
 	function checkArgumentType(variable, variableName, type, typeDescription, index) {
 		if (type === String) {
-			if (typeof(variable) !== 'string') {
+			if (!is.string(variable)) {
 				throwInvalidTypeError(variableName, 'string', index);
 			}
 		} else if (type === Number) {
-			if (typeof(variable) !== 'number') {
+			if (!is.number(variable)) {
 				throwInvalidTypeError(variableName, 'number', index);
 			}
 		} else if (type === Function) {
-			if (typeof(variable) !== 'function') {
+			if (!is.fn(variable)) {
 				throwInvalidTypeError(variableName, 'function', index);
 			}
 		} else if (type === Boolean) {
-			if (typeof(variable) !== 'boolean') {
+			if (!is.boolean(variable)) {
 				throwInvalidTypeError(variableName, 'boolean', index);
 			}
 		} else if (type === Date) {
-			if (!(variable instanceof Date)) {
+			if (!is.date(variable)) {
 				throwInvalidTypeError(variableName, 'date', index);
 			}
 		} else if (type === Array) {
-			if (!Array.isArray(variable)) {
+			if (!is.array(variable)) {
 				throwInvalidTypeError(variableName, 'array', index);
 			}
 		} else if (!(variable instanceof (type || Object))) {

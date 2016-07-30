@@ -2,7 +2,7 @@ module.exports = (() => {
 	'use strict';
 
 	const connection = {
-		getIsSecure: function(secure) {
+		getIsSecure(secure) {
 			return typeof(secure) === 'boolean' && secure;
 		}
 	};

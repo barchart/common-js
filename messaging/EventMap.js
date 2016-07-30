@@ -1,4 +1,5 @@
 var Event = require('./Event');
+var assert = require('./../lang/assert');
 
 module.exports = (() => {
 	'use strict';
@@ -9,7 +10,7 @@ module.exports = (() => {
 		}
 
 		fire(eventName, data) {
-			let event = this._events[eventName];
+			const event = this._events[eventName];
 
 			if (event) {
 				event.fire(data);
@@ -17,9 +18,7 @@ module.exports = (() => {
 		}
 
 		register(eventName, handler) {
-			if (typeof eventName !== 'string') {
-				throw new Error('An event name must be a string.');
-			}
+			assert.argumentIsRequired(eventName, 'eventName', String);
 
 			let event = this._events[eventName];
 
@@ -31,11 +30,9 @@ module.exports = (() => {
 		}
 
 		unregister(eventName, handler) {
-			if (typeof eventName !== 'string') {
-				throw new Error('An event name must be a string.');
-			}
+			assert.argumentIsRequired(eventName, 'eventName', String);
 
-			let event = this._events[eventName];
+			const event = this._events[eventName];
 
 			if (event) {
 				event.unregister(handler);
@@ -47,11 +44,9 @@ module.exports = (() => {
 		}
 
 		clear(eventName) {
-			if (typeof eventName !== 'string') {
-				throw new Error('An event name must be a string.');
-			}
+			assert.argumentIsRequired(eventName, 'eventName', String);
 
-			let event = this._events[eventName];
+			const event = this._events[eventName];
 
 			if (event) {
 				event.clear();
@@ -61,7 +56,7 @@ module.exports = (() => {
 		}
 
 		getIsEmpty(eventName) {
-			let event = this._events[eventName];
+			const event = this._events[eventName];
 
 			let returnVal;
 
@@ -75,7 +70,7 @@ module.exports = (() => {
 		}
 
 		getKeys() {
-			let keys = [];
+			const keys = [];
 
 			for (let key in this._events) {
 				if (this._events.hasOwnProperty(key)) {
