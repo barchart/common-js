@@ -10,6 +10,23 @@ module.exports = (() => {
 			return a.filter((item, index, array) => {
 				return array.indexOf(item) === index;
 			});
+		},
+
+		groupBy(a, keySelector) {
+			assert.argumentIsArray(a, 'a');
+			assert.argumentIsRequired(keySelector, 'keySelector', Function);
+
+			return a.reduce((groups, item) => {
+				const key = keySelector(item);
+
+				if (!groups.hasOwnProperty(key)) {
+					groups[key] = [ ];
+				}
+
+				groups[key].push(item);
+
+				return groups;
+			}, { });
 		}
 	};
 })();

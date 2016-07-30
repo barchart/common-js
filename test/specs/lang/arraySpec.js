@@ -27,3 +27,48 @@ describe('When reducing an array to unique values', function() {
 		});
 	});
 });
+
+describe('When grouping an array', function() {
+	'use strict';
+
+	describe('and using objects containing the first three rows of pascals triangle', function() {
+		var groups;
+
+		beforeEach(function() {
+			groups = array.groupBy([ { value: 1 }, { value: 1 }, { value: 1 }, { value: 1 }, { value: 2 }, { value: 1 } ], function(item) { return item.value; });
+		});
+
+		it('should only contain 2 keys', function() {
+			expect(Object.keys(groups).length).toEqual(2);
+		});
+
+		it('should have a key for number one', function() {
+			expect(groups.hasOwnProperty(1)).toEqual(true);
+		});
+
+		it('should have five items grouped for the number one', function() {
+			expect(groups[1].length).toEqual(5);
+		});
+
+		it('should an object with a value of one for each item grouped for the number one', function() {
+			var group = groups[1];
+
+			for (var i = 0; i < group.length; i++) {
+				expect(group[i].value).toEqual(1);
+			}
+		});
+
+		it('should have one item grouped for the number two', function() {
+			expect(groups[2].length).toEqual(1);
+		});
+
+		it('should an object with a value of two for each item grouped for the number two', function() {
+			var group = groups[2];
+
+			for (var i = 0; i < group.length; i++) {
+				expect(group[i].value).toEqual(2);
+			}
+		});
+	});
+});
+
