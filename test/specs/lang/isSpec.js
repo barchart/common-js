@@ -32,6 +32,14 @@ describe('When checking the number 3', function() {
 	it("it should not be a boolean", function() {
 		expect(is.boolean(candidate)).toEqual(false);
 	});
+
+	it("it should not be null", function() {
+		expect(is.null(candidate)).toEqual(false);
+	});
+
+	it("it should not be undefined", function() {
+		expect(is.undefined(candidate)).toEqual(false);
+	});
 });
 
 describe('When checking the string "3"', function() {
@@ -65,6 +73,14 @@ describe('When checking the string "3"', function() {
 
 	it("it should not be a boolean", function() {
 		expect(is.boolean(candidate)).toEqual(false);
+	});
+
+	it("it should not be null", function() {
+		expect(is.null(candidate)).toEqual(false);
+	});
+
+	it("it should not be undefined", function() {
+		expect(is.undefined(candidate)).toEqual(false);
 	});
 });
 
@@ -100,6 +116,14 @@ describe('When checking the date 08/29/2016', function() {
 	it("it should not be a boolean", function() {
 		expect(is.boolean(candidate)).toEqual(false);
 	});
+
+	it("it should not be null", function() {
+		expect(is.null(candidate)).toEqual(false);
+	});
+
+	it("it should not be undefined", function() {
+		expect(is.undefined(candidate)).toEqual(false);
+	});
 });
 
 describe('When checking the "expect" function', function() {
@@ -133,6 +157,14 @@ describe('When checking the "expect" function', function() {
 
 	it("it should not be a boolean", function() {
 		expect(is.boolean(candidate)).toEqual(false);
+	});
+
+	it("it should not be null", function() {
+		expect(is.null(candidate)).toEqual(false);
+	});
+
+	it("it should not be undefined", function() {
+		expect(is.undefined(candidate)).toEqual(false);
 	});
 });
 
@@ -168,6 +200,14 @@ describe('When checking a null value', function() {
 	it("it should not be a boolean", function() {
 		expect(is.boolean(candidate)).toEqual(false);
 	});
+
+	it("it should be null", function() {
+		expect(is.null(candidate)).toEqual(true);
+	});
+
+	it("it should not be undefined", function() {
+		expect(is.undefined(candidate)).toEqual(false);
+	});
 });
 
 describe('When checking an undefined value', function() {
@@ -201,5 +241,13 @@ describe('When checking an undefined value', function() {
 
 	it("it should not be a boolean", function() {
 		expect(is.boolean(candidate)).toEqual(false);
+	});
+
+	it("it should not be null", function() {
+		expect(is.null(candidate)).toEqual(false);
+	});
+
+	it("it should be undefined", function() {
+		expect(is.undefined(candidate)).toEqual(true);
 	});
 });
