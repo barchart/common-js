@@ -24,6 +24,14 @@ module.exports = (() => {
 
 		boolean(candidate) {
 			return typeof(candidate) === 'boolean';
+		},
+
+		null(candidate) {
+			return candidate === null;
+		},
+
+		undefined(candidate) {
+			return candidate === undefined;
 		}
 	};
 })();
