@@ -77,7 +77,7 @@ module.exports = (() => {
 				returnRef = this;
 			}
 
-			for (let i = 0; i < this._children.length; i++) {
+			for (var i = 0; i < this._children.length; i++) {
 				var child = this._children[i];
 
 				returnRef = child.search(predicate, childrenFirst, true);
