@@ -44,6 +44,28 @@ module.exports = (() => {
 
 				return map;
 			}, { });
+		},
+
+		dropRight(a) {
+			let returnRef = Array.from(a);
+
+			if (returnRef.length !== 0) {
+				returnRef.pop();
+			}
+
+			return returnRef;
+		},
+
+		last(a) {
+			let returnRef;
+
+			if (a.length !== 0) {
+				returnRef = a[a.length - 1];
+			} else {
+				returnRef = undefined;
+			}
+
+			return returnRef;
 		}
 	};
 })();
