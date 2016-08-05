@@ -72,8 +72,6 @@ describe('When grouping an array', function() {
 	});
 
 	describe('When indexing an array', function() {
-		'use strict';
-
 		describe('and using objects containing the first three prime numbers', function() {
 			var groups;
 
