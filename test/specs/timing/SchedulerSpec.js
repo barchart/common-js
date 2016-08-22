@@ -31,6 +31,30 @@ describe('When a Scheduler is constructed', function() {
 					done();
 				});
 		});
+
+		it('should not create a memory leak', function(done) {
+			var before = 0;
+
+			for (var tb in scheduler._timeoutBindings) {
+				before++;
+			}
+
+			expect(before).toEqual(1);
+
+			promise
+				.then(function() {
+					var after = 0;
+
+					for (var tb in scheduler._timeoutBindings) {
+						after++;
+					}
+
+					expect(after).toEqual(0);
+				})
+				.finally(function() {
+					done();
+				});
+		});
 	});
 
 	describe('and is disposed', function() {
