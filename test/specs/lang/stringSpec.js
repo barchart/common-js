@@ -102,7 +102,7 @@ describe('When left padding a string', function() {
 
 		it('the result should be the correct number of characters', function() {
 			expect(result.length).toEqual(base.length + 1);
-		})
+		});
 
 		it('the first character should be the repeating character', function() {
 			expect(result.substring(0, 1)).toEqual(repeat);
