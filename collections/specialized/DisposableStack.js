@@ -6,9 +6,9 @@ var Disposable = require('./../../lang/Disposable');
 module.exports = (() => {
 	'use strict';
 
-	class DisposableStack {
+	class DisposableStack extends Disposable {
 		constructor() {
-			this._super();
+			super();
 
 			this._stack = new Stack();
 		}
