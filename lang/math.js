@@ -6,7 +6,7 @@ module.exports = function() {
 	var epsilon = Number.EPSILON || 2.2204460492503130808472633361816E-16;
 
 	var math = {
-		equals: function(a, b) {
+		approximate: function(a, b) {
 			if (!_.isNumber(a) || !_.isNumber(b)) {
 				return false;
 			}
