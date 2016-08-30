@@ -16,7 +16,13 @@ module.exports = function() {
 			}
 
 			if (isFinite(a) && isFinite(b)) {
-				return Math.abs(a - b) < epsilon;
+				var absoluteDifference = Math.abs(a - b);
+
+				if (absoluteDifference < epsilon) {
+					return true;
+				} else {
+					return !(absoluteDifference > Math.max(Math.abs(a), Math.abs(b)) * epsilon);
+				}
 			} else {
 				return false;
 			}

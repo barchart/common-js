@@ -23,7 +23,7 @@ describe('When using math.equals', function() {
 
 	describe("and comparing identical derived decimals derived with division and multiplication", function() {
 		it("should return true", function() {
-			expect(math.equals((100 / 3) * 3, 100)).toEqual(true);
+			expect(math.equals((100.33 / 3) * 3, 100.33)).toEqual(true);
 		});
 	});
 
