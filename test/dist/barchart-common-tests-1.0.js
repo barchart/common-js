@@ -42,7 +42,7 @@ module.exports = function() {
 
 	return Queue;
 }();
-},{"class.extend":17}],2:[function(require,module,exports){
+},{"class.extend":18}],2:[function(require,module,exports){
 var Class = require('class.extend');
 
 module.exports = function() {
@@ -86,7 +86,7 @@ module.exports = function() {
 
 	return Stack;
 }();
-},{"class.extend":17}],3:[function(require,module,exports){
+},{"class.extend":18}],3:[function(require,module,exports){
 var Class = require('class.extend');
 
 var assert = require('./../../lang/assert');
@@ -168,7 +168,7 @@ module.exports = function() {
 
 	return ComparatorBuilder;
 }();
-},{"./../../lang/assert":11,"./comparators":4,"class.extend":17}],4:[function(require,module,exports){
+},{"./../../lang/assert":11,"./comparators":4,"class.extend":18}],4:[function(require,module,exports){
 var _ = require('lodash');
 
 var assert = require('./../../lang/assert');
@@ -205,7 +205,7 @@ module.exports = function() {
 
 	return comparators;
 }();
-},{"./../../lang/assert":11,"lodash":20}],5:[function(require,module,exports){
+},{"./../../lang/assert":11,"lodash":21}],5:[function(require,module,exports){
 var Class = require('class.extend');
 var assert = require('./../../lang/assert');
 
@@ -310,7 +310,7 @@ module.exports = function() {
 
 	return EvictingList;
 }();
-},{"./../../lang/assert":11,"class.extend":17}],6:[function(require,module,exports){
+},{"./../../lang/assert":11,"class.extend":18}],6:[function(require,module,exports){
 var Class = require('class.extend');
 var assert = require('./../../lang/assert');
 
@@ -534,7 +534,7 @@ module.exports = function() {
 
 	return EvictingMap;
 }();
-},{"./../../lang/assert":11,"class.extend":17}],7:[function(require,module,exports){
+},{"./../../lang/assert":11,"class.extend":18}],7:[function(require,module,exports){
 var Class = require('class.extend');
 
 var assert = require('./../lang/assert');
@@ -587,7 +587,7 @@ module.exports = function() {
 
 	return CommandHandler;
 }();
-},{"./../lang/assert":11,"class.extend":17}],8:[function(require,module,exports){
+},{"./../lang/assert":11,"class.extend":18}],8:[function(require,module,exports){
 var assert = require('./../lang/assert');
 var CommandHandler = require('./CommandHandler');
 
@@ -685,7 +685,7 @@ module.exports = function() {
 
 	return MappedCommandHandler;
 }();
-},{"./../lang/assert":11,"./CommandHandler":7,"lodash":20}],10:[function(require,module,exports){
+},{"./../lang/assert":11,"./CommandHandler":7,"lodash":21}],10:[function(require,module,exports){
 var Class = require('class.extend');
 
 var assert = require('./assert');
@@ -746,7 +746,7 @@ module.exports = function() {
 
 	return Disposable;
 }();
-},{"./assert":11,"class.extend":17}],11:[function(require,module,exports){
+},{"./assert":11,"class.extend":18}],11:[function(require,module,exports){
 var _ = require('lodash');
 
 module.exports = function() {
@@ -832,7 +832,7 @@ module.exports = function() {
 
 	return assert;
 }();
-},{"lodash":20}],12:[function(require,module,exports){
+},{"lodash":21}],12:[function(require,module,exports){
 var _ = require('lodash');
 
 var assert = require('./assert');
@@ -948,7 +948,41 @@ module.exports = function() {
 
 	return attributes;
 }();
-},{"./assert":11,"lodash":20}],13:[function(require,module,exports){
+},{"./assert":11,"lodash":21}],13:[function(require,module,exports){
+var _ = require('lodash');
+
+module.exports = function() {
+	'use strict';
+
+	var epsilon = Number.EPSILON || 2.2204460492503130808472633361816E-16;
+
+	var math = {
+		approximate: function(a, b) {
+			if (!_.isNumber(a) || !_.isNumber(b)) {
+				return false;
+			}
+
+			if (a == b) {
+				return true;
+			}
+
+			if (isFinite(a) && isFinite(b)) {
+				var absoluteDifference = Math.abs(a - b);
+
+				if (absoluteDifference < epsilon) {
+					return true;
+				} else {
+					return !(absoluteDifference > Math.max(Math.abs(a), Math.abs(b)) * epsilon);
+				}
+			} else {
+				return false;
+			}
+		}
+	};
+
+	return math;
+}();
+},{"lodash":21}],14:[function(require,module,exports){
 var _ = require('lodash');
 
 var assert = require('./../lang/assert');
@@ -1029,7 +1063,7 @@ module.exports = function() {
 
 	return Event;
 }();
-},{"./../lang/Disposable":10,"./../lang/assert":11,"lodash":20}],14:[function(require,module,exports){
+},{"./../lang/Disposable":10,"./../lang/assert":11,"lodash":21}],15:[function(require,module,exports){
 var _ = require('lodash');
 
 var assert = require('./../lang/assert');
@@ -1038,7 +1072,7 @@ var Event = require('./../messaging/Event');
 
 module.exports = function() {
 	var Model = Disposable.extend({
-		init: function(propertyNames, propertyObservers) {
+		init: function(propertyNames, propertyObservers, equalityPredicates) {
 			this._propertyNames = propertyNames;
 
 			this._transactionCommit = new Event(this);
@@ -1052,11 +1086,12 @@ module.exports = function() {
 			this._sequence = 0;
 
 			var observers = propertyObservers || { };
+			var predicates = equalityPredicates || { };
 
 			for (var i = 0; i < this._propertyNames.length; i++) {
 				var propertyName = propertyNames[i];
 
-				createProperty.call(this, propertyName, observers[propertyName] || emptyFunction);
+				createProperty.call(this, propertyName, observers[propertyName] || emptyFunction, predicates[propertyName] || checkEquals);
 			}
 		},
 
@@ -1183,7 +1218,11 @@ module.exports = function() {
 		return;
 	}
 
-	function createProperty(propertyName, propertyObserver) {
+	function checkEquals(a, b) {
+		return a === b;
+	}
+
+	function createProperty(propertyName, propertyObserver, equalityPredicate) {
 		var that = this;
 
 		var propertyValue;
@@ -1193,7 +1232,7 @@ module.exports = function() {
 				return propertyValue;
 			},
 			set: function(value) {
-				if (propertyValue === value) {
+				if (equalityPredicate(propertyValue, value)) {
 					return;
 				}
 
@@ -1219,11 +1258,11 @@ module.exports = function() {
 
 	return Model;
 }();
-},{"./../lang/Disposable":10,"./../lang/assert":11,"./../messaging/Event":13,"lodash":20}],15:[function(require,module,exports){
+},{"./../lang/Disposable":10,"./../lang/assert":11,"./../messaging/Event":14,"lodash":21}],16:[function(require,module,exports){
 
-},{}],16:[function(require,module,exports){
-arguments[4][15][0].apply(exports,arguments)
-},{"dup":15}],17:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
+arguments[4][16][0].apply(exports,arguments)
+},{"dup":16}],18:[function(require,module,exports){
 (function(){
   var initializing = false, fnTest = /xyz/.test(function(){xyz;}) ? /\b_super\b/ : /.*/;
 
@@ -1295,7 +1334,7 @@ arguments[4][15][0].apply(exports,arguments)
   module.exports = Class;
 })();
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -1598,7 +1637,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -1623,7 +1662,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -13978,7 +14017,7 @@ if (typeof Object.create === 'function') {
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 "use strict";
 var layouts = require('../layouts')
 , consoleLog = console.log.bind(console);
@@ -14001,7 +14040,7 @@ function configure(config) {
 exports.appender = consoleAppender;
 exports.configure = configure;
 
-},{"../layouts":24}],22:[function(require,module,exports){
+},{"../layouts":25}],23:[function(require,module,exports){
 "use strict";
 var levels = require("./levels");
 var DEFAULT_FORMAT = ':remote-addr - -' +
@@ -14227,7 +14266,7 @@ function createNoLogCondition(nolog) {
 
 exports.connectLogger = getLogger;
 
-},{"./levels":25}],23:[function(require,module,exports){
+},{"./levels":26}],24:[function(require,module,exports){
 "use strict";
 exports.ISO8601_FORMAT = "yyyy-MM-dd hh:mm:ss.SSS";
 exports.ISO8601_WITH_TZ_OFFSET_FORMAT = "yyyy-MM-ddThh:mm:ssO";
@@ -14301,7 +14340,7 @@ exports.asString = function(/*format,*/ date, timezoneOffset) {
 
 };
 
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 (function (process){
 "use strict";
 var dateFormat = require('./date_format')
@@ -14656,7 +14695,7 @@ module.exports = {
 };
 
 }).call(this,require('_process'))
-},{"./date_format":23,"_process":29,"os":15,"util":31}],25:[function(require,module,exports){
+},{"./date_format":24,"_process":30,"os":16,"util":32}],26:[function(require,module,exports){
 "use strict";
 
 function Level(level, levelStr) {
@@ -14719,7 +14758,7 @@ module.exports = {
   toLevel: toLevel
 };
 
-},{}],26:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 (function (process){
 "use strict";
 /*
@@ -15202,7 +15241,7 @@ configure();
 
 
 }).call(this,require('_process'))
-},{"./appenders/console":21,"./connect-logger":22,"./layouts":24,"./levels":25,"./logger":27,"_process":29,"events":18,"fs":16,"path":28,"util":31}],27:[function(require,module,exports){
+},{"./appenders/console":22,"./connect-logger":23,"./layouts":25,"./levels":26,"./logger":28,"_process":30,"events":19,"fs":17,"path":29,"util":32}],28:[function(require,module,exports){
 "use strict";
 var levels = require('./levels')
 , util = require('util')
@@ -15317,7 +15356,7 @@ exports.Logger = Logger;
 exports.disableAllLogWrites = disableAllLogWrites;
 exports.enableAllLogWrites = enableAllLogWrites;
 
-},{"./levels":25,"events":18,"util":31}],28:[function(require,module,exports){
+},{"./levels":26,"events":19,"util":32}],29:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -15545,9 +15584,8 @@ var substr = 'ab'.substr(-1) === 'b'
 ;
 
 }).call(this,require('_process'))
-},{"_process":29}],29:[function(require,module,exports){
+},{"_process":30}],30:[function(require,module,exports){
 // shim for using process in browser
-
 var process = module.exports = {};
 
 // cached from whatever global is present so that test runners that stub it
@@ -15559,21 +15597,63 @@ var cachedSetTimeout;
 var cachedClearTimeout;
 
 (function () {
-  try {
-    cachedSetTimeout = setTimeout;
-  } catch (e) {
-    cachedSetTimeout = function () {
-      throw new Error('setTimeout is not defined');
+    try {
+        cachedSetTimeout = setTimeout;
+    } catch (e) {
+        cachedSetTimeout = function () {
+            throw new Error('setTimeout is not defined');
+        }
     }
-  }
-  try {
-    cachedClearTimeout = clearTimeout;
-  } catch (e) {
-    cachedClearTimeout = function () {
-      throw new Error('clearTimeout is not defined');
+    try {
+        cachedClearTimeout = clearTimeout;
+    } catch (e) {
+        cachedClearTimeout = function () {
+            throw new Error('clearTimeout is not defined');
+        }
     }
-  }
 } ())
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedSetTimeout(fun, 0);
+    } catch(e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch(e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
+    }
+
+
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedClearTimeout(marker);
+    } catch (e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
+    }
+
+
+
+}
 var queue = [];
 var draining = false;
 var currentQueue;
@@ -15598,7 +15678,7 @@ function drainQueue() {
     if (draining) {
         return;
     }
-    var timeout = cachedSetTimeout(cleanUpNextTick);
+    var timeout = runTimeout(cleanUpNextTick);
     draining = true;
 
     var len = queue.length;
@@ -15615,7 +15695,7 @@ function drainQueue() {
     }
     currentQueue = null;
     draining = false;
-    cachedClearTimeout(timeout);
+    runClearTimeout(timeout);
 }
 
 process.nextTick = function (fun) {
@@ -15627,7 +15707,7 @@ process.nextTick = function (fun) {
     }
     queue.push(new Item(fun, args));
     if (queue.length === 1 && !draining) {
-        cachedSetTimeout(drainQueue, 0);
+        runTimeout(drainQueue);
     }
 };
 
@@ -15666,14 +15746,14 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],30:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],31:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -16263,7 +16343,7 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":30,"_process":29,"inherits":19}],32:[function(require,module,exports){
+},{"./support/isBuffer":31,"_process":30,"inherits":20}],33:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -16282,7 +16362,7 @@ define(function (require) {
 });
 })(typeof define === 'function' && define.amd ? define : function (factory) { module.exports = factory(require); });
 
-},{"./Scheduler":33,"./env":45,"./makePromise":47}],33:[function(require,module,exports){
+},{"./Scheduler":34,"./env":46,"./makePromise":48}],34:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -16364,7 +16444,7 @@ define(function() {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
-},{}],34:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -16392,7 +16472,7 @@ define(function() {
 	return TimeoutError;
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
-},{}],35:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -16449,7 +16529,7 @@ define(function() {
 
 
 
-},{}],36:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -16740,7 +16820,7 @@ define(function(require) {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(require); }));
 
-},{"../apply":35,"../state":48}],37:[function(require,module,exports){
+},{"../apply":36,"../state":49}],38:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -16902,7 +16982,7 @@ define(function() {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
-},{}],38:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -16931,7 +17011,7 @@ define(function() {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
-},{}],39:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -16953,7 +17033,7 @@ define(function(require) {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(require); }));
 
-},{"../state":48}],40:[function(require,module,exports){
+},{"../state":49}],41:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -17020,7 +17100,7 @@ define(function() {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
-},{}],41:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -17046,7 +17126,7 @@ define(function() {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
-},{}],42:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -17126,7 +17206,7 @@ define(function(require) {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(require); }));
 
-},{"../TimeoutError":34,"../env":45}],43:[function(require,module,exports){
+},{"../TimeoutError":35,"../env":46}],44:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -17214,7 +17294,7 @@ define(function(require) {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(require); }));
 
-},{"../env":45,"../format":46}],44:[function(require,module,exports){
+},{"../env":46,"../format":47}],45:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -17254,7 +17334,7 @@ define(function() {
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
 
-},{}],45:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 (function (process){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
@@ -17331,7 +17411,7 @@ define(function(require) {
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(require); }));
 
 }).call(this,require('_process'))
-},{"_process":29}],46:[function(require,module,exports){
+},{"_process":30}],47:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -17389,7 +17469,7 @@ define(function() {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
-},{}],47:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 (function (process){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
@@ -18320,7 +18400,7 @@ define(function() {
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
 }).call(this,require('_process'))
-},{"_process":29}],48:[function(require,module,exports){
+},{"_process":30}],49:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -18357,7 +18437,7 @@ define(function() {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
-},{}],49:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 
 /**
@@ -18587,7 +18667,7 @@ define(function (require) {
 });
 })(typeof define === 'function' && define.amd ? define : function (factory) { module.exports = factory(require); });
 
-},{"./lib/Promise":32,"./lib/TimeoutError":34,"./lib/apply":35,"./lib/decorators/array":36,"./lib/decorators/flow":37,"./lib/decorators/fold":38,"./lib/decorators/inspect":39,"./lib/decorators/iterate":40,"./lib/decorators/progress":41,"./lib/decorators/timed":42,"./lib/decorators/unhandledRejection":43,"./lib/decorators/with":44}],50:[function(require,module,exports){
+},{"./lib/Promise":33,"./lib/TimeoutError":35,"./lib/apply":36,"./lib/decorators/array":37,"./lib/decorators/flow":38,"./lib/decorators/fold":39,"./lib/decorators/inspect":40,"./lib/decorators/iterate":41,"./lib/decorators/progress":42,"./lib/decorators/timed":43,"./lib/decorators/unhandledRejection":44,"./lib/decorators/with":45}],51:[function(require,module,exports){
 var assert = require('./../lang/assert');
 
 var Specification = require('./Specification');
@@ -18615,7 +18695,7 @@ module.exports = function() {
 
 	return AndSpecification;
 }();
-},{"./../lang/assert":11,"./Specification":56}],51:[function(require,module,exports){
+},{"./../lang/assert":11,"./Specification":57}],52:[function(require,module,exports){
 var _ = require('lodash');
 
 var assert = require('./../lang/assert');
@@ -18643,7 +18723,7 @@ module.exports = function() {
 
 	return ContainedSpecification;
 }();
-},{"./../lang/assert":11,"./Specification":56,"lodash":20}],52:[function(require,module,exports){
+},{"./../lang/assert":11,"./Specification":57,"lodash":21}],53:[function(require,module,exports){
 var _ = require('lodash');
 
 var Specification = require('./Specification');
@@ -18667,7 +18747,7 @@ module.exports = function() {
 
 	return ContainsSpecification;
 }();
-},{"./Specification":56,"lodash":20}],53:[function(require,module,exports){
+},{"./Specification":57,"lodash":21}],54:[function(require,module,exports){
 var Specification = require('./Specification');
 
 module.exports = function() {
@@ -18687,7 +18767,7 @@ module.exports = function() {
 
 	return FailSpecification;
 }();
-},{"./Specification":56}],54:[function(require,module,exports){
+},{"./Specification":57}],55:[function(require,module,exports){
 var assert = require('./../lang/assert');
 
 var Specification = require('./Specification');
@@ -18715,7 +18795,7 @@ module.exports = function() {
 
 	return OrSpecification;
 }();
-},{"./../lang/assert":11,"./Specification":56}],55:[function(require,module,exports){
+},{"./../lang/assert":11,"./Specification":57}],56:[function(require,module,exports){
 var Specification = require('./Specification');
 
 module.exports = function() {
@@ -18735,7 +18815,7 @@ module.exports = function() {
 
 	return PassSpecification;
 }();
-},{"./Specification":56}],56:[function(require,module,exports){
+},{"./Specification":57}],57:[function(require,module,exports){
 var Class = require('class.extend');
 
 module.exports = function() {
@@ -18759,7 +18839,7 @@ module.exports = function() {
 
 	return Specification;
 }();
-},{"class.extend":17}],57:[function(require,module,exports){
+},{"class.extend":18}],58:[function(require,module,exports){
 var Stack = require('./../../../collections/Stack');
 
 describe('When a Stack is constructed', function() {
@@ -18875,7 +18955,7 @@ describe('When a Stack is constructed', function() {
 		});
 	});
 });
-},{"./../../../collections/Stack":2}],58:[function(require,module,exports){
+},{"./../../../collections/Stack":2}],59:[function(require,module,exports){
 var ComparatorBuilder = require('./../../../../collections/sorting/ComparatorBuilder');
 
 describe('When a ComparatorBuilder is composed with two comparators', function() {
@@ -18957,7 +19037,7 @@ describe('When a ComparatorBuilder is composed with two comparators', function()
         });
     });
 });
-},{"./../../../../collections/sorting/ComparatorBuilder":3}],59:[function(require,module,exports){
+},{"./../../../../collections/sorting/ComparatorBuilder":3}],60:[function(require,module,exports){
 var comparators = require('./../../../../collections/sorting/comparators');
 
 describe('When using the "compareDates" comparator', function() {
@@ -19061,7 +19141,7 @@ describe('When using the "compareStrings" comparator', function() {
 		});
 	});
 });
-},{"./../../../../collections/sorting/comparators":4}],60:[function(require,module,exports){
+},{"./../../../../collections/sorting/comparators":4}],61:[function(require,module,exports){
 var EvictingList = require('./../../../../collections/specialized/EvictingList');
 
 describe('When an EvictingList is constructed (with no capacity)', function() {
@@ -19283,7 +19363,7 @@ describe('When an EvictingList is constructed (with a capacity of 3)', function(
 		});
 	});
 });
-},{"./../../../../collections/specialized/EvictingList":5}],61:[function(require,module,exports){
+},{"./../../../../collections/specialized/EvictingList":5}],62:[function(require,module,exports){
 var EvictingMap = require('./../../../../collections/specialized/EvictingMap');
 
 describe('When an EvictingMap is constructed (with no capacity)', function() {
@@ -19563,7 +19643,7 @@ describe('When an EvictingMap is constructed (with a capacity of 3)', function()
 		});
 	});
 });
-},{"./../../../../collections/specialized/EvictingMap":6}],62:[function(require,module,exports){
+},{"./../../../../collections/specialized/EvictingMap":6}],63:[function(require,module,exports){
 var CommandHandler = require('./../../../commands/CommandHandler');
 
 describe('When a CommandHandler is created from a function', function() {
@@ -19627,7 +19707,7 @@ describe('When a CommandHandler is created from a function', function() {
 		});
 	});
 });
-},{"./../../../commands/CommandHandler":7}],63:[function(require,module,exports){
+},{"./../../../commands/CommandHandler":7}],64:[function(require,module,exports){
 var CommandHandler = require('./../../../commands/CommandHandler');
 var CompositeCommandHandler = require('./../../../commands/CompositeCommandHandler');
 
@@ -19690,7 +19770,7 @@ describe('When a CompositeCommandHandler is created', function() {
 		});
 	});
 });
-},{"./../../../commands/CommandHandler":7,"./../../../commands/CompositeCommandHandler":8}],64:[function(require,module,exports){
+},{"./../../../commands/CommandHandler":7,"./../../../commands/CompositeCommandHandler":8}],65:[function(require,module,exports){
 var CommandHandler = require('./../../../commands/CommandHandler');
 var MappedCommandHandler = require('./../../../commands/MappedCommandHandler');
 
@@ -19769,7 +19849,7 @@ describe('When a MappedCommandHandler is created with two mapped commands', func
 		});
 	});
 });
-},{"./../../../commands/CommandHandler":7,"./../../../commands/MappedCommandHandler":9}],65:[function(require,module,exports){
+},{"./../../../commands/CommandHandler":7,"./../../../commands/MappedCommandHandler":9}],66:[function(require,module,exports){
 var Disposable = require('./../../../lang/Disposable');
 
 describe('When a Disposable is extended', function() {
@@ -19882,7 +19962,7 @@ describe('When a Disposable.fromAction creates a Disposable', function() {
 		});
 	});
 });
-},{"./../../../lang/Disposable":10}],66:[function(require,module,exports){
+},{"./../../../lang/Disposable":10}],67:[function(require,module,exports){
 var attributes = require('./../../../lang/attributes');
 
 describe('When "attributes.has" is used to check a top-level property', function() {
@@ -20490,7 +20570,67 @@ describe('When "attributes.erase" is used to remove a second-level property (usi
 		});
 	});
 });
-},{"./../../../lang/attributes":12}],67:[function(require,module,exports){
+},{"./../../../lang/attributes":12}],68:[function(require,module,exports){
+var math = require('./../../../lang/math');
+
+describe('When using math.approximate', function() {
+	'use strict';
+
+	describe("and comparing identical integers", function() {
+		it("should return true", function() {
+			expect(math.approximate(12, 12)).toEqual(true);
+		});
+	});
+
+	describe("and comparing identical decimals literals", function() {
+		it("should return true", function() {
+			expect(math.approximate(0.3, 0.3)).toEqual(true);
+		});
+	});
+
+	describe("and comparing identical derived decimals derived with addition", function() {
+		it("should return true", function() {
+			expect(math.approximate(0.1 + 0.2, 0.3)).toEqual(true);
+		});
+	});
+
+	describe("and comparing identical derived decimals derived with division and multiplication", function() {
+		it("should return true", function() {
+			expect(math.approximate((100.33 / 3) * 3, 100.33)).toEqual(true);
+		});
+	});
+
+	describe("and comparing an integer with undefined", function() {
+		it("should return false", function() {
+			expect(math.approximate(123, undefined)).toEqual(false);
+		});
+	});
+
+	describe("and comparing a decimal with undefined", function() {
+		it("should return false", function() {
+			expect(math.approximate(123.45, undefined)).toEqual(false);
+		});
+	});
+
+	describe("and comparing an integer with null", function() {
+		it("should return false", function() {
+			expect(math.approximate(123, null)).toEqual(false);
+		});
+	});
+
+	describe("and comparing a decimal with null", function() {
+		it("should return false", function() {
+			expect(math.approximate(123.45, null)).toEqual(false);
+		});
+	});
+
+	describe("and comparing strings", function() {
+		it("should return false", function() {
+			expect(math.approximate('hi', 'there')).toEqual(false);
+		});
+	});
+});
+},{"./../../../lang/math":13}],69:[function(require,module,exports){
 var Disposable = require('./../../../lang/Disposable');
 var Event = require('./../../../messaging/Event');
 
@@ -20671,7 +20811,7 @@ describe('When an Event is constructed', function() {
 		});
 	});
 });
-},{"./../../../lang/Disposable":10,"./../../../messaging/Event":13}],68:[function(require,module,exports){
+},{"./../../../lang/Disposable":10,"./../../../messaging/Event":14}],70:[function(require,module,exports){
 var Disposable = require('./../../../lang/Disposable');
 var Model = require('./../../../models/Model');
 
@@ -20753,7 +20893,7 @@ describe('When an Model is constructed with "firstName" and "lastName" propertie
 		});
 	});
 });
-},{"./../../../lang/Disposable":10,"./../../../models/Model":14}],69:[function(require,module,exports){
+},{"./../../../lang/Disposable":10,"./../../../models/Model":15}],71:[function(require,module,exports){
 var Specification = require('./../../../specifications/Specification');
 var AndSpecification = require('./../../../specifications/AndSpecification');
 
@@ -20845,7 +20985,7 @@ describe('When an AndSpecification is constructed', function() {
 		});
 	});
 });
-},{"./../../../specifications/AndSpecification":50,"./../../../specifications/Specification":56}],70:[function(require,module,exports){
+},{"./../../../specifications/AndSpecification":51,"./../../../specifications/Specification":57}],72:[function(require,module,exports){
 var ContainedSpecification = require('./../../../specifications/ContainedSpecification');
 
 describe('When a ContainedSpecification is constructed', function() {
@@ -20906,7 +21046,7 @@ describe('When a ContainedSpecification is constructed', function() {
 		});
 	});
 });
-},{"./../../../specifications/ContainedSpecification":51}],71:[function(require,module,exports){
+},{"./../../../specifications/ContainedSpecification":52}],73:[function(require,module,exports){
 var ContainsSpecification = require('./../../../specifications/ContainsSpecification');
 
 describe('When a ContainsSpecification is constructed', function() {
@@ -20955,7 +21095,7 @@ describe('When a ContainsSpecification is constructed', function() {
 		});
 	});
 });
-},{"./../../../specifications/ContainsSpecification":52}],72:[function(require,module,exports){
+},{"./../../../specifications/ContainsSpecification":53}],74:[function(require,module,exports){
 var FailSpecification = require('./../../../specifications/FailSpecification');
 
 describe('When a FailSpecification is constructed', function() {
@@ -21004,7 +21144,7 @@ describe('When a FailSpecification is constructed', function() {
 		});
 	});
 });
-},{"./../../../specifications/FailSpecification":53}],73:[function(require,module,exports){
+},{"./../../../specifications/FailSpecification":54}],75:[function(require,module,exports){
 var Specification = require('./../../../specifications/Specification');
 var OrSpecification = require('./../../../specifications/OrSpecification');
 
@@ -21096,7 +21236,7 @@ describe('When an OrSpecification is constructed', function() {
 		});
 	});
 });
-},{"./../../../specifications/OrSpecification":54,"./../../../specifications/Specification":56}],74:[function(require,module,exports){
+},{"./../../../specifications/OrSpecification":55,"./../../../specifications/Specification":57}],76:[function(require,module,exports){
 var PassSpecification = require('./../../../specifications/PassSpecification');
 
 describe('When a PassSpecification is constructed', function() {
@@ -21145,7 +21285,7 @@ describe('When a PassSpecification is constructed', function() {
 		});
 	});
 });
-},{"./../../../specifications/PassSpecification":55}],75:[function(require,module,exports){
+},{"./../../../specifications/PassSpecification":56}],77:[function(require,module,exports){
 var RateLimiter = require('./../../../timing/RateLimiter');
 
 describe('When a RateLimiter is constructed (1 execution per 25 milliseconds)', function() {
@@ -21380,7 +21520,7 @@ describe('When a RateLimiter is constructed (2 execution per 25 milliseconds)', 
 		});
 	});
 });
-},{"./../../../timing/RateLimiter":77}],76:[function(require,module,exports){
+},{"./../../../timing/RateLimiter":79}],78:[function(require,module,exports){
 var Scheduler = require('./../../../timing/Scheduler');
 
 describe('When a Scheduler is constructed', function() {
@@ -21414,6 +21554,30 @@ describe('When a Scheduler is constructed', function() {
 					done();
 				});
 		});
+
+		it('should not create a memory leak', function(done) {
+			var before = 0;
+
+			for (var tb in scheduler._timeoutBindings) {
+				before++;
+			}
+
+			expect(before).toEqual(1);
+
+			promise
+				.then(function() {
+					var after = 0;
+
+					for (var tb in scheduler._timeoutBindings) {
+						after++;
+					}
+
+					expect(after).toEqual(0);
+				})
+				.finally(function() {
+					done();
+				});
+		});
 	});
 
 	describe('and is disposed', function() {
@@ -21432,7 +21596,7 @@ describe('When a Scheduler is constructed', function() {
 		});
 	});
 });
-},{"./../../../timing/Scheduler":78}],77:[function(require,module,exports){
+},{"./../../../timing/Scheduler":80}],79:[function(require,module,exports){
 var _ = require('lodash');
 var log4js = require('log4js');
 var when = require('when');
@@ -21543,7 +21707,7 @@ module.exports = function() {
 
 	return RateLimiter;
 }();
-},{"./../collections/Queue":1,"./../lang/Disposable":10,"./../lang/assert":11,"./Scheduler":78,"lodash":20,"log4js":26,"when":49}],78:[function(require,module,exports){
+},{"./../collections/Queue":1,"./../lang/Disposable":10,"./../lang/assert":11,"./Scheduler":80,"lodash":21,"log4js":27,"when":50}],80:[function(require,module,exports){
 var _ = require('lodash');
 var log4js = require('log4js');
 var when = require('when');
@@ -21707,4 +21871,4 @@ module.exports = function() {
 
     return Scheduler;
 }();
-},{"./../lang/Disposable":10,"./../lang/assert":11,"lodash":20,"log4js":26,"when":49}]},{},[58,59,60,61,57,62,63,64,66,65,67,68,69,70,71,72,73,74,75,76]);
+},{"./../lang/Disposable":10,"./../lang/assert":11,"lodash":21,"log4js":27,"when":50}]},{},[59,60,61,62,58,63,64,65,67,66,68,69,70,71,72,73,74,75,76,77,78]);

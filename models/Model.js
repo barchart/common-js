@@ -6,7 +6,7 @@ var Event = require('./../messaging/Event');
 
 module.exports = function() {
 	var Model = Disposable.extend({
-		init: function(propertyNames, propertyObservers) {
+		init: function(propertyNames, propertyObservers, equalityPredicates) {
 			this._propertyNames = propertyNames;
 
 			this._transactionCommit = new Event(this);
@@ -20,11 +20,12 @@ module.exports = function() {
 			this._sequence = 0;
 
 			var observers = propertyObservers || { };
+			var predicates = equalityPredicates || { };
 
 			for (var i = 0; i < this._propertyNames.length; i++) {
 				var propertyName = propertyNames[i];
 
-				createProperty.call(this, propertyName, observers[propertyName] || emptyFunction);
+				createProperty.call(this, propertyName, observers[propertyName] || emptyFunction, predicates[propertyName] || checkEquals);
 			}
 		},
 
@@ -151,7 +152,11 @@ module.exports = function() {
 		return;
 	}
 
-	function createProperty(propertyName, propertyObserver) {
+	function checkEquals(a, b) {
+		return a === b;
+	}
+
+	function createProperty(propertyName, propertyObserver, equalityPredicate) {
 		var that = this;
 
 		var propertyValue;
@@ -161,7 +166,7 @@ module.exports = function() {
 				return propertyValue;
 			},
 			set: function(value) {
-				if (propertyValue === value) {
+				if (equalityPredicate(propertyValue, value)) {
 					return;
 				}
 
