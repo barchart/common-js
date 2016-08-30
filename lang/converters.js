@@ -1,7 +1,3 @@
-var _ = require('lodash');
-
-var assert = require('./assert');
-
 module.exports = function() {
 	'use strict';
 
