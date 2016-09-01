@@ -4,11 +4,11 @@ module.exports = (() => {
 	'use strict';
 
 	const assert = {
-		argumentIsRequired: (variable, variableName, type, typeDescription) => {
+		argumentIsRequired(variable, variableName, type, typeDescription) {
 			checkArgumentType(variable, variableName, type, typeDescription);
 		},
 
-		argumentIsOptional: (variable, variableName, type, typeDescription) => {
+		argumentIsOptional(variable, variableName, type, typeDescription) {
 			if (variable === null || variable === undefined) {
 				return;
 			}
@@ -16,7 +16,7 @@ module.exports = (() => {
 			checkArgumentType(variable, variableName, type, typeDescription);
 		},
 
-		argumentIsArray: (variable, variableName, itemConstraint, itemConstraintDescription) => {
+		argumentIsArray(variable, variableName, itemConstraint, itemConstraintDescription) {
 			assert.argumentIsRequired(variable, variableName, Array);
 
 			if (itemConstraint) {
@@ -34,13 +34,13 @@ module.exports = (() => {
 			}
 		},
 
-		areEqual: (a, b, descriptionA, descriptionB) => {
+		areEqual(a, b, descriptionA, descriptionB) {
 			if (a !== b) {
 				throw new Error('The objects must be equal ([' + (descriptionA || a.toString()) + ' and ' + (descriptionB || b.toString()));
 			}
 		},
 
-		areNotEqual: (a, b, descriptionA, descriptionB) => {
+		areNotEqual(a, b, descriptionA, descriptionB) {
 			if (a === b) {
 				throw new Error('The objects cannot be equal ([' + (descriptionA || a.toString()) + ' and ' + (descriptionB || b.toString()));
 			}
