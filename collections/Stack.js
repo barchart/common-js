@@ -1,4 +1,4 @@
-module.exports = function() {
+module.exports = (() => {
 	'use strict';
 
 	class Stack {
@@ -38,4 +38,4 @@ module.exports = function() {
 	}
 
 	return Stack;
-}();
+})();
