@@ -3,8 +3,6 @@ var is = require('./is');
 module.exports = (() => {
 	'use strict';
 
-	var epsilon = Number.EPSILON;
-
 	return {
 		approximate(a, b) {
 			if (!is.number(a) || !is.number(b)) {
@@ -16,12 +14,12 @@ module.exports = (() => {
 			}
 
 			if (isFinite(a) && isFinite(b)) {
-				var absoluteDifference = Math.abs(a - b);
+				const absoluteDifference = Math.abs(a - b);
 
-				if (absoluteDifference < epsilon) {
+				if (absoluteDifference < Number.EPSILON) {
 					return true;
 				} else {
-					return !(absoluteDifference > Math.max(Math.abs(a), Math.abs(b)) * epsilon);
+					return !(absoluteDifference > Math.max(Math.abs(a), Math.abs(b)) * Number.EPSILON);
 				}
 			} else {
 				return false;

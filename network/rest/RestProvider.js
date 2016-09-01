@@ -27,7 +27,7 @@ module.exports = (() => {
 				let payload = endpoint.getPayload(data);
 
 				if (action.getUseQuerystring()) {
-					var qs = querystring.stringify(payload);
+					let qs = querystring.stringify(payload);
 
 					if (qs) {
 						path = path + '?' + qs;
