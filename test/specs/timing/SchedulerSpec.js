@@ -53,8 +53,7 @@ describe('When a Scheduler is constructed', function() {
 					}
 
 					expect(after).toEqual(0);
-				})
-				.finally(function() {
+				}).then(function() {
 					done();
 				});
 		});
