@@ -30,7 +30,7 @@ module.exports = (() => {
 		}
 
 		addChild(value) {
-			const returnRef = new Tree(this, value);
+			const returnRef = new Tree(value, this);
 
 			this._children.push(returnRef);
 
