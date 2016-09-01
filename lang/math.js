@@ -1,13 +1,13 @@
-var _ = require('lodash');
+var is = require('./is');
 
-module.exports = function() {
+module.exports = (() => {
 	'use strict';
 
-	var epsilon = Number.EPSILON || 2.2204460492503130808472633361816E-16;
+	var epsilon = Number.EPSILON;
 
-	var math = {
-		approximate: function(a, b) {
-			if (!_.isNumber(a) || !_.isNumber(b)) {
+	return {
+		approximate(a, b) {
+			if (!is.number(a) || is.number(b)) {
 				return false;
 			}
 
@@ -28,6 +28,4 @@ module.exports = function() {
 			}
 		}
 	};
-
-	return math;
-}();
+})();
