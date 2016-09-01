@@ -252,7 +252,7 @@ module.exports = function () {
 	return ComparatorBuilder;
 }();
 
-},{"./../../lang/assert":12,"./comparators":4}],4:[function(require,module,exports){
+},{"./../../lang/assert":13,"./comparators":4}],4:[function(require,module,exports){
 'use strict';
 
 var assert = require('./../../lang/assert');
@@ -288,7 +288,99 @@ module.exports = function () {
 	};
 }();
 
-},{"./../../lang/assert":12}],5:[function(require,module,exports){
+},{"./../../lang/assert":13}],5:[function(require,module,exports){
+'use strict';
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
+var _createClass = function () {
+	function defineProperties(target, props) {
+		for (var i = 0; i < props.length; i++) {
+			var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+		}
+	}return function (Constructor, protoProps, staticProps) {
+		if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+	};
+}();
+
+function _classCallCheck(instance, Constructor) {
+	if (!(instance instanceof Constructor)) {
+		throw new TypeError("Cannot call a class as a function");
+	}
+}
+
+function _possibleConstructorReturn(self, call) {
+	if (!self) {
+		throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+	}return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+}
+
+function _inherits(subClass, superClass) {
+	if (typeof superClass !== "function" && superClass !== null) {
+		throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
+	}subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+}
+
+var Stack = require('./../Stack');
+
+var assert = require('./../../lang/assert');
+var Disposable = require('./../../lang/Disposable');
+
+module.exports = function () {
+	'use strict';
+
+	var DisposableStack = function (_Disposable) {
+		_inherits(DisposableStack, _Disposable);
+
+		function DisposableStack() {
+			_classCallCheck(this, DisposableStack);
+
+			var _this = _possibleConstructorReturn(this, (DisposableStack.__proto__ || Object.getPrototypeOf(DisposableStack)).call(this));
+
+			_this._stack = new Stack();
+			return _this;
+		}
+
+		_createClass(DisposableStack, [{
+			key: 'push',
+			value: function push(disposable) {
+				assert.argumentIsRequired(disposable, 'disposable', Disposable, 'Disposable');
+
+				if (this.getIsDisposed()) {
+					throw new Error('Unable to push item onto DisposableStack because it has been disposed.');
+				}
+
+				this._stack.push(disposable);
+			}
+		}, {
+			key: '_onDispose',
+			value: function _onDispose() {
+				while (!this._stack.empty()) {
+					this._stack.pop().dispose();
+				}
+			}
+		}], [{
+			key: 'fromArray',
+			value: function fromArray(bindings) {
+				assert.argumentIsArray(bindings, 'bindings', Disposable, 'Disposable');
+
+				var returnRef = new DisposableStack();
+
+				for (var i = 0; i < bindings.length; i++) {
+					returnRef.push(bindings[i]);
+				}
+
+				return returnRef;
+			}
+		}]);
+
+		return DisposableStack;
+	}(Disposable);
+
+	return DisposableStack;
+}();
+
+},{"./../../lang/Disposable":11,"./../../lang/assert":13,"./../Stack":2}],6:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
@@ -423,7 +515,7 @@ module.exports = function () {
 	return EvictingList;
 }();
 
-},{"./../../lang/assert":12}],6:[function(require,module,exports){
+},{"./../../lang/assert":13}],7:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
@@ -703,7 +795,7 @@ module.exports = function () {
 	return EvictingMap;
 }();
 
-},{"./../../lang/assert":12}],7:[function(require,module,exports){
+},{"./../../lang/assert":13}],8:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
@@ -807,7 +899,7 @@ module.exports = function () {
 	return CommandHandler;
 }();
 
-},{"./../lang/assert":12}],8:[function(require,module,exports){
+},{"./../lang/assert":13}],9:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
@@ -881,7 +973,7 @@ module.exports = function () {
 	return CompositeCommandHandler;
 }();
 
-},{"./../lang/assert":12,"./CommandHandler":7}],9:[function(require,module,exports){
+},{"./../lang/assert":13,"./CommandHandler":8}],10:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
@@ -970,7 +1062,7 @@ module.exports = function () {
 				var handlerName = this._nameExtractor(data);
 				var handler = this._handlerMap[handlerName] || this._defaultHandler;
 
-				var returnRef;
+				var returnRef = void 0;
 
 				if (handler) {
 					returnRef = handler.process(data);
@@ -993,7 +1085,7 @@ module.exports = function () {
 	return MappedCommandHandler;
 }();
 
-},{"./../lang/assert":12,"./CommandHandler":7}],10:[function(require,module,exports){
+},{"./../lang/assert":13,"./CommandHandler":8}],11:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
@@ -1107,7 +1199,7 @@ module.exports = function () {
 	return Disposable;
 }();
 
-},{"./assert":12}],11:[function(require,module,exports){
+},{"./assert":13}],12:[function(require,module,exports){
 'use strict';
 
 var assert = require('./assert');
@@ -1178,7 +1270,7 @@ module.exports = function () {
 	};
 }();
 
-},{"./assert":12}],12:[function(require,module,exports){
+},{"./assert":13}],13:[function(require,module,exports){
 'use strict';
 
 var is = require('./is');
@@ -1190,7 +1282,6 @@ module.exports = function () {
 		argumentIsRequired: function argumentIsRequired(variable, variableName, type, typeDescription) {
 			checkArgumentType(variable, variableName, type, typeDescription);
 		},
-
 		argumentIsOptional: function argumentIsOptional(variable, variableName, type, typeDescription) {
 			if (variable === null || variable === undefined) {
 				return;
@@ -1198,7 +1289,6 @@ module.exports = function () {
 
 			checkArgumentType(variable, variableName, type, typeDescription);
 		},
-
 		argumentIsArray: function argumentIsArray(variable, variableName, itemConstraint, itemConstraintDescription) {
 			assert.argumentIsRequired(variable, variableName, Array);
 
@@ -1206,7 +1296,7 @@ module.exports = function () {
 				(function () {
 					var itemValidator = void 0;
 
-					if (typeof itemConstraint === 'function') {
+					if (typeof itemConstraint === 'function' && itemConstraint !== Function) {
 						itemValidator = function itemValidator(value, index) {
 							return itemConstraint(value, variableName + '[' + index + ']');
 						};
@@ -1222,13 +1312,11 @@ module.exports = function () {
 				})();
 			}
 		},
-
 		areEqual: function areEqual(a, b, descriptionA, descriptionB) {
 			if (a !== b) {
 				throw new Error('The objects must be equal ([' + (descriptionA || a.toString()) + ' and ' + (descriptionB || b.toString()));
 			}
 		},
-
 		areNotEqual: function areNotEqual(a, b, descriptionA, descriptionB) {
 			if (a === b) {
 				throw new Error('The objects cannot be equal ([' + (descriptionA || a.toString()) + ' and ' + (descriptionB || b.toString()));
@@ -1281,7 +1369,7 @@ module.exports = function () {
 	return assert;
 }();
 
-},{"./is":15}],13:[function(require,module,exports){
+},{"./is":16}],14:[function(require,module,exports){
 'use strict';
 
 var assert = require('./assert');
@@ -1304,7 +1392,6 @@ module.exports = function () {
 
 			return propertyTarget !== null && propertyTarget.hasOwnProperty(last(propertyNameArray));
 		},
-
 		read: function read(target, propertyNames) {
 			assert.argumentIsRequired(target, 'target', Object);
 
@@ -1329,7 +1416,6 @@ module.exports = function () {
 
 			return returnRef;
 		},
-
 		write: function write(target, propertyNames, value) {
 			assert.argumentIsRequired(target, 'target', Object);
 
@@ -1346,7 +1432,6 @@ module.exports = function () {
 
 			propertyTarget[propertyName] = value;
 		},
-
 		erase: function erase(target, propertyNames) {
 			if (!attributes.has(target, propertyNames)) {
 				return;
@@ -1362,7 +1447,7 @@ module.exports = function () {
 	};
 
 	function getPropertyNameArray(propertyNames) {
-		var returnRef;
+		var returnRef = void 0;
 
 		if (Array.isArray(propertyNames)) {
 			returnRef = propertyNames;
@@ -1406,7 +1491,7 @@ module.exports = function () {
 	return attributes;
 }();
 
-},{"./assert":12}],14:[function(require,module,exports){
+},{"./assert":13}],15:[function(require,module,exports){
 'use strict';
 
 module.exports = function () {
@@ -1456,7 +1541,7 @@ module.exports = function () {
 	return utilities;
 }();
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 'use strict';
 
 var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
@@ -1514,7 +1599,42 @@ module.exports = function () {
 	};
 }();
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
+'use strict';
+
+var is = require('./is');
+
+module.exports = function () {
+	'use strict';
+
+	var epsilon = Number.EPSILON;
+
+	return {
+		approximate: function approximate(a, b) {
+			if (!is.number(a) || !is.number(b)) {
+				return false;
+			}
+
+			if (a == b) {
+				return true;
+			}
+
+			if (isFinite(a) && isFinite(b)) {
+				var absoluteDifference = Math.abs(a - b);
+
+				if (absoluteDifference < epsilon) {
+					return true;
+				} else {
+					return !(absoluteDifference > Math.max(Math.abs(a), Math.abs(b)) * epsilon);
+				}
+			} else {
+				return false;
+			}
+		}
+	};
+}();
+
+},{"./is":16}],18:[function(require,module,exports){
 'use strict';
 
 var assert = require('./assert');
@@ -1536,7 +1656,7 @@ module.exports = function () {
 	};
 }();
 
-},{"./assert":12,"./is":15}],17:[function(require,module,exports){
+},{"./assert":13,"./is":16}],19:[function(require,module,exports){
 'use strict';
 
 var assert = require('./assert');
@@ -1576,7 +1696,7 @@ module.exports = function () {
 	};
 }();
 
-},{"./assert":12,"./is":15}],18:[function(require,module,exports){
+},{"./assert":13,"./is":16}],20:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
@@ -1725,7 +1845,7 @@ module.exports = function () {
 	return Event;
 }();
 
-},{"./../lang/Disposable":10}],19:[function(require,module,exports){
+},{"./../lang/Disposable":11}],21:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
@@ -1853,7 +1973,7 @@ module.exports = function () {
 	return EventMap;
 }();
 
-},{"./../lang/assert":12,"./Event":18}],20:[function(require,module,exports){
+},{"./../lang/assert":13,"./Event":20}],22:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
@@ -1896,7 +2016,7 @@ module.exports = function () {
 	var Model = function (_Disposable) {
 		_inherits(Model, _Disposable);
 
-		function Model(propertyNames, propertyObservers) {
+		function Model(propertyNames, propertyObservers, equalityPredicates) {
 			_classCallCheck(this, Model);
 
 			var _this = _possibleConstructorReturn(this, (Model.__proto__ || Object.getPrototypeOf(Model)).call(this));
@@ -1908,14 +2028,18 @@ module.exports = function () {
 			_this._transactionOpen = false;
 			_this._transactionData = null;
 
+			_this._trackerOpen = false;
+			_this._trackerData = null;
+
 			_this._sequence = 0;
 
 			var observers = propertyObservers || {};
+			var predicates = equalityPredicates || {};
 
 			for (var i = 0; i < _this._propertyNames.length; i++) {
 				var propertyName = propertyNames[i];
 
-				createProperty.call(_this, propertyName, observers[propertyName] || emptyFunction);
+				createProperty.call(_this, propertyName, observers[propertyName] || emptyFunction, predicates[propertyName] || checkEquals);
 			}
 			return _this;
 		}
@@ -1947,6 +2071,14 @@ module.exports = function () {
 
 					this._transactionData.sequence = this._sequence++;
 
+					if (this._trackerOpen) {
+						this._trackerData = this._trackerData || {};
+
+						for (var propertyName in this._transactionData) {
+							this._trackerData[propertyName] = this._transactionData[propertyName];
+						}
+					}
+
 					this._transactionCommit.fire(this._transactionData);
 
 					this._transactionData = null;
@@ -1974,6 +2106,46 @@ module.exports = function () {
 				}
 
 				return this._transactionCommit.register(observer);
+			}
+		}, {
+			key: 'startTracker',
+			value: function startTracker() {
+				if (this._trackerOpen) {
+					return;
+				}
+
+				this._trackerOpen = true;
+			}
+		}, {
+			key: 'resetTracker',
+			value: function resetTracker() {
+				if (!this._trackerOpen) {
+					return null;
+				}
+
+				if (this.getIsDisposed()) {
+					return null;
+				}
+
+				var returnRef = this._trackerData;
+
+				this._trackerData = null;
+
+				return returnRef;
+			}
+		}, {
+			key: 'stopTracking',
+			value: function stopTracking() {
+				if (!this._trackerOpen) {
+					return;
+				}
+
+				if (this.getIsDisposed()) {
+					return;
+				}
+
+				this._trackerOpen = false;
+				this._trackerData = null;
 			}
 		}, {
 			key: 'getSnapshot',
@@ -2010,35 +2182,37 @@ module.exports = function () {
 		return;
 	}
 
-	function createProperty(propertyName, propertyObserver) {
-		var _this2 = this;
+	function checkEquals(a, b) {
+		return a === b;
+	}
 
-		var propertyValue;
+	function createProperty(propertyName, propertyObserver, equalityPredicate) {
+		var propertyValue = void 0;
 
 		Object.defineProperty(this, propertyName, {
 			get: function get() {
 				return propertyValue;
 			},
 			set: function set(value) {
-				if (propertyValue === value) {
+				if (equalityPredicate(propertyValue, value)) {
 					return;
 				}
 
 				propertyValue = value;
 
-				var implicit = !_this2._transactionOpen;
+				var implicit = !this._transactionOpen;
 
 				if (implicit) {
-					_this2.beginTransaction();
+					this.beginTransaction();
 				}
 
-				_this2._transactionData = _this2._transactionData || {};
-				_this2._transactionData[propertyName] = propertyValue;
+				this._transactionData = this._transactionData || {};
+				this._transactionData[propertyName] = propertyValue;
 
 				propertyObserver();
 
 				if (implicit) {
-					_this2.endTransaction();
+					this.endTransaction();
 				}
 			}
 		});
@@ -2047,11 +2221,193 @@ module.exports = function () {
 	return Model;
 }();
 
-},{"./../lang/Disposable":10,"./../lang/assert":12,"./../messaging/Event":18}],21:[function(require,module,exports){
+},{"./../lang/Disposable":11,"./../lang/assert":13,"./../messaging/Event":20}],23:[function(require,module,exports){
 
-},{}],22:[function(require,module,exports){
-arguments[4][21][0].apply(exports,arguments)
-},{"dup":21}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
+arguments[4][23][0].apply(exports,arguments)
+},{"dup":23}],25:[function(require,module,exports){
+// shim for using process in browser
+var process = module.exports = {};
+
+// cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
+
+var cachedSetTimeout;
+var cachedClearTimeout;
+
+function defaultSetTimout() {
+    throw new Error('setTimeout has not been defined');
+}
+function defaultClearTimeout () {
+    throw new Error('clearTimeout has not been defined');
+}
+(function () {
+    try {
+        if (typeof setTimeout === 'function') {
+            cachedSetTimeout = setTimeout;
+        } else {
+            cachedSetTimeout = defaultSetTimout;
+        }
+    } catch (e) {
+        cachedSetTimeout = defaultSetTimout;
+    }
+    try {
+        if (typeof clearTimeout === 'function') {
+            cachedClearTimeout = clearTimeout;
+        } else {
+            cachedClearTimeout = defaultClearTimeout;
+        }
+    } catch (e) {
+        cachedClearTimeout = defaultClearTimeout;
+    }
+} ())
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    // if setTimeout wasn't available but was latter defined
+    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+        cachedSetTimeout = setTimeout;
+        return setTimeout(fun, 0);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedSetTimeout(fun, 0);
+    } catch(e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch(e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
+    }
+
+
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    // if clearTimeout wasn't available but was latter defined
+    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+        cachedClearTimeout = clearTimeout;
+        return clearTimeout(marker);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedClearTimeout(marker);
+    } catch (e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
+    }
+
+
+
+}
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = runTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
+            }
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    runClearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        runTimeout(drainQueue);
+    }
+};
+
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function() { return 0; };
+
+},{}],26:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -2354,7 +2710,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],24:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -2379,7 +2735,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],25:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 "use strict";
 var layouts = require('../layouts')
 , consoleLog = console.log.bind(console);
@@ -2402,7 +2758,7 @@ function configure(config) {
 exports.appender = consoleAppender;
 exports.configure = configure;
 
-},{"../layouts":28}],26:[function(require,module,exports){
+},{"../layouts":31}],29:[function(require,module,exports){
 "use strict";
 var levels = require("./levels");
 var DEFAULT_FORMAT = ':remote-addr - -' +
@@ -2628,7 +2984,7 @@ function createNoLogCondition(nolog) {
 
 exports.connectLogger = getLogger;
 
-},{"./levels":29}],27:[function(require,module,exports){
+},{"./levels":32}],30:[function(require,module,exports){
 "use strict";
 exports.ISO8601_FORMAT = "yyyy-MM-dd hh:mm:ss.SSS";
 exports.ISO8601_WITH_TZ_OFFSET_FORMAT = "yyyy-MM-ddThh:mm:ssO";
@@ -2702,7 +3058,7 @@ exports.asString = function(/*format,*/ date, timezoneOffset) {
 
 };
 
-},{}],28:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 (function (process){
 "use strict";
 var dateFormat = require('./date_format')
@@ -3057,7 +3413,7 @@ module.exports = {
 };
 
 }).call(this,require('_process'))
-},{"./date_format":27,"_process":33,"os":21,"util":35}],29:[function(require,module,exports){
+},{"./date_format":30,"_process":25,"os":23,"util":37}],32:[function(require,module,exports){
 "use strict";
 
 function Level(level, levelStr) {
@@ -3120,7 +3476,7 @@ module.exports = {
   toLevel: toLevel
 };
 
-},{}],30:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 (function (process){
 "use strict";
 /*
@@ -3603,7 +3959,7 @@ configure();
 
 
 }).call(this,require('_process'))
-},{"./appenders/console":25,"./connect-logger":26,"./layouts":28,"./levels":29,"./logger":31,"_process":33,"events":23,"fs":22,"path":32,"util":35}],31:[function(require,module,exports){
+},{"./appenders/console":28,"./connect-logger":29,"./layouts":31,"./levels":32,"./logger":34,"_process":25,"events":26,"fs":24,"path":35,"util":37}],34:[function(require,module,exports){
 "use strict";
 var levels = require('./levels')
 , util = require('util')
@@ -3718,7 +4074,7 @@ exports.Logger = Logger;
 exports.disableAllLogWrites = disableAllLogWrites;
 exports.enableAllLogWrites = enableAllLogWrites;
 
-},{"./levels":29,"events":23,"util":35}],32:[function(require,module,exports){
+},{"./levels":32,"events":26,"util":37}],35:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -3946,176 +4302,14 @@ var substr = 'ab'.substr(-1) === 'b'
 ;
 
 }).call(this,require('_process'))
-},{"_process":33}],33:[function(require,module,exports){
-// shim for using process in browser
-var process = module.exports = {};
-
-// cached from whatever global is present so that test runners that stub it
-// don't break things.  But we need to wrap it in a try catch in case it is
-// wrapped in strict mode code which doesn't define any globals.  It's inside a
-// function because try/catches deoptimize in certain engines.
-
-var cachedSetTimeout;
-var cachedClearTimeout;
-
-(function () {
-    try {
-        cachedSetTimeout = setTimeout;
-    } catch (e) {
-        cachedSetTimeout = function () {
-            throw new Error('setTimeout is not defined');
-        }
-    }
-    try {
-        cachedClearTimeout = clearTimeout;
-    } catch (e) {
-        cachedClearTimeout = function () {
-            throw new Error('clearTimeout is not defined');
-        }
-    }
-} ())
-function runTimeout(fun) {
-    if (cachedSetTimeout === setTimeout) {
-        //normal enviroments in sane situations
-        return setTimeout(fun, 0);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedSetTimeout(fun, 0);
-    } catch(e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-            return cachedSetTimeout.call(null, fun, 0);
-        } catch(e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-            return cachedSetTimeout.call(this, fun, 0);
-        }
-    }
-
-
-}
-function runClearTimeout(marker) {
-    if (cachedClearTimeout === clearTimeout) {
-        //normal enviroments in sane situations
-        return clearTimeout(marker);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedClearTimeout(marker);
-    } catch (e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
-            return cachedClearTimeout.call(null, marker);
-        } catch (e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
-            return cachedClearTimeout.call(this, marker);
-        }
-    }
-
-
-
-}
-var queue = [];
-var draining = false;
-var currentQueue;
-var queueIndex = -1;
-
-function cleanUpNextTick() {
-    if (!draining || !currentQueue) {
-        return;
-    }
-    draining = false;
-    if (currentQueue.length) {
-        queue = currentQueue.concat(queue);
-    } else {
-        queueIndex = -1;
-    }
-    if (queue.length) {
-        drainQueue();
-    }
-}
-
-function drainQueue() {
-    if (draining) {
-        return;
-    }
-    var timeout = runTimeout(cleanUpNextTick);
-    draining = true;
-
-    var len = queue.length;
-    while(len) {
-        currentQueue = queue;
-        queue = [];
-        while (++queueIndex < len) {
-            if (currentQueue) {
-                currentQueue[queueIndex].run();
-            }
-        }
-        queueIndex = -1;
-        len = queue.length;
-    }
-    currentQueue = null;
-    draining = false;
-    runClearTimeout(timeout);
-}
-
-process.nextTick = function (fun) {
-    var args = new Array(arguments.length - 1);
-    if (arguments.length > 1) {
-        for (var i = 1; i < arguments.length; i++) {
-            args[i - 1] = arguments[i];
-        }
-    }
-    queue.push(new Item(fun, args));
-    if (queue.length === 1 && !draining) {
-        runTimeout(drainQueue);
-    }
-};
-
-// v8 likes predictible objects
-function Item(fun, array) {
-    this.fun = fun;
-    this.array = array;
-}
-Item.prototype.run = function () {
-    this.fun.apply(null, this.array);
-};
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-process.version = ''; // empty string to avoid regexp issues
-process.versions = {};
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-};
-
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-process.umask = function() { return 0; };
-
-},{}],34:[function(require,module,exports){
+},{"_process":25}],36:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],35:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -4705,7 +4899,7 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":34,"_process":33,"inherits":24}],36:[function(require,module,exports){
+},{"./support/isBuffer":36,"_process":25,"inherits":27}],38:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
@@ -4779,7 +4973,7 @@ module.exports = function () {
 	return AndSpecification;
 }();
 
-},{"./../lang/assert":12,"./Specification":42}],37:[function(require,module,exports){
+},{"./../lang/assert":13,"./Specification":44}],39:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
@@ -4853,7 +5047,7 @@ module.exports = function () {
 	return ContainedSpecification;
 }();
 
-},{"./../lang/assert":12,"./Specification":42}],38:[function(require,module,exports){
+},{"./../lang/assert":13,"./Specification":44}],40:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
@@ -4925,7 +5119,7 @@ module.exports = function () {
 	return ContainsSpecification;
 }();
 
-},{"./Specification":42}],39:[function(require,module,exports){
+},{"./Specification":44}],41:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
@@ -4990,7 +5184,7 @@ module.exports = function () {
 	return FailSpecification;
 }();
 
-},{"./Specification":42}],40:[function(require,module,exports){
+},{"./Specification":44}],42:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
@@ -5064,7 +5258,7 @@ module.exports = function () {
 	return OrSpecification;
 }();
 
-},{"./../lang/assert":12,"./Specification":42}],41:[function(require,module,exports){
+},{"./../lang/assert":13,"./Specification":44}],43:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
@@ -5129,7 +5323,7 @@ module.exports = function () {
 	return PassSpecification;
 }();
 
-},{"./Specification":42}],42:[function(require,module,exports){
+},{"./Specification":44}],44:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
@@ -5179,7 +5373,7 @@ module.exports = function () {
 	return Specification;
 }();
 
-},{}],43:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 'use strict';
 
 var Stack = require('./../../../collections/Stack');
@@ -5298,7 +5492,7 @@ describe('When a Stack is constructed', function () {
 	});
 });
 
-},{"./../../../collections/Stack":2}],44:[function(require,module,exports){
+},{"./../../../collections/Stack":2}],46:[function(require,module,exports){
 'use strict';
 
 var ComparatorBuilder = require('./../../../../collections/sorting/ComparatorBuilder');
@@ -5388,7 +5582,7 @@ describe('When a ComparatorBuilder is composed with two comparators', function (
     });
 });
 
-},{"./../../../../collections/sorting/ComparatorBuilder":3}],45:[function(require,module,exports){
+},{"./../../../../collections/sorting/ComparatorBuilder":3}],47:[function(require,module,exports){
 'use strict';
 
 var comparators = require('./../../../../collections/sorting/comparators');
@@ -5495,7 +5689,99 @@ describe('When using the "compareStrings" comparator', function () {
 	});
 });
 
-},{"./../../../../collections/sorting/comparators":4}],46:[function(require,module,exports){
+},{"./../../../../collections/sorting/comparators":4}],48:[function(require,module,exports){
+'use strict';
+
+var Disposable = require('./../../../../lang/Disposable');
+var DisposableStack = require('./../../../../collections/specialized/DisposableStack');
+
+describe('When an DisposableStack is constructed', function () {
+	'use strict';
+
+	var disposeStack;
+
+	beforeEach(function () {
+		disposeStack = new DisposableStack();
+	});
+
+	it('should be disposable', function () {
+		expect(disposeStack instanceof Disposable).toEqual(true);
+	});
+
+	describe('and a Disposable item is added to the stack', function () {
+		var disposableOne;
+		var spyOne;
+
+		var disposeOrder;
+
+		beforeEach(function () {
+			disposeStack.push(disposableOne = Disposable.fromAction(spyOne = jasmine.createSpy('spyOne').and.callFake(function () {
+				disposeOrder.push(disposableOne);
+			})));
+		});
+
+		describe('and the stack is disposed', function () {
+			beforeEach(function () {
+				disposeOrder = [];
+
+				disposeStack.dispose();
+			});
+
+			it('the item should be disposed', function () {
+				expect(disposableOne.getIsDisposed()).toEqual(true);
+			});
+
+			it('the dispose logic should have been triggered', function () {
+				expect(spyOne).toHaveBeenCalled();
+			});
+		});
+
+		describe('and the another item is added to the stack', function () {
+			var disposableTwo;
+			var spyTwo;
+
+			beforeEach(function () {
+				disposeStack.push(disposableTwo = Disposable.fromAction(spyTwo = jasmine.createSpy('spyTwo').and.callFake(function () {
+					disposeOrder.push(disposableTwo);
+				})));
+			});
+
+			describe('and the stack is disposed', function () {
+				beforeEach(function () {
+					disposeOrder = [];
+
+					disposeStack.dispose();
+				});
+
+				it('the first item should be disposed', function () {
+					expect(disposableOne.getIsDisposed()).toEqual(true);
+				});
+
+				it('the dispose logic for the first item have been triggered', function () {
+					expect(spyOne).toHaveBeenCalled();
+				});
+
+				it('the second item should be disposed', function () {
+					expect(disposableTwo.getIsDisposed()).toEqual(true);
+				});
+
+				it('the dispose logic for the second item have been triggered', function () {
+					expect(spyTwo).toHaveBeenCalled();
+				});
+
+				it('the second item should be disposed first (per "stack" rules)', function () {
+					expect(disposeOrder[0]).toBe(disposableTwo);
+				});
+
+				it('the first item should be disposed next (per "stack" rules)', function () {
+					expect(disposeOrder[1]).toBe(disposableOne);
+				});
+			});
+		});
+	});
+});
+
+},{"./../../../../collections/specialized/DisposableStack":5,"./../../../../lang/Disposable":11}],49:[function(require,module,exports){
 'use strict';
 
 var EvictingList = require('./../../../../collections/specialized/EvictingList');
@@ -5720,7 +6006,7 @@ describe('When an EvictingList is constructed (with a capacity of 3)', function 
 	});
 });
 
-},{"./../../../../collections/specialized/EvictingList":5}],47:[function(require,module,exports){
+},{"./../../../../collections/specialized/EvictingList":6}],50:[function(require,module,exports){
 'use strict';
 
 var EvictingMap = require('./../../../../collections/specialized/EvictingMap');
@@ -6003,7 +6289,7 @@ describe('When an EvictingMap is constructed (with a capacity of 3)', function (
 	});
 });
 
-},{"./../../../../collections/specialized/EvictingMap":6}],48:[function(require,module,exports){
+},{"./../../../../collections/specialized/EvictingMap":7}],51:[function(require,module,exports){
 'use strict';
 
 var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
@@ -6078,7 +6364,7 @@ describe('When a CommandHandler is created from a function', function () {
 	});
 });
 
-},{"./../../../commands/CommandHandler":7}],49:[function(require,module,exports){
+},{"./../../../commands/CommandHandler":8}],52:[function(require,module,exports){
 'use strict';
 
 var CommandHandler = require('./../../../commands/CommandHandler');
@@ -6140,7 +6426,7 @@ describe('When a CompositeCommandHandler is created', function () {
 	});
 });
 
-},{"./../../../commands/CommandHandler":7,"./../../../commands/CompositeCommandHandler":8}],50:[function(require,module,exports){
+},{"./../../../commands/CommandHandler":8,"./../../../commands/CompositeCommandHandler":9}],53:[function(require,module,exports){
 'use strict';
 
 var CommandHandler = require('./../../../commands/CommandHandler');
@@ -6222,7 +6508,7 @@ describe('When a MappedCommandHandler is created with two mapped commands', func
 	});
 });
 
-},{"./../../../commands/CommandHandler":7,"./../../../commands/MappedCommandHandler":9}],51:[function(require,module,exports){
+},{"./../../../commands/CommandHandler":8,"./../../../commands/MappedCommandHandler":10}],54:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
@@ -6381,7 +6667,7 @@ describe('When a Disposable.fromAction creates a Disposable', function () {
 	});
 });
 
-},{"./../../../lang/Disposable":10}],52:[function(require,module,exports){
+},{"./../../../lang/Disposable":11}],55:[function(require,module,exports){
 'use strict';
 
 var array = require('./../../../lang/array');
@@ -6504,7 +6790,7 @@ describe('When grouping an array', function () {
 	});
 });
 
-},{"./../../../lang/array":11}],53:[function(require,module,exports){
+},{"./../../../lang/array":12}],56:[function(require,module,exports){
 'use strict';
 
 var attributes = require('./../../../lang/attributes');
@@ -7111,7 +7397,7 @@ describe('When "attributes.erase" is used to remove a second-level property (usi
 	});
 });
 
-},{"./../../../lang/attributes":13}],54:[function(require,module,exports){
+},{"./../../../lang/attributes":14}],57:[function(require,module,exports){
 'use strict';
 
 var dateUtilities = require('./../../../lang/date');
@@ -7126,7 +7412,7 @@ describe('When extracting the "short" day of week', function () {
 	});
 });
 
-},{"./../../../lang/date":14}],55:[function(require,module,exports){
+},{"./../../../lang/date":15}],58:[function(require,module,exports){
 'use strict';
 
 var is = require('./../../../lang/is');
@@ -7531,7 +7817,70 @@ describe('When checking an undefined value', function () {
 	});
 });
 
-},{"./../../../lang/is":15}],56:[function(require,module,exports){
+},{"./../../../lang/is":16}],59:[function(require,module,exports){
+'use strict';
+
+var math = require('./../../../lang/math');
+
+describe('When using math.approximate', function () {
+	'use strict';
+
+	describe("and comparing identical integers", function () {
+		it("should return true", function () {
+			expect(math.approximate(12, 12)).toEqual(true);
+		});
+	});
+
+	describe("and comparing identical decimals literals", function () {
+		it("should return true", function () {
+			expect(math.approximate(0.3, 0.3)).toEqual(true);
+		});
+	});
+
+	describe("and comparing identical derived decimals derived with addition", function () {
+		it("should return true", function () {
+			expect(math.approximate(0.1 + 0.2, 0.3)).toEqual(true);
+		});
+	});
+
+	describe("and comparing identical derived decimals derived with division and multiplication", function () {
+		it("should return true", function () {
+			expect(math.approximate(100.33 / 3 * 3, 100.33)).toEqual(true);
+		});
+	});
+
+	describe("and comparing an integer with undefined", function () {
+		it("should return false", function () {
+			expect(math.approximate(123, undefined)).toEqual(false);
+		});
+	});
+
+	describe("and comparing a decimal with undefined", function () {
+		it("should return false", function () {
+			expect(math.approximate(123.45, undefined)).toEqual(false);
+		});
+	});
+
+	describe("and comparing an integer with null", function () {
+		it("should return false", function () {
+			expect(math.approximate(123, null)).toEqual(false);
+		});
+	});
+
+	describe("and comparing a decimal with null", function () {
+		it("should return false", function () {
+			expect(math.approximate(123.45, null)).toEqual(false);
+		});
+	});
+
+	describe("and comparing strings", function () {
+		it("should return false", function () {
+			expect(math.approximate('hi', 'there')).toEqual(false);
+		});
+	});
+});
+
+},{"./../../../lang/math":17}],60:[function(require,module,exports){
 'use strict';
 
 var random = require('./../../../lang/random');
@@ -7575,7 +7924,7 @@ describe('When generating a random number with a range of multiple values', func
 	});
 });
 
-},{"./../../../lang/random":16}],57:[function(require,module,exports){
+},{"./../../../lang/random":18}],61:[function(require,module,exports){
 'use strict';
 
 var string = require('./../../../lang/string');
@@ -7720,7 +8069,7 @@ describe('When left padding a string', function () {
 	});
 });
 
-},{"./../../../lang/string":17}],58:[function(require,module,exports){
+},{"./../../../lang/string":19}],62:[function(require,module,exports){
 'use strict';
 
 var EventMap = require('./../../../messaging/EventMap');
@@ -7898,7 +8247,7 @@ describe('When an EventMap is constructed', function () {
 	});
 });
 
-},{"./../../../messaging/EventMap":19}],59:[function(require,module,exports){
+},{"./../../../messaging/EventMap":21}],63:[function(require,module,exports){
 'use strict';
 
 var Disposable = require('./../../../lang/Disposable');
@@ -8082,7 +8431,7 @@ describe('When an Event is constructed', function () {
 	});
 });
 
-},{"./../../../lang/Disposable":10,"./../../../messaging/Event":18}],60:[function(require,module,exports){
+},{"./../../../lang/Disposable":11,"./../../../messaging/Event":20}],64:[function(require,module,exports){
 'use strict';
 
 var Disposable = require('./../../../lang/Disposable');
@@ -8167,7 +8516,7 @@ describe('When an Model is constructed with "firstName" and "lastName" propertie
 	});
 });
 
-},{"./../../../lang/Disposable":10,"./../../../models/Model":20}],61:[function(require,module,exports){
+},{"./../../../lang/Disposable":11,"./../../../models/Model":22}],65:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
@@ -8307,7 +8656,7 @@ describe('When an AndSpecification is constructed', function () {
 	});
 });
 
-},{"./../../../specifications/AndSpecification":36,"./../../../specifications/Specification":42}],62:[function(require,module,exports){
+},{"./../../../specifications/AndSpecification":38,"./../../../specifications/Specification":44}],66:[function(require,module,exports){
 'use strict';
 
 var ContainedSpecification = require('./../../../specifications/ContainedSpecification');
@@ -8371,7 +8720,7 @@ describe('When a ContainedSpecification is constructed', function () {
 	});
 });
 
-},{"./../../../specifications/ContainedSpecification":37}],63:[function(require,module,exports){
+},{"./../../../specifications/ContainedSpecification":39}],67:[function(require,module,exports){
 'use strict';
 
 var ContainsSpecification = require('./../../../specifications/ContainsSpecification');
@@ -8423,7 +8772,7 @@ describe('When a ContainsSpecification is constructed', function () {
 	});
 });
 
-},{"./../../../specifications/ContainsSpecification":38}],64:[function(require,module,exports){
+},{"./../../../specifications/ContainsSpecification":40}],68:[function(require,module,exports){
 'use strict';
 
 var FailSpecification = require('./../../../specifications/FailSpecification');
@@ -8475,7 +8824,7 @@ describe('When a FailSpecification is constructed', function () {
 	});
 });
 
-},{"./../../../specifications/FailSpecification":39}],65:[function(require,module,exports){
+},{"./../../../specifications/FailSpecification":41}],69:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
@@ -8615,7 +8964,7 @@ describe('When an OrSpecification is constructed', function () {
 	});
 });
 
-},{"./../../../specifications/OrSpecification":40,"./../../../specifications/Specification":42}],66:[function(require,module,exports){
+},{"./../../../specifications/OrSpecification":42,"./../../../specifications/Specification":44}],70:[function(require,module,exports){
 'use strict';
 
 var PassSpecification = require('./../../../specifications/PassSpecification');
@@ -8667,7 +9016,7 @@ describe('When a PassSpecification is constructed', function () {
 	});
 });
 
-},{"./../../../specifications/PassSpecification":41}],67:[function(require,module,exports){
+},{"./../../../specifications/PassSpecification":43}],71:[function(require,module,exports){
 'use strict';
 
 var RateLimiter = require('./../../../timing/RateLimiter');
@@ -8901,7 +9250,7 @@ describe('When a RateLimiter is constructed (2 execution per 25 milliseconds)', 
 	});
 });
 
-},{"./../../../timing/RateLimiter":69}],68:[function(require,module,exports){
+},{"./../../../timing/RateLimiter":73}],72:[function(require,module,exports){
 'use strict';
 
 var Scheduler = require('./../../../timing/Scheduler');
@@ -8935,6 +9284,28 @@ describe('When a Scheduler is constructed', function () {
 				done();
 			});
 		});
+
+		it('should not create a memory leak', function (done) {
+			var before = 0;
+
+			for (var tb in scheduler._timeoutBindings) {
+				before++;
+			}
+
+			expect(before).toEqual(1);
+
+			promise.then(function () {
+				var after = 0;
+
+				for (var tb in scheduler._timeoutBindings) {
+					after++;
+				}
+
+				expect(after).toEqual(0);
+			}).then(function () {
+				done();
+			});
+		});
 	});
 
 	describe('and is disposed', function () {
@@ -8954,7 +9325,7 @@ describe('When a Scheduler is constructed', function () {
 	});
 });
 
-},{"./../../../timing/Scheduler":70}],69:[function(require,module,exports){
+},{"./../../../timing/Scheduler":74}],73:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
@@ -9106,7 +9477,7 @@ module.exports = function () {
 	return RateLimiter;
 }();
 
-},{"./../collections/Queue":1,"./../lang/Disposable":10,"./../lang/assert":12,"./Scheduler":70,"log4js":30}],70:[function(require,module,exports){
+},{"./../collections/Queue":1,"./../lang/Disposable":11,"./../lang/assert":13,"./Scheduler":74,"log4js":33}],74:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
@@ -9308,4 +9679,4 @@ module.exports = function () {
     return Scheduler;
 }();
 
-},{"./../lang/Disposable":10,"./../lang/assert":12}]},{},[44,45,46,47,43,48,49,50,52,53,54,51,55,56,57,58,59,60,61,62,63,64,65,66,67,68]);
+},{"./../lang/Disposable":11,"./../lang/assert":13}]},{},[46,47,48,49,50,45,51,52,53,55,56,57,54,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72]);
