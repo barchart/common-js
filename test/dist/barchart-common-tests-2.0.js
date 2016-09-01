@@ -2346,6 +2346,8 @@ module.exports = function () {
 	}
 
 	function createProperty(propertyName, propertyObserver, equalityPredicate) {
+		var _this2 = this;
+
 		var propertyValue = void 0;
 
 		Object.defineProperty(this, propertyName, {
@@ -2359,19 +2361,19 @@ module.exports = function () {
 
 				propertyValue = value;
 
-				var implicit = !this._transactionOpen;
+				var implicit = !_this2._transactionOpen;
 
 				if (implicit) {
-					this.beginTransaction();
+					_this2.beginTransaction();
 				}
 
-				this._transactionData = this._transactionData || {};
-				this._transactionData[propertyName] = propertyValue;
+				_this2._transactionData = _this2._transactionData || {};
+				_this2._transactionData[propertyName] = propertyValue;
 
 				propertyObserver();
 
 				if (implicit) {
-					this.endTransaction();
+					_this2.endTransaction();
 				}
 			}
 		});
