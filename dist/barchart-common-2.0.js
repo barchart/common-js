@@ -202,7 +202,7 @@ module.exports = function () {
 		}, {
 			key: 'addChild',
 			value: function addChild(value) {
-				var returnRef = new Tree(this, value);
+				var returnRef = new Tree(value, this);
 
 				this._children.push(returnRef);
 
@@ -211,8 +211,6 @@ module.exports = function () {
 		}, {
 			key: 'removeChild',
 			value: function removeChild(node) {
-				var returnRef = null;
-
 				for (var i = this._children.length - 1; !(i < 0); i--) {
 					var child = this._children[i];
 
@@ -482,6 +480,8 @@ module.exports = function () {
 },{"./../../lang/assert":15}],7:[function(require,module,exports){
 'use strict';
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
 var _createClass = function () {
 	function defineProperties(target, props) {
 		for (var i = 0; i < props.length; i++) {
@@ -498,6 +498,18 @@ function _classCallCheck(instance, Constructor) {
 	}
 }
 
+function _possibleConstructorReturn(self, call) {
+	if (!self) {
+		throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+	}return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+}
+
+function _inherits(subClass, superClass) {
+	if (typeof superClass !== "function" && superClass !== null) {
+		throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
+	}subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+}
+
 var Stack = require('./../Stack');
 
 var assert = require('./../../lang/assert');
@@ -506,13 +518,16 @@ var Disposable = require('./../../lang/Disposable');
 module.exports = function () {
 	'use strict';
 
-	var DisposableStack = function () {
+	var DisposableStack = function (_Disposable) {
+		_inherits(DisposableStack, _Disposable);
+
 		function DisposableStack() {
 			_classCallCheck(this, DisposableStack);
 
-			this._super();
+			var _this = _possibleConstructorReturn(this, (DisposableStack.__proto__ || Object.getPrototypeOf(DisposableStack)).call(this));
 
-			this._stack = new Stack();
+			_this._stack = new Stack();
+			return _this;
 		}
 
 		_createClass(DisposableStack, [{
@@ -549,7 +564,7 @@ module.exports = function () {
 		}]);
 
 		return DisposableStack;
-	}();
+	}(Disposable);
 
 	return DisposableStack;
 }();
@@ -774,7 +789,7 @@ module.exports = function () {
 		function DelegateCommandHandler(handler) {
 			_classCallCheck(this, DelegateCommandHandler);
 
-			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(DelegateCommandHandler).call(this));
+			var _this = _possibleConstructorReturn(this, (DelegateCommandHandler.__proto__ || Object.getPrototypeOf(DelegateCommandHandler)).call(this));
 
 			_this._handler = handler;
 			return _this;
@@ -838,7 +853,7 @@ module.exports = function () {
 		function CompositeCommandHandler(commandHandlerA, commandHandlerB) {
 			_classCallCheck(this, CompositeCommandHandler);
 
-			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(CompositeCommandHandler).call(this));
+			var _this = _possibleConstructorReturn(this, (CompositeCommandHandler.__proto__ || Object.getPrototypeOf(CompositeCommandHandler)).call(this));
 
 			assert.argumentIsRequired(commandHandlerA, 'commandHandlerA', CommandHandler, 'CommandHandler');
 			assert.argumentIsRequired(commandHandlerB, 'commandHandlerB', CommandHandler, 'CommandHandler');
@@ -912,7 +927,7 @@ module.exports = function () {
 		function MappedCommandHandler(nameExtractor) {
 			_classCallCheck(this, MappedCommandHandler);
 
-			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(MappedCommandHandler).call(this));
+			var _this = _possibleConstructorReturn(this, (MappedCommandHandler.__proto__ || Object.getPrototypeOf(MappedCommandHandler)).call(this));
 
 			assert.argumentIsRequired(nameExtractor, 'nameFunction', Function);
 
@@ -956,7 +971,7 @@ module.exports = function () {
 				var handlerName = this._nameExtractor(data);
 				var handler = this._handlerMap[handlerName] || this._defaultHandler;
 
-				var returnRef;
+				var returnRef = void 0;
 
 				if (handler) {
 					returnRef = handler.process(data);
@@ -1022,6 +1037,8 @@ module.exports = function () {
 	Object.keys(lang).forEach(function (key) {
 		namespaces[key] = lang[key];
 	});
+
+	return namespaces;
 }();
 
 },{"./collections/index":4,"./commands/index":12,"./lang/index":18,"./messaging/index":21,"./models/index":23,"./specifications/index":51,"./timing/index":54}],14:[function(require,module,exports){
@@ -1113,7 +1130,7 @@ module.exports = function () {
 		function DisposableAction(disposeAction) {
 			_classCallCheck(this, DisposableAction);
 
-			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(DisposableAction).call(this, disposeAction));
+			var _this = _possibleConstructorReturn(this, (DisposableAction.__proto__ || Object.getPrototypeOf(DisposableAction)).call(this, disposeAction));
 
 			_this._disposeAction = disposeAction;
 			return _this;
@@ -1150,7 +1167,6 @@ module.exports = function () {
 		argumentIsRequired: function argumentIsRequired(variable, variableName, type, typeDescription) {
 			checkArgumentType(variable, variableName, type, typeDescription);
 		},
-
 		argumentIsOptional: function argumentIsOptional(variable, variableName, type, typeDescription) {
 			if (variable === null || variable === undefined) {
 				return;
@@ -1158,7 +1174,6 @@ module.exports = function () {
 
 			checkArgumentType(variable, variableName, type, typeDescription);
 		},
-
 		argumentIsArray: function argumentIsArray(variable, variableName, itemConstraint, itemConstraintDescription) {
 			assert.argumentIsRequired(variable, variableName, Array);
 
@@ -1166,7 +1181,7 @@ module.exports = function () {
 				(function () {
 					var itemValidator = void 0;
 
-					if (typeof itemConstraint === 'function') {
+					if (typeof itemConstraint === 'function' && itemConstraint !== Function) {
 						itemValidator = function itemValidator(value, index) {
 							return itemConstraint(value, variableName + '[' + index + ']');
 						};
@@ -1182,13 +1197,11 @@ module.exports = function () {
 				})();
 			}
 		},
-
 		areEqual: function areEqual(a, b, descriptionA, descriptionB) {
 			if (a !== b) {
 				throw new Error('The objects must be equal ([' + (descriptionA || a.toString()) + ' and ' + (descriptionB || b.toString()));
 			}
 		},
-
 		areNotEqual: function areNotEqual(a, b, descriptionA, descriptionB) {
 			if (a === b) {
 				throw new Error('The objects cannot be equal ([' + (descriptionA || a.toString()) + ' and ' + (descriptionB || b.toString()));
@@ -1264,7 +1277,6 @@ module.exports = function () {
 
 			return propertyTarget !== null && propertyTarget.hasOwnProperty(last(propertyNameArray));
 		},
-
 		read: function read(target, propertyNames) {
 			assert.argumentIsRequired(target, 'target', Object);
 
@@ -1289,7 +1301,6 @@ module.exports = function () {
 
 			return returnRef;
 		},
-
 		write: function write(target, propertyNames, value) {
 			assert.argumentIsRequired(target, 'target', Object);
 
@@ -1306,7 +1317,6 @@ module.exports = function () {
 
 			propertyTarget[propertyName] = value;
 		},
-
 		erase: function erase(target, propertyNames) {
 			if (!attributes.has(target, propertyNames)) {
 				return;
@@ -1322,7 +1332,7 @@ module.exports = function () {
 	};
 
 	function getPropertyNameArray(propertyNames) {
-		var returnRef;
+		var returnRef = void 0;
 
 		if (Array.isArray(propertyNames)) {
 			returnRef = propertyNames;
@@ -1372,17 +1382,14 @@ module.exports = function () {
 module.exports = function () {
 	'use strict';
 
-	var converters = {
+	return {
 		toDate: function toDate(object) {
 			return new Date(object);
 		},
-
 		empty: function empty(object) {
 			return object;
 		}
 	};
-
-	return converters;
 }();
 
 },{}],18:[function(require,module,exports){
@@ -1409,12 +1416,23 @@ module.exports = function () {
 },{"./Disposable":14,"./assert":15,"./attributes":16,"./converters":17,"./is":19}],19:[function(require,module,exports){
 'use strict';
 
+var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
+var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) {
+	return typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+} : function (obj) {
+	return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+};
+
 module.exports = function () {
 	'use strict';
 
 	return {
 		number: function number(candidate) {
-			return typeof candidate === 'number';
+			return typeof candidate === 'number' && !isNaN(candidate);
+		},
+		nan: function nan(candidate) {
+			return typeof candidate === 'number' && isNaN(candidate);
 		},
 		string: function string(candidate) {
 			return typeof candidate === 'string';
@@ -1430,6 +1448,9 @@ module.exports = function () {
 		},
 		boolean: function boolean(candidate) {
 			return typeof candidate === 'boolean';
+		},
+		object: function object(candidate) {
+			return (typeof candidate === 'undefined' ? 'undefined' : _typeof(candidate)) === 'object' && candidate !== null;
 		},
 		null: function _null(candidate) {
 			return candidate === null;
@@ -1494,7 +1515,7 @@ module.exports = function () {
 		function Event(sender) {
 			_classCallCheck(this, Event);
 
-			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Event).call(this));
+			var _this = _possibleConstructorReturn(this, (Event.__proto__ || Object.getPrototypeOf(Event)).call(this));
 
 			_this._sender = sender || null;
 
@@ -1655,10 +1676,10 @@ module.exports = function () {
 	var Model = function (_Disposable) {
 		_inherits(Model, _Disposable);
 
-		function Model(propertyNames, propertyObservers) {
+		function Model(propertyNames, propertyObservers, equalityPredicates) {
 			_classCallCheck(this, Model);
 
-			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Model).call(this));
+			var _this = _possibleConstructorReturn(this, (Model.__proto__ || Object.getPrototypeOf(Model)).call(this));
 
 			_this._propertyNames = propertyNames;
 
@@ -1667,14 +1688,18 @@ module.exports = function () {
 			_this._transactionOpen = false;
 			_this._transactionData = null;
 
+			_this._trackerOpen = false;
+			_this._trackerData = null;
+
 			_this._sequence = 0;
 
 			var observers = propertyObservers || {};
+			var predicates = equalityPredicates || {};
 
 			for (var i = 0; i < _this._propertyNames.length; i++) {
 				var propertyName = propertyNames[i];
 
-				createProperty.call(_this, propertyName, observers[propertyName] || emptyFunction);
+				createProperty.call(_this, propertyName, observers[propertyName] || emptyFunction, predicates[propertyName] || checkEquals);
 			}
 			return _this;
 		}
@@ -1706,6 +1731,14 @@ module.exports = function () {
 
 					this._transactionData.sequence = this._sequence++;
 
+					if (this._trackerOpen) {
+						this._trackerData = this._trackerData || {};
+
+						for (var propertyName in this._transactionData) {
+							this._trackerData[propertyName] = this._transactionData[propertyName];
+						}
+					}
+
 					this._transactionCommit.fire(this._transactionData);
 
 					this._transactionData = null;
@@ -1733,6 +1766,46 @@ module.exports = function () {
 				}
 
 				return this._transactionCommit.register(observer);
+			}
+		}, {
+			key: 'startTracker',
+			value: function startTracker() {
+				if (this._trackerOpen) {
+					return;
+				}
+
+				this._trackerOpen = true;
+			}
+		}, {
+			key: 'resetTracker',
+			value: function resetTracker() {
+				if (!this._trackerOpen) {
+					return null;
+				}
+
+				if (this.getIsDisposed()) {
+					return null;
+				}
+
+				var returnRef = this._trackerData;
+
+				this._trackerData = null;
+
+				return returnRef;
+			}
+		}, {
+			key: 'stopTracking',
+			value: function stopTracking() {
+				if (!this._trackerOpen) {
+					return;
+				}
+
+				if (this.getIsDisposed()) {
+					return;
+				}
+
+				this._trackerOpen = false;
+				this._trackerData = null;
 			}
 		}, {
 			key: 'getSnapshot',
@@ -1769,35 +1842,37 @@ module.exports = function () {
 		return;
 	}
 
-	function createProperty(propertyName, propertyObserver) {
-		var _this2 = this;
+	function checkEquals(a, b) {
+		return a === b;
+	}
 
-		var propertyValue;
+	function createProperty(propertyName, propertyObserver, equalityPredicate) {
+		var propertyValue = void 0;
 
 		Object.defineProperty(this, propertyName, {
 			get: function get() {
 				return propertyValue;
 			},
 			set: function set(value) {
-				if (propertyValue === value) {
+				if (equalityPredicate(propertyValue, value)) {
 					return;
 				}
 
 				propertyValue = value;
 
-				var implicit = !_this2._transactionOpen;
+				var implicit = !this._transactionOpen;
 
 				if (implicit) {
-					_this2.beginTransaction();
+					this.beginTransaction();
 				}
 
-				_this2._transactionData = _this2._transactionData || {};
-				_this2._transactionData[propertyName] = propertyValue;
+				this._transactionData = this._transactionData || {};
+				this._transactionData[propertyName] = propertyValue;
 
 				propertyObserver();
 
 				if (implicit) {
-					_this2.endTransaction();
+					this.endTransaction();
 				}
 			}
 		});
@@ -1824,127 +1899,6 @@ module.exports = function () {
 },{}],25:[function(require,module,exports){
 arguments[4][24][0].apply(exports,arguments)
 },{"dup":24}],26:[function(require,module,exports){
-// shim for using process in browser
-
-var process = module.exports = {};
-
-// cached from whatever global is present so that test runners that stub it
-// don't break things.  But we need to wrap it in a try catch in case it is
-// wrapped in strict mode code which doesn't define any globals.  It's inside a
-// function because try/catches deoptimize in certain engines.
-
-var cachedSetTimeout;
-var cachedClearTimeout;
-
-(function () {
-  try {
-    cachedSetTimeout = setTimeout;
-  } catch (e) {
-    cachedSetTimeout = function () {
-      throw new Error('setTimeout is not defined');
-    }
-  }
-  try {
-    cachedClearTimeout = clearTimeout;
-  } catch (e) {
-    cachedClearTimeout = function () {
-      throw new Error('clearTimeout is not defined');
-    }
-  }
-} ())
-var queue = [];
-var draining = false;
-var currentQueue;
-var queueIndex = -1;
-
-function cleanUpNextTick() {
-    if (!draining || !currentQueue) {
-        return;
-    }
-    draining = false;
-    if (currentQueue.length) {
-        queue = currentQueue.concat(queue);
-    } else {
-        queueIndex = -1;
-    }
-    if (queue.length) {
-        drainQueue();
-    }
-}
-
-function drainQueue() {
-    if (draining) {
-        return;
-    }
-    var timeout = cachedSetTimeout.call(null, cleanUpNextTick);
-    draining = true;
-
-    var len = queue.length;
-    while(len) {
-        currentQueue = queue;
-        queue = [];
-        while (++queueIndex < len) {
-            if (currentQueue) {
-                currentQueue[queueIndex].run();
-            }
-        }
-        queueIndex = -1;
-        len = queue.length;
-    }
-    currentQueue = null;
-    draining = false;
-    cachedClearTimeout.call(null, timeout);
-}
-
-process.nextTick = function (fun) {
-    var args = new Array(arguments.length - 1);
-    if (arguments.length > 1) {
-        for (var i = 1; i < arguments.length; i++) {
-            args[i - 1] = arguments[i];
-        }
-    }
-    queue.push(new Item(fun, args));
-    if (queue.length === 1 && !draining) {
-        cachedSetTimeout.call(null, drainQueue, 0);
-    }
-};
-
-// v8 likes predictible objects
-function Item(fun, array) {
-    this.fun = fun;
-    this.array = array;
-}
-Item.prototype.run = function () {
-    this.fun.apply(null, this.array);
-};
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-process.version = ''; // empty string to avoid regexp issues
-process.versions = {};
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-};
-
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-process.umask = function() { return 0; };
-
-},{}],27:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -2247,7 +2201,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],28:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -2272,7 +2226,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],29:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 "use strict";
 var layouts = require('../layouts')
 , consoleLog = console.log.bind(console);
@@ -2295,7 +2249,7 @@ function configure(config) {
 exports.appender = consoleAppender;
 exports.configure = configure;
 
-},{"../layouts":32}],30:[function(require,module,exports){
+},{"../layouts":31}],29:[function(require,module,exports){
 "use strict";
 var levels = require("./levels");
 var DEFAULT_FORMAT = ':remote-addr - -' +
@@ -2521,7 +2475,7 @@ function createNoLogCondition(nolog) {
 
 exports.connectLogger = getLogger;
 
-},{"./levels":33}],31:[function(require,module,exports){
+},{"./levels":32}],30:[function(require,module,exports){
 "use strict";
 exports.ISO8601_FORMAT = "yyyy-MM-dd hh:mm:ss.SSS";
 exports.ISO8601_WITH_TZ_OFFSET_FORMAT = "yyyy-MM-ddThh:mm:ssO";
@@ -2595,7 +2549,7 @@ exports.asString = function(/*format,*/ date, timezoneOffset) {
 
 };
 
-},{}],32:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 (function (process){
 "use strict";
 var dateFormat = require('./date_format')
@@ -2950,7 +2904,7 @@ module.exports = {
 };
 
 }).call(this,require('_process'))
-},{"./date_format":31,"_process":26,"os":24,"util":38}],33:[function(require,module,exports){
+},{"./date_format":30,"_process":36,"os":24,"util":38}],32:[function(require,module,exports){
 "use strict";
 
 function Level(level, levelStr) {
@@ -3013,7 +2967,7 @@ module.exports = {
   toLevel: toLevel
 };
 
-},{}],34:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 (function (process){
 "use strict";
 /*
@@ -3496,7 +3450,7 @@ configure();
 
 
 }).call(this,require('_process'))
-},{"./appenders/console":29,"./connect-logger":30,"./layouts":32,"./levels":33,"./logger":35,"_process":26,"events":27,"fs":25,"path":36,"util":38}],35:[function(require,module,exports){
+},{"./appenders/console":28,"./connect-logger":29,"./layouts":31,"./levels":32,"./logger":34,"_process":36,"events":26,"fs":25,"path":35,"util":38}],34:[function(require,module,exports){
 "use strict";
 var levels = require('./levels')
 , util = require('util')
@@ -3611,7 +3565,7 @@ exports.Logger = Logger;
 exports.disableAllLogWrites = disableAllLogWrites;
 exports.enableAllLogWrites = enableAllLogWrites;
 
-},{"./levels":33,"events":27,"util":38}],36:[function(require,module,exports){
+},{"./levels":32,"events":26,"util":38}],35:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -3839,7 +3793,169 @@ var substr = 'ab'.substr(-1) === 'b'
 ;
 
 }).call(this,require('_process'))
-},{"_process":26}],37:[function(require,module,exports){
+},{"_process":36}],36:[function(require,module,exports){
+// shim for using process in browser
+var process = module.exports = {};
+
+// cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
+
+var cachedSetTimeout;
+var cachedClearTimeout;
+
+(function () {
+    try {
+        cachedSetTimeout = setTimeout;
+    } catch (e) {
+        cachedSetTimeout = function () {
+            throw new Error('setTimeout is not defined');
+        }
+    }
+    try {
+        cachedClearTimeout = clearTimeout;
+    } catch (e) {
+        cachedClearTimeout = function () {
+            throw new Error('clearTimeout is not defined');
+        }
+    }
+} ())
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedSetTimeout(fun, 0);
+    } catch(e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch(e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
+    }
+
+
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedClearTimeout(marker);
+    } catch (e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
+    }
+
+
+
+}
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = runTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
+            }
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    runClearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        runTimeout(drainQueue);
+    }
+};
+
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function() { return 0; };
+
+},{}],37:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
@@ -4436,7 +4552,7 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":37,"_process":26,"inherits":28}],39:[function(require,module,exports){
+},{"./support/isBuffer":37,"_process":36,"inherits":27}],39:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
@@ -4482,7 +4598,7 @@ module.exports = function () {
 		function AndSpecification(specificationOne, specificationTwo) {
 			_classCallCheck(this, AndSpecification);
 
-			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(AndSpecification).call(this));
+			var _this = _possibleConstructorReturn(this, (AndSpecification.__proto__ || Object.getPrototypeOf(AndSpecification)).call(this));
 
 			assert.argumentIsRequired(specificationOne, 'specificationOne', Specification, 'Specification');
 			assert.argumentIsRequired(specificationTwo, 'specificationTwo', Specification, 'Specification');
@@ -4556,7 +4672,7 @@ module.exports = function () {
 		function ContainedSpecification(value) {
 			_classCallCheck(this, ContainedSpecification);
 
-			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(ContainedSpecification).call(this));
+			var _this = _possibleConstructorReturn(this, (ContainedSpecification.__proto__ || Object.getPrototypeOf(ContainedSpecification)).call(this));
 
 			assert.argumentIsArray(value, 'value');
 
@@ -4628,7 +4744,7 @@ module.exports = function () {
 		function ContainsSpecification(value) {
 			_classCallCheck(this, ContainsSpecification);
 
-			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(ContainsSpecification).call(this));
+			var _this = _possibleConstructorReturn(this, (ContainsSpecification.__proto__ || Object.getPrototypeOf(ContainsSpecification)).call(this));
 
 			_this._value = value;
 			return _this;
@@ -4700,7 +4816,7 @@ module.exports = function () {
 		function EqualsSpecification(value) {
 			_classCallCheck(this, EqualsSpecification);
 
-			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(EqualsSpecification).call(this));
+			var _this = _possibleConstructorReturn(this, (EqualsSpecification.__proto__ || Object.getPrototypeOf(EqualsSpecification)).call(this));
 
 			_this._value = value;
 			return _this;
@@ -4768,7 +4884,7 @@ module.exports = function () {
 		function FailSpecification(value) {
 			_classCallCheck(this, FailSpecification);
 
-			return _possibleConstructorReturn(this, Object.getPrototypeOf(FailSpecification).call(this));
+			return _possibleConstructorReturn(this, (FailSpecification.__proto__ || Object.getPrototypeOf(FailSpecification)).call(this));
 		}
 
 		_createClass(FailSpecification, [{
@@ -4835,7 +4951,7 @@ module.exports = function () {
 		function GreaterThanSpecification(value) {
 			_classCallCheck(this, GreaterThanSpecification);
 
-			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(GreaterThanSpecification).call(this));
+			var _this = _possibleConstructorReturn(this, (GreaterThanSpecification.__proto__ || Object.getPrototypeOf(GreaterThanSpecification)).call(this));
 
 			assert.argumentIsRequired(value, 'value', Number);
 
@@ -4909,7 +5025,7 @@ module.exports = function () {
 		function LessThanSpecification(value) {
 			_classCallCheck(this, LessThanSpecification);
 
-			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(LessThanSpecification).call(this));
+			var _this = _possibleConstructorReturn(this, (LessThanSpecification.__proto__ || Object.getPrototypeOf(LessThanSpecification)).call(this));
 
 			assert.argumentIsRequired(value, 'value', Number);
 
@@ -4983,7 +5099,7 @@ module.exports = function () {
 		function OrSpecification(specificationOne, specificationTwo) {
 			_classCallCheck(this, OrSpecification);
 
-			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(OrSpecification).call(this));
+			var _this = _possibleConstructorReturn(this, (OrSpecification.__proto__ || Object.getPrototypeOf(OrSpecification)).call(this));
 
 			assert.argumentIsRequired(specificationOne, 'specificationOne', Specification, 'Specification');
 			assert.argumentIsRequired(specificationTwo, 'specificationTwo', Specification, 'Specification');
@@ -5055,7 +5171,7 @@ module.exports = function () {
 		function PassSpecification(value) {
 			_classCallCheck(this, PassSpecification);
 
-			return _possibleConstructorReturn(this, Object.getPrototypeOf(PassSpecification).call(this));
+			return _possibleConstructorReturn(this, (PassSpecification.__proto__ || Object.getPrototypeOf(PassSpecification)).call(this));
 		}
 
 		_createClass(PassSpecification, [{
@@ -5242,7 +5358,7 @@ module.exports = function () {
 		function TranslateSpecification(specification, translator) {
 			_classCallCheck(this, TranslateSpecification);
 
-			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(TranslateSpecification).call(this));
+			var _this = _possibleConstructorReturn(this, (TranslateSpecification.__proto__ || Object.getPrototypeOf(TranslateSpecification)).call(this));
 
 			assert.argumentIsRequired(specification, 'specification', Specification, 'Specification');
 			assert.argumentIsRequired(translator, 'translator', Function);
@@ -5357,7 +5473,7 @@ module.exports = function () {
 		function RateLimiter(windowMaximumCount, windowDurationMilliseconds) {
 			_classCallCheck(this, RateLimiter);
 
-			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RateLimiter).call(this));
+			var _this = _possibleConstructorReturn(this, (RateLimiter.__proto__ || Object.getPrototypeOf(RateLimiter)).call(this));
 
 			assert.argumentIsRequired(windowMaximumCount, 'windowMaximumCount', Number);
 			assert.argumentIsRequired(windowDurationMilliseconds, 'windowDurationMilliseconds', Number);
@@ -5457,7 +5573,7 @@ module.exports = function () {
 	return RateLimiter;
 }();
 
-},{"./../collections/Queue":1,"./../lang/Disposable":14,"./../lang/assert":15,"./Scheduler":53,"log4js":34}],53:[function(require,module,exports){
+},{"./../collections/Queue":1,"./../lang/Disposable":14,"./../lang/assert":15,"./Scheduler":53,"log4js":33}],53:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
@@ -5502,7 +5618,7 @@ module.exports = function () {
         function Scheduler() {
             _classCallCheck(this, Scheduler);
 
-            var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Scheduler).call(this));
+            var _this = _possibleConstructorReturn(this, (Scheduler.__proto__ || Object.getPrototypeOf(Scheduler)).call(this));
 
             _this._timeoutBindings = {};
             _this._intervalBindings = {};
