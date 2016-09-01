@@ -2,11 +2,11 @@ module.exports = (() => {
 	'use strict';
 
 	var converters = {
-		toDate: function(object) {
+		toDate(object) {
 			return new Date(object);
 		},
 
-		empty: function(object) {
+		empty(object) {
 			return object;
 		}
 	};
