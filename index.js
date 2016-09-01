@@ -9,7 +9,7 @@ var timing = require('./timing/index');
 module.exports = (() => {
 	'use strict';
 
-	var namespaces = {
+	const namespaces = {
 		Collections: collections,
 		Commands: commands,
 		Messaging: messaging,
@@ -21,4 +21,6 @@ module.exports = (() => {
 	Object.keys(lang).forEach((key) => {
 		namespaces[key] = lang[key];
 	});
+
+	return namespaces;
 })();

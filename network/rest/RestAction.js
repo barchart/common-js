@@ -45,7 +45,7 @@ module.exports = (() => {
 	}
 
 	const addAction = (restAction) => {
-		var action = restAction.getAction();
+		const action = restAction.getAction();
 
 		RestAction[action] = restAction;
 	};

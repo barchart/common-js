@@ -13,7 +13,7 @@ module.exports = (() => {
 		},
 
 		getDateOrdinal(date) {
-			var d = utilities.getDate(date);
+			const d = utilities.getDate(date);
 			const remainder = d % 10;
 
 			let returnRef;

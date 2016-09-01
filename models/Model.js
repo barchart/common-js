@@ -25,7 +25,7 @@ module.exports = (() => {
 			const predicates = equalityPredicates || { };
 
 			for (let i = 0; i < this._propertyNames.length; i++) {
-				var propertyName = propertyNames[i];
+				const propertyName = propertyNames[i];
 
 				createProperty.call(this, propertyName, observers[propertyName] || emptyFunction, predicates[propertyName] || checkEquals);
 			}
@@ -58,7 +58,7 @@ module.exports = (() => {
 				if (this._trackerOpen) {
 					this._trackerData = this._trackerData || { };
 
-					for (var propertyName in this._transactionData) {
+					for (let propertyName in this._transactionData) {
 						this._trackerData[propertyName] = this._transactionData[propertyName];
 					}
 				}
@@ -106,7 +106,7 @@ module.exports = (() => {
 				return null;
 			}
 
-			var returnRef = this._trackerData;
+			const returnRef = this._trackerData;
 
 			this._trackerData = null;
 
@@ -130,7 +130,7 @@ module.exports = (() => {
 			const snapshot = {};
 
 			for (let i = 0; i < this._propertyNames.length; i++) {
-				var propertyName = this._propertyNames[i];
+				const propertyName = this._propertyNames[i];
 
 				snapshot[propertyName] = this[propertyName];
 			}
