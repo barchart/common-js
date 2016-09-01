@@ -23,7 +23,7 @@ module.exports = (() => {
 				let itemValidator;
 
 				if (typeof(itemConstraint) === 'function' && itemConstraint !== Function) {
-					itemValidator = (value, index) => itemConstraint(value, `${variableName}[${index}]`);
+					itemValidator = (value, index) => value instanceof itemConstraint || itemConstraint(value, `${variableName}[${index}]`);
 				} else {
 					itemValidator = (value, index) => checkArgumentType(value, variableName, itemConstraint, itemConstraintDescription, index);
 				}
