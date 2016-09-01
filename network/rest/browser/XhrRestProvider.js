@@ -11,7 +11,7 @@ module.exports = (() => {
 		}
 
 		_call(endpoint, data, host, port, secure) {
-			return new Promise(function(resolveCallback, rejectCallback) {
+			return new Promise((resolveCallback, rejectCallback) => {
 				const options = {
 					url: endpoint.getUrl(data, host, port, secure),
 					method: endpoint.getAction().getHttpVerb(),

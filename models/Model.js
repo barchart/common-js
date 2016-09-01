@@ -165,7 +165,7 @@ module.exports = (() => {
 			get: () => {
 				return propertyValue;
 			},
-			set: function(value) {
+			set: (value) => {
 				if (equalityPredicate(propertyValue, value)) {
 					return;
 				}

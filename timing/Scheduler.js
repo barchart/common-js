@@ -98,13 +98,13 @@ module.exports = (() => {
                 }
 
                 return this.schedule(actionToBackoff, backoffDelay, (actionDescription || 'unspecified') + ', attempt ' + (failureCount + 1))
-                    .then(function(result) {
+                    .then((result) => {
                         if (result) {
                             return result;
                         } else {
                             return scheduleBackoff(++failureCount);
                         }
-                    }).catch(function(e) {
+                    }).catch((e) => {
                         return scheduleBackoff(++failureCount);
                     });
             };
