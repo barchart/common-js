@@ -7,7 +7,7 @@ module.exports = (() => {
 
 	return {
 		approximate(a, b) {
-			if (!is.number(a) || is.number(b)) {
+			if (!is.number(a) || !is.number(b)) {
 				return false;
 			}
 
