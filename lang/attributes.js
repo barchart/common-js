@@ -4,7 +4,7 @@ module.exports = (() => {
 	'use strict';
 
 	const attributes = {
-		has: (target, propertyNames) => {
+		has(target, propertyNames) {
 			assert.argumentIsRequired(target, 'target', Object);
 
 			if (Array.isArray(propertyNames)) {
@@ -19,7 +19,7 @@ module.exports = (() => {
 			return propertyTarget !== null && propertyTarget.hasOwnProperty(last(propertyNameArray));
 		},
 
-		read: (target, propertyNames) => {
+		read(target, propertyNames) {
 			assert.argumentIsRequired(target, 'target', Object);
 
 			if (Array.isArray(propertyNames)) {
@@ -44,7 +44,7 @@ module.exports = (() => {
 			return returnRef;
 		},
 
-		write: (target, propertyNames, value) => {
+		write(target, propertyNames, value) {
 			assert.argumentIsRequired(target, 'target', Object);
 
 			if (Array.isArray(propertyNames)) {
@@ -61,7 +61,7 @@ module.exports = (() => {
 			propertyTarget[propertyName] = value;
 		},
 
-		erase: (target, propertyNames) => {
+		erase(target, propertyNames) {
 			if (!attributes.has(target, propertyNames)) {
 				return;
 			}
