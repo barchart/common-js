@@ -13,7 +13,7 @@ module.exports = (() => {
 		}
 
 		_call(endpoint, data, host, port, secure) {
-			return new Promise(function(resolveCallback, rejectCallback) {
+			return new Promise((resolveCallback, rejectCallback) => {
 				let connector;
 
 				if (secure) {
@@ -49,15 +49,15 @@ module.exports = (() => {
 
 					let responseText = '';
 
-					response.on('error', function(error) {
+					response.on('error', (error) => {
 						rejectCallback(error);
 					});
 
-					response.on('data', function(chunk) {
+					response.on('data', (chunk) => {
 						responseText = responseText + chunk;
 					});
 
-					response.on('end', function() {
+					response.on('end', () => {
 						resolveCallback(JSON.parse(responseText));
 					});
 				});
