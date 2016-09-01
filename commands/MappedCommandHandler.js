@@ -43,10 +43,10 @@ module.exports = (() => {
 		}
 
 		_process(data) {
-			var handlerName = this._nameExtractor(data);
-			var handler = this._handlerMap[handlerName] || this._defaultHandler;
+			const handlerName = this._nameExtractor(data);
+			const handler = this._handlerMap[handlerName] || this._defaultHandler;
 
-			var returnRef;
+			let returnRef;
 
 			if (handler) {
 				returnRef = handler.process(data);

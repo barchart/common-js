@@ -1,7 +1,7 @@
 module.exports = (() => {
 	'use strict';
 
-	var converters = {
+	return {
 		toDate(object) {
 			return new Date(object);
 		},
@@ -10,6 +10,4 @@ module.exports = (() => {
 			return object;
 		}
 	};
-
-	return converters;
 })();

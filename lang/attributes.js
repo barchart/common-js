@@ -76,7 +76,7 @@ module.exports = (() => {
 	};
 
 	function getPropertyNameArray(propertyNames) {
-		var returnRef;
+		let returnRef;
 
 		if (Array.isArray(propertyNames)) {
 			returnRef = propertyNames;

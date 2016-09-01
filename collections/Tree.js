@@ -38,8 +38,6 @@ module.exports = (() => {
 		}
 
 		removeChild(node) {
-			var returnRef = null;
-
 			for (let i = this._children.length - 1; !(i < 0); i--) {
 				const child = this._children[i];
 
@@ -77,8 +75,8 @@ module.exports = (() => {
 				returnRef = this;
 			}
 
-			for (var i = 0; i < this._children.length; i++) {
-				var child = this._children[i];
+			for (let i = 0; i < this._children.length; i++) {
+				const child = this._children[i];
 
 				returnRef = child.search(predicate, childrenFirst, true);
 
