@@ -1183,7 +1183,7 @@ module.exports = function () {
 
 					if (typeof itemConstraint === 'function' && itemConstraint !== Function) {
 						itemValidator = function itemValidator(value, index) {
-							return itemConstraint(value, variableName + '[' + index + ']');
+							return value instanceof itemConstraint || itemConstraint(value, variableName + '[' + index + ']');
 						};
 					} else {
 						itemValidator = function itemValidator(value, index) {
