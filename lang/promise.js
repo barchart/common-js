@@ -26,10 +26,16 @@ module.exports = (() => {
 				promise.then((result) => {
 					if (pending) {
 						pending = false;
-
 						clearTimeout(token);
 
 						resolveCallback(result);
+					}
+				}).catch((error) => {
+					if (pending) {
+						pending = false;
+						clearTimeout(token);
+
+						rejectCallback(error);
 					}
 				});
 			});
