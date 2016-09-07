@@ -1,7 +1,10 @@
+var log4js = require('log4js');
 var Scheduler = require('./../../../timing/Scheduler');
 
 describe('When a Scheduler is constructed', function() {
 	'use strict';
+
+	log4js.configure({ });
 
 	var scheduler;
 

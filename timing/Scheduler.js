@@ -31,10 +31,25 @@ module.exports = function() {
 
             var token = null;
 
+            var scheduleDate;
+            var executeDate;
+
+            if (logger.isDebugEnabled()) {
+                scheduleDate = new Date();
+
+                logger.debug('Scheduling action (', (actionDescription || 'with no description'), ') to run in', millisecondDelay, 'milliseconds');
+            }
+
             var defer = when.defer();
 
             var wrappedAction = function() {
                 try {
+                    if (logger.isDebugEnabled()) {
+                        executeDate = new Date();
+
+                        logger.debug('Scheduled action (', (actionDescription || 'with no description'), ') running after', (executeDate.getTime() - scheduleDate.getTime()), 'milliseconds');
+                    }
+
                     delete that._timeoutBindings[token];
 
                     defer.resolve(actionToSchedule());
