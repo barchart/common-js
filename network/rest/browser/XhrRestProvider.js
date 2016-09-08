@@ -24,7 +24,7 @@ module.exports = (() => {
 					} else if (response.statusCode !== 200) {
 						let message;
 
-						if (_.isObject(body) && _.isString(body.message)) {
+						if (is.object(body) && is.string(body.message)) {
 							message = body.message;
 						} else {
 							message = 'The server returned an HTTP ' + response.statusCode + ' error.';

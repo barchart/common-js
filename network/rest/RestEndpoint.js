@@ -86,7 +86,7 @@ module.exports = (() => {
 				returnRef = data;
 			}
 
-			if (this.getAction().getPayloadIsRequired() && !_.isObject(returnRef)) {
+			if (this.getAction().getPayloadIsRequired() && !is.object(returnRef)) {
 				throw new Error('Unable to generate REST payload.');
 			}
 
