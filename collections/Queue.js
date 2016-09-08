@@ -34,10 +34,6 @@ module.exports = function() {
 			return this._array.length === 0;
 		},
 
-		isEmpty: function() {
-			return this.empty();
-		},
-
 		toString: function() {
 			return '[Queue]';
 		}
