@@ -1,3 +1,4 @@
+var assert = require('./../lang/assert');
 var Disposable = require('./../lang/Disposable');
 
 module.exports = (() => {
@@ -13,9 +14,7 @@ module.exports = (() => {
 		}
 
 		register(handler) {
-			if (typeof handler !== 'function') {
-				throw new Error('Event handler must be a function.');
-			}
+			assert.argumentIsRequired(handler, 'handler', Function);
 
 			addRegistration.call(this, handler);
 
@@ -29,9 +28,7 @@ module.exports = (() => {
 		}
 
 		unregister(handler) {
-			if (typeof handler !== 'function') {
-				throw new Error('Event handler must be a function.');
-			}
+			assert.argumentIsRequired(handler, 'handler', Function);
 
 			removeRegistration.call(this, handler);
 		}
