@@ -32,10 +32,6 @@ module.exports = (() => {
 			return this._array.length === 0;
 		}
 
-		isEmpty() {
-			return this.empty();
-		}
-
 		toString() {
 			return '[Queue]';
 		}
