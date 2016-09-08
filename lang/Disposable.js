@@ -35,6 +35,12 @@ module.exports = (() => {
 
 			return new DisposableAction(disposeAction);
 		}
+
+		static getEmpty() {
+			return Disposable.fromAction(() => {
+				return;
+			});
+		}
 	}
 
 	class DisposableAction extends Disposable {
@@ -53,12 +59,6 @@ module.exports = (() => {
 			return '[DisposableAction]';
 		}
 	}
-
-	Disposable.getEmpty = function() {
-		return Disposable.fromAction(function() {
-			return;
-		});
-	};
 
 	return Disposable;
 })();
