@@ -36,7 +36,7 @@ module.exports = (() => {
 			return this.empty();
 		}
 
-		toString: function() {
+		toString() {
 			return '[Queue]';
 		}
 	}
