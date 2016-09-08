@@ -56,5 +56,11 @@ module.exports = function() {
 		return new DisposableAction(disposeAction);
 	};
 
+	Disposable.getEmpty = function() {
+		return Disposable.fromAction(function() {
+			return;
+		});
+	};
+
 	return Disposable;
 }();
