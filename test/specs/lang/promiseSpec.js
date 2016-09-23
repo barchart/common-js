@@ -365,7 +365,7 @@ describe('When mapping an array through an promise-based function', function() {
 						start: startDate.getTime(),
 						end: endDate.getTime()
 					});
-				}, 10);
+				}, 15);
 			});
 		});
 	};

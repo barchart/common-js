@@ -1,28 +1,47 @@
 var assert = require('./assert');
+var is = require('./is');
 
 module.exports = (() => {
 	'use strict';
 
-	return {
-		add(existing, valueToAdd) {
-			assert.argumentIsRequired(existing, 'existing', Number);
-			assert.argumentIsRequired(valueToAdd, 'valueToAdd', Number);
-
-			return existing | valueToAdd;
+	const mask = {
+		getEmpty() {
+			return 0;
 		},
 
-		remove(existing, valueToRemove) {
+		add(existing, itemToAdd) {
 			assert.argumentIsRequired(existing, 'existing', Number);
-			assert.argumentIsRequired(valueToRemove, 'valueToRemove', Number);
+			assert.argumentIsRequired(itemToAdd, 'itemToAdd', Number);
 
-			return existing & valueToRemove;
+			if (mask.checkItem(itemToAdd)) {
+				return existing | itemToAdd;
+			} else {
+				return existing;
+			}
 		},
 
-		has(existing, candidateValue) {
+		remove(existing, itemToRemove) {
 			assert.argumentIsRequired(existing, 'existing', Number);
-			assert.argumentIsRequired(candidateValue, 'candidateValue', Number);
+			assert.argumentIsRequired(itemToRemove, 'itemToRemove', Number);
 
-			return (existing & candidateValue) === candidateValue;
+			if (mask.checkItem(itemToRemove)) {
+				return existing & ~itemToRemove;
+			} else {
+				return existing;
+			}
+		},
+
+		has(existing, itemToCheck) {
+			assert.argumentIsRequired(existing, 'existing', Number);
+			assert.argumentIsRequired(itemToCheck, 'itemToCheck', Number);
+
+			return mask.checkItem(itemToCheck) && (existing & itemToCheck) === itemToCheck;
+		},
+
+		checkItem(itemToCheck) {
+			return is.number(itemToCheck) && (itemToCheck === 0 || ((itemToCheck & (~itemToCheck + 1)) === itemToCheck));
 		}
 	};
+
+	return mask;
 })();
