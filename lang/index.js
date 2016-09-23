@@ -7,6 +7,7 @@ var date = require('./date');
 var Disposable = require('./Disposable');
 var is = require('./is');
 var mask = require('./mask');
+var math = require('./math');
 var promise = require('./promise');
 var random = require('./random');
 var string = require('./string');
