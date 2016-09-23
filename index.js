@@ -3,6 +3,7 @@ var commands = require('./commands/index');
 var lang = require('./lang/index');
 var messaging = require('./messaging/index');
 var models = require('./models/index');
+var network = require('./network/index');
 var specifications = require('./specifications/index');
 var timing = require('./timing/index');
 
@@ -14,6 +15,7 @@ module.exports = (() => {
 		Commands: commands,
 		Messaging: messaging,
 		Models: models,
+		Network: network,
 		Timing: timing,
 		Specifications: specifications
 	};
