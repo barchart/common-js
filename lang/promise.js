@@ -46,49 +46,69 @@ module.exports = (() => {
 			assert.argumentIsRequired(mapper, 'mapper', Function);
 			assert.argumentIsOptional(concurrency, 'concurrency', Number);
 
-			if (items.length === 0) {
-				return Promise.resolve([ ]);
-			}
+			const c = Math.max(0, concurrency || 0);
 
-			return new Promise((resolveCallback, rejectCallback) => {
-				const concurrencyToUse = Math.max(1, concurrency || 0);
+			let mapPromise;
 
-				let current = 0;
-
+			if (c === 0) {
+				mapPromise = Promise.all(items.map((item) => Promise.resolve(mapper(item))));
+			} else {
+				let total = items.length;
 				let active = 0;
 				let complete = 0;
+				let failure = false;
 
-				let results = Array.of(items.length);
+				const results = Array.of(total);
 
-				const start = (index) => {
-					current = index;
-					active = active + 1;
+				const executors = items.map((item, index) => {
+					return () => {
+						return Promise.resolve()
+							.then(() => {
+								return mapper(item);
+							}).then((result) => {
+								results[index] = result;
+							});
+					};
+				});
 
-					const item = items[current];
+				mapPromise = new Promise((resolveCallback, rejectCallback) => {
+					const execute = () => {
+						if (!(executors.length > 0 && c > active && !failure)) {
+							return;
+						}
 
-					Promise.resolve()
-						.then(() => {
-							return mapper(item);
-						}).then((result) => {
-							results[index] = result;
+						active = active + 1;
 
-							active = active - 1;
-							complete = complete + 1;
+						const executor = executors.shift();
 
-							if (complete === items.length) {
-								resolveCallback(results);
-							} else if (active < concurrencyToUse && complete < items.length) {
-								start(current + 1);
-							}
-						}).catch((error) => {
-							rejectCallback(error);
-						});
-				};
+						executor()
+							.then(() => {
+								if (failure) {
+									return;
+								}
 
-				for (var i = 0; i < items.length && active < concurrencyToUse && complete < items.length; i++) {
-					start(i);
-				}
-			});
+								active = active - 1;
+								complete = complete + 1;
+
+								if (complete < total) {
+									execute();
+								} else {
+									resolveCallback(results);
+								}
+							}).catch((error) => {
+								failure = false;
+
+								rejectCallback(error);
+							});
+
+						execute();
+					};
+
+					execute();
+				});
+			}
+
+			return mapPromise;
 		}
 	};
 })();
