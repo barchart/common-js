@@ -113,3 +113,86 @@ describe('When grouping an array', function() {
 		});
 	});
 });
+
+describe('When calculating the "difference" between two arrays', function() {
+	describe('and the arrays are empty', function() {
+		var difference;
+
+		beforeEach(() => {
+			difference = array.difference([ ], [ ]);
+		});
+
+		it('should be an array', function() {
+			expect(difference instanceof Array).toEqual(true);
+		});
+
+		it('should be empty', function() {
+			expect(difference.length).toEqual(0);
+		});
+	});
+
+	describe('and first array is [1,2] and the second array is [2,3]', function() {
+		var difference;
+
+		beforeEach(() => {
+			difference = array.difference([1,2], [2,3]);
+		});
+
+		it('should be an array', function() {
+			expect(difference instanceof Array).toEqual(true);
+		});
+
+		it('should contain one element', function() {
+			expect(difference.length).toEqual(1);
+		});
+
+		it('the first element should be 1', function() {
+			expect(difference[0]).toEqual(1);
+		});
+	});
+
+	describe('and first array is [2,3] and the second array is [1,2]', function() {
+		var difference;
+
+		beforeEach(() => {
+			difference = array.difference([2,3], [1,2]);
+		});
+
+		it('should be an array', function() {
+			expect(difference instanceof Array).toEqual(true);
+		});
+
+		it('should contain one element', function() {
+			expect(difference.length).toEqual(1);
+		});
+
+		it('the first element should be 3', function() {
+			expect(difference[0]).toEqual(3);
+		});
+	});
+
+	describe('and first array has a unique object and both arrays share an object', function() {
+		var same;
+		var unique;
+
+		var difference;
+
+		beforeEach(() => {
+			same = {};
+
+			difference = array.difference([same, unique = { }], [same]);
+		});
+
+		it('should be an array', function() {
+			expect(difference instanceof Array).toEqual(true);
+		});
+
+		it('should contain one element', function() {
+			expect(difference.length).toEqual(1);
+		});
+
+		it('the first element the unique object', function() {
+			expect(difference[0]).toBe(unique);
+		});
+	});
+});

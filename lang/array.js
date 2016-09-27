@@ -66,6 +66,22 @@ module.exports = (() => {
 			}
 
 			return returnRef;
+		},
+
+		difference(a, b) {
+			const returnRef = [ ];
+
+			a.forEach((candidate) => {
+				const exclude = b.some((comparison) => {
+					return candidate === comparison;
+				});
+
+				if (!exclude) {
+					returnRef.push(candidate);
+				}
+			});
+
+			return returnRef;
 		}
 	};
 })();
