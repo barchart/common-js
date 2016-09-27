@@ -1,5 +1,7 @@
 var xhr = require('xhr');
 
+var assert = require('./../../../lang/is');
+
 var RestProviderBase = require('./../RestProviderBase');
 
 module.exports = (() => {
