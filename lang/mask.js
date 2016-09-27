@@ -38,7 +38,7 @@ module.exports = function() {
 		},
 
 		checkItem: function(itemToCheck) {
-			return is.number(itemToCheck) && (itemToCheck === 0 || ((itemToCheck & (~itemToCheck + 1)) === itemToCheck));
+			return typeof(itemToCheck) === 'number' && (itemToCheck === 0 || ((itemToCheck & (~itemToCheck + 1)) === itemToCheck));
 		}
 	};
 
