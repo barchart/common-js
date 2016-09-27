@@ -1,6 +1,6 @@
 var xhr = require('xhr');
 
-var assert = require('./../../../lang/is');
+var is = require('./../../../lang/is');
 
 var RestProviderBase = require('./../RestProviderBase');
 
