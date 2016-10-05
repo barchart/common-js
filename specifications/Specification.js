@@ -1,9 +1,5 @@
 var assert = require('./../lang/assert');
 
-var Specification = require('./Specification');
-var AndSpecification = require('./AndSpecification');
-var OrSpecification = require('./OrSpecification');
-
 module.exports = (() => {
 	'use strict';
 
@@ -36,6 +32,49 @@ module.exports = (() => {
 			return '[Specification]';
 		}
 	}
+
+	class AndSpecification extends Specification {
+		constructor(specificationOne, specificationTwo) {
+			super();
+
+			assert.argumentIsRequired(specificationOne, 'specificationOne', Specification, 'Specification');
+			assert.argumentIsRequired(specificationTwo, 'specificationTwo', Specification, 'Specification');
+
+			this._specificationOne = specificationOne;
+			this._specificationTwo = specificationTwo;
+		}
+
+		_evaluate(data) {
+			return this._specificationOne.evaluate(data) && this._specificationTwo.evaluate(data);
+		}
+
+		toString() {
+			return '[AndSpecification]';
+		}
+	}
+
+	class OrSpecification extends Specification {
+		constructor(specificationOne, specificationTwo) {
+			super();
+
+			assert.argumentIsRequired(specificationOne, 'specificationOne', Specification, 'Specification');
+			assert.argumentIsRequired(specificationTwo, 'specificationTwo', Specification, 'Specification');
+
+			this._specificationOne = specificationOne;
+			this._specificationTwo = specificationTwo;
+		}
+
+		_evaluate(data) {
+			return this._specificationOne.evaluate(data) || this._specificationTwo.evaluate(data);
+		}
+
+		toString() {
+			return '[OrSpecification]';
+		}
+	}
+
+	Specification.AndSpecification = AndSpecification;
+	Specification.OrSpecification = OrSpecification;
 
 	return Specification;
 })();

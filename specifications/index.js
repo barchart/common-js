@@ -8,7 +8,6 @@ var LessThanSpecification = require('./LessThanSpecification');
 var OrSpecification = require('./OrSpecification');
 var PassSpecification = require('./PassSpecification');
 var Specification = require('./Specification');
-var SpecificationBuilder = require('./SpecificationBuilder');
 var TranslateSpecification = require('./TranslateSpecification');
 
 module.exports = (() => {
@@ -25,7 +24,6 @@ module.exports = (() => {
 		OrSpecification: OrSpecification,
 		PassSpecification: PassSpecification,
 		Specification: Specification,
-		SpecificationBuilder: SpecificationBuilder,
 		TranslateSpecification: TranslateSpecification
 	};
 })();
