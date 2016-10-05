@@ -1,3 +1,9 @@
+var assert = require('./../lang/assert');
+
+var Specification = require('./Specification');
+var AndSpecification = require('./AndSpecification');
+var OrSpecification = require('./OrSpecification');
+
 module.exports = (() => {
 	'use strict';
 
@@ -12,6 +18,18 @@ module.exports = (() => {
 
 		_evaluate(data) {
 			return false;
+		}
+
+		and(other) {
+			assert.argumentIsRequired(other, 'other', Specification, 'Specification');
+
+			return new AndSpecification(this, other);
+		}
+
+		or(other) {
+			assert.argumentIsRequired(other, 'other', Specification, 'Specification');
+
+			return new OrSpecification(this, other);
 		}
 
 		toString() {

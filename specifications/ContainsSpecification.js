@@ -3,7 +3,7 @@ var Specification = require('./Specification');
 module.exports = (() => {
 	'use strict';
 
-	class ContainsSpecification extends Specification{
+	class ContainsSpecification extends Specification {
 		constructor(value) {
 			super();
 
