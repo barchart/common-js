@@ -109,6 +109,12 @@ module.exports = (() => {
 			}
 
 			return mapPromise;
+		},
+
+		pipeline(executors, input) {
+			assert.argumentIsArray(executors, 'executors', Function);
+
+			return executors.reduce((previous, executor) => previous.then((result) => executor(result)), Promise.resolve(input));
 		}
 	};
 })();

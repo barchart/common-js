@@ -623,3 +623,236 @@ describe('When using the "promise.map" function', function() {
 		return maximum;
 	};
 });
+
+describe('When processing a "pipeline" of promises', function() {
+	'use strict';
+
+	describe('and no executors are specified', function() {
+		var input;
+		var p;
+
+		beforeEach(function() {
+			p = promise.pipeline([], input = { });
+		});
+
+		it('should return the original input', function(done) {
+			p.then(function(result) {
+				expect(result).toBe(input);
+
+				done();
+			});
+		});
+	});
+
+	describe('and one asynchronous executor is specified', function() {
+		var input;
+
+		var spyOne;
+
+		var p;
+
+		beforeEach(function() {
+			var delayedSquare = function(x) {
+				return new Promise((resolveCallback) => {
+					setTimeout(function() {
+						resolveCallback(x * x);
+					}, 10);
+				});
+			};
+
+			spyOne = jasmine.createSpy('spyOne').and.callFake(delayedSquare);
+
+			p = promise.pipeline([ spyOne ], input = 2);
+		});
+
+		it('the first executor should be called with the input', function(done) {
+			p.then(function(result) {
+				expect(spyOne).toHaveBeenCalledWith(2);
+
+				done();
+			});
+		});
+
+		it('the promise should return the correct result', function(done) {
+			p.then(function(result) {
+				expect(result).toEqual(4);
+
+				done();
+			});
+		});
+	});
+
+	describe('and two asynchronous executors are specified', function() {
+		var input;
+
+		var spyOne;
+		var spyTwo;
+
+		var p;
+
+		beforeEach(function() {
+			var delayedSquare = function(x) {
+				return new Promise((resolveCallback) => {
+					setTimeout(function() {
+						resolveCallback(x * x);
+					}, 10);
+				});
+			};
+
+			spyOne = jasmine.createSpy('spyOne').and.callFake(delayedSquare);
+			spyTwo = jasmine.createSpy('spyTwo').and.callFake(delayedSquare);
+
+			p = promise.pipeline([ spyOne, spyTwo ], input = 2);
+		});
+
+		it('the first executor should be called with the input', function(done) {
+			p.then(function(result) {
+				expect(spyOne).toHaveBeenCalledWith(2);
+
+				done();
+			});
+		});
+
+		it('the second executor should be called with the result of the first executor', function(done) {
+			p.then(function(result) {
+				expect(spyTwo).toHaveBeenCalledWith(4);
+
+				done();
+			});
+		});
+
+		it('the promise should return the correct result', function(done) {
+			p.then(function(result) {
+				expect(result).toEqual(16);
+
+				done();
+			});
+		});
+	});
+	
+	describe('and one synchronous executor is specified', function() {
+		var input;
+
+		var spyOne;
+
+		var p;
+
+		beforeEach(function() {
+			var synchronousSquare = function(x) {
+				return x * x;
+			};
+
+			spyOne = jasmine.createSpy('spyOne').and.callFake(synchronousSquare);
+
+			p = promise.pipeline([ spyOne ], input = 2);
+		});
+
+		it('the first executor should be called with the input', function(done) {
+			p.then(function(result) {
+				expect(spyOne).toHaveBeenCalledWith(2);
+
+				done();
+			});
+		});
+
+		it('the promise should return the correct result', function(done) {
+			p.then(function(result) {
+				expect(result).toEqual(4);
+
+				done();
+			});
+		});
+	});
+
+	describe('and two synchronous executors are specified', function() {
+		var input;
+
+		var spyOne;
+		var spyTwo;
+
+		var p;
+
+		beforeEach(function() {
+			var synchronousSquare = function(x) {
+				return x * x;
+			};
+
+			spyOne = jasmine.createSpy('spyOne').and.callFake(synchronousSquare);
+			spyTwo = jasmine.createSpy('spyTwo').and.callFake(synchronousSquare);
+
+			p = promise.pipeline([ spyOne, spyTwo ], input = 2);
+		});
+
+		it('the first executor should be called with the input', function(done) {
+			p.then(function(result) {
+				expect(spyOne).toHaveBeenCalledWith(2);
+
+				done();
+			});
+		});
+
+		it('the second executor should be called with the result of the first executor', function(done) {
+			p.then(function(result) {
+				expect(spyTwo).toHaveBeenCalledWith(4);
+
+				done();
+			});
+		});
+
+		it('the promise should return the correct result', function(done) {
+			p.then(function(result) {
+				expect(result).toEqual(16);
+
+				done();
+			});
+		});
+	});
+
+	describe('and an executor throws an exception', function() {
+		var input;
+
+		var spyOne;
+		var spyTwo;
+
+		var p;
+
+		beforeEach(function() {
+			var synchronousException = function(x) {
+				throw new Exception('oops');
+			};
+			
+			var synchronousSquare = function(x) {
+				return x * x;
+			};
+
+			spyOne = jasmine.createSpy('spyOne').and.callFake(synchronousException);
+			spyTwo = jasmine.createSpy('spyTwo').and.callFake(synchronousSquare);
+
+			p = promise.pipeline([ spyOne, spyTwo ], input = 2);
+		});
+
+		it('the promise should reject', function(done) {
+			p.catch(function(error) {
+				expect(error instanceof Error).toEqual(true);
+
+				done();
+			});
+		});
+
+		it('the first executor should be called with the input', function(done) {
+			p.catch(function(error) {
+				expect(spyOne).toHaveBeenCalledWith(2);
+
+				done();
+			});
+		});
+
+		it('the second executor not have should be called with the result of the first executor', function(done) {
+			p.catch(function(error) {
+				expect(spyTwo).not.toHaveBeenCalled();
+
+				done();
+			});
+		});
+	});
+});
