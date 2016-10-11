@@ -50,7 +50,7 @@ module.exports = (() => {
 
 			let mapPromise;
 
-			if (c === 0) {
+			if (c === 0 || items.length === 0) {
 				mapPromise = Promise.all(items.map((item) => Promise.resolve(mapper(item))));
 			} else {
 				let total = items.length;
