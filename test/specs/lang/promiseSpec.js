@@ -169,6 +169,39 @@ describe('When using the "promise.map" function', function() {
 	'use strict';
 
 	describe('with an asynchronous, promise-based mapper', function() {
+		describe('and the array has zero items', function() {
+			var mapPromise;
+
+			var mapItems;
+			var mapSpy;
+
+			beforeEach(function() {
+				mapItems = [ ];
+			});
+
+			describe('and the concurrency level is zero', function() {
+				beforeEach(function() {
+					mapPromise = promise.map(mapItems, mapSpy = jasmine.createSpy('mapSpy'), 0);
+				});
+
+				it('the result should be an empty array', function(done) {
+					mapPromise.then(function(results) {
+						expect(results.length).toEqual(0);
+
+						done();
+					});
+				});
+
+				it('the mapping function should not have been called', function(done) {
+					mapPromise.then(function(results) {
+						expect(mapSpy).not.toHaveBeenCalled();
+
+						done();
+					});
+				});
+			});
+		});
+
 		describe('and the array has three items', function() {
 			var mapPromise;
 
