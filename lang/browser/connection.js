@@ -21,7 +21,7 @@ module.exports = (() => {
 					protocol = '';
 				}
 
-				returnVal = protocol.startsWith('https');
+				returnVal = protocol.indexOf('https') === 0;
 			}
 
 			return returnVal;
