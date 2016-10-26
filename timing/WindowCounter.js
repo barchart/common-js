@@ -33,6 +33,20 @@ module.exports = function() {
 			return advance.call(this).getCount();
 		},
 
+		getPrevious: function() {
+			advance.call(this);
+
+			var returnVal;
+
+			if (this._windows.length > 1) {
+				returnVal = this._windows[1].getCount();
+			} else {
+				returnVal = 0;
+			}
+
+			return returnVal;
+		},
+
 		getAverage: function() {
 			var current = advance.call(this);
 

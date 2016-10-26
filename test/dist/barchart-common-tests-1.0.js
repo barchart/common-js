@@ -21645,10 +21645,12 @@ describe('When a WindowCounter is constructed', function() {
 	'use strict';
 
 	var duration;
+	var windows;
+
 	var counter;
 
 	beforeEach(function() {
-		counter = new WindowCounter(duration = 15);
+		counter = new WindowCounter(duration = 15, windows = 100);
 	});
 
 	describe('and the counter is immediately incremented', function() {
@@ -21672,10 +21674,6 @@ describe('When a WindowCounter is constructed', function() {
 			it('the current count should be the sum of the amounts added', function() {
 				expect(counter.getCurrent()).toEqual(a + b);
 			});
-
-			it('the average count should be the sum of the amounts added', function() {
-				expect(counter.getAverage()).toEqual(a + b);
-			});
 		});
 
 		describe('and the counter is incremented after the current window expires', function() {
@@ -21687,6 +21685,10 @@ describe('When a WindowCounter is constructed', function() {
 
 					done();
 				}, duration + duration / 2);
+			});
+
+			it('the previous count should be the sum of the previous window', function() {
+				expect(counter.getPrevious()).toEqual(a);
 			});
 
 			it('the current count should be the amount added', function() {
@@ -21995,6 +21997,7 @@ var Class = require('class.extend');
 var log4js = require('log4js');
 
 var assert = require('./../lang/assert');
+var Queue = require('./../collections/Queue');
 
 module.exports = function() {
 	'use strict';
@@ -22002,16 +22005,16 @@ module.exports = function() {
 	var logger = log4js.getLogger('common/timing/WindowCounter');
 
 	var WindowCounter = Class.extend({
-		init: function(duration) {
+		init: function(duration, windows) {
 			assert.argumentIsRequired(duration, 'duration', Number);
+			assert.argumentIsRequired(windows, 'windows', Number);
 
 			this._duration = duration;
 
-			this._current = new Window(getTime(), this._duration);
-			this._previous = null;
+			this._windows = [ new Window(getTime(), this._duration) ];
+			this._maximum = Math.max(windows, 2);
 
 			this._previousCount = 0;
-			this._previousWindows = 0;
 		},
 
 		increment: function(count) {
@@ -22025,15 +22028,23 @@ module.exports = function() {
 		},
 
 		getPrevious: function() {
-			var current = advance.call(this);
+			advance.call(this);
 
-			return this._previous.getCount();
+			var returnVal;
+
+			if (this._windows.length > 1) {
+				returnVal = this._windows[1].getCount();
+			} else {
+				returnVal = 0;
+			}
+
+			return returnVal;
 		},
 
 		getAverage: function() {
 			var current = advance.call(this);
 
-			return (this._current.getCount() + this._previousCount) / (this._previousWindows + 1);
+			return (current.getCount() + this._previousCount) / this._windows.length;
 		},
 
 		toString: function() {
@@ -22044,15 +22055,22 @@ module.exports = function() {
 	function advance() {
 		var now = getTime();
 
-		while (!this._current.contains(now)) {
-			this._previous = this._current;
-			this._current = new Window(this._previous.getEnd(), this._duration);
+		while (!this._windows[0].contains(now)) {
+			var previous = this._windows[0];
+			var current = new Window(previous.getEnd(), this._duration);
 
-			this._previousCount = this._previousCount + this._previous.getCount();
-			this._previousWindows = this._previousWindows + 1;
+			this._windows.unshift(current);
+
+			this._previousCount = this._previousCount + previous.getCount();
+
+			if (this._windows.length > this._maximum) {
+				var removed = this._windows.pop();
+				
+				this._previousCount = this._previousCount - removed.getCount();
+			}
 		}
 
-		return this._current;
+		return this._windows[0];
 	}
 
 	function getTime() {
@@ -22090,4 +22108,4 @@ module.exports = function() {
 
 	return WindowCounter;
 }();
-},{"./../lang/assert":11,"class.extend":18,"lodash":20,"log4js":26}]},{},[59,60,61,62,58,63,64,65,67,66,68,69,70,71,72,73,74,75,76,77,78,79]);
+},{"./../collections/Queue":1,"./../lang/assert":11,"class.extend":18,"lodash":20,"log4js":26}]},{},[59,60,61,62,58,63,64,65,67,66,68,69,70,71,72,73,74,75,76,77,78,79]);

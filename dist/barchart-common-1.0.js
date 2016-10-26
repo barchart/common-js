@@ -173,17 +173,7 @@ module.exports = function() {
 			for (var i = 0; i < this._children.length; i++) {
 				var child = this._children[i];
 
-				if (returnRef === null && childrenFirst) {
-					returnRef = this.search(predicate, true, false);
-				}
-
-				if (returnRef === null && predicate(child.getValue(), child)) {
-					returnRef = child;
-				}
-
-				if (returnRef === null && !childrenFirst) {
-					returnRef = this.search(predicate, false, false);
-				}
+				returnRef = child.search(predicate, childrenFirst, true);
 
 				if (returnRef !== null) {
 					break;
@@ -370,7 +360,7 @@ module.exports = function() {
 
 	return comparators;
 }();
-},{"./../../lang/assert":15,"lodash":26}],7:[function(require,module,exports){
+},{"./../../lang/assert":15,"lodash":25}],7:[function(require,module,exports){
 var Stack = require('./../Stack');
 
 var assert = require('./../../lang/assert');
@@ -677,7 +667,7 @@ module.exports = function() {
 
 	return MappedCommandHandler;
 }();
-},{"./../lang/assert":15,"./CommandHandler":9,"lodash":26}],12:[function(require,module,exports){
+},{"./../lang/assert":15,"./CommandHandler":9,"lodash":25}],12:[function(require,module,exports){
 var CommandHandler = require('./CommandHandler');
 var CompositeCommandHandler = require('./CompositeCommandHandler');
 var MappedCommandHandler = require('./MappedCommandHandler');
@@ -714,7 +704,7 @@ module.exports = function() {
 
 	return _.merge(lang, namespaces);
 }();
-},{"./collections/index":4,"./commands/index":12,"./lang/index":18,"./messaging/index":20,"./specifications/index":64,"./timing/index":67,"lodash":26}],14:[function(require,module,exports){
+},{"./collections/index":4,"./commands/index":12,"./lang/index":18,"./messaging/index":20,"./specifications/index":63,"./timing/index":66,"lodash":25}],14:[function(require,module,exports){
 var Class = require('class.extend');
 
 var assert = require('./assert');
@@ -771,6 +761,12 @@ module.exports = function() {
 
 	Disposable.fromAction = function(disposeAction) {
 		return new DisposableAction(disposeAction);
+	};
+
+	Disposable.getEmpty = function() {
+		return Disposable.fromAction(function() {
+			return;
+		});
 	};
 
 	return Disposable;
@@ -861,7 +857,7 @@ module.exports = function() {
 
 	return assert;
 }();
-},{"lodash":26}],16:[function(require,module,exports){
+},{"lodash":25}],16:[function(require,module,exports){
 var _ = require('lodash');
 
 var assert = require('./assert');
@@ -977,11 +973,7 @@ module.exports = function() {
 
 	return attributes;
 }();
-},{"./assert":15,"lodash":26}],17:[function(require,module,exports){
-var _ = require('lodash');
-
-var assert = require('./assert');
-
+},{"./assert":15,"lodash":25}],17:[function(require,module,exports){
 module.exports = function() {
 	'use strict';
 
@@ -997,7 +989,7 @@ module.exports = function() {
 
 	return converters;
 }();
-},{"./assert":15,"lodash":26}],18:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 var assert = require('./assert');
 var attributes = require('./attributes');
 var converters = require('./converters');
@@ -1094,7 +1086,7 @@ module.exports = function() {
 
 	return Event;
 }();
-},{"./../lang/Disposable":14,"./../lang/assert":15,"lodash":26}],20:[function(require,module,exports){
+},{"./../lang/Disposable":14,"./../lang/assert":15,"lodash":25}],20:[function(require,module,exports){
 var Event = require('./Event');
 
 module.exports = function() {
@@ -1484,31 +1476,6 @@ function isUndefined(arg) {
 }
 
 },{}],25:[function(require,module,exports){
-if (typeof Object.create === 'function') {
-  // implementation from standard node.js 'util' module
-  module.exports = function inherits(ctor, superCtor) {
-    ctor.super_ = superCtor
-    ctor.prototype = Object.create(superCtor.prototype, {
-      constructor: {
-        value: ctor,
-        enumerable: false,
-        writable: true,
-        configurable: true
-      }
-    });
-  };
-} else {
-  // old school shim for old browsers
-  module.exports = function inherits(ctor, superCtor) {
-    ctor.super_ = superCtor
-    var TempCtor = function () {}
-    TempCtor.prototype = superCtor.prototype
-    ctor.prototype = new TempCtor()
-    ctor.prototype.constructor = ctor
-  }
-}
-
-},{}],26:[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -13863,7 +13830,7 @@ if (typeof Object.create === 'function') {
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],27:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 "use strict";
 var layouts = require('../layouts')
 , consoleLog = console.log.bind(console);
@@ -13886,7 +13853,7 @@ function configure(config) {
 exports.appender = consoleAppender;
 exports.configure = configure;
 
-},{"../layouts":30}],28:[function(require,module,exports){
+},{"../layouts":29}],27:[function(require,module,exports){
 "use strict";
 var levels = require("./levels");
 var DEFAULT_FORMAT = ':remote-addr - -' +
@@ -14112,7 +14079,7 @@ function createNoLogCondition(nolog) {
 
 exports.connectLogger = getLogger;
 
-},{"./levels":31}],29:[function(require,module,exports){
+},{"./levels":30}],28:[function(require,module,exports){
 "use strict";
 exports.ISO8601_FORMAT = "yyyy-MM-dd hh:mm:ss.SSS";
 exports.ISO8601_WITH_TZ_OFFSET_FORMAT = "yyyy-MM-ddThh:mm:ssO";
@@ -14186,7 +14153,7 @@ exports.asString = function(/*format,*/ date, timezoneOffset) {
 
 };
 
-},{}],30:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 (function (process){
 "use strict";
 var dateFormat = require('./date_format')
@@ -14541,7 +14508,7 @@ module.exports = {
 };
 
 }).call(this,require('_process'))
-},{"./date_format":29,"_process":35,"os":21,"util":37}],31:[function(require,module,exports){
+},{"./date_format":28,"_process":34,"os":21,"util":37}],30:[function(require,module,exports){
 "use strict";
 
 function Level(level, levelStr) {
@@ -14604,7 +14571,7 @@ module.exports = {
   toLevel: toLevel
 };
 
-},{}],32:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 (function (process){
 "use strict";
 /*
@@ -15087,7 +15054,7 @@ configure();
 
 
 }).call(this,require('_process'))
-},{"./appenders/console":27,"./connect-logger":28,"./layouts":30,"./levels":31,"./logger":33,"_process":35,"events":24,"fs":22,"path":34,"util":37}],33:[function(require,module,exports){
+},{"./appenders/console":26,"./connect-logger":27,"./layouts":29,"./levels":30,"./logger":32,"_process":34,"events":24,"fs":22,"path":33,"util":37}],32:[function(require,module,exports){
 "use strict";
 var levels = require('./levels')
 , util = require('util')
@@ -15202,7 +15169,7 @@ exports.Logger = Logger;
 exports.disableAllLogWrites = disableAllLogWrites;
 exports.enableAllLogWrites = enableAllLogWrites;
 
-},{"./levels":31,"events":24,"util":37}],34:[function(require,module,exports){
+},{"./levels":30,"events":24,"util":37}],33:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -15430,9 +15397,8 @@ var substr = 'ab'.substr(-1) === 'b'
 ;
 
 }).call(this,require('_process'))
-},{"_process":35}],35:[function(require,module,exports){
+},{"_process":34}],34:[function(require,module,exports){
 // shim for using process in browser
-
 var process = module.exports = {};
 
 // cached from whatever global is present so that test runners that stub it
@@ -15443,22 +15409,84 @@ var process = module.exports = {};
 var cachedSetTimeout;
 var cachedClearTimeout;
 
+function defaultSetTimout() {
+    throw new Error('setTimeout has not been defined');
+}
+function defaultClearTimeout () {
+    throw new Error('clearTimeout has not been defined');
+}
 (function () {
-  try {
-    cachedSetTimeout = setTimeout;
-  } catch (e) {
-    cachedSetTimeout = function () {
-      throw new Error('setTimeout is not defined');
+    try {
+        if (typeof setTimeout === 'function') {
+            cachedSetTimeout = setTimeout;
+        } else {
+            cachedSetTimeout = defaultSetTimout;
+        }
+    } catch (e) {
+        cachedSetTimeout = defaultSetTimout;
     }
-  }
-  try {
-    cachedClearTimeout = clearTimeout;
-  } catch (e) {
-    cachedClearTimeout = function () {
-      throw new Error('clearTimeout is not defined');
+    try {
+        if (typeof clearTimeout === 'function') {
+            cachedClearTimeout = clearTimeout;
+        } else {
+            cachedClearTimeout = defaultClearTimeout;
+        }
+    } catch (e) {
+        cachedClearTimeout = defaultClearTimeout;
     }
-  }
 } ())
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    // if setTimeout wasn't available but was latter defined
+    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+        cachedSetTimeout = setTimeout;
+        return setTimeout(fun, 0);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedSetTimeout(fun, 0);
+    } catch(e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch(e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
+    }
+
+
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    // if clearTimeout wasn't available but was latter defined
+    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+        cachedClearTimeout = clearTimeout;
+        return clearTimeout(marker);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedClearTimeout(marker);
+    } catch (e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
+    }
+
+
+
+}
 var queue = [];
 var draining = false;
 var currentQueue;
@@ -15483,7 +15511,7 @@ function drainQueue() {
     if (draining) {
         return;
     }
-    var timeout = cachedSetTimeout(cleanUpNextTick);
+    var timeout = runTimeout(cleanUpNextTick);
     draining = true;
 
     var len = queue.length;
@@ -15500,7 +15528,7 @@ function drainQueue() {
     }
     currentQueue = null;
     draining = false;
-    cachedClearTimeout(timeout);
+    runClearTimeout(timeout);
 }
 
 process.nextTick = function (fun) {
@@ -15512,7 +15540,7 @@ process.nextTick = function (fun) {
     }
     queue.push(new Item(fun, args));
     if (queue.length === 1 && !draining) {
-        cachedSetTimeout(drainQueue, 0);
+        runTimeout(drainQueue);
     }
 };
 
@@ -15550,6 +15578,31 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 process.umask = function() { return 0; };
+
+},{}],35:[function(require,module,exports){
+if (typeof Object.create === 'function') {
+  // implementation from standard node.js 'util' module
+  module.exports = function inherits(ctor, superCtor) {
+    ctor.super_ = superCtor
+    ctor.prototype = Object.create(superCtor.prototype, {
+      constructor: {
+        value: ctor,
+        enumerable: false,
+        writable: true,
+        configurable: true
+      }
+    });
+  };
+} else {
+  // old school shim for old browsers
+  module.exports = function inherits(ctor, superCtor) {
+    ctor.super_ = superCtor
+    var TempCtor = function () {}
+    TempCtor.prototype = superCtor.prototype
+    ctor.prototype = new TempCtor()
+    ctor.prototype.constructor = ctor
+  }
+}
 
 },{}],36:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
@@ -16148,7 +16201,7 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":36,"_process":35,"inherits":25}],38:[function(require,module,exports){
+},{"./support/isBuffer":36,"_process":34,"inherits":35}],38:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -17216,7 +17269,7 @@ define(function(require) {
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(require); }));
 
 }).call(this,require('_process'))
-},{"_process":35}],52:[function(require,module,exports){
+},{"_process":34}],52:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -18205,7 +18258,7 @@ define(function() {
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
 }).call(this,require('_process'))
-},{"_process":35}],54:[function(require,module,exports){
+},{"_process":34}],54:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -18473,34 +18526,12 @@ define(function (require) {
 })(typeof define === 'function' && define.amd ? define : function (factory) { module.exports = factory(require); });
 
 },{"./lib/Promise":38,"./lib/TimeoutError":40,"./lib/apply":41,"./lib/decorators/array":42,"./lib/decorators/flow":43,"./lib/decorators/fold":44,"./lib/decorators/inspect":45,"./lib/decorators/iterate":46,"./lib/decorators/progress":47,"./lib/decorators/timed":48,"./lib/decorators/unhandledRejection":49,"./lib/decorators/with":50}],56:[function(require,module,exports){
-var assert = require('./../lang/assert');
-
 var Specification = require('./Specification');
 
 module.exports = function() {
-	var AndSpecification = Specification.extend({
-		init: function(specificationOne, specificationTwo) {
-			assert.argumentIsRequired(specificationOne, 'specificationOne', Specification, 'Specification');
-			assert.argumentIsRequired(specificationTwo, 'specificationTwo', Specification, 'Specification');
-
-			this._super();
-
-			this._specificationOne = specificationOne;
-			this._specificationTwo = specificationTwo;
-		},
-
-		_evaluate: function(data) {
-			return this._specificationOne.evaluate(data) && this._specificationTwo.evaluate(data);
-		},
-
-		toString: function() {
-			return '[AndSpecification]';
-		}
-	});
-
-	return AndSpecification;
+	return Specification.AndSpecification;
 }();
-},{"./../lang/assert":15,"./Specification":61}],57:[function(require,module,exports){
+},{"./Specification":61}],57:[function(require,module,exports){
 var Specification = require('./Specification');
 
 module.exports = function() {
@@ -18579,11 +18610,67 @@ module.exports = function() {
 	return LessThanSpecification;
 }();
 },{"./../lang/assert":15,"./Specification":61}],60:[function(require,module,exports){
-var assert = require('./../lang/assert');
-
 var Specification = require('./Specification');
 
 module.exports = function() {
+	return Specification.OrSpecification;
+}();
+},{"./Specification":61}],61:[function(require,module,exports){
+var Class = require('class.extend');
+
+var assert = require('./../lang/assert');
+
+module.exports = function() {
+	var Specification = Class.extend({
+		init: function() {
+
+		},
+
+		evaluate: function(data) {
+			return this._evaluate(data);
+		},
+
+		_evaluate: function(data) {
+			return false;
+		},
+
+		and: function(other) {
+			assert.argumentIsRequired(other, 'other', Specification, 'Specification');
+
+			return new AndSpecification(this, other);
+		},
+
+		or: function(other) {
+			assert.argumentIsRequired(other, 'other', Specification, 'Specification');
+
+			return new OrSpecification(this, other);
+		},
+
+		toString: function() {
+			return '[Specification]';
+		}
+	});
+
+	var AndSpecification = Specification.extend({
+		init: function(specificationOne, specificationTwo) {
+			assert.argumentIsRequired(specificationOne, 'specificationOne', Specification, 'Specification');
+			assert.argumentIsRequired(specificationTwo, 'specificationTwo', Specification, 'Specification');
+
+			this._super();
+
+			this._specificationOne = specificationOne;
+			this._specificationTwo = specificationTwo;
+		},
+
+		_evaluate: function(data) {
+			return this._specificationOne.evaluate(data) && this._specificationTwo.evaluate(data);
+		},
+
+		toString: function() {
+			return '[AndSpecification]';
+		}
+	});
+
 	var OrSpecification = Specification.extend({
 		init: function(specificationOne, specificationTwo) {
 			assert.argumentIsRequired(specificationOne, 'specificationOne', Specification, 'Specification');
@@ -18604,71 +18691,12 @@ module.exports = function() {
 		}
 	});
 
-	return OrSpecification;
-}();
-},{"./../lang/assert":15,"./Specification":61}],61:[function(require,module,exports){
-var Class = require('class.extend');
-
-module.exports = function() {
-	var Specification = Class.extend({
-		init: function() {
-
-		},
-
-		evaluate: function(data) {
-			return this._evaluate(data);
-		},
-
-		_evaluate: function(data) {
-			return false;
-		},
-
-		toString: function() {
-			return '[Specification]';
-		}
-	});
+	Specification.AndSpecification = AndSpecification;
+	Specification.OrSpecification = OrSpecification;
 
 	return Specification;
 }();
-},{"class.extend":23}],62:[function(require,module,exports){
-var assert = require('./../lang/assert');
-
-var Specification = require('./Specification');
-var AndSpecification = require('./AndSpecification');
-var OrSpecification = require('./OrSpecification');
-
-module.exports = function() {
-	var SpecificationBuilder = Class.extend({
-		init: function(specification) {
-			assert.argumentIsRequired(specification, 'specification', Specification, 'Specification');
-
-			this._specification = specification;
-		},
-
-		and: function(other) {
-			return new SpecificationBuilder(new AndSpecification(this._specification , other));
-		},
-
-		or: function(other) {
-			return new SpecificationBuilder(new OrSpecification(this._specification , other));
-		},
-
-		build: function() {
-			return this._specification;
-		},
-
-		toString: function() {
-			return '[SpecificationBuilder]';
-		}
-	});
-
-	SpecificationBuilder.startWith = function(specification) {
-		return new SpecificationBuilder(specification);
-	};
-
-	return SpecificationBuilder;
-}();
-},{"./../lang/assert":15,"./AndSpecification":56,"./OrSpecification":60,"./Specification":61}],63:[function(require,module,exports){
+},{"./../lang/assert":15,"class.extend":23}],62:[function(require,module,exports){
 var assert = require('./../lang/assert');
 
 var Specification = require('./Specification');
@@ -18696,14 +18724,13 @@ module.exports = function() {
 
 	return TranslateSpecification;
 }();
-},{"./../lang/assert":15,"./Specification":61}],64:[function(require,module,exports){
+},{"./../lang/assert":15,"./Specification":61}],63:[function(require,module,exports){
 var AndSpecification = require('./AndSpecification');
 var EqualsSpecification = require('./EqualsSpecification');
 var GreaterThanSpecification = require('./GreaterThanSpecification');
 var LessThanSpecification = require('./LessThanSpecification');
 var OrSpecification = require('./OrSpecification');
 var Specification = require('./Specification');
-var SpecificationBuilder = require('./SpecificationBuilder');
 var TranslateSpecification = require('./TranslateSpecification');
 
 module.exports = function() {
@@ -18716,11 +18743,10 @@ module.exports = function() {
 		LessThanSpecification: LessThanSpecification,
 		OrSpecification: OrSpecification,
 		Specification: Specification,
-		SpecificationBuilder: SpecificationBuilder,
 		TranslateSpecification: TranslateSpecification
 	};
 }();
-},{"./AndSpecification":56,"./EqualsSpecification":57,"./GreaterThanSpecification":58,"./LessThanSpecification":59,"./OrSpecification":60,"./Specification":61,"./SpecificationBuilder":62,"./TranslateSpecification":63}],65:[function(require,module,exports){
+},{"./AndSpecification":56,"./EqualsSpecification":57,"./GreaterThanSpecification":58,"./LessThanSpecification":59,"./OrSpecification":60,"./Specification":61,"./TranslateSpecification":62}],64:[function(require,module,exports){
 var _ = require('lodash');
 var log4js = require('log4js');
 var when = require('when');
@@ -18831,7 +18857,7 @@ module.exports = function() {
 
 	return RateLimiter;
 }();
-},{"./../collections/Queue":1,"./../lang/Disposable":14,"./../lang/assert":15,"./Scheduler":66,"lodash":26,"log4js":32,"when":55}],66:[function(require,module,exports){
+},{"./../collections/Queue":1,"./../lang/Disposable":14,"./../lang/assert":15,"./Scheduler":65,"lodash":25,"log4js":31,"when":55}],65:[function(require,module,exports){
 var _ = require('lodash');
 var log4js = require('log4js');
 var when = require('when');
@@ -18865,10 +18891,25 @@ module.exports = function() {
 
             var token = null;
 
+            var scheduleDate;
+            var executeDate;
+
+            if (logger.isDebugEnabled()) {
+                scheduleDate = new Date();
+
+                logger.debug('Scheduling action (', (actionDescription || 'with no description'), ') to run in', millisecondDelay, 'milliseconds');
+            }
+
             var defer = when.defer();
 
             var wrappedAction = function() {
                 try {
+                    if (logger.isDebugEnabled()) {
+                        executeDate = new Date();
+
+                        logger.debug('Scheduled action (', (actionDescription || 'with no description'), ') running after', (executeDate.getTime() - scheduleDate.getTime()), 'milliseconds');
+                    }
+
                     delete that._timeoutBindings[token];
 
                     defer.resolve(actionToSchedule());
@@ -18995,7 +19036,7 @@ module.exports = function() {
 
     return Scheduler;
 }();
-},{"./../lang/Disposable":14,"./../lang/assert":15,"lodash":26,"log4js":32,"when":55}],67:[function(require,module,exports){
+},{"./../lang/Disposable":14,"./../lang/assert":15,"lodash":25,"log4js":31,"when":55}],66:[function(require,module,exports){
 var RateLimiter = require('./RateLimiter');
 var Scheduler = require('./Scheduler');
 
@@ -19007,5 +19048,5 @@ module.exports = function() {
 		Scheduler: Scheduler
 	};
 }();
-},{"./RateLimiter":65,"./Scheduler":66}]},{},[13])(13)
+},{"./RateLimiter":64,"./Scheduler":65}]},{},[13])(13)
 });

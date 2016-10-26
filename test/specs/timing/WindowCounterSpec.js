@@ -33,10 +33,6 @@ describe('When a WindowCounter is constructed', function() {
 			it('the current count should be the sum of the amounts added', function() {
 				expect(counter.getCurrent()).toEqual(a + b);
 			});
-
-			it('the average count should be the sum of the amounts added', function() {
-				expect(counter.getAverage()).toEqual(a + b);
-			});
 		});
 
 		describe('and the counter is incremented after the current window expires', function() {
@@ -48,6 +44,10 @@ describe('When a WindowCounter is constructed', function() {
 
 					done();
 				}, duration + duration / 2);
+			});
+
+			it('the previous count should be the sum of the previous window', function() {
+				expect(counter.getPrevious()).toEqual(a);
 			});
 
 			it('the current count should be the amount added', function() {
