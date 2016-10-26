@@ -21695,8 +21695,8 @@ describe('When a WindowCounter is constructed', function() {
 				expect(counter.getCurrent()).toEqual(b);
 			});
 
-			it('the average count should be the sum of the amounts added (divided by two)', function() {
-				expect(counter.getAverage()).toEqual((a + b) / 2);
+			it('the average count should be the sum of the previous window', function() {
+				expect(counter.getAverage()).toEqual(a);
 			});
 		});
 	});
@@ -22044,7 +22044,7 @@ module.exports = function() {
 		getAverage: function() {
 			var current = advance.call(this);
 
-			return (current.getCount() + this._previousCount) / this._windows.length;
+			return this._previousCount / (this._windows.length - 1);
 		},
 
 		toString: function() {
