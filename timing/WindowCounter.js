@@ -50,7 +50,17 @@ module.exports = function() {
 		getAverage: function() {
 			var current = advance.call(this);
 
-			return this._previousCount / (this._windows.length - 1);
+			var previousWindows = this._windows.length - 1;
+
+			var returnVal;
+
+			if (previousWindows > 0) {
+				returnVal = this._previousCount / previousWindows;
+			} else {
+				returnVal = 0;
+			}
+
+			return returnVal;
 		},
 
 		toString: function() {
