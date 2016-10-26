@@ -4,10 +4,12 @@ describe('When a WindowCounter is constructed', function() {
 	'use strict';
 
 	var duration;
+	var windows;
+
 	var counter;
 
 	beforeEach(function() {
-		counter = new WindowCounter(duration = 15);
+		counter = new WindowCounter(duration = 15, windows = 100);
 	});
 
 	describe('and the counter is immediately incremented', function() {

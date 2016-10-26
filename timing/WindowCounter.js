@@ -3,6 +3,7 @@ var Class = require('class.extend');
 var log4js = require('log4js');
 
 var assert = require('./../lang/assert');
+var Queue = require('./../collections/Queue');
 
 module.exports = function() {
 	'use strict';
@@ -10,16 +11,16 @@ module.exports = function() {
 	var logger = log4js.getLogger('common/timing/WindowCounter');
 
 	var WindowCounter = Class.extend({
-		init: function(duration) {
+		init: function(duration, windows) {
 			assert.argumentIsRequired(duration, 'duration', Number);
+			assert.argumentIsRequired(windows, 'windows', Number);
 
 			this._duration = duration;
 
-			this._current = new Window(getTime(), this._duration);
-			this._previous = null;
+			this._windows = [ new Window(getTime(), this._duration) ];
+			this._maximum = Math.max(windows, 2);
 
 			this._previousCount = 0;
-			this._previousWindows = 0;
 		},
 
 		increment: function(count) {
@@ -32,16 +33,10 @@ module.exports = function() {
 			return advance.call(this).getCount();
 		},
 
-		getPrevious: function() {
-			var current = advance.call(this);
-
-			return this._previous.getCount();
-		},
-
 		getAverage: function() {
 			var current = advance.call(this);
 
-			return (this._current.getCount() + this._previousCount) / (this._previousWindows + 1);
+			return (current.getCount() + this._previousCount) / this._windows.length;
 		},
 
 		toString: function() {
@@ -52,15 +47,22 @@ module.exports = function() {
 	function advance() {
 		var now = getTime();
 
-		while (!this._current.contains(now)) {
-			this._previous = this._current;
-			this._current = new Window(this._previous.getEnd(), this._duration);
+		while (!this._windows[0].contains(now)) {
+			var previous = this._windows[0];
+			var current = new Window(previous.getEnd(), this._duration);
 
-			this._previousCount = this._previousCount + this._previous.getCount();
-			this._previousWindows = this._previousWindows + 1;
+			this._windows.unshift(current);
+
+			this._previousCount = this._previousCount + previous.getCount();
+
+			if (this._windows.length > this._maximum) {
+				var removed = this._windows.pop();
+				
+				this._previousCount = this._previousCount - removed.getCount();
+			}
 		}
 
-		return this._current;
+		return this._windows[0];
 	}
 
 	function getTime() {
