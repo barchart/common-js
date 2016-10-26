@@ -205,7 +205,7 @@ module.exports = function() {
 
 	return comparators;
 }();
-},{"./../../lang/assert":11,"lodash":21}],5:[function(require,module,exports){
+},{"./../../lang/assert":11,"lodash":20}],5:[function(require,module,exports){
 var Class = require('class.extend');
 var assert = require('./../../lang/assert');
 
@@ -685,7 +685,7 @@ module.exports = function() {
 
 	return MappedCommandHandler;
 }();
-},{"./../lang/assert":11,"./CommandHandler":7,"lodash":21}],10:[function(require,module,exports){
+},{"./../lang/assert":11,"./CommandHandler":7,"lodash":20}],10:[function(require,module,exports){
 var Class = require('class.extend');
 
 var assert = require('./assert');
@@ -742,6 +742,12 @@ module.exports = function() {
 
 	Disposable.fromAction = function(disposeAction) {
 		return new DisposableAction(disposeAction);
+	};
+
+	Disposable.getEmpty = function() {
+		return Disposable.fromAction(function() {
+			return;
+		});
 	};
 
 	return Disposable;
@@ -832,7 +838,7 @@ module.exports = function() {
 
 	return assert;
 }();
-},{"lodash":21}],12:[function(require,module,exports){
+},{"lodash":20}],12:[function(require,module,exports){
 var _ = require('lodash');
 
 var assert = require('./assert');
@@ -948,7 +954,7 @@ module.exports = function() {
 
 	return attributes;
 }();
-},{"./assert":11,"lodash":21}],13:[function(require,module,exports){
+},{"./assert":11,"lodash":20}],13:[function(require,module,exports){
 var _ = require('lodash');
 
 module.exports = function() {
@@ -982,7 +988,7 @@ module.exports = function() {
 
 	return math;
 }();
-},{"lodash":21}],14:[function(require,module,exports){
+},{"lodash":20}],14:[function(require,module,exports){
 var _ = require('lodash');
 
 var assert = require('./../lang/assert');
@@ -1063,7 +1069,7 @@ module.exports = function() {
 
 	return Event;
 }();
-},{"./../lang/Disposable":10,"./../lang/assert":11,"lodash":21}],15:[function(require,module,exports){
+},{"./../lang/Disposable":10,"./../lang/assert":11,"lodash":20}],15:[function(require,module,exports){
 var _ = require('lodash');
 
 var assert = require('./../lang/assert');
@@ -1258,7 +1264,7 @@ module.exports = function() {
 
 	return Model;
 }();
-},{"./../lang/Disposable":10,"./../lang/assert":11,"./../messaging/Event":14,"lodash":21}],16:[function(require,module,exports){
+},{"./../lang/Disposable":10,"./../lang/assert":11,"./../messaging/Event":14,"lodash":20}],16:[function(require,module,exports){
 
 },{}],17:[function(require,module,exports){
 arguments[4][16][0].apply(exports,arguments)
@@ -1638,31 +1644,6 @@ function isUndefined(arg) {
 }
 
 },{}],20:[function(require,module,exports){
-if (typeof Object.create === 'function') {
-  // implementation from standard node.js 'util' module
-  module.exports = function inherits(ctor, superCtor) {
-    ctor.super_ = superCtor
-    ctor.prototype = Object.create(superCtor.prototype, {
-      constructor: {
-        value: ctor,
-        enumerable: false,
-        writable: true,
-        configurable: true
-      }
-    });
-  };
-} else {
-  // old school shim for old browsers
-  module.exports = function inherits(ctor, superCtor) {
-    ctor.super_ = superCtor
-    var TempCtor = function () {}
-    TempCtor.prototype = superCtor.prototype
-    ctor.prototype = new TempCtor()
-    ctor.prototype.constructor = ctor
-  }
-}
-
-},{}],21:[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -14017,7 +13998,7 @@ if (typeof Object.create === 'function') {
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],22:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 "use strict";
 var layouts = require('../layouts')
 , consoleLog = console.log.bind(console);
@@ -14040,7 +14021,7 @@ function configure(config) {
 exports.appender = consoleAppender;
 exports.configure = configure;
 
-},{"../layouts":25}],23:[function(require,module,exports){
+},{"../layouts":24}],22:[function(require,module,exports){
 "use strict";
 var levels = require("./levels");
 var DEFAULT_FORMAT = ':remote-addr - -' +
@@ -14266,7 +14247,7 @@ function createNoLogCondition(nolog) {
 
 exports.connectLogger = getLogger;
 
-},{"./levels":26}],24:[function(require,module,exports){
+},{"./levels":25}],23:[function(require,module,exports){
 "use strict";
 exports.ISO8601_FORMAT = "yyyy-MM-dd hh:mm:ss.SSS";
 exports.ISO8601_WITH_TZ_OFFSET_FORMAT = "yyyy-MM-ddThh:mm:ssO";
@@ -14340,7 +14321,7 @@ exports.asString = function(/*format,*/ date, timezoneOffset) {
 
 };
 
-},{}],25:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 (function (process){
 "use strict";
 var dateFormat = require('./date_format')
@@ -14695,7 +14676,7 @@ module.exports = {
 };
 
 }).call(this,require('_process'))
-},{"./date_format":24,"_process":30,"os":16,"util":32}],26:[function(require,module,exports){
+},{"./date_format":23,"_process":29,"os":16,"util":32}],25:[function(require,module,exports){
 "use strict";
 
 function Level(level, levelStr) {
@@ -14758,7 +14739,7 @@ module.exports = {
   toLevel: toLevel
 };
 
-},{}],27:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 (function (process){
 "use strict";
 /*
@@ -15241,7 +15222,7 @@ configure();
 
 
 }).call(this,require('_process'))
-},{"./appenders/console":22,"./connect-logger":23,"./layouts":25,"./levels":26,"./logger":28,"_process":30,"events":19,"fs":17,"path":29,"util":32}],28:[function(require,module,exports){
+},{"./appenders/console":21,"./connect-logger":22,"./layouts":24,"./levels":25,"./logger":27,"_process":29,"events":19,"fs":17,"path":28,"util":32}],27:[function(require,module,exports){
 "use strict";
 var levels = require('./levels')
 , util = require('util')
@@ -15356,7 +15337,7 @@ exports.Logger = Logger;
 exports.disableAllLogWrites = disableAllLogWrites;
 exports.enableAllLogWrites = enableAllLogWrites;
 
-},{"./levels":26,"events":19,"util":32}],29:[function(require,module,exports){
+},{"./levels":25,"events":19,"util":32}],28:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -15584,7 +15565,7 @@ var substr = 'ab'.substr(-1) === 'b'
 ;
 
 }).call(this,require('_process'))
-},{"_process":30}],30:[function(require,module,exports){
+},{"_process":29}],29:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -15596,25 +15577,40 @@ var process = module.exports = {};
 var cachedSetTimeout;
 var cachedClearTimeout;
 
+function defaultSetTimout() {
+    throw new Error('setTimeout has not been defined');
+}
+function defaultClearTimeout () {
+    throw new Error('clearTimeout has not been defined');
+}
 (function () {
     try {
-        cachedSetTimeout = setTimeout;
-    } catch (e) {
-        cachedSetTimeout = function () {
-            throw new Error('setTimeout is not defined');
+        if (typeof setTimeout === 'function') {
+            cachedSetTimeout = setTimeout;
+        } else {
+            cachedSetTimeout = defaultSetTimout;
         }
+    } catch (e) {
+        cachedSetTimeout = defaultSetTimout;
     }
     try {
-        cachedClearTimeout = clearTimeout;
-    } catch (e) {
-        cachedClearTimeout = function () {
-            throw new Error('clearTimeout is not defined');
+        if (typeof clearTimeout === 'function') {
+            cachedClearTimeout = clearTimeout;
+        } else {
+            cachedClearTimeout = defaultClearTimeout;
         }
+    } catch (e) {
+        cachedClearTimeout = defaultClearTimeout;
     }
 } ())
 function runTimeout(fun) {
     if (cachedSetTimeout === setTimeout) {
         //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    // if setTimeout wasn't available but was latter defined
+    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+        cachedSetTimeout = setTimeout;
         return setTimeout(fun, 0);
     }
     try {
@@ -15635,6 +15631,11 @@ function runTimeout(fun) {
 function runClearTimeout(marker) {
     if (cachedClearTimeout === clearTimeout) {
         //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    // if clearTimeout wasn't available but was latter defined
+    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+        cachedClearTimeout = clearTimeout;
         return clearTimeout(marker);
     }
     try {
@@ -15745,6 +15746,31 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 process.umask = function() { return 0; };
+
+},{}],30:[function(require,module,exports){
+if (typeof Object.create === 'function') {
+  // implementation from standard node.js 'util' module
+  module.exports = function inherits(ctor, superCtor) {
+    ctor.super_ = superCtor
+    ctor.prototype = Object.create(superCtor.prototype, {
+      constructor: {
+        value: ctor,
+        enumerable: false,
+        writable: true,
+        configurable: true
+      }
+    });
+  };
+} else {
+  // old school shim for old browsers
+  module.exports = function inherits(ctor, superCtor) {
+    ctor.super_ = superCtor
+    var TempCtor = function () {}
+    TempCtor.prototype = superCtor.prototype
+    ctor.prototype = new TempCtor()
+    ctor.prototype.constructor = ctor
+  }
+}
 
 },{}],31:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
@@ -16343,7 +16369,7 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":31,"_process":30,"inherits":20}],33:[function(require,module,exports){
+},{"./support/isBuffer":31,"_process":29,"inherits":30}],33:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -17411,7 +17437,7 @@ define(function(require) {
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(require); }));
 
 }).call(this,require('_process'))
-},{"_process":30}],47:[function(require,module,exports){
+},{"_process":29}],47:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -18400,7 +18426,7 @@ define(function() {
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
 }).call(this,require('_process'))
-},{"_process":30}],49:[function(require,module,exports){
+},{"_process":29}],49:[function(require,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -18668,34 +18694,12 @@ define(function (require) {
 })(typeof define === 'function' && define.amd ? define : function (factory) { module.exports = factory(require); });
 
 },{"./lib/Promise":33,"./lib/TimeoutError":35,"./lib/apply":36,"./lib/decorators/array":37,"./lib/decorators/flow":38,"./lib/decorators/fold":39,"./lib/decorators/inspect":40,"./lib/decorators/iterate":41,"./lib/decorators/progress":42,"./lib/decorators/timed":43,"./lib/decorators/unhandledRejection":44,"./lib/decorators/with":45}],51:[function(require,module,exports){
-var assert = require('./../lang/assert');
-
 var Specification = require('./Specification');
 
 module.exports = function() {
-	var AndSpecification = Specification.extend({
-		init: function(specificationOne, specificationTwo) {
-			assert.argumentIsRequired(specificationOne, 'specificationOne', Specification, 'Specification');
-			assert.argumentIsRequired(specificationTwo, 'specificationTwo', Specification, 'Specification');
-
-			this._super();
-
-			this._specificationOne = specificationOne;
-			this._specificationTwo = specificationTwo;
-		},
-
-		_evaluate: function(data) {
-			return this._specificationOne.evaluate(data) && this._specificationTwo.evaluate(data);
-		},
-
-		toString: function() {
-			return '[AndSpecification]';
-		}
-	});
-
-	return AndSpecification;
+	return Specification.AndSpecification;
 }();
-},{"./../lang/assert":11,"./Specification":57}],52:[function(require,module,exports){
+},{"./Specification":57}],52:[function(require,module,exports){
 var _ = require('lodash');
 
 var assert = require('./../lang/assert');
@@ -18723,7 +18727,7 @@ module.exports = function() {
 
 	return ContainedSpecification;
 }();
-},{"./../lang/assert":11,"./Specification":57,"lodash":21}],53:[function(require,module,exports){
+},{"./../lang/assert":11,"./Specification":57,"lodash":20}],53:[function(require,module,exports){
 var _ = require('lodash');
 
 var Specification = require('./Specification');
@@ -18747,7 +18751,7 @@ module.exports = function() {
 
 	return ContainsSpecification;
 }();
-},{"./Specification":57,"lodash":21}],54:[function(require,module,exports){
+},{"./Specification":57,"lodash":20}],54:[function(require,module,exports){
 var Specification = require('./Specification');
 
 module.exports = function() {
@@ -18768,34 +18772,12 @@ module.exports = function() {
 	return FailSpecification;
 }();
 },{"./Specification":57}],55:[function(require,module,exports){
-var assert = require('./../lang/assert');
-
 var Specification = require('./Specification');
 
 module.exports = function() {
-	var OrSpecification = Specification.extend({
-		init: function(specificationOne, specificationTwo) {
-			assert.argumentIsRequired(specificationOne, 'specificationOne', Specification, 'Specification');
-			assert.argumentIsRequired(specificationTwo, 'specificationTwo', Specification, 'Specification');
-
-			this._super();
-
-			this._specificationOne = specificationOne;
-			this._specificationTwo = specificationTwo;
-		},
-
-		_evaluate: function(data) {
-			return this._specificationOne.evaluate(data) || this._specificationTwo.evaluate(data);
-		},
-
-		toString: function() {
-			return '[OrSpecification]';
-		}
-	});
-
-	return OrSpecification;
+	return Specification.OrSpecification;
 }();
-},{"./../lang/assert":11,"./Specification":57}],56:[function(require,module,exports){
+},{"./Specification":57}],56:[function(require,module,exports){
 var Specification = require('./Specification');
 
 module.exports = function() {
@@ -18818,6 +18800,8 @@ module.exports = function() {
 },{"./Specification":57}],57:[function(require,module,exports){
 var Class = require('class.extend');
 
+var assert = require('./../lang/assert');
+
 module.exports = function() {
 	var Specification = Class.extend({
 		init: function() {
@@ -18832,14 +18816,69 @@ module.exports = function() {
 			return false;
 		},
 
+		and: function(other) {
+			assert.argumentIsRequired(other, 'other', Specification, 'Specification');
+
+			return new AndSpecification(this, other);
+		},
+
+		or: function(other) {
+			assert.argumentIsRequired(other, 'other', Specification, 'Specification');
+
+			return new OrSpecification(this, other);
+		},
+
 		toString: function() {
 			return '[Specification]';
 		}
 	});
 
+	var AndSpecification = Specification.extend({
+		init: function(specificationOne, specificationTwo) {
+			assert.argumentIsRequired(specificationOne, 'specificationOne', Specification, 'Specification');
+			assert.argumentIsRequired(specificationTwo, 'specificationTwo', Specification, 'Specification');
+
+			this._super();
+
+			this._specificationOne = specificationOne;
+			this._specificationTwo = specificationTwo;
+		},
+
+		_evaluate: function(data) {
+			return this._specificationOne.evaluate(data) && this._specificationTwo.evaluate(data);
+		},
+
+		toString: function() {
+			return '[AndSpecification]';
+		}
+	});
+
+	var OrSpecification = Specification.extend({
+		init: function(specificationOne, specificationTwo) {
+			assert.argumentIsRequired(specificationOne, 'specificationOne', Specification, 'Specification');
+			assert.argumentIsRequired(specificationTwo, 'specificationTwo', Specification, 'Specification');
+
+			this._super();
+
+			this._specificationOne = specificationOne;
+			this._specificationTwo = specificationTwo;
+		},
+
+		_evaluate: function(data) {
+			return this._specificationOne.evaluate(data) || this._specificationTwo.evaluate(data);
+		},
+
+		toString: function() {
+			return '[OrSpecification]';
+		}
+	});
+
+	Specification.AndSpecification = AndSpecification;
+	Specification.OrSpecification = OrSpecification;
+
 	return Specification;
 }();
-},{"class.extend":18}],58:[function(require,module,exports){
+},{"./../lang/assert":11,"class.extend":18}],58:[function(require,module,exports){
 var Stack = require('./../../../collections/Stack');
 
 describe('When a Stack is constructed', function() {
@@ -21520,11 +21559,14 @@ describe('When a RateLimiter is constructed (2 execution per 25 milliseconds)', 
 		});
 	});
 });
-},{"./../../../timing/RateLimiter":79}],78:[function(require,module,exports){
+},{"./../../../timing/RateLimiter":80}],78:[function(require,module,exports){
+var log4js = require('log4js');
 var Scheduler = require('./../../../timing/Scheduler');
 
 describe('When a Scheduler is constructed', function() {
 	'use strict';
+
+	log4js.configure({ });
 
 	var scheduler;
 
@@ -21596,7 +21638,68 @@ describe('When a Scheduler is constructed', function() {
 		});
 	});
 });
-},{"./../../../timing/Scheduler":80}],79:[function(require,module,exports){
+},{"./../../../timing/Scheduler":81,"log4js":26}],79:[function(require,module,exports){
+var WindowCounter = require('./../../../timing/WindowCounter');
+
+describe('When a WindowCounter is constructed', function() {
+	'use strict';
+
+	var duration;
+	var counter;
+
+	beforeEach(function() {
+		counter = new WindowCounter(duration = 15);
+	});
+
+	describe('and the counter is immediately incremented', function() {
+		var a;
+
+		beforeEach(function() {
+			counter.increment(a = 42);
+		});
+
+		it('the current count should be the amount added', function() {
+			expect(counter.getCurrent()).toEqual(a);
+		});
+
+		describe('and the counter is immediately incremented, again', function() {
+			var b;
+
+			beforeEach(function() {
+				counter.increment(b = 99);
+			});
+
+			it('the current count should be the sum of the amounts added', function() {
+				expect(counter.getCurrent()).toEqual(a + b);
+			});
+
+			it('the average count should be the sum of the amounts added', function() {
+				expect(counter.getAverage()).toEqual(a + b);
+			});
+		});
+
+		describe('and the counter is incremented after the current window expires', function() {
+			var b;
+
+			beforeEach(function(done) {
+				setTimeout(function() {
+					counter.increment(b = 3);
+
+					done();
+				}, duration + duration / 2);
+			});
+
+			it('the current count should be the amount added', function() {
+				expect(counter.getCurrent()).toEqual(b);
+			});
+
+			it('the average count should be the sum of the amounts added (divided by two)', function() {
+				expect(counter.getAverage()).toEqual((a + b) / 2);
+			});
+		});
+	});
+});
+},{"./../../../timing/WindowCounter":82}],80:[function(require,module,exports){
 var _ = require('lodash');
 var log4js = require('log4js');
 var when = require('when');
@@ -21707,7 +21810,7 @@ module.exports = function() {
 
 	return RateLimiter;
 }();
-},{"./../collections/Queue":1,"./../lang/Disposable":10,"./../lang/assert":11,"./Scheduler":80,"lodash":21,"log4js":27,"when":50}],80:[function(require,module,exports){
+},{"./../collections/Queue":1,"./../lang/Disposable":10,"./../lang/assert":11,"./Scheduler":81,"lodash":20,"log4js":26,"when":50}],81:[function(require,module,exports){
 var _ = require('lodash');
 var log4js = require('log4js');
 var when = require('when');
@@ -21741,10 +21844,25 @@ module.exports = function() {
 
             var token = null;
 
+            var scheduleDate;
+            var executeDate;
+
+            if (logger.isDebugEnabled()) {
+                scheduleDate = new Date();
+
+                logger.debug('Scheduling action (', (actionDescription || 'with no description'), ') to run in', millisecondDelay, 'milliseconds');
+            }
+
             var defer = when.defer();
 
             var wrappedAction = function() {
                 try {
+                    if (logger.isDebugEnabled()) {
+                        executeDate = new Date();
+
+                        logger.debug('Scheduled action (', (actionDescription || 'with no description'), ') running after', (executeDate.getTime() - scheduleDate.getTime()), 'milliseconds');
+                    }
+
                     delete that._timeoutBindings[token];
 
                     defer.resolve(actionToSchedule());
@@ -21871,4 +21989,105 @@ module.exports = function() {
 
     return Scheduler;
 }();
-},{"./../lang/Disposable":10,"./../lang/assert":11,"lodash":21,"log4js":27,"when":50}]},{},[59,60,61,62,58,63,64,65,67,66,68,69,70,71,72,73,74,75,76,77,78]);
+},{"./../lang/Disposable":10,"./../lang/assert":11,"lodash":20,"log4js":26,"when":50}],82:[function(require,module,exports){
+var _ = require('lodash');
+var Class = require('class.extend');
+var log4js = require('log4js');
+
+var assert = require('./../lang/assert');
+
+module.exports = function() {
+	'use strict';
+
+	var logger = log4js.getLogger('common/timing/WindowCounter');
+
+	var WindowCounter = Class.extend({
+		init: function(duration) {
+			assert.argumentIsRequired(duration, 'duration', Number);
+
+			this._duration = duration;
+
+			this._current = new Window(getTime(), this._duration);
+			this._previous = null;
+
+			this._previousCount = 0;
+			this._previousWindows = 0;
+		},
+
+		increment: function(count) {
+			assert.argumentIsRequired(count, 'count', Number);
+
+			advance.call(this).increment(count);
+		},
+
+		getCurrent: function() {
+			return advance.call(this).getCount();
+		},
+
+		getPrevious: function() {
+			var current = advance.call(this);
+
+			return this._previous.getCount();
+		},
+
+		getAverage: function() {
+			var current = advance.call(this);
+
+			return (this._current.getCount() + this._previousCount) / (this._previousWindows + 1);
+		},
+
+		toString: function() {
+			return '[WindowCounter]';
+		}
+	});
+
+	function advance() {
+		var now = getTime();
+
+		while (!this._current.contains(now)) {
+			this._previous = this._current;
+			this._current = new Window(this._previous.getEnd(), this._duration);
+
+			this._previousCount = this._previousCount + this._previous.getCount();
+			this._previousWindows = this._previousWindows + 1;
+		}
+
+		return this._current;
+	}
+
+	function getTime() {
+		return (new Date()).getTime();
+	}
+
+	var Window = Class.extend({
+		init: function(start, duration) {
+			this._start = start;
+			this._end = start + duration;
+
+			this._count = 0;
+		},
+
+		contains: function(now) {
+			return !(now < this._start || now > this._end);
+		},
+
+		increment: function(count) {
+			this._count = this._count + count;
+		},
+
+		getStart: function() {
+			return this._start;
+		},
+
+		getEnd: function() {
+			return this._end;
+		},
+
+		getCount: function() {
+			return this._count;
+		}
+	});
+
+	return WindowCounter;
+}();
+},{"./../lang/assert":11,"class.extend":18,"lodash":20,"log4js":26}]},{},[59,60,61,62,58,63,64,65,67,66,68,69,70,71,72,73,74,75,76,77,78,79]);
