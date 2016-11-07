@@ -1,19 +1,21 @@
-var _ = require('lodash');
-
 var assert = require('./../lang/assert');
-var Class = require('class.extend');
+var Disposable = require('./../lang/Disposable');
 
 var Event = require('./Event');
 
 module.exports = function() {
 	'use strict';
 
-	var EventMap = Class.extend({
+	var EventMap = Disposable.extend({
 		init: function() {
-			this._events = {};
+			this._events = { };
 		},
 
 		fire: function(eventName, data) {
+			if (this.getIsDisposed()) {
+				throw new Error('The event has been disposed.');
+			}
+
 			var event = this._events[eventName];
 
 			if (event) {
@@ -23,6 +25,10 @@ module.exports = function() {
 
 		register: function(eventName, handler) {
 			assert.argumentIsRequired(eventName, 'eventName', String);
+
+			if (this.getIsDisposed()) {
+				throw new Error('The event has been disposed.');
+			}
 
 			var event = this._events[eventName];
 
@@ -87,6 +93,18 @@ module.exports = function() {
 
 		hasKey(key) {
 			return this._events.hasOwnProperty(key);
+		},
+
+		_onDispose: function() {
+			var keys = this.getKeys();
+
+			for (var i = 0; i < keys.length; i++) {
+				var key = keys[i];
+
+				this._events[key].dispose();
+			}
+
+			this._events = { };
 		},
 
 		toString() {
