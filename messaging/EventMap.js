@@ -36,7 +36,7 @@ module.exports = function() {
 				event = this._events[eventName] = new Event(this);
 			}
 
-			event.register(handler);
+			return event.register(handler);
 		},
 
 		unregister: function(eventName, handler) {
