@@ -33,6 +33,16 @@ module.exports = function() {
 			});
 		},
 
+		unregister: function(handler) {
+			assert.argumentIsRequired(handler, 'handler', Function);
+
+			removeRegistration.call(this, handler);
+		},
+
+		clear: function() {
+			this._observers = [];
+		},
+
 		fire: function(data) {
 			if (this.getIsDisposed()) {
 				throw new Error('The event has been disposed.');
@@ -45,6 +55,10 @@ module.exports = function() {
 
 				observer(data, this._sender);
 			}
+		},
+
+		getIsEmpty: function() {
+			return this._observers.length === 0;
 		},
 
 		_onDispose: function() {
