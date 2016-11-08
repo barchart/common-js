@@ -1,11 +1,14 @@
-var Event = require('./Event');
 var assert = require('./../lang/assert');
+var Disposable = require('./../lang/Disposable');
+var Event = require('./Event');
 
 module.exports = (() => {
 	'use strict';
 
-	class EventMap {
+	class EventMap extends Disposable {
 		constructor() {
+			super();
+
 			this._events = {};
 		}
 
@@ -20,13 +23,17 @@ module.exports = (() => {
 		register(eventName, handler) {
 			assert.argumentIsRequired(eventName, 'eventName', String);
 
+			if (this.getIsDisposed()) {
+				throw new Error('The event has been disposed.');
+			}
+
 			let event = this._events[eventName];
 
 			if (!event) {
 				event = this._events[eventName] = new Event(this);
 			}
 
-			event.register(handler);
+			return event.register(handler);
 		}
 
 		unregister(eventName, handler) {
@@ -81,8 +88,21 @@ module.exports = (() => {
 			return keys;
 		}
 
+
 		hasKey(key) {
 			return this._events.hasOwnProperty(key);
+		}
+
+		_onDispose() {
+			let keys = this.getKeys();
+
+			for (let i = 0; i < keys.length; i++) {
+				var key = keys[i];
+
+				this._events[key].dispose();
+			}
+
+			this._events = { };
 		}
 
 		toString() {

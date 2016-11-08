@@ -27,6 +27,7 @@ module.exports = (() => {
 			});
 		}
 
+
 		unregister(handler) {
 			assert.argumentIsRequired(handler, 'handler', Function);
 
