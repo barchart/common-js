@@ -86,7 +86,7 @@ module.exports = (() => {
 
             const scheduleBackoff = (failureCount) => {
                 if (maximumAttempts > 0 && failureCount > maximumAttempts) {
-                    return Promise.reject(`Maximum failures reaacked for ${actionDescription}`);
+                    return Promise.reject(`Maximum failures reached for ${actionDescription}`);
                 }
 
                 let backoffDelay;
