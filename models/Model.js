@@ -181,7 +181,7 @@ module.exports = (() => {
 				this._transactionData = this._transactionData || {};
 				this._transactionData[propertyName] = propertyValue;
 
-				propertyObserver();
+				propertyObserver(this);
 
 				if (implicit) {
 					this.endTransaction();
