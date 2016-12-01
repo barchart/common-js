@@ -64,7 +64,7 @@ module.exports = (() => {
 		{ short: 'Sep' },
 		{ short: 'Oct' },
 		{ short: 'Nov' },
-		{ short: 'Dev' }
+		{ short: 'Dec' }
 	];
 
 	return utilities;
