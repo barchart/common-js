@@ -1,6 +1,7 @@
 var AndSpecification = require('./AndSpecification');
 var EqualsSpecification = require('./EqualsSpecification');
 var GreaterThanSpecification = require('./GreaterThanSpecification');
+var NumericSpecification = require('./NumericSpecification');
 var LessThanSpecification = require('./LessThanSpecification');
 var OrSpecification = require('./OrSpecification');
 var Specification = require('./Specification');
@@ -13,6 +14,7 @@ module.exports = function() {
 		AndSpecification: AndSpecification,
 		EqualsSpecification: EqualsSpecification,
 		GreaterThanSpecification: GreaterThanSpecification,
+		NumericSpecification: NumericSpecification,
 		LessThanSpecification: LessThanSpecification,
 		OrSpecification: OrSpecification,
 		Specification: Specification,
