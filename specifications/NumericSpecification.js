@@ -1,21 +1,23 @@
-var assert = require('./../lang/assert');
+var is = require('./../lang/is');
 
 var Specification = require('./Specification');
 
-module.exports = function() {
-	var NumericSpecification = Specification.extend({
-		init: function() {
-			this._super();
-		},
+module.exports = (() => {
+	'use strict';
 
-		_evaluate: function(data) {
-			return typeof data === 'number';
-		},
+	class NumericSpecification extends Specification {
+		constructor() {
+			super();
+		}
 
-		toString: function() {
+		_evaluate(data) {
+			return is.number(data);
+		}
+
+		toString() {
 			return '[NumericSpecification]';
 		}
-	});
+	}
 
 	return NumericSpecification;
-}();
+})();
