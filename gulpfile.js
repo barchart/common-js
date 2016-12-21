@@ -47,7 +47,7 @@ gulp.task('commit-changes', function () {
 });
 
 gulp.task('push-changes', function (cb) {
-    git.push('origin', 'master', cb);
+    git.push('origin', 'bryan/es6-upgrade', cb);
 });
 
 gulp.task('create-tag', function (cb) {
