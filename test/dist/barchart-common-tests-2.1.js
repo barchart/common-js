@@ -8778,8 +8778,6 @@ describe('When merging objects', function () {
 	describe('that have nesting', function () {
 		beforeEach(function () {
 			merged = object.merge(a = { a: { a: 1, b: 0 } }, b = { a: { b: 2, z: 26 } });
-
-			console.log(merged);
 		});
 
 		it('should not provide a reference to the (nested) first source', function () {
