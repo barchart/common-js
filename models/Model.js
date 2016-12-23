@@ -1,4 +1,5 @@
 var assert = require('./../lang/assert');
+var is = require('./../lang/is');
 var Disposable = require('./../lang/Disposable');
 var Event = require('./../messaging/Event');
 
@@ -159,18 +160,20 @@ module.exports = (() => {
 	}
 
 	function createProperty(propertyName, propertyObserver, equalityPredicate) {
-		let propertyValue;
+		let propertyValue = null;
 
 		Object.defineProperty(this, propertyName, {
 			get: () => {
 				return propertyValue;
 			},
 			set: (value) => {
-				if (equalityPredicate(propertyValue, value)) {
+				const valueToAssign = is.undefined(value) ? null : value;
+
+				if (equalityPredicate(propertyValue, valueToAssign)) {
 					return;
 				}
 
-				propertyValue = value;
+				propertyValue = valueToAssign;
 
 				const implicit = !this._transactionOpen;
 
