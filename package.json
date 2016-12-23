@@ -23,9 +23,9 @@
     "JavaScript"
   ],
   "dependencies": {
-    "moment-timezone": "^0.5.0",
+    "moment-timezone": "0.5.11",
     "log4js": "0.6.33",
-    "xhr": "^2.2.0"
+    "xhr": "2.3.2"
   },
   "devDependencies": {
     "babel-plugin-external-helpers-2": "^6.3.13",
