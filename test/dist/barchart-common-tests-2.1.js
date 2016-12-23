@@ -2451,6 +2451,7 @@ function _inherits(subClass, superClass) {
 }
 
 var assert = require('./../lang/assert');
+var is = require('./../lang/is');
 var Disposable = require('./../lang/Disposable');
 var Event = require('./../messaging/Event');
 
@@ -2633,18 +2634,20 @@ module.exports = function () {
 	function createProperty(propertyName, propertyObserver, equalityPredicate) {
 		var _this2 = this;
 
-		var propertyValue = void 0;
+		var propertyValue = null;
 
 		Object.defineProperty(this, propertyName, {
 			get: function get() {
 				return propertyValue;
 			},
 			set: function set(value) {
-				if (equalityPredicate(propertyValue, value)) {
+				var valueToAssign = is.undefined(value) ? null : value;
+
+				if (equalityPredicate(propertyValue, valueToAssign)) {
 					return;
 				}
 
-				propertyValue = value;
+				propertyValue = valueToAssign;
 
 				var implicit = !_this2._transactionOpen;
 
@@ -2667,7 +2670,7 @@ module.exports = function () {
 	return Model;
 }();
 
-},{"./../lang/Disposable":12,"./../lang/assert":14,"./../messaging/Event":24}],27:[function(require,module,exports){
+},{"./../lang/Disposable":12,"./../lang/assert":14,"./../lang/is":17,"./../messaging/Event":24}],27:[function(require,module,exports){
 
 },{}],28:[function(require,module,exports){
 arguments[4][27][0].apply(exports,arguments)
@@ -10297,6 +10300,11 @@ describe('When an Model is constructed with "firstName" and "lastName" propertie
 			expect(binding instanceof Disposable).toEqual(true);
 		});
 
+		it('should return null values for each property', function () {
+			expect(model.firstName).toBe(null);
+			expect(model.lastName).toBe(null);
+		});
+
 		describe('and both properties are updated', function () {
 			var data;
 
@@ -10305,7 +10313,7 @@ describe('When an Model is constructed with "firstName" and "lastName" propertie
 				model.lastName = 'Ingle';
 			});
 
-			it('two transactions should be occur', function () {
+			it('two transactions should occur', function () {
 				expect(spy.calls.count()).toEqual(2);
 			});
 
@@ -10318,7 +10326,7 @@ describe('When an Model is constructed with "firstName" and "lastName" propertie
 				expect(argsOne[1]).toBe(model);
 			});
 
-			it('the first transaction should have updated the "last name" property', function () {
+			it('the second transaction should have updated the "last name" property', function () {
 				var argsOne = spy.calls.argsFor(1);
 
 				expect(argsOne[0].lastName).toEqual('Ingle');
@@ -10338,7 +10346,7 @@ describe('When an Model is constructed with "firstName" and "lastName" propertie
 				});
 			});
 
-			it('one transactions should be occur', function () {
+			it('one transaction should occur', function () {
 				expect(spy.calls.count()).toEqual(1);
 			});
 
@@ -10350,6 +10358,53 @@ describe('When an Model is constructed with "firstName" and "lastName" propertie
 				expect(argsOne[0].sequence).toEqual(0);
 
 				expect(argsOne[1]).toBe(model);
+			});
+		});
+
+		describe('and both properties are to undefined values', function () {
+			var data;
+
+			beforeEach(function () {
+				model.firstName = undefined;
+				model.lastName = undefined;
+			});
+
+			it('no transactions should occur', function () {
+				expect(spy.calls.count()).toEqual(0);
+			});
+
+			it('the properties should return null values', function () {
+				expect(model.firstName).toBe(null);
+				expect(model.lastName).toBe(null);
+			});
+
+			describe('and both are updated to non-null values', function () {
+				beforeEach(function () {
+					model.firstName = 0;
+					model.lastName = '';
+				});
+
+				it('two transactions should occur', function () {
+					expect(spy.calls.count()).toEqual(2);
+				});
+
+				it('the first transaction should have updated the "first name" property to zero', function () {
+					var argsOne = spy.calls.argsFor(0);
+
+					expect(argsOne[0].firstName).toBe(0);
+					expect(argsOne[0].sequence).toEqual(0);
+
+					expect(argsOne[1]).toBe(model);
+				});
+
+				it('the second transaction should have updated the "last name" property to a zero-length string', function () {
+					var argsOne = spy.calls.argsFor(1);
+
+					expect(argsOne[0].lastName).toBe('');
+					expect(argsOne[0].sequence).toEqual(1);
+
+					expect(argsOne[1]).toBe(model);
+				});
 			});
 		});
 	});

@@ -2645,6 +2645,7 @@ function _inherits(subClass, superClass) {
 }
 
 var assert = require('./../lang/assert');
+var is = require('./../lang/is');
 var Disposable = require('./../lang/Disposable');
 var Event = require('./../messaging/Event');
 
@@ -2827,18 +2828,20 @@ module.exports = function () {
 	function createProperty(propertyName, propertyObserver, equalityPredicate) {
 		var _this2 = this;
 
-		var propertyValue = void 0;
+		var propertyValue = null;
 
 		Object.defineProperty(this, propertyName, {
 			get: function get() {
 				return propertyValue;
 			},
 			set: function set(value) {
-				if (equalityPredicate(propertyValue, value)) {
+				var valueToAssign = is.undefined(value) ? null : value;
+
+				if (equalityPredicate(propertyValue, valueToAssign)) {
 					return;
 				}
 
-				propertyValue = value;
+				propertyValue = valueToAssign;
 
 				var implicit = !_this2._transactionOpen;
 
@@ -2861,7 +2864,7 @@ module.exports = function () {
 	return Model;
 }();
 
-},{"./../lang/Disposable":15,"./../lang/assert":17,"./../messaging/Event":31}],35:[function(require,module,exports){
+},{"./../lang/Disposable":15,"./../lang/assert":17,"./../lang/is":23,"./../messaging/Event":31}],35:[function(require,module,exports){
 'use strict';
 
 var Model = require('./Model');
