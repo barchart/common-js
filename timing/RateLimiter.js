@@ -1,5 +1,3 @@
-var log4js = require('log4js');
-
 var assert = require('./../lang/assert');
 var Disposable = require('./../lang/Disposable');
 
@@ -8,8 +6,6 @@ var Scheduler = require('./Scheduler');
 
 module.exports = (() => {
 	'use strict';
-
-	const logger = log4js.getLogger('common/timing/RateLimiter');
 
 	class RateLimiter extends Disposable {
 		constructor(windowMaximumCount, windowDurationMilliseconds) {

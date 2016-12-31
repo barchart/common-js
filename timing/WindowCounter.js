@@ -1,12 +1,8 @@
-var log4js = require('log4js');
-
 var assert = require('./../lang/assert');
 var Queue = require('./../collections/Queue');
 
 module.exports = (() => {
 	'use strict';
-
-	const logger = log4js.getLogger('common/timing/WindowCounter');
 
 	class WindowCounter {
 		constructor(duration, windows) {
@@ -78,7 +74,7 @@ module.exports = (() => {
 
 			if (this._windows.length > this._maximum) {
 				const removed = this._windows.pop();
-				
+
 				this._previousCount = this._previousCount - removed.getCount();
 			}
 		}
