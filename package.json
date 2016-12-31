@@ -24,7 +24,7 @@
   ],
   "dependencies": {
     "moment-timezone": "0.5.11",
-    "log4js": "0.6.33",
+    "log4js": "1.1.0",
     "xhr": "2.3.2"
   },
   "devDependencies": {
