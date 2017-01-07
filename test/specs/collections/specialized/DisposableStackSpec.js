@@ -38,6 +38,14 @@ describe('When an DisposableStack is constructed', function() {
 			it('the dispose logic should have been triggered', function() {
 				expect(spyOne).toHaveBeenCalled();
 			});
+
+			describe('and another item is added to the stack', function() {
+				it('should throw an error', function() {
+					expect(function() {
+						disposeStack.push(Disposable.fromAction(function() { }));
+					}).toThrow();
+				});
+			});
 		});
 
 		describe('and the another item is added to the stack', function() {
