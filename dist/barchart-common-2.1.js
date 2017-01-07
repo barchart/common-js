@@ -516,6 +516,7 @@ var Stack = require('./../Stack');
 
 var assert = require('./../../lang/assert');
 var Disposable = require('./../../lang/Disposable');
+var is = require('./../../lang/is');
 
 module.exports = function () {
 	'use strict';
@@ -572,7 +573,7 @@ module.exports = function () {
 				return promise.then(function (b) {
 					var bindings = void 0;
 
-					if (b.isArray) {
+					if (is.array(b)) {
 						bindings = b;
 					} else {
 						bindings = [b];
@@ -591,7 +592,7 @@ module.exports = function () {
 	return DisposableStack;
 }();
 
-},{"./../../lang/Disposable":15,"./../../lang/assert":17,"./../Stack":2}],8:[function(require,module,exports){
+},{"./../../lang/Disposable":15,"./../../lang/assert":17,"./../../lang/is":23,"./../Stack":2}],8:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
