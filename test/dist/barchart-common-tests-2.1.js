@@ -531,6 +531,26 @@ module.exports = function () {
 
 				return returnRef;
 			}
+		}, {
+			key: 'pushPromise',
+			value: function pushPromise(stack, promise) {
+				assert.argumentIsRequired(stack, 'stack', DisposableStack, 'DisposableStack');
+				assert.argumentIsRequired(promise, 'promise');
+
+				return promise.then(function (b) {
+					var bindings = void 0;
+
+					if (b.isArray) {
+						bindings = b;
+					} else {
+						bindings = [b];
+					}
+
+					bindings.forEach(function (binding) {
+						return stack.push(binding);
+					});
+				});
+			}
 		}]);
 
 		return DisposableStack;
@@ -3599,6 +3619,14 @@ describe('When an DisposableStack is constructed', function () {
 
 			it('the dispose logic should have been triggered', function () {
 				expect(spyOne).toHaveBeenCalled();
+			});
+
+			describe('and another item is added to the stack', function () {
+				it('should throw an error', function () {
+					expect(function () {
+						disposeStack.push(Disposable.fromAction(function () {}));
+					}).toThrow();
+				});
 			});
 		});
 
