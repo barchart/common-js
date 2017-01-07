@@ -40,6 +40,23 @@ module.exports = (() => {
 
 			return returnRef;
 		}
+
+		static pushPromise(stack, promise) {
+			assert.argumentIsRequired(stack, 'stack', DisposableStack, 'DisposableStack');
+			assert.argumentIsRequired(promise, 'promise');
+
+			return promise.then((b) => {
+				let bindings;
+
+				if (b.isArray) {
+					bindings = b;
+				} else {
+					bindings = [ b ];
+				}
+
+				bindings.forEach(binding => stack.push(binding));
+			});
+		}
 	}
 
 	return DisposableStack;
