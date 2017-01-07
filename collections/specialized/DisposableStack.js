@@ -2,6 +2,7 @@ var Stack = require('./../Stack');
 
 var assert = require('./../../lang/assert');
 var Disposable = require('./../../lang/Disposable');
+var is = require('./../../lang/is');
 
 module.exports = (() => {
 	'use strict';
@@ -48,7 +49,7 @@ module.exports = (() => {
 			return promise.then((b) => {
 				let bindings;
 
-				if (b.isArray) {
+				if (is.array(b)) {
 					bindings = b;
 				} else {
 					bindings = [ b ];
