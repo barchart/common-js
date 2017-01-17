@@ -127,3 +127,29 @@ describe('When merging objects', function() {
 		});
 	});
 });
+
+describe('When when extracting keys', function() {
+	describe('from an object that has "a" and "b" properties', function() {
+		var keys;
+
+		beforeEach(function() {
+			keys = object.keys({ a: 1, b: 1 });
+		});
+
+		it('should have with two items', function() {
+			expect(keys.length).toEqual(2);
+		});
+
+		it('should contain an "a" value', function() {
+			expect(keys[0] === 'a' || keys[1] === 'a').toEqual(true);
+		});
+
+		it('should contain a "b" value', function() {
+			expect(keys[0] === 'b' || keys[1] === 'b').toEqual(true);
+		});
+
+		it('should not contain a "toString" value', function() {
+			expect(keys[0] === 'toString' || keys[1] === 'toString').toEqual(false);
+		});
+	});
+});

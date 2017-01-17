@@ -7,6 +7,8 @@ var network = require('./network/index');
 var specifications = require('./specifications/index');
 var timing = require('./timing/index');
 
+var object = require('./lang/object');
+
 module.exports = (() => {
 	'use strict';
 
@@ -20,7 +22,7 @@ module.exports = (() => {
 		Specifications: specifications
 	};
 
-	Object.keys(lang).forEach((key) => {
+	object.keys(lang).forEach((key) => {
 		namespaces[key] = lang[key];
 	});
 

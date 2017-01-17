@@ -1,5 +1,6 @@
 var assert = require('./../lang/assert');
 var Disposable = require('./../lang/Disposable');
+var object = require('./../lang/object');
 
 module.exports = (() => {
     'use strict';
@@ -113,11 +114,11 @@ module.exports = (() => {
         }
 
         _onDispose() {
-            Object.keys(this._timeoutBindings).forEach((key) => {
+            object.keys(this._timeoutBindings).forEach((key) => {
                 this._timeoutBindings[key].dispose();
             });
 
-            Object.keys(this._intervalBindings).forEach((key) => {
+            object.keys(this._intervalBindings).forEach((key) => {
                 this._intervalBindings[key].dispose();
             });
 

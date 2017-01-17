@@ -13,7 +13,7 @@ module.exports = (() => {
 					return object.clone(targetItem);
 				});
 			} else if (is.object(target)) {
-				c = Object.keys(target).reduce((accumulator, key) => {
+				c = object.keys(target).reduce((accumulator, key) => {
 					accumulator[key] = object.clone(target[key]);
 
 					return accumulator;
@@ -32,7 +32,7 @@ module.exports = (() => {
 			const mergeSource = is.object(b) && !is.array(b);
 
 			if (mergeTarget && mergeSource) {
-				const properties = array.unique(Object.keys(a).concat(Object.keys(b)));
+				const properties = array.unique(object.keys(a).concat(object.keys(b)));
 
 				m = properties.reduce((accumulator, property) => {
 					accumulator[property] = object.merge(a[property], b[property]);
@@ -46,6 +46,18 @@ module.exports = (() => {
 			}
 
 			return m;
+		},
+
+		keys(target) {
+			const keys = [];
+
+			for (var k in target) {
+				if (target.hasOwnProperty(k)) {
+					keys.push(k);
+				}
+			}
+
+			return keys;
 		}
 	};
 
