@@ -1326,6 +1326,8 @@ var network = require('./network/index');
 var specifications = require('./specifications/index');
 var timing = require('./timing/index');
 
+var object = require('./lang/object');
+
 module.exports = function () {
 	'use strict';
 
@@ -1339,14 +1341,14 @@ module.exports = function () {
 		Specifications: specifications
 	};
 
-	Object.keys(lang).forEach(function (key) {
+	object.keys(lang).forEach(function (key) {
 		namespaces[key] = lang[key];
 	});
 
 	return namespaces;
 }();
 
-},{"./collections/index":4,"./commands/index":13,"./lang/index":22,"./messaging/index":33,"./models/index":35,"./network/index":36,"./specifications/index":95,"./timing/index":98}],15:[function(require,module,exports){
+},{"./collections/index":4,"./commands/index":13,"./lang/index":22,"./lang/object":26,"./messaging/index":33,"./models/index":35,"./network/index":36,"./specifications/index":95,"./timing/index":98}],15:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -2052,7 +2054,7 @@ module.exports = function () {
 					return object.clone(targetItem);
 				});
 			} else if (is.object(target)) {
-				c = Object.keys(target).reduce(function (accumulator, key) {
+				c = object.keys(target).reduce(function (accumulator, key) {
 					accumulator[key] = object.clone(target[key]);
 
 					return accumulator;
@@ -2070,7 +2072,7 @@ module.exports = function () {
 			var mergeSource = is.object(b) && !is.array(b);
 
 			if (mergeTarget && mergeSource) {
-				var properties = array.unique(Object.keys(a).concat(Object.keys(b)));
+				var properties = array.unique(object.keys(a).concat(object.keys(b)));
 
 				m = properties.reduce(function (accumulator, property) {
 					accumulator[property] = object.merge(a[property], b[property]);
@@ -2084,6 +2086,17 @@ module.exports = function () {
 			}
 
 			return m;
+		},
+		keys: function keys(target) {
+			var keys = [];
+
+			for (var k in target) {
+				if (target.hasOwnProperty(k)) {
+					keys.push(k);
+				}
+			}
+
+			return keys;
 		}
 	};
 
@@ -16739,6 +16752,7 @@ function _inherits(subClass, superClass) {
 
 var assert = require('./../lang/assert');
 var Disposable = require('./../lang/Disposable');
+var object = require('./../lang/object');
 
 module.exports = function () {
     'use strict';
@@ -16867,11 +16881,11 @@ module.exports = function () {
             value: function _onDispose() {
                 var _this5 = this;
 
-                Object.keys(this._timeoutBindings).forEach(function (key) {
+                object.keys(this._timeoutBindings).forEach(function (key) {
                     _this5._timeoutBindings[key].dispose();
                 });
 
-                Object.keys(this._intervalBindings).forEach(function (key) {
+                object.keys(this._intervalBindings).forEach(function (key) {
                     _this5._intervalBindings[key].dispose();
                 });
 
@@ -16906,7 +16920,7 @@ module.exports = function () {
     return Scheduler;
 }();
 
-},{"./../lang/Disposable":15,"./../lang/assert":17}],98:[function(require,module,exports){
+},{"./../lang/Disposable":15,"./../lang/assert":17,"./../lang/object":26}],98:[function(require,module,exports){
 'use strict';
 
 var RateLimiter = require('./RateLimiter');

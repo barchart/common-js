@@ -1899,7 +1899,7 @@ module.exports = function () {
 					return object.clone(targetItem);
 				});
 			} else if (is.object(target)) {
-				c = Object.keys(target).reduce(function (accumulator, key) {
+				c = object.keys(target).reduce(function (accumulator, key) {
 					accumulator[key] = object.clone(target[key]);
 
 					return accumulator;
@@ -1917,7 +1917,7 @@ module.exports = function () {
 			var mergeSource = is.object(b) && !is.array(b);
 
 			if (mergeTarget && mergeSource) {
-				var properties = array.unique(Object.keys(a).concat(Object.keys(b)));
+				var properties = array.unique(object.keys(a).concat(object.keys(b)));
 
 				m = properties.reduce(function (accumulator, property) {
 					accumulator[property] = object.merge(a[property], b[property]);
@@ -1931,6 +1931,17 @@ module.exports = function () {
 			}
 
 			return m;
+		},
+		keys: function keys(target) {
+			var keys = [];
+
+			for (var k in target) {
+				if (target.hasOwnProperty(k)) {
+					keys.push(k);
+				}
+			}
+
+			return keys;
 		}
 	};
 
@@ -6267,6 +6278,32 @@ describe('When merging objects', function () {
 	});
 });
 
+describe('When when extracting keys', function () {
+	describe('from an object that has "a" and "b" properties', function () {
+		var keys;
+
+		beforeEach(function () {
+			keys = object.keys({ a: 1, b: 1 });
+		});
+
+		it('should have with two items', function () {
+			expect(keys.length).toEqual(2);
+		});
+
+		it('should contain an "a" value', function () {
+			expect(keys[0] === 'a' || keys[1] === 'a').toEqual(true);
+		});
+
+		it('should contain a "b" value', function () {
+			expect(keys[0] === 'b' || keys[1] === 'b').toEqual(true);
+		});
+
+		it('should not contain a "toString" value', function () {
+			expect(keys[0] === 'toString' || keys[1] === 'toString').toEqual(false);
+		});
+	});
+});
+
 },{"./../../../lang/object":20}],53:[function(require,module,exports){
 'use strict';
 
@@ -8993,6 +9030,7 @@ function _inherits(subClass, superClass) {
 
 var assert = require('./../lang/assert');
 var Disposable = require('./../lang/Disposable');
+var object = require('./../lang/object');
 
 module.exports = function () {
     'use strict';
@@ -9121,11 +9159,11 @@ module.exports = function () {
             value: function _onDispose() {
                 var _this5 = this;
 
-                Object.keys(this._timeoutBindings).forEach(function (key) {
+                object.keys(this._timeoutBindings).forEach(function (key) {
                     _this5._timeoutBindings[key].dispose();
                 });
 
-                Object.keys(this._intervalBindings).forEach(function (key) {
+                object.keys(this._intervalBindings).forEach(function (key) {
                     _this5._intervalBindings[key].dispose();
                 });
 
@@ -9160,7 +9198,7 @@ module.exports = function () {
     return Scheduler;
 }();
 
-},{"./../lang/Disposable":12,"./../lang/assert":14}],71:[function(require,module,exports){
+},{"./../lang/Disposable":12,"./../lang/assert":14,"./../lang/object":20}],71:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
