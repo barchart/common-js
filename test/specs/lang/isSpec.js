@@ -37,7 +37,7 @@ describe('When checking the number 3', function() {
 		expect(is.boolean(candidate)).toEqual(false);
 	});
 
-	it("it should not be and object", function() {
+	it("it should not be an object", function() {
 		expect(is.object(candidate)).toEqual(false);
 	});
 
@@ -59,7 +59,7 @@ describe('When checking the Number.NaN', function() {
 		candidate = Number.NaN;
 	});
 
-	it("it should be a number", function() {
+	it("it should not be a number", function() {
 		expect(is.number(candidate)).toEqual(false);
 	});
 
@@ -87,7 +87,7 @@ describe('When checking the Number.NaN', function() {
 		expect(is.boolean(candidate)).toEqual(false);
 	});
 
-	it("it should not be and object", function() {
+	it("it should not be an object", function() {
 		expect(is.object(candidate)).toEqual(false);
 	});
 
@@ -137,7 +137,7 @@ describe('When checking the string "3"', function() {
 		expect(is.boolean(candidate)).toEqual(false);
 	});
 
-	it("it should not be and object", function() {
+	it("it should not be an object", function() {
 		expect(is.object(candidate)).toEqual(false);
 	});
 
@@ -175,7 +175,7 @@ describe('When checking the date 08/29/2016', function() {
 		expect(is.date(candidate)).toEqual(true);
 	});
 
-	it("it should be and object", function() {
+	it("it should be an object", function() {
 		expect(is.object(candidate)).toEqual(true);
 	});
 
@@ -237,7 +237,7 @@ describe('When checking the "expect" function', function() {
 		expect(is.boolean(candidate)).toEqual(false);
 	});
 
-	it("it should not be and object", function() {
+	it("it should not be an object", function() {
 		expect(is.object(candidate)).toEqual(false);
 	});
 
@@ -287,7 +287,7 @@ describe('When checking an empty object', function() {
 		expect(is.boolean(candidate)).toEqual(false);
 	});
 
-	it("it should be and object", function() {
+	it("it should be an object", function() {
 		expect(is.object(candidate)).toEqual(true);
 	});
 
@@ -337,7 +337,7 @@ describe('When checking a null value', function() {
 		expect(is.boolean(candidate)).toEqual(false);
 	});
 
-	it("it should not be and object", function() {
+	it("it should not be an object", function() {
 		expect(is.object(candidate)).toEqual(false);
 	});
 
@@ -387,7 +387,7 @@ describe('When checking an undefined value', function() {
 		expect(is.boolean(candidate)).toEqual(false);
 	});
 
-	it("it should not be and object", function() {
+	it("it should not be an object", function() {
 		expect(is.object(candidate)).toEqual(false);
 	});
 
