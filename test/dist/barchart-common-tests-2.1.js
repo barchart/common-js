@@ -20,12 +20,26 @@ function _classCallCheck(instance, Constructor) {
 module.exports = function () {
 	'use strict';
 
+	/**
+  * A queue collection.
+  *
+  * @public
+  */
+
 	var Queue = function () {
 		function Queue() {
 			_classCallCheck(this, Queue);
 
 			this._array = [];
 		}
+
+		/**
+   * Adds an item to the queue.
+   *
+   * @public
+   * @param {object} item
+   * @returns {object} - The item added to the queue.
+   */
 
 		_createClass(Queue, [{
 			key: 'enqueue',
@@ -34,6 +48,14 @@ module.exports = function () {
 
 				return item;
 			}
+
+			/**
+    * Removes the next item from the queue and returns it.
+    *
+    * @public
+    * @returns {object} - The item added to the queue.
+    */
+
 		}, {
 			key: 'dequeue',
 			value: function dequeue() {
@@ -43,6 +65,14 @@ module.exports = function () {
 
 				return this._array.shift();
 			}
+
+			/**
+    * Returns the next item in the queue (without removing it).
+    *
+    * @public
+    * @returns {object} - The item added to the queue.
+    */
+
 		}, {
 			key: 'peek',
 			value: function peek() {
@@ -52,6 +82,14 @@ module.exports = function () {
 
 				return this._array[0];
 			}
+
+			/**
+    * Returns true if the queue is empty; otherwise false.
+    *
+    * @public
+    * @returns {boolean}
+    */
+
 		}, {
 			key: 'empty',
 			value: function empty() {
@@ -8706,7 +8744,7 @@ describe('When a RateLimiter is constructed (2 execution per 25 milliseconds)', 
 	});
 });
 
-},{"./../../../timing/RateLimiter":69}],67:[function(require,module,exports){
+},{"./../../../timing/RateLimiter":70}],67:[function(require,module,exports){
 'use strict';
 
 var Scheduler = require('./../../../timing/Scheduler');
@@ -8781,7 +8819,96 @@ describe('When a Scheduler is constructed', function () {
 	});
 });
 
-},{"./../../../timing/Scheduler":70}],68:[function(require,module,exports){
+},{"./../../../timing/Scheduler":71}],68:[function(require,module,exports){
+'use strict';
+
+var Serializer = require('./../../../timing/Serializer');
+
+describe('When a Serializer is used to schedule four tasks', function () {
+	'use strict';
+
+	var serializer;
+
+	var spies;
+	var promises;
+	var results;
+
+	beforeEach(function () {
+		serializer = new Serializer();
+
+		spies = [];
+		promises = [];
+		results = [];
+
+		for (var i = 0; i < 4; i++) {
+			var spy = getSpy(results, false);
+
+			spies.push(spy);
+			promises.push(serializer.enqueue(spy));
+		}
+	});
+
+	describe('and the tasks complete', function () {
+		beforeEach(function (done) {
+			Promise.all(promises).then(function () {
+				done();
+			});
+		});
+
+		it('the first task should have been executed', function () {
+			expect(spies[0]).toHaveBeenCalled();
+		});
+
+		it('the second task should have been executed', function () {
+			expect(spies[1]).toHaveBeenCalled();
+		});
+
+		it('the third task should have been executed', function () {
+			expect(spies[2]).toHaveBeenCalled();
+		});
+
+		it('the fourth task should have been executed', function () {
+			expect(spies[3]).toHaveBeenCalled();
+		});
+
+		it('the first task should complete before the second task starts', function () {
+			expect(results[0].end <= results[1].start).toEqual(true);
+		});
+
+		it('the second task should complete before the third task starts', function () {
+			expect(results[1].end <= results[2].start).toEqual(true);
+		});
+
+		it('the third task should complete before the fourth task starts', function () {
+			expect(results[2].end <= results[3].start).toEqual(true);
+		});
+	});
+});
+
+function getSpy(results, fail) {
+	return jasmine.createSpy('spy').and.callFake(function () {
+		return new Promise(function (resolveCallback, rejectCallback) {
+			var start = new Date();
+
+			setTimeout(function () {
+				var end = new Date();
+
+				results.push({
+					start: start.getTime(),
+					end: end.getTime()
+				});
+
+				if (fail) {
+					rejectCallback();
+				} else {
+					resolveCallback();
+				}
+			}, 5);
+		});
+	});
+}
+
+},{"./../../../timing/Serializer":72}],69:[function(require,module,exports){
 'use strict';
 
 var WindowCounter = require('./../../../timing/WindowCounter');
@@ -8847,7 +8974,7 @@ describe('When a WindowCounter is constructed', function () {
 	});
 });
 
-},{"./../../../timing/WindowCounter":71}],69:[function(require,module,exports){
+},{"./../../../timing/WindowCounter":73}],70:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -8995,7 +9122,7 @@ module.exports = function () {
 	return RateLimiter;
 }();
 
-},{"./../collections/Queue":1,"./../lang/Disposable":12,"./../lang/assert":14,"./Scheduler":70}],70:[function(require,module,exports){
+},{"./../collections/Queue":1,"./../lang/Disposable":12,"./../lang/assert":14,"./Scheduler":71}],71:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -9198,7 +9325,107 @@ module.exports = function () {
     return Scheduler;
 }();
 
-},{"./../lang/Disposable":12,"./../lang/assert":14,"./../lang/object":20}],71:[function(require,module,exports){
+},{"./../lang/Disposable":12,"./../lang/assert":14,"./../lang/object":20}],72:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () {
+	function defineProperties(target, props) {
+		for (var i = 0; i < props.length; i++) {
+			var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+		}
+	}return function (Constructor, protoProps, staticProps) {
+		if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+	};
+}();
+
+function _classCallCheck(instance, Constructor) {
+	if (!(instance instanceof Constructor)) {
+		throw new TypeError("Cannot call a class as a function");
+	}
+}
+
+var assert = require('./../lang/assert');
+
+var Queue = require('./../collections/Queue');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * Processes actions in sequence.
+  *
+  * @public
+  */
+
+	var Serializer = function () {
+		function Serializer() {
+			_classCallCheck(this, Serializer);
+
+			this._workQueue = new Queue();
+
+			this._running = false;
+		}
+
+		/**
+   * Adds a new action to the processing queue. If the action
+   * is asynchronous, the action should return a promise.
+   *
+   * @public
+   * @param {Function} actionToEnqueue
+   * @returns {Promise} - A promise which resolves once the action has been processed.
+   */
+
+		_createClass(Serializer, [{
+			key: 'enqueue',
+			value: function enqueue(actionToEnqueue) {
+				var _this = this;
+
+				assert.argumentIsRequired(actionToEnqueue, 'actionToEnqueue', Function);
+
+				return new Promise(function (resolveCallback, rejectCallback) {
+					_this._workQueue.enqueue(function () {
+						return Promise.resolve().then(function () {
+							return actionToEnqueue();
+						}).then(function (result) {
+							resolveCallback(result);
+						}).catch(function (error) {
+							rejectCallback(error);
+						}).then(function () {
+							_this._running = false;
+
+							checkStart.call(_this);
+						});
+					});
+
+					checkStart.call(_this);
+				});
+			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[Serializer]';
+			}
+		}]);
+
+		return Serializer;
+	}();
+
+	function checkStart() {
+		if (this._workQueue.empty() || this._running) {
+			return;
+		}
+
+		this._running = true;
+
+		var actionToExecute = this._workQueue.dequeue();
+
+		actionToExecute();
+	}
+
+	return Serializer;
+}();
+
+},{"./../collections/Queue":1,"./../lang/assert":14}],73:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
@@ -9359,4 +9586,4 @@ module.exports = function () {
 	return WindowCounter;
 }();
 
-},{"./../collections/Queue":1,"./../lang/assert":14}]},{},[37,38,39,40,41,35,36,42,43,44,46,47,48,45,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68]);
+},{"./../collections/Queue":1,"./../lang/assert":14}]},{},[37,38,39,40,41,35,36,42,43,44,46,47,48,45,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69]);

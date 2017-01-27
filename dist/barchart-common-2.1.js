@@ -20,12 +20,26 @@ function _classCallCheck(instance, Constructor) {
 module.exports = function () {
 	'use strict';
 
+	/**
+  * A queue collection.
+  *
+  * @public
+  */
+
 	var Queue = function () {
 		function Queue() {
 			_classCallCheck(this, Queue);
 
 			this._array = [];
 		}
+
+		/**
+   * Adds an item to the queue.
+   *
+   * @public
+   * @param {object} item
+   * @returns {object} - The item added to the queue.
+   */
 
 		_createClass(Queue, [{
 			key: 'enqueue',
@@ -34,6 +48,14 @@ module.exports = function () {
 
 				return item;
 			}
+
+			/**
+    * Removes the next item from the queue and returns it.
+    *
+    * @public
+    * @returns {object} - The item added to the queue.
+    */
+
 		}, {
 			key: 'dequeue',
 			value: function dequeue() {
@@ -43,6 +65,14 @@ module.exports = function () {
 
 				return this._array.shift();
 			}
+
+			/**
+    * Returns the next item in the queue (without removing it).
+    *
+    * @public
+    * @returns {object} - The item added to the queue.
+    */
+
 		}, {
 			key: 'peek',
 			value: function peek() {
@@ -52,6 +82,14 @@ module.exports = function () {
 
 				return this._array[0];
 			}
+
+			/**
+    * Returns true if the queue is empty; otherwise false.
+    *
+    * @public
+    * @returns {boolean}
+    */
+
 		}, {
 			key: 'empty',
 			value: function empty() {
