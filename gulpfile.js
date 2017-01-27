@@ -9,6 +9,7 @@ var gitStatus = require('git-get-status');
 var glob = require('glob');
 var helpers = require('babelify-external-helpers');
 var jasmine = require('gulp-jasmine');
+var jsdoc = require('gulp-jsdoc3');
 var jshint = require('gulp-jshint');
 var rename = require('gulp-rename');
 var runSequence = require('run-sequence');
@@ -38,6 +39,17 @@ gulp.task('bump-version', function () {
     return gulp.src([ './package.json' ])
         .pipe(bump({ type: 'patch' }).on('error', util.log))
         .pipe(gulp.dest('./'));
+});
+
+gulp.task('document', function (cb) {
+	config = {
+		"opts": {
+			"destination": "./docs"
+		},
+	};
+
+	gulp.src(['README.md', './**/*.js', '!./node_modules/**', '!./test/**', '!./dist/**' ], {read: false})
+		.pipe(jsdoc(config, cb));
 });
 
 gulp.task('commit-changes', function () {
@@ -119,6 +131,7 @@ gulp.task('release', function (callback) {
         'build-browser-tests',
         'execute-browser-tests',
         'execute-node-tests',
+		'document',
         'bump-version',
         'commit-changes',
         'push-changes',

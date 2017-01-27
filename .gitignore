@@ -1,5 +1,6 @@
 .gitignore
 .idea
+docs
 node_modules
 aws/
 .DS_Store
