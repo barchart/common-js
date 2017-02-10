@@ -81,7 +81,7 @@ describe('When a RateLimiter is constructed (1 execution per 25 milliseconds)', 
 
 					var shortestPossibleDuration = Math.floor(index / windowMaximumCount) * windowDurationMilliseconds;
 
-					expect(duration).not.toBeLessThan(shortestPossibleDuration);
+					expect(duration + 1).not.toBeLessThan(shortestPossibleDuration);
 				});
 			};
 
