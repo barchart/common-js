@@ -1,4 +1,5 @@
 var assert = require('./assert');
+var is = require('./is');
 
 module.exports = (() => {
 	'use strict';
@@ -95,7 +96,7 @@ module.exports = (() => {
 		for (let i = 0; i < (propertyNameArray.length - 1); i++) {
 			let propertyName = propertyNameArray[i];
 
-			if (propertyTarget.hasOwnProperty(propertyName)) {
+			if (propertyTarget.hasOwnProperty(propertyName) && !is.null(propertyTarget[propertyName]) && !is.undefined(propertyTarget[propertyName])) {
 				propertyTarget = propertyTarget[propertyName];
 			} else if (create) {
 				propertyTarget = propertyTarget[propertyName] = {};

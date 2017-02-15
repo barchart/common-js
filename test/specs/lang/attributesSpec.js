@@ -57,7 +57,9 @@ describe('When "attributes.has" is used to check a second-level property', funct
 		target = {
 			nested: {
 				test: 123
-			}
+			},
+			a: undefined,
+			b: null
 		};
 	});
 
@@ -76,6 +78,18 @@ describe('When "attributes.has" is used to check a second-level property', funct
 	describe("and the top-level property does not exist", function() {
 		it("should return true", function() {
 			expect(attributes.has(target, "wrong.name")).toEqual(false);
+		});
+	});
+
+	describe("and the top-level property exists, but is undefined", function() {
+		it("should return true", function() {
+			expect(attributes.has(target, "a.name")).toEqual(false);
+		});
+	});
+
+	describe("and the top-level property exists, but is null", function() {
+		it("should return true", function() {
+			expect(attributes.has(target, "b.name")).toEqual(false);
 		});
 	});
 });
