@@ -1613,6 +1613,7 @@ module.exports = function () {
 'use strict';
 
 var assert = require('./assert');
+var is = require('./is');
 
 module.exports = function () {
 	'use strict';
@@ -1706,7 +1707,7 @@ module.exports = function () {
 		for (var i = 0; i < propertyNameArray.length - 1; i++) {
 			var propertyName = propertyNameArray[i];
 
-			if (propertyTarget.hasOwnProperty(propertyName)) {
+			if (propertyTarget.hasOwnProperty(propertyName) && !is.null(propertyTarget[propertyName]) && !is.undefined(propertyTarget[propertyName])) {
 				propertyTarget = propertyTarget[propertyName];
 			} else if (create) {
 				propertyTarget = propertyTarget[propertyName] = {};
@@ -1731,7 +1732,7 @@ module.exports = function () {
 	return attributes;
 }();
 
-},{"./assert":14}],16:[function(require,module,exports){
+},{"./assert":14,"./is":17}],16:[function(require,module,exports){
 'use strict';
 
 module.exports = function () {
@@ -4990,7 +4991,9 @@ describe('When "attributes.has" is used to check a second-level property', funct
 		target = {
 			nested: {
 				test: 123
-			}
+			},
+			a: undefined,
+			b: null
 		};
 	});
 
@@ -5009,6 +5012,18 @@ describe('When "attributes.has" is used to check a second-level property', funct
 	describe("and the top-level property does not exist", function () {
 		it("should return true", function () {
 			expect(attributes.has(target, "wrong.name")).toEqual(false);
+		});
+	});
+
+	describe("and the top-level property exists, but is undefined", function () {
+		it("should return true", function () {
+			expect(attributes.has(target, "a.name")).toEqual(false);
+		});
+	});
+
+	describe("and the top-level property exists, but is null", function () {
+		it("should return true", function () {
+			expect(attributes.has(target, "b.name")).toEqual(false);
 		});
 	});
 });

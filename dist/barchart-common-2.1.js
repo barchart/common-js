@@ -1696,6 +1696,7 @@ module.exports = function () {
 'use strict';
 
 var assert = require('./assert');
+var is = require('./is');
 
 module.exports = function () {
 	'use strict';
@@ -1789,7 +1790,7 @@ module.exports = function () {
 		for (var i = 0; i < propertyNameArray.length - 1; i++) {
 			var propertyName = propertyNameArray[i];
 
-			if (propertyTarget.hasOwnProperty(propertyName)) {
+			if (propertyTarget.hasOwnProperty(propertyName) && !is.null(propertyTarget[propertyName]) && !is.undefined(propertyTarget[propertyName])) {
 				propertyTarget = propertyTarget[propertyName];
 			} else if (create) {
 				propertyTarget = propertyTarget[propertyName] = {};
@@ -1814,7 +1815,7 @@ module.exports = function () {
 	return attributes;
 }();
 
-},{"./assert":17}],19:[function(require,module,exports){
+},{"./assert":17,"./is":23}],19:[function(require,module,exports){
 'use strict';
 
 module.exports = function () {
