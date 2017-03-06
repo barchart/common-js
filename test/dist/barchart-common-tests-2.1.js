@@ -1620,6 +1620,8 @@ module.exports = function () {
 
 	var attributes = {
 		has: function has(target, propertyNames) {
+			var separator = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '.';
+
 			assert.argumentIsRequired(target, 'target', Object);
 
 			if (Array.isArray(propertyNames)) {
@@ -1628,12 +1630,14 @@ module.exports = function () {
 				assert.argumentIsRequired(propertyNames, 'propertyNames', String);
 			}
 
-			var propertyNameArray = getPropertyNameArray(propertyNames);
+			var propertyNameArray = getPropertyNameArray(propertyNames, separator);
 			var propertyTarget = getPropertyTarget(target, propertyNameArray, false);
 
 			return propertyTarget !== null && propertyTarget.hasOwnProperty(last(propertyNameArray));
 		},
 		read: function read(target, propertyNames) {
+			var separator = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '.';
+
 			assert.argumentIsRequired(target, 'target', Object);
 
 			if (Array.isArray(propertyNames)) {
@@ -1642,7 +1646,7 @@ module.exports = function () {
 				assert.argumentIsRequired(propertyNames, 'propertyNames', String);
 			}
 
-			var propertyNameArray = getPropertyNameArray(propertyNames);
+			var propertyNameArray = getPropertyNameArray(propertyNames, separator);
 			var propertyTarget = getPropertyTarget(target, propertyNameArray, false);
 
 			var returnRef = void 0;
@@ -1658,6 +1662,8 @@ module.exports = function () {
 			return returnRef;
 		},
 		write: function write(target, propertyNames, value) {
+			var separator = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '.';
+
 			assert.argumentIsRequired(target, 'target', Object);
 
 			if (Array.isArray(propertyNames)) {
@@ -1666,7 +1672,7 @@ module.exports = function () {
 				assert.argumentIsRequired(propertyNames, 'propertyNames', String);
 			}
 
-			var propertyNameArray = getPropertyNameArray(propertyNames);
+			var propertyNameArray = getPropertyNameArray(propertyNames, separator);
 			var propertyTarget = getPropertyTarget(target, propertyNameArray, true);
 
 			var propertyName = last(propertyNameArray);
@@ -1674,11 +1680,13 @@ module.exports = function () {
 			propertyTarget[propertyName] = value;
 		},
 		erase: function erase(target, propertyNames) {
+			var separator = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '.';
+
 			if (!attributes.has(target, propertyNames)) {
 				return;
 			}
 
-			var propertyNameArray = getPropertyNameArray(propertyNames);
+			var propertyNameArray = getPropertyNameArray(propertyNames, separator);
 			var propertyTarget = getPropertyTarget(target, propertyNameArray, true);
 
 			var propertyName = last(propertyNameArray);
@@ -1688,12 +1696,14 @@ module.exports = function () {
 	};
 
 	function getPropertyNameArray(propertyNames) {
+		var separator = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '.';
+
 		var returnRef = void 0;
 
 		if (Array.isArray(propertyNames)) {
 			returnRef = propertyNames;
 		} else {
-			returnRef = propertyNames.split('.');
+			returnRef = propertyNames.split(separator);
 		}
 
 		return returnRef;
@@ -5546,6 +5556,56 @@ describe('When "attributes.erase" is used to remove a second-level property (usi
 		it("the target should be unaffected", function () {
 			expect(target.hasOwnProperty("nested")).toEqual(true);
 			expect(target.nested.hasOwnProperty("test")).toEqual(true);
+		});
+	});
+});
+
+describe('When "attributes.read" is used with a null separator', function () {
+	'use strict';
+
+	var target;
+
+	beforeEach(function () {
+		target = {
+			'some.key': 1
+		};
+	});
+
+	describe("and the property exists", function () {
+		it("should return the property value", function () {
+			expect(attributes.read(target, 'some.key', null)).toEqual(1);
+		});
+	});
+
+	describe("and the property does not exist", function () {
+		it("should be undefined", function () {
+			expect(attributes.read(target, 'another.key', null)).toEqual(undefined);
+		});
+	});
+});
+
+describe('When "attributes.read" is used with a non-default separator', function () {
+	'use strict';
+
+	var target;
+
+	beforeEach(function () {
+		target = {
+			nested: {
+				test: 1
+			}
+		};
+	});
+
+	describe("and the property exists", function () {
+		it("should return the property value", function () {
+			expect(attributes.read(target, 'nested|test', '|')).toEqual(1);
+		});
+	});
+
+	describe("and the property does not exist", function () {
+		it("should be undefined", function () {
+			expect(attributes.read(target, 'another|key', '|')).toEqual(undefined);
 		});
 	});
 });

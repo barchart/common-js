@@ -1703,6 +1703,8 @@ module.exports = function () {
 
 	var attributes = {
 		has: function has(target, propertyNames) {
+			var separator = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '.';
+
 			assert.argumentIsRequired(target, 'target', Object);
 
 			if (Array.isArray(propertyNames)) {
@@ -1711,12 +1713,14 @@ module.exports = function () {
 				assert.argumentIsRequired(propertyNames, 'propertyNames', String);
 			}
 
-			var propertyNameArray = getPropertyNameArray(propertyNames);
+			var propertyNameArray = getPropertyNameArray(propertyNames, separator);
 			var propertyTarget = getPropertyTarget(target, propertyNameArray, false);
 
 			return propertyTarget !== null && propertyTarget.hasOwnProperty(last(propertyNameArray));
 		},
 		read: function read(target, propertyNames) {
+			var separator = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '.';
+
 			assert.argumentIsRequired(target, 'target', Object);
 
 			if (Array.isArray(propertyNames)) {
@@ -1725,7 +1729,7 @@ module.exports = function () {
 				assert.argumentIsRequired(propertyNames, 'propertyNames', String);
 			}
 
-			var propertyNameArray = getPropertyNameArray(propertyNames);
+			var propertyNameArray = getPropertyNameArray(propertyNames, separator);
 			var propertyTarget = getPropertyTarget(target, propertyNameArray, false);
 
 			var returnRef = void 0;
@@ -1741,6 +1745,8 @@ module.exports = function () {
 			return returnRef;
 		},
 		write: function write(target, propertyNames, value) {
+			var separator = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '.';
+
 			assert.argumentIsRequired(target, 'target', Object);
 
 			if (Array.isArray(propertyNames)) {
@@ -1749,7 +1755,7 @@ module.exports = function () {
 				assert.argumentIsRequired(propertyNames, 'propertyNames', String);
 			}
 
-			var propertyNameArray = getPropertyNameArray(propertyNames);
+			var propertyNameArray = getPropertyNameArray(propertyNames, separator);
 			var propertyTarget = getPropertyTarget(target, propertyNameArray, true);
 
 			var propertyName = last(propertyNameArray);
@@ -1757,11 +1763,13 @@ module.exports = function () {
 			propertyTarget[propertyName] = value;
 		},
 		erase: function erase(target, propertyNames) {
+			var separator = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '.';
+
 			if (!attributes.has(target, propertyNames)) {
 				return;
 			}
 
-			var propertyNameArray = getPropertyNameArray(propertyNames);
+			var propertyNameArray = getPropertyNameArray(propertyNames, separator);
 			var propertyTarget = getPropertyTarget(target, propertyNameArray, true);
 
 			var propertyName = last(propertyNameArray);
@@ -1771,12 +1779,14 @@ module.exports = function () {
 	};
 
 	function getPropertyNameArray(propertyNames) {
+		var separator = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '.';
+
 		var returnRef = void 0;
 
 		if (Array.isArray(propertyNames)) {
 			returnRef = propertyNames;
 		} else {
-			returnRef = propertyNames.split('.');
+			returnRef = propertyNames.split(separator);
 		}
 
 		return returnRef;
