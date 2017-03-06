@@ -619,3 +619,57 @@ describe('When "attributes.erase" is used to remove a second-level property (usi
 		});
 	});
 });
+
+
+describe('When "attributes.read" is used with a null separator', function() {
+	'use strict';
+
+	var target;
+
+	beforeEach(function() {
+		target = {
+			'some.key' : 1
+		};
+	});
+
+	describe("and the property exists", function() {
+		it("should return the property value", function() {
+			expect(attributes.read(target, 'some.key', null)).toEqual(1);
+		});
+	});
+
+	describe("and the property does not exist", function() {
+		it("should be undefined", function() {
+			expect(attributes.read(target, 'another.key', null)).toEqual(undefined);
+		});
+	});
+
+});
+
+
+describe('When "attributes.read" is used with a non-default separator', function() {
+	'use strict';
+
+	var target;
+
+	beforeEach(function() {
+		target = {
+			nested : {
+				test: 1
+			}
+		};
+	});
+
+	describe("and the property exists", function() {
+		it("should return the property value", function() {
+			expect(attributes.read(target, 'nested|test', '|')).toEqual(1);
+		});
+	});
+
+	describe("and the property does not exist", function() {
+		it("should be undefined", function() {
+			expect(attributes.read(target, 'another|key', '|')).toEqual(undefined);
+		});
+	});
+
+});
