@@ -5,7 +5,7 @@ module.exports = (() => {
 	'use strict';
 
 	const attributes = {
-		has(target, propertyNames) {
+		has(target, propertyNames, separator = '.') {
 			assert.argumentIsRequired(target, 'target', Object);
 
 			if (Array.isArray(propertyNames)) {
@@ -14,13 +14,13 @@ module.exports = (() => {
 				assert.argumentIsRequired(propertyNames, 'propertyNames', String);
 			}
 
-			const propertyNameArray = getPropertyNameArray(propertyNames);
+			const propertyNameArray = getPropertyNameArray(propertyNames, separator);
 			const propertyTarget = getPropertyTarget(target, propertyNameArray, false);
 
 			return propertyTarget !== null && propertyTarget.hasOwnProperty(last(propertyNameArray));
 		},
 
-		read(target, propertyNames) {
+		read(target, propertyNames, separator = '.') {
 			assert.argumentIsRequired(target, 'target', Object);
 
 			if (Array.isArray(propertyNames)) {
@@ -29,7 +29,7 @@ module.exports = (() => {
 				assert.argumentIsRequired(propertyNames, 'propertyNames', String);
 			}
 
-			const propertyNameArray = getPropertyNameArray(propertyNames);
+			const propertyNameArray = getPropertyNameArray(propertyNames, separator);
 			const propertyTarget = getPropertyTarget(target, propertyNameArray, false);
 
 			let returnRef;
@@ -45,7 +45,7 @@ module.exports = (() => {
 			return returnRef;
 		},
 
-		write(target, propertyNames, value) {
+		write(target, propertyNames, value, separator = '.') {
 			assert.argumentIsRequired(target, 'target', Object);
 
 			if (Array.isArray(propertyNames)) {
@@ -54,7 +54,7 @@ module.exports = (() => {
 				assert.argumentIsRequired(propertyNames, 'propertyNames', String);
 			}
 
-			const propertyNameArray = getPropertyNameArray(propertyNames);
+			const propertyNameArray = getPropertyNameArray(propertyNames, separator);
 			const propertyTarget = getPropertyTarget(target, propertyNameArray, true);
 
 			const propertyName = last(propertyNameArray);
@@ -62,12 +62,12 @@ module.exports = (() => {
 			propertyTarget[propertyName] = value;
 		},
 
-		erase(target, propertyNames) {
+		erase(target, propertyNames, separator = '.') {
 			if (!attributes.has(target, propertyNames)) {
 				return;
 			}
 
-			const propertyNameArray = getPropertyNameArray(propertyNames);
+			const propertyNameArray = getPropertyNameArray(propertyNames, separator);
 			const propertyTarget = getPropertyTarget(target, propertyNameArray, true);
 
 			const propertyName = last(propertyNameArray);
@@ -76,13 +76,13 @@ module.exports = (() => {
 		}
 	};
 
-	function getPropertyNameArray(propertyNames) {
+	function getPropertyNameArray(propertyNames, separator = '.') {
 		let returnRef;
 
 		if (Array.isArray(propertyNames)) {
 			returnRef = propertyNames;
 		} else {
-			returnRef = propertyNames.split('.');
+			returnRef = propertyNames.split(separator);
 		}
 
 		return returnRef;
