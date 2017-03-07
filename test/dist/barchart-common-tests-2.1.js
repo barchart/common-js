@@ -1619,12 +1619,10 @@ module.exports = function () {
 	'use strict';
 
 	var attributes = {
-		has: function has(target, propertyNames) {
-			var separator = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '.';
-
+		has: function has(target, propertyNames, separator) {
 			assert.argumentIsRequired(target, 'target', Object);
 
-			if (Array.isArray(propertyNames)) {
+			if (is.array(propertyNames)) {
 				assert.argumentIsArray(propertyNames, 'propertyNames', String);
 			} else {
 				assert.argumentIsRequired(propertyNames, 'propertyNames', String);
@@ -1635,12 +1633,10 @@ module.exports = function () {
 
 			return propertyTarget !== null && propertyTarget.hasOwnProperty(last(propertyNameArray));
 		},
-		read: function read(target, propertyNames) {
-			var separator = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '.';
-
+		read: function read(target, propertyNames, separator) {
 			assert.argumentIsRequired(target, 'target', Object);
 
-			if (Array.isArray(propertyNames)) {
+			if (is.array(propertyNames)) {
 				assert.argumentIsArray(propertyNames, 'propertyNames', String);
 			} else {
 				assert.argumentIsRequired(propertyNames, 'propertyNames', String);
@@ -1661,12 +1657,10 @@ module.exports = function () {
 
 			return returnRef;
 		},
-		write: function write(target, propertyNames, value) {
-			var separator = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '.';
-
+		write: function write(target, propertyNames, value, separator) {
 			assert.argumentIsRequired(target, 'target', Object);
 
-			if (Array.isArray(propertyNames)) {
+			if (is.array(propertyNames)) {
 				assert.argumentIsArray(propertyNames, 'propertyNames', String);
 			} else {
 				assert.argumentIsRequired(propertyNames, 'propertyNames', String);
@@ -1679,9 +1673,7 @@ module.exports = function () {
 
 			propertyTarget[propertyName] = value;
 		},
-		erase: function erase(target, propertyNames) {
-			var separator = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '.';
-
+		erase: function erase(target, propertyNames, separator) {
 			if (!attributes.has(target, propertyNames)) {
 				return;
 			}
@@ -1700,7 +1692,7 @@ module.exports = function () {
 
 		var returnRef = void 0;
 
-		if (Array.isArray(propertyNames)) {
+		if (is.array(propertyNames)) {
 			returnRef = propertyNames;
 		} else {
 			returnRef = propertyNames.split(separator);
