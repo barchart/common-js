@@ -5,10 +5,10 @@ module.exports = (() => {
 	'use strict';
 
 	const attributes = {
-		has(target, propertyNames, separator = '.') {
+		has(target, propertyNames, separator) {
 			assert.argumentIsRequired(target, 'target', Object);
 
-			if (Array.isArray(propertyNames)) {
+			if (is.array(propertyNames)) {
 				assert.argumentIsArray(propertyNames, 'propertyNames', String);
 			} else {
 				assert.argumentIsRequired(propertyNames, 'propertyNames', String);
@@ -20,10 +20,10 @@ module.exports = (() => {
 			return propertyTarget !== null && propertyTarget.hasOwnProperty(last(propertyNameArray));
 		},
 
-		read(target, propertyNames, separator = '.') {
+		read(target, propertyNames, separator) {
 			assert.argumentIsRequired(target, 'target', Object);
 
-			if (Array.isArray(propertyNames)) {
+			if (is.array(propertyNames)) {
 				assert.argumentIsArray(propertyNames, 'propertyNames', String);
 			} else {
 				assert.argumentIsRequired(propertyNames, 'propertyNames', String);
@@ -45,10 +45,10 @@ module.exports = (() => {
 			return returnRef;
 		},
 
-		write(target, propertyNames, value, separator = '.') {
+		write(target, propertyNames, value, separator) {
 			assert.argumentIsRequired(target, 'target', Object);
 
-			if (Array.isArray(propertyNames)) {
+			if (is.array(propertyNames)) {
 				assert.argumentIsArray(propertyNames, 'propertyNames', String);
 			} else {
 				assert.argumentIsRequired(propertyNames, 'propertyNames', String);
@@ -62,7 +62,7 @@ module.exports = (() => {
 			propertyTarget[propertyName] = value;
 		},
 
-		erase(target, propertyNames, separator = '.') {
+		erase(target, propertyNames, separator) {
 			if (!attributes.has(target, propertyNames)) {
 				return;
 			}
@@ -79,7 +79,7 @@ module.exports = (() => {
 	function getPropertyNameArray(propertyNames, separator = '.') {
 		let returnRef;
 
-		if (Array.isArray(propertyNames)) {
+		if (is.array(propertyNames)) {
 			returnRef = propertyNames;
 		} else {
 			returnRef = propertyNames.split(separator);
