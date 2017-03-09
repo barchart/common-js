@@ -70,21 +70,21 @@ module.exports = (() => {
 	}
 
 	function removeRegistration(handler) {
-		const indiciesToRemove = [];
+		const indicesToRemove = [];
 
 		for (let i = 0; i < this._observers.length; i++) {
 			let candidate = this._observers[i];
 
 			if (candidate === handler) {
-				indiciesToRemove.push(i);
+				indicesToRemove.push(i);
 			}
 		}
 
-		if (indiciesToRemove.length > 0) {
+		if (indicesToRemove.length > 0) {
 			const copiedObservers = this._observers.slice();
 
-			for (let j = indiciesToRemove.length - 1; !(j < 0); j--) {
-				copiedObservers.splice(indiciesToRemove[j], 1);
+			for (let j = indicesToRemove.length - 1; !(j < 0); j--) {
+				copiedObservers.splice(indicesToRemove[j], 1);
 			}
 
 			this._observers = copiedObservers;
