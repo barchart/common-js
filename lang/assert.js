@@ -36,13 +36,13 @@ module.exports = (() => {
 
 		areEqual(a, b, descriptionA, descriptionB) {
 			if (a !== b) {
-				throw new Error('The objects must be equal ([' + (descriptionA || a.toString()) + ' and ' + (descriptionB || b.toString()));
+				throw new Error(`The objects must be equal [${(descriptionA || a.toString())}] and [${(descriptionB || b.toString())}]`);
 			}
 		},
 
 		areNotEqual(a, b, descriptionA, descriptionB) {
 			if (a === b) {
-				throw new Error('The objects cannot be equal ([' + (descriptionA || a.toString()) + ' and ' + (descriptionB || b.toString()));
+				throw new Error(`The objects cannot be equal [${(descriptionA || a.toString())}] and [${(descriptionB || b.toString())}]`);
 			}
 		}
 	};
@@ -81,9 +81,9 @@ module.exports = (() => {
 		let message;
 
 		if (typeof(index) === 'number') {
-			message = 'The argument [' + (variableName || 'unspecified') + '], at index [' + index.toString() + '] must be a ' + (typeDescription || 'unknown');
+			message = `The argument [${(variableName || 'unspecified')}], at index [${index.toString()}] must be a [${(typeDescription || 'unknown')}]`;
 		} else {
-			message = 'The argument [' + (variableName || 'unspecified') + '] must be a ' + (typeDescription || 'Object');
+			message = `The argument [${(variableName || 'unspecified')}] must be a ${(typeDescription || 'Object')}`;
 		}
 
 		throw new Error(message);
