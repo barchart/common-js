@@ -1,5 +1,5 @@
-var moment = require('moment-timezone/builds/moment-timezone-with-data-2010-2020');
-var assert = require('./assert');
+const moment = require('moment-timezone/builds/moment-timezone-with-data-2010-2020'),
+	assert = require('./assert');
 
 module.exports = (() => {
 	'use strict';

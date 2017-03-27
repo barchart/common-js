@@ -1,6 +1,6 @@
-var assert = require('./../../lang/assert');
-var attributes = require('./../../lang/attributes');
-var is = require('./../../lang/is');
+const assert = require('./../../lang/assert'),
+	attributes = require('./../../lang/attributes'),
+	is = require('./../../lang/is');
 
 var RestAction = require('./RestAction');
 

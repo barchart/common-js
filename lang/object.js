@@ -1,5 +1,5 @@
-var array = require('./array');
-var is = require('./is');
+const array = require('./array'),
+	is = require('./is');
 
 module.exports = (() => {
 	'use strict';

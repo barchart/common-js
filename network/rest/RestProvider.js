@@ -1,10 +1,10 @@
-var http = require('http');
-var https = require('https');
-var querystring = require('querystring');
+const http = require('http'),
+	https = require('https'),
+	querystring = require('querystring');
 
-var promise = require('./../../lang/promise');
+const promise = require('./../../lang/promise');
 
-var RestProviderBase = require('./RestProviderBase');
+const RestProviderBase = require('./RestProviderBase');
 
 module.exports = (() => {
 	'use strict';

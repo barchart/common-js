@@ -1,5 +1,5 @@
-var Event = require('./Event');
-var EventMap = require('./EventMap');
+const Event = require('./Event'),
+	EventMap = require('./EventMap');
 
 module.exports = (() => {
 	'use strict';

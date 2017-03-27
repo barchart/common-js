@@ -1,8 +1,8 @@
-var Stack = require('./../Stack');
+const Stack = require('./../Stack');
 
-var assert = require('./../../lang/assert');
-var Disposable = require('./../../lang/Disposable');
-var is = require('./../../lang/is');
+const assert = require('./../../lang/assert'),
+	Disposable = require('./../../lang/Disposable'),
+	is = require('./../../lang/is');
 
 module.exports = (() => {
 	'use strict';

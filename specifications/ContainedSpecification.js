@@ -1,6 +1,6 @@
-var assert = require('./../lang/assert');
+const assert = require('./../lang/assert');
 
-var Specification = require('./Specification');
+const Specification = require('./Specification');
 
 module.exports = (() => {
 	'use strict';

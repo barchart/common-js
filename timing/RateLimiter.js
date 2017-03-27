@@ -1,9 +1,9 @@
-var assert = require('./../lang/assert');
-var Disposable = require('./../lang/Disposable');
-var promise = require('./../lang/promise');
+const assert = require('./../lang/assert'),
+	Disposable = require('./../lang/Disposable'),
+	promise = require('./../lang/promise');
 
-var Queue = require('./../collections/Queue');
-var Scheduler = require('./Scheduler');
+const Queue = require('./../collections/Queue'),
+	Scheduler = require('./Scheduler');
 
 module.exports = (() => {
 	'use strict';

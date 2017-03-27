@@ -1,7 +1,7 @@
-var assert = require('./../lang/assert');
-var is = require('./../lang/is');
-var Disposable = require('./../lang/Disposable');
-var Event = require('./../messaging/Event');
+const assert = require('./../lang/assert'),
+	is = require('./../lang/is'),
+	Disposable = require('./../lang/Disposable'),
+	Event = require('./../messaging/Event');
 
 module.exports = (() => {
 	'use strict';

@@ -1,4 +1,4 @@
-var is = require('./is');
+const is = require('./is');
 
 module.exports = (() => {
 	'use strict';

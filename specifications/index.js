@@ -1,15 +1,15 @@
-var AndSpecification = require('./AndSpecification');
-var ContainedSpecification = require('./ContainedSpecification');
-var ContainsSpecification = require('./ContainsSpecification');
-var EqualsSpecification = require('./EqualsSpecification');
-var FailSpecification = require('./FailSpecification');
-var GreaterThanSpecification = require('./GreaterThanSpecification');
-var NumericSpecification = require('./NumericSpecification');
-var LessThanSpecification = require('./LessThanSpecification');
-var OrSpecification = require('./OrSpecification');
-var PassSpecification = require('./PassSpecification');
-var Specification = require('./Specification');
-var TranslateSpecification = require('./TranslateSpecification');
+const AndSpecification = require('./AndSpecification'),
+	ContainedSpecification = require('./ContainedSpecification'),
+	ContainsSpecification = require('./ContainsSpecification'),
+	EqualsSpecification = require('./EqualsSpecification'),
+	FailSpecification = require('./FailSpecification'),
+	GreaterThanSpecification = require('./GreaterThanSpecification'),
+	NumericSpecification = require('./NumericSpecification'),
+	LessThanSpecification = require('./LessThanSpecification'),
+	OrSpecification = require('./OrSpecification'),
+	PassSpecification = require('./PassSpecification'),
+	Specification = require('./Specification'),
+	TranslateSpecification = require('./TranslateSpecification');
 
 module.exports = (() => {
 	'use strict';

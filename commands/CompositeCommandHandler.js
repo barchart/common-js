@@ -1,5 +1,5 @@
-var assert = require('./../lang/assert');
-var CommandHandler = require('./CommandHandler');
+const assert = require('./../lang/assert'),
+	CommandHandler = require('./CommandHandler');
 
 module.exports = (() => {
 	'use strict';

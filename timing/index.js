@@ -1,11 +1,15 @@
-var RateLimiter = require('./RateLimiter');
-var Scheduler = require('./Scheduler');
+const RateLimiter = require('./RateLimiter'),
+	Serializer = require('./Serializer'),
+	Scheduler = require('./Scheduler'),
+	WindowCounter = require('./WindowCounter');
 
 module.exports = (() => {
 	'use strict';
 
 	return {
 		RateLimiter: RateLimiter,
-		Scheduler: Scheduler
+		Serializer: Serializer,
+		Scheduler: Scheduler,
+		WindowCounter: WindowCounter
 	};
 })();

@@ -1,5 +1,5 @@
-var assert = require('./../../lang/assert');
-var comparators = require('./comparators');
+const assert = require('./../../lang/assert'),
+	comparators = require('./comparators');
 
 module.exports = (() => {
 	'use strict';

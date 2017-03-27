@@ -1,4 +1,4 @@
-var Model = require('./Model');
+const Model = require('./Model');
 
 module.exports = (() => {
 	'use strict';

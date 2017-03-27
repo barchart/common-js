@@ -1,6 +1,6 @@
-var assert = require('./../../lang/assert');
+const assert = require('./../../lang/assert');
 
-var RestEndpoint = require('./RestEndpoint');
+const RestEndpoint = require('./RestEndpoint');
 
 module.exports = (() => {
 	'use strict';

@@ -358,8 +358,8 @@ function _classCallCheck(instance, Constructor) {
 	}
 }
 
-var assert = require('./../../lang/assert');
-var comparators = require('./comparators');
+var assert = require('./../../lang/assert'),
+    comparators = require('./comparators');
 
 module.exports = function () {
 	'use strict';
@@ -520,9 +520,9 @@ function _inherits(subClass, superClass) {
 
 var Stack = require('./../Stack');
 
-var assert = require('./../../lang/assert');
-var Disposable = require('./../../lang/Disposable');
-var is = require('./../../lang/is');
+var assert = require('./../../lang/assert'),
+    Disposable = require('./../../lang/Disposable'),
+    is = require('./../../lang/is');
 
 module.exports = function () {
 	'use strict';
@@ -1150,8 +1150,8 @@ function _inherits(subClass, superClass) {
 	}subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 }
 
-var assert = require('./../lang/assert');
-var CommandHandler = require('./CommandHandler');
+var assert = require('./../lang/assert'),
+    CommandHandler = require('./CommandHandler');
 
 module.exports = function () {
 	'use strict';
@@ -1224,8 +1224,8 @@ function _inherits(subClass, superClass) {
 	}subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 }
 
-var assert = require('./../lang/assert');
-var CommandHandler = require('./CommandHandler');
+var assert = require('./../lang/assert'),
+    CommandHandler = require('./CommandHandler');
 
 module.exports = function () {
 	'use strict';
@@ -1610,8 +1610,8 @@ module.exports = function () {
 },{"./is":17}],15:[function(require,module,exports){
 'use strict';
 
-var assert = require('./assert');
-var is = require('./is');
+var assert = require('./assert'),
+    is = require('./is');
 
 module.exports = function () {
 	'use strict';
@@ -1843,8 +1843,8 @@ module.exports = function () {
 },{}],18:[function(require,module,exports){
 'use strict';
 
-var assert = require('./assert');
-var is = require('./is');
+var assert = require('./assert'),
+    is = require('./is');
 
 module.exports = function () {
 	'use strict';
@@ -1923,8 +1923,8 @@ module.exports = function () {
 },{"./is":17}],20:[function(require,module,exports){
 'use strict';
 
-var array = require('./array');
-var is = require('./is');
+var array = require('./array'),
+    is = require('./is');
 
 module.exports = function () {
 	'use strict';
@@ -2156,8 +2156,8 @@ module.exports = function () {
 },{"./assert":14}],22:[function(require,module,exports){
 'use strict';
 
-var assert = require('./assert');
-var is = require('./is');
+var assert = require('./assert'),
+    is = require('./is');
 
 module.exports = function () {
 	'use strict';
@@ -2178,8 +2178,8 @@ module.exports = function () {
 },{"./assert":14,"./is":17}],23:[function(require,module,exports){
 'use strict';
 
-var assert = require('./assert');
-var is = require('./is');
+var assert = require('./assert'),
+    is = require('./is');
 
 module.exports = function () {
 	'use strict';
@@ -2248,8 +2248,8 @@ function _inherits(subClass, superClass) {
 	}subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 }
 
-var assert = require('./../lang/assert');
-var Disposable = require('./../lang/Disposable');
+var assert = require('./../lang/assert'),
+    Disposable = require('./../lang/Disposable');
 
 module.exports = function () {
 	'use strict';
@@ -2394,9 +2394,9 @@ function _inherits(subClass, superClass) {
 	}subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 }
 
-var assert = require('./../lang/assert');
-var Disposable = require('./../lang/Disposable');
-var Event = require('./Event');
+var assert = require('./../lang/assert'),
+    Disposable = require('./../lang/Disposable'),
+    Event = require('./Event');
 
 module.exports = function () {
 	'use strict';
@@ -2559,10 +2559,10 @@ function _inherits(subClass, superClass) {
 	}subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 }
 
-var assert = require('./../lang/assert');
-var is = require('./../lang/is');
-var Disposable = require('./../lang/Disposable');
-var Event = require('./../messaging/Event');
+var assert = require('./../lang/assert'),
+    is = require('./../lang/is'),
+    Disposable = require('./../lang/Disposable'),
+    Event = require('./../messaging/Event');
 
 module.exports = function () {
 	'use strict';
@@ -9171,11 +9171,12 @@ function _inherits(subClass, superClass) {
 	}subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 }
 
-var assert = require('./../lang/assert');
-var Disposable = require('./../lang/Disposable');
+var assert = require('./../lang/assert'),
+    Disposable = require('./../lang/Disposable'),
+    promise = require('./../lang/promise');
 
-var Queue = require('./../collections/Queue');
-var Scheduler = require('./Scheduler');
+var Queue = require('./../collections/Queue'),
+    Scheduler = require('./Scheduler');
 
 module.exports = function () {
 	'use strict';
@@ -9214,7 +9215,7 @@ module.exports = function () {
 					throw new Error('Unable to enqueue action, the rate limiter has been disposed.');
 				}
 
-				return new Promise(function (resolveCallback, rejectCallback) {
+				return promise.build(function (resolveCallback, rejectCallback) {
 					_this2._workQueue.enqueue(function () {
 						Promise.resolve().then(function () {
 							return actionToEnqueue();
@@ -9286,7 +9287,7 @@ module.exports = function () {
 	return RateLimiter;
 }();
 
-},{"./../collections/Queue":1,"./../lang/Disposable":12,"./../lang/assert":14,"./Scheduler":71}],71:[function(require,module,exports){
+},{"./../collections/Queue":1,"./../lang/Disposable":12,"./../lang/assert":14,"./../lang/promise":21,"./Scheduler":71}],71:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -9319,9 +9320,10 @@ function _inherits(subClass, superClass) {
     }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 }
 
-var assert = require('./../lang/assert');
-var Disposable = require('./../lang/Disposable');
-var object = require('./../lang/object');
+var assert = require('./../lang/assert'),
+    Disposable = require('./../lang/Disposable'),
+    object = require('./../lang/object'),
+    promise = require('./../lang/promise');
 
 module.exports = function () {
     'use strict';
@@ -9354,7 +9356,7 @@ module.exports = function () {
 
                 var token = void 0;
 
-                var schedulePromise = new Promise(function (resolveCallback, rejectCallback) {
+                var schedulePromise = promise.build(function (resolveCallback, rejectCallback) {
                     var wrappedAction = function wrappedAction() {
                         delete _this2._timeoutBindings[token];
 
@@ -9489,7 +9491,7 @@ module.exports = function () {
     return Scheduler;
 }();
 
-},{"./../lang/Disposable":12,"./../lang/assert":14,"./../lang/object":20}],72:[function(require,module,exports){
+},{"./../lang/Disposable":12,"./../lang/assert":14,"./../lang/object":20,"./../lang/promise":21}],72:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
@@ -9508,7 +9510,8 @@ function _classCallCheck(instance, Constructor) {
 	}
 }
 
-var assert = require('./../lang/assert');
+var assert = require('./../lang/assert'),
+    promise = require('./../lang/promise');
 
 var Queue = require('./../collections/Queue');
 
@@ -9546,7 +9549,7 @@ module.exports = function () {
 
 				assert.argumentIsRequired(actionToEnqueue, 'actionToEnqueue', Function);
 
-				return new Promise(function (resolveCallback, rejectCallback) {
+				return promise.build(function (resolveCallback, rejectCallback) {
 					_this._workQueue.enqueue(function () {
 						return Promise.resolve().then(function () {
 							return actionToEnqueue();
@@ -9589,7 +9592,7 @@ module.exports = function () {
 	return Serializer;
 }();
 
-},{"./../collections/Queue":1,"./../lang/assert":14}],73:[function(require,module,exports){
+},{"./../collections/Queue":1,"./../lang/assert":14,"./../lang/promise":21}],73:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
@@ -9608,8 +9611,8 @@ function _classCallCheck(instance, Constructor) {
 	}
 }
 
-var assert = require('./../lang/assert');
-var Queue = require('./../collections/Queue');
+var assert = require('./../lang/assert'),
+    Queue = require('./../collections/Queue');
 
 module.exports = function () {
 	'use strict';

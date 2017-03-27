@@ -1,7 +1,7 @@
-var assert = require('./../lang/assert');
-var Disposable = require('./../lang/Disposable');
-var object = require('./../lang/object');
-var promise = require('./../lang/promise');
+const assert = require('./../lang/assert'),
+    Disposable = require('./../lang/Disposable'),
+    object = require('./../lang/object'),
+	promise = require('./../lang/promise');
 
 module.exports = (() => {
     'use strict';

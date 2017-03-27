@@ -1,6 +1,6 @@
-var CommandHandler = require('./CommandHandler');
-var CompositeCommandHandler = require('./CompositeCommandHandler');
-var MappedCommandHandler = require('./MappedCommandHandler');
+const CommandHandler = require('./CommandHandler'),
+	CompositeCommandHandler = require('./CompositeCommandHandler'),
+	MappedCommandHandler = require('./MappedCommandHandler');
 
 module.exports = (() => {
 	'use strict';

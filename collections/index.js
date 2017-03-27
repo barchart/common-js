@@ -1,12 +1,12 @@
-var Queue = require('./Queue');
-var Stack = require('./Stack');
-var Tree = require('./Tree');
-var DisposableStack = require('./specialized/DisposableStack');
-var EvictingList = require('./specialized/EvictingList');
-var EvictingMap = require('./specialized/EvictingMap');
+const Queue = require('./Queue'),
+	Stack = require('./Stack'),
+	Tree = require('./Tree'),
+	DisposableStack = require('./specialized/DisposableStack'),
+	EvictingList = require('./specialized/EvictingList'),
+	EvictingMap = require('./specialized/EvictingMap');
 
-var ComparatorBuilder = require('./sorting/ComparatorBuilder');
-var comparators = require('./sorting/comparators');
+const ComparatorBuilder = require('./sorting/ComparatorBuilder'),
+	comparators = require('./sorting/comparators');
 
 module.exports = (() => {
 	'use strict';

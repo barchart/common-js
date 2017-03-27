@@ -1,7 +1,7 @@
-var assert = require('./../lang/assert');
-var promise = require('./../lang/promise');
+const assert = require('./../lang/assert'),
+	promise = require('./../lang/promise');
 
-var Queue = require('./../collections/Queue');
+const Queue = require('./../collections/Queue');
 
 module.exports = (() => {
 	'use strict';

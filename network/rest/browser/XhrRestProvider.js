@@ -1,9 +1,9 @@
-var xhr = require('xhr');
+const xhr = require('xhr');
 
-var is = require('./../../../lang/is');
-var promise = require('./../../../lang/promise');
+const is = require('./../../../lang/is'),
+	promise = require('./../../../lang/promise');
 
-var RestProviderBase = require('./../RestProviderBase');
+const RestProviderBase = require('./../RestProviderBase');
 
 module.exports = (() => {
 	'use strict';

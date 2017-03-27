@@ -1,6 +1,6 @@
-var is = require('./../lang/is');
+const is = require('./../lang/is');
 
-var Specification = require('./Specification');
+const Specification = require('./Specification');
 
 module.exports = (() => {
 	'use strict';
