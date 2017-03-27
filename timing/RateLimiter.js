@@ -1,5 +1,6 @@
 var assert = require('./../lang/assert');
 var Disposable = require('./../lang/Disposable');
+var promise = require('./../lang/promise');
 
 var Queue = require('./../collections/Queue');
 var Scheduler = require('./Scheduler');
@@ -32,7 +33,7 @@ module.exports = (() => {
 				throw new Error('Unable to enqueue action, the rate limiter has been disposed.');
 			}
 
-			return new Promise((resolveCallback, rejectCallback) => {
+			return promise.build((resolveCallback, rejectCallback) => {
 				this._workQueue.enqueue(() => {
 					Promise.resolve()
 						.then(() => {

@@ -1,4 +1,5 @@
 var assert = require('./../lang/assert');
+var promise = require('./../lang/promise');
 
 var Queue = require('./../collections/Queue');
 
@@ -28,7 +29,7 @@ module.exports = (() => {
 		enqueue(actionToEnqueue) {
 			assert.argumentIsRequired(actionToEnqueue, 'actionToEnqueue', Function);
 
-			return new Promise((resolveCallback, rejectCallback) => {
+			return promise.build((resolveCallback, rejectCallback) => {
 				this._workQueue.enqueue(() => {
 					return Promise.resolve()
 						.then(() => {

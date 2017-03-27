@@ -2,6 +2,8 @@ var http = require('http');
 var https = require('https');
 var querystring = require('querystring');
 
+var promise = require('./../../lang/promise');
+
 var RestProviderBase = require('./RestProviderBase');
 
 module.exports = (() => {
@@ -13,7 +15,7 @@ module.exports = (() => {
 		}
 
 		_call(endpoint, data, host, port, secure) {
-			return new Promise((resolveCallback, rejectCallback) => {
+			return promise.build((resolveCallback, rejectCallback) => {
 				let connector;
 
 				if (secure) {

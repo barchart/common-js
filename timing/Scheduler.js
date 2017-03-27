@@ -1,6 +1,7 @@
 var assert = require('./../lang/assert');
 var Disposable = require('./../lang/Disposable');
 var object = require('./../lang/object');
+var promise = require('./../lang/promise');
 
 module.exports = (() => {
     'use strict';
@@ -24,7 +25,7 @@ module.exports = (() => {
 
             let token;
 
-            const schedulePromise = new Promise((resolveCallback, rejectCallback) => {
+            const schedulePromise = promise.build((resolveCallback, rejectCallback) => {
                 const wrappedAction = () => {
                     delete this._timeoutBindings[token];
 
