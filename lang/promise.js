@@ -3,7 +3,7 @@ var assert = require('./assert');
 module.exports = (() => {
 	'use strict';
 
-	return {
+	const utilities = {
 		timeout(promise, timeout) {
 			return Promise.resolve()
 				.then(() => {
@@ -14,7 +14,7 @@ module.exports = (() => {
 						throw new Error('Promise timeout must be greater than zero.');
 					}
 
-					return new Promise((resolveCallback, rejectCallback) => {
+					return utilities.build((resolveCallback, rejectCallback) => {
 						let pending = true;
 
 						let token = setTimeout(() => {
@@ -76,7 +76,7 @@ module.exports = (() => {
 							};
 						});
 
-						mapPromise = new Promise((resolveCallback, rejectCallback) => {
+						mapPromise = utilities.build((resolveCallback, rejectCallback) => {
 							const execute = () => {
 								if (!(executors.length > 0 && c > active && !failure)) {
 									return;
@@ -157,4 +157,6 @@ module.exports = (() => {
 			});
 		}
 	};
+
+	return utilities;
 })();

@@ -1995,7 +1995,7 @@ var assert = require('./assert');
 module.exports = function () {
 	'use strict';
 
-	return {
+	var utilities = {
 		timeout: function timeout(promise, _timeout) {
 			return Promise.resolve().then(function () {
 				assert.argumentIsRequired(promise, 'promise', Promise, 'Promise');
@@ -2005,7 +2005,7 @@ module.exports = function () {
 					throw new Error('Promise timeout must be greater than zero.');
 				}
 
-				return new Promise(function (resolveCallback, rejectCallback) {
+				return utilities.build(function (resolveCallback, rejectCallback) {
 					var pending = true;
 
 					var token = setTimeout(function () {
@@ -2066,7 +2066,7 @@ module.exports = function () {
 						};
 					});
 
-					mapPromise = new Promise(function (resolveCallback, rejectCallback) {
+					mapPromise = utilities.build(function (resolveCallback, rejectCallback) {
 						var execute = function execute() {
 							if (!(executors.length > 0 && c > active && !failure)) {
 								return;
@@ -2149,6 +2149,8 @@ module.exports = function () {
 			});
 		}
 	};
+
+	return utilities;
 }();
 
 },{"./assert":14}],22:[function(require,module,exports){
