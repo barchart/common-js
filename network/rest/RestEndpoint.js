@@ -2,7 +2,7 @@ const assert = require('./../../lang/assert'),
 	attributes = require('./../../lang/attributes'),
 	is = require('./../../lang/is');
 
-var RestAction = require('./RestAction');
+const RestAction = require('./RestAction');
 
 module.exports = (() => {
 	'use strict';

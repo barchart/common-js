@@ -51,7 +51,7 @@ module.exports = (() => {
 		keys(target) {
 			const keys = [];
 
-			for (var k in target) {
+			for (let k in target) {
 				if (target.hasOwnProperty(k)) {
 					keys.push(k);
 				}
