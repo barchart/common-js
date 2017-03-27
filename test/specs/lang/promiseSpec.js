@@ -911,3 +911,68 @@ describe('When processing a "pipeline" of promises', function() {
 		});
 	});
 });
+
+
+
+
+
+describe('When "promise.build" is used to create a promise', function() {
+	'use strict';
+
+	describe('and the executor resolves', function() {
+		var p;
+
+		beforeEach(function() {
+			p = promise.build(function(r, x) {
+				r('ok');
+			});
+		});
+
+		it('the promise should be fulfilled', function(done) {
+			p.then(function(result) {
+				expect(result).toEqual('ok');
+
+				done();
+			});
+		});
+	});
+
+	describe('and the executor rejects', function() {
+		var p;
+
+		beforeEach(function() {
+			p = promise.build(function(r, x) {
+				x('not ok');
+			});
+		});
+
+		it('the promise should be fulfilled', function(done) {
+			p.catch(function(result) {
+				expect(result).toEqual('not ok');
+
+				done();
+			});
+		});
+	});
+
+	describe('and the executor throws an error', function() {
+		var p;
+		var e;
+
+		beforeEach(function() {
+			p = promise.build(function(r, x) {
+				e = new Error('oops');
+
+				throw e;
+			});
+		});
+
+		it('the promise should be rejected', function(done) {
+			p.catch(function(error) {
+				expect(error).toBe(e);
+
+				done();
+			});
+		});
+	});
+});

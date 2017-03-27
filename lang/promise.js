@@ -117,8 +117,19 @@ module.exports = (() => {
 			return executors.reduce((previous, executor) => previous.then((result) => executor(result)), Promise.resolve(input));
 		},
 
+		/**
+		 * Creates a new promise, given an executor.
+		 *
+		 * This is a wrapper for the {@link Promise} constructor; however, any error
+		 * is caught and the resulting promise is rejected (instead of letting the
+		 * error bubble up to the top-level handler).
+		 *
+		 * @public
+		 * @param {Function} executor - A function which has two callback parameters. The first is used to resolve the promise, the second rejects it.
+		 * @returns {Promise}
+		 */
 		build(executor) {
-			return new Promise((resolve, reject) {
+			return new Promise((resolve, reject) => {
 				try {
 					executor(resolve, reject);
 				} catch(e) {
