@@ -912,10 +912,6 @@ describe('When processing a "pipeline" of promises', function() {
 	});
 });
 
-
-
-
-
 describe('When "promise.build" is used to create a promise', function() {
 	'use strict';
 
