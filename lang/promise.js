@@ -115,6 +115,16 @@ module.exports = (() => {
 			assert.argumentIsArray(executors, 'executors', Function);
 
 			return executors.reduce((previous, executor) => previous.then((result) => executor(result)), Promise.resolve(input));
+		},
+
+		build(executor) {
+			return new Promise((resolve, reject) {
+				try {
+					executor(resolve, reject);
+				} catch(e) {
+					reject(e);
+				}
+			});
 		}
 	};
 })();
