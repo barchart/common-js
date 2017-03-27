@@ -1533,23 +1533,21 @@ module.exports = function () {
 			assert.argumentIsRequired(variable, variableName, Array);
 
 			if (itemConstraint) {
-				(function () {
-					var itemValidator = void 0;
+				var itemValidator = void 0;
 
-					if (typeof itemConstraint === 'function' && itemConstraint !== Function) {
-						itemValidator = function itemValidator(value, index) {
-							return value instanceof itemConstraint || itemConstraint(value, variableName + '[' + index + ']');
-						};
-					} else {
-						itemValidator = function itemValidator(value, index) {
-							return checkArgumentType(value, variableName, itemConstraint, itemConstraintDescription, index);
-						};
-					}
+				if (typeof itemConstraint === 'function' && itemConstraint !== Function) {
+					itemValidator = function itemValidator(value, index) {
+						return value instanceof itemConstraint || itemConstraint(value, variableName + '[' + index + ']');
+					};
+				} else {
+					itemValidator = function itemValidator(value, index) {
+						return checkArgumentType(value, variableName, itemConstraint, itemConstraintDescription, index);
+					};
+				}
 
-					variable.forEach(function (v, i) {
-						itemValidator(v, i);
-					});
-				})();
+				variable.forEach(function (v, i) {
+					itemValidator(v, i);
+				});
 			}
 		},
 		areEqual: function areEqual(a, b, descriptionA, descriptionB) {
@@ -1999,56 +1997,58 @@ module.exports = function () {
 
 	return {
 		timeout: function timeout(promise, _timeout) {
-			assert.argumentIsRequired(promise, 'promise', Promise, 'Promise');
-			assert.argumentIsRequired(_timeout, 'timeout', Number);
+			return Promise.resolve().then(function () {
+				assert.argumentIsRequired(promise, 'promise', Promise, 'Promise');
+				assert.argumentIsRequired(_timeout, 'timeout', Number);
 
-			if (!(_timeout > 0)) {
-				throw new Error('Promise timeout must be greater than zero.');
-			}
+				if (!(_timeout > 0)) {
+					throw new Error('Promise timeout must be greater than zero.');
+				}
 
-			return new Promise(function (resolveCallback, rejectCallback) {
-				var pending = true;
+				return new Promise(function (resolveCallback, rejectCallback) {
+					var pending = true;
 
-				var token = setTimeout(function () {
-					if (pending) {
-						pending = false;
+					var token = setTimeout(function () {
+						if (pending) {
+							pending = false;
 
-						rejectCallback('Promise timed out after ' + _timeout + ' milliseconds');
-					}
-				}, _timeout);
+							rejectCallback('Promise timed out after ' + _timeout + ' milliseconds');
+						}
+					}, _timeout);
 
-				promise.then(function (result) {
-					if (pending) {
-						pending = false;
-						clearTimeout(token);
+					promise.then(function (result) {
+						if (pending) {
+							pending = false;
+							clearTimeout(token);
 
-						resolveCallback(result);
-					}
-				}).catch(function (error) {
-					if (pending) {
-						pending = false;
-						clearTimeout(token);
+							resolveCallback(result);
+						}
+					}).catch(function (error) {
+						if (pending) {
+							pending = false;
+							clearTimeout(token);
 
-						rejectCallback(error);
-					}
+							rejectCallback(error);
+						}
+					});
 				});
 			});
 		},
 		map: function map(items, mapper, concurrency) {
-			assert.argumentIsArray(items, 'items');
-			assert.argumentIsRequired(mapper, 'mapper', Function);
-			assert.argumentIsOptional(concurrency, 'concurrency', Number);
+			return Promise.resolve().then(function () {
+				assert.argumentIsArray(items, 'items');
+				assert.argumentIsRequired(mapper, 'mapper', Function);
+				assert.argumentIsOptional(concurrency, 'concurrency', Number);
 
-			var c = Math.max(0, concurrency || 0);
+				var c = Math.max(0, concurrency || 0);
 
-			var mapPromise = void 0;
+				var mapPromise = void 0;
 
-			if (c === 0 || items.length === 0) {
-				mapPromise = Promise.all(items.map(function (item) {
-					return Promise.resolve(mapper(item));
-				}));
-			} else {
-				(function () {
+				if (c === 0 || items.length === 0) {
+					mapPromise = Promise.all(items.map(function (item) {
+						return Promise.resolve(mapper(item));
+					}));
+				} else {
 					var total = items.length;
 					var active = 0;
 					var complete = 0;
@@ -2100,19 +2100,53 @@ module.exports = function () {
 
 						execute();
 					});
-				})();
-			}
+				}
 
-			return mapPromise;
+				return mapPromise;
+			});
 		},
-		pipeline: function pipeline(executors, input) {
-			assert.argumentIsArray(executors, 'executors', Function);
 
-			return executors.reduce(function (previous, executor) {
-				return previous.then(function (result) {
-					return executor(result);
-				});
-			}, Promise.resolve(input));
+		/**
+   * Runs a series of functions sequentially (where each function can be
+   * synchronous or asynchronous). The result of each function is passed
+   * to the successive function and the result of the final function is
+   * returned to the consumer.
+   *
+   * @param {Function[]} functions - An array of functions, each expecting a single argument.
+   * @param input - The argument to pass the first function.
+   * @returns {Promise.<TResult>}
+   */
+		pipeline: function pipeline(functions, input) {
+			return Promise.resolve().then(function () {
+				assert.argumentIsArray(functions, 'functions', Function);
+
+				return functions.reduce(function (previous, fn) {
+					return previous.then(function (result) {
+						return fn(result);
+					});
+				}, Promise.resolve(input));
+			});
+		},
+
+		/**
+   * Creates a new promise, given an executor.
+   *
+   * This is a wrapper for the {@link Promise} constructor; however, any error
+   * is caught and the resulting promise is rejected (instead of letting the
+   * error bubble up to the top-level handler).
+   *
+   * @public
+   * @param {Function} executor - A function which has two callback parameters. The first is used to resolve the promise, the second rejects it.
+   * @returns {Promise}
+   */
+		build: function build(executor) {
+			return new Promise(function (resolve, reject) {
+				try {
+					executor(resolve, reject);
+				} catch (e) {
+					reject(e);
+				}
+			});
 		}
 	};
 }();
@@ -7319,6 +7353,67 @@ describe('When processing a "pipeline" of promises', function () {
 		it('the second executor not have should be called with the result of the first executor', function (done) {
 			p.catch(function (error) {
 				expect(spyTwo).not.toHaveBeenCalled();
+
+				done();
+			});
+		});
+	});
+});
+
+describe('When "promise.build" is used to create a promise', function () {
+	'use strict';
+
+	describe('and the executor resolves', function () {
+		var p;
+
+		beforeEach(function () {
+			p = promise.build(function (r, x) {
+				r('ok');
+			});
+		});
+
+		it('the promise should be fulfilled', function (done) {
+			p.then(function (result) {
+				expect(result).toEqual('ok');
+
+				done();
+			});
+		});
+	});
+
+	describe('and the executor rejects', function () {
+		var p;
+
+		beforeEach(function () {
+			p = promise.build(function (r, x) {
+				x('not ok');
+			});
+		});
+
+		it('the promise should be fulfilled', function (done) {
+			p.catch(function (result) {
+				expect(result).toEqual('not ok');
+
+				done();
+			});
+		});
+	});
+
+	describe('and the executor throws an error', function () {
+		var p;
+		var e;
+
+		beforeEach(function () {
+			p = promise.build(function (r, x) {
+				e = new Error('oops');
+
+				throw e;
+			});
+		});
+
+		it('the promise should be rejected', function (done) {
+			p.catch(function (error) {
+				expect(error).toBe(e);
 
 				done();
 			});
