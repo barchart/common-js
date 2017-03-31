@@ -5,6 +5,50 @@ module.exports = (() => {
 	'use strict';
 
 	const object = {
+		/**
+		 * <p>Performs "deep" equality check on two objects.</p>
+		 *
+		 * <p>Array items are compared, object properties are compared, and
+		 * finally "primitive" values are checked using strict equality rules.</p>
+		 *
+		 * @param a
+		 * @param b
+		 *
+		 * @returns {Boolean}
+		 */
+		equals(a, b) {
+			let returnVal;
+
+			if (a === b) {
+				returnVal = true
+			} else if (is.array(a) && is.array(b)) {
+				if (a.length === b.length) {
+					returnVal = a.length === 0 || a.every((x, i) => object.equals(x, b[i]));
+				} else {
+					returnVal = false;
+				}
+			} else if (is.object(a) && is.object(b)) {
+				const keysA = object.keys(a);
+				const keysB = object.keys(b);
+
+				returnVal = array.differenceSymmetric(keysA, keysB).length === 0 && keysA.every((key) => {
+					const valueA = a[key];
+					const valueB = b[key];
+
+					return object.equals(valueA, valueB);
+				});
+			} else {
+				returnVal = false;
+			}
+
+			return returnVal;
+		},
+
+		/**
+		 * Performs a "deep" copy.
+		 *
+		 * @returns {Object}
+		 */
 		clone(target) {
 			let c;
 

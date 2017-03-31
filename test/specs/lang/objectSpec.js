@@ -153,3 +153,95 @@ describe('When when extracting keys', function() {
 		});
 	});
 });
+
+describe('When running a deep comparison', function() {
+	describe('against two matching strings', function() {
+		it('the result should be true', function() {
+			expect(object.equals('abc', 'abc')).toEqual(true);
+		});
+	});
+
+	describe('against two different strings', function() {
+		it('the result should be true', function() {
+			expect(object.equals('abc', 'xyz')).toEqual(false);
+		});
+	});
+
+	describe('against an array containing the same strings', function() {
+		it('the result should be false', function() {
+			expect(object.equals([ 'a', 'b' ], [ 'a', 'b' ])).toEqual(true);
+		});
+	});
+
+	describe('against an array of different sizes', function() {
+		it('the result should be false', function() {
+			expect(object.equals([ 'a', 'b' ], [ 'a', 'b', 'c' ])).toEqual(false);
+		});
+	});
+
+	describe('against objects where one object has an extra property', function() {
+		it('the result should be false', function() {
+			expect(object.equals({ first: 'bryan' }, { first: 'bryan', last: 'ingle' })).toEqual(false);
+		});
+	});
+
+	describe('against an complex object, with the same properties and values', function() {
+		it('the result should be true', function() {
+			var a = {
+				hi: {
+					my: {
+						name: [
+							'Elvis',
+							'Presley'
+						],
+						home: 'Graceland'
+					}
+				}
+			};
+
+			var b = {
+				hi: {
+					my: {
+						name: [
+							'Elvis',
+							'Presley'
+						],
+						home: 'Graceland'
+					}
+				}
+			};
+
+			expect(object.equals(a, b)).toEqual(true);
+		});
+	});
+
+	describe('against an complex object, with the different properties and values', function() {
+		it('the result should be false', function() {
+			var a = {
+				hi: {
+					my: {
+						name: [
+							'Elvis',
+							'Presley'
+						],
+						home: 'Graceland'
+					}
+				}
+			};
+
+			var b = {
+				hi: {
+					my: {
+						name: [
+							'Johnny',
+							'Cash'
+						],
+						home: 'Tennessee'
+					}
+				}
+			};
+
+			expect(object.equals(a, b)).toEqual(false);
+		});
+	});
+});
