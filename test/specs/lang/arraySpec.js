@@ -191,7 +191,233 @@ describe('When calculating the "difference" between two arrays', function() {
 			expect(difference.length).toEqual(1);
 		});
 
-		it('the first element the unique object', function() {
+		it('the first element should be the unique object', function() {
+			expect(difference[0]).toBe(unique);
+		});
+	});
+
+	describe('and second array has a unique object and both arrays share an object', function() {
+		var same;
+		var unique;
+
+		var difference;
+
+		beforeEach(() => {
+			same = {};
+
+			difference = array.difference([same], [same, unique = { }]);
+		});
+
+		it('should be an array', function() {
+			expect(difference instanceof Array).toEqual(true);
+		});
+
+		it('should contain zero elements', function() {
+			expect(difference.length).toEqual(0);
+		});
+	});
+});
+
+describe('When calculating the "union" of two arrays', function() {
+	describe('and the arrays are empty', function() {
+		var union;
+
+		beforeEach(() => {
+			union = array.union([ ], [ ]);
+		});
+
+		it('should be an array', function() {
+			expect(union instanceof Array).toEqual(true);
+		});
+
+		it('should be empty', function() {
+			expect(union.length).toEqual(0);
+		});
+	});
+
+	describe('and first array is [1,2] and the second array is [2,3]', function() {
+		var union;
+
+		beforeEach(() => {
+			union = array.union([1,2], [2,3]);
+		});
+
+		it('should be an array', function() {
+			expect(union instanceof Array).toEqual(true);
+		});
+
+		it('should contain three elements', function() {
+			expect(union.length).toEqual(3);
+		});
+
+		it('the first element should be 1', function() {
+			expect(union[0]).toEqual(1);
+		});
+
+		it('the second element should be 2', function() {
+			expect(union[1]).toEqual(2);
+		});
+
+		it('the third element should be 3', function() {
+			expect(union[2]).toEqual(3);
+		});
+	});
+
+	describe('and first array has a unique object and both arrays share an object', function() {
+		var same;
+		var unique;
+
+		var difference;
+
+		beforeEach(() => {
+			same = {};
+
+			difference = array.union([same, unique = { }], [same]);
+		});
+
+		it('should be an array', function() {
+			expect(difference instanceof Array).toEqual(true);
+		});
+
+		it('should contain two elements', function() {
+			expect(difference.length).toEqual(2);
+		});
+
+		it('the first element the should be "same" object', function() {
+			expect(difference[0]).toBe(same);
+		});
+
+		it('the second element the should be "unique" object', function() {
+			expect(difference[1]).toBe(unique);
+		});
+	});
+});
+
+describe('When calculating the "intersection" of two arrays', function() {
+	describe('and the arrays are empty', function() {
+		var intersection;
+
+		beforeEach(() => {
+			intersection = array.intersection([ ], [ ]);
+		});
+
+		it('should be an array', function() {
+			expect(intersection instanceof Array).toEqual(true);
+		});
+
+		it('should be empty', function() {
+			expect(intersection.length).toEqual(0);
+		});
+	});
+
+	describe('and first array is [1,2] and the second array is [2,3]', function() {
+		var intersection;
+
+		beforeEach(() => {
+			intersection = array.intersection([1,2], [2,3]);
+		});
+
+		it('should be an array', function() {
+			expect(intersection instanceof Array).toEqual(true);
+		});
+
+		it('should contain one element', function() {
+			expect(intersection.length).toEqual(1);
+		});
+
+		it('the first element should be 2', function() {
+			expect(intersection[0]).toEqual(2);
+		});
+	});
+
+	describe('and first array has a unique object and both arrays share an object', function() {
+		var same;
+		var unique;
+
+		var intersection;
+
+		beforeEach(() => {
+			same = {};
+
+			intersection = array.intersection([same, unique = { }], [same]);
+		});
+
+		it('should be an array', function() {
+			expect(intersection instanceof Array).toEqual(true);
+		});
+
+		it('should contain one elements', function() {
+			expect(intersection.length).toEqual(1);
+		});
+
+		it('the first element the "same" object', function() {
+			expect(intersection[0]).toBe(same);
+		});
+	});
+});
+
+describe('When calculating the "symmetric difference" of two arrays', function() {
+	describe('and the arrays are empty', function() {
+		var difference;
+
+		beforeEach(() => {
+			difference = array.differenceSymmetric([ ], [ ]);
+		});
+
+		it('should be an array', function() {
+			expect(difference instanceof Array).toEqual(true);
+		});
+
+		it('should be empty', function() {
+			expect(difference.length).toEqual(0);
+		});
+	});
+
+	describe('and first array is [1,2] and the second array is [2,3]', function() {
+		var difference;
+
+		beforeEach(() => {
+			difference = array.differenceSymmetric([1,2], [2,3]);
+		});
+
+		it('should be an array', function() {
+			expect(difference instanceof Array).toEqual(true);
+		});
+
+		it('should contain two elements', function() {
+			expect(difference.length).toEqual(2);
+		});
+
+		it('the first element should be 1', function() {
+			expect(difference[0]).toEqual(1);
+		});
+
+		it('the second element should be 3', function() {
+			expect(difference[1]).toEqual(3);
+		});
+	});
+
+	describe('and first array has a unique object and both arrays share an object', function() {
+		var same;
+		var unique;
+
+		var difference;
+
+		beforeEach(() => {
+			same = {};
+
+			difference = array.differenceSymmetric([same, unique = { }], [same]);
+		});
+
+		it('should be an array', function() {
+			expect(difference instanceof Array).toEqual(true);
+		});
+
+		it('should contain one elements', function() {
+			expect(difference.length).toEqual(1);
+		});
+
+		it('the first element the "unique" object', function() {
 			expect(difference[0]).toBe(unique);
 		});
 	});

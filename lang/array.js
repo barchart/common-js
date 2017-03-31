@@ -3,7 +3,7 @@ const assert = require('./assert');
 module.exports = (() => {
 	'use strict';
 
-	return {
+	const array = {
 		unique(a) {
 			assert.argumentIsArray(a, 'a');
 
@@ -68,6 +68,13 @@ module.exports = (() => {
 			return returnRef;
 		},
 
+		/**
+		 * Set difference operation (using strict equality).
+		 *
+		 * @param {Array} a
+		 * @param {Array} b
+		 * @returns {Array}
+		 */
 		difference(a, b) {
 			const returnRef = [ ];
 
@@ -82,6 +89,58 @@ module.exports = (() => {
 			});
 
 			return returnRef;
+		},
+
+		differenceSymmetric(a, b) {
+			return array.union(array.difference(a, b), array.difference(b, a));
+		},
+
+		/**
+		 * Set union operation (using strict equality).
+		 *
+		 * @param {Array} a
+		 * @param {Array} b
+		 * @returns {Array}
+		 */
+		union(a, b) {
+			const returnRef = a.slice();
+
+			b.forEach((candidate) => {
+				const exclude = returnRef.some((comparison) => {
+					return candidate === comparison;
+				});
+
+				if (!exclude) {
+					returnRef.push(candidate);
+				}
+			});
+
+			return returnRef;
+		},
+
+		/**
+		 * Set intersection operation (using strict equality).
+		 *
+		 * @param {Array} a
+		 * @param {Array} b
+		 * @returns {Array}
+		 */
+		intersection(a, b) {
+			const returnRef = [ ];
+
+			a.forEach((candidate) => {
+				const include = b.some((comparison) => {
+					return candidate === comparison;
+				});
+
+				if (include) {
+					returnRef.push(candidate);
+				}
+			});
+
+			return returnRef;
 		}
 	};
+
+	return array;
 })();
