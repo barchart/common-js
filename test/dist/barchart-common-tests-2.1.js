@@ -1341,12 +1341,25 @@ var assert = require('./assert');
 module.exports = function () {
 	'use strict';
 
+	/**
+  * An object that has an end-of-life process.
+  *
+  * @public
+  * @interface
+  */
+
 	var Disposable = function () {
 		function Disposable() {
 			_classCallCheck(this, Disposable);
 
 			this._disposed = false;
 		}
+
+		/**
+   * Invokes end-of-life logic. Once this function has been
+   * invoked, further interaction with the object is not
+   * recommended.
+   */
 
 		_createClass(Disposable, [{
 			key: 'dispose',
@@ -1359,11 +1372,24 @@ module.exports = function () {
 
 				this._onDispose();
 			}
+
+			/**
+    * @protected
+    * @ignore
+    */
+
 		}, {
 			key: '_onDispose',
 			value: function _onDispose() {
 				return;
 			}
+
+			/**
+    * Returns true if the {@link Disposable#dispose} function has been invoked.
+    *
+    * @returns {boolean}
+    */
+
 		}, {
 			key: 'getIsDisposed',
 			value: function getIsDisposed() {
@@ -1374,6 +1400,16 @@ module.exports = function () {
 			value: function toString() {
 				return '[Disposable]';
 			}
+
+			/**
+    * Creates and returns a {@link Disposable} object with end-of-life logic
+    * delegated to a function.
+    *
+    * @param disposeAction {Function}
+    *
+    * @returns {Disposable}
+    */
+
 		}], [{
 			key: 'fromAction',
 			value: function fromAction(disposeAction) {
@@ -1381,6 +1417,14 @@ module.exports = function () {
 
 				return new DisposableAction(disposeAction);
 			}
+
+			/**
+    * Creates and returns a {@link Disposable} object whose end-of-life
+    * logic does nothing.
+    *
+    * @returns {Disposable}
+    */
+
 		}, {
 			key: 'getEmpty',
 			value: function getEmpty() {
@@ -1432,7 +1476,7 @@ var assert = require('./assert');
 module.exports = function () {
 	'use strict';
 
-	return {
+	var array = {
 		unique: function unique(a) {
 			assert.argumentIsArray(a, 'a');
 
@@ -1492,6 +1536,14 @@ module.exports = function () {
 
 			return returnRef;
 		},
+
+		/**
+   * Set difference operation (using strict equality).
+   *
+   * @param {Array} a
+   * @param {Array} b
+   * @returns {Array}
+   */
 		difference: function difference(a, b) {
 			var returnRef = [];
 
@@ -1506,8 +1558,59 @@ module.exports = function () {
 			});
 
 			return returnRef;
+		},
+		differenceSymmetric: function differenceSymmetric(a, b) {
+			return array.union(array.difference(a, b), array.difference(b, a));
+		},
+
+		/**
+   * Set union operation (using strict equality).
+   *
+   * @param {Array} a
+   * @param {Array} b
+   * @returns {Array}
+   */
+		union: function union(a, b) {
+			var returnRef = a.slice();
+
+			b.forEach(function (candidate) {
+				var exclude = returnRef.some(function (comparison) {
+					return candidate === comparison;
+				});
+
+				if (!exclude) {
+					returnRef.push(candidate);
+				}
+			});
+
+			return returnRef;
+		},
+
+		/**
+   * Set intersection operation (using strict equality).
+   *
+   * @param {Array} a
+   * @param {Array} b
+   * @returns {Array}
+   */
+		intersection: function intersection(a, b) {
+			var returnRef = [];
+
+			a.forEach(function (candidate) {
+				var include = b.some(function (comparison) {
+					return candidate === comparison;
+				});
+
+				if (include) {
+					returnRef.push(candidate);
+				}
+			});
+
+			return returnRef;
 		}
 	};
+
+	return array;
 }();
 
 },{"./assert":14}],14:[function(require,module,exports){
@@ -1930,6 +2033,52 @@ module.exports = function () {
 	'use strict';
 
 	var object = {
+		/**
+   * <p>Performs "deep" equality check on two objects.</p>
+   *
+   * <p>Array items are compared, object properties are compared, and
+   * finally "primitive" values are checked using strict equality rules.</p>
+   *
+   * @param a
+   * @param b
+   *
+   * @returns {Boolean}
+   */
+		equals: function equals(a, b) {
+			var returnVal = void 0;
+
+			if (a === b) {
+				returnVal = true;
+			} else if (is.array(a) && is.array(b)) {
+				if (a.length === b.length) {
+					returnVal = a.length === 0 || a.every(function (x, i) {
+						return object.equals(x, b[i]);
+					});
+				} else {
+					returnVal = false;
+				}
+			} else if (is.object(a) && is.object(b)) {
+				var keysA = object.keys(a);
+				var keysB = object.keys(b);
+
+				returnVal = array.differenceSymmetric(keysA, keysB).length === 0 && keysA.every(function (key) {
+					var valueA = a[key];
+					var valueB = b[key];
+
+					return object.equals(valueA, valueB);
+				});
+			} else {
+				returnVal = false;
+			}
+
+			return returnVal;
+		},
+
+		/**
+   * Performs a "deep" copy.
+   *
+   * @returns {Object}
+   */
 		clone: function clone(target) {
 			var c = void 0;
 
@@ -4961,7 +5110,233 @@ describe('When calculating the "difference" between two arrays', function () {
 			expect(difference.length).toEqual(1);
 		});
 
-		it('the first element the unique object', function () {
+		it('the first element should be the unique object', function () {
+			expect(difference[0]).toBe(unique);
+		});
+	});
+
+	describe('and second array has a unique object and both arrays share an object', function () {
+		var same;
+		var unique;
+
+		var difference;
+
+		beforeEach(function () {
+			same = {};
+
+			difference = array.difference([same], [same, unique = {}]);
+		});
+
+		it('should be an array', function () {
+			expect(difference instanceof Array).toEqual(true);
+		});
+
+		it('should contain zero elements', function () {
+			expect(difference.length).toEqual(0);
+		});
+	});
+});
+
+describe('When calculating the "union" of two arrays', function () {
+	describe('and the arrays are empty', function () {
+		var union;
+
+		beforeEach(function () {
+			union = array.union([], []);
+		});
+
+		it('should be an array', function () {
+			expect(union instanceof Array).toEqual(true);
+		});
+
+		it('should be empty', function () {
+			expect(union.length).toEqual(0);
+		});
+	});
+
+	describe('and first array is [1,2] and the second array is [2,3]', function () {
+		var union;
+
+		beforeEach(function () {
+			union = array.union([1, 2], [2, 3]);
+		});
+
+		it('should be an array', function () {
+			expect(union instanceof Array).toEqual(true);
+		});
+
+		it('should contain three elements', function () {
+			expect(union.length).toEqual(3);
+		});
+
+		it('the first element should be 1', function () {
+			expect(union[0]).toEqual(1);
+		});
+
+		it('the second element should be 2', function () {
+			expect(union[1]).toEqual(2);
+		});
+
+		it('the third element should be 3', function () {
+			expect(union[2]).toEqual(3);
+		});
+	});
+
+	describe('and first array has a unique object and both arrays share an object', function () {
+		var same;
+		var unique;
+
+		var difference;
+
+		beforeEach(function () {
+			same = {};
+
+			difference = array.union([same, unique = {}], [same]);
+		});
+
+		it('should be an array', function () {
+			expect(difference instanceof Array).toEqual(true);
+		});
+
+		it('should contain two elements', function () {
+			expect(difference.length).toEqual(2);
+		});
+
+		it('the first element the should be "same" object', function () {
+			expect(difference[0]).toBe(same);
+		});
+
+		it('the second element the should be "unique" object', function () {
+			expect(difference[1]).toBe(unique);
+		});
+	});
+});
+
+describe('When calculating the "intersection" of two arrays', function () {
+	describe('and the arrays are empty', function () {
+		var intersection;
+
+		beforeEach(function () {
+			intersection = array.intersection([], []);
+		});
+
+		it('should be an array', function () {
+			expect(intersection instanceof Array).toEqual(true);
+		});
+
+		it('should be empty', function () {
+			expect(intersection.length).toEqual(0);
+		});
+	});
+
+	describe('and first array is [1,2] and the second array is [2,3]', function () {
+		var intersection;
+
+		beforeEach(function () {
+			intersection = array.intersection([1, 2], [2, 3]);
+		});
+
+		it('should be an array', function () {
+			expect(intersection instanceof Array).toEqual(true);
+		});
+
+		it('should contain one element', function () {
+			expect(intersection.length).toEqual(1);
+		});
+
+		it('the first element should be 2', function () {
+			expect(intersection[0]).toEqual(2);
+		});
+	});
+
+	describe('and first array has a unique object and both arrays share an object', function () {
+		var same;
+		var unique;
+
+		var intersection;
+
+		beforeEach(function () {
+			same = {};
+
+			intersection = array.intersection([same, unique = {}], [same]);
+		});
+
+		it('should be an array', function () {
+			expect(intersection instanceof Array).toEqual(true);
+		});
+
+		it('should contain one elements', function () {
+			expect(intersection.length).toEqual(1);
+		});
+
+		it('the first element the "same" object', function () {
+			expect(intersection[0]).toBe(same);
+		});
+	});
+});
+
+describe('When calculating the "symmetric difference" of two arrays', function () {
+	describe('and the arrays are empty', function () {
+		var difference;
+
+		beforeEach(function () {
+			difference = array.differenceSymmetric([], []);
+		});
+
+		it('should be an array', function () {
+			expect(difference instanceof Array).toEqual(true);
+		});
+
+		it('should be empty', function () {
+			expect(difference.length).toEqual(0);
+		});
+	});
+
+	describe('and first array is [1,2] and the second array is [2,3]', function () {
+		var difference;
+
+		beforeEach(function () {
+			difference = array.differenceSymmetric([1, 2], [2, 3]);
+		});
+
+		it('should be an array', function () {
+			expect(difference instanceof Array).toEqual(true);
+		});
+
+		it('should contain two elements', function () {
+			expect(difference.length).toEqual(2);
+		});
+
+		it('the first element should be 1', function () {
+			expect(difference[0]).toEqual(1);
+		});
+
+		it('the second element should be 3', function () {
+			expect(difference[1]).toEqual(3);
+		});
+	});
+
+	describe('and first array has a unique object and both arrays share an object', function () {
+		var same;
+		var unique;
+
+		var difference;
+
+		beforeEach(function () {
+			same = {};
+
+			difference = array.differenceSymmetric([same, unique = {}], [same]);
+		});
+
+		it('should be an array', function () {
+			expect(difference instanceof Array).toEqual(true);
+		});
+
+		it('should contain one elements', function () {
+			expect(difference.length).toEqual(1);
+		});
+
+		it('the first element the "unique" object', function () {
 			expect(difference[0]).toBe(unique);
 		});
 	});
@@ -6441,6 +6816,86 @@ describe('When when extracting keys', function () {
 
 		it('should not contain a "toString" value', function () {
 			expect(keys[0] === 'toString' || keys[1] === 'toString').toEqual(false);
+		});
+	});
+});
+
+describe('When running a deep comparison', function () {
+	describe('against two matching strings', function () {
+		it('the result should be true', function () {
+			expect(object.equals('abc', 'abc')).toEqual(true);
+		});
+	});
+
+	describe('against two different strings', function () {
+		it('the result should be true', function () {
+			expect(object.equals('abc', 'xyz')).toEqual(false);
+		});
+	});
+
+	describe('against an array containing the same strings', function () {
+		it('the result should be false', function () {
+			expect(object.equals(['a', 'b'], ['a', 'b'])).toEqual(true);
+		});
+	});
+
+	describe('against an array of different sizes', function () {
+		it('the result should be false', function () {
+			expect(object.equals(['a', 'b'], ['a', 'b', 'c'])).toEqual(false);
+		});
+	});
+
+	describe('against objects where one object has an extra property', function () {
+		it('the result should be false', function () {
+			expect(object.equals({ first: 'bryan' }, { first: 'bryan', last: 'ingle' })).toEqual(false);
+		});
+	});
+
+	describe('against an complex object, with the same properties and values', function () {
+		it('the result should be true', function () {
+			var a = {
+				hi: {
+					my: {
+						name: ['Elvis', 'Presley'],
+						home: 'Graceland'
+					}
+				}
+			};
+
+			var b = {
+				hi: {
+					my: {
+						name: ['Elvis', 'Presley'],
+						home: 'Graceland'
+					}
+				}
+			};
+
+			expect(object.equals(a, b)).toEqual(true);
+		});
+	});
+
+	describe('against an complex object, with the different properties and values', function () {
+		it('the result should be false', function () {
+			var a = {
+				hi: {
+					my: {
+						name: ['Elvis', 'Presley'],
+						home: 'Graceland'
+					}
+				}
+			};
+
+			var b = {
+				hi: {
+					my: {
+						name: ['Johnny', 'Cash'],
+						home: 'Tennessee'
+					}
+				}
+			};
+
+			expect(object.equals(a, b)).toEqual(false);
 		});
 	});
 });

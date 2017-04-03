@@ -1424,12 +1424,25 @@ var assert = require('./assert');
 module.exports = function () {
 	'use strict';
 
+	/**
+  * An object that has an end-of-life process.
+  *
+  * @public
+  * @interface
+  */
+
 	var Disposable = function () {
 		function Disposable() {
 			_classCallCheck(this, Disposable);
 
 			this._disposed = false;
 		}
+
+		/**
+   * Invokes end-of-life logic. Once this function has been
+   * invoked, further interaction with the object is not
+   * recommended.
+   */
 
 		_createClass(Disposable, [{
 			key: 'dispose',
@@ -1442,11 +1455,24 @@ module.exports = function () {
 
 				this._onDispose();
 			}
+
+			/**
+    * @protected
+    * @ignore
+    */
+
 		}, {
 			key: '_onDispose',
 			value: function _onDispose() {
 				return;
 			}
+
+			/**
+    * Returns true if the {@link Disposable#dispose} function has been invoked.
+    *
+    * @returns {boolean}
+    */
+
 		}, {
 			key: 'getIsDisposed',
 			value: function getIsDisposed() {
@@ -1457,6 +1483,16 @@ module.exports = function () {
 			value: function toString() {
 				return '[Disposable]';
 			}
+
+			/**
+    * Creates and returns a {@link Disposable} object with end-of-life logic
+    * delegated to a function.
+    *
+    * @param disposeAction {Function}
+    *
+    * @returns {Disposable}
+    */
+
 		}], [{
 			key: 'fromAction',
 			value: function fromAction(disposeAction) {
@@ -1464,6 +1500,14 @@ module.exports = function () {
 
 				return new DisposableAction(disposeAction);
 			}
+
+			/**
+    * Creates and returns a {@link Disposable} object whose end-of-life
+    * logic does nothing.
+    *
+    * @returns {Disposable}
+    */
+
 		}, {
 			key: 'getEmpty',
 			value: function getEmpty() {
@@ -1515,7 +1559,7 @@ var assert = require('./assert');
 module.exports = function () {
 	'use strict';
 
-	return {
+	var array = {
 		unique: function unique(a) {
 			assert.argumentIsArray(a, 'a');
 
@@ -1575,6 +1619,14 @@ module.exports = function () {
 
 			return returnRef;
 		},
+
+		/**
+   * Set difference operation (using strict equality).
+   *
+   * @param {Array} a
+   * @param {Array} b
+   * @returns {Array}
+   */
 		difference: function difference(a, b) {
 			var returnRef = [];
 
@@ -1589,8 +1641,59 @@ module.exports = function () {
 			});
 
 			return returnRef;
+		},
+		differenceSymmetric: function differenceSymmetric(a, b) {
+			return array.union(array.difference(a, b), array.difference(b, a));
+		},
+
+		/**
+   * Set union operation (using strict equality).
+   *
+   * @param {Array} a
+   * @param {Array} b
+   * @returns {Array}
+   */
+		union: function union(a, b) {
+			var returnRef = a.slice();
+
+			b.forEach(function (candidate) {
+				var exclude = returnRef.some(function (comparison) {
+					return candidate === comparison;
+				});
+
+				if (!exclude) {
+					returnRef.push(candidate);
+				}
+			});
+
+			return returnRef;
+		},
+
+		/**
+   * Set intersection operation (using strict equality).
+   *
+   * @param {Array} a
+   * @param {Array} b
+   * @returns {Array}
+   */
+		intersection: function intersection(a, b) {
+			var returnRef = [];
+
+			a.forEach(function (candidate) {
+				var include = b.some(function (comparison) {
+					return candidate === comparison;
+				});
+
+				if (include) {
+					returnRef.push(candidate);
+				}
+			});
+
+			return returnRef;
 		}
 	};
+
+	return array;
 }();
 
 },{"./assert":17}],17:[function(require,module,exports){
@@ -2085,6 +2188,52 @@ module.exports = function () {
 	'use strict';
 
 	var object = {
+		/**
+   * <p>Performs "deep" equality check on two objects.</p>
+   *
+   * <p>Array items are compared, object properties are compared, and
+   * finally "primitive" values are checked using strict equality rules.</p>
+   *
+   * @param a
+   * @param b
+   *
+   * @returns {Boolean}
+   */
+		equals: function equals(a, b) {
+			var returnVal = void 0;
+
+			if (a === b) {
+				returnVal = true;
+			} else if (is.array(a) && is.array(b)) {
+				if (a.length === b.length) {
+					returnVal = a.length === 0 || a.every(function (x, i) {
+						return object.equals(x, b[i]);
+					});
+				} else {
+					returnVal = false;
+				}
+			} else if (is.object(a) && is.object(b)) {
+				var keysA = object.keys(a);
+				var keysB = object.keys(b);
+
+				returnVal = array.differenceSymmetric(keysA, keysB).length === 0 && keysA.every(function (key) {
+					var valueA = a[key];
+					var valueB = b[key];
+
+					return object.equals(valueA, valueB);
+				});
+			} else {
+				returnVal = false;
+			}
+
+			return returnVal;
+		},
+
+		/**
+   * Performs a "deep" copy.
+   *
+   * @returns {Object}
+   */
 		clone: function clone(target) {
 			var c = void 0;
 
