@@ -20,7 +20,7 @@ module.exports = (() => {
 			let returnVal;
 
 			if (a === b) {
-				returnVal = true
+				returnVal = true;
 			} else if (is.array(a) && is.array(b)) {
 				if (a.length === b.length) {
 					returnVal = a.length === 0 || a.every((x, i) => object.equals(x, b[i]));
