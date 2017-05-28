@@ -1,4 +1,5 @@
 const assert = require('./assert');
+const is = require('./is');
 
 module.exports = (() => {
 	'use strict';
@@ -47,6 +48,8 @@ module.exports = (() => {
 		},
 
 		dropRight(a) {
+			assert.argumentIsArray(a, 'a');
+
 			let returnRef = Array.from(a);
 
 			if (returnRef.length !== 0) {
@@ -57,6 +60,8 @@ module.exports = (() => {
 		},
 
 		last(a) {
+			assert.argumentIsArray(a, 'a');
+
 			let returnRef;
 
 			if (a.length !== 0) {
@@ -68,6 +73,21 @@ module.exports = (() => {
 			return returnRef;
 		},
 
+		flatten(a, recusive) {
+			assert.argumentIsArray(a, 'a');
+			assert.argumentIsOptional(recusive, 'recursive', Boolean);
+
+			const empty = [];
+
+			let flat = empty.concat.apply(empty, a);
+
+			if (recusive && flat.some(x => is.array(x))) {
+				flat = array.flatten(flat, true);
+			}
+
+			return flat;
+		},
+
 		/**
 		 * Set difference operation (using strict equality).
 		 *
@@ -76,6 +96,9 @@ module.exports = (() => {
 		 * @returns {Array}
 		 */
 		difference(a, b) {
+			assert.argumentIsArray(a, 'a');
+			assert.argumentIsArray(b, 'b');
+
 			const returnRef = [ ];
 
 			a.forEach((candidate) => {
@@ -103,6 +126,9 @@ module.exports = (() => {
 		 * @returns {Array}
 		 */
 		union(a, b) {
+			assert.argumentIsArray(a, 'a');
+			assert.argumentIsArray(b, 'b');
+
 			const returnRef = a.slice();
 
 			b.forEach((candidate) => {
@@ -126,6 +152,9 @@ module.exports = (() => {
 		 * @returns {Array}
 		 */
 		intersection(a, b) {
+			assert.argumentIsArray(a, 'a');
+			assert.argumentIsArray(b, 'b');
+
 			const returnRef = [ ];
 
 			a.forEach((candidate) => {

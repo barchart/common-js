@@ -1,6 +1,6 @@
 var array = require('./../../../lang/array');
 
-describe('When reducing an array to unique values', function() {
+describe('when reducing an array to unique values', function() {
 	'use strict';
 
 	describe('and using the first four rows of pascals triangle', function() {
@@ -28,7 +28,72 @@ describe('When reducing an array to unique values', function() {
 	});
 });
 
-describe('When grouping an array', function() {
+describe('when flattening an array', function() {
+	'use strict';
+
+	var arrayOne;
+	var arrayTwo;
+
+	var itemA;
+	var itemB;
+	var itemC;
+	var itemD;
+
+	beforeEach(function() {
+		arrayOne = [ itemA = 'a', itemB = 'b', itemC =[ 'c' ]];
+		arrayTwo = [ itemD = 'd' ];
+	});
+
+	describe('without using recursion', function() {
+		var result;
+
+		beforeEach(function() {
+			result = array.flatten([ arrayOne, arrayTwo ], false);
+		});
+
+		it('the first item should be "a"', function() {
+			expect(result[0]).toBe(itemA);
+		});
+
+		it('the second item should be "b"', function() {
+			expect(result[1]).toBe(itemB);
+		});
+
+		it('the third item should be "c"', function() {
+			expect(result[2]).toBe(itemC);
+		});
+
+		it('the forth item should be "d"', function() {
+			expect(result[3]).toBe(itemD);
+		});
+	});
+
+	describe('and using recursion', function() {
+		var result;
+
+		beforeEach(function() {
+			result = array.flatten([ arrayOne, arrayTwo ], true);
+		});
+
+		it('the first item should be "a"', function() {
+			expect(result[0]).toBe(itemA);
+		});
+
+		it('the second item should be "b"', function() {
+			expect(result[1]).toBe(itemB);
+		});
+
+		it('the third item should be "c"', function() {
+			expect(result[2]).toBe('c');
+		});
+
+		it('the forth item should be "d"', function() {
+			expect(result[3]).toBe(itemD);
+		});
+	});
+});
+
+describe('when grouping an array', function() {
 	'use strict';
 
 	describe('and using objects containing the first three rows of pascals triangle', function() {
@@ -71,7 +136,7 @@ describe('When grouping an array', function() {
 		});
 	});
 
-	describe('When indexing an array', function() {
+	describe('when indexing an array', function() {
 		describe('and using objects containing the first three prime numbers', function() {
 			var groups;
 
@@ -114,7 +179,7 @@ describe('When grouping an array', function() {
 	});
 });
 
-describe('When calculating the "difference" between two arrays', function() {
+describe('when calculating the "difference" between two arrays', function() {
 	describe('and the arrays are empty', function() {
 		var difference;
 
@@ -218,7 +283,7 @@ describe('When calculating the "difference" between two arrays', function() {
 	});
 });
 
-describe('When calculating the "union" of two arrays', function() {
+describe('when calculating the "union" of two arrays', function() {
 	describe('and the arrays are empty', function() {
 		var union;
 
@@ -293,7 +358,7 @@ describe('When calculating the "union" of two arrays', function() {
 	});
 });
 
-describe('When calculating the "intersection" of two arrays', function() {
+describe('when calculating the "intersection" of two arrays', function() {
 	describe('and the arrays are empty', function() {
 		var intersection;
 
@@ -356,7 +421,7 @@ describe('When calculating the "intersection" of two arrays', function() {
 	});
 });
 
-describe('When calculating the "symmetric difference" of two arrays', function() {
+describe('when calculating the "symmetric difference" of two arrays', function() {
 	describe('and the arrays are empty', function() {
 		var difference;
 
