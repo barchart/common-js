@@ -1555,6 +1555,7 @@ module.exports = function () {
 'use strict';
 
 var assert = require('./assert');
+var is = require('./is');
 
 module.exports = function () {
 	'use strict';
@@ -1600,6 +1601,8 @@ module.exports = function () {
 			}, {});
 		},
 		dropRight: function dropRight(a) {
+			assert.argumentIsArray(a, 'a');
+
 			var returnRef = Array.from(a);
 
 			if (returnRef.length !== 0) {
@@ -1609,6 +1612,8 @@ module.exports = function () {
 			return returnRef;
 		},
 		last: function last(a) {
+			assert.argumentIsArray(a, 'a');
+
 			var returnRef = void 0;
 
 			if (a.length !== 0) {
@@ -1619,6 +1624,22 @@ module.exports = function () {
 
 			return returnRef;
 		},
+		flatten: function flatten(a, recusive) {
+			assert.argumentIsArray(a, 'a');
+			assert.argumentIsOptional(recusive, 'recursive', Boolean);
+
+			var empty = [];
+
+			var flat = empty.concat.apply(empty, a);
+
+			if (recusive && flat.some(function (x) {
+				return is.array(x);
+			})) {
+				flat = array.flatten(flat, true);
+			}
+
+			return flat;
+		},
 
 		/**
    * Set difference operation (using strict equality).
@@ -1628,6 +1649,9 @@ module.exports = function () {
    * @returns {Array}
    */
 		difference: function difference(a, b) {
+			assert.argumentIsArray(a, 'a');
+			assert.argumentIsArray(b, 'b');
+
 			var returnRef = [];
 
 			a.forEach(function (candidate) {
@@ -1654,6 +1678,9 @@ module.exports = function () {
    * @returns {Array}
    */
 		union: function union(a, b) {
+			assert.argumentIsArray(a, 'a');
+			assert.argumentIsArray(b, 'b');
+
 			var returnRef = a.slice();
 
 			b.forEach(function (candidate) {
@@ -1677,6 +1704,9 @@ module.exports = function () {
    * @returns {Array}
    */
 		intersection: function intersection(a, b) {
+			assert.argumentIsArray(a, 'a');
+			assert.argumentIsArray(b, 'b');
+
 			var returnRef = [];
 
 			a.forEach(function (candidate) {
@@ -1696,7 +1726,7 @@ module.exports = function () {
 	return array;
 }();
 
-},{"./assert":17}],17:[function(require,module,exports){
+},{"./assert":17,"./is":23}],17:[function(require,module,exports){
 'use strict';
 
 var is = require('./is');
