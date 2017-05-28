@@ -11,8 +11,8 @@ module.exports = (() => {
 		 * <p>Array items are compared, object properties are compared, and
 		 * finally "primitive" values are checked using strict equality rules.</p>
 		 *
-		 * @param a
-		 * @param b
+		 * @param {Object} a
+		 * @param {Object} b
 		 *
 		 * @returns {Boolean}
 		 */
@@ -47,28 +47,41 @@ module.exports = (() => {
 		/**
 		 * Performs a "deep" copy.
 		 *
+		 * @param {Object} source - The object to copy.
+		 *
 		 * @returns {Object}
 		 */
-		clone(target) {
+		clone(source) {
 			let c;
 
-			if (is.array(target)) {
-				c = target.map((targetItem) => {
-					return object.clone(targetItem);
+			if (is.array(source)) {
+				c = source.map((sourceItem) => {
+					return object.clone(sourceItem);
 				});
-			} else if (is.object(target)) {
-				c = object.keys(target).reduce((accumulator, key) => {
-					accumulator[key] = object.clone(target[key]);
+			} else if (is.object(source)) {
+				c = object.keys(source).reduce((accumulator, key) => {
+					accumulator[key] = object.clone(source[key]);
 
 					return accumulator;
 				}, { });
 			} else {
-				c = target;
+				c = source;
 			}
 
 			return c;
 		},
 
+		/**
+		 * Creates a new object (or array) by performing a deep copy
+		 * of the properties from each object. If the same property
+		 * exists on both objects, the property value from the
+		 * second object ("b") is preferred.
+		 *
+		 * @param {Object} a
+		 * @param {Object} b
+		 *
+		 * @returns {Object}
+		 */
 		merge(a, b) {
 			let m;
 
@@ -92,6 +105,13 @@ module.exports = (() => {
 			return m;
 		},
 
+		/**
+		 * Given an object, returns an array of "own" properties.
+		 *
+		 * @param {Object} target - The object to interrogate.
+		 *
+		 * @returns {Array<string>}
+		 */
 		keys(target) {
 			const keys = [];
 
