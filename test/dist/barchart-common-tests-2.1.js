@@ -1636,21 +1636,23 @@ module.exports = function () {
 			assert.argumentIsRequired(variable, variableName, Array);
 
 			if (itemConstraint) {
-				var itemValidator = void 0;
+				(function () {
+					var itemValidator = void 0;
 
-				if (typeof itemConstraint === 'function' && itemConstraint !== Function) {
-					itemValidator = function itemValidator(value, index) {
-						return value instanceof itemConstraint || itemConstraint(value, variableName + '[' + index + ']');
-					};
-				} else {
-					itemValidator = function itemValidator(value, index) {
-						return checkArgumentType(value, variableName, itemConstraint, itemConstraintDescription, index);
-					};
-				}
+					if (typeof itemConstraint === 'function' && itemConstraint !== Function) {
+						itemValidator = function itemValidator(value, index) {
+							return value instanceof itemConstraint || itemConstraint(value, variableName + '[' + index + ']');
+						};
+					} else {
+						itemValidator = function itemValidator(value, index) {
+							return checkArgumentType(value, variableName, itemConstraint, itemConstraintDescription, index);
+						};
+					}
 
-				variable.forEach(function (v, i) {
-					itemValidator(v, i);
-				});
+					variable.forEach(function (v, i) {
+						itemValidator(v, i);
+					});
+				})();
 			}
 		},
 		areEqual: function areEqual(a, b, descriptionA, descriptionB) {
@@ -2198,57 +2200,59 @@ module.exports = function () {
 						return Promise.resolve(mapper(item));
 					}));
 				} else {
-					var total = items.length;
-					var active = 0;
-					var complete = 0;
-					var failure = false;
+					(function () {
+						var total = items.length;
+						var active = 0;
+						var complete = 0;
+						var failure = false;
 
-					var results = Array.of(total);
+						var results = Array.of(total);
 
-					var executors = items.map(function (item, index) {
-						return function () {
-							return Promise.resolve().then(function () {
-								return mapper(item);
-							}).then(function (result) {
-								results[index] = result;
-							});
-						};
-					});
+						var executors = items.map(function (item, index) {
+							return function () {
+								return Promise.resolve().then(function () {
+									return mapper(item);
+								}).then(function (result) {
+									results[index] = result;
+								});
+							};
+						});
 
-					mapPromise = utilities.build(function (resolveCallback, rejectCallback) {
-						var execute = function execute() {
-							if (!(executors.length > 0 && c > active && !failure)) {
-								return;
-							}
-
-							active = active + 1;
-
-							var executor = executors.shift();
-
-							executor().then(function () {
-								if (failure) {
+						mapPromise = utilities.build(function (resolveCallback, rejectCallback) {
+							var execute = function execute() {
+								if (!(executors.length > 0 && c > active && !failure)) {
 									return;
 								}
 
-								active = active - 1;
-								complete = complete + 1;
+								active = active + 1;
 
-								if (complete < total) {
-									execute();
-								} else {
-									resolveCallback(results);
-								}
-							}).catch(function (error) {
-								failure = false;
+								var executor = executors.shift();
 
-								rejectCallback(error);
-							});
+								executor().then(function () {
+									if (failure) {
+										return;
+									}
+
+									active = active - 1;
+									complete = complete + 1;
+
+									if (complete < total) {
+										execute();
+									} else {
+										resolveCallback(results);
+									}
+								}).catch(function (error) {
+									failure = false;
+
+									rejectCallback(error);
+								});
+
+								execute();
+							};
 
 							execute();
-						};
-
-						execute();
-					});
+						});
+					})();
 				}
 
 				return mapPromise;
