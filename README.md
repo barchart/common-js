@@ -3,16 +3,6 @@
 
 Utilities that can be used in a browser or Node.js environment.
 
-## Simple Setup
-
-1.	Clone the [repository](https://github.com/barchart/barchart-common-js).
-
-        > git clone git@github.com:barchart/barchart-common-js.git
-
-2.	Download third-party dependencies
-
-        > npm install
-
 ## Documentation
 
 The code is documented with [JSDoc](http://usejsdoc.org/). While the output hasn't been committed to source control, you can generate the documentation by using the following commands:
