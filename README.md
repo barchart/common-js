@@ -7,15 +7,26 @@ Utilities that can be used in a browser or Node.js environment.
 
 1.	Clone the [repository](https://github.com/barchart/barchart-common-js).
 
-		git clone git@github.com:barchart/barchart-common-js.git
+        > git clone git@github.com:barchart/barchart-common-js.git
 
 2.	Download third-party dependencies
 
-		npm install
+        > npm install
+
+## Documentation
+
+The code is documented with [JSDoc](http://usejsdoc.org/). While the output hasn't been committed to source control, you can generate the documentation by using the following commands:
+
+    > npm install
+    > gulp document
 
 ## Development
 
-Gulp is used to check "linting" and run unit tests.
+Gulp is used to check "linting" and run unit tests, as follows:
+
+    > npm install
+    > gulp lint
+    > gulp test
 
 ## Consumers
 
@@ -54,18 +65,15 @@ So, in your consuming application, take the following steps:
 Please refer to https://github.com/barchart/aws-beanstalk-nodejs-job-manager for an
 example of the "ebextension" files.
 
-### Test
 
-Unit tests are run via gulp
-
-	gulp test
-
-###Release
+### Release
 
 Use gulp to test, package, and tag a new release as follows:
 
-	gulp release
+    > npm install
+    > gulp release
 
-##License
+## License
 
-This software is proprietary and intended for internal use by Barchart.com only.
+This software is proprietary and intended for internal use by Barchart.com only (although, we are considering
+making this repository public, and changing the license -- there is no proprietary code here).
