@@ -1666,23 +1666,21 @@ module.exports = function () {
 			assert.argumentIsRequired(variable, variableName, Array);
 
 			if (itemConstraint) {
-				(function () {
-					var itemValidator = void 0;
+				var itemValidator = void 0;
 
-					if (typeof itemConstraint === 'function' && itemConstraint !== Function) {
-						itemValidator = function itemValidator(value, index) {
-							return value instanceof itemConstraint || itemConstraint(value, variableName + '[' + index + ']');
-						};
-					} else {
-						itemValidator = function itemValidator(value, index) {
-							return checkArgumentType(value, variableName, itemConstraint, itemConstraintDescription, index);
-						};
-					}
+				if (typeof itemConstraint === 'function' && itemConstraint !== Function) {
+					itemValidator = function itemValidator(value, index) {
+						return value instanceof itemConstraint || itemConstraint(value, variableName + '[' + index + ']');
+					};
+				} else {
+					itemValidator = function itemValidator(value, index) {
+						return checkArgumentType(value, variableName, itemConstraint, itemConstraintDescription, index);
+					};
+				}
 
-					variable.forEach(function (v, i) {
-						itemValidator(v, i);
-					});
-				})();
+				variable.forEach(function (v, i) {
+					itemValidator(v, i);
+				});
 			}
 		},
 		areEqual: function areEqual(a, b, descriptionA, descriptionB) {
@@ -2071,8 +2069,8 @@ module.exports = function () {
    * <p>Array items are compared, object properties are compared, and
    * finally "primitive" values are checked using strict equality rules.</p>
    *
-   * @param a
-   * @param b
+   * @param {Object} a
+   * @param {Object} b
    *
    * @returns {Boolean}
    */
@@ -2109,27 +2107,41 @@ module.exports = function () {
 		/**
    * Performs a "deep" copy.
    *
+   * @param {Object} source - The object to copy.
+   *
    * @returns {Object}
    */
-		clone: function clone(target) {
+		clone: function clone(source) {
 			var c = void 0;
 
-			if (is.array(target)) {
-				c = target.map(function (targetItem) {
-					return object.clone(targetItem);
+			if (is.array(source)) {
+				c = source.map(function (sourceItem) {
+					return object.clone(sourceItem);
 				});
-			} else if (is.object(target)) {
-				c = object.keys(target).reduce(function (accumulator, key) {
-					accumulator[key] = object.clone(target[key]);
+			} else if (is.object(source)) {
+				c = object.keys(source).reduce(function (accumulator, key) {
+					accumulator[key] = object.clone(source[key]);
 
 					return accumulator;
 				}, {});
 			} else {
-				c = target;
+				c = source;
 			}
 
 			return c;
 		},
+
+		/**
+   * Creates a new object (or array) by performing a deep copy
+   * of the properties from each object. If the same property
+   * exists on both objects, the property value from the
+   * second object ("b") is preferred.
+   *
+   * @param {Object} a
+   * @param {Object} b
+   *
+   * @returns {Object}
+   */
 		merge: function merge(a, b) {
 			var m = void 0;
 
@@ -2152,6 +2164,14 @@ module.exports = function () {
 
 			return m;
 		},
+
+		/**
+   * Given an object, returns an array of "own" properties.
+   *
+   * @param {Object} target - The object to interrogate.
+   *
+   * @returns {Array<string>}
+   */
 		keys: function keys(target) {
 			var keys = [];
 
@@ -2230,59 +2250,57 @@ module.exports = function () {
 						return Promise.resolve(mapper(item));
 					}));
 				} else {
-					(function () {
-						var total = items.length;
-						var active = 0;
-						var complete = 0;
-						var failure = false;
+					var total = items.length;
+					var active = 0;
+					var complete = 0;
+					var failure = false;
 
-						var results = Array.of(total);
+					var results = Array.of(total);
 
-						var executors = items.map(function (item, index) {
-							return function () {
-								return Promise.resolve().then(function () {
-									return mapper(item);
-								}).then(function (result) {
-									results[index] = result;
-								});
-							};
-						});
+					var executors = items.map(function (item, index) {
+						return function () {
+							return Promise.resolve().then(function () {
+								return mapper(item);
+							}).then(function (result) {
+								results[index] = result;
+							});
+						};
+					});
 
-						mapPromise = utilities.build(function (resolveCallback, rejectCallback) {
-							var execute = function execute() {
-								if (!(executors.length > 0 && c > active && !failure)) {
+					mapPromise = utilities.build(function (resolveCallback, rejectCallback) {
+						var execute = function execute() {
+							if (!(executors.length > 0 && c > active && !failure)) {
+								return;
+							}
+
+							active = active + 1;
+
+							var executor = executors.shift();
+
+							executor().then(function () {
+								if (failure) {
 									return;
 								}
 
-								active = active + 1;
+								active = active - 1;
+								complete = complete + 1;
 
-								var executor = executors.shift();
+								if (complete < total) {
+									execute();
+								} else {
+									resolveCallback(results);
+								}
+							}).catch(function (error) {
+								failure = false;
 
-								executor().then(function () {
-									if (failure) {
-										return;
-									}
-
-									active = active - 1;
-									complete = complete + 1;
-
-									if (complete < total) {
-										execute();
-									} else {
-										resolveCallback(results);
-									}
-								}).catch(function (error) {
-									failure = false;
-
-									rejectCallback(error);
-								});
-
-								execute();
-							};
+								rejectCallback(error);
+							});
 
 							execute();
-						});
-					})();
+						};
+
+						execute();
+					});
 				}
 
 				return mapPromise;
