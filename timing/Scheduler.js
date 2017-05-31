@@ -1,5 +1,6 @@
 const assert = require('./../lang/assert'),
     Disposable = require('./../lang/Disposable'),
+	is = require('./../lang/is'),
     object = require('./../lang/object'),
 	promise = require('./../lang/promise');
 
@@ -84,17 +85,22 @@ module.exports = (() => {
 		 * @param {string=} actionDescription - Description of the action to attempt, used for logging purposes.
 		 * @param {number=} maximumAttempts - The number of attempts to before giving up.
 		 */
-		backoff(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts) {
+		backoff(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts, failureCallback) {
             assert.argumentIsRequired(actionToBackoff, 'actionToBackoff', Function);
             assert.argumentIsOptional(millisecondDelay, 'millisecondDelay', Number);
             assert.argumentIsOptional(actionDescription, 'actionDescription', String);
             assert.argumentIsOptional(maximumAttempts, 'maximumAttempts', Number);
+			assert.argumentIsOptional(failureCallback, 'failureCallback', Function);
 
             if (this.getIsDisposed()) {
                 throw new Error('The Scheduler has been disposed.');
             }
 
             const scheduleBackoff = (failureCount) => {
+            	if (failureCount > 0 && is.fn(failureCallback)) {
+            		failureCallback(failureCount);
+				}
+
                 if (maximumAttempts > 0 && failureCount > maximumAttempts) {
                     return Promise.reject(`Maximum failures reached for ${actionDescription}`);
                 }
