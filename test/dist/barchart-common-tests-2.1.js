@@ -9894,6 +9894,7 @@ function _inherits(subClass, superClass) {
 
 var assert = require('./../lang/assert'),
     Disposable = require('./../lang/Disposable'),
+    is = require('./../lang/is'),
     object = require('./../lang/object'),
     promise = require('./../lang/promise');
 
@@ -9979,21 +9980,36 @@ module.exports = function () {
 
                 return this._intervalBindings[token];
             }
+
+            /**
+                   * Attempts an action, repeating if necessary, using an exponential backoff.
+             *
+             * @param {Function} actionToBackoff - The action to attempt. If it fails -- because an error is thrown, a promise is rejected, or the function returns a falsey value -- the action will be invoked again.
+             * @param {number=} millisecondDelay - The amount of time to wait after the first failure. Subsequent failures are multiply this value by 2 ^ [number of failures]. So, a 1000 millisecond backoff would schedule attempts using the following delays: 0, 1000, 2000, 4000, 8000, etc.
+             * @param {string=} actionDescription - Description of the action to attempt, used for logging purposes.
+             * @param {number=} maximumAttempts - The number of attempts to before giving up.
+             */
+
         }, {
             key: 'backoff',
-            value: function backoff(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts) {
+            value: function backoff(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts, failureCallback) {
                 var _this4 = this;
 
                 assert.argumentIsRequired(actionToBackoff, 'actionToBackoff', Function);
                 assert.argumentIsOptional(millisecondDelay, 'millisecondDelay', Number);
                 assert.argumentIsOptional(actionDescription, 'actionDescription', String);
                 assert.argumentIsOptional(maximumAttempts, 'maximumAttempts', Number);
+                assert.argumentIsOptional(failureCallback, 'failureCallback', Function);
 
                 if (this.getIsDisposed()) {
                     throw new Error('The Scheduler has been disposed.');
                 }
 
                 var scheduleBackoff = function scheduleBackoff(failureCount) {
+                    if (failureCount > 0 && is.fn(failureCallback)) {
+                        failureCallback(failureCount);
+                    }
+
                     if (maximumAttempts > 0 && failureCount > maximumAttempts) {
                         return Promise.reject('Maximum failures reached for ' + actionDescription);
                     }
@@ -10063,7 +10079,7 @@ module.exports = function () {
     return Scheduler;
 }();
 
-},{"./../lang/Disposable":12,"./../lang/assert":14,"./../lang/object":20,"./../lang/promise":21}],72:[function(require,module,exports){
+},{"./../lang/Disposable":12,"./../lang/assert":14,"./../lang/is":17,"./../lang/object":20,"./../lang/promise":21}],72:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
