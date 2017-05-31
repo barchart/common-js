@@ -76,7 +76,15 @@ module.exports = (() => {
             return this._intervalBindings[token];
         }
 
-        backoff(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts) {
+		/**
+         * Attempts an action, repeating if necessary, using an exponential backoff.
+		 *
+		 * @param {Function} actionToBackoff - The action to attempt. If it fails -- because an error is thrown, a promise is rejected, or the function returns a falsey value -- the action will be invoked again.
+		 * @param {number=} millisecondDelay - The amount of time to wait after the first failure. Subsequent failures are multiply this value by 2 ^ [number of failures]. So, a 1000 millisecond backoff would schedule attempts using the following delays: 0, 1000, 2000, 4000, 8000, etc.
+		 * @param {string=} actionDescription - Description of the action to attempt, used for logging purposes.
+		 * @param {number=} maximumAttempts - The number of attempts to before giving up.
+		 */
+		backoff(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts) {
             assert.argumentIsRequired(actionToBackoff, 'actionToBackoff', Function);
             assert.argumentIsOptional(millisecondDelay, 'millisecondDelay', Number);
             assert.argumentIsOptional(actionDescription, 'actionDescription', String);
