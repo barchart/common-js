@@ -17289,11 +17289,13 @@ module.exports = function () {
              * @param {number=} millisecondDelay - The amount of time to wait after the first failure. Subsequent failures are multiply this value by 2 ^ [number of failures]. So, a 1000 millisecond backoff would schedule attempts using the following delays: 0, 1000, 2000, 4000, 8000, etc.
              * @param {string=} actionDescription - Description of the action to attempt, used for logging purposes.
              * @param {number=} maximumAttempts - The number of attempts to before giving up.
+                   * @param {Function=} maximumAttempts - If provided, will be invoked if a function is considered to be failing.
+                   * @param {Object=} failureValue - If provided, will consider the result to have failed, if this value is returned (a deep equality check is used). If not provided, a "falsey" value will trigger a retry.
              */
 
         }, {
             key: 'backoff',
-            value: function backoff(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts, failureCallback) {
+            value: function backoff(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts, failureCallback, failureValue, falseyFailure) {
                 var _this4 = this;
 
                 assert.argumentIsRequired(actionToBackoff, 'actionToBackoff', Function);
@@ -17323,8 +17325,20 @@ module.exports = function () {
                         backoffDelay = (millisecondDelay || 1000) * Math.pow(2, failureCount);
                     }
 
+                    var failurePredicate = void 0;
+
+                    if (is.undefined(failureValue)) {
+                        failurePredicate = function failurePredicate(value) {
+                            return !value;
+                        };
+                    } else {
+                        failurePredicate = function failurePredicate(value) {
+                            return is.boolean(falseyFailure) && falseyFailure && !value || !object.equals(value, failureValue);
+                        };
+                    }
+
                     return _this4.schedule(actionToBackoff, backoffDelay, (actionDescription || 'unspecified') + ', attempt ' + (failureCount + 1)).then(function (result) {
-                        if (result) {
+                        if (!failurePredicate(result)) {
                             return result;
                         } else {
                             return scheduleBackoff(++failureCount);
