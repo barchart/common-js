@@ -84,8 +84,10 @@ module.exports = (() => {
 		 * @param {number=} millisecondDelay - The amount of time to wait after the first failure. Subsequent failures are multiply this value by 2 ^ [number of failures]. So, a 1000 millisecond backoff would schedule attempts using the following delays: 0, 1000, 2000, 4000, 8000, etc.
 		 * @param {string=} actionDescription - Description of the action to attempt, used for logging purposes.
 		 * @param {number=} maximumAttempts - The number of attempts to before giving up.
+         * @param {Function=} maximumAttempts - If provided, will be invoked if a function is considered to be failing.
+         * @param {Object=} failureValue - If provided, will consider the result to have failed, if this value is returned (a deep equality check is used). If not provided, a "falsey" value will trigger a retry.
 		 */
-		backoff(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts, failureCallback) {
+		backoff(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts, failureCallback, failureValue) {
             assert.argumentIsRequired(actionToBackoff, 'actionToBackoff', Function);
             assert.argumentIsOptional(millisecondDelay, 'millisecondDelay', Number);
             assert.argumentIsOptional(actionDescription, 'actionDescription', String);
@@ -113,9 +115,17 @@ module.exports = (() => {
                     backoffDelay = (millisecondDelay || 1000) * Math.pow(2, failureCount);
                 }
 
+                let failurePredicate;
+
+                if (is.undefined(failureValue)) {
+                    failurePredicate = (value) => !result;
+                } else {
+                    failurePredicate = (value) => !object.equals(value, failureValue);
+                }
+
                 return this.schedule(actionToBackoff, backoffDelay, (actionDescription || 'unspecified') + ', attempt ' + (failureCount + 1))
                     .then((result) => {
-                        if (result) {
+                        if (!failurePredicate(result)) {
                             return result;
                         } else {
                             return scheduleBackoff(++failureCount);
