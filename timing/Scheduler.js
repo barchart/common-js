@@ -87,7 +87,7 @@ module.exports = (() => {
          * @param {Function=} maximumAttempts - If provided, will be invoked if a function is considered to be failing.
          * @param {Object=} failureValue - If provided, will consider the result to have failed, if this value is returned (a deep equality check is used). If not provided, a "falsey" value will trigger a retry.
 		 */
-		backoff(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts, failureCallback, failureValue) {
+		backoff(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts, failureCallback, failureValue, falseyFailure) {
             assert.argumentIsRequired(actionToBackoff, 'actionToBackoff', Function);
             assert.argumentIsOptional(millisecondDelay, 'millisecondDelay', Number);
             assert.argumentIsOptional(actionDescription, 'actionDescription', String);
@@ -118,9 +118,9 @@ module.exports = (() => {
                 let failurePredicate;
 
                 if (is.undefined(failureValue)) {
-                    failurePredicate = (value) => !result;
+                    failurePredicate = (value) => !value;
                 } else {
-                    failurePredicate = (value) => !object.equals(value, failureValue);
+                    failurePredicate = (value) => (is.boolean(falseyFailure) && falseyFailure && !value) || !object.equals(value, failureValue);
                 }
 
                 return this.schedule(actionToBackoff, backoffDelay, (actionDescription || 'unspecified') + ', attempt ' + (failureCount + 1))
