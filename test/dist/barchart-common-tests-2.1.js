@@ -7015,6 +7015,12 @@ describe('When running a deep comparison', function () {
 			expect(object.equals(a, b)).toEqual(false);
 		});
 	});
+
+	describe('against two empty arrays', function () {
+		it('the result should be true', function () {
+			expect(object.equals([], [])).toEqual(true);
+		});
+	});
 });
 
 },{"./../../../lang/object":20}],53:[function(require,module,exports){
