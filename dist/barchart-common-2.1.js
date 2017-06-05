@@ -17166,31 +17166,31 @@ module.exports = function () {
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var _createClass = function () {
-    function defineProperties(target, props) {
-        for (var i = 0; i < props.length; i++) {
-            var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
-        }
-    }return function (Constructor, protoProps, staticProps) {
-        if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
-    };
+	function defineProperties(target, props) {
+		for (var i = 0; i < props.length; i++) {
+			var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+		}
+	}return function (Constructor, protoProps, staticProps) {
+		if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+	};
 }();
 
 function _classCallCheck(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-        throw new TypeError("Cannot call a class as a function");
-    }
+	if (!(instance instanceof Constructor)) {
+		throw new TypeError("Cannot call a class as a function");
+	}
 }
 
 function _possibleConstructorReturn(self, call) {
-    if (!self) {
-        throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-    }return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+	if (!self) {
+		throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+	}return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
 }
 
 function _inherits(subClass, superClass) {
-    if (typeof superClass !== "function" && superClass !== null) {
-        throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
-    }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+	if (typeof superClass !== "function" && superClass !== null) {
+		throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
+	}subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 }
 
 var assert = require('./../lang/assert'),
@@ -17200,198 +17200,198 @@ var assert = require('./../lang/assert'),
     promise = require('./../lang/promise');
 
 module.exports = function () {
-    'use strict';
+	'use strict';
 
-    var Scheduler = function (_Disposable) {
-        _inherits(Scheduler, _Disposable);
+	var Scheduler = function (_Disposable) {
+		_inherits(Scheduler, _Disposable);
 
-        function Scheduler() {
-            _classCallCheck(this, Scheduler);
+		function Scheduler() {
+			_classCallCheck(this, Scheduler);
 
-            var _this = _possibleConstructorReturn(this, (Scheduler.__proto__ || Object.getPrototypeOf(Scheduler)).call(this));
+			var _this = _possibleConstructorReturn(this, (Scheduler.__proto__ || Object.getPrototypeOf(Scheduler)).call(this));
 
-            _this._timeoutBindings = {};
-            _this._intervalBindings = {};
-            return _this;
-        }
+			_this._timeoutBindings = {};
+			_this._intervalBindings = {};
+			return _this;
+		}
 
-        _createClass(Scheduler, [{
-            key: 'schedule',
-            value: function schedule(actionToSchedule, millisecondDelay, actionDescription) {
-                var _this2 = this;
+		_createClass(Scheduler, [{
+			key: 'schedule',
+			value: function schedule(actionToSchedule, millisecondDelay, actionDescription) {
+				var _this2 = this;
 
-                assert.argumentIsRequired(actionToSchedule, 'actionToSchedule', Function);
-                assert.argumentIsRequired(millisecondDelay, 'millisecondDelay', Number);
-                assert.argumentIsOptional(actionDescription, 'actionDescription', String);
+				assert.argumentIsRequired(actionToSchedule, 'actionToSchedule', Function);
+				assert.argumentIsRequired(millisecondDelay, 'millisecondDelay', Number);
+				assert.argumentIsOptional(actionDescription, 'actionDescription', String);
 
-                if (this.getIsDisposed()) {
-                    throw new Error('The Scheduler has been disposed.');
-                }
+				if (this.getIsDisposed()) {
+					throw new Error('The Scheduler has been disposed.');
+				}
 
-                var token = void 0;
+				var token = void 0;
 
-                var schedulePromise = promise.build(function (resolveCallback, rejectCallback) {
-                    var wrappedAction = function wrappedAction() {
-                        delete _this2._timeoutBindings[token];
+				var schedulePromise = promise.build(function (resolveCallback, rejectCallback) {
+					var wrappedAction = function wrappedAction() {
+						delete _this2._timeoutBindings[token];
 
-                        try {
-                            resolveCallback(actionToSchedule());
-                        } catch (e) {
-                            rejectCallback(e);
-                        }
-                    };
+						try {
+							resolveCallback(actionToSchedule());
+						} catch (e) {
+							rejectCallback(e);
+						}
+					};
 
-                    token = setTimeout(wrappedAction, millisecondDelay);
-                });
+					token = setTimeout(wrappedAction, millisecondDelay);
+				});
 
-                this._timeoutBindings[token] = Disposable.fromAction(function () {
-                    clearTimeout(token);
+				this._timeoutBindings[token] = Disposable.fromAction(function () {
+					clearTimeout(token);
 
-                    delete _this2._timeoutBindings[token];
-                });
+					delete _this2._timeoutBindings[token];
+				});
 
-                return schedulePromise;
-            }
-        }, {
-            key: 'repeat',
-            value: function repeat(actionToRepeat, millisecondInterval, actionDescription) {
-                var _this3 = this;
+				return schedulePromise;
+			}
+		}, {
+			key: 'repeat',
+			value: function repeat(actionToRepeat, millisecondInterval, actionDescription) {
+				var _this3 = this;
 
-                assert.argumentIsRequired(actionToRepeat, 'actionToRepeat', Function);
-                assert.argumentIsRequired(millisecondInterval, 'millisecondInterval', Number);
-                assert.argumentIsOptional(actionDescription, 'actionDescription', String);
+				assert.argumentIsRequired(actionToRepeat, 'actionToRepeat', Function);
+				assert.argumentIsRequired(millisecondInterval, 'millisecondInterval', Number);
+				assert.argumentIsOptional(actionDescription, 'actionDescription', String);
 
-                if (this.getIsDisposed()) {
-                    throw new Error('The Scheduler has been disposed.');
-                }
+				if (this.getIsDisposed()) {
+					throw new Error('The Scheduler has been disposed.');
+				}
 
-                var wrappedAction = function wrappedAction() {
-                    try {
-                        actionToRepeat();
-                    } catch (e) {}
-                };
+				var wrappedAction = function wrappedAction() {
+					try {
+						actionToRepeat();
+					} catch (e) {}
+				};
 
-                var token = setInterval(wrappedAction, millisecondInterval);
+				var token = setInterval(wrappedAction, millisecondInterval);
 
-                this._intervalBindings[token] = Disposable.fromAction(function () {
-                    clearInterval(token);
+				this._intervalBindings[token] = Disposable.fromAction(function () {
+					clearInterval(token);
 
-                    delete _this3._intervalBindings[token];
-                });
+					delete _this3._intervalBindings[token];
+				});
 
-                return this._intervalBindings[token];
-            }
+				return this._intervalBindings[token];
+			}
 
-            /**
-                   * Attempts an action, repeating if necessary, using an exponential backoff.
-             *
-             * @param {Function} actionToBackoff - The action to attempt. If it fails -- because an error is thrown, a promise is rejected, or the function returns a falsey value -- the action will be invoked again.
-             * @param {number=} millisecondDelay - The amount of time to wait after the first failure. Subsequent failures are multiply this value by 2 ^ [number of failures]. So, a 1000 millisecond backoff would schedule attempts using the following delays: 0, 1000, 2000, 4000, 8000, etc.
-             * @param {string=} actionDescription - Description of the action to attempt, used for logging purposes.
-             * @param {number=} maximumAttempts - The number of attempts to before giving up.
-                   * @param {Function=} maximumAttempts - If provided, will be invoked if a function is considered to be failing.
-                   * @param {Object=} failureValue - If provided, will consider the result to have failed, if this value is returned (a deep equality check is used). If not provided, a "falsey" value will trigger a retry.
-             */
+			/**
+    * Attempts an action, repeating if necessary, using an exponential backoff.
+    *
+    * @param {Function} actionToBackoff - The action to attempt. If it fails -- because an error is thrown, a promise is rejected, or the function returns a falsey value -- the action will be invoked again.
+    * @param {number=} millisecondDelay - The amount of time to wait after the first failure. Subsequent failures are multiply this value by 2 ^ [number of failures]. So, a 1000 millisecond backoff would schedule attempts using the following delays: 0, 1000, 2000, 4000, 8000, etc.
+    * @param {string=} actionDescription - Description of the action to attempt, used for logging purposes.
+    * @param {number=} maximumAttempts - The number of attempts to before giving up.
+    * @param {Function=} maximumAttempts - If provided, will be invoked if a function is considered to be failing.
+    * @param {Object=} failureValue - If provided, will consider the result to have failed, if this value is returned (a deep equality check is used). If not provided, a "falsey" value will trigger a retry.
+    */
 
-        }, {
-            key: 'backoff',
-            value: function backoff(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts, failureCallback, failureValue, falseyFailure) {
-                var _this4 = this;
+		}, {
+			key: 'backoff',
+			value: function backoff(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts, failureCallback, failureValue) {
+				var _this4 = this;
 
-                assert.argumentIsRequired(actionToBackoff, 'actionToBackoff', Function);
-                assert.argumentIsOptional(millisecondDelay, 'millisecondDelay', Number);
-                assert.argumentIsOptional(actionDescription, 'actionDescription', String);
-                assert.argumentIsOptional(maximumAttempts, 'maximumAttempts', Number);
-                assert.argumentIsOptional(failureCallback, 'failureCallback', Function);
+				assert.argumentIsRequired(actionToBackoff, 'actionToBackoff', Function);
+				assert.argumentIsOptional(millisecondDelay, 'millisecondDelay', Number);
+				assert.argumentIsOptional(actionDescription, 'actionDescription', String);
+				assert.argumentIsOptional(maximumAttempts, 'maximumAttempts', Number);
+				assert.argumentIsOptional(failureCallback, 'failureCallback', Function);
 
-                if (this.getIsDisposed()) {
-                    throw new Error('The Scheduler has been disposed.');
-                }
+				if (this.getIsDisposed()) {
+					throw new Error('The Scheduler has been disposed.');
+				}
 
-                var scheduleBackoff = function scheduleBackoff(failureCount) {
-                    if (failureCount > 0 && is.fn(failureCallback)) {
-                        failureCallback(failureCount);
-                    }
+				var scheduleBackoff = function scheduleBackoff(failureCount) {
+					if (failureCount > 0 && is.fn(failureCallback)) {
+						failureCallback(failureCount);
+					}
 
-                    if (maximumAttempts > 0 && failureCount > maximumAttempts) {
-                        return Promise.reject('Maximum failures reached for ' + actionDescription);
-                    }
+					if (maximumAttempts > 0 && failureCount > maximumAttempts) {
+						return Promise.reject('Maximum failures reached for ' + actionDescription);
+					}
 
-                    var backoffDelay = void 0;
+					var backoffDelay = void 0;
 
-                    if (failureCount === 0) {
-                        backoffDelay = millisecondDelay;
-                    } else {
-                        backoffDelay = (millisecondDelay || 1000) * Math.pow(2, failureCount);
-                    }
+					if (failureCount === 0) {
+						backoffDelay = millisecondDelay;
+					} else {
+						backoffDelay = (millisecondDelay || 1000) * Math.pow(2, failureCount);
+					}
 
-                    var failurePredicate = void 0;
+					var successPredicate = void 0;
 
-                    if (is.undefined(failureValue)) {
-                        failurePredicate = function failurePredicate(value) {
-                            return !value;
-                        };
-                    } else {
-                        failurePredicate = function failurePredicate(value) {
-                            return is.boolean(falseyFailure) && falseyFailure && !value || !object.equals(value, failureValue);
-                        };
-                    }
+					if (is.undefined(failureValue)) {
+						successPredicate = function successPredicate(value) {
+							return value;
+						};
+					} else {
+						successPredicate = function successPredicate(value) {
+							return !object.equals(value, failureValue);
+						};
+					}
 
-                    return _this4.schedule(actionToBackoff, backoffDelay, (actionDescription || 'unspecified') + ', attempt ' + (failureCount + 1)).then(function (result) {
-                        if (!failurePredicate(result)) {
-                            return result;
-                        } else {
-                            return scheduleBackoff(++failureCount);
-                        }
-                    }).catch(function (e) {
-                        return scheduleBackoff(++failureCount);
-                    });
-                };
+					return _this4.schedule(actionToBackoff, backoffDelay, (actionDescription || 'unspecified') + ', attempt ' + (failureCount + 1)).then(function (result) {
+						if (successPredicate(result)) {
+							return result;
+						} else {
+							return scheduleBackoff(++failureCount);
+						}
+					}).catch(function (e) {
+						return scheduleBackoff(++failureCount);
+					});
+				};
 
-                return scheduleBackoff(0);
-            }
-        }, {
-            key: '_onDispose',
-            value: function _onDispose() {
-                var _this5 = this;
+				return scheduleBackoff(0);
+			}
+		}, {
+			key: '_onDispose',
+			value: function _onDispose() {
+				var _this5 = this;
 
-                object.keys(this._timeoutBindings).forEach(function (key) {
-                    _this5._timeoutBindings[key].dispose();
-                });
+				object.keys(this._timeoutBindings).forEach(function (key) {
+					_this5._timeoutBindings[key].dispose();
+				});
 
-                object.keys(this._intervalBindings).forEach(function (key) {
-                    _this5._intervalBindings[key].dispose();
-                });
+				object.keys(this._intervalBindings).forEach(function (key) {
+					_this5._intervalBindings[key].dispose();
+				});
 
-                this._timeoutBindings = null;
-                this._intervalBindings = null;
-            }
-        }, {
-            key: 'toString',
-            value: function toString() {
-                return '[Scheduler]';
-            }
-        }], [{
-            key: 'schedule',
-            value: function schedule(actionToSchedule, millisecondDelay, actionDescription) {
-                var scheduler = new Scheduler();
+				this._timeoutBindings = null;
+				this._intervalBindings = null;
+			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[Scheduler]';
+			}
+		}], [{
+			key: 'schedule',
+			value: function schedule(actionToSchedule, millisecondDelay, actionDescription) {
+				var scheduler = new Scheduler();
 
-                scheduler.schedule(actionToSchedule, millisecondDelay, actionDescription).then(function (result) {
-                    scheduler.dispose();
+				scheduler.schedule(actionToSchedule, millisecondDelay, actionDescription).then(function (result) {
+					scheduler.dispose();
 
-                    return result;
-                }).catch(function (e) {
-                    scheduler.dispose();
+					return result;
+				}).catch(function (e) {
+					scheduler.dispose();
 
-                    throw e;
-                });
-            }
-        }]);
+					throw e;
+				});
+			}
+		}]);
 
-        return Scheduler;
-    }(Disposable);
+		return Scheduler;
+	}(Disposable);
 
-    return Scheduler;
+	return Scheduler;
 }();
 
 },{"./../lang/Disposable":15,"./../lang/assert":17,"./../lang/is":23,"./../lang/object":26,"./../lang/promise":27}],98:[function(require,module,exports){
