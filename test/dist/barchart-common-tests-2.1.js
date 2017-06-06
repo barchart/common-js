@@ -1541,21 +1541,41 @@ module.exports = function () {
 
 			return returnRef;
 		},
-		flatten: function flatten(a, recusive) {
+		flatten: function flatten(a, recursive) {
 			assert.argumentIsArray(a, 'a');
-			assert.argumentIsOptional(recusive, 'recursive', Boolean);
+			assert.argumentIsOptional(recursive, 'recursive', Boolean);
 
 			var empty = [];
 
 			var flat = empty.concat.apply(empty, a);
 
-			if (recusive && flat.some(function (x) {
+			if (recursive && flat.some(function (x) {
 				return is.array(x);
 			})) {
 				flat = array.flatten(flat, true);
 			}
 
 			return flat;
+		},
+
+		/**
+   * Breaks an array into smaller arrays.
+   *
+   * @param a
+   * @param size
+   */
+		partition: function partition(a, size) {
+			assert.argumentIsArray(a, 'a');
+			assert.argumentIsOptional(size, 'size', Number);
+
+			var copy = a.slice(0);
+			var partitions = [];
+
+			while (copy.length !== 0) {
+				partitions.push(copy.splice(0, size));
+			}
+
+			return partitions;
 		},
 
 		/**
@@ -4991,6 +5011,92 @@ describe('when reducing an array to unique values', function () {
 
 		it('should contain 3', function () {
 			expect(unique.indexOf(3)).toEqual(2);
+		});
+	});
+});
+
+describe('when partitioning an array of three items', function () {
+	'use strict';
+
+	var original;
+
+	beforeEach(function () {
+		original = [1, 2, 3];
+	});
+
+	describe('using a partition size of 10', function () {
+		var partitions;
+
+		beforeEach(function () {
+			partitions = array.partition(original, 10);
+		});
+
+		it('should return an array', function () {
+			expect(partitions instanceof Array).toEqual(true);
+		});
+
+		it('should return a copy of the original array', function () {
+			expect(partitions).not.toBe(original);
+		});
+
+		it('should contain one partition', function () {
+			expect(partitions.length).toEqual(1);
+		});
+
+		it('the first partition should contain three items', function () {
+			expect(partitions[0].length).toEqual(3);
+		});
+
+		it('the first partition item should be the first item', function () {
+			expect(partitions[0][0]).toBe(original[0]);
+		});
+
+		it('the second partition item should be the first item', function () {
+			expect(partitions[0][1]).toBe(original[1]);
+		});
+
+		it('the third partition item should be the first item', function () {
+			expect(partitions[0][2]).toBe(original[2]);
+		});
+	});
+
+	describe('using a partition size of two', function () {
+		var partitions;
+
+		beforeEach(function () {
+			partitions = array.partition(original, 2);
+		});
+
+		it('should return an array', function () {
+			expect(partitions instanceof Array).toEqual(true);
+		});
+
+		it('should return a copy of the original array', function () {
+			expect(partitions).not.toBe(original);
+		});
+
+		it('should contain two partition', function () {
+			expect(partitions.length).toEqual(2);
+		});
+
+		it('the first partition should contain two items', function () {
+			expect(partitions[0].length).toEqual(2);
+		});
+
+		it('the second partition should contain one item', function () {
+			expect(partitions[1].length).toEqual(1);
+		});
+
+		it('the first item of the first partition should be the first item', function () {
+			expect(partitions[0][0]).toBe(original[0]);
+		});
+
+		it('the second item of the first partition should be the second item', function () {
+			expect(partitions[0][1]).toBe(original[1]);
+		});
+
+		it('the first item of the second partition should be the third item', function () {
+			expect(partitions[1][0]).toBe(original[2]);
 		});
 	});
 });

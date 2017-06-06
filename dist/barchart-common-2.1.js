@@ -1624,21 +1624,41 @@ module.exports = function () {
 
 			return returnRef;
 		},
-		flatten: function flatten(a, recusive) {
+		flatten: function flatten(a, recursive) {
 			assert.argumentIsArray(a, 'a');
-			assert.argumentIsOptional(recusive, 'recursive', Boolean);
+			assert.argumentIsOptional(recursive, 'recursive', Boolean);
 
 			var empty = [];
 
 			var flat = empty.concat.apply(empty, a);
 
-			if (recusive && flat.some(function (x) {
+			if (recursive && flat.some(function (x) {
 				return is.array(x);
 			})) {
 				flat = array.flatten(flat, true);
 			}
 
 			return flat;
+		},
+
+		/**
+   * Breaks an array into smaller arrays.
+   *
+   * @param a
+   * @param size
+   */
+		partition: function partition(a, size) {
+			assert.argumentIsArray(a, 'a');
+			assert.argumentIsOptional(size, 'size', Number);
+
+			var copy = a.slice(0);
+			var partitions = [];
+
+			while (copy.length !== 0) {
+				partitions.push(copy.splice(0, size));
+			}
+
+			return partitions;
 		},
 
 		/**
