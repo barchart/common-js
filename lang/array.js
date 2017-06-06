@@ -73,19 +73,39 @@ module.exports = (() => {
 			return returnRef;
 		},
 
-		flatten(a, recusive) {
+		flatten(a, recursive) {
 			assert.argumentIsArray(a, 'a');
-			assert.argumentIsOptional(recusive, 'recursive', Boolean);
+			assert.argumentIsOptional(recursive, 'recursive', Boolean);
 
 			const empty = [];
 
 			let flat = empty.concat.apply(empty, a);
 
-			if (recusive && flat.some(x => is.array(x))) {
+			if (recursive && flat.some(x => is.array(x))) {
 				flat = array.flatten(flat, true);
 			}
 
 			return flat;
+		},
+
+		/**
+		 * Breaks an array into smaller arrays.
+		 *
+		 * @param a
+		 * @param size
+		 */
+		partition(a, size) {
+			assert.argumentIsArray(a, 'a');
+			assert.argumentIsOptional(size, 'size', Number);
+
+			const copy = a.slice(0);
+			const partitions = [ ];
+
+			while (copy.length !== 0) {
+				partitions.push(copy.splice(0, size));
+			}
+
+			return partitions;
 		},
 
 		/**

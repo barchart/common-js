@@ -28,6 +28,92 @@ describe('when reducing an array to unique values', function() {
 	});
 });
 
+describe('when partitioning an array of three items', function() {
+	'use strict';
+
+	var original;
+
+	beforeEach(function() {
+		original = [ 1, 2, 3 ];
+	});
+
+	describe('using a partition size of 10', function() {
+		var partitions;
+
+		beforeEach(function() {
+			partitions = array.partition(original, 10);
+		});
+
+		it('should return an array', function() {
+			expect(partitions instanceof Array).toEqual(true);
+		});
+
+		it('should return a copy of the original array', function() {
+			expect(partitions).not.toBe(original);
+		});
+
+		it('should contain one partition', function() {
+			expect(partitions.length).toEqual(1);
+		});
+
+		it('the first partition should contain three items', function() {
+			expect(partitions[0].length).toEqual(3);
+		});
+
+		it('the first partition item should be the first item', function() {
+			expect(partitions[0][0]).toBe(original[0]);
+		});
+
+		it('the second partition item should be the first item', function() {
+			expect(partitions[0][1]).toBe(original[1]);
+		});
+
+		it('the third partition item should be the first item', function() {
+			expect(partitions[0][2]).toBe(original[2]);
+		});
+	});
+
+	describe('using a partition size of two', function() {
+		var partitions;
+
+		beforeEach(function() {
+			partitions = array.partition(original, 2);
+		});
+
+		it('should return an array', function() {
+			expect(partitions instanceof Array).toEqual(true);
+		});
+
+		it('should return a copy of the original array', function() {
+			expect(partitions).not.toBe(original);
+		});
+
+		it('should contain two partition', function() {
+			expect(partitions.length).toEqual(2);
+		});
+
+		it('the first partition should contain two items', function() {
+			expect(partitions[0].length).toEqual(2);
+		});
+
+		it('the second partition should contain one item', function() {
+			expect(partitions[1].length).toEqual(1);
+		});
+
+		it('the first item of the first partition should be the first item', function() {
+			expect(partitions[0][0]).toBe(original[0]);
+		});
+
+		it('the second item of the first partition should be the second item', function() {
+			expect(partitions[0][1]).toBe(original[1]);
+		});
+
+		it('the first item of the second partition should be the third item', function() {
+			expect(partitions[1][0]).toBe(original[2]);
+		});
+	});
+});
+
 describe('when flattening an array', function() {
 	'use strict';
 
