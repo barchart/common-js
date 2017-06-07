@@ -101,10 +101,10 @@ module.exports = (() => {
 											resolveCallback(results);
 										}
 									}).catch((error) => {
-									failure = false;
+										failure = false;
 
-									rejectCallback(error);
-								});
+										rejectCallback(error);
+									});
 
 								execute();
 							};
