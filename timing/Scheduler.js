@@ -122,7 +122,7 @@ module.exports = (() => {
 				} else {
 					successPredicate = (value) => {
 						return !object.equals(value, failureValue);
-					}
+					};
 				}
 
 				return this.schedule(actionToBackoff, backoffDelay, (actionDescription || 'unspecified') + ', attempt ' + (failureCount + 1))
