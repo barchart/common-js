@@ -4,16 +4,16 @@ const moment = require('moment-timezone/builds/moment-timezone-with-data-2010-20
 module.exports = (() => {
 	'use strict';
 
-	return {
+	const timezone = {
 		getTimezones() {
 			return moment.tz.names();
 		},
 
-		hasTimezone(timezone) {
-			assert.argumentIsRequired(timezone, 'timezone', String);
+		hasTimezone(name) {
+			assert.argumentIsRequired(name, 'name', String);
 
 			return timezone.getTimezones().some((candidate) => {
-				return candidate === timezone;
+				return candidate === name;
 			});
 		},
 
@@ -21,4 +21,6 @@ module.exports = (() => {
 			return moment.tz.guess() || null;
 		}
 	};
+
+	return timezone;
 })();
