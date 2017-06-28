@@ -53,6 +53,10 @@ describe('When using memoize.simple', function() {
 				});
 
 				it('the memoized function not to have been called again', function() {
+					expect(spy.calls.count()).toEqual(1);
+				});
+
+				it('the memoized function should have returned the cached value', function() {
 					expect(resultTwo).toEqual(resultOne);
 				});
 			});
