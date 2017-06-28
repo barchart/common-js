@@ -2076,6 +2076,43 @@ module.exports = function () {
 },{"./is":17}],20:[function(require,module,exports){
 'use strict';
 
+var is = require('./is');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * Utilities for caching results of function invocations (a.k.a. memoization).
+  *
+  * @public
+  * @module lang/memoize
+  */
+
+	return {
+		/**
+   * Memoizes a function that accepts a single argument only. Furthermore,
+   * the parameter's toString function must return a unique value.
+   *
+   * @public
+   * @param {Function} fn - The function to memoize. This function should accept one parameters whose "toString" function outputs a unique value.
+   */
+		simple: function simple(fn) {
+			var cache = {};
+
+			return function (x) {
+				if (cache.hasOwnProperty(x)) {
+					return cache[x];
+				} else {
+					return cache[x] = fn(x);
+				}
+			};
+		}
+	};
+}();
+
+},{"./is":17}],21:[function(require,module,exports){
+'use strict';
+
 var array = require('./array'),
     is = require('./is');
 
@@ -2208,7 +2245,7 @@ module.exports = function () {
 	return object;
 }();
 
-},{"./array":13,"./is":17}],21:[function(require,module,exports){
+},{"./array":13,"./is":17}],22:[function(require,module,exports){
 'use strict';
 
 var assert = require('./assert');
@@ -2374,7 +2411,7 @@ module.exports = function () {
 	return utilities;
 }();
 
-},{"./assert":14}],22:[function(require,module,exports){
+},{"./assert":14}],23:[function(require,module,exports){
 'use strict';
 
 var assert = require('./assert'),
@@ -2396,7 +2433,7 @@ module.exports = function () {
 	};
 }();
 
-},{"./assert":14,"./is":17}],23:[function(require,module,exports){
+},{"./assert":14,"./is":17}],24:[function(require,module,exports){
 'use strict';
 
 var assert = require('./assert'),
@@ -2436,7 +2473,7 @@ module.exports = function () {
 	};
 }();
 
-},{"./assert":14,"./is":17}],24:[function(require,module,exports){
+},{"./assert":14,"./is":17}],25:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -2582,7 +2619,7 @@ module.exports = function () {
 	return Event;
 }();
 
-},{"./../lang/Disposable":12,"./../lang/assert":14}],25:[function(require,module,exports){
+},{"./../lang/Disposable":12,"./../lang/assert":14}],26:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -2747,7 +2784,7 @@ module.exports = function () {
 	return EventMap;
 }();
 
-},{"./../lang/Disposable":12,"./../lang/assert":14,"./Event":24}],26:[function(require,module,exports){
+},{"./../lang/Disposable":12,"./../lang/assert":14,"./Event":25}],27:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -3000,7 +3037,7 @@ module.exports = function () {
 	return Model;
 }();
 
-},{"./../lang/Disposable":12,"./../lang/assert":14,"./../lang/is":17,"./../messaging/Event":24}],27:[function(require,module,exports){
+},{"./../lang/Disposable":12,"./../lang/assert":14,"./../lang/is":17,"./../messaging/Event":25}],28:[function(require,module,exports){
 'use strict';
 
 var Specification = require('./Specification');
@@ -3011,7 +3048,7 @@ module.exports = function () {
 	return Specification.AndSpecification;
 }();
 
-},{"./Specification":34}],28:[function(require,module,exports){
+},{"./Specification":35}],29:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -3085,7 +3122,7 @@ module.exports = function () {
 	return ContainedSpecification;
 }();
 
-},{"./../lang/assert":14,"./Specification":34}],29:[function(require,module,exports){
+},{"./../lang/assert":14,"./Specification":35}],30:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -3157,7 +3194,7 @@ module.exports = function () {
 	return ContainsSpecification;
 }();
 
-},{"./Specification":34}],30:[function(require,module,exports){
+},{"./Specification":35}],31:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -3222,7 +3259,7 @@ module.exports = function () {
 	return FailSpecification;
 }();
 
-},{"./Specification":34}],31:[function(require,module,exports){
+},{"./Specification":35}],32:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -3289,7 +3326,7 @@ module.exports = function () {
 	return NumericSpecification;
 }();
 
-},{"./../lang/is":17,"./Specification":34}],32:[function(require,module,exports){
+},{"./../lang/is":17,"./Specification":35}],33:[function(require,module,exports){
 'use strict';
 
 var Specification = require('./Specification');
@@ -3300,7 +3337,7 @@ module.exports = function () {
 	return Specification.OrSpecification;
 }();
 
-},{"./Specification":34}],33:[function(require,module,exports){
+},{"./Specification":35}],34:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -3365,7 +3402,7 @@ module.exports = function () {
 	return PassSpecification;
 }();
 
-},{"./Specification":34}],34:[function(require,module,exports){
+},{"./Specification":35}],35:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -3510,7 +3547,7 @@ module.exports = function () {
 	return Specification;
 }();
 
-},{"./../lang/assert":14}],35:[function(require,module,exports){
+},{"./../lang/assert":14}],36:[function(require,module,exports){
 'use strict';
 
 var Stack = require('./../../../collections/Stack');
@@ -3629,7 +3666,7 @@ describe('When a Stack is constructed', function () {
 	});
 });
 
-},{"./../../../collections/Stack":2}],36:[function(require,module,exports){
+},{"./../../../collections/Stack":2}],37:[function(require,module,exports){
 'use strict';
 
 var Tree = require('./../../../collections/Tree');
@@ -3688,7 +3725,7 @@ describe('When a Tree is constructed', function () {
 	});
 });
 
-},{"./../../../collections/Tree":3}],37:[function(require,module,exports){
+},{"./../../../collections/Tree":3}],38:[function(require,module,exports){
 'use strict';
 
 var ComparatorBuilder = require('./../../../../collections/sorting/ComparatorBuilder');
@@ -3778,7 +3815,7 @@ describe('When a ComparatorBuilder is composed with two comparators', function (
     });
 });
 
-},{"./../../../../collections/sorting/ComparatorBuilder":4}],38:[function(require,module,exports){
+},{"./../../../../collections/sorting/ComparatorBuilder":4}],39:[function(require,module,exports){
 'use strict';
 
 var comparators = require('./../../../../collections/sorting/comparators');
@@ -3885,7 +3922,7 @@ describe('When using the "compareStrings" comparator', function () {
 	});
 });
 
-},{"./../../../../collections/sorting/comparators":5}],39:[function(require,module,exports){
+},{"./../../../../collections/sorting/comparators":5}],40:[function(require,module,exports){
 'use strict';
 
 var Disposable = require('./../../../../lang/Disposable');
@@ -4096,7 +4133,7 @@ describe('When an DisposableStack is constructed', function () {
 	});
 });
 
-},{"./../../../../collections/specialized/DisposableStack":6,"./../../../../lang/Disposable":12}],40:[function(require,module,exports){
+},{"./../../../../collections/specialized/DisposableStack":6,"./../../../../lang/Disposable":12}],41:[function(require,module,exports){
 'use strict';
 
 var EvictingList = require('./../../../../collections/specialized/EvictingList');
@@ -4321,7 +4358,7 @@ describe('When an EvictingList is constructed (with a capacity of 3)', function 
 	});
 });
 
-},{"./../../../../collections/specialized/EvictingList":7}],41:[function(require,module,exports){
+},{"./../../../../collections/specialized/EvictingList":7}],42:[function(require,module,exports){
 'use strict';
 
 var EvictingMap = require('./../../../../collections/specialized/EvictingMap');
@@ -4604,7 +4641,7 @@ describe('When an EvictingMap is constructed (with a capacity of 3)', function (
 	});
 });
 
-},{"./../../../../collections/specialized/EvictingMap":8}],42:[function(require,module,exports){
+},{"./../../../../collections/specialized/EvictingMap":8}],43:[function(require,module,exports){
 'use strict';
 
 var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -4679,7 +4716,7 @@ describe('When a CommandHandler is created from a function', function () {
 	});
 });
 
-},{"./../../../commands/CommandHandler":9}],43:[function(require,module,exports){
+},{"./../../../commands/CommandHandler":9}],44:[function(require,module,exports){
 'use strict';
 
 var CommandHandler = require('./../../../commands/CommandHandler');
@@ -4741,7 +4778,7 @@ describe('When a CompositeCommandHandler is created', function () {
 	});
 });
 
-},{"./../../../commands/CommandHandler":9,"./../../../commands/CompositeCommandHandler":10}],44:[function(require,module,exports){
+},{"./../../../commands/CommandHandler":9,"./../../../commands/CompositeCommandHandler":10}],45:[function(require,module,exports){
 'use strict';
 
 var CommandHandler = require('./../../../commands/CommandHandler');
@@ -4823,7 +4860,7 @@ describe('When a MappedCommandHandler is created with two mapped commands', func
 	});
 });
 
-},{"./../../../commands/CommandHandler":9,"./../../../commands/MappedCommandHandler":11}],45:[function(require,module,exports){
+},{"./../../../commands/CommandHandler":9,"./../../../commands/MappedCommandHandler":11}],46:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -4982,7 +5019,7 @@ describe('When a Disposable.fromAction creates a Disposable', function () {
 	});
 });
 
-},{"./../../../lang/Disposable":12}],46:[function(require,module,exports){
+},{"./../../../lang/Disposable":12}],47:[function(require,module,exports){
 'use strict';
 
 var array = require('./../../../lang/array');
@@ -5565,7 +5602,7 @@ describe('when calculating the "symmetric difference" of two arrays', function (
 	});
 });
 
-},{"./../../../lang/array":13}],47:[function(require,module,exports){
+},{"./../../../lang/array":13}],48:[function(require,module,exports){
 'use strict';
 
 var attributes = require('./../../../lang/attributes');
@@ -6236,7 +6273,7 @@ describe('When "attributes.read" is used with a non-default separator', function
 	});
 });
 
-},{"./../../../lang/attributes":15}],48:[function(require,module,exports){
+},{"./../../../lang/attributes":15}],49:[function(require,module,exports){
 'use strict';
 
 var dateUtilities = require('./../../../lang/date');
@@ -6251,7 +6288,7 @@ describe('When extracting the "short" day of week', function () {
 	});
 });
 
-},{"./../../../lang/date":16}],49:[function(require,module,exports){
+},{"./../../../lang/date":16}],50:[function(require,module,exports){
 'use strict';
 
 var is = require('./../../../lang/is');
@@ -6656,7 +6693,7 @@ describe('When checking an undefined value', function () {
 	});
 });
 
-},{"./../../../lang/is":17}],50:[function(require,module,exports){
+},{"./../../../lang/is":17}],51:[function(require,module,exports){
 'use strict';
 
 var mask = require('./../../../lang/mask');
@@ -6813,7 +6850,7 @@ describe('When working with an empty flags collection', function () {
 	});
 });
 
-},{"./../../../lang/mask":18}],51:[function(require,module,exports){
+},{"./../../../lang/mask":18}],52:[function(require,module,exports){
 'use strict';
 
 var math = require('./../../../lang/math');
@@ -6876,7 +6913,101 @@ describe('When using math.approximate', function () {
 	});
 });
 
-},{"./../../../lang/math":19}],52:[function(require,module,exports){
+},{"./../../../lang/math":19}],53:[function(require,module,exports){
+'use strict';
+
+var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) {
+	return typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+} : function (obj) {
+	return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+};
+
+var memoize = require('./../../../lang/memoize');
+
+describe('When using memoize.simple', function () {
+	'use strict';
+
+	describe("on a function that takes a tenth of second to complete", function () {
+		var spy;
+		var memo;
+
+		var counter;
+
+		beforeEach(function () {
+			counter = 0;
+
+			spy = jasmine.createSpy('spy').and.callFake(function (x) {
+				counter = counter + 1;
+
+				return counter;
+			});
+
+			memo = memoize.simple(spy);
+		});
+
+		it('the memoized function should not have been called', function () {
+			expect(spy).not.toHaveBeenCalled();
+		});
+
+		describe("and the memoized function is called", function () {
+			var paramOne;
+			var resultOne;
+
+			beforeEach(function () {
+				resultOne = memo(paramOne = 'a');
+			});
+
+			it('the memoized function to have been called', function () {
+				expect(spy.calls.count()).toEqual(1);
+			});
+
+			it('the memoized function to have been called with the correct parameters', function () {
+				expect(spy).toHaveBeenCalledWith(paramOne);
+			});
+
+			it('the result should be a number', function () {
+				expect(typeof resultOne === 'undefined' ? 'undefined' : _typeof(resultOne)).toEqual('number');
+			});
+
+			describe("and the memoized function is with the same value again", function () {
+				var resultTwo;
+
+				beforeEach(function () {
+					resultTwo = memo(paramOne);
+				});
+
+				it('the memoized function not to have been called again', function () {
+					expect(resultTwo).toEqual(resultOne);
+				});
+			});
+
+			describe("and the memoized function is called with another value", function () {
+				var paramTwo;
+				var resultTwo;
+
+				beforeEach(function () {
+					resultTwo = memo(paramTwo = 'b');
+				});
+
+				it('the memoized function to have been called', function () {
+					expect(spy.calls.count()).toEqual(2);
+				});
+
+				it('the memoized function to have been called with the correct parameters', function () {
+					expect(spy).toHaveBeenCalledWith(paramTwo);
+				});
+
+				it('the result should be a number', function () {
+					expect(typeof resultTwo === 'undefined' ? 'undefined' : _typeof(resultTwo)).toEqual('number');
+				});
+			});
+		});
+	});
+});
+
+},{"./../../../lang/memoize":20}],54:[function(require,module,exports){
 'use strict';
 
 var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -7129,7 +7260,7 @@ describe('When running a deep comparison', function () {
 	});
 });
 
-},{"./../../../lang/object":20}],53:[function(require,module,exports){
+},{"./../../../lang/object":21}],55:[function(require,module,exports){
 'use strict';
 
 var promise = require('./../../../lang/promise');
@@ -8107,7 +8238,7 @@ describe('When "promise.build" is used to create a promise', function () {
 	});
 });
 
-},{"./../../../lang/promise":21}],54:[function(require,module,exports){
+},{"./../../../lang/promise":22}],56:[function(require,module,exports){
 'use strict';
 
 var random = require('./../../../lang/random');
@@ -8151,7 +8282,7 @@ describe('When generating a random number with a range of multiple values', func
 	});
 });
 
-},{"./../../../lang/random":22}],55:[function(require,module,exports){
+},{"./../../../lang/random":23}],57:[function(require,module,exports){
 'use strict';
 
 var string = require('./../../../lang/string');
@@ -8296,7 +8427,7 @@ describe('When left padding a string', function () {
 	});
 });
 
-},{"./../../../lang/string":23}],56:[function(require,module,exports){
+},{"./../../../lang/string":24}],58:[function(require,module,exports){
 'use strict';
 
 var EventMap = require('./../../../messaging/EventMap');
@@ -8474,7 +8605,7 @@ describe('When an EventMap is constructed', function () {
 	});
 });
 
-},{"./../../../messaging/EventMap":25}],57:[function(require,module,exports){
+},{"./../../../messaging/EventMap":26}],59:[function(require,module,exports){
 'use strict';
 
 var Disposable = require('./../../../lang/Disposable');
@@ -8658,7 +8789,7 @@ describe('When an Event is constructed', function () {
 	});
 });
 
-},{"./../../../lang/Disposable":12,"./../../../messaging/Event":24}],58:[function(require,module,exports){
+},{"./../../../lang/Disposable":12,"./../../../messaging/Event":25}],60:[function(require,module,exports){
 'use strict';
 
 var Disposable = require('./../../../lang/Disposable');
@@ -8795,7 +8926,7 @@ describe('When an Model is constructed with "firstName" and "lastName" propertie
 	});
 });
 
-},{"./../../../lang/Disposable":12,"./../../../models/Model":26}],59:[function(require,module,exports){
+},{"./../../../lang/Disposable":12,"./../../../models/Model":27}],61:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -8935,7 +9066,7 @@ describe('When an AndSpecification is constructed', function () {
 	});
 });
 
-},{"./../../../specifications/AndSpecification":27,"./../../../specifications/Specification":34}],60:[function(require,module,exports){
+},{"./../../../specifications/AndSpecification":28,"./../../../specifications/Specification":35}],62:[function(require,module,exports){
 'use strict';
 
 var ContainedSpecification = require('./../../../specifications/ContainedSpecification');
@@ -8999,7 +9130,7 @@ describe('When a ContainedSpecification is constructed', function () {
 	});
 });
 
-},{"./../../../specifications/ContainedSpecification":28}],61:[function(require,module,exports){
+},{"./../../../specifications/ContainedSpecification":29}],63:[function(require,module,exports){
 'use strict';
 
 var ContainsSpecification = require('./../../../specifications/ContainsSpecification');
@@ -9051,7 +9182,7 @@ describe('When a ContainsSpecification is constructed', function () {
 	});
 });
 
-},{"./../../../specifications/ContainsSpecification":29}],62:[function(require,module,exports){
+},{"./../../../specifications/ContainsSpecification":30}],64:[function(require,module,exports){
 'use strict';
 
 var FailSpecification = require('./../../../specifications/FailSpecification');
@@ -9103,7 +9234,7 @@ describe('When a FailSpecification is constructed', function () {
 	});
 });
 
-},{"./../../../specifications/FailSpecification":30}],63:[function(require,module,exports){
+},{"./../../../specifications/FailSpecification":31}],65:[function(require,module,exports){
 'use strict';
 
 var NumericSpecification = require('./../../../specifications/NumericSpecification');
@@ -9166,7 +9297,7 @@ describe('When a NumericSpecification is constructed', function () {
 	});
 });
 
-},{"./../../../specifications/NumericSpecification":31}],64:[function(require,module,exports){
+},{"./../../../specifications/NumericSpecification":32}],66:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -9306,7 +9437,7 @@ describe('When an OrSpecification is constructed', function () {
 	});
 });
 
-},{"./../../../specifications/OrSpecification":32,"./../../../specifications/Specification":34}],65:[function(require,module,exports){
+},{"./../../../specifications/OrSpecification":33,"./../../../specifications/Specification":35}],67:[function(require,module,exports){
 'use strict';
 
 var PassSpecification = require('./../../../specifications/PassSpecification');
@@ -9358,7 +9489,7 @@ describe('When a PassSpecification is constructed', function () {
 	});
 });
 
-},{"./../../../specifications/PassSpecification":33}],66:[function(require,module,exports){
+},{"./../../../specifications/PassSpecification":34}],68:[function(require,module,exports){
 'use strict';
 
 var RateLimiter = require('./../../../timing/RateLimiter');
@@ -9592,7 +9723,7 @@ describe('When a RateLimiter is constructed (2 execution per 25 milliseconds)', 
 	});
 });
 
-},{"./../../../timing/RateLimiter":70}],67:[function(require,module,exports){
+},{"./../../../timing/RateLimiter":72}],69:[function(require,module,exports){
 'use strict';
 
 var Scheduler = require('./../../../timing/Scheduler');
@@ -9825,7 +9956,7 @@ describe('When a backoff is used', function () {
 	});
 });
 
-},{"./../../../timing/Scheduler":71}],68:[function(require,module,exports){
+},{"./../../../timing/Scheduler":73}],70:[function(require,module,exports){
 'use strict';
 
 var Serializer = require('./../../../timing/Serializer');
@@ -9914,7 +10045,7 @@ function getSpy(results, fail) {
 	});
 }
 
-},{"./../../../timing/Serializer":72}],69:[function(require,module,exports){
+},{"./../../../timing/Serializer":74}],71:[function(require,module,exports){
 'use strict';
 
 var WindowCounter = require('./../../../timing/WindowCounter');
@@ -9980,7 +10111,7 @@ describe('When a WindowCounter is constructed', function () {
 	});
 });
 
-},{"./../../../timing/WindowCounter":73}],70:[function(require,module,exports){
+},{"./../../../timing/WindowCounter":75}],72:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -10129,7 +10260,7 @@ module.exports = function () {
 	return RateLimiter;
 }();
 
-},{"./../collections/Queue":1,"./../lang/Disposable":12,"./../lang/assert":14,"./../lang/promise":21,"./Scheduler":71}],71:[function(require,module,exports){
+},{"./../collections/Queue":1,"./../lang/Disposable":12,"./../lang/assert":14,"./../lang/promise":22,"./Scheduler":73}],73:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -10363,7 +10494,7 @@ module.exports = function () {
 	return Scheduler;
 }();
 
-},{"./../lang/Disposable":12,"./../lang/assert":14,"./../lang/is":17,"./../lang/object":20,"./../lang/promise":21}],72:[function(require,module,exports){
+},{"./../lang/Disposable":12,"./../lang/assert":14,"./../lang/is":17,"./../lang/object":21,"./../lang/promise":22}],74:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
@@ -10464,7 +10595,7 @@ module.exports = function () {
 	return Serializer;
 }();
 
-},{"./../collections/Queue":1,"./../lang/assert":14,"./../lang/promise":21}],73:[function(require,module,exports){
+},{"./../collections/Queue":1,"./../lang/assert":14,"./../lang/promise":22}],75:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
@@ -10625,4 +10756,4 @@ module.exports = function () {
 	return WindowCounter;
 }();
 
-},{"./../collections/Queue":1,"./../lang/assert":14}]},{},[37,38,39,40,41,35,36,42,43,44,46,47,48,45,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69]);
+},{"./../collections/Queue":1,"./../lang/assert":14}]},{},[38,39,40,41,42,36,37,43,44,45,47,48,49,46,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71]);
