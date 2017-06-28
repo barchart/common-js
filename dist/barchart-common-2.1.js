@@ -2600,21 +2600,23 @@ var moment = require('moment-timezone/builds/moment-timezone-with-data-2010-2020
 module.exports = function () {
 	'use strict';
 
-	return {
+	var timezone = {
 		getTimezones: function getTimezones() {
 			return moment.tz.names();
 		},
-		hasTimezone: function hasTimezone(timezone) {
-			assert.argumentIsRequired(timezone, 'timezone', String);
+		hasTimezone: function hasTimezone(name) {
+			assert.argumentIsRequired(name, 'name', String);
 
 			return timezone.getTimezones().some(function (candidate) {
-				return candidate === timezone;
+				return candidate === name;
 			});
 		},
 		guessTimezone: function guessTimezone() {
 			return moment.tz.guess() || null;
 		}
 	};
+
+	return timezone;
 }();
 
 },{"./assert":17,"moment-timezone/builds/moment-timezone-with-data-2010-2020":55}],31:[function(require,module,exports){
