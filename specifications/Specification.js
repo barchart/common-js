@@ -28,6 +28,10 @@ module.exports = (() => {
 			return new OrSpecification(this, other);
 		}
 
+		not() {
+			return new NotSpecification(this);
+		}
+
 		toString() {
 			return '[Specification]';
 		}
@@ -73,8 +77,27 @@ module.exports = (() => {
 		}
 	}
 
+	class NotSpecification extends Specification {
+		constructor(otherSpecification) {
+			super();
+
+			assert.argumentIsRequired(otherSpecification, 'otherSpecification', Specification, 'Specification');
+
+			this._otherSpecification = otherSpecification;
+		}
+
+		_evaluate(data) {
+			return !this._otherSpecification.evaluate(data);
+		}
+
+		toString() {
+			return '[NotSpecification]';
+		}
+	}
+
 	Specification.AndSpecification = AndSpecification;
 	Specification.OrSpecification = OrSpecification;
+	Specification.NotSpecification = NotSpecification;
 
 	return Specification;
 })();
