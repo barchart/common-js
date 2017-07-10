@@ -3934,10 +3934,6 @@ process.off = noop;
 process.removeListener = noop;
 process.removeAllListeners = noop;
 process.emit = noop;
-process.prependListener = noop;
-process.prependOnceListener = noop;
-
-process.listeners = function (name) { return [] }
 
 process.binding = function (name) {
     throw new Error('process.binding is not supported');
@@ -16851,6 +16847,11 @@ module.exports = function () {
 				return new OrSpecification(this, other);
 			}
 		}, {
+			key: 'not',
+			value: function not() {
+				return new NotSpecification(this);
+			}
+		}, {
 			key: 'toString',
 			value: function toString() {
 				return '[Specification]';
@@ -16922,8 +16923,38 @@ module.exports = function () {
 		return OrSpecification;
 	}(Specification);
 
+	var NotSpecification = function (_Specification3) {
+		_inherits(NotSpecification, _Specification3);
+
+		function NotSpecification(otherSpecification) {
+			_classCallCheck(this, NotSpecification);
+
+			var _this3 = _possibleConstructorReturn(this, (NotSpecification.__proto__ || Object.getPrototypeOf(NotSpecification)).call(this));
+
+			assert.argumentIsRequired(otherSpecification, 'otherSpecification', Specification, 'Specification');
+
+			_this3._otherSpecification = otherSpecification;
+			return _this3;
+		}
+
+		_createClass(NotSpecification, [{
+			key: '_evaluate',
+			value: function _evaluate(data) {
+				return !this._otherSpecification.evaluate(data);
+			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[NotSpecification]';
+			}
+		}]);
+
+		return NotSpecification;
+	}(Specification);
+
 	Specification.AndSpecification = AndSpecification;
 	Specification.OrSpecification = OrSpecification;
+	Specification.NotSpecification = NotSpecification;
 
 	return Specification;
 }();
