@@ -134,6 +134,15 @@ module.exports = (() => {
 			return returnRef;
 		},
 
+		/**
+		 * Set symmetric difference operation (using strict equality). In
+		 * other words, this is the union of the differences between the
+		 * sets.
+		 *
+		 * @param {Array} a
+		 * @param {Array} b
+		 * @returns {Array}
+		 */
 		differenceSymmetric(a, b) {
 			return array.union(array.difference(a, b), array.difference(b, a));
 		},
