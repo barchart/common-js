@@ -1,6 +1,6 @@
 {
   "name": "common",
-  "version": "2.1.87",
+  "version": "2.2.0",
   "description": "Library of common javascript utilities",
   "author": {
     "name": "Bryan Ingle",
