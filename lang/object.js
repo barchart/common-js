@@ -4,6 +4,12 @@ const array = require('./array'),
 module.exports = (() => {
 	'use strict';
 
+	/**
+	 * Utilities for working with objects.
+	 *
+	 * @public
+	 * @module lang/object
+	 */
 	const object = {
 		/**
 		 * <p>Performs "deep" equality check on two objects.</p>

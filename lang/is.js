@@ -5,7 +5,7 @@ module.exports = (() => {
 	 * Utilities for interrogating variables (e.g. checking data types).
 	 *
 	 * @public
-	 * @module lang/memoize
+	 * @module lang/is
 	 */
 	return {
 		/**

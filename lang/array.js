@@ -1,5 +1,12 @@
-const assert = require('./assert');
-const is = require('./is');
+/**
+ * Utilities for working with arrays.
+ *
+ * @public
+ * @module lang/array
+ */
+
+const assert = require('./assert'),
+	is = require('./is');
 
 module.exports = (() => {
 	'use strict';

@@ -3,6 +3,12 @@ const assert = require('./assert');
 module.exports = (() => {
 	'use strict';
 
+	/**
+	 * Utilities for working with promises.
+	 *
+	 * @public
+	 * @module lang/promise
+	 */
 	const utilities = {
 		timeout(promise, timeout) {
 			return Promise.resolve()
