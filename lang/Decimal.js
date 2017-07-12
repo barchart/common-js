@@ -1,6 +1,6 @@
 const is = require('./is');
 
-const Big = require('big.js')
+const Big = require('big.js');
 
 module.exports = (() => {
 	'use strict';
