@@ -1471,8 +1471,15 @@ module.exports = function () {
 },{"./assert":14}],13:[function(require,module,exports){
 'use strict';
 
-var assert = require('./assert');
-var is = require('./is');
+/**
+ * Utilities for working with arrays.
+ *
+ * @public
+ * @module lang/array
+ */
+
+var assert = require('./assert'),
+    is = require('./is');
 
 module.exports = function () {
 	'use strict';
@@ -1951,56 +1958,153 @@ module.exports = function () {
 var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) {
-	return typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+  return typeof obj === "undefined" ? "undefined" : _typeof2(obj);
 } : function (obj) {
-	return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof2(obj);
 };
 
 module.exports = function () {
-	'use strict';
+  'use strict';
 
-	return {
-		number: function number(candidate) {
-			return typeof candidate === 'number' && !isNaN(candidate);
-		},
-		nan: function nan(candidate) {
-			return typeof candidate === 'number' && isNaN(candidate);
-		},
-		string: function string(candidate) {
-			return typeof candidate === 'string';
-		},
-		date: function date(candidate) {
-			return candidate instanceof Date;
-		},
-		fn: function fn(candidate) {
-			return typeof candidate === 'function';
-		},
-		array: function array(candidate) {
-			return Array.isArray(candidate);
-		},
-		boolean: function boolean(candidate) {
-			return typeof candidate === 'boolean';
-		},
-		object: function object(candidate) {
-			return (typeof candidate === 'undefined' ? 'undefined' : _typeof(candidate)) === 'object' && candidate !== null;
-		},
-		null: function _null(candidate) {
-			return candidate === null;
-		},
-		undefined: function (_undefined) {
-			function undefined(_x) {
-				return _undefined.apply(this, arguments);
-			}
+  /**
+   * Utilities for interrogating variables (e.g. checking data types).
+   *
+   * @public
+   * @module lang/is
+   */
 
-			undefined.toString = function () {
-				return _undefined.toString();
-			};
+  return {
+    /**
+     * Returns true, if the argument is a number. NaN will return false.
+     *
+     * @public
+     * @param candidate
+     * @returns {boolean}
+     */
+    number: function number(candidate) {
+      return typeof candidate === 'number' && !isNaN(candidate);
+    },
 
-			return undefined;
-		}(function (candidate) {
-			return candidate === undefined;
-		})
-	};
+    /**
+     * Returns true, if the argument is NaN.
+     *
+     * @public
+     * @param candidate
+     * @returns {boolean}
+     */
+    nan: function nan(candidate) {
+      return typeof candidate === 'number' && isNaN(candidate);
+    },
+
+    /**
+     * Returns true, if the argument is a valid integer.
+     *
+     * @public
+     * @param candidate
+     * @returns {boolean}
+     */
+    integer: function integer(candidate) {
+      return typeof candidate === 'number' && !isNaN(candidate) && (candidate | 0) === candidate;
+    },
+
+    /**
+     * Returns true, if the argument is a string.
+     *
+     * @public
+     * @param candidate
+     * @returns {boolean}
+     */
+    string: function string(candidate) {
+      return typeof candidate === 'string';
+    },
+
+    /**
+     * Returns true, if the argument is a JavaScript Date instance.
+     *
+     * @public
+     * @param candidate
+     * @returns {boolean}
+     */
+    date: function date(candidate) {
+      return candidate instanceof Date;
+    },
+
+    /**
+     * Returns true, if the argument is a function.
+     *
+     * @public
+     * @param candidate
+     * @returns {boolean}
+     */
+    fn: function fn(candidate) {
+      return typeof candidate === 'function';
+    },
+
+    /**
+     * Returns true, if the argument is an array.
+     *
+     * @public
+     * @param candidate
+     * @returns {boolean}
+     */
+    array: function array(candidate) {
+      return Array.isArray(candidate);
+    },
+
+    /**
+     * Returns true, if the argument is a Boolean value.
+     *
+     * @public
+     * @param candidate
+     * @returns {boolean}
+     */
+    boolean: function boolean(candidate) {
+      return typeof candidate === 'boolean';
+    },
+
+    /**
+     * Returns true, if the argument is an object.
+     *
+     * @public
+     * @param candidate
+     * @returns {boolean}
+     */
+    object: function object(candidate) {
+      return (typeof candidate === 'undefined' ? 'undefined' : _typeof(candidate)) === 'object' && candidate !== null;
+    },
+
+    /**
+     * Returns true, if the argument is a null value.
+     *
+     * @public
+     * @param candidate
+     * @returns {boolean}
+     */
+    null: function _null(candidate) {
+      return candidate === null;
+    },
+
+    /**
+     * Returns true, if the argument is an undefined value.
+     *
+     * @public
+     * @param candidate
+     * @returns {boolean}
+     */
+    undefined: function (_undefined) {
+      function undefined(_x) {
+        return _undefined.apply(this, arguments);
+      }
+
+      undefined.toString = function () {
+        return _undefined.toString();
+      };
+
+      return undefined;
+    }(function (candidate) {
+      return candidate === undefined;
+    })
+  };
 }();
 
 },{}],18:[function(require,module,exports){
@@ -2128,6 +2232,13 @@ var array = require('./array'),
 
 module.exports = function () {
 	'use strict';
+
+	/**
+  * Utilities for working with objects.
+  *
+  * @public
+  * @module lang/object
+  */
 
 	var object = {
 		/**
@@ -2262,6 +2373,13 @@ var assert = require('./assert');
 
 module.exports = function () {
 	'use strict';
+
+	/**
+  * Utilities for working with promises.
+  *
+  * @public
+  * @module lang/promise
+  */
 
 	var utilities = {
 		timeout: function timeout(promise, _timeout) {
@@ -6433,6 +6551,64 @@ describe('When checking the number 3', function () {
 		expect(is.nan(candidate)).toEqual(false);
 	});
 
+	it("it should be an integer", function () {
+		expect(is.integer(candidate)).toEqual(true);
+	});
+
+	it("it should not be a string", function () {
+		expect(is.string(candidate)).toEqual(false);
+	});
+
+	it("it should not be a Date", function () {
+		expect(is.date(candidate)).toEqual(false);
+	});
+
+	it("it should not be a function", function () {
+		expect(is.fn(candidate)).toEqual(false);
+	});
+
+	it("it should not be an array", function () {
+		expect(is.array(candidate)).toEqual(false);
+	});
+
+	it("it should not be a boolean", function () {
+		expect(is.boolean(candidate)).toEqual(false);
+	});
+
+	it("it should not be an object", function () {
+		expect(is.object(candidate)).toEqual(false);
+	});
+
+	it("it should not be null", function () {
+		expect(is.null(candidate)).toEqual(false);
+	});
+
+	it("it should not be undefined", function () {
+		expect(is.undefined(candidate)).toEqual(false);
+	});
+});
+
+describe('When checking the Math.PI', function () {
+	'use strict';
+
+	var candidate;
+
+	beforeEach(function () {
+		candidate = Math.PI;
+	});
+
+	it("it should be a number", function () {
+		expect(is.number(candidate)).toEqual(true);
+	});
+
+	it("it should not be nan", function () {
+		expect(is.nan(candidate)).toEqual(false);
+	});
+
+	it("it should be an integer", function () {
+		expect(is.integer(candidate)).toEqual(false);
+	});
+
 	it("it should not be a string", function () {
 		expect(is.string(candidate)).toEqual(false);
 	});
@@ -6481,6 +6657,10 @@ describe('When checking the Number.NaN', function () {
 
 	it("it should be nan", function () {
 		expect(is.nan(candidate)).toEqual(true);
+	});
+
+	it("it should not be an integer", function () {
+		expect(is.integer(candidate)).toEqual(false);
 	});
 
 	it("it should not be a string", function () {
@@ -6533,6 +6713,10 @@ describe('When checking the string "3"', function () {
 		expect(is.nan(candidate)).toEqual(false);
 	});
 
+	it("it should not be an integer", function () {
+		expect(is.integer(candidate)).toEqual(false);
+	});
+
 	it("it should be a string", function () {
 		expect(is.string(candidate)).toEqual(true);
 	});
@@ -6581,6 +6765,10 @@ describe('When checking the date 08/29/2016', function () {
 
 	it("it should not be nan", function () {
 		expect(is.nan(candidate)).toEqual(false);
+	});
+
+	it("it should not be an integer", function () {
+		expect(is.integer(candidate)).toEqual(false);
 	});
 
 	it("it should not be a string", function () {
@@ -6633,6 +6821,10 @@ describe('When checking the "expect" function', function () {
 		expect(is.nan(candidate)).toEqual(false);
 	});
 
+	it("it should not be an integer", function () {
+		expect(is.integer(candidate)).toEqual(false);
+	});
+
 	it("it should not be a string", function () {
 		expect(is.string(candidate)).toEqual(false);
 	});
@@ -6681,6 +6873,10 @@ describe('When checking an empty object', function () {
 
 	it("it should not be nan", function () {
 		expect(is.nan(candidate)).toEqual(false);
+	});
+
+	it("it should not be an integer", function () {
+		expect(is.integer(candidate)).toEqual(false);
 	});
 
 	it("it should not be a string", function () {
@@ -6733,6 +6929,10 @@ describe('When checking a null value', function () {
 		expect(is.nan(candidate)).toEqual(false);
 	});
 
+	it("it should not be an integer", function () {
+		expect(is.integer(candidate)).toEqual(false);
+	});
+
 	it("it should not be a string", function () {
 		expect(is.string(candidate)).toEqual(false);
 	});
@@ -6781,6 +6981,10 @@ describe('When checking an undefined value', function () {
 
 	it("it should not be nan", function () {
 		expect(is.nan(candidate)).toEqual(false);
+	});
+
+	it("it should not be an integer", function () {
+		expect(is.integer(candidate)).toEqual(false);
 	});
 
 	it("it should not be a string", function () {
