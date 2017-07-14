@@ -17,10 +17,10 @@ module.exports = (() => {
 		}
 
 		call(endpoint, data) {
-			assert.argumentIsRequired(endpoint, endpoint, RestEndpoint, 'RestEndpoint');
-
 			return Promise.resolve()
 				.then(() => {
+					assert.argumentIsRequired(endpoint, endpoint, RestEndpoint, 'RestEndpoint');
+
 					return this._call(endpoint, data, this._host, this._port, this._secure);
 				});
 		}
