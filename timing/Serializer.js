@@ -27,9 +27,9 @@ module.exports = (() => {
 		 * @returns {Promise} - A promise which resolves once the action has been processed.
 		 */
 		enqueue(actionToEnqueue) {
-			assert.argumentIsRequired(actionToEnqueue, 'actionToEnqueue', Function);
-
 			return promise.build((resolveCallback, rejectCallback) => {
+				assert.argumentIsRequired(actionToEnqueue, 'actionToEnqueue', Function);
+
 				this._workQueue.enqueue(() => {
 					return Promise.resolve()
 						.then(() => {
