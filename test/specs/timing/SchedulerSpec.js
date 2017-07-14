@@ -31,44 +31,35 @@ describe('When a Scheduler is constructed', function() {
 					done();
 				});
 		});
-
-		it('should not create a memory leak', function(done) {
-			var before = 0;
-
-			for (var tb in scheduler._timeoutBindings) {
-				before++;
-			}
-
-			expect(before).toEqual(1);
-
-			promise
-				.then(function() {
-					var after = 0;
-
-					for (var tb in scheduler._timeoutBindings) {
-						after++;
-					}
-
-					expect(after).toEqual(0);
-				}).then(function() {
-					done();
-				});
-		});
 	});
 
 	describe('and is disposed', function() {
-		var spy;
-
 		beforeEach(function() {
-			spy = jasmine.createSpy('spy');
-
 			scheduler.dispose();
 		});
 
-		it('should throw if an attempt is made to schedule a task', function() {
-			expect(function() {
-				scheduler.schedule(spy, 100, 'A scheduled task');
-			}).toThrow(new Error('The Scheduler has been disposed.'));
+		it('and a task is scheduled', function() {
+			var spy;
+			var success;
+
+			beforeEach(function(done) {
+				scheduler.schedule(spy = jasmine.createSpy('spy'), 10, 'A scheduled task')
+					.then(() => {
+						success = true;
+					}).catch(() => {
+						success = false;
+					}).then(() => {
+						done();
+					});
+			});
+
+			it('should reject the promise', function() {
+				expect(success).toEqual(false);
+			});
+
+			it('should not invoke the underlying task', function() {
+				expect(spy).not.toHaveBeenCalled();
+			});
 		});
 	});
 });
