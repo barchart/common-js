@@ -9,6 +9,11 @@ const RestProviderBase = require('./RestProviderBase');
 module.exports = (() => {
 	'use strict';
 
+	/**
+	 * Executes REST-ful action inside a Node.js server.
+	 *
+	 * @public
+	 */
 	class RestProvider extends RestProviderBase {
 		constructor(host, port, secure) {
 			super(host, port, secure);

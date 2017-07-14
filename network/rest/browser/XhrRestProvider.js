@@ -8,6 +8,9 @@ const RestProviderBase = require('./../RestProviderBase');
 module.exports = (() => {
 	'use strict';
 
+	/**
+	 * Executes REST-ful actions from a browser, using the "xhr" module.
+	 */
 	class XhrRestProvider extends RestProviderBase {
 		constructor(baseUrl, port, secure) {
 			super(baseUrl, port, secure);
