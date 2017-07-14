@@ -8,7 +8,17 @@ const Queue = require('./../collections/Queue'),
 module.exports = (() => {
 	'use strict';
 
+	/**
+	 * A work queue that restricts the rate at which items are
+	 * processed.
+	 *
+	 * @public
+	 */
 	class RateLimiter extends Disposable {
+		/**
+		 * @param {number} - windowMaximumCount - The maximum number of items which can be processed during a timeframe.
+		 * @param {number} - windowDurationMilliseconds - The number of milliseconds in the timeframe.
+		 */
 		constructor(windowMaximumCount, windowDurationMilliseconds) {
 			super();
 
@@ -26,14 +36,21 @@ module.exports = (() => {
 			this._windowCounter = 0;
 		}
 
+		/**
+		 * Adds an item to the work queue and returns a promise that will
+		 * resolve after the item completes execution.
+		 *
+		 * @param {Function} actionToEnqueue - The action to execute.
+		 * @returns {Promise}
+		 */
 		enqueue(actionToEnqueue) {
-			assert.argumentIsRequired(actionToEnqueue, 'actionToEnqueue', Function);
-
-			if (this.getIsDisposed()) {
-				throw new Error('Unable to enqueue action, the rate limiter has been disposed.');
-			}
-
 			return promise.build((resolveCallback, rejectCallback) => {
+				assert.argumentIsRequired(actionToEnqueue, 'actionToEnqueue', Function);
+
+				if (this.getIsDisposed()) {
+					throw new Error('Unable to enqueue action, the rate limiter has been disposed.');
+				}
+
 				this._workQueue.enqueue(() => {
 					Promise.resolve()
 						.then(() => {
