@@ -7,6 +7,9 @@ const assert = require('./../lang/assert'),
 module.exports = (() => {
 	'use strict';
 
+	/**
+	 * An object that wraps asynchronous delays (i.e. timeout and interval).
+	 */
 	class Scheduler extends Disposable {
 		constructor() {
 			super();
@@ -16,37 +19,40 @@ module.exports = (() => {
 		}
 
 		schedule(actionToSchedule, millisecondDelay, actionDescription) {
-			assert.argumentIsRequired(actionToSchedule, 'actionToSchedule', Function);
-			assert.argumentIsRequired(millisecondDelay, 'millisecondDelay', Number);
-			assert.argumentIsOptional(actionDescription, 'actionDescription', String);
+			return Promise.resolve()
+				.then(() => {
+					assert.argumentIsRequired(actionToSchedule, 'actionToSchedule', Function);
+					assert.argumentIsRequired(millisecondDelay, 'millisecondDelay', Number);
+					assert.argumentIsOptional(actionDescription, 'actionDescription', String);
 
-			if (this.getIsDisposed()) {
-				throw new Error('The Scheduler has been disposed.');
-			}
-
-			let token;
-
-			const schedulePromise = promise.build((resolveCallback, rejectCallback) => {
-				const wrappedAction = () => {
-					delete this._timeoutBindings[token];
-
-					try {
-						resolveCallback(actionToSchedule());
-					} catch (e) {
-						rejectCallback(e);
+					if (this.getIsDisposed()) {
+						throw new Error('The Scheduler has been disposed.');
 					}
-				};
 
-				token = setTimeout(wrappedAction, millisecondDelay);
-			});
+					let token;
 
-			this._timeoutBindings[token] = Disposable.fromAction(() => {
-				clearTimeout(token);
+					const schedulePromise = promise.build((resolveCallback, rejectCallback) => {
+						const wrappedAction = () => {
+							delete this._timeoutBindings[token];
 
-				delete this._timeoutBindings[token];
-			});
+							try {
+								resolveCallback(actionToSchedule());
+							} catch (e) {
+								rejectCallback(e);
+							}
+						};
 
-			return schedulePromise;
+						token = setTimeout(wrappedAction, millisecondDelay);
+					});
+
+					this._timeoutBindings[token] = Disposable.fromAction(() => {
+						clearTimeout(token);
+
+						delete this._timeoutBindings[token];
+					});
+
+					return schedulePromise;
+				});
 		}
 
 		repeat(actionToRepeat, millisecondInterval, actionDescription) {
@@ -88,56 +94,59 @@ module.exports = (() => {
 		 * @param {Object=} failureValue - If provided, will consider the result to have failed, if this value is returned (a deep equality check is used). If not provided, a "falsey" value will trigger a retry.
 		 */
 		backoff(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts, failureCallback, failureValue) {
-			assert.argumentIsRequired(actionToBackoff, 'actionToBackoff', Function);
-			assert.argumentIsOptional(millisecondDelay, 'millisecondDelay', Number);
-			assert.argumentIsOptional(actionDescription, 'actionDescription', String);
-			assert.argumentIsOptional(maximumAttempts, 'maximumAttempts', Number);
-			assert.argumentIsOptional(failureCallback, 'failureCallback', Function);
+			return Promise.resolve()
+				.then(() => {
+					assert.argumentIsRequired(actionToBackoff, 'actionToBackoff', Function);
+					assert.argumentIsOptional(millisecondDelay, 'millisecondDelay', Number);
+					assert.argumentIsOptional(actionDescription, 'actionDescription', String);
+					assert.argumentIsOptional(maximumAttempts, 'maximumAttempts', Number);
+					assert.argumentIsOptional(failureCallback, 'failureCallback', Function);
 
-			if (this.getIsDisposed()) {
-				throw new Error('The Scheduler has been disposed.');
-			}
+					if (this.getIsDisposed()) {
+						throw new Error('The Scheduler has been disposed.');
+					}
 
-			const scheduleBackoff = (failureCount) => {
-				if (failureCount > 0 && is.fn(failureCallback)) {
-					failureCallback(failureCount);
-				}
-
-				if (maximumAttempts > 0 && failureCount > maximumAttempts) {
-					return Promise.reject(`Maximum failures reached for ${actionDescription}`);
-				}
-
-				let backoffDelay;
-
-				if (failureCount === 0) {
-					backoffDelay = millisecondDelay;
-				} else {
-					backoffDelay = (millisecondDelay || 1000) * Math.pow(2, failureCount);
-				}
-
-				let successPredicate;
-
-				if (is.undefined(failureValue)) {
-					successPredicate = (value) => value;
-				} else {
-					successPredicate = (value) => {
-						return !object.equals(value, failureValue);
-					};
-				}
-
-				return this.schedule(actionToBackoff, backoffDelay, (actionDescription || 'unspecified') + ', attempt ' + (failureCount + 1))
-					.then((result) => {
-						if (successPredicate(result)) {
-							return result;
-						} else {
-							return scheduleBackoff(++failureCount);
+					const scheduleBackoff = (failureCount) => {
+						if (failureCount > 0 && is.fn(failureCallback)) {
+							failureCallback(failureCount);
 						}
-					}).catch((e) => {
-						return scheduleBackoff(++failureCount);
-					});
-			};
 
-			return scheduleBackoff(0);
+						if (maximumAttempts > 0 && failureCount > maximumAttempts) {
+							return Promise.reject(`Maximum failures reached for ${actionDescription}`);
+						}
+
+						let backoffDelay;
+
+						if (failureCount === 0) {
+							backoffDelay = millisecondDelay;
+						} else {
+							backoffDelay = (millisecondDelay || 1000) * Math.pow(2, failureCount);
+						}
+
+						let successPredicate;
+
+						if (is.undefined(failureValue)) {
+							successPredicate = (value) => value;
+						} else {
+							successPredicate = (value) => {
+								return !object.equals(value, failureValue);
+							};
+						}
+
+						return this.schedule(actionToBackoff, backoffDelay, (actionDescription || 'unspecified') + ', attempt ' + (failureCount + 1))
+							.then((result) => {
+								if (successPredicate(result)) {
+									return result;
+								} else {
+									return scheduleBackoff(++failureCount);
+								}
+							}).catch((e) => {
+								return scheduleBackoff(++failureCount);
+							});
+					};
+
+					return scheduleBackoff(0);
+				});
 		}
 
 		_onDispose() {
