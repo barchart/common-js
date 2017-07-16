@@ -18,6 +18,14 @@ module.exports = (() => {
 			this._intervalBindings = {};
 		}
 
+		/**
+		 * Schedules an action to execute in the future, returning a Promise.
+		 *
+		 * @param {Function} actionToSchedule - The action to execute.
+		 * @param {number} millisecondDelay - Milliseconds before the action can be started.
+		 * @param {string=} actionDescription - A description of the action, used for logging purposes.
+		 * @returns {Promise}
+		 */
 		schedule(actionToSchedule, millisecondDelay, actionDescription) {
 			return Promise.resolve()
 				.then(() => {
