@@ -3384,6 +3384,12 @@ var assert = require('./../../lang/assert');
 module.exports = function () {
 	'use strict';
 
+	/**
+  * Maps an action (e.g.. create) to an HTTP verb (e.g. POST).
+  *
+  * @public
+  */
+
 	var RestAction = function () {
 		function RestAction(action, httpVerb, requiresQuery, requiresPayload, useQueryString) {
 			_classCallCheck(this, RestAction);
@@ -3402,11 +3408,26 @@ module.exports = function () {
 			this._useQuerystring = useQueryString;
 		}
 
+		/**
+   * The HTTP action (e.g. create).
+   *
+   * @public
+   * @returns {string}
+   */
+
 		_createClass(RestAction, [{
 			key: 'getAction',
 			value: function getAction() {
 				return this._action;
 			}
+
+			/**
+    * The HTTP verb.
+    *
+    * @public
+    * @returns {string}
+    */
+
 		}, {
 			key: 'getHttpVerb',
 			value: function getHttpVerb() {
@@ -3422,32 +3443,99 @@ module.exports = function () {
 			value: function getPayloadIsRequired() {
 				return this._requiresPayload;
 			}
+
+			/**
+    * Indicates if it is appropriate to use a querystring with this action.
+    *
+    * @public
+    * @returns {Boolean}
+    */
+
 		}, {
 			key: 'getUseQuerystring',
 			value: function getUseQuerystring() {
 				return this._useQuerystring;
 			}
+
+			/**
+    * The REST-ful action to create an object.
+    *
+    * @public
+    * @returns {RestAction}
+    */
+
 		}, {
 			key: 'toString',
 			value: function toString() {
 				return '[RestAction (action=' + this._action + ')]';
+			}
+		}], [{
+			key: 'Create',
+			get: function get() {
+				return CREATE;
+			}
+
+			/**
+    * The REST-ful action to update an object.
+    *
+    * @public
+    * @returns {RestAction}
+    */
+
+		}, {
+			key: 'Update',
+			get: function get() {
+				return UPDATE;
+			}
+
+			/**
+    * The REST-ful action to retrieve an object.
+    *
+    * @public
+    * @returns {RestAction}
+    */
+
+		}, {
+			key: 'Retrieve',
+			get: function get() {
+				return RETRIEVE;
+			}
+
+			/**
+    * The REST-ful action to delete an object.
+    *
+    * @public
+    * @returns {RestAction}
+    */
+
+		}, {
+			key: 'Delete',
+			get: function get() {
+				return DELETE;
+			}
+
+			/**
+    * The REST-ful action to retrieve execute a query for object(s).
+    *
+    * @public
+    * @returns {RestAction}
+    */
+
+		}, {
+			key: 'Query',
+			get: function get() {
+				return QUERY;
 			}
 		}]);
 
 		return RestAction;
 	}();
 
-	var addAction = function addAction(restAction) {
-		var action = restAction.getAction();
-
-		RestAction[action] = restAction;
-	};
-
-	addAction(new RestAction('Create', 'POST', false, true, false));
-	addAction(new RestAction('Update', 'PUT', true, true, false));
-	addAction(new RestAction('Retrieve', 'GET', true, false, true));
-	addAction(new RestAction('Delete', 'DELETE', true, false, false));
-	addAction(new RestAction('Query', 'GET', false, false, true));
+	var CREATE = new RestAction('Create', 'POST', false, true, false);
+	var UPDATE = new RestAction('Update', 'PUT', true, true, false);
+	var RETRIEVE = new RestAction('Retrieve', 'GET', true, false, true);
+	var DELETE = new RestAction('Delete', 'DELETE', true, false, false);
+	var QUERY = new RestAction('Query', 'GET', false, false, true);
 
 	return RestAction;
 }();
@@ -3480,7 +3568,20 @@ var RestAction = require('./RestAction');
 module.exports = function () {
 	'use strict';
 
+	/**
+  * Defines a REST-ful endpoint and allows construction of valid
+  * URI that can be used to call the endpoint.
+  *
+  * @public
+  */
+
 	var RestEndpoint = function () {
+		/**
+   *
+   * @param {RestAction} action - The action supported by the endpoint
+   * @param {Array<String>} pathProperties - The parameters required by the endpoint
+   * @param {String=} payloadProperty - The property name of the object to use as a payload for the REST action
+   */
 		function RestEndpoint(action, pathProperties, payloadProperty) {
 			_classCallCheck(this, RestEndpoint);
 
@@ -3494,11 +3595,30 @@ module.exports = function () {
 			this._payloadProperty = payloadProperty || null;
 		}
 
+		/**
+   * The {@link RestAction} the endpoint supports.
+   *
+   * @public
+   * @returns {RestAction}
+   */
+
 		_createClass(RestEndpoint, [{
 			key: 'getAction',
 			value: function getAction() {
 				return this._action;
 			}
+
+			/**
+    * Constructs the URI used to trigger the REST action.
+    *
+    * @public
+    * @param {Object} data - The data which will be passed to the endpoint
+    * @param {String} host - The host name to call
+    * @param {Number=} port - The port
+    * @param {Boolean=} secure - If true, HTTPS is used; otherwise HTTP.
+    * @returns {*}
+    */
+
 		}, {
 			key: 'getUrl',
 			value: function getUrl(data, host, port, secure) {
@@ -3624,6 +3744,12 @@ var RestProviderBase = require('./RestProviderBase');
 module.exports = function () {
 	'use strict';
 
+	/**
+  * Executes REST-ful action inside a Node.js server.
+  *
+  * @public
+  */
+
 	var RestProvider = function (_RestProviderBase) {
 		_inherits(RestProvider, _RestProviderBase);
 
@@ -3726,7 +3852,19 @@ var RestEndpoint = require('./RestEndpoint');
 module.exports = function () {
 	'use strict';
 
+	/**
+  * Executes REST-ful actions.
+  *
+  * @interface
+  */
+
 	var RestProviderBase = function () {
+		/**
+   * @public
+   * @param {String} host - The host name to call
+   * @param {Number=} port - The port
+   * @param {Boolean=} secure - If true, HTTPS is used; otherwise HTTP.
+   */
 		function RestProviderBase(host, port, secure) {
 			_classCallCheck(this, RestProviderBase);
 
@@ -3739,14 +3877,23 @@ module.exports = function () {
 			this._secure = secure;
 		}
 
+		/**
+   * Triggers a REST action targetting a {@link RestEndpoint}.
+   *
+   * @public
+   * @param {RestEndpoint} endpoint - The enpoint to call.
+   * @param {object} data - The data to pass to the endpoint.
+  	 * @returns {Promise.<TResult>}
+   */
+
 		_createClass(RestProviderBase, [{
 			key: 'call',
 			value: function call(endpoint, data) {
 				var _this = this;
 
-				assert.argumentIsRequired(endpoint, endpoint, RestEndpoint, 'RestEndpoint');
-
 				return Promise.resolve().then(function () {
+					assert.argumentIsRequired(endpoint, endpoint, RestEndpoint, 'RestEndpoint');
+
 					return _this._call(endpoint, data, _this._host, _this._port, _this._secure);
 				});
 			}
@@ -4062,6 +4209,10 @@ process.off = noop;
 process.removeListener = noop;
 process.removeAllListeners = noop;
 process.emit = noop;
+process.prependListener = noop;
+process.prependOnceListener = noop;
+
+process.listeners = function (name) { return [] }
 
 process.binding = function (name) {
     throw new Error('process.binding is not supported');
@@ -17239,9 +17390,20 @@ var Queue = require('./../collections/Queue'),
 module.exports = function () {
 	'use strict';
 
+	/**
+  * A work queue that restricts the rate at which items are
+  * processed.
+  *
+  * @public
+  */
+
 	var RateLimiter = function (_Disposable) {
 		_inherits(RateLimiter, _Disposable);
 
+		/**
+   * @param {number} - windowMaximumCount - The maximum number of items which can be processed during a timeframe.
+   * @param {number} - windowDurationMilliseconds - The number of milliseconds in the timeframe.
+   */
 		function RateLimiter(windowMaximumCount, windowDurationMilliseconds) {
 			_classCallCheck(this, RateLimiter);
 
@@ -17262,18 +17424,26 @@ module.exports = function () {
 			return _this;
 		}
 
+		/**
+   * Adds an item to the work queue and returns a promise that will
+   * resolve after the item completes execution.
+   *
+   * @param {Function} actionToEnqueue - The action to execute.
+   * @returns {Promise}
+   */
+
 		_createClass(RateLimiter, [{
 			key: 'enqueue',
 			value: function enqueue(actionToEnqueue) {
 				var _this2 = this;
 
-				assert.argumentIsRequired(actionToEnqueue, 'actionToEnqueue', Function);
-
-				if (this.getIsDisposed()) {
-					throw new Error('Unable to enqueue action, the rate limiter has been disposed.');
-				}
-
 				return promise.build(function (resolveCallback, rejectCallback) {
+					assert.argumentIsRequired(actionToEnqueue, 'actionToEnqueue', Function);
+
+					if (_this2.getIsDisposed()) {
+						throw new Error('Unable to enqueue action, the rate limiter has been disposed.');
+					}
+
 					_this2._workQueue.enqueue(function () {
 						Promise.resolve().then(function () {
 							return actionToEnqueue();
@@ -17387,6 +17557,10 @@ var assert = require('./../lang/assert'),
 module.exports = function () {
 	'use strict';
 
+	/**
+  * An object that wraps asynchronous delays (i.e. timeout and interval).
+  */
+
 	var Scheduler = function (_Disposable) {
 		_inherits(Scheduler, _Disposable);
 
@@ -17400,42 +17574,53 @@ module.exports = function () {
 			return _this;
 		}
 
+		/**
+   * Schedules an action to execute in the future, returning a Promise.
+   *
+   * @param {Function} actionToSchedule - The action to execute.
+   * @param {number} millisecondDelay - Milliseconds before the action can be started.
+   * @param {string=} actionDescription - A description of the action, used for logging purposes.
+   * @returns {Promise}
+   */
+
 		_createClass(Scheduler, [{
 			key: 'schedule',
 			value: function schedule(actionToSchedule, millisecondDelay, actionDescription) {
 				var _this2 = this;
 
-				assert.argumentIsRequired(actionToSchedule, 'actionToSchedule', Function);
-				assert.argumentIsRequired(millisecondDelay, 'millisecondDelay', Number);
-				assert.argumentIsOptional(actionDescription, 'actionDescription', String);
+				return Promise.resolve().then(function () {
+					assert.argumentIsRequired(actionToSchedule, 'actionToSchedule', Function);
+					assert.argumentIsRequired(millisecondDelay, 'millisecondDelay', Number);
+					assert.argumentIsOptional(actionDescription, 'actionDescription', String);
 
-				if (this.getIsDisposed()) {
-					throw new Error('The Scheduler has been disposed.');
-				}
+					if (_this2.getIsDisposed()) {
+						throw new Error('The Scheduler has been disposed.');
+					}
 
-				var token = void 0;
+					var token = void 0;
 
-				var schedulePromise = promise.build(function (resolveCallback, rejectCallback) {
-					var wrappedAction = function wrappedAction() {
+					var schedulePromise = promise.build(function (resolveCallback, rejectCallback) {
+						var wrappedAction = function wrappedAction() {
+							delete _this2._timeoutBindings[token];
+
+							try {
+								resolveCallback(actionToSchedule());
+							} catch (e) {
+								rejectCallback(e);
+							}
+						};
+
+						token = setTimeout(wrappedAction, millisecondDelay);
+					});
+
+					_this2._timeoutBindings[token] = Disposable.fromAction(function () {
+						clearTimeout(token);
+
 						delete _this2._timeoutBindings[token];
+					});
 
-						try {
-							resolveCallback(actionToSchedule());
-						} catch (e) {
-							rejectCallback(e);
-						}
-					};
-
-					token = setTimeout(wrappedAction, millisecondDelay);
+					return schedulePromise;
 				});
-
-				this._timeoutBindings[token] = Disposable.fromAction(function () {
-					clearTimeout(token);
-
-					delete _this2._timeoutBindings[token];
-				});
-
-				return schedulePromise;
 			}
 		}, {
 			key: 'repeat',
@@ -17471,7 +17656,7 @@ module.exports = function () {
     * Attempts an action, repeating if necessary, using an exponential backoff.
     *
     * @param {Function} actionToBackoff - The action to attempt. If it fails -- because an error is thrown, a promise is rejected, or the function returns a falsey value -- the action will be invoked again.
-    * @param {number=} millisecondDelay - The amount of time to wait after the first failure. Subsequent failures are multiply this value by 2 ^ [number of failures]. So, a 1000 millisecond backoff would schedule attempts using the following delays: 0, 1000, 2000, 4000, 8000, etc.
+    * @param {number=} millisecondDelay - The amount of time to wait to execute the action. Subsequent failures are multiply this value by 2 ^ [number of failures]. So, a 1000 millisecond backoff would schedule attempts using the following delays: 0, 1000, 2000, 4000, 8000, etc. If not specified, the first attemopt will execute immediately, then a value of 1000 will be used.
     * @param {string=} actionDescription - Description of the action to attempt, used for logging purposes.
     * @param {number=} maximumAttempts - The number of attempts to before giving up.
     * @param {Function=} maximumAttempts - If provided, will be invoked if a function is considered to be failing.
@@ -17483,57 +17668,59 @@ module.exports = function () {
 			value: function backoff(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts, failureCallback, failureValue) {
 				var _this4 = this;
 
-				assert.argumentIsRequired(actionToBackoff, 'actionToBackoff', Function);
-				assert.argumentIsOptional(millisecondDelay, 'millisecondDelay', Number);
-				assert.argumentIsOptional(actionDescription, 'actionDescription', String);
-				assert.argumentIsOptional(maximumAttempts, 'maximumAttempts', Number);
-				assert.argumentIsOptional(failureCallback, 'failureCallback', Function);
+				return Promise.resolve().then(function () {
+					assert.argumentIsRequired(actionToBackoff, 'actionToBackoff', Function);
+					assert.argumentIsOptional(millisecondDelay, 'millisecondDelay', Number);
+					assert.argumentIsOptional(actionDescription, 'actionDescription', String);
+					assert.argumentIsOptional(maximumAttempts, 'maximumAttempts', Number);
+					assert.argumentIsOptional(failureCallback, 'failureCallback', Function);
 
-				if (this.getIsDisposed()) {
-					throw new Error('The Scheduler has been disposed.');
-				}
-
-				var scheduleBackoff = function scheduleBackoff(failureCount) {
-					if (failureCount > 0 && is.fn(failureCallback)) {
-						failureCallback(failureCount);
+					if (_this4.getIsDisposed()) {
+						throw new Error('The Scheduler has been disposed.');
 					}
 
-					if (maximumAttempts > 0 && failureCount > maximumAttempts) {
-						return Promise.reject('Maximum failures reached for ' + actionDescription);
-					}
-
-					var backoffDelay = void 0;
-
-					if (failureCount === 0) {
-						backoffDelay = millisecondDelay;
-					} else {
-						backoffDelay = (millisecondDelay || 1000) * Math.pow(2, failureCount);
-					}
-
-					var successPredicate = void 0;
-
-					if (is.undefined(failureValue)) {
-						successPredicate = function successPredicate(value) {
-							return value;
-						};
-					} else {
-						successPredicate = function successPredicate(value) {
-							return !object.equals(value, failureValue);
-						};
-					}
-
-					return _this4.schedule(actionToBackoff, backoffDelay, (actionDescription || 'unspecified') + ', attempt ' + (failureCount + 1)).then(function (result) {
-						if (successPredicate(result)) {
-							return result;
-						} else {
-							return scheduleBackoff(++failureCount);
+					var scheduleBackoff = function scheduleBackoff(failureCount) {
+						if (failureCount > 0 && is.fn(failureCallback)) {
+							failureCallback(failureCount);
 						}
-					}).catch(function (e) {
-						return scheduleBackoff(++failureCount);
-					});
-				};
 
-				return scheduleBackoff(0);
+						if (maximumAttempts > 0 && failureCount > maximumAttempts) {
+							return Promise.reject('Maximum failures reached for ' + actionDescription);
+						}
+
+						var backoffDelay = void 0;
+
+						if (failureCount === 0) {
+							backoffDelay = millisecondDelay || 0;
+						} else {
+							backoffDelay = (millisecondDelay || 1000) * Math.pow(2, failureCount);
+						}
+
+						var successPredicate = void 0;
+
+						if (is.undefined(failureValue)) {
+							successPredicate = function successPredicate(value) {
+								return value;
+							};
+						} else {
+							successPredicate = function successPredicate(value) {
+								return !object.equals(value, failureValue);
+							};
+						}
+
+						return _this4.schedule(actionToBackoff, backoffDelay, (actionDescription || 'unspecified') + ', attempt ' + (failureCount + 1)).then(function (result) {
+							if (successPredicate(result)) {
+								return result;
+							} else {
+								return scheduleBackoff(++failureCount);
+							}
+						}).catch(function (e) {
+							return scheduleBackoff(++failureCount);
+						});
+					};
+
+					return scheduleBackoff(0);
+				});
 			}
 		}, {
 			key: '_onDispose',
@@ -17635,9 +17822,9 @@ module.exports = function () {
 			value: function enqueue(actionToEnqueue) {
 				var _this = this;
 
-				assert.argumentIsRequired(actionToEnqueue, 'actionToEnqueue', Function);
-
 				return promise.build(function (resolveCallback, rejectCallback) {
+					assert.argumentIsRequired(actionToEnqueue, 'actionToEnqueue', Function);
+
 					_this._workQueue.enqueue(function () {
 						return Promise.resolve().then(function () {
 							return actionToEnqueue();
