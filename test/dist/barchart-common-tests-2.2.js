@@ -10373,43 +10373,34 @@ describe('When a Scheduler is constructed', function () {
 				done();
 			});
 		});
-
-		it('should not create a memory leak', function (done) {
-			var before = 0;
-
-			for (var tb in scheduler._timeoutBindings) {
-				before++;
-			}
-
-			expect(before).toEqual(1);
-
-			promise.then(function () {
-				var after = 0;
-
-				for (var tb in scheduler._timeoutBindings) {
-					after++;
-				}
-
-				expect(after).toEqual(0);
-			}).then(function () {
-				done();
-			});
-		});
 	});
 
 	describe('and is disposed', function () {
-		var spy;
-
 		beforeEach(function () {
-			spy = jasmine.createSpy('spy');
-
 			scheduler.dispose();
 		});
 
-		it('should throw if an attempt is made to schedule a task', function () {
-			expect(function () {
-				scheduler.schedule(spy, 100, 'A scheduled task');
-			}).toThrow(new Error('The Scheduler has been disposed.'));
+		it('and a task is scheduled', function () {
+			var spy;
+			var success;
+
+			beforeEach(function (done) {
+				scheduler.schedule(spy = jasmine.createSpy('spy'), 10, 'A scheduled task').then(function () {
+					success = true;
+				}).catch(function () {
+					success = false;
+				}).then(function () {
+					done();
+				});
+			});
+
+			it('should reject the promise', function () {
+				expect(success).toEqual(false);
+			});
+
+			it('should not invoke the underlying task', function () {
+				expect(spy).not.toHaveBeenCalled();
+			});
 		});
 	});
 });
@@ -10770,9 +10761,20 @@ var Queue = require('./../collections/Queue'),
 module.exports = function () {
 	'use strict';
 
+	/**
+  * A work queue that restricts the rate at which items are
+  * processed.
+  *
+  * @public
+  */
+
 	var RateLimiter = function (_Disposable) {
 		_inherits(RateLimiter, _Disposable);
 
+		/**
+   * @param {number} - windowMaximumCount - The maximum number of items which can be processed during a timeframe.
+   * @param {number} - windowDurationMilliseconds - The number of milliseconds in the timeframe.
+   */
 		function RateLimiter(windowMaximumCount, windowDurationMilliseconds) {
 			_classCallCheck(this, RateLimiter);
 
@@ -10793,18 +10795,26 @@ module.exports = function () {
 			return _this;
 		}
 
+		/**
+   * Adds an item to the work queue and returns a promise that will
+   * resolve after the item completes execution.
+   *
+   * @param {Function} actionToEnqueue - The action to execute.
+   * @returns {Promise}
+   */
+
 		_createClass(RateLimiter, [{
 			key: 'enqueue',
 			value: function enqueue(actionToEnqueue) {
 				var _this2 = this;
 
-				assert.argumentIsRequired(actionToEnqueue, 'actionToEnqueue', Function);
-
-				if (this.getIsDisposed()) {
-					throw new Error('Unable to enqueue action, the rate limiter has been disposed.');
-				}
-
 				return promise.build(function (resolveCallback, rejectCallback) {
+					assert.argumentIsRequired(actionToEnqueue, 'actionToEnqueue', Function);
+
+					if (_this2.getIsDisposed()) {
+						throw new Error('Unable to enqueue action, the rate limiter has been disposed.');
+					}
+
 					_this2._workQueue.enqueue(function () {
 						Promise.resolve().then(function () {
 							return actionToEnqueue();
@@ -10918,6 +10928,10 @@ var assert = require('./../lang/assert'),
 module.exports = function () {
 	'use strict';
 
+	/**
+  * An object that wraps asynchronous delays (i.e. timeout and interval).
+  */
+
 	var Scheduler = function (_Disposable) {
 		_inherits(Scheduler, _Disposable);
 
@@ -10931,42 +10945,53 @@ module.exports = function () {
 			return _this;
 		}
 
+		/**
+   * Schedules an action to execute in the future, returning a Promise.
+   *
+   * @param {Function} actionToSchedule - The action to execute.
+   * @param {number} millisecondDelay - Milliseconds before the action can be started.
+   * @param {string=} actionDescription - A description of the action, used for logging purposes.
+   * @returns {Promise}
+   */
+
 		_createClass(Scheduler, [{
 			key: 'schedule',
 			value: function schedule(actionToSchedule, millisecondDelay, actionDescription) {
 				var _this2 = this;
 
-				assert.argumentIsRequired(actionToSchedule, 'actionToSchedule', Function);
-				assert.argumentIsRequired(millisecondDelay, 'millisecondDelay', Number);
-				assert.argumentIsOptional(actionDescription, 'actionDescription', String);
+				return Promise.resolve().then(function () {
+					assert.argumentIsRequired(actionToSchedule, 'actionToSchedule', Function);
+					assert.argumentIsRequired(millisecondDelay, 'millisecondDelay', Number);
+					assert.argumentIsOptional(actionDescription, 'actionDescription', String);
 
-				if (this.getIsDisposed()) {
-					throw new Error('The Scheduler has been disposed.');
-				}
+					if (_this2.getIsDisposed()) {
+						throw new Error('The Scheduler has been disposed.');
+					}
 
-				var token = void 0;
+					var token = void 0;
 
-				var schedulePromise = promise.build(function (resolveCallback, rejectCallback) {
-					var wrappedAction = function wrappedAction() {
+					var schedulePromise = promise.build(function (resolveCallback, rejectCallback) {
+						var wrappedAction = function wrappedAction() {
+							delete _this2._timeoutBindings[token];
+
+							try {
+								resolveCallback(actionToSchedule());
+							} catch (e) {
+								rejectCallback(e);
+							}
+						};
+
+						token = setTimeout(wrappedAction, millisecondDelay);
+					});
+
+					_this2._timeoutBindings[token] = Disposable.fromAction(function () {
+						clearTimeout(token);
+
 						delete _this2._timeoutBindings[token];
+					});
 
-						try {
-							resolveCallback(actionToSchedule());
-						} catch (e) {
-							rejectCallback(e);
-						}
-					};
-
-					token = setTimeout(wrappedAction, millisecondDelay);
+					return schedulePromise;
 				});
-
-				this._timeoutBindings[token] = Disposable.fromAction(function () {
-					clearTimeout(token);
-
-					delete _this2._timeoutBindings[token];
-				});
-
-				return schedulePromise;
 			}
 		}, {
 			key: 'repeat',
@@ -11002,7 +11027,7 @@ module.exports = function () {
     * Attempts an action, repeating if necessary, using an exponential backoff.
     *
     * @param {Function} actionToBackoff - The action to attempt. If it fails -- because an error is thrown, a promise is rejected, or the function returns a falsey value -- the action will be invoked again.
-    * @param {number=} millisecondDelay - The amount of time to wait after the first failure. Subsequent failures are multiply this value by 2 ^ [number of failures]. So, a 1000 millisecond backoff would schedule attempts using the following delays: 0, 1000, 2000, 4000, 8000, etc.
+    * @param {number=} millisecondDelay - The amount of time to wait to execute the action. Subsequent failures are multiply this value by 2 ^ [number of failures]. So, a 1000 millisecond backoff would schedule attempts using the following delays: 0, 1000, 2000, 4000, 8000, etc. If not specified, the first attemopt will execute immediately, then a value of 1000 will be used.
     * @param {string=} actionDescription - Description of the action to attempt, used for logging purposes.
     * @param {number=} maximumAttempts - The number of attempts to before giving up.
     * @param {Function=} maximumAttempts - If provided, will be invoked if a function is considered to be failing.
@@ -11014,57 +11039,59 @@ module.exports = function () {
 			value: function backoff(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts, failureCallback, failureValue) {
 				var _this4 = this;
 
-				assert.argumentIsRequired(actionToBackoff, 'actionToBackoff', Function);
-				assert.argumentIsOptional(millisecondDelay, 'millisecondDelay', Number);
-				assert.argumentIsOptional(actionDescription, 'actionDescription', String);
-				assert.argumentIsOptional(maximumAttempts, 'maximumAttempts', Number);
-				assert.argumentIsOptional(failureCallback, 'failureCallback', Function);
+				return Promise.resolve().then(function () {
+					assert.argumentIsRequired(actionToBackoff, 'actionToBackoff', Function);
+					assert.argumentIsOptional(millisecondDelay, 'millisecondDelay', Number);
+					assert.argumentIsOptional(actionDescription, 'actionDescription', String);
+					assert.argumentIsOptional(maximumAttempts, 'maximumAttempts', Number);
+					assert.argumentIsOptional(failureCallback, 'failureCallback', Function);
 
-				if (this.getIsDisposed()) {
-					throw new Error('The Scheduler has been disposed.');
-				}
-
-				var scheduleBackoff = function scheduleBackoff(failureCount) {
-					if (failureCount > 0 && is.fn(failureCallback)) {
-						failureCallback(failureCount);
+					if (_this4.getIsDisposed()) {
+						throw new Error('The Scheduler has been disposed.');
 					}
 
-					if (maximumAttempts > 0 && failureCount > maximumAttempts) {
-						return Promise.reject('Maximum failures reached for ' + actionDescription);
-					}
-
-					var backoffDelay = void 0;
-
-					if (failureCount === 0) {
-						backoffDelay = millisecondDelay;
-					} else {
-						backoffDelay = (millisecondDelay || 1000) * Math.pow(2, failureCount);
-					}
-
-					var successPredicate = void 0;
-
-					if (is.undefined(failureValue)) {
-						successPredicate = function successPredicate(value) {
-							return value;
-						};
-					} else {
-						successPredicate = function successPredicate(value) {
-							return !object.equals(value, failureValue);
-						};
-					}
-
-					return _this4.schedule(actionToBackoff, backoffDelay, (actionDescription || 'unspecified') + ', attempt ' + (failureCount + 1)).then(function (result) {
-						if (successPredicate(result)) {
-							return result;
-						} else {
-							return scheduleBackoff(++failureCount);
+					var scheduleBackoff = function scheduleBackoff(failureCount) {
+						if (failureCount > 0 && is.fn(failureCallback)) {
+							failureCallback(failureCount);
 						}
-					}).catch(function (e) {
-						return scheduleBackoff(++failureCount);
-					});
-				};
 
-				return scheduleBackoff(0);
+						if (maximumAttempts > 0 && failureCount > maximumAttempts) {
+							return Promise.reject('Maximum failures reached for ' + actionDescription);
+						}
+
+						var backoffDelay = void 0;
+
+						if (failureCount === 0) {
+							backoffDelay = millisecondDelay || 0;
+						} else {
+							backoffDelay = (millisecondDelay || 1000) * Math.pow(2, failureCount);
+						}
+
+						var successPredicate = void 0;
+
+						if (is.undefined(failureValue)) {
+							successPredicate = function successPredicate(value) {
+								return value;
+							};
+						} else {
+							successPredicate = function successPredicate(value) {
+								return !object.equals(value, failureValue);
+							};
+						}
+
+						return _this4.schedule(actionToBackoff, backoffDelay, (actionDescription || 'unspecified') + ', attempt ' + (failureCount + 1)).then(function (result) {
+							if (successPredicate(result)) {
+								return result;
+							} else {
+								return scheduleBackoff(++failureCount);
+							}
+						}).catch(function (e) {
+							return scheduleBackoff(++failureCount);
+						});
+					};
+
+					return scheduleBackoff(0);
+				});
 			}
 		}, {
 			key: '_onDispose',
@@ -11166,9 +11193,9 @@ module.exports = function () {
 			value: function enqueue(actionToEnqueue) {
 				var _this = this;
 
-				assert.argumentIsRequired(actionToEnqueue, 'actionToEnqueue', Function);
-
 				return promise.build(function (resolveCallback, rejectCallback) {
+					assert.argumentIsRequired(actionToEnqueue, 'actionToEnqueue', Function);
+
 					_this._workQueue.enqueue(function () {
 						return Promise.resolve().then(function () {
 							return actionToEnqueue();

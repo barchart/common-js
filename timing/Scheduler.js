@@ -95,7 +95,7 @@ module.exports = (() => {
 		 * Attempts an action, repeating if necessary, using an exponential backoff.
 		 *
 		 * @param {Function} actionToBackoff - The action to attempt. If it fails -- because an error is thrown, a promise is rejected, or the function returns a falsey value -- the action will be invoked again.
-		 * @param {number=} millisecondDelay - The amount of time to wait after the first failure. Subsequent failures are multiply this value by 2 ^ [number of failures]. So, a 1000 millisecond backoff would schedule attempts using the following delays: 0, 1000, 2000, 4000, 8000, etc.
+		 * @param {number=} millisecondDelay - The amount of time to wait to execute the action. Subsequent failures are multiply this value by 2 ^ [number of failures]. So, a 1000 millisecond backoff would schedule attempts using the following delays: 0, 1000, 2000, 4000, 8000, etc. If not specified, the first attemopt will execute immediately, then a value of 1000 will be used.
 		 * @param {string=} actionDescription - Description of the action to attempt, used for logging purposes.
 		 * @param {number=} maximumAttempts - The number of attempts to before giving up.
 		 * @param {Function=} maximumAttempts - If provided, will be invoked if a function is considered to be failing.
@@ -126,7 +126,7 @@ module.exports = (() => {
 						let backoffDelay;
 
 						if (failureCount === 0) {
-							backoffDelay = millisecondDelay;
+							backoffDelay = (millisecondDelay || 0);
 						} else {
 							backoffDelay = (millisecondDelay || 1000) * Math.pow(2, failureCount);
 						}
