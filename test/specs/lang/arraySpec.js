@@ -28,6 +28,38 @@ describe('when reducing an array to unique values', function() {
 	});
 });
 
+describe('when reducing an array of objects to unique values', function() {
+	'use strict';
+
+	describe('and using the first four rows of pascals triangle', function() {
+		var unique;
+
+		var one;
+		var two;
+		var three;
+
+		beforeEach(function() {
+			unique = array.uniqueBy([ one = { x: 1 }, { x: 1 }, { x: 1 }, { x: 1 }, two = { x: 2 }, { x: 1 }, { x: 1 }, three = { x: 3 }, { x: 3 }, { x: 1 } ], function(obj) { return obj.x; });
+		});
+
+		it('should only contain 3 unique elements', function() {
+			expect(unique.length).toEqual(3);
+		});
+
+		it('should contain the first item whose value is one', function() {
+			expect(unique[0]).toBe(one);
+		});
+
+		it('should contain the first item whose value is two', function() {
+			expect(unique[1]).toBe(two);
+		});
+
+		it('should contain the first item whose value is three', function() {
+			expect(unique[2]).toBe(three);
+		});
+	});
+});
+
 describe('when partitioning an array of three items', function() {
 	'use strict';
 
