@@ -1485,11 +1485,37 @@ module.exports = function () {
 	'use strict';
 
 	var array = {
+		/**
+   * Returns the unique items from an array, where the unique
+   * key is determined via a strict equality check.
+   *
+   * @param a
+   * @param {Function} keySelector - The function, when applied to an item yields a unique key.
+   */
 		unique: function unique(a) {
 			assert.argumentIsArray(a, 'a');
 
 			return a.filter(function (item, index, array) {
 				return array.indexOf(item) === index;
+			});
+		},
+
+		/**
+   * Returns the unique items from an array, where the unique
+   * key is determined by a delegate.
+   *
+   * @param a
+   * @param {Function} keySelector - The function, when applied to an item yields a unique key.
+   */
+		uniqueBy: function uniqueBy(a, keySelector) {
+			assert.argumentIsArray(a, 'a');
+
+			return a.filter(function (item, index, array) {
+				var key = keySelector(item);
+
+				return array.findIndex(function (candidate) {
+					return key === keySelector(candidate);
+				}) === index;
 			});
 		},
 		groupBy: function groupBy(a, keySelector) {
@@ -5289,6 +5315,40 @@ describe('when reducing an array to unique values', function () {
 
 		it('should contain 3', function () {
 			expect(unique.indexOf(3)).toEqual(2);
+		});
+	});
+});
+
+describe('when reducing an array of objects to unique values', function () {
+	'use strict';
+
+	describe('and using the first four rows of pascals triangle', function () {
+		var unique;
+
+		var one;
+		var two;
+		var three;
+
+		beforeEach(function () {
+			unique = array.uniqueBy([one = { x: 1 }, { x: 1 }, { x: 1 }, { x: 1 }, two = { x: 2 }, { x: 1 }, { x: 1 }, three = { x: 3 }, { x: 3 }, { x: 1 }], function (obj) {
+				return obj.x;
+			});
+		});
+
+		it('should only contain 3 unique elements', function () {
+			expect(unique.length).toEqual(3);
+		});
+
+		it('should contain the first item whose value is one', function () {
+			expect(unique[0]).toBe(one);
+		});
+
+		it('should contain the first item whose value is two', function () {
+			expect(unique[1]).toBe(two);
+		});
+
+		it('should contain the first item whose value is three', function () {
+			expect(unique[2]).toBe(three);
 		});
 	});
 });

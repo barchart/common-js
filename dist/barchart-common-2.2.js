@@ -1568,11 +1568,37 @@ module.exports = function () {
 	'use strict';
 
 	var array = {
+		/**
+   * Returns the unique items from an array, where the unique
+   * key is determined via a strict equality check.
+   *
+   * @param a
+   * @param {Function} keySelector - The function, when applied to an item yields a unique key.
+   */
 		unique: function unique(a) {
 			assert.argumentIsArray(a, 'a');
 
 			return a.filter(function (item, index, array) {
 				return array.indexOf(item) === index;
+			});
+		},
+
+		/**
+   * Returns the unique items from an array, where the unique
+   * key is determined by a delegate.
+   *
+   * @param a
+   * @param {Function} keySelector - The function, when applied to an item yields a unique key.
+   */
+		uniqueBy: function uniqueBy(a, keySelector) {
+			assert.argumentIsArray(a, 'a');
+
+			return a.filter(function (item, index, array) {
+				var key = keySelector(item);
+
+				return array.findIndex(function (candidate) {
+					return key === keySelector(candidate);
+				}) === index;
 			});
 		},
 		groupBy: function groupBy(a, keySelector) {
@@ -4209,10 +4235,6 @@ process.off = noop;
 process.removeListener = noop;
 process.removeAllListeners = noop;
 process.emit = noop;
-process.prependListener = noop;
-process.prependOnceListener = noop;
-
-process.listeners = function (name) { return [] }
 
 process.binding = function (name) {
     throw new Error('process.binding is not supported');
