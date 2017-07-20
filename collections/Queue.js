@@ -2,7 +2,7 @@ module.exports = (() => {
 	'use strict';
 
 	/**
-	 * A queue collection.
+	 * A queue collection (i.e. supports FIFO operations).
 	 *
 	 * @public
 	 */
@@ -25,7 +25,7 @@ module.exports = (() => {
 		}
 
 		/**
-		 * Removes the next item from the queue and returns it.
+		 * Removes the next item from the queue and returns it. Throws if the queue is empty.
 		 *
 		 * @public
 		 * @returns {object} - The item added to the queue.
@@ -39,7 +39,7 @@ module.exports = (() => {
 		}
 
 		/**
-		 * Returns the next item in the queue (without removing it).
+		 * Returns the next item in the queue (without removing it). Throws if the queue is empty.
 		 *
 		 * @public
 		 * @returns {object} - The item added to the queue.
