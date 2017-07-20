@@ -21,7 +21,7 @@ module.exports = function () {
 	'use strict';
 
 	/**
-  * A queue collection.
+  * A queue collection (i.e. supports FIFO operations).
   *
   * @public
   */
@@ -50,7 +50,7 @@ module.exports = function () {
 			}
 
 			/**
-    * Removes the next item from the queue and returns it.
+    * Removes the next item from the queue and returns it. Throws if the queue is empty.
     *
     * @public
     * @returns {object} - The item added to the queue.
@@ -67,7 +67,7 @@ module.exports = function () {
 			}
 
 			/**
-    * Returns the next item in the queue (without removing it).
+    * Returns the next item in the queue (without removing it). Throws if the queue is empty.
     *
     * @public
     * @returns {object} - The item added to the queue.
@@ -130,12 +130,26 @@ function _classCallCheck(instance, Constructor) {
 module.exports = function () {
 	'use strict';
 
+	/**
+  * A stack collection (supports LIFO operations).
+  *
+  * @public
+  */
+
 	var Stack = function () {
 		function Stack() {
 			_classCallCheck(this, Stack);
 
 			this._array = [];
 		}
+
+		/**
+   * Adds an item to the stack.
+   *
+   * @public
+   * @param {object} item
+   * @returns {object} - The item added to the stack.
+   */
 
 		_createClass(Stack, [{
 			key: 'push',
@@ -144,6 +158,14 @@ module.exports = function () {
 
 				return item;
 			}
+
+			/**
+    * Removes and returns an item from the stack. Throws if the stack is empty.
+    *
+    * @public
+    * @returns {object} - The removed from the stack.
+    */
+
 		}, {
 			key: 'pop',
 			value: function pop() {
@@ -153,6 +175,14 @@ module.exports = function () {
 
 				return this._array.shift();
 			}
+
+			/**
+    * Returns the next item in the stack (without removing it). Throws if the stack is empty.
+    *
+    * @public
+    * @returns {object} - The item added to the queue.
+    */
+
 		}, {
 			key: 'peek',
 			value: function peek() {
@@ -162,6 +192,14 @@ module.exports = function () {
 
 				return this._array[0];
 			}
+
+			/**
+    * Returns true if the queue is empty; otherwise false.
+    *
+    * @public
+    * @returns {boolean}
+    */
+
 		}, {
 			key: 'empty',
 			value: function empty() {
@@ -202,7 +240,19 @@ function _classCallCheck(instance, Constructor) {
 module.exports = function () {
 	'use strict';
 
+	/**
+  * A tree data structure. Each instance represents a node, holding
+  * an item, a reference to the parent node, and a reference to
+  * children nodes.
+  *
+  * @public
+  */
+
 	var Tree = function () {
+		/**
+   * @param {object} value - The value of the node.
+   * @param {Tree} parent - The parent node. If not supplied, this will be the root node.
+   */
 		function Tree(value, parent) {
 			_classCallCheck(this, Tree);
 
@@ -212,31 +262,80 @@ module.exports = function () {
 			this._children = [];
 		}
 
+		/**
+   * Returns the parent node. If this is the root node, a null value is returned.
+   *
+   * @public
+   * @returns {Tree|null}
+   */
+
 		_createClass(Tree, [{
 			key: 'getParent',
 			value: function getParent() {
 				return this._parent;
 			}
+
+			/**
+    * Returns the collection of children nodes.
+    *
+    * @public
+    * @returns {Array<Tree>}
+    */
+
 		}, {
 			key: 'getChildren',
 			value: function getChildren() {
 				return this._children;
 			}
+
+			/**
+    * Returns the value associated with the current node.
+    *
+    * @public
+    * @returns {object}
+    */
+
 		}, {
 			key: 'getValue',
 			value: function getValue() {
 				return this._value;
 			}
+
+			/**
+    * Returns true if this node has no children; otherwise false.
+    *
+    * @public
+    * @returns {boolean}
+    */
+
 		}, {
 			key: 'getIsLeaf',
 			value: function getIsLeaf() {
 				return this._children.length === 0;
 			}
+
+			/**
+    * Returns true if this node has no parent; otherwise false.
+    *
+    * @public
+    * @returns {boolean}
+    */
+
 		}, {
 			key: 'getIsRoot',
 			value: function getIsRoot() {
 				return this._parent === null;
 			}
+
+			/**
+    * Adds a child node to the current node and returns a reference
+    * to the child node.
+    *
+    * @public
+    * @param {object} value - The value of the child.
+    * @returns {Tree}
+    */
+
 		}, {
 			key: 'addChild',
 			value: function addChild(value) {
@@ -246,6 +345,14 @@ module.exports = function () {
 
 				return returnRef;
 			}
+
+			/**
+    * Removes a child node.
+    *
+    * @public
+    * @param {Tree} node - The child to remove.
+    */
+
 		}, {
 			key: 'removeChild',
 			value: function removeChild(node) {
@@ -262,6 +369,16 @@ module.exports = function () {
 					}
 				}
 			}
+
+			/**
+    * Searches the children nodes for the first child node that matches the
+    * predicate.
+    *
+    * @public
+    * @param {Function} predicate - A predicate that tests each child node. The predicate takes two arguments -- the node's value, and the node itself.
+    * @returns {Tree|null}
+    */
+
 		}, {
 			key: 'findChild',
 			value: function findChild(predicate) {
@@ -279,6 +396,17 @@ module.exports = function () {
 
 				return returnRef;
 			}
+
+			/**
+    * Searches the tree recursively, starting with the current node.
+    *
+    * @public
+    * @param {Function} predicate - A predicate that tests each child node. The predicate takes two arguments -- the node's value, and the node itself.
+    * @param {boolean=} childrenFirst - True if the tree should be searched depth first.
+    * @param {boolean=} includeCurrentNode - True if the current node should be checked against the predicate.
+    * @returns {Tree|null}
+    */
+
 		}, {
 			key: 'search',
 			value: function search(predicate, childrenFirst, includeCurrentNode) {
@@ -304,6 +432,16 @@ module.exports = function () {
 
 				return returnRef;
 			}
+
+			/**
+    * Walks the children of the current node -- current node down to the lead nodes, running an action on each node.
+    *
+    * @public
+    * @param {Function} walkAction - A action to apply to each node. The action takes two arguments -- the node's value, and the node itself.
+    * @param {boolean=} childrenFirst - True if the tree should be walked depth first.
+    * @param {boolean=} includeCurrentNode - True if the current node should be applied to the action.
+    */
+
 		}, {
 			key: 'walk',
 			value: function walk(walkAction, childrenFirst, includeCurrentNode) {
@@ -315,6 +453,15 @@ module.exports = function () {
 
 				this.search(predicate, childrenFirst, includeCurrentNode);
 			}
+
+			/**
+    * Climbs the parents of the current node -- current node up to the root node, running an action on each node.
+    *
+    * @public
+    * @param {Function} climbAction - A action to apply to each node. The action takes two arguments -- the node's value, and the node itself.
+    * @param {boolean=} includeCurrentNode - True if the current node should be applied to the action.
+    */
+
 		}, {
 			key: 'climb',
 			value: function climb(climbAction, includeCurrentNode) {
@@ -559,6 +706,14 @@ var assert = require('./../../lang/assert'),
 module.exports = function () {
 	'use strict';
 
+	/**
+  * A stack of {@link Disposable} instances which itself inherits {@Disposable}.
+  * When {@link DisposableStack#dispose} is called, then each item in the collection
+  * is disposed in order.
+  *
+  * @public
+  */
+
 	var DisposableStack = function (_Disposable) {
 		_inherits(DisposableStack, _Disposable);
 
@@ -570,6 +725,13 @@ module.exports = function () {
 			_this._stack = new Stack();
 			return _this;
 		}
+
+		/**
+   * Adds a new {@link Disposable} instance to the stack.
+   *
+   * @public
+   * @param {Disposable} disposable - The item to add.
+   */
 
 		_createClass(DisposableStack, [{
 			key: 'push',
@@ -655,6 +817,13 @@ module.exports = function () {
 	'use strict';
 
 	var empty = {};
+
+	/**
+  * A list that is restricted to a certain capacity. If adding an
+  * item would exceed the capacity; the oldest item is removed.
+  *
+  * @public
+  */
 
 	var EvictingList = function () {
 		function EvictingList(capacity) {
@@ -788,6 +957,13 @@ var assert = require('./../../lang/assert');
 
 module.exports = function () {
 	'use strict';
+
+	/**
+  * A map that is restricted to a certain capacity. If adding an
+  * item would exceed the capacity; the oldest item is removed.
+  *
+  * @public
+  */
 
 	var EvictingMap = function () {
 		function EvictingMap(capacity) {
@@ -17791,6 +17967,8 @@ module.exports = function () {
 },{"./../lang/Disposable":15,"./../lang/assert":17,"./../lang/is":23,"./../lang/object":26,"./../lang/promise":27}],98:[function(require,module,exports){
 'use strict';
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 var _createClass = function () {
 	function defineProperties(target, props) {
 		for (var i = 0; i < props.length; i++) {
@@ -17807,7 +17985,20 @@ function _classCallCheck(instance, Constructor) {
 	}
 }
 
+function _possibleConstructorReturn(self, call) {
+	if (!self) {
+		throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+	}return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+}
+
+function _inherits(subClass, superClass) {
+	if (typeof superClass !== "function" && superClass !== null) {
+		throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
+	}subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+}
+
 var assert = require('./../lang/assert'),
+    Disposable = require('./../lang/Disposable'),
     promise = require('./../lang/promise');
 
 var Queue = require('./../collections/Queue');
@@ -17816,18 +18007,23 @@ module.exports = function () {
 	'use strict';
 
 	/**
-  * Processes actions in sequence.
+  * A work queue that processes actions in sequence.
   *
   * @public
   */
 
-	var Serializer = function () {
+	var Serializer = function (_Disposable) {
+		_inherits(Serializer, _Disposable);
+
 		function Serializer() {
 			_classCallCheck(this, Serializer);
 
-			this._workQueue = new Queue();
+			var _this = _possibleConstructorReturn(this, (Serializer.__proto__ || Object.getPrototypeOf(Serializer)).call(this));
 
-			this._running = false;
+			_this._workQueue = new Queue();
+
+			_this._running = false;
+			return _this;
 		}
 
 		/**
@@ -17842,27 +18038,42 @@ module.exports = function () {
 		_createClass(Serializer, [{
 			key: 'enqueue',
 			value: function enqueue(actionToEnqueue) {
-				var _this = this;
+				var _this2 = this;
 
 				return promise.build(function (resolveCallback, rejectCallback) {
 					assert.argumentIsRequired(actionToEnqueue, 'actionToEnqueue', Function);
 
-					_this._workQueue.enqueue(function () {
+					if (_this2.getIsDisposed()) {
+						throw new Error('Unable to add action to the Serializer, it has been disposed.');
+					}
+
+					_this2._workQueue.enqueue(function () {
 						return Promise.resolve().then(function () {
+							if (_this2.getIsDisposed()) {
+								throw new Error('Unable to process Serializer action, the serializer has been disposed.');
+							}
+
 							return actionToEnqueue();
 						}).then(function (result) {
 							resolveCallback(result);
 						}).catch(function (error) {
 							rejectCallback(error);
 						}).then(function () {
-							_this._running = false;
+							_this2._running = false;
 
-							checkStart.call(_this);
+							checkStart.call(_this2);
 						});
 					});
 
-					checkStart.call(_this);
+					checkStart.call(_this2);
 				});
+			}
+		}, {
+			key: '_onDispose',
+			value: function _onDispose() {
+				while (!this._stack.empty()) {
+					this._stack.pop().dispose();
+				}
 			}
 		}, {
 			key: 'toString',
@@ -17872,7 +18083,7 @@ module.exports = function () {
 		}]);
 
 		return Serializer;
-	}();
+	}(Disposable);
 
 	function checkStart() {
 		if (this._workQueue.empty() || this._running) {
@@ -17889,7 +18100,7 @@ module.exports = function () {
 	return Serializer;
 }();
 
-},{"./../collections/Queue":1,"./../lang/assert":17,"./../lang/promise":27}],99:[function(require,module,exports){
+},{"./../collections/Queue":1,"./../lang/Disposable":15,"./../lang/assert":17,"./../lang/promise":27}],99:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
