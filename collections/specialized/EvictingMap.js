@@ -3,6 +3,12 @@ const assert = require('./../../lang/assert');
 module.exports = (() => {
 	'use strict';
 
+	/**
+	 * A map that is restricted to a certain capacity. If adding an
+	 * item would exceed the capacity; the oldest item is removed.
+	 *
+	 * @public
+	 */
 	class EvictingMap {
 		constructor(capacity) {
 			assert.argumentIsOptional(capacity, 'capacity', Number);

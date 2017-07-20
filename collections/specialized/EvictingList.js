@@ -5,6 +5,12 @@ module.exports = (() => {
 
 	const empty = { };
 
+	/**
+	 * A list that is restricted to a certain capacity. If adding an
+	 * item would exceed the capacity; the oldest item is removed.
+	 *
+	 * @public
+	 */
 	class EvictingList {
 		constructor(capacity) {
 			assert.argumentIsOptional(capacity, 'capacity', Number);
