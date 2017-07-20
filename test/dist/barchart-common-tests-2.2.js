@@ -11431,20 +11431,44 @@ module.exports = function () {
 
 			_this._workQueue = new Queue();
 
+			_this._counter = 0;
+			_this._current = 0;
+
 			_this._running = false;
 			return _this;
 		}
 
-		/**
-   * Adds a new action to the processing queue. If the action
-   * is asynchronous, the action should return a promise.
-   *
-   * @public
-   * @param {Function} actionToEnqueue
-   * @returns {Promise} - A promise which resolves once the action has been processed.
-   */
-
 		_createClass(Serializer, [{
+			key: 'getCurrent',
+			value: function getCurrent() {
+				return this._current;
+			}
+		}, {
+			key: 'getTotal',
+			value: function getTotal() {
+				return this._counter;
+			}
+		}, {
+			key: 'getPending',
+			value: function getPending() {
+				return this._counter - this._current;
+			}
+		}, {
+			key: 'getRunning',
+			value: function getRunning() {
+				return this._running;
+			}
+
+			/**
+    * Adds a new action to the processing queue. If the action
+    * is asynchronous, the action should return a promise.
+    *
+    * @public
+    * @param {Function} actionToEnqueue
+    * @returns {Promise} - A promise which resolves once the action has been processed.
+    */
+
+		}, {
 			key: 'enqueue',
 			value: function enqueue(actionToEnqueue) {
 				var _this2 = this;
@@ -11456,11 +11480,15 @@ module.exports = function () {
 						throw new Error('Unable to add action to the Serializer, it has been disposed.');
 					}
 
+					_this2._counter = _this2._counter + 1;
+
 					_this2._workQueue.enqueue(function () {
 						return Promise.resolve().then(function () {
 							if (_this2.getIsDisposed()) {
 								throw new Error('Unable to process Serializer action, the serializer has been disposed.');
 							}
+
+							_this2._current = _this2._current + 1;
 
 							return actionToEnqueue();
 						}).then(function (result) {
