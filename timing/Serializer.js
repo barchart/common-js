@@ -7,7 +7,7 @@ module.exports = (() => {
 	'use strict';
 
 	/**
-	 * Processes actions in sequence.
+	 * A work queue that processes actions in sequence.
 	 *
 	 * @public
 	 */
