@@ -1,4 +1,5 @@
 const assert = require('./../lang/assert'),
+	Disposable = require('./../lang/Disposable'),
 	promise = require('./../lang/promise');
 
 const Queue = require('./../collections/Queue');
@@ -11,8 +12,10 @@ module.exports = (() => {
 	 *
 	 * @public
 	 */
-	class Serializer {
+	class Serializer extends Disposable {
 		constructor() {
+			super();
+
 			this._workQueue = new Queue();
 
 			this._running = false;
@@ -30,9 +33,17 @@ module.exports = (() => {
 			return promise.build((resolveCallback, rejectCallback) => {
 				assert.argumentIsRequired(actionToEnqueue, 'actionToEnqueue', Function);
 
+				if (this.getIsDisposed()) {
+					throw new Error('Unable to add action to the Serializer, it has been disposed.');
+				}
+
 				this._workQueue.enqueue(() => {
 					return Promise.resolve()
 						.then(() => {
+							if (this.getIsDisposed()) {
+								throw new Error('Unable to process Serializer action, the serializer has been disposed.');
+							}
+
 							return actionToEnqueue();
 						}).then((result) => {
 							resolveCallback(result);
@@ -47,6 +58,12 @@ module.exports = (() => {
 
 				checkStart.call(this);
 			});
+		}
+
+		_onDispose() {
+			while (!this._stack.empty()) {
+				this._stack.pop().dispose();
+			}
 		}
 
 		toString() {
