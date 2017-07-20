@@ -18,7 +18,26 @@ module.exports = (() => {
 
 			this._workQueue = new Queue();
 
+			this._counter = 0;
+			this._current = 0;
+
 			this._running = false;
+		}
+
+		getCurrent() {
+			return this._current;
+		}
+
+		getTotal() {
+			return this._counter;
+		}
+
+		getPending() {
+			return this._counter - this._current;
+		}
+
+		getRunning() {
+			return this._running;
 		}
 
 		/**
@@ -37,12 +56,16 @@ module.exports = (() => {
 					throw new Error('Unable to add action to the Serializer, it has been disposed.');
 				}
 
+				this._counter = this._counter + 1;
+
 				this._workQueue.enqueue(() => {
 					return Promise.resolve()
 						.then(() => {
 							if (this.getIsDisposed()) {
 								throw new Error('Unable to process Serializer action, the serializer has been disposed.');
 							}
+
+							this._current = this._current + 1;
 
 							return actionToEnqueue();
 						}).then((result) => {
