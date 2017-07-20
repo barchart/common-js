@@ -7,6 +7,13 @@ const assert = require('./../../lang/assert'),
 module.exports = (() => {
 	'use strict';
 
+	/**
+	 * A stack of {@link Disposable} instances which itself inherits {@Disposable}.
+	 * When {@link DisposableStack#dispose} is called, then each item in the collection
+	 * is disposed in order.
+	 *
+	 * @public
+	 */
 	class DisposableStack extends Disposable {
 		constructor() {
 			super();
@@ -14,6 +21,12 @@ module.exports = (() => {
 			this._stack = new Stack();
 		}
 
+		/**
+		 * Adds a new {@link Disposable} instance to the stack.
+		 *
+		 * @public
+		 * @param {Disposable} disposable - The item to add.
+		 */
 		push(disposable) {
 			assert.argumentIsRequired(disposable, 'disposable', Disposable, 'Disposable');
 
