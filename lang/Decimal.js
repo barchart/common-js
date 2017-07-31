@@ -1,4 +1,5 @@
-const is = require('./is');
+const assert = require('./assert'),
+	is = require('./is');
 
 const Big = require('big.js');
 
@@ -32,16 +33,16 @@ module.exports = (() => {
 		}
 
 		round(places, mode) {
-			assert.argumentIsRequired('places', places, Number);
-			assert.argumentIsRequired('mode', mode, RoundingMode, 'RoundingMode');
+			assert.argumentIsRequired(places, 'places', Number);
+			assert.argumentIsRequired(mode, 'mode', RoundingMode, 'RoundingMode');
 
-			return new Decimal(this._big.round(2), mode.code);
+			return new Decimal(this._big.round(places, mode.code));
 		}
 
 		getIsZero(approximate) {
-			assert.argumentIsOptional('approximate', approximate, Boolean);
+			assert.argumentIsOptional(approximate, 'approximate', Boolean);
 
-			return this._big.eq(zero) || (is.boolean(approximate) && approximate && this.round(20, RoundingMode.Normal).getIsZero());
+			return this._big.eq(zero) || (is.boolean(approximate) && approximate && this.round(20, RoundingMode.NORMAL).getIsZero());
 		}
 
 		getIsPositive() {
@@ -60,11 +61,11 @@ module.exports = (() => {
 			return this._big.toFixed();
 		}
 
-		static get Zero() {
-			return zero;
+		static get ZERO() {
+			return decimalZero;
 		}
 
-		static get RoundingMode() {
+		static get ROUNDING_MODE() {
 			return RoundingMode;
 		}
 
@@ -87,6 +88,8 @@ module.exports = (() => {
 		}
 	}
 
+	const decimalZero = new Decimal(0);
+
 	class RoundingMode {
 		constructor(description, code) {
 			this._description = description;
@@ -101,15 +104,15 @@ module.exports = (() => {
 			return this._code;
 		}
 
-		static get Up() {
+		static get UP() {
 			return up;
 		}
 
-		static get Down() {
+		static get DOWN() {
 			return down;
 		}
 
-		static get Normal() {
+		static get NORMAL() {
 			return normal;
 		}
 
