@@ -3,50 +3,6 @@ const is = require('./is');
 module.exports = (() => {
 	'use strict';
 
-	const assert = {
-		argumentIsRequired(variable, variableName, type, typeDescription) {
-			checkArgumentType(variable, variableName, type, typeDescription);
-		},
-
-		argumentIsOptional(variable, variableName, type, typeDescription) {
-			if (variable === null || variable === undefined) {
-				return;
-			}
-
-			checkArgumentType(variable, variableName, type, typeDescription);
-		},
-
-		argumentIsArray(variable, variableName, itemConstraint, itemConstraintDescription) {
-			assert.argumentIsRequired(variable, variableName, Array);
-
-			if (itemConstraint) {
-				let itemValidator;
-
-				if (typeof(itemConstraint) === 'function' && itemConstraint !== Function) {
-					itemValidator = (value, index) => value instanceof itemConstraint || itemConstraint(value, `${variableName}[${index}]`);
-				} else {
-					itemValidator = (value, index) => checkArgumentType(value, variableName, itemConstraint, itemConstraintDescription, index);
-				}
-
-				variable.forEach((v, i) => {
-					itemValidator(v, i);
-				});
-			}
-		},
-
-		areEqual(a, b, descriptionA, descriptionB) {
-			if (a !== b) {
-				throw new Error(`The objects must be equal [${(descriptionA || a.toString())}] and [${(descriptionB || b.toString())}]`);
-			}
-		},
-
-		areNotEqual(a, b, descriptionA, descriptionB) {
-			if (a === b) {
-				throw new Error(`The objects cannot be equal [${(descriptionA || a.toString())}] and [${(descriptionB || b.toString())}]`);
-			}
-		}
-	};
-
 	function checkArgumentType(variable, variableName, type, typeDescription, index) {
 		if (type === String) {
 			if (!is.string(variable)) {
@@ -89,5 +45,70 @@ module.exports = (() => {
 		throw new Error(message);
 	}
 
-	return assert;
+	/**
+	 * Utilities checking arguments.
+	 *
+	 * @public
+	 * @module lang/assert
+	 */
+	return {
+		/**
+		 * Throws an error if an argument doesn't conform to the desired specification.
+		 *
+		 * @param {*} variable - The value to check.
+		 * @param {String} variableName - The name of the value (used for formatting an error message).
+		 * @param {*} type - The expected type of the argument.
+		 * @param {String=} typeDescription - The description of the expected type (used for formatting an error message).
+		 */
+		argumentIsRequired(variable, variableName, type, typeDescription) {
+			checkArgumentType(variable, variableName, type, typeDescription);
+		},
+
+		/**
+		 * A relaxed version of the "argumentIsRequired" function that will not throw if
+		 * the value is undefined or null.
+		 *
+		 * @param {*} variable - The value to check.
+		 * @param {String} variableName - The name of the value (used for formatting an error message).
+		 * @param {*} type - The expected type of the argument.
+		 * @param {String=} typeDescription - The description of the expected type (used for formatting an error message).
+		 */
+		argumentIsOptional(variable, variableName, type, typeDescription) {
+			if (variable === null || variable === undefined) {
+				return;
+			}
+
+			checkArgumentType(variable, variableName, type, typeDescription);
+		},
+
+		argumentIsArray(variable, variableName, itemConstraint, itemConstraintDescription) {
+			this.argumentIsRequired(variable, variableName, Array);
+
+			if (itemConstraint) {
+				let itemValidator;
+
+				if (typeof(itemConstraint) === 'function' && itemConstraint !== Function) {
+					itemValidator = (value, index) => value instanceof itemConstraint || itemConstraint(value, `${variableName}[${index}]`);
+				} else {
+					itemValidator = (value, index) => checkArgumentType(value, variableName, itemConstraint, itemConstraintDescription, index);
+				}
+
+				variable.forEach((v, i) => {
+					itemValidator(v, i);
+				});
+			}
+		},
+
+		areEqual(a, b, descriptionA, descriptionB) {
+			if (a !== b) {
+				throw new Error(`The objects must be equal [${(descriptionA || a.toString())}] and [${(descriptionB || b.toString())}]`);
+			}
+		},
+
+		areNotEqual(a, b, descriptionA, descriptionB) {
+			if (a === b) {
+				throw new Error(`The objects cannot be equal [${(descriptionA || a.toString())}] and [${(descriptionB || b.toString())}]`);
+			}
+		}
+	};
 })();

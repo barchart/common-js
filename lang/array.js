@@ -1,22 +1,21 @@
-/**
- * Utilities for working with arrays.
- *
- * @public
- * @module lang/array
- */
-
 const assert = require('./assert'),
 	is = require('./is');
 
 module.exports = (() => {
 	'use strict';
 
-	const array = {
+	/**
+	 * Utilities for working with arrays.
+	 *
+	 * @public
+	 * @module lang/array
+	 */
+	return {
 		/**
 		 * Returns the unique items from an array, where the unique
 		 * key is determined via a strict equality check.
 		 *
-		 * @param a
+		 * @param {Array} a
 		 * @param {Function} keySelector - The function, when applied to an item yields a unique key.
 		 */
 		unique(a) {
@@ -31,7 +30,7 @@ module.exports = (() => {
 		 * Returns the unique items from an array, where the unique
 		 * key is determined by a delegate.
 		 *
-		 * @param a
+		 * @param {Array} a
 		 * @param {Function} keySelector - The function, when applied to an item yields a unique key.
 		 */
 		uniqueBy(a, keySelector) {
@@ -44,6 +43,15 @@ module.exports = (() => {
 			});
 		},
 
+		/**
+		 * Splits array into groups and returns an object (where the properties have
+		 * are arrays). Unlike the indexBy function, there can be many items
+		 * which share the same key.
+		 *
+		 * @param {Array} a
+		 * @param {Function} keySelector - The function, when applied to an item yields a key.
+		 * @returns {Object}
+		 */
 		groupBy(a, keySelector) {
 			assert.argumentIsArray(a, 'a');
 			assert.argumentIsRequired(keySelector, 'keySelector', Function);
@@ -61,6 +69,15 @@ module.exports = (() => {
 			}, { });
 		},
 
+		/**
+		 * Splits array into groups and returns an object (where the properties are items from the
+		 * original array). Unlike the groupBy, Only one item can have a given key
+		 * value.
+		 *
+		 * @param {Array} a
+		 * @param {Function} keySelector - The function, when applied to an item yields a unique key.
+		 * @returns {Object}
+		 */
 		indexBy(a, keySelector) {
 			assert.argumentIsArray(a, 'a');
 			assert.argumentIsRequired(keySelector, 'keySelector', Function);
@@ -78,6 +95,12 @@ module.exports = (() => {
 			}, { });
 		},
 
+		/**
+		 * Returns a new array containing all but the last item.
+		 *
+		 * @param {Array} a
+		 * @returns {Array}
+		 */
 		dropRight(a) {
 			assert.argumentIsArray(a, 'a');
 
@@ -90,6 +113,13 @@ module.exports = (() => {
 			return returnRef;
 		},
 
+		/**
+		 * Returns the last item from an array, or an undefined value, if the
+		 * array is empty.
+		 *
+		 * @param {Array} a
+		 * @returns {*|undefined}
+		 */
 		last(a) {
 			assert.argumentIsArray(a, 'a');
 
@@ -104,6 +134,14 @@ module.exports = (() => {
 			return returnRef;
 		},
 
+		/**
+		 * Returns a copy of an array, replacing any item that is itself an array
+		 * with the item's items.
+		 *
+		 * @param {Array} a
+		 * @param {Boolean=} recursive - If true, all nested arrays will be flattened.
+		 * @returns {Array}
+		 */
 		flatten(a, recursive) {
 			assert.argumentIsArray(a, 'a');
 			assert.argumentIsOptional(recursive, 'recursive', Boolean);
@@ -113,17 +151,18 @@ module.exports = (() => {
 			let flat = empty.concat.apply(empty, a);
 
 			if (recursive && flat.some(x => is.array(x))) {
-				flat = array.flatten(flat, true);
+				flat = this.flatten(flat, true);
 			}
 
 			return flat;
 		},
 
 		/**
-		 * Breaks an array into smaller arrays.
+		 * Breaks an array into smaller arrays, returning an array of arrays.
 		 *
-		 * @param a
-		 * @param size
+		 * @param {Array} a
+		 * @param {Number} size - The maximum number of items per partition.
+		 * @param {Array<Array>}
 		 */
 		partition(a, size) {
 			assert.argumentIsArray(a, 'a');
@@ -175,7 +214,7 @@ module.exports = (() => {
 		 * @returns {Array}
 		 */
 		differenceSymmetric(a, b) {
-			return array.union(array.difference(a, b), array.difference(b, a));
+			return this.union(this.difference(a, b), this.difference(b, a));
 		},
 
 		/**
@@ -230,6 +269,4 @@ module.exports = (() => {
 			return returnRef;
 		}
 	};
-
-	return array;
 })();

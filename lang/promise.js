@@ -9,7 +9,7 @@ module.exports = (() => {
 	 * @public
 	 * @module lang/promise
 	 */
-	const utilities = {
+	return {
 		timeout(promise, timeout) {
 			return Promise.resolve()
 				.then(() => {
@@ -20,7 +20,7 @@ module.exports = (() => {
 						throw new Error('Promise timeout must be greater than zero.');
 					}
 
-					return utilities.build((resolveCallback, rejectCallback) => {
+					return this.build((resolveCallback, rejectCallback) => {
 						let pending = true;
 
 						let token = setTimeout(() => {
@@ -82,7 +82,7 @@ module.exports = (() => {
 							};
 						});
 
-						mapPromise = utilities.build((resolveCallback, rejectCallback) => {
+						mapPromise = this.build((resolveCallback, rejectCallback) => {
 							const execute = () => {
 								if (!(executors.length > 0 && c > active && !failure)) {
 									return;
@@ -163,6 +163,4 @@ module.exports = (() => {
 			});
 		}
 	};
-
-	return utilities;
 })();
