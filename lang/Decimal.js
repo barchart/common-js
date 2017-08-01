@@ -54,6 +54,8 @@ module.exports = (() => {
 		}
 
 		toFloat(places) {
+			assert.argumentIsOptional(places, 'places', Number);
+
 			return parseFloat(this._big.toFixed(places || 16));
 		}
 
