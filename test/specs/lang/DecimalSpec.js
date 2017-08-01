@@ -1,5 +1,32 @@
 var Decimal = require('./../../../lang/Decimal');
 
+describe('When adding values that cause floating point problems (e.g. 1.1 + 2.2 != 3.3)', function() {
+	'use strict';
+
+	var a;
+	var b;
+	var c;
+
+	beforeEach(function() {
+		a = new Decimal(1.1);
+		b = new Decimal(2.2);
+
+		c = a.add(b);
+	});
+
+	describe('and exported to a floating point value', function() {
+		var f;
+
+		beforeEach(function() {
+			f = c.toFloat();
+		});
+
+		it('should sum to 3.3 (not 3.3000000000000003)', function() {
+			expect(f).toEqual(3.3);
+		});
+	});
+});
+
 describe('When accessing the "Zero" singleton', function() {
 	'use strict';
 
@@ -152,25 +179,29 @@ describe('When instantiating a Decimal', function() {
 				}).toThrow();
 			});
 		});
+	});
 
-		describe('and dividing by one third', function() {
+	describe('from the string "1"', function() {
+		var d;
 
+		beforeEach(function() {
+			d = new Decimal("1");
 		});
 
-		describe('and dividing by three', function() {
-
+		it('should be positive', function() {
+			expect(d.getIsPositive()).toEqual(true);
 		});
 
-		describe('and multiplying by zero', function() {
-
+		it('should not be negative', function() {
+			expect(d.getIsNegative()).toEqual(false);
 		});
 
-		describe('and multiplying five', function() {
-
+		it('should be zero', function() {
+			expect(d.getIsZero()).toEqual(false);
 		});
 
-		describe('and multiplying by one fifth', function() {
-
+		it('the fixed export should equal "1"', function() {
+			expect(d.toFixed()).toEqual('1');
 		});
 	});
 });
