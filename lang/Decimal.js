@@ -53,8 +53,8 @@ module.exports = (() => {
 			return this._big.lt(zero);
 		}
 
-		toFloat() {
-			return parseFloat(this._big.toFixed());
+		toFloat(places) {
+			return parseFloat(this._big.toFixed(places || 16));
 		}
 
 		toFixed() {

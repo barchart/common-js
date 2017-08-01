@@ -27,6 +27,34 @@ describe('When adding values that cause floating point problems (e.g. 1.1 + 2.2 
 	});
 });
 
+
+describe('When working with values that loss of precision occurs with floating point math (e.g. 100 trillion plus one third)', function() {
+	'use strict';
+
+	var a;
+	var b;
+	var c;
+
+	beforeEach(function() {
+		a = new Decimal(100000000000000);
+		b = new Decimal(1/8);
+
+		c = a.add(b);
+	});
+
+	describe('and exported to a fixed string', function() {
+		var f;
+
+		beforeEach(function() {
+			f = c.toFixed();
+		});
+
+		it('should maintain precision', function() {
+			expect(f).toEqual("100000000000000.125");
+		});
+	});
+});
+
 describe('When accessing the "Zero" singleton', function() {
 	'use strict';
 
