@@ -44,6 +44,11 @@ module.exports = (() => {
 				});
 		}
 
+		/**
+		 * @protected
+		 * @abstract
+		 * @ignore
+		 */
 		_call(endpoint, data, host, port, secure) {
 			return true;
 		}

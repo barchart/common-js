@@ -31,6 +31,7 @@ module.exports = (() => {
 
 		/**
 		 * @protected
+		 * @abstract
 		 * @ignore
 		 */
 		_onDispose() {
