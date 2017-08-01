@@ -596,7 +596,7 @@ module.exports = function () {
 	return ComparatorBuilder;
 }();
 
-},{"./../../lang/assert":14,"./comparators":5}],5:[function(require,module,exports){
+},{"./../../lang/assert":15,"./comparators":5}],5:[function(require,module,exports){
 'use strict';
 
 var assert = require('./../../lang/assert');
@@ -632,7 +632,7 @@ module.exports = function () {
 	};
 }();
 
-},{"./../../lang/assert":14}],6:[function(require,module,exports){
+},{"./../../lang/assert":15}],6:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -760,7 +760,7 @@ module.exports = function () {
 	return DisposableStack;
 }();
 
-},{"./../../lang/Disposable":12,"./../../lang/assert":14,"./../../lang/is":17,"./../Stack":2}],7:[function(require,module,exports){
+},{"./../../lang/Disposable":13,"./../../lang/assert":15,"./../../lang/is":18,"./../Stack":2}],7:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
@@ -902,7 +902,7 @@ module.exports = function () {
 	return EvictingList;
 }();
 
-},{"./../../lang/assert":14}],8:[function(require,module,exports){
+},{"./../../lang/assert":15}],8:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
@@ -1189,7 +1189,7 @@ module.exports = function () {
 	return EvictingMap;
 }();
 
-},{"./../../lang/assert":14}],9:[function(require,module,exports){
+},{"./../../lang/assert":15}],9:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -1293,7 +1293,7 @@ module.exports = function () {
 	return CommandHandler;
 }();
 
-},{"./../lang/assert":14}],10:[function(require,module,exports){
+},{"./../lang/assert":15}],10:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -1367,7 +1367,7 @@ module.exports = function () {
 	return CompositeCommandHandler;
 }();
 
-},{"./../lang/assert":14,"./CommandHandler":9}],11:[function(require,module,exports){
+},{"./../lang/assert":15,"./CommandHandler":9}],11:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -1479,7 +1479,190 @@ module.exports = function () {
 	return MappedCommandHandler;
 }();
 
-},{"./../lang/assert":14,"./CommandHandler":9}],12:[function(require,module,exports){
+},{"./../lang/assert":15,"./CommandHandler":9}],12:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () {
+	function defineProperties(target, props) {
+		for (var i = 0; i < props.length; i++) {
+			var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+		}
+	}return function (Constructor, protoProps, staticProps) {
+		if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+	};
+}();
+
+function _classCallCheck(instance, Constructor) {
+	if (!(instance instanceof Constructor)) {
+		throw new TypeError("Cannot call a class as a function");
+	}
+}
+
+var assert = require('./assert'),
+    is = require('./is');
+
+var Big = require('big.js');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * An immutable object that allows for arbitrary-precision calculations.
+  *
+  * @public
+  */
+
+	var Decimal = function () {
+		function Decimal(value) {
+			_classCallCheck(this, Decimal);
+
+			this._big = getBig(value);
+		}
+
+		_createClass(Decimal, [{
+			key: 'add',
+			value: function add(other) {
+				return new Decimal(this._big.plus(getBig(other)));
+			}
+		}, {
+			key: 'subtract',
+			value: function subtract(other) {
+				return new Decimal(this._big.minus(getBig(other)));
+			}
+		}, {
+			key: 'multiply',
+			value: function multiply(other) {
+				return new Decimal(this._big.times(getBig(other)));
+			}
+		}, {
+			key: 'divide',
+			value: function divide(other) {
+				return new Decimal(this._big.div(getBig(other)));
+			}
+		}, {
+			key: 'round',
+			value: function round(places, mode) {
+				assert.argumentIsRequired(places, 'places', Number);
+				assert.argumentIsRequired(mode, 'mode', RoundingMode, 'RoundingMode');
+
+				return new Decimal(this._big.round(places, mode.code));
+			}
+		}, {
+			key: 'getIsZero',
+			value: function getIsZero(approximate) {
+				assert.argumentIsOptional(approximate, 'approximate', Boolean);
+
+				return this._big.eq(zero) || is.boolean(approximate) && approximate && this.round(20, RoundingMode.NORMAL).getIsZero();
+			}
+		}, {
+			key: 'getIsPositive',
+			value: function getIsPositive() {
+				return this._big.gt(zero);
+			}
+		}, {
+			key: 'getIsNegative',
+			value: function getIsNegative() {
+				return this._big.lt(zero);
+			}
+		}, {
+			key: 'toFloat',
+			value: function toFloat(places) {
+				assert.argumentIsOptional(places, 'places', Number);
+
+				return parseFloat(this._big.toFixed(places || 16));
+			}
+		}, {
+			key: 'toFixed',
+			value: function toFixed() {
+				return this._big.toFixed();
+			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[Decimal]';
+			}
+		}], [{
+			key: 'ZERO',
+			get: function get() {
+				return decimalZero;
+			}
+		}, {
+			key: 'ROUNDING_MODE',
+			get: function get() {
+				return RoundingMode;
+			}
+		}]);
+
+		return Decimal;
+	}();
+
+	var zero = new Big(0);
+	var positiveOne = new Big(1);
+	var negativeOne = new Big(-1);
+
+	function getBig(value) {
+		if (value instanceof Big) {
+			return value;
+		} else if (value instanceof Decimal) {
+			return value._big;
+		} else {
+			return new Big(value);
+		}
+	}
+
+	var decimalZero = new Decimal(0);
+
+	var RoundingMode = function () {
+		function RoundingMode(description, code) {
+			_classCallCheck(this, RoundingMode);
+
+			this._description = description;
+			this._code = code;
+		}
+
+		_createClass(RoundingMode, [{
+			key: 'toString',
+			value: function toString() {
+				return '[RoundingMode]';
+			}
+		}, {
+			key: 'description',
+			get: function get() {
+				return this._description;
+			}
+		}, {
+			key: 'code',
+			get: function get() {
+				return this._code;
+			}
+		}], [{
+			key: 'UP',
+			get: function get() {
+				return up;
+			}
+		}, {
+			key: 'DOWN',
+			get: function get() {
+				return down;
+			}
+		}, {
+			key: 'NORMAL',
+			get: function get() {
+				return normal;
+			}
+		}]);
+
+		return RoundingMode;
+	}();
+
+	var up = new RoundingMode('up', 3);
+	var down = new RoundingMode('down', 0);
+	var normal = new RoundingMode('normal', 1);
+
+	return Decimal;
+}();
+
+},{"./assert":15,"./is":18,"big.js":29}],13:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -1551,6 +1734,7 @@ module.exports = function () {
 
 			/**
     * @protected
+    * @abstract
     * @ignore
     */
 
@@ -1644,15 +1828,8 @@ module.exports = function () {
 	return Disposable;
 }();
 
-},{"./assert":14}],13:[function(require,module,exports){
+},{"./assert":15}],14:[function(require,module,exports){
 'use strict';
-
-/**
- * Utilities for working with arrays.
- *
- * @public
- * @module lang/array
- */
 
 var assert = require('./assert'),
     is = require('./is');
@@ -1660,12 +1837,19 @@ var assert = require('./assert'),
 module.exports = function () {
 	'use strict';
 
-	var array = {
+	/**
+  * Utilities for working with arrays.
+  *
+  * @public
+  * @module lang/array
+  */
+
+	return {
 		/**
    * Returns the unique items from an array, where the unique
    * key is determined via a strict equality check.
    *
-   * @param a
+   * @param {Array} a
    * @param {Function} keySelector - The function, when applied to an item yields a unique key.
    */
 		unique: function unique(a) {
@@ -1680,7 +1864,7 @@ module.exports = function () {
    * Returns the unique items from an array, where the unique
    * key is determined by a delegate.
    *
-   * @param a
+   * @param {Array} a
    * @param {Function} keySelector - The function, when applied to an item yields a unique key.
    */
 		uniqueBy: function uniqueBy(a, keySelector) {
@@ -1694,6 +1878,16 @@ module.exports = function () {
 				}) === index;
 			});
 		},
+
+		/**
+   * Splits array into groups and returns an object (where the properties have
+   * are arrays). Unlike the indexBy function, there can be many items
+   * which share the same key.
+   *
+   * @param {Array} a
+   * @param {Function} keySelector - The function, when applied to an item yields a key.
+   * @returns {Object}
+   */
 		groupBy: function groupBy(a, keySelector) {
 			assert.argumentIsArray(a, 'a');
 			assert.argumentIsRequired(keySelector, 'keySelector', Function);
@@ -1710,6 +1904,16 @@ module.exports = function () {
 				return groups;
 			}, {});
 		},
+
+		/**
+   * Splits array into groups and returns an object (where the properties are items from the
+   * original array). Unlike the groupBy, Only one item can have a given key
+   * value.
+   *
+   * @param {Array} a
+   * @param {Function} keySelector - The function, when applied to an item yields a unique key.
+   * @returns {Object}
+   */
 		indexBy: function indexBy(a, keySelector) {
 			assert.argumentIsArray(a, 'a');
 			assert.argumentIsRequired(keySelector, 'keySelector', Function);
@@ -1726,6 +1930,13 @@ module.exports = function () {
 				return map;
 			}, {});
 		},
+
+		/**
+   * Returns a new array containing all but the last item.
+   *
+   * @param {Array} a
+   * @returns {Array}
+   */
 		dropRight: function dropRight(a) {
 			assert.argumentIsArray(a, 'a');
 
@@ -1737,6 +1948,14 @@ module.exports = function () {
 
 			return returnRef;
 		},
+
+		/**
+   * Returns the last item from an array, or an undefined value, if the
+   * array is empty.
+   *
+   * @param {Array} a
+   * @returns {*|undefined}
+   */
 		last: function last(a) {
 			assert.argumentIsArray(a, 'a');
 
@@ -1750,6 +1969,15 @@ module.exports = function () {
 
 			return returnRef;
 		},
+
+		/**
+   * Returns a copy of an array, replacing any item that is itself an array
+   * with the item's items.
+   *
+   * @param {Array} a
+   * @param {Boolean=} recursive - If true, all nested arrays will be flattened.
+   * @returns {Array}
+   */
 		flatten: function flatten(a, recursive) {
 			assert.argumentIsArray(a, 'a');
 			assert.argumentIsOptional(recursive, 'recursive', Boolean);
@@ -1761,17 +1989,18 @@ module.exports = function () {
 			if (recursive && flat.some(function (x) {
 				return is.array(x);
 			})) {
-				flat = array.flatten(flat, true);
+				flat = this.flatten(flat, true);
 			}
 
 			return flat;
 		},
 
 		/**
-   * Breaks an array into smaller arrays.
+   * Breaks an array into smaller arrays, returning an array of arrays.
    *
-   * @param a
-   * @param size
+   * @param {Array} a
+   * @param {Number} size - The maximum number of items per partition.
+   * @param {Array<Array>}
    */
 		partition: function partition(a, size) {
 			assert.argumentIsArray(a, 'a');
@@ -1823,7 +2052,7 @@ module.exports = function () {
    * @returns {Array}
    */
 		differenceSymmetric: function differenceSymmetric(a, b) {
-			return array.union(array.difference(a, b), array.difference(b, a));
+			return this.union(this.difference(a, b), this.difference(b, a));
 		},
 
 		/**
@@ -1878,61 +2107,15 @@ module.exports = function () {
 			return returnRef;
 		}
 	};
-
-	return array;
 }();
 
-},{"./assert":14,"./is":17}],14:[function(require,module,exports){
+},{"./assert":15,"./is":18}],15:[function(require,module,exports){
 'use strict';
 
 var is = require('./is');
 
 module.exports = function () {
 	'use strict';
-
-	var assert = {
-		argumentIsRequired: function argumentIsRequired(variable, variableName, type, typeDescription) {
-			checkArgumentType(variable, variableName, type, typeDescription);
-		},
-		argumentIsOptional: function argumentIsOptional(variable, variableName, type, typeDescription) {
-			if (variable === null || variable === undefined) {
-				return;
-			}
-
-			checkArgumentType(variable, variableName, type, typeDescription);
-		},
-		argumentIsArray: function argumentIsArray(variable, variableName, itemConstraint, itemConstraintDescription) {
-			assert.argumentIsRequired(variable, variableName, Array);
-
-			if (itemConstraint) {
-				var itemValidator = void 0;
-
-				if (typeof itemConstraint === 'function' && itemConstraint !== Function) {
-					itemValidator = function itemValidator(value, index) {
-						return value instanceof itemConstraint || itemConstraint(value, variableName + '[' + index + ']');
-					};
-				} else {
-					itemValidator = function itemValidator(value, index) {
-						return checkArgumentType(value, variableName, itemConstraint, itemConstraintDescription, index);
-					};
-				}
-
-				variable.forEach(function (v, i) {
-					itemValidator(v, i);
-				});
-			}
-		},
-		areEqual: function areEqual(a, b, descriptionA, descriptionB) {
-			if (a !== b) {
-				throw new Error('The objects must be equal [' + (descriptionA || a.toString()) + '] and [' + (descriptionB || b.toString()) + ']');
-			}
-		},
-		areNotEqual: function areNotEqual(a, b, descriptionA, descriptionB) {
-			if (a === b) {
-				throw new Error('The objects cannot be equal [' + (descriptionA || a.toString()) + '] and [' + (descriptionB || b.toString()) + ']');
-			}
-		}
-	};
 
 	function checkArgumentType(variable, variableName, type, typeDescription, index) {
 		if (type === String) {
@@ -1976,10 +2159,76 @@ module.exports = function () {
 		throw new Error(message);
 	}
 
-	return assert;
+	/**
+  * Utilities checking arguments.
+  *
+  * @public
+  * @module lang/assert
+  */
+	return {
+		/**
+   * Throws an error if an argument doesn't conform to the desired specification.
+   *
+   * @param {*} variable - The value to check.
+   * @param {String} variableName - The name of the value (used for formatting an error message).
+   * @param {*} type - The expected type of the argument.
+   * @param {String=} typeDescription - The description of the expected type (used for formatting an error message).
+   */
+		argumentIsRequired: function argumentIsRequired(variable, variableName, type, typeDescription) {
+			checkArgumentType(variable, variableName, type, typeDescription);
+		},
+
+		/**
+   * A relaxed version of the "argumentIsRequired" function that will not throw if
+   * the value is undefined or null.
+   *
+   * @param {*} variable - The value to check.
+   * @param {String} variableName - The name of the value (used for formatting an error message).
+   * @param {*} type - The expected type of the argument.
+   * @param {String=} typeDescription - The description of the expected type (used for formatting an error message).
+   */
+		argumentIsOptional: function argumentIsOptional(variable, variableName, type, typeDescription) {
+			if (variable === null || variable === undefined) {
+				return;
+			}
+
+			checkArgumentType(variable, variableName, type, typeDescription);
+		},
+		argumentIsArray: function argumentIsArray(variable, variableName, itemConstraint, itemConstraintDescription) {
+			this.argumentIsRequired(variable, variableName, Array);
+
+			if (itemConstraint) {
+				var itemValidator = void 0;
+
+				if (typeof itemConstraint === 'function' && itemConstraint !== Function) {
+					itemValidator = function itemValidator(value, index) {
+						return value instanceof itemConstraint || itemConstraint(value, variableName + '[' + index + ']');
+					};
+				} else {
+					itemValidator = function itemValidator(value, index) {
+						return checkArgumentType(value, variableName, itemConstraint, itemConstraintDescription, index);
+					};
+				}
+
+				variable.forEach(function (v, i) {
+					itemValidator(v, i);
+				});
+			}
+		},
+		areEqual: function areEqual(a, b, descriptionA, descriptionB) {
+			if (a !== b) {
+				throw new Error('The objects must be equal [' + (descriptionA || a.toString()) + '] and [' + (descriptionB || b.toString()) + ']');
+			}
+		},
+		areNotEqual: function areNotEqual(a, b, descriptionA, descriptionB) {
+			if (a === b) {
+				throw new Error('The objects cannot be equal [' + (descriptionA || a.toString()) + '] and [' + (descriptionB || b.toString()) + ']');
+			}
+		}
+	};
 }();
 
-},{"./is":17}],15:[function(require,module,exports){
+},{"./is":18}],16:[function(require,module,exports){
 'use strict';
 
 var assert = require('./assert'),
@@ -2104,7 +2353,7 @@ module.exports = function () {
 	return attributes;
 }();
 
-},{"./assert":14,"./is":17}],16:[function(require,module,exports){
+},{"./assert":15,"./is":18}],17:[function(require,module,exports){
 'use strict';
 
 module.exports = function () {
@@ -2154,7 +2403,7 @@ module.exports = function () {
 	return utilities;
 }();
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 'use strict';
 
 var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -2309,7 +2558,7 @@ module.exports = function () {
   };
 }();
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 'use strict';
 
 var assert = require('./assert'),
@@ -2356,7 +2605,7 @@ module.exports = function () {
 	return mask;
 }();
 
-},{"./assert":14,"./is":17}],19:[function(require,module,exports){
+},{"./assert":15,"./is":18}],20:[function(require,module,exports){
 'use strict';
 
 var is = require('./is');
@@ -2389,7 +2638,7 @@ module.exports = function () {
 	};
 }();
 
-},{"./is":17}],20:[function(require,module,exports){
+},{"./is":18}],21:[function(require,module,exports){
 'use strict';
 
 var is = require('./is');
@@ -2426,7 +2675,7 @@ module.exports = function () {
 	};
 }();
 
-},{"./is":17}],21:[function(require,module,exports){
+},{"./is":18}],22:[function(require,module,exports){
 'use strict';
 
 var array = require('./array'),
@@ -2568,7 +2817,7 @@ module.exports = function () {
 	return object;
 }();
 
-},{"./array":13,"./is":17}],22:[function(require,module,exports){
+},{"./array":14,"./is":18}],23:[function(require,module,exports){
 'use strict';
 
 var assert = require('./assert');
@@ -2583,8 +2832,10 @@ module.exports = function () {
   * @module lang/promise
   */
 
-	var utilities = {
+	return {
 		timeout: function timeout(promise, _timeout) {
+			var _this = this;
+
 			return Promise.resolve().then(function () {
 				assert.argumentIsRequired(promise, 'promise', Promise, 'Promise');
 				assert.argumentIsRequired(_timeout, 'timeout', Number);
@@ -2593,7 +2844,7 @@ module.exports = function () {
 					throw new Error('Promise timeout must be greater than zero.');
 				}
 
-				return utilities.build(function (resolveCallback, rejectCallback) {
+				return _this.build(function (resolveCallback, rejectCallback) {
 					var pending = true;
 
 					var token = setTimeout(function () {
@@ -2623,6 +2874,8 @@ module.exports = function () {
 			});
 		},
 		map: function map(items, mapper, concurrency) {
+			var _this2 = this;
+
 			return Promise.resolve().then(function () {
 				assert.argumentIsArray(items, 'items');
 				assert.argumentIsRequired(mapper, 'mapper', Function);
@@ -2654,7 +2907,7 @@ module.exports = function () {
 						};
 					});
 
-					mapPromise = utilities.build(function (resolveCallback, rejectCallback) {
+					mapPromise = _this2.build(function (resolveCallback, rejectCallback) {
 						var execute = function execute() {
 							if (!(executors.length > 0 && c > active && !failure)) {
 								return;
@@ -2737,11 +2990,9 @@ module.exports = function () {
 			});
 		}
 	};
-
-	return utilities;
 }();
 
-},{"./assert":14}],23:[function(require,module,exports){
+},{"./assert":15}],24:[function(require,module,exports){
 'use strict';
 
 var assert = require('./assert'),
@@ -2763,7 +3014,7 @@ module.exports = function () {
 	};
 }();
 
-},{"./assert":14,"./is":17}],24:[function(require,module,exports){
+},{"./assert":15,"./is":18}],25:[function(require,module,exports){
 'use strict';
 
 var assert = require('./assert'),
@@ -2803,7 +3054,7 @@ module.exports = function () {
 	};
 }();
 
-},{"./assert":14,"./is":17}],25:[function(require,module,exports){
+},{"./assert":15,"./is":18}],26:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -2949,7 +3200,7 @@ module.exports = function () {
 	return Event;
 }();
 
-},{"./../lang/Disposable":12,"./../lang/assert":14}],26:[function(require,module,exports){
+},{"./../lang/Disposable":13,"./../lang/assert":15}],27:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -3114,7 +3365,7 @@ module.exports = function () {
 	return EventMap;
 }();
 
-},{"./../lang/Disposable":12,"./../lang/assert":14,"./Event":25}],27:[function(require,module,exports){
+},{"./../lang/Disposable":13,"./../lang/assert":15,"./Event":26}],28:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -3367,7 +3618,1151 @@ module.exports = function () {
 	return Model;
 }();
 
-},{"./../lang/Disposable":12,"./../lang/assert":14,"./../lang/is":17,"./../messaging/Event":25}],28:[function(require,module,exports){
+},{"./../lang/Disposable":13,"./../lang/assert":15,"./../lang/is":18,"./../messaging/Event":26}],29:[function(require,module,exports){
+/* big.js v3.1.3 https://github.com/MikeMcl/big.js/LICENCE */
+;(function (global) {
+    'use strict';
+
+/*
+  big.js v3.1.3
+  A small, fast, easy-to-use library for arbitrary-precision decimal arithmetic.
+  https://github.com/MikeMcl/big.js/
+  Copyright (c) 2014 Michael Mclaughlin <M8ch88l@gmail.com>
+  MIT Expat Licence
+*/
+
+/***************************** EDITABLE DEFAULTS ******************************/
+
+    // The default values below must be integers within the stated ranges.
+
+    /*
+     * The maximum number of decimal places of the results of operations
+     * involving division: div and sqrt, and pow with negative exponents.
+     */
+    var DP = 20,                           // 0 to MAX_DP
+
+        /*
+         * The rounding mode used when rounding to the above decimal places.
+         *
+         * 0 Towards zero (i.e. truncate, no rounding).       (ROUND_DOWN)
+         * 1 To nearest neighbour. If equidistant, round up.  (ROUND_HALF_UP)
+         * 2 To nearest neighbour. If equidistant, to even.   (ROUND_HALF_EVEN)
+         * 3 Away from zero.                                  (ROUND_UP)
+         */
+        RM = 1,                            // 0, 1, 2 or 3
+
+        // The maximum value of DP and Big.DP.
+        MAX_DP = 1E6,                      // 0 to 1000000
+
+        // The maximum magnitude of the exponent argument to the pow method.
+        MAX_POWER = 1E6,                   // 1 to 1000000
+
+        /*
+         * The exponent value at and beneath which toString returns exponential
+         * notation.
+         * JavaScript's Number type: -7
+         * -1000000 is the minimum recommended exponent value of a Big.
+         */
+        E_NEG = -7,                   // 0 to -1000000
+
+        /*
+         * The exponent value at and above which toString returns exponential
+         * notation.
+         * JavaScript's Number type: 21
+         * 1000000 is the maximum recommended exponent value of a Big.
+         * (This limit is not enforced or checked.)
+         */
+        E_POS = 21,                   // 0 to 1000000
+
+/******************************************************************************/
+
+        // The shared prototype object.
+        P = {},
+        isValid = /^-?(\d+(\.\d*)?|\.\d+)(e[+-]?\d+)?$/i,
+        Big;
+
+
+    /*
+     * Create and return a Big constructor.
+     *
+     */
+    function bigFactory() {
+
+        /*
+         * The Big constructor and exported function.
+         * Create and return a new instance of a Big number object.
+         *
+         * n {number|string|Big} A numeric value.
+         */
+        function Big(n) {
+            var x = this;
+
+            // Enable constructor usage without new.
+            if (!(x instanceof Big)) {
+                return n === void 0 ? bigFactory() : new Big(n);
+            }
+
+            // Duplicate.
+            if (n instanceof Big) {
+                x.s = n.s;
+                x.e = n.e;
+                x.c = n.c.slice();
+            } else {
+                parse(x, n);
+            }
+
+            /*
+             * Retain a reference to this Big constructor, and shadow
+             * Big.prototype.constructor which points to Object.
+             */
+            x.constructor = Big;
+        }
+
+        Big.prototype = P;
+        Big.DP = DP;
+        Big.RM = RM;
+        Big.E_NEG = E_NEG;
+        Big.E_POS = E_POS;
+
+        return Big;
+    }
+
+
+    // Private functions
+
+
+    /*
+     * Return a string representing the value of Big x in normal or exponential
+     * notation to dp fixed decimal places or significant digits.
+     *
+     * x {Big} The Big to format.
+     * dp {number} Integer, 0 to MAX_DP inclusive.
+     * toE {number} 1 (toExponential), 2 (toPrecision) or undefined (toFixed).
+     */
+    function format(x, dp, toE) {
+        var Big = x.constructor,
+
+            // The index (normal notation) of the digit that may be rounded up.
+            i = dp - (x = new Big(x)).e,
+            c = x.c;
+
+        // Round?
+        if (c.length > ++dp) {
+            rnd(x, i, Big.RM);
+        }
+
+        if (!c[0]) {
+            ++i;
+        } else if (toE) {
+            i = dp;
+
+        // toFixed
+        } else {
+            c = x.c;
+
+            // Recalculate i as x.e may have changed if value rounded up.
+            i = x.e + i + 1;
+        }
+
+        // Append zeros?
+        for (; c.length < i; c.push(0)) {
+        }
+        i = x.e;
+
+        /*
+         * toPrecision returns exponential notation if the number of
+         * significant digits specified is less than the number of digits
+         * necessary to represent the integer part of the value in normal
+         * notation.
+         */
+        return toE === 1 || toE && (dp <= i || i <= Big.E_NEG) ?
+
+          // Exponential notation.
+          (x.s < 0 && c[0] ? '-' : '') +
+            (c.length > 1 ? c[0] + '.' + c.join('').slice(1) : c[0]) +
+              (i < 0 ? 'e' : 'e+') + i
+
+          // Normal notation.
+          : x.toString();
+    }
+
+
+    /*
+     * Parse the number or string value passed to a Big constructor.
+     *
+     * x {Big} A Big number instance.
+     * n {number|string} A numeric value.
+     */
+    function parse(x, n) {
+        var e, i, nL;
+
+        // Minus zero?
+        if (n === 0 && 1 / n < 0) {
+            n = '-0';
+
+        // Ensure n is string and check validity.
+        } else if (!isValid.test(n += '')) {
+            throwErr(NaN);
+        }
+
+        // Determine sign.
+        x.s = n.charAt(0) == '-' ? (n = n.slice(1), -1) : 1;
+
+        // Decimal point?
+        if ((e = n.indexOf('.')) > -1) {
+            n = n.replace('.', '');
+        }
+
+        // Exponential form?
+        if ((i = n.search(/e/i)) > 0) {
+
+            // Determine exponent.
+            if (e < 0) {
+                e = i;
+            }
+            e += +n.slice(i + 1);
+            n = n.substring(0, i);
+
+        } else if (e < 0) {
+
+            // Integer.
+            e = n.length;
+        }
+
+        // Determine leading zeros.
+        for (i = 0; n.charAt(i) == '0'; i++) {
+        }
+
+        if (i == (nL = n.length)) {
+
+            // Zero.
+            x.c = [ x.e = 0 ];
+        } else {
+
+            // Determine trailing zeros.
+            for (; n.charAt(--nL) == '0';) {
+            }
+
+            x.e = e - i - 1;
+            x.c = [];
+
+            // Convert string to array of digits without leading/trailing zeros.
+            for (e = 0; i <= nL; x.c[e++] = +n.charAt(i++)) {
+            }
+        }
+
+        return x;
+    }
+
+
+    /*
+     * Round Big x to a maximum of dp decimal places using rounding mode rm.
+     * Called by div, sqrt and round.
+     *
+     * x {Big} The Big to round.
+     * dp {number} Integer, 0 to MAX_DP inclusive.
+     * rm {number} 0, 1, 2 or 3 (DOWN, HALF_UP, HALF_EVEN, UP)
+     * [more] {boolean} Whether the result of division was truncated.
+     */
+    function rnd(x, dp, rm, more) {
+        var u,
+            xc = x.c,
+            i = x.e + dp + 1;
+
+        if (rm === 1) {
+
+            // xc[i] is the digit after the digit that may be rounded up.
+            more = xc[i] >= 5;
+        } else if (rm === 2) {
+            more = xc[i] > 5 || xc[i] == 5 &&
+              (more || i < 0 || xc[i + 1] !== u || xc[i - 1] & 1);
+        } else if (rm === 3) {
+            more = more || xc[i] !== u || i < 0;
+        } else {
+            more = false;
+
+            if (rm !== 0) {
+                throwErr('!Big.RM!');
+            }
+        }
+
+        if (i < 1 || !xc[0]) {
+
+            if (more) {
+
+                // 1, 0.1, 0.01, 0.001, 0.0001 etc.
+                x.e = -dp;
+                x.c = [1];
+            } else {
+
+                // Zero.
+                x.c = [x.e = 0];
+            }
+        } else {
+
+            // Remove any digits after the required decimal places.
+            xc.length = i--;
+
+            // Round up?
+            if (more) {
+
+                // Rounding up may mean the previous digit has to be rounded up.
+                for (; ++xc[i] > 9;) {
+                    xc[i] = 0;
+
+                    if (!i--) {
+                        ++x.e;
+                        xc.unshift(1);
+                    }
+                }
+            }
+
+            // Remove trailing zeros.
+            for (i = xc.length; !xc[--i]; xc.pop()) {
+            }
+        }
+
+        return x;
+    }
+
+
+    /*
+     * Throw a BigError.
+     *
+     * message {string} The error message.
+     */
+    function throwErr(message) {
+        var err = new Error(message);
+        err.name = 'BigError';
+
+        throw err;
+    }
+
+
+    // Prototype/instance methods
+
+
+    /*
+     * Return a new Big whose value is the absolute value of this Big.
+     */
+    P.abs = function () {
+        var x = new this.constructor(this);
+        x.s = 1;
+
+        return x;
+    };
+
+
+    /*
+     * Return
+     * 1 if the value of this Big is greater than the value of Big y,
+     * -1 if the value of this Big is less than the value of Big y, or
+     * 0 if they have the same value.
+    */
+    P.cmp = function (y) {
+        var xNeg,
+            x = this,
+            xc = x.c,
+            yc = (y = new x.constructor(y)).c,
+            i = x.s,
+            j = y.s,
+            k = x.e,
+            l = y.e;
+
+        // Either zero?
+        if (!xc[0] || !yc[0]) {
+            return !xc[0] ? !yc[0] ? 0 : -j : i;
+        }
+
+        // Signs differ?
+        if (i != j) {
+            return i;
+        }
+        xNeg = i < 0;
+
+        // Compare exponents.
+        if (k != l) {
+            return k > l ^ xNeg ? 1 : -1;
+        }
+
+        i = -1;
+        j = (k = xc.length) < (l = yc.length) ? k : l;
+
+        // Compare digit by digit.
+        for (; ++i < j;) {
+
+            if (xc[i] != yc[i]) {
+                return xc[i] > yc[i] ^ xNeg ? 1 : -1;
+            }
+        }
+
+        // Compare lengths.
+        return k == l ? 0 : k > l ^ xNeg ? 1 : -1;
+    };
+
+
+    /*
+     * Return a new Big whose value is the value of this Big divided by the
+     * value of Big y, rounded, if necessary, to a maximum of Big.DP decimal
+     * places using rounding mode Big.RM.
+     */
+    P.div = function (y) {
+        var x = this,
+            Big = x.constructor,
+            // dividend
+            dvd = x.c,
+            //divisor
+            dvs = (y = new Big(y)).c,
+            s = x.s == y.s ? 1 : -1,
+            dp = Big.DP;
+
+        if (dp !== ~~dp || dp < 0 || dp > MAX_DP) {
+            throwErr('!Big.DP!');
+        }
+
+        // Either 0?
+        if (!dvd[0] || !dvs[0]) {
+
+            // If both are 0, throw NaN
+            if (dvd[0] == dvs[0]) {
+                throwErr(NaN);
+            }
+
+            // If dvs is 0, throw +-Infinity.
+            if (!dvs[0]) {
+                throwErr(s / 0);
+            }
+
+            // dvd is 0, return +-0.
+            return new Big(s * 0);
+        }
+
+        var dvsL, dvsT, next, cmp, remI, u,
+            dvsZ = dvs.slice(),
+            dvdI = dvsL = dvs.length,
+            dvdL = dvd.length,
+            // remainder
+            rem = dvd.slice(0, dvsL),
+            remL = rem.length,
+            // quotient
+            q = y,
+            qc = q.c = [],
+            qi = 0,
+            digits = dp + (q.e = x.e - y.e) + 1;
+
+        q.s = s;
+        s = digits < 0 ? 0 : digits;
+
+        // Create version of divisor with leading zero.
+        dvsZ.unshift(0);
+
+        // Add zeros to make remainder as long as divisor.
+        for (; remL++ < dvsL; rem.push(0)) {
+        }
+
+        do {
+
+            // 'next' is how many times the divisor goes into current remainder.
+            for (next = 0; next < 10; next++) {
+
+                // Compare divisor and remainder.
+                if (dvsL != (remL = rem.length)) {
+                    cmp = dvsL > remL ? 1 : -1;
+                } else {
+
+                    for (remI = -1, cmp = 0; ++remI < dvsL;) {
+
+                        if (dvs[remI] != rem[remI]) {
+                            cmp = dvs[remI] > rem[remI] ? 1 : -1;
+                            break;
+                        }
+                    }
+                }
+
+                // If divisor < remainder, subtract divisor from remainder.
+                if (cmp < 0) {
+
+                    // Remainder can't be more than 1 digit longer than divisor.
+                    // Equalise lengths using divisor with extra leading zero?
+                    for (dvsT = remL == dvsL ? dvs : dvsZ; remL;) {
+
+                        if (rem[--remL] < dvsT[remL]) {
+                            remI = remL;
+
+                            for (; remI && !rem[--remI]; rem[remI] = 9) {
+                            }
+                            --rem[remI];
+                            rem[remL] += 10;
+                        }
+                        rem[remL] -= dvsT[remL];
+                    }
+                    for (; !rem[0]; rem.shift()) {
+                    }
+                } else {
+                    break;
+                }
+            }
+
+            // Add the 'next' digit to the result array.
+            qc[qi++] = cmp ? next : ++next;
+
+            // Update the remainder.
+            if (rem[0] && cmp) {
+                rem[remL] = dvd[dvdI] || 0;
+            } else {
+                rem = [ dvd[dvdI] ];
+            }
+
+        } while ((dvdI++ < dvdL || rem[0] !== u) && s--);
+
+        // Leading zero? Do not remove if result is simply zero (qi == 1).
+        if (!qc[0] && qi != 1) {
+
+            // There can't be more than one zero.
+            qc.shift();
+            q.e--;
+        }
+
+        // Round?
+        if (qi > digits) {
+            rnd(q, dp, Big.RM, rem[0] !== u);
+        }
+
+        return q;
+    };
+
+
+    /*
+     * Return true if the value of this Big is equal to the value of Big y,
+     * otherwise returns false.
+     */
+    P.eq = function (y) {
+        return !this.cmp(y);
+    };
+
+
+    /*
+     * Return true if the value of this Big is greater than the value of Big y,
+     * otherwise returns false.
+     */
+    P.gt = function (y) {
+        return this.cmp(y) > 0;
+    };
+
+
+    /*
+     * Return true if the value of this Big is greater than or equal to the
+     * value of Big y, otherwise returns false.
+     */
+    P.gte = function (y) {
+        return this.cmp(y) > -1;
+    };
+
+
+    /*
+     * Return true if the value of this Big is less than the value of Big y,
+     * otherwise returns false.
+     */
+    P.lt = function (y) {
+        return this.cmp(y) < 0;
+    };
+
+
+    /*
+     * Return true if the value of this Big is less than or equal to the value
+     * of Big y, otherwise returns false.
+     */
+    P.lte = function (y) {
+         return this.cmp(y) < 1;
+    };
+
+
+    /*
+     * Return a new Big whose value is the value of this Big minus the value
+     * of Big y.
+     */
+    P.sub = P.minus = function (y) {
+        var i, j, t, xLTy,
+            x = this,
+            Big = x.constructor,
+            a = x.s,
+            b = (y = new Big(y)).s;
+
+        // Signs differ?
+        if (a != b) {
+            y.s = -b;
+            return x.plus(y);
+        }
+
+        var xc = x.c.slice(),
+            xe = x.e,
+            yc = y.c,
+            ye = y.e;
+
+        // Either zero?
+        if (!xc[0] || !yc[0]) {
+
+            // y is non-zero? x is non-zero? Or both are zero.
+            return yc[0] ? (y.s = -b, y) : new Big(xc[0] ? x : 0);
+        }
+
+        // Determine which is the bigger number.
+        // Prepend zeros to equalise exponents.
+        if (a = xe - ye) {
+
+            if (xLTy = a < 0) {
+                a = -a;
+                t = xc;
+            } else {
+                ye = xe;
+                t = yc;
+            }
+
+            t.reverse();
+            for (b = a; b--; t.push(0)) {
+            }
+            t.reverse();
+        } else {
+
+            // Exponents equal. Check digit by digit.
+            j = ((xLTy = xc.length < yc.length) ? xc : yc).length;
+
+            for (a = b = 0; b < j; b++) {
+
+                if (xc[b] != yc[b]) {
+                    xLTy = xc[b] < yc[b];
+                    break;
+                }
+            }
+        }
+
+        // x < y? Point xc to the array of the bigger number.
+        if (xLTy) {
+            t = xc;
+            xc = yc;
+            yc = t;
+            y.s = -y.s;
+        }
+
+        /*
+         * Append zeros to xc if shorter. No need to add zeros to yc if shorter
+         * as subtraction only needs to start at yc.length.
+         */
+        if (( b = (j = yc.length) - (i = xc.length) ) > 0) {
+
+            for (; b--; xc[i++] = 0) {
+            }
+        }
+
+        // Subtract yc from xc.
+        for (b = i; j > a;){
+
+            if (xc[--j] < yc[j]) {
+
+                for (i = j; i && !xc[--i]; xc[i] = 9) {
+                }
+                --xc[i];
+                xc[j] += 10;
+            }
+            xc[j] -= yc[j];
+        }
+
+        // Remove trailing zeros.
+        for (; xc[--b] === 0; xc.pop()) {
+        }
+
+        // Remove leading zeros and adjust exponent accordingly.
+        for (; xc[0] === 0;) {
+            xc.shift();
+            --ye;
+        }
+
+        if (!xc[0]) {
+
+            // n - n = +0
+            y.s = 1;
+
+            // Result must be zero.
+            xc = [ye = 0];
+        }
+
+        y.c = xc;
+        y.e = ye;
+
+        return y;
+    };
+
+
+    /*
+     * Return a new Big whose value is the value of this Big modulo the
+     * value of Big y.
+     */
+    P.mod = function (y) {
+        var yGTx,
+            x = this,
+            Big = x.constructor,
+            a = x.s,
+            b = (y = new Big(y)).s;
+
+        if (!y.c[0]) {
+            throwErr(NaN);
+        }
+
+        x.s = y.s = 1;
+        yGTx = y.cmp(x) == 1;
+        x.s = a;
+        y.s = b;
+
+        if (yGTx) {
+            return new Big(x);
+        }
+
+        a = Big.DP;
+        b = Big.RM;
+        Big.DP = Big.RM = 0;
+        x = x.div(y);
+        Big.DP = a;
+        Big.RM = b;
+
+        return this.minus( x.times(y) );
+    };
+
+
+    /*
+     * Return a new Big whose value is the value of this Big plus the value
+     * of Big y.
+     */
+    P.add = P.plus = function (y) {
+        var t,
+            x = this,
+            Big = x.constructor,
+            a = x.s,
+            b = (y = new Big(y)).s;
+
+        // Signs differ?
+        if (a != b) {
+            y.s = -b;
+            return x.minus(y);
+        }
+
+        var xe = x.e,
+            xc = x.c,
+            ye = y.e,
+            yc = y.c;
+
+        // Either zero?
+        if (!xc[0] || !yc[0]) {
+
+            // y is non-zero? x is non-zero? Or both are zero.
+            return yc[0] ? y : new Big(xc[0] ? x : a * 0);
+        }
+        xc = xc.slice();
+
+        // Prepend zeros to equalise exponents.
+        // Note: Faster to use reverse then do unshifts.
+        if (a = xe - ye) {
+
+            if (a > 0) {
+                ye = xe;
+                t = yc;
+            } else {
+                a = -a;
+                t = xc;
+            }
+
+            t.reverse();
+            for (; a--; t.push(0)) {
+            }
+            t.reverse();
+        }
+
+        // Point xc to the longer array.
+        if (xc.length - yc.length < 0) {
+            t = yc;
+            yc = xc;
+            xc = t;
+        }
+        a = yc.length;
+
+        /*
+         * Only start adding at yc.length - 1 as the further digits of xc can be
+         * left as they are.
+         */
+        for (b = 0; a;) {
+            b = (xc[--a] = xc[a] + yc[a] + b) / 10 | 0;
+            xc[a] %= 10;
+        }
+
+        // No need to check for zero, as +x + +y != 0 && -x + -y != 0
+
+        if (b) {
+            xc.unshift(b);
+            ++ye;
+        }
+
+         // Remove trailing zeros.
+        for (a = xc.length; xc[--a] === 0; xc.pop()) {
+        }
+
+        y.c = xc;
+        y.e = ye;
+
+        return y;
+    };
+
+
+    /*
+     * Return a Big whose value is the value of this Big raised to the power n.
+     * If n is negative, round, if necessary, to a maximum of Big.DP decimal
+     * places using rounding mode Big.RM.
+     *
+     * n {number} Integer, -MAX_POWER to MAX_POWER inclusive.
+     */
+    P.pow = function (n) {
+        var x = this,
+            one = new x.constructor(1),
+            y = one,
+            isNeg = n < 0;
+
+        if (n !== ~~n || n < -MAX_POWER || n > MAX_POWER) {
+            throwErr('!pow!');
+        }
+
+        n = isNeg ? -n : n;
+
+        for (;;) {
+
+            if (n & 1) {
+                y = y.times(x);
+            }
+            n >>= 1;
+
+            if (!n) {
+                break;
+            }
+            x = x.times(x);
+        }
+
+        return isNeg ? one.div(y) : y;
+    };
+
+
+    /*
+     * Return a new Big whose value is the value of this Big rounded to a
+     * maximum of dp decimal places using rounding mode rm.
+     * If dp is not specified, round to 0 decimal places.
+     * If rm is not specified, use Big.RM.
+     *
+     * [dp] {number} Integer, 0 to MAX_DP inclusive.
+     * [rm] 0, 1, 2 or 3 (ROUND_DOWN, ROUND_HALF_UP, ROUND_HALF_EVEN, ROUND_UP)
+     */
+    P.round = function (dp, rm) {
+        var x = this,
+            Big = x.constructor;
+
+        if (dp == null) {
+            dp = 0;
+        } else if (dp !== ~~dp || dp < 0 || dp > MAX_DP) {
+            throwErr('!round!');
+        }
+        rnd(x = new Big(x), dp, rm == null ? Big.RM : rm);
+
+        return x;
+    };
+
+
+    /*
+     * Return a new Big whose value is the square root of the value of this Big,
+     * rounded, if necessary, to a maximum of Big.DP decimal places using
+     * rounding mode Big.RM.
+     */
+    P.sqrt = function () {
+        var estimate, r, approx,
+            x = this,
+            Big = x.constructor,
+            xc = x.c,
+            i = x.s,
+            e = x.e,
+            half = new Big('0.5');
+
+        // Zero?
+        if (!xc[0]) {
+            return new Big(x);
+        }
+
+        // If negative, throw NaN.
+        if (i < 0) {
+            throwErr(NaN);
+        }
+
+        // Estimate.
+        i = Math.sqrt(x.toString());
+
+        // Math.sqrt underflow/overflow?
+        // Pass x to Math.sqrt as integer, then adjust the result exponent.
+        if (i === 0 || i === 1 / 0) {
+            estimate = xc.join('');
+
+            if (!(estimate.length + e & 1)) {
+                estimate += '0';
+            }
+
+            r = new Big( Math.sqrt(estimate).toString() );
+            r.e = ((e + 1) / 2 | 0) - (e < 0 || e & 1);
+        } else {
+            r = new Big(i.toString());
+        }
+
+        i = r.e + (Big.DP += 4);
+
+        // Newton-Raphson iteration.
+        do {
+            approx = r;
+            r = half.times( approx.plus( x.div(approx) ) );
+        } while ( approx.c.slice(0, i).join('') !==
+                       r.c.slice(0, i).join('') );
+
+        rnd(r, Big.DP -= 4, Big.RM);
+
+        return r;
+    };
+
+
+    /*
+     * Return a new Big whose value is the value of this Big times the value of
+     * Big y.
+     */
+    P.mul = P.times = function (y) {
+        var c,
+            x = this,
+            Big = x.constructor,
+            xc = x.c,
+            yc = (y = new Big(y)).c,
+            a = xc.length,
+            b = yc.length,
+            i = x.e,
+            j = y.e;
+
+        // Determine sign of result.
+        y.s = x.s == y.s ? 1 : -1;
+
+        // Return signed 0 if either 0.
+        if (!xc[0] || !yc[0]) {
+            return new Big(y.s * 0);
+        }
+
+        // Initialise exponent of result as x.e + y.e.
+        y.e = i + j;
+
+        // If array xc has fewer digits than yc, swap xc and yc, and lengths.
+        if (a < b) {
+            c = xc;
+            xc = yc;
+            yc = c;
+            j = a;
+            a = b;
+            b = j;
+        }
+
+        // Initialise coefficient array of result with zeros.
+        for (c = new Array(j = a + b); j--; c[j] = 0) {
+        }
+
+        // Multiply.
+
+        // i is initially xc.length.
+        for (i = b; i--;) {
+            b = 0;
+
+            // a is yc.length.
+            for (j = a + i; j > i;) {
+
+                // Current sum of products at this digit position, plus carry.
+                b = c[j] + yc[i] * xc[j - i - 1] + b;
+                c[j--] = b % 10;
+
+                // carry
+                b = b / 10 | 0;
+            }
+            c[j] = (c[j] + b) % 10;
+        }
+
+        // Increment result exponent if there is a final carry.
+        if (b) {
+            ++y.e;
+        }
+
+        // Remove any leading zero.
+        if (!c[0]) {
+            c.shift();
+        }
+
+        // Remove trailing zeros.
+        for (i = c.length; !c[--i]; c.pop()) {
+        }
+        y.c = c;
+
+        return y;
+    };
+
+
+    /*
+     * Return a string representing the value of this Big.
+     * Return exponential notation if this Big has a positive exponent equal to
+     * or greater than Big.E_POS, or a negative exponent equal to or less than
+     * Big.E_NEG.
+     */
+    P.toString = P.valueOf = P.toJSON = function () {
+        var x = this,
+            Big = x.constructor,
+            e = x.e,
+            str = x.c.join(''),
+            strL = str.length;
+
+        // Exponential notation?
+        if (e <= Big.E_NEG || e >= Big.E_POS) {
+            str = str.charAt(0) + (strL > 1 ? '.' + str.slice(1) : '') +
+              (e < 0 ? 'e' : 'e+') + e;
+
+        // Negative exponent?
+        } else if (e < 0) {
+
+            // Prepend zeros.
+            for (; ++e; str = '0' + str) {
+            }
+            str = '0.' + str;
+
+        // Positive exponent?
+        } else if (e > 0) {
+
+            if (++e > strL) {
+
+                // Append zeros.
+                for (e -= strL; e-- ; str += '0') {
+                }
+            } else if (e < strL) {
+                str = str.slice(0, e) + '.' + str.slice(e);
+            }
+
+        // Exponent zero.
+        } else if (strL > 1) {
+            str = str.charAt(0) + '.' + str.slice(1);
+        }
+
+        // Avoid '-0'
+        return x.s < 0 && x.c[0] ? '-' + str : str;
+    };
+
+
+    /*
+     ***************************************************************************
+     * If toExponential, toFixed, toPrecision and format are not required they
+     * can safely be commented-out or deleted. No redundant code will be left.
+     * format is used only by toExponential, toFixed and toPrecision.
+     ***************************************************************************
+     */
+
+
+    /*
+     * Return a string representing the value of this Big in exponential
+     * notation to dp fixed decimal places and rounded, if necessary, using
+     * Big.RM.
+     *
+     * [dp] {number} Integer, 0 to MAX_DP inclusive.
+     */
+    P.toExponential = function (dp) {
+
+        if (dp == null) {
+            dp = this.c.length - 1;
+        } else if (dp !== ~~dp || dp < 0 || dp > MAX_DP) {
+            throwErr('!toExp!');
+        }
+
+        return format(this, dp, 1);
+    };
+
+
+    /*
+     * Return a string representing the value of this Big in normal notation
+     * to dp fixed decimal places and rounded, if necessary, using Big.RM.
+     *
+     * [dp] {number} Integer, 0 to MAX_DP inclusive.
+     */
+    P.toFixed = function (dp) {
+        var str,
+            x = this,
+            Big = x.constructor,
+            neg = Big.E_NEG,
+            pos = Big.E_POS;
+
+        // Prevent the possibility of exponential notation.
+        Big.E_NEG = -(Big.E_POS = 1 / 0);
+
+        if (dp == null) {
+            str = x.toString();
+        } else if (dp === ~~dp && dp >= 0 && dp <= MAX_DP) {
+            str = format(x, x.e + dp);
+
+            // (-0).toFixed() is '0', but (-0.1).toFixed() is '-0'.
+            // (-0).toFixed(1) is '0.0', but (-0.01).toFixed(1) is '-0.0'.
+            if (x.s < 0 && x.c[0] && str.indexOf('-') < 0) {
+        //E.g. -0.5 if rounded to -0 will cause toString to omit the minus sign.
+                str = '-' + str;
+            }
+        }
+        Big.E_NEG = neg;
+        Big.E_POS = pos;
+
+        if (!str) {
+            throwErr('!toFix!');
+        }
+
+        return str;
+    };
+
+
+    /*
+     * Return a string representing the value of this Big rounded to sd
+     * significant digits using Big.RM. Use exponential notation if sd is less
+     * than the number of digits necessary to represent the integer part of the
+     * value in normal notation.
+     *
+     * sd {number} Integer, 1 to MAX_DP inclusive.
+     */
+    P.toPrecision = function (sd) {
+
+        if (sd == null) {
+            return this.toString();
+        } else if (sd !== ~~sd || sd < 1 || sd > MAX_DP) {
+            throwErr('!toPre!');
+        }
+
+        return format(this, sd - 1, 2);
+    };
+
+
+    // Export
+
+
+    Big = bigFactory();
+
+    //AMD.
+    if (typeof define === 'function' && define.amd) {
+        define(function () {
+            return Big;
+        });
+
+    // Node and other CommonJS-like environments that support module.exports.
+    } else if (typeof module !== 'undefined' && module.exports) {
+        module.exports = Big;
+
+    //Browser.
+    } else {
+        global.Big = Big;
+    }
+})(this);
+
+},{}],30:[function(require,module,exports){
 'use strict';
 
 var Specification = require('./Specification');
@@ -3378,7 +4773,7 @@ module.exports = function () {
 	return Specification.AndSpecification;
 }();
 
-},{"./Specification":37}],29:[function(require,module,exports){
+},{"./Specification":39}],31:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -3452,7 +4847,7 @@ module.exports = function () {
 	return ContainedSpecification;
 }();
 
-},{"./../lang/assert":14,"./Specification":37}],30:[function(require,module,exports){
+},{"./../lang/assert":15,"./Specification":39}],32:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -3524,7 +4919,7 @@ module.exports = function () {
 	return ContainsSpecification;
 }();
 
-},{"./Specification":37}],31:[function(require,module,exports){
+},{"./Specification":39}],33:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -3589,7 +4984,7 @@ module.exports = function () {
 	return FailSpecification;
 }();
 
-},{"./Specification":37}],32:[function(require,module,exports){
+},{"./Specification":39}],34:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -3656,7 +5051,7 @@ module.exports = function () {
 	return NanSpecification;
 }();
 
-},{"./../lang/is":17,"./Specification":37}],33:[function(require,module,exports){
+},{"./../lang/is":18,"./Specification":39}],35:[function(require,module,exports){
 'use strict';
 
 var Specification = require('./Specification');
@@ -3667,7 +5062,7 @@ module.exports = function () {
 	return Specification.NotSpecification;
 }();
 
-},{"./Specification":37}],34:[function(require,module,exports){
+},{"./Specification":39}],36:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -3734,7 +5129,7 @@ module.exports = function () {
 	return NumericSpecification;
 }();
 
-},{"./../lang/is":17,"./Specification":37}],35:[function(require,module,exports){
+},{"./../lang/is":18,"./Specification":39}],37:[function(require,module,exports){
 'use strict';
 
 var Specification = require('./Specification');
@@ -3745,7 +5140,7 @@ module.exports = function () {
 	return Specification.OrSpecification;
 }();
 
-},{"./Specification":37}],36:[function(require,module,exports){
+},{"./Specification":39}],38:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -3810,7 +5205,7 @@ module.exports = function () {
 	return PassSpecification;
 }();
 
-},{"./Specification":37}],37:[function(require,module,exports){
+},{"./Specification":39}],39:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -3990,7 +5385,7 @@ module.exports = function () {
 	return Specification;
 }();
 
-},{"./../lang/assert":14}],38:[function(require,module,exports){
+},{"./../lang/assert":15}],40:[function(require,module,exports){
 'use strict';
 
 var Stack = require('./../../../collections/Stack');
@@ -4109,7 +5504,7 @@ describe('When a Stack is constructed', function () {
 	});
 });
 
-},{"./../../../collections/Stack":2}],39:[function(require,module,exports){
+},{"./../../../collections/Stack":2}],41:[function(require,module,exports){
 'use strict';
 
 var Tree = require('./../../../collections/Tree');
@@ -4168,7 +5563,7 @@ describe('When a Tree is constructed', function () {
 	});
 });
 
-},{"./../../../collections/Tree":3}],40:[function(require,module,exports){
+},{"./../../../collections/Tree":3}],42:[function(require,module,exports){
 'use strict';
 
 var ComparatorBuilder = require('./../../../../collections/sorting/ComparatorBuilder');
@@ -4258,7 +5653,7 @@ describe('When a ComparatorBuilder is composed with two comparators', function (
     });
 });
 
-},{"./../../../../collections/sorting/ComparatorBuilder":4}],41:[function(require,module,exports){
+},{"./../../../../collections/sorting/ComparatorBuilder":4}],43:[function(require,module,exports){
 'use strict';
 
 var comparators = require('./../../../../collections/sorting/comparators');
@@ -4365,7 +5760,7 @@ describe('When using the "compareStrings" comparator', function () {
 	});
 });
 
-},{"./../../../../collections/sorting/comparators":5}],42:[function(require,module,exports){
+},{"./../../../../collections/sorting/comparators":5}],44:[function(require,module,exports){
 'use strict';
 
 var Disposable = require('./../../../../lang/Disposable');
@@ -4576,7 +5971,7 @@ describe('When an DisposableStack is constructed', function () {
 	});
 });
 
-},{"./../../../../collections/specialized/DisposableStack":6,"./../../../../lang/Disposable":12}],43:[function(require,module,exports){
+},{"./../../../../collections/specialized/DisposableStack":6,"./../../../../lang/Disposable":13}],45:[function(require,module,exports){
 'use strict';
 
 var EvictingList = require('./../../../../collections/specialized/EvictingList');
@@ -4801,7 +6196,7 @@ describe('When an EvictingList is constructed (with a capacity of 3)', function 
 	});
 });
 
-},{"./../../../../collections/specialized/EvictingList":7}],44:[function(require,module,exports){
+},{"./../../../../collections/specialized/EvictingList":7}],46:[function(require,module,exports){
 'use strict';
 
 var EvictingMap = require('./../../../../collections/specialized/EvictingMap');
@@ -5084,7 +6479,7 @@ describe('When an EvictingMap is constructed (with a capacity of 3)', function (
 	});
 });
 
-},{"./../../../../collections/specialized/EvictingMap":8}],45:[function(require,module,exports){
+},{"./../../../../collections/specialized/EvictingMap":8}],47:[function(require,module,exports){
 'use strict';
 
 var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -5159,7 +6554,7 @@ describe('When a CommandHandler is created from a function', function () {
 	});
 });
 
-},{"./../../../commands/CommandHandler":9}],46:[function(require,module,exports){
+},{"./../../../commands/CommandHandler":9}],48:[function(require,module,exports){
 'use strict';
 
 var CommandHandler = require('./../../../commands/CommandHandler');
@@ -5221,7 +6616,7 @@ describe('When a CompositeCommandHandler is created', function () {
 	});
 });
 
-},{"./../../../commands/CommandHandler":9,"./../../../commands/CompositeCommandHandler":10}],47:[function(require,module,exports){
+},{"./../../../commands/CommandHandler":9,"./../../../commands/CompositeCommandHandler":10}],49:[function(require,module,exports){
 'use strict';
 
 var CommandHandler = require('./../../../commands/CommandHandler');
@@ -5303,7 +6698,245 @@ describe('When a MappedCommandHandler is created with two mapped commands', func
 	});
 });
 
-},{"./../../../commands/CommandHandler":9,"./../../../commands/MappedCommandHandler":11}],48:[function(require,module,exports){
+},{"./../../../commands/CommandHandler":9,"./../../../commands/MappedCommandHandler":11}],50:[function(require,module,exports){
+'use strict';
+
+var Decimal = require('./../../../lang/Decimal');
+
+describe('When adding values that cause floating point problems (e.g. 1.1 + 2.2 != 3.3)', function () {
+	'use strict';
+
+	var a;
+	var b;
+	var c;
+
+	beforeEach(function () {
+		a = new Decimal(1.1);
+		b = new Decimal(2.2);
+
+		c = a.add(b);
+	});
+
+	describe('and exported to a floating point value', function () {
+		var f;
+
+		beforeEach(function () {
+			f = c.toFloat();
+		});
+
+		it('should sum to 3.3 (not 3.3000000000000003)', function () {
+			expect(f).toEqual(3.3);
+		});
+	});
+});
+
+describe('When working with values that loss of precision occurs with floating point math (e.g. 100 trillion plus one third)', function () {
+	'use strict';
+
+	var a;
+	var b;
+	var c;
+
+	beforeEach(function () {
+		a = new Decimal(100000000000000);
+		b = new Decimal(1 / 8);
+
+		c = a.add(b);
+	});
+
+	describe('and exported to a fixed string', function () {
+		var f;
+
+		beforeEach(function () {
+			f = c.toFixed();
+		});
+
+		it('should maintain precision', function () {
+			expect(f).toEqual("100000000000000.125");
+		});
+	});
+});
+
+describe('When accessing the "Zero" singleton', function () {
+	'use strict';
+
+	var zero;
+
+	beforeEach(function () {
+		zero = Decimal.ZERO;
+	});
+
+	it('should not be positive', function () {
+		expect(zero.getIsPositive()).toEqual(false);
+	});
+
+	it('should not be negative', function () {
+		expect(zero.getIsNegative()).toEqual(false);
+	});
+
+	it('should be zero', function () {
+		expect(zero.getIsZero()).toEqual(true);
+	});
+
+	it('should approximate zero', function () {
+		expect(zero.getIsZero(true)).toEqual(true);
+	});
+
+	it('the floating point export should equal zero', function () {
+		expect(zero.toFloat()).toEqual(0);
+	});
+
+	it('the fixed export should equal "0"', function () {
+		expect(zero.toFixed()).toEqual('0');
+	});
+});
+
+describe('When instantiating a Decimal', function () {
+	'use strict';
+
+	describe('from an object', function () {
+		it('should throw', function () {
+			expect(function () {
+				var d = new Decimal({});
+			}).toThrow();
+		});
+	});
+
+	describe('from a null value', function () {
+		it('should throw', function () {
+			expect(function () {
+				var d = new Decimal(null);
+			}).toThrow();
+		});
+	});
+
+	describe('from an undefined value', function () {
+		it('should throw', function () {
+			expect(function () {
+				var d = new Decimal(undefined);
+			}).toThrow();
+		});
+	});
+
+	describe('from the number forty two', function () {
+		var d;
+
+		beforeEach(function () {
+			d = new Decimal(42);
+		});
+
+		it('should not be positive', function () {
+			expect(d.getIsPositive()).toEqual(true);
+		});
+
+		it('should not be negative', function () {
+			expect(d.getIsNegative()).toEqual(false);
+		});
+
+		it('should be zero', function () {
+			expect(d.getIsZero()).toEqual(false);
+		});
+
+		it('should approximate zero', function () {
+			expect(d.getIsZero(true)).toEqual(false);
+		});
+
+		it('the floating point export should equal the meaning of life', function () {
+			expect(d.toFloat()).toEqual(42);
+		});
+
+		it('the fixed export should equal "42"', function () {
+			expect(d.toFixed()).toEqual('42');
+		});
+
+		describe('and adding the number one', function () {
+			var e;
+
+			beforeEach(function () {
+				e = d.add(1);
+			});
+
+			it('should return a Decimal instance', function () {
+				expect(e instanceof Decimal).toEqual(true);
+			});
+
+			it('should be a different instance', function () {
+				expect(e).not.toBe(d);
+			});
+
+			it('should equal forty three', function () {
+				expect(e.toFloat()).toEqual(43);
+			});
+
+			it('should not mutate the original instance', function () {
+				expect(d.toFloat()).toEqual(42);
+			});
+		});
+
+		describe('and adding a Decimal having a value of one', function () {
+			var e;
+			var x;
+
+			beforeEach(function () {
+				e = d.add(x = new Decimal(1));
+			});
+
+			it('should return a Decimal instance', function () {
+				expect(e instanceof Decimal).toEqual(true);
+			});
+
+			it('should be a different instance', function () {
+				expect(e).not.toBe(d);
+			});
+
+			it('should equal forty three', function () {
+				expect(e.toFloat()).toEqual(43);
+			});
+
+			it('should not mutate the original instance', function () {
+				expect(d.toFloat()).toEqual(42);
+			});
+
+			it('should not mutate the operand', function () {
+				expect(x.toFloat()).toEqual(1);
+			});
+		});
+
+		describe('and dividing by zero', function () {
+			it('should throw', function () {
+				expect(function () {
+					var e = d.divideBy(0);
+				}).toThrow();
+			});
+		});
+	});
+
+	describe('from the string "1"', function () {
+		var d;
+
+		beforeEach(function () {
+			d = new Decimal("1");
+		});
+
+		it('should be positive', function () {
+			expect(d.getIsPositive()).toEqual(true);
+		});
+
+		it('should not be negative', function () {
+			expect(d.getIsNegative()).toEqual(false);
+		});
+
+		it('should be zero', function () {
+			expect(d.getIsZero()).toEqual(false);
+		});
+
+		it('the fixed export should equal "1"', function () {
+			expect(d.toFixed()).toEqual('1');
+		});
+	});
+});
+
+},{"./../../../lang/Decimal":12}],51:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -5462,7 +7095,7 @@ describe('When a Disposable.fromAction creates a Disposable', function () {
 	});
 });
 
-},{"./../../../lang/Disposable":12}],49:[function(require,module,exports){
+},{"./../../../lang/Disposable":13}],52:[function(require,module,exports){
 'use strict';
 
 var array = require('./../../../lang/array');
@@ -6079,7 +7712,7 @@ describe('when calculating the "symmetric difference" of two arrays', function (
 	});
 });
 
-},{"./../../../lang/array":13}],50:[function(require,module,exports){
+},{"./../../../lang/array":14}],53:[function(require,module,exports){
 'use strict';
 
 var attributes = require('./../../../lang/attributes');
@@ -6750,7 +8383,7 @@ describe('When "attributes.read" is used with a non-default separator', function
 	});
 });
 
-},{"./../../../lang/attributes":15}],51:[function(require,module,exports){
+},{"./../../../lang/attributes":16}],54:[function(require,module,exports){
 'use strict';
 
 var dateUtilities = require('./../../../lang/date');
@@ -6765,7 +8398,7 @@ describe('When extracting the "short" day of week', function () {
 	});
 });
 
-},{"./../../../lang/date":16}],52:[function(require,module,exports){
+},{"./../../../lang/date":17}],55:[function(require,module,exports){
 'use strict';
 
 var is = require('./../../../lang/is');
@@ -7256,7 +8889,7 @@ describe('When checking an undefined value', function () {
 	});
 });
 
-},{"./../../../lang/is":17}],53:[function(require,module,exports){
+},{"./../../../lang/is":18}],56:[function(require,module,exports){
 'use strict';
 
 var mask = require('./../../../lang/mask');
@@ -7413,7 +9046,7 @@ describe('When working with an empty flags collection', function () {
 	});
 });
 
-},{"./../../../lang/mask":18}],54:[function(require,module,exports){
+},{"./../../../lang/mask":19}],57:[function(require,module,exports){
 'use strict';
 
 var math = require('./../../../lang/math');
@@ -7476,7 +9109,7 @@ describe('When using math.approximate', function () {
 	});
 });
 
-},{"./../../../lang/math":19}],55:[function(require,module,exports){
+},{"./../../../lang/math":20}],58:[function(require,module,exports){
 'use strict';
 
 var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -7574,7 +9207,7 @@ describe('When using memoize.simple', function () {
 	});
 });
 
-},{"./../../../lang/memoize":20}],56:[function(require,module,exports){
+},{"./../../../lang/memoize":21}],59:[function(require,module,exports){
 'use strict';
 
 var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -7827,7 +9460,7 @@ describe('When running a deep comparison', function () {
 	});
 });
 
-},{"./../../../lang/object":21}],57:[function(require,module,exports){
+},{"./../../../lang/object":22}],60:[function(require,module,exports){
 'use strict';
 
 var promise = require('./../../../lang/promise');
@@ -8805,7 +10438,7 @@ describe('When "promise.build" is used to create a promise', function () {
 	});
 });
 
-},{"./../../../lang/promise":22}],58:[function(require,module,exports){
+},{"./../../../lang/promise":23}],61:[function(require,module,exports){
 'use strict';
 
 var random = require('./../../../lang/random');
@@ -8849,7 +10482,7 @@ describe('When generating a random number with a range of multiple values', func
 	});
 });
 
-},{"./../../../lang/random":23}],59:[function(require,module,exports){
+},{"./../../../lang/random":24}],62:[function(require,module,exports){
 'use strict';
 
 var string = require('./../../../lang/string');
@@ -8994,7 +10627,7 @@ describe('When left padding a string', function () {
 	});
 });
 
-},{"./../../../lang/string":24}],60:[function(require,module,exports){
+},{"./../../../lang/string":25}],63:[function(require,module,exports){
 'use strict';
 
 var EventMap = require('./../../../messaging/EventMap');
@@ -9172,7 +10805,7 @@ describe('When an EventMap is constructed', function () {
 	});
 });
 
-},{"./../../../messaging/EventMap":26}],61:[function(require,module,exports){
+},{"./../../../messaging/EventMap":27}],64:[function(require,module,exports){
 'use strict';
 
 var Disposable = require('./../../../lang/Disposable');
@@ -9356,7 +10989,7 @@ describe('When an Event is constructed', function () {
 	});
 });
 
-},{"./../../../lang/Disposable":12,"./../../../messaging/Event":25}],62:[function(require,module,exports){
+},{"./../../../lang/Disposable":13,"./../../../messaging/Event":26}],65:[function(require,module,exports){
 'use strict';
 
 var Disposable = require('./../../../lang/Disposable');
@@ -9493,7 +11126,7 @@ describe('When an Model is constructed with "firstName" and "lastName" propertie
 	});
 });
 
-},{"./../../../lang/Disposable":12,"./../../../models/Model":27}],63:[function(require,module,exports){
+},{"./../../../lang/Disposable":13,"./../../../models/Model":28}],66:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -9633,7 +11266,7 @@ describe('When an AndSpecification is constructed', function () {
 	});
 });
 
-},{"./../../../specifications/AndSpecification":28,"./../../../specifications/Specification":37}],64:[function(require,module,exports){
+},{"./../../../specifications/AndSpecification":30,"./../../../specifications/Specification":39}],67:[function(require,module,exports){
 'use strict';
 
 var ContainedSpecification = require('./../../../specifications/ContainedSpecification');
@@ -9697,7 +11330,7 @@ describe('When a ContainedSpecification is constructed', function () {
 	});
 });
 
-},{"./../../../specifications/ContainedSpecification":29}],65:[function(require,module,exports){
+},{"./../../../specifications/ContainedSpecification":31}],68:[function(require,module,exports){
 'use strict';
 
 var ContainsSpecification = require('./../../../specifications/ContainsSpecification');
@@ -9749,7 +11382,7 @@ describe('When a ContainsSpecification is constructed', function () {
 	});
 });
 
-},{"./../../../specifications/ContainsSpecification":30}],66:[function(require,module,exports){
+},{"./../../../specifications/ContainsSpecification":32}],69:[function(require,module,exports){
 'use strict';
 
 var FailSpecification = require('./../../../specifications/FailSpecification');
@@ -9801,7 +11434,7 @@ describe('When a FailSpecification is constructed', function () {
 	});
 });
 
-},{"./../../../specifications/FailSpecification":31}],67:[function(require,module,exports){
+},{"./../../../specifications/FailSpecification":33}],70:[function(require,module,exports){
 'use strict';
 
 var NanSpecification = require('./../../../specifications/NanSpecification');
@@ -9876,7 +11509,7 @@ describe('When a NanSpecification is constructed', function () {
 	});
 });
 
-},{"./../../../specifications/NanSpecification":32}],68:[function(require,module,exports){
+},{"./../../../specifications/NanSpecification":34}],71:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -10086,7 +11719,7 @@ describe('When a Specification (that always succeeds) is constructed', function 
 	});
 });
 
-},{"./../../../specifications/NotSpecification":33,"./../../../specifications/Specification":37}],69:[function(require,module,exports){
+},{"./../../../specifications/NotSpecification":35,"./../../../specifications/Specification":39}],72:[function(require,module,exports){
 'use strict';
 
 var NumericSpecification = require('./../../../specifications/NumericSpecification');
@@ -10149,7 +11782,7 @@ describe('When a NumericSpecification is constructed', function () {
 	});
 });
 
-},{"./../../../specifications/NumericSpecification":34}],70:[function(require,module,exports){
+},{"./../../../specifications/NumericSpecification":36}],73:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -10289,7 +11922,7 @@ describe('When an OrSpecification is constructed', function () {
 	});
 });
 
-},{"./../../../specifications/OrSpecification":35,"./../../../specifications/Specification":37}],71:[function(require,module,exports){
+},{"./../../../specifications/OrSpecification":37,"./../../../specifications/Specification":39}],74:[function(require,module,exports){
 'use strict';
 
 var PassSpecification = require('./../../../specifications/PassSpecification');
@@ -10341,7 +11974,7 @@ describe('When a PassSpecification is constructed', function () {
 	});
 });
 
-},{"./../../../specifications/PassSpecification":36}],72:[function(require,module,exports){
+},{"./../../../specifications/PassSpecification":38}],75:[function(require,module,exports){
 'use strict';
 
 var RateLimiter = require('./../../../timing/RateLimiter');
@@ -10575,7 +12208,7 @@ describe('When a RateLimiter is constructed (2 execution per 25 milliseconds)', 
 	});
 });
 
-},{"./../../../timing/RateLimiter":76}],73:[function(require,module,exports){
+},{"./../../../timing/RateLimiter":79}],76:[function(require,module,exports){
 'use strict';
 
 var Scheduler = require('./../../../timing/Scheduler');
@@ -10799,7 +12432,7 @@ describe('When a backoff is used', function () {
 	});
 });
 
-},{"./../../../timing/Scheduler":77}],74:[function(require,module,exports){
+},{"./../../../timing/Scheduler":80}],77:[function(require,module,exports){
 'use strict';
 
 var Serializer = require('./../../../timing/Serializer');
@@ -10888,7 +12521,7 @@ function getSpy(results, fail) {
 	});
 }
 
-},{"./../../../timing/Serializer":78}],75:[function(require,module,exports){
+},{"./../../../timing/Serializer":81}],78:[function(require,module,exports){
 'use strict';
 
 var WindowCounter = require('./../../../timing/WindowCounter');
@@ -10954,7 +12587,7 @@ describe('When a WindowCounter is constructed', function () {
 	});
 });
 
-},{"./../../../timing/WindowCounter":79}],76:[function(require,module,exports){
+},{"./../../../timing/WindowCounter":82}],79:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -11122,7 +12755,7 @@ module.exports = function () {
 	return RateLimiter;
 }();
 
-},{"./../collections/Queue":1,"./../lang/Disposable":12,"./../lang/assert":14,"./../lang/promise":22,"./Scheduler":77}],77:[function(require,module,exports){
+},{"./../collections/Queue":1,"./../lang/Disposable":13,"./../lang/assert":15,"./../lang/promise":23,"./Scheduler":80}],80:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -11373,7 +13006,7 @@ module.exports = function () {
 	return Scheduler;
 }();
 
-},{"./../lang/Disposable":12,"./../lang/assert":14,"./../lang/is":17,"./../lang/object":21,"./../lang/promise":22}],78:[function(require,module,exports){
+},{"./../lang/Disposable":13,"./../lang/assert":15,"./../lang/is":18,"./../lang/object":22,"./../lang/promise":23}],81:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -11537,7 +13170,7 @@ module.exports = function () {
 	return Serializer;
 }();
 
-},{"./../collections/Queue":1,"./../lang/Disposable":12,"./../lang/assert":14,"./../lang/promise":22}],79:[function(require,module,exports){
+},{"./../collections/Queue":1,"./../lang/Disposable":13,"./../lang/assert":15,"./../lang/promise":23}],82:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
@@ -11698,4 +13331,4 @@ module.exports = function () {
 	return WindowCounter;
 }();
 
-},{"./../collections/Queue":1,"./../lang/assert":14}]},{},[40,41,42,43,44,38,39,45,46,47,49,50,51,48,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75]);
+},{"./../collections/Queue":1,"./../lang/assert":15}]},{},[42,43,44,45,46,40,41,47,48,49,52,53,54,50,51,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78]);

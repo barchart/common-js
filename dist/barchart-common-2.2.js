@@ -1634,6 +1634,7 @@ module.exports = function () {
 
 			/**
     * @protected
+    * @abstract
     * @ignore
     */
 
@@ -1730,25 +1731,25 @@ module.exports = function () {
 },{"./assert":17}],16:[function(require,module,exports){
 'use strict';
 
-/**
- * Utilities for working with arrays.
- *
- * @public
- * @module lang/array
- */
-
 var assert = require('./assert'),
     is = require('./is');
 
 module.exports = function () {
 	'use strict';
 
-	var array = {
+	/**
+  * Utilities for working with arrays.
+  *
+  * @public
+  * @module lang/array
+  */
+
+	return {
 		/**
    * Returns the unique items from an array, where the unique
    * key is determined via a strict equality check.
    *
-   * @param a
+   * @param {Array} a
    * @param {Function} keySelector - The function, when applied to an item yields a unique key.
    */
 		unique: function unique(a) {
@@ -1763,7 +1764,7 @@ module.exports = function () {
    * Returns the unique items from an array, where the unique
    * key is determined by a delegate.
    *
-   * @param a
+   * @param {Array} a
    * @param {Function} keySelector - The function, when applied to an item yields a unique key.
    */
 		uniqueBy: function uniqueBy(a, keySelector) {
@@ -1777,6 +1778,16 @@ module.exports = function () {
 				}) === index;
 			});
 		},
+
+		/**
+   * Splits array into groups and returns an object (where the properties have
+   * are arrays). Unlike the indexBy function, there can be many items
+   * which share the same key.
+   *
+   * @param {Array} a
+   * @param {Function} keySelector - The function, when applied to an item yields a key.
+   * @returns {Object}
+   */
 		groupBy: function groupBy(a, keySelector) {
 			assert.argumentIsArray(a, 'a');
 			assert.argumentIsRequired(keySelector, 'keySelector', Function);
@@ -1793,6 +1804,16 @@ module.exports = function () {
 				return groups;
 			}, {});
 		},
+
+		/**
+   * Splits array into groups and returns an object (where the properties are items from the
+   * original array). Unlike the groupBy, Only one item can have a given key
+   * value.
+   *
+   * @param {Array} a
+   * @param {Function} keySelector - The function, when applied to an item yields a unique key.
+   * @returns {Object}
+   */
 		indexBy: function indexBy(a, keySelector) {
 			assert.argumentIsArray(a, 'a');
 			assert.argumentIsRequired(keySelector, 'keySelector', Function);
@@ -1809,6 +1830,13 @@ module.exports = function () {
 				return map;
 			}, {});
 		},
+
+		/**
+   * Returns a new array containing all but the last item.
+   *
+   * @param {Array} a
+   * @returns {Array}
+   */
 		dropRight: function dropRight(a) {
 			assert.argumentIsArray(a, 'a');
 
@@ -1820,6 +1848,14 @@ module.exports = function () {
 
 			return returnRef;
 		},
+
+		/**
+   * Returns the last item from an array, or an undefined value, if the
+   * array is empty.
+   *
+   * @param {Array} a
+   * @returns {*|undefined}
+   */
 		last: function last(a) {
 			assert.argumentIsArray(a, 'a');
 
@@ -1833,6 +1869,15 @@ module.exports = function () {
 
 			return returnRef;
 		},
+
+		/**
+   * Returns a copy of an array, replacing any item that is itself an array
+   * with the item's items.
+   *
+   * @param {Array} a
+   * @param {Boolean=} recursive - If true, all nested arrays will be flattened.
+   * @returns {Array}
+   */
 		flatten: function flatten(a, recursive) {
 			assert.argumentIsArray(a, 'a');
 			assert.argumentIsOptional(recursive, 'recursive', Boolean);
@@ -1844,17 +1889,18 @@ module.exports = function () {
 			if (recursive && flat.some(function (x) {
 				return is.array(x);
 			})) {
-				flat = array.flatten(flat, true);
+				flat = this.flatten(flat, true);
 			}
 
 			return flat;
 		},
 
 		/**
-   * Breaks an array into smaller arrays.
+   * Breaks an array into smaller arrays, returning an array of arrays.
    *
-   * @param a
-   * @param size
+   * @param {Array} a
+   * @param {Number} size - The maximum number of items per partition.
+   * @param {Array<Array>}
    */
 		partition: function partition(a, size) {
 			assert.argumentIsArray(a, 'a');
@@ -1906,7 +1952,7 @@ module.exports = function () {
    * @returns {Array}
    */
 		differenceSymmetric: function differenceSymmetric(a, b) {
-			return array.union(array.difference(a, b), array.difference(b, a));
+			return this.union(this.difference(a, b), this.difference(b, a));
 		},
 
 		/**
@@ -1961,8 +2007,6 @@ module.exports = function () {
 			return returnRef;
 		}
 	};
-
-	return array;
 }();
 
 },{"./assert":17,"./is":23}],17:[function(require,module,exports){
@@ -1972,50 +2016,6 @@ var is = require('./is');
 
 module.exports = function () {
 	'use strict';
-
-	var assert = {
-		argumentIsRequired: function argumentIsRequired(variable, variableName, type, typeDescription) {
-			checkArgumentType(variable, variableName, type, typeDescription);
-		},
-		argumentIsOptional: function argumentIsOptional(variable, variableName, type, typeDescription) {
-			if (variable === null || variable === undefined) {
-				return;
-			}
-
-			checkArgumentType(variable, variableName, type, typeDescription);
-		},
-		argumentIsArray: function argumentIsArray(variable, variableName, itemConstraint, itemConstraintDescription) {
-			assert.argumentIsRequired(variable, variableName, Array);
-
-			if (itemConstraint) {
-				var itemValidator = void 0;
-
-				if (typeof itemConstraint === 'function' && itemConstraint !== Function) {
-					itemValidator = function itemValidator(value, index) {
-						return value instanceof itemConstraint || itemConstraint(value, variableName + '[' + index + ']');
-					};
-				} else {
-					itemValidator = function itemValidator(value, index) {
-						return checkArgumentType(value, variableName, itemConstraint, itemConstraintDescription, index);
-					};
-				}
-
-				variable.forEach(function (v, i) {
-					itemValidator(v, i);
-				});
-			}
-		},
-		areEqual: function areEqual(a, b, descriptionA, descriptionB) {
-			if (a !== b) {
-				throw new Error('The objects must be equal [' + (descriptionA || a.toString()) + '] and [' + (descriptionB || b.toString()) + ']');
-			}
-		},
-		areNotEqual: function areNotEqual(a, b, descriptionA, descriptionB) {
-			if (a === b) {
-				throw new Error('The objects cannot be equal [' + (descriptionA || a.toString()) + '] and [' + (descriptionB || b.toString()) + ']');
-			}
-		}
-	};
 
 	function checkArgumentType(variable, variableName, type, typeDescription, index) {
 		if (type === String) {
@@ -2059,7 +2059,73 @@ module.exports = function () {
 		throw new Error(message);
 	}
 
-	return assert;
+	/**
+  * Utilities checking arguments.
+  *
+  * @public
+  * @module lang/assert
+  */
+	return {
+		/**
+   * Throws an error if an argument doesn't conform to the desired specification.
+   *
+   * @param {*} variable - The value to check.
+   * @param {String} variableName - The name of the value (used for formatting an error message).
+   * @param {*} type - The expected type of the argument.
+   * @param {String=} typeDescription - The description of the expected type (used for formatting an error message).
+   */
+		argumentIsRequired: function argumentIsRequired(variable, variableName, type, typeDescription) {
+			checkArgumentType(variable, variableName, type, typeDescription);
+		},
+
+		/**
+   * A relaxed version of the "argumentIsRequired" function that will not throw if
+   * the value is undefined or null.
+   *
+   * @param {*} variable - The value to check.
+   * @param {String} variableName - The name of the value (used for formatting an error message).
+   * @param {*} type - The expected type of the argument.
+   * @param {String=} typeDescription - The description of the expected type (used for formatting an error message).
+   */
+		argumentIsOptional: function argumentIsOptional(variable, variableName, type, typeDescription) {
+			if (variable === null || variable === undefined) {
+				return;
+			}
+
+			checkArgumentType(variable, variableName, type, typeDescription);
+		},
+		argumentIsArray: function argumentIsArray(variable, variableName, itemConstraint, itemConstraintDescription) {
+			this.argumentIsRequired(variable, variableName, Array);
+
+			if (itemConstraint) {
+				var itemValidator = void 0;
+
+				if (typeof itemConstraint === 'function' && itemConstraint !== Function) {
+					itemValidator = function itemValidator(value, index) {
+						return value instanceof itemConstraint || itemConstraint(value, variableName + '[' + index + ']');
+					};
+				} else {
+					itemValidator = function itemValidator(value, index) {
+						return checkArgumentType(value, variableName, itemConstraint, itemConstraintDescription, index);
+					};
+				}
+
+				variable.forEach(function (v, i) {
+					itemValidator(v, i);
+				});
+			}
+		},
+		areEqual: function areEqual(a, b, descriptionA, descriptionB) {
+			if (a !== b) {
+				throw new Error('The objects must be equal [' + (descriptionA || a.toString()) + '] and [' + (descriptionB || b.toString()) + ']');
+			}
+		},
+		areNotEqual: function areNotEqual(a, b, descriptionA, descriptionB) {
+			if (a === b) {
+				throw new Error('The objects cannot be equal [' + (descriptionA || a.toString()) + '] and [' + (descriptionB || b.toString()) + ']');
+			}
+		}
+	};
 }();
 
 },{"./is":23}],18:[function(require,module,exports){
@@ -2701,8 +2767,10 @@ module.exports = function () {
   * @module lang/promise
   */
 
-	var utilities = {
+	return {
 		timeout: function timeout(promise, _timeout) {
+			var _this = this;
+
 			return Promise.resolve().then(function () {
 				assert.argumentIsRequired(promise, 'promise', Promise, 'Promise');
 				assert.argumentIsRequired(_timeout, 'timeout', Number);
@@ -2711,7 +2779,7 @@ module.exports = function () {
 					throw new Error('Promise timeout must be greater than zero.');
 				}
 
-				return utilities.build(function (resolveCallback, rejectCallback) {
+				return _this.build(function (resolveCallback, rejectCallback) {
 					var pending = true;
 
 					var token = setTimeout(function () {
@@ -2741,6 +2809,8 @@ module.exports = function () {
 			});
 		},
 		map: function map(items, mapper, concurrency) {
+			var _this2 = this;
+
 			return Promise.resolve().then(function () {
 				assert.argumentIsArray(items, 'items');
 				assert.argumentIsRequired(mapper, 'mapper', Function);
@@ -2772,7 +2842,7 @@ module.exports = function () {
 						};
 					});
 
-					mapPromise = utilities.build(function (resolveCallback, rejectCallback) {
+					mapPromise = _this2.build(function (resolveCallback, rejectCallback) {
 						var execute = function execute() {
 							if (!(executors.length > 0 && c > active && !failure)) {
 								return;
@@ -2855,8 +2925,6 @@ module.exports = function () {
 			});
 		}
 	};
-
-	return utilities;
 }();
 
 },{"./assert":17}],28:[function(require,module,exports){
@@ -4099,6 +4167,13 @@ module.exports = function () {
 					return _this._call(endpoint, data, _this._host, _this._port, _this._secure);
 				});
 			}
+
+			/**
+    * @protected
+    * @abstract
+    * @ignore
+    */
+
 		}, {
 			key: '_call',
 			value: function _call(endpoint, data, host, port, secure) {
