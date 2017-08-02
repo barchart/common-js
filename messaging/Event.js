@@ -4,6 +4,11 @@ const assert = require('./../lang/assert'),
 module.exports = (() => {
 	'use strict';
 
+	/**
+	 * An implementation of the observer pattern.
+	 *
+	 * @param {*} sender - The object which owns the event.
+	 */
 	class Event extends Disposable {
 		constructor(sender) {
 			super();
@@ -13,6 +18,14 @@ module.exports = (() => {
 			this._observers = [];
 		}
 
+		/**
+		 * Registers an event handler which will receive a notification when
+		 * {@link Event#fire} is called.
+		 *
+		 * @public
+		 * @param {Function} handler - The function which will be called each time the event fires. The first argument will be the event data. The second argument will be the event owner (i.e. sender).
+		 * @returns {Disposable}
+		 */
 		register(handler) {
 			assert.argumentIsRequired(handler, 'handler', Function);
 
@@ -27,17 +40,34 @@ module.exports = (() => {
 			});
 		}
 
-
+		/**
+		 * Removes registration for an event handler. That is, the handler will
+		 * no longer be called if the event fires.
+		 *
+		 * @public
+		 * @param {Function} handler
+		 */
 		unregister(handler) {
 			assert.argumentIsRequired(handler, 'handler', Function);
 
 			removeRegistration.call(this, handler);
 		}
 
+		/**
+		 * Removes all handlers from the event.
+		 *
+		 * @public
+		 */
 		clear() {
 			this._observers = [];
 		}
 
+		/**
+		 * Triggers the event, calling all previously registered handlers.
+		 *
+		 * @public
+		 * @param {*) data - The data to pass each handler.
+		 */
 		fire(data) {
 			let observers = this._observers;
 
@@ -48,6 +78,11 @@ module.exports = (() => {
 			}
 		}
 
+		/**
+		 * Returns true, if no handlers are currently registered.
+		 *
+		 * @returns {boolean}
+		 */
 		getIsEmpty() {
 			return this._observers.length === 0;
 		}

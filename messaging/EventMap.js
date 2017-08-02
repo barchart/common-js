@@ -5,6 +5,10 @@ const assert = require('./../lang/assert'),
 module.exports = (() => {
 	'use strict';
 
+	/**
+	 * A container for {@link Event} instances where each event is
+	 * keyed by name.
+	 */
 	class EventMap extends Disposable {
 		constructor() {
 			super();
@@ -12,6 +16,14 @@ module.exports = (() => {
 			this._events = {};
 		}
 
+		/**
+		 * Fires the appropriate event which is mapped to the event name.
+		 * See {@link Event#fire} for more information.
+		 *
+		 * @public
+		 * @param {String} eventName - The event's name.
+		 * @param {*} data - The data to provide to observers.
+		 */
 		fire(eventName, data) {
 			const event = this._events[eventName];
 
@@ -20,6 +32,13 @@ module.exports = (() => {
 			}
 		}
 
+		/**
+		 * Registers a handler. See {@link Event#register} for more information.
+		 *
+		 * @public
+		 * @param {String} eventName - The event's name.
+		 * @param {Function} handler
+		 */
 		register(eventName, handler) {
 			assert.argumentIsRequired(eventName, 'eventName', String);
 
@@ -36,6 +55,13 @@ module.exports = (() => {
 			return event.register(handler);
 		}
 
+		/**
+		 * Removes a handler. See {@link Event#unregister} for more information.
+		 *
+		 * @public
+		 * @param {String} eventName - The event's name.
+		 * @param {Function} handler
+		 */
 		unregister(eventName, handler) {
 			assert.argumentIsRequired(eventName, 'eventName', String);
 
@@ -50,6 +76,12 @@ module.exports = (() => {
 			}
 		}
 
+		/**
+		 * Clears an event's handlers. See {@link Event#clear} for more information.
+		 *
+		 * @public
+		 * @param {String} eventName - The event's name.
+		 */
 		clear(eventName) {
 			assert.argumentIsRequired(eventName, 'eventName', String);
 
@@ -62,6 +94,12 @@ module.exports = (() => {
 			}
 		}
 
+		/**
+		 * Returns true, if no handlers are currently registered for the
+		 * specified event. See {@link Event#getIsEmpty} for more information.
+		 *
+		 * @returns {boolean}
+		 */
 		getIsEmpty(eventName) {
 			const event = this._events[eventName];
 
@@ -76,6 +114,11 @@ module.exports = (() => {
 			return returnVal;
 		}
 
+		/**
+		 * Returns an array of all the event names.
+		 *
+		 * @returns {Array<String>}
+		 */
 		getKeys() {
 			const keys = [];
 
@@ -88,7 +131,12 @@ module.exports = (() => {
 			return keys;
 		}
 
-
+		/**
+		 * Returns true, if an event with the given name exists.
+		 *
+		 * @param {String} key
+		 * @returns {boolean}
+		 */
 		hasKey(key) {
 			return this._events.hasOwnProperty(key);
 		}
