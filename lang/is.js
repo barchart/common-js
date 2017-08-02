@@ -11,6 +11,7 @@ module.exports = (() => {
 		/**
 		 * Returns true, if the argument is a number. NaN will return false.
 		 *
+		 * @static
 		 * @public
 		 * @param candidate
 		 * @returns {boolean}
@@ -22,6 +23,7 @@ module.exports = (() => {
 		/**
 		 * Returns true, if the argument is NaN.
 		 *
+		 * @static
 		 * @public
 		 * @param candidate
 		 * @returns {boolean}
@@ -33,6 +35,7 @@ module.exports = (() => {
 		/**
 		 * Returns true, if the argument is a valid integer.
 		 *
+		 * @static
 		 * @public
 		 * @param candidate
 		 * @returns {boolean}
@@ -44,6 +47,7 @@ module.exports = (() => {
 		/**
 		 * Returns true, if the argument is a string.
 		 *
+		 * @static
 		 * @public
 		 * @param candidate
 		 * @returns {boolean}
@@ -55,6 +59,7 @@ module.exports = (() => {
 		/**
 		 * Returns true, if the argument is a JavaScript Date instance.
 		 *
+		 * @static
 		 * @public
 		 * @param candidate
 		 * @returns {boolean}
@@ -66,6 +71,7 @@ module.exports = (() => {
 		/**
 		 * Returns true, if the argument is a function.
 		 *
+		 * @static
 		 * @public
 		 * @param candidate
 		 * @returns {boolean}
@@ -77,6 +83,7 @@ module.exports = (() => {
 		/**
 		 * Returns true, if the argument is an array.
 		 *
+		 * @static
 		 * @public
 		 * @param candidate
 		 * @returns {boolean}
@@ -88,6 +95,7 @@ module.exports = (() => {
 		/**
 		 * Returns true, if the argument is a Boolean value.
 		 *
+		 * @static
 		 * @public
 		 * @param candidate
 		 * @returns {boolean}
@@ -99,6 +107,7 @@ module.exports = (() => {
 		/**
 		 * Returns true, if the argument is an object.
 		 *
+		 * @static
 		 * @public
 		 * @param candidate
 		 * @returns {boolean}
@@ -110,6 +119,7 @@ module.exports = (() => {
 		/**
 		 * Returns true, if the argument is a null value.
 		 *
+		 * @static
 		 * @public
 		 * @param candidate
 		 * @returns {boolean}
@@ -121,6 +131,7 @@ module.exports = (() => {
 		/**
 		 * Returns true, if the argument is an undefined value.
 		 *
+		 * @static
 		 * @public
 		 * @param candidate
 		 * @returns {boolean}

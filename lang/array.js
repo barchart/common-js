@@ -15,6 +15,7 @@ module.exports = (() => {
 		 * Returns the unique items from an array, where the unique
 		 * key is determined via a strict equality check.
 		 *
+		 * @static
 		 * @param {Array} a
 		 * @param {Function} keySelector - The function, when applied to an item yields a unique key.
 		 */
@@ -30,6 +31,7 @@ module.exports = (() => {
 		 * Returns the unique items from an array, where the unique
 		 * key is determined by a delegate.
 		 *
+		 * @static
 		 * @param {Array} a
 		 * @param {Function} keySelector - The function, when applied to an item yields a unique key.
 		 */
@@ -48,6 +50,7 @@ module.exports = (() => {
 		 * are arrays). Unlike the indexBy function, there can be many items
 		 * which share the same key.
 		 *
+		 * @static
 		 * @param {Array} a
 		 * @param {Function} keySelector - The function, when applied to an item yields a key.
 		 * @returns {Object}
@@ -74,6 +77,7 @@ module.exports = (() => {
 		 * original array). Unlike the groupBy, Only one item can have a given key
 		 * value.
 		 *
+		 * @static
 		 * @param {Array} a
 		 * @param {Function} keySelector - The function, when applied to an item yields a unique key.
 		 * @returns {Object}
@@ -98,6 +102,7 @@ module.exports = (() => {
 		/**
 		 * Returns a new array containing all but the last item.
 		 *
+		 * @static
 		 * @param {Array} a
 		 * @returns {Array}
 		 */
@@ -117,6 +122,7 @@ module.exports = (() => {
 		 * Returns the last item from an array, or an undefined value, if the
 		 * array is empty.
 		 *
+		 * @static
 		 * @param {Array} a
 		 * @returns {*|undefined}
 		 */
@@ -138,6 +144,7 @@ module.exports = (() => {
 		 * Returns a copy of an array, replacing any item that is itself an array
 		 * with the item's items.
 		 *
+		 * @static
 		 * @param {Array} a
 		 * @param {Boolean=} recursive - If true, all nested arrays will be flattened.
 		 * @returns {Array}
@@ -160,6 +167,7 @@ module.exports = (() => {
 		/**
 		 * Breaks an array into smaller arrays, returning an array of arrays.
 		 *
+		 * @static
 		 * @param {Array} a
 		 * @param {Number} size - The maximum number of items per partition.
 		 * @param {Array<Array>}
@@ -181,6 +189,7 @@ module.exports = (() => {
 		/**
 		 * Set difference operation (using strict equality).
 		 *
+		 * @static
 		 * @param {Array} a
 		 * @param {Array} b
 		 * @returns {Array}
@@ -209,6 +218,7 @@ module.exports = (() => {
 		 * other words, this is the union of the differences between the
 		 * sets.
 		 *
+		 * @static
 		 * @param {Array} a
 		 * @param {Array} b
 		 * @returns {Array}
@@ -220,6 +230,7 @@ module.exports = (() => {
 		/**
 		 * Set union operation (using strict equality).
 		 *
+		 * @static
 		 * @param {Array} a
 		 * @param {Array} b
 		 * @returns {Array}
@@ -246,6 +257,7 @@ module.exports = (() => {
 		/**
 		 * Set intersection operation (using strict equality).
 		 *
+		 * @static
 		 * @param {Array} a
 		 * @param {Array} b
 		 * @returns {Array}

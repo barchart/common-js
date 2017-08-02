@@ -17,9 +17,9 @@ module.exports = (() => {
 		 * <p>Array items are compared, object properties are compared, and
 		 * finally "primitive" values are checked using strict equality rules.</p>
 		 *
+		 * @static
 		 * @param {Object} a
 		 * @param {Object} b
-		 *
 		 * @returns {Boolean}
 		 */
 		equals(a, b) {
@@ -53,8 +53,8 @@ module.exports = (() => {
 		/**
 		 * Performs a "deep" copy.
 		 *
+		 * @static
 		 * @param {Object} source - The object to copy.
-		 *
 		 * @returns {Object}
 		 */
 		clone(source) {
@@ -83,9 +83,9 @@ module.exports = (() => {
 		 * exists on both objects, the property value from the
 		 * second object ("b") is preferred.
 		 *
+		 * @static
 		 * @param {Object} a
 		 * @param {Object} b
-		 *
 		 * @returns {Object}
 		 */
 		merge(a, b) {
@@ -114,8 +114,8 @@ module.exports = (() => {
 		/**
 		 * Given an object, returns an array of "own" properties.
 		 *
+		 * @static
 		 * @param {Object} target - The object to interrogate.
-		 *
 		 * @returns {Array<string>}
 		 */
 		keys(target) {

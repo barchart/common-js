@@ -14,6 +14,7 @@ module.exports = (() => {
 		 * Memoizes a function that accepts a single argument only. Furthermore,
 		 * the parameter's toString function must return a unique value.
 		 *
+		 * @static
 		 * @public
 		 * @param {Function} fn - The function to memoize. This function should accept one parameters whose "toString" function outputs a unique value.
 		 */

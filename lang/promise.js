@@ -129,6 +129,8 @@ module.exports = (() => {
 		 * to the successive function and the result of the final function is
 		 * returned to the consumer.
 		 *
+		 * @static
+		 * @public
 		 * @param {Function[]} functions - An array of functions, each expecting a single argument.
 		 * @param input - The argument to pass the first function.
 		 * @returns {Promise.<TResult>}
@@ -149,6 +151,7 @@ module.exports = (() => {
 		 * is caught and the resulting promise is rejected (instead of letting the
 		 * error bubble up to the top-level handler).
 		 *
+		 * @static
 		 * @public
 		 * @param {Function} executor - A function which has two callback parameters. The first is used to resolve the promise, the second rejects it.
 		 * @returns {Promise}

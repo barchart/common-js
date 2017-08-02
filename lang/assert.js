@@ -55,6 +55,7 @@ module.exports = (() => {
 		/**
 		 * Throws an error if an argument doesn't conform to the desired specification.
 		 *
+		 * @static
 		 * @param {*} variable - The value to check.
 		 * @param {String} variableName - The name of the value (used for formatting an error message).
 		 * @param {*} type - The expected type of the argument.
@@ -68,6 +69,7 @@ module.exports = (() => {
 		 * A relaxed version of the "argumentIsRequired" function that will not throw if
 		 * the value is undefined or null.
 		 *
+		 * @static
 		 * @param {*} variable - The value to check.
 		 * @param {String} variableName - The name of the value (used for formatting an error message).
 		 * @param {*} type - The expected type of the argument.
