@@ -1849,6 +1849,7 @@ module.exports = function () {
    * Returns the unique items from an array, where the unique
    * key is determined via a strict equality check.
    *
+   * @static
    * @param {Array} a
    * @param {Function} keySelector - The function, when applied to an item yields a unique key.
    */
@@ -1864,6 +1865,7 @@ module.exports = function () {
    * Returns the unique items from an array, where the unique
    * key is determined by a delegate.
    *
+   * @static
    * @param {Array} a
    * @param {Function} keySelector - The function, when applied to an item yields a unique key.
    */
@@ -1884,6 +1886,7 @@ module.exports = function () {
    * are arrays). Unlike the indexBy function, there can be many items
    * which share the same key.
    *
+   * @static
    * @param {Array} a
    * @param {Function} keySelector - The function, when applied to an item yields a key.
    * @returns {Object}
@@ -1910,6 +1913,7 @@ module.exports = function () {
    * original array). Unlike the groupBy, Only one item can have a given key
    * value.
    *
+   * @static
    * @param {Array} a
    * @param {Function} keySelector - The function, when applied to an item yields a unique key.
    * @returns {Object}
@@ -1934,6 +1938,7 @@ module.exports = function () {
 		/**
    * Returns a new array containing all but the last item.
    *
+   * @static
    * @param {Array} a
    * @returns {Array}
    */
@@ -1953,6 +1958,7 @@ module.exports = function () {
    * Returns the last item from an array, or an undefined value, if the
    * array is empty.
    *
+   * @static
    * @param {Array} a
    * @returns {*|undefined}
    */
@@ -1974,6 +1980,7 @@ module.exports = function () {
    * Returns a copy of an array, replacing any item that is itself an array
    * with the item's items.
    *
+   * @static
    * @param {Array} a
    * @param {Boolean=} recursive - If true, all nested arrays will be flattened.
    * @returns {Array}
@@ -1998,6 +2005,7 @@ module.exports = function () {
 		/**
    * Breaks an array into smaller arrays, returning an array of arrays.
    *
+   * @static
    * @param {Array} a
    * @param {Number} size - The maximum number of items per partition.
    * @param {Array<Array>}
@@ -2019,6 +2027,7 @@ module.exports = function () {
 		/**
    * Set difference operation (using strict equality).
    *
+   * @static
    * @param {Array} a
    * @param {Array} b
    * @returns {Array}
@@ -2047,6 +2056,7 @@ module.exports = function () {
    * other words, this is the union of the differences between the
    * sets.
    *
+   * @static
    * @param {Array} a
    * @param {Array} b
    * @returns {Array}
@@ -2058,6 +2068,7 @@ module.exports = function () {
 		/**
    * Set union operation (using strict equality).
    *
+   * @static
    * @param {Array} a
    * @param {Array} b
    * @returns {Array}
@@ -2084,6 +2095,7 @@ module.exports = function () {
 		/**
    * Set intersection operation (using strict equality).
    *
+   * @static
    * @param {Array} a
    * @param {Array} b
    * @returns {Array}
@@ -2169,6 +2181,7 @@ module.exports = function () {
 		/**
    * Throws an error if an argument doesn't conform to the desired specification.
    *
+   * @static
    * @param {*} variable - The value to check.
    * @param {String} variableName - The name of the value (used for formatting an error message).
    * @param {*} type - The expected type of the argument.
@@ -2182,6 +2195,7 @@ module.exports = function () {
    * A relaxed version of the "argumentIsRequired" function that will not throw if
    * the value is undefined or null.
    *
+   * @static
    * @param {*} variable - The value to check.
    * @param {String} variableName - The name of the value (used for formatting an error message).
    * @param {*} type - The expected type of the argument.
@@ -2428,6 +2442,7 @@ module.exports = function () {
     /**
      * Returns true, if the argument is a number. NaN will return false.
      *
+     * @static
      * @public
      * @param candidate
      * @returns {boolean}
@@ -2439,6 +2454,7 @@ module.exports = function () {
     /**
      * Returns true, if the argument is NaN.
      *
+     * @static
      * @public
      * @param candidate
      * @returns {boolean}
@@ -2450,6 +2466,7 @@ module.exports = function () {
     /**
      * Returns true, if the argument is a valid integer.
      *
+     * @static
      * @public
      * @param candidate
      * @returns {boolean}
@@ -2461,6 +2478,7 @@ module.exports = function () {
     /**
      * Returns true, if the argument is a string.
      *
+     * @static
      * @public
      * @param candidate
      * @returns {boolean}
@@ -2472,6 +2490,7 @@ module.exports = function () {
     /**
      * Returns true, if the argument is a JavaScript Date instance.
      *
+     * @static
      * @public
      * @param candidate
      * @returns {boolean}
@@ -2483,6 +2502,7 @@ module.exports = function () {
     /**
      * Returns true, if the argument is a function.
      *
+     * @static
      * @public
      * @param candidate
      * @returns {boolean}
@@ -2494,6 +2514,7 @@ module.exports = function () {
     /**
      * Returns true, if the argument is an array.
      *
+     * @static
      * @public
      * @param candidate
      * @returns {boolean}
@@ -2505,6 +2526,7 @@ module.exports = function () {
     /**
      * Returns true, if the argument is a Boolean value.
      *
+     * @static
      * @public
      * @param candidate
      * @returns {boolean}
@@ -2516,6 +2538,7 @@ module.exports = function () {
     /**
      * Returns true, if the argument is an object.
      *
+     * @static
      * @public
      * @param candidate
      * @returns {boolean}
@@ -2527,6 +2550,7 @@ module.exports = function () {
     /**
      * Returns true, if the argument is a null value.
      *
+     * @static
      * @public
      * @param candidate
      * @returns {boolean}
@@ -2538,6 +2562,7 @@ module.exports = function () {
     /**
      * Returns true, if the argument is an undefined value.
      *
+     * @static
      * @public
      * @param candidate
      * @returns {boolean}
@@ -2658,6 +2683,7 @@ module.exports = function () {
    * Memoizes a function that accepts a single argument only. Furthermore,
    * the parameter's toString function must return a unique value.
    *
+   * @static
    * @public
    * @param {Function} fn - The function to memoize. This function should accept one parameters whose "toString" function outputs a unique value.
    */
@@ -2698,9 +2724,9 @@ module.exports = function () {
    * <p>Array items are compared, object properties are compared, and
    * finally "primitive" values are checked using strict equality rules.</p>
    *
+   * @static
    * @param {Object} a
    * @param {Object} b
-   *
    * @returns {Boolean}
    */
 		equals: function equals(a, b) {
@@ -2736,8 +2762,8 @@ module.exports = function () {
 		/**
    * Performs a "deep" copy.
    *
+   * @static
    * @param {Object} source - The object to copy.
-   *
    * @returns {Object}
    */
 		clone: function clone(source) {
@@ -2766,9 +2792,9 @@ module.exports = function () {
    * exists on both objects, the property value from the
    * second object ("b") is preferred.
    *
+   * @static
    * @param {Object} a
    * @param {Object} b
-   *
    * @returns {Object}
    */
 		merge: function merge(a, b) {
@@ -2797,8 +2823,8 @@ module.exports = function () {
 		/**
    * Given an object, returns an array of "own" properties.
    *
+   * @static
    * @param {Object} target - The object to interrogate.
-   *
    * @returns {Array<string>}
    */
 		keys: function keys(target) {
@@ -2953,6 +2979,8 @@ module.exports = function () {
    * to the successive function and the result of the final function is
    * returned to the consumer.
    *
+   * @static
+   * @public
    * @param {Function[]} functions - An array of functions, each expecting a single argument.
    * @param input - The argument to pass the first function.
    * @returns {Promise.<TResult>}
@@ -2976,6 +3004,7 @@ module.exports = function () {
    * is caught and the resulting promise is rejected (instead of letting the
    * error bubble up to the top-level handler).
    *
+   * @static
    * @public
    * @param {Function} executor - A function which has two callback parameters. The first is used to resolve the promise, the second rejects it.
    * @returns {Promise}
@@ -3093,6 +3122,12 @@ var assert = require('./../lang/assert'),
 module.exports = function () {
 	'use strict';
 
+	/**
+  * An implementation of the observer pattern.
+  *
+  * @param {*} sender - The object which owns the event.
+  */
+
 	var Event = function (_Disposable) {
 		_inherits(Event, _Disposable);
 
@@ -3106,6 +3141,15 @@ module.exports = function () {
 			_this._observers = [];
 			return _this;
 		}
+
+		/**
+   * Registers an event handler which will receive a notification when
+   * {@link Event#fire} is called.
+   *
+   * @public
+   * @param {Function} handler - The function which will be called each time the event fires. The first argument will be the event data. The second argument will be the event owner (i.e. sender).
+   * @returns {Disposable}
+   */
 
 		_createClass(Event, [{
 			key: 'register',
@@ -3124,6 +3168,15 @@ module.exports = function () {
 					removeRegistration.call(_this2, handler);
 				});
 			}
+
+			/**
+    * Removes registration for an event handler. That is, the handler will
+    * no longer be called if the event fires.
+    *
+    * @public
+    * @param {Function} handler
+    */
+
 		}, {
 			key: 'unregister',
 			value: function unregister(handler) {
@@ -3131,11 +3184,26 @@ module.exports = function () {
 
 				removeRegistration.call(this, handler);
 			}
+
+			/**
+    * Removes all handlers from the event.
+    *
+    * @public
+    */
+
 		}, {
 			key: 'clear',
 			value: function clear() {
 				this._observers = [];
 			}
+
+			/**
+    * Triggers the event, calling all previously registered handlers.
+    *
+    * @public
+    * @param {*) data - The data to pass each handler.
+    */
+
 		}, {
 			key: 'fire',
 			value: function fire(data) {
@@ -3147,6 +3215,13 @@ module.exports = function () {
 					observer(data, this._sender);
 				}
 			}
+
+			/**
+    * Returns true, if no handlers are currently registered.
+    *
+    * @returns {boolean}
+    */
+
 		}, {
 			key: 'getIsEmpty',
 			value: function getIsEmpty() {
@@ -3240,6 +3315,11 @@ var assert = require('./../lang/assert'),
 module.exports = function () {
 	'use strict';
 
+	/**
+  * A container for {@link Event} instances where each event is
+  * keyed by name.
+  */
+
 	var EventMap = function (_Disposable) {
 		_inherits(EventMap, _Disposable);
 
@@ -3252,6 +3332,15 @@ module.exports = function () {
 			return _this;
 		}
 
+		/**
+   * Fires the appropriate event which is mapped to the event name.
+   * See {@link Event#fire} for more information.
+   *
+   * @public
+   * @param {String} eventName - The event's name.
+   * @param {*} data - The data to provide to observers.
+   */
+
 		_createClass(EventMap, [{
 			key: 'fire',
 			value: function fire(eventName, data) {
@@ -3261,6 +3350,15 @@ module.exports = function () {
 					event.fire(data);
 				}
 			}
+
+			/**
+    * Registers a handler. See {@link Event#register} for more information.
+    *
+    * @public
+    * @param {String} eventName - The event's name.
+    * @param {Function} handler
+    */
+
 		}, {
 			key: 'register',
 			value: function register(eventName, handler) {
@@ -3278,6 +3376,15 @@ module.exports = function () {
 
 				return event.register(handler);
 			}
+
+			/**
+    * Removes a handler. See {@link Event#unregister} for more information.
+    *
+    * @public
+    * @param {String} eventName - The event's name.
+    * @param {Function} handler
+    */
+
 		}, {
 			key: 'unregister',
 			value: function unregister(eventName, handler) {
@@ -3293,6 +3400,14 @@ module.exports = function () {
 					}
 				}
 			}
+
+			/**
+    * Clears an event's handlers. See {@link Event#clear} for more information.
+    *
+    * @public
+    * @param {String} eventName - The event's name.
+    */
+
 		}, {
 			key: 'clear',
 			value: function clear(eventName) {
@@ -3306,6 +3421,14 @@ module.exports = function () {
 					delete this._events[eventName];
 				}
 			}
+
+			/**
+    * Returns true, if no handlers are currently registered for the
+    * specified event. See {@link Event#getIsEmpty} for more information.
+    *
+    * @returns {boolean}
+    */
+
 		}, {
 			key: 'getIsEmpty',
 			value: function getIsEmpty(eventName) {
@@ -3321,6 +3444,13 @@ module.exports = function () {
 
 				return returnVal;
 			}
+
+			/**
+    * Returns an array of all the event names.
+    *
+    * @returns {Array<String>}
+    */
+
 		}, {
 			key: 'getKeys',
 			value: function getKeys() {
@@ -3334,6 +3464,14 @@ module.exports = function () {
 
 				return keys;
 			}
+
+			/**
+    * Returns true, if an event with the given name exists.
+    *
+    * @param {String} key
+    * @returns {boolean}
+    */
+
 		}, {
 			key: 'hasKey',
 			value: function hasKey(key) {
