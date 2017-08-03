@@ -56,6 +56,10 @@ module.exports = (() => {
 		toFloat(places) {
 			assert.argumentIsOptional(places, 'places', Number);
 
+			// Accepting places might be a mistake here; perhaps
+			// the consumer should be forced to use the round
+			// function.
+
 			return parseFloat(this._big.toFixed(places || 16));
 		}
 
