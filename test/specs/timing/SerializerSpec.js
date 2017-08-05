@@ -62,6 +62,54 @@ describe('When a Serializer is used to schedule four tasks', function() {
 	});
 });
 
+describe('When a Serializer is used to schedule a task that throws', function() {
+	var serializer;
+	var promise;
+	var reject;
+
+	beforeEach(function(done) {
+		serializer = new Serializer();
+
+		reject = false;
+
+		promise = serializer.enqueue(function() {
+			throw new Error('Boom');
+		}).catch((e) => {
+			reject = true;
+
+			done();
+		});
+	});
+
+	it('should reject the promise', function() {
+		expect(reject).toEqual(true);
+	});
+});
+
+describe('When a Serializer is used to schedule a task that rejects', function() {
+	var serializer;
+	var promise;
+	var reject;
+
+	beforeEach(function(done) {
+		serializer = new Serializer();
+
+		reject = false;
+
+		promise = serializer.enqueue(function() {
+			return Promise.reject('Boom Boom');
+		}).catch((e) => {
+			reject = true;
+
+			done();
+		});
+	});
+
+	it('should reject the promise', function() {
+		expect(reject).toEqual(true);
+	});
+});
+
 function getSpy(results, fail) {
 	return jasmine.createSpy('spy').and.callFake(function() {
 		return new Promise(function(resolveCallback, rejectCallback) {

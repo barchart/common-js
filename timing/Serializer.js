@@ -59,7 +59,7 @@ module.exports = (() => {
 				this._counter = this._counter + 1;
 
 				this._workQueue.enqueue(() => {
-					return Promise.resolve()
+					Promise.resolve()
 						.then(() => {
 							if (this.getIsDisposed()) {
 								throw new Error('Unable to process Serializer action, the serializer has been disposed.');
