@@ -10,28 +10,71 @@ module.exports = (() => {
 	 * An immutable object that allows for arbitrary-precision calculations.
 	 *
 	 * @public
+	 * @param {Decimal|Number|String} value - The value.
 	 */
 	class Decimal {
 		constructor(value) {
 			this._big = getBig(value);
 		}
 
+		/**
+		 * Returns a new {@link Decimal} instance that is the sum of the
+		 * current instance's value and the value supplied.
+		 *
+		 * @public
+		 * @param {Decimal|Number|String} other - The value to add.
+		 * @returns {Decimal}
+		 */
 		add(other) {
 			return new Decimal(this._big.plus(getBig(other)));
 		}
 
+		/**
+		 * Returns a new {@link Decimal} instance with a value that results
+		 * from the subtraction of the value supplied from the current instance's
+		 * value.
+		 *
+		 * @public
+		 * @param {Decimal|Number|String} other - The value to subtract.
+		 * @returns {Decimal}
+		 */
 		subtract(other) {
 			return new Decimal(this._big.minus(getBig(other)));
 		}
 
+		/**
+		 * Returns a new {@link Decimal} instance that is the product of the
+		 * current instance's value and the value supplied.
+		 *
+		 * @public
+		 * @param {Decimal|Number|String} other - The value to add.
+		 * @returns {Decimal}
+		 */
 		multiply(other) {
 			return new Decimal(this._big.times(getBig(other)));
 		}
 
+		/**
+		 * Returns a new {@link Decimal} instance with a value that results
+		 * from the division of the current instance's value by the value
+		 * supplied.
+		 *
+		 * @public
+		 * @param {Decimal|Number|String} other - The value to subtract.
+		 * @returns {Decimal}
+		 */
 		divide(other) {
 			return new Decimal(this._big.div(getBig(other)));
 		}
 
+		/**
+		 * Returns a new {@link Decimal} with a value resulting from a rounding
+		 * operation on the current value.
+		 *
+		 * @param {Number} places - The number of decimal places to retain.
+		 * @param {RoundingMode} mode - The strategy to use for rounding.
+		 * @returns {Decimal}
+		 */
 		round(places, mode) {
 			assert.argumentIsRequired(places, 'places', Number);
 			assert.argumentIsRequired(mode, 'mode', RoundingMode, 'RoundingMode');
@@ -39,20 +82,44 @@ module.exports = (() => {
 			return new Decimal(this._big.round(places, mode.code));
 		}
 
+		/**
+		 * Returns a Boolean value, indicating if the current instance's value is
+		 * equal to zero (or approximately equal to zero).
+		 *
+		 * @param {Boolean=} approximate
+		 * @returns {Boolean}
+		 */
 		getIsZero(approximate) {
 			assert.argumentIsOptional(approximate, 'approximate', Boolean);
 
 			return this._big.eq(zero) || (is.boolean(approximate) && approximate && this.round(20, RoundingMode.NORMAL).getIsZero());
 		}
 
+		/**
+		 * Returns true if the current instance is positive; otherwise false.
+		 *
+		 * @returns {Boolean}
+		 */
 		getIsPositive() {
 			return this._big.gt(zero);
 		}
 
+		/**
+		 * Returns true if the current instance is negative; otherwise false.
+		 *
+		 * @returns {Boolean}
+		 */
 		getIsNegative() {
 			return this._big.lt(zero);
 		}
 
+		/**
+		 * Emits a floating point value that approximates the value of the current
+		 * instance.
+		 *
+		 * @param {Number=} places
+		 * @returns {Number}
+		 */
 		toFloat(places) {
 			assert.argumentIsOptional(places, 'places', Number);
 
@@ -63,14 +130,28 @@ module.exports = (() => {
 			return parseFloat(this._big.toFixed(places || 16));
 		}
 
+		/**
+		 * Returns a string-based representation of the instance's value.
+		 *
+		 * @returns {String}
+		 */
 		toFixed() {
 			return this._big.toFixed();
 		}
 
+		/**
+		 * Returns an instance with the value of zero.
+		 *
+		 * @returns {Decimal}
+		 */
 		static get ZERO() {
 			return decimalZero;
 		}
 
+		/**
+		 * @returns {RoundingMode}
+		 * @constructor
+		 */
 		static get ROUNDING_MODE() {
 			return RoundingMode;
 		}
