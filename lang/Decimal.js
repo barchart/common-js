@@ -95,6 +95,17 @@ module.exports = (() => {
 		}
 
 		/**
+		 * Returns a new {@link Decimal} instance the opposite sign as the
+		 * current instance's value.
+		 *
+		 * @public
+		 * @returns {Decimal}
+		 */
+		opposite() {
+			return this.multiply(-1);
+		}
+
+		/**
 		 * Returns a Boolean value, indicating if the current instance's value is
 		 * equal to zero (or approximately equal to zero).
 		 *
@@ -201,22 +212,47 @@ module.exports = (() => {
 			this._code = code;
 		}
 
+		/**
+		 * Description of the rounding mode.
+		 *
+		 * @returns {String}
+		 */
 		get description() {
 			return this._description;
 		}
 
+		/**
+		 * Code assigned to rounding mode.
+		 *
+		 * @returns {Number}
+		 */
 		get code() {
 			return this._code;
 		}
 
+		/**
+		 * Rounds away from zero.
+		 *
+		 * @returns {RoundingMode}
+		 */
 		static get UP() {
 			return up;
 		}
 
+		/**
+		 * Rounds towards zero.
+		 *
+		 * @returns {RoundingMode}
+		 */
 		static get DOWN() {
 			return down;
 		}
 
+		/**
+		 * Rounds towards nearest neighbor. If equidistant, rounds away from zero.
+		 *
+		 * @returns {RoundingMode}
+		 */
 		static get NORMAL() {
 			return normal;
 		}
