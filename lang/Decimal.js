@@ -71,6 +71,7 @@ module.exports = (() => {
 		 * Returns a new {@link Decimal} with a value resulting from a rounding
 		 * operation on the current value.
 		 *
+		 * @public
 		 * @param {Number} places - The number of decimal places to retain.
 		 * @param {RoundingMode} mode - The strategy to use for rounding.
 		 * @returns {Decimal}
@@ -83,9 +84,21 @@ module.exports = (() => {
 		}
 
 		/**
+		 * Returns a new {@link Decimal} instance having the absolute value of
+		 * the current instance's value.
+		 *
+		 * @public
+		 * @returns {Decimal}
+		 */
+		absolute() {
+			return new Decimal(this._big.abs());
+		}
+
+		/**
 		 * Returns a Boolean value, indicating if the current instance's value is
 		 * equal to zero (or approximately equal to zero).
 		 *
+		 * @public
 		 * @param {Boolean=} approximate
 		 * @returns {Boolean}
 		 */
@@ -98,6 +111,7 @@ module.exports = (() => {
 		/**
 		 * Returns true if the current instance is positive; otherwise false.
 		 *
+		 * @public
 		 * @returns {Boolean}
 		 */
 		getIsPositive() {
@@ -107,6 +121,7 @@ module.exports = (() => {
 		/**
 		 * Returns true if the current instance is negative; otherwise false.
 		 *
+		 * @public
 		 * @returns {Boolean}
 		 */
 		getIsNegative() {
@@ -117,6 +132,7 @@ module.exports = (() => {
 		 * Emits a floating point value that approximates the value of the current
 		 * instance.
 		 *
+		 * @public
 		 * @param {Number=} places
 		 * @returns {Number}
 		 */
@@ -133,6 +149,7 @@ module.exports = (() => {
 		/**
 		 * Returns a string-based representation of the instance's value.
 		 *
+		 * @public
 		 * @returns {String}
 		 */
 		toFixed() {
@@ -149,6 +166,7 @@ module.exports = (() => {
 		}
 
 		/**
+		 * @public
 		 * @returns {RoundingMode}
 		 * @constructor
 		 */
