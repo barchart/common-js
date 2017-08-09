@@ -179,10 +179,10 @@ module.exports = (() => {
 
 					return result;
 				}).catch((e) => {
-				scheduler.dispose();
+					scheduler.dispose();
 
-				throw e;
-			});
+					throw e;
+				});
 		}
 
 		toString() {
