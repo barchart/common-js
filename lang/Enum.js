@@ -71,7 +71,17 @@ module.exports = (() => {
 		 * @returns {Enum|null}
 		 */
 		static fromCode(type, code) {
-			return types.get(type).find(x => x.code === code) || null;
+			return Enum.getItems(type).find(x => x.code === code) || null;
+		}
+
+		/**
+		 * Returns all of the enumeration's items (given an enumeration type).
+		 *
+		 * @param {Function} type - The enumeration to list.
+		 * @returns {Array}
+		 */
+		static getItems(type) {
+			return types.get(type) || [ ];
 		}
 
 		toString() {
