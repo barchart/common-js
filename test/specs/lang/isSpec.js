@@ -21,6 +21,10 @@ describe('When checking the number 3', function() {
 		expect(is.integer(candidate)).toEqual(true);
 	});
 
+	it("it should be an large integer", function() {
+		expect(is.large(candidate)).toEqual(true);
+	});
+
 	it("it should not be a string", function() {
 		expect(is.string(candidate)).toEqual(false);
 	});
@@ -71,7 +75,7 @@ describe('When checking the Math.PI', function() {
 		expect(is.nan(candidate)).toEqual(false);
 	});
 
-	it("it should be an integer", function() {
+	it("it should not be an integer", function() {
 		expect(is.integer(candidate)).toEqual(false);
 	});
 
@@ -183,6 +187,10 @@ describe('When checking the string "3"', function() {
 		expect(is.integer(candidate)).toEqual(false);
 	});
 
+	it("it should not be an large integer", function() {
+		expect(is.large(candidate)).toEqual(false);
+	});
+
 	it("it should be a string", function() {
 		expect(is.string(candidate)).toEqual(true);
 	});
@@ -235,6 +243,10 @@ describe('When checking the date 08/29/2016', function() {
 
 	it("it should not be an integer", function() {
 		expect(is.integer(candidate)).toEqual(false);
+	});
+
+	it("it should not be an large integer", function() {
+		expect(is.large(candidate)).toEqual(false);
 	});
 
 	it("it should not be a string", function() {
@@ -291,6 +303,10 @@ describe('When checking the "expect" function', function() {
 		expect(is.integer(candidate)).toEqual(false);
 	});
 
+	it("it should not be an large integer", function() {
+		expect(is.large(candidate)).toEqual(false);
+	});
+
 	it("it should not be a string", function() {
 		expect(is.string(candidate)).toEqual(false);
 	});
@@ -345,6 +361,10 @@ describe('When checking an empty object', function() {
 		expect(is.integer(candidate)).toEqual(false);
 	});
 
+	it("it should not be an large integer", function() {
+		expect(is.large(candidate)).toEqual(false);
+	});
+
 	it("it should not be a string", function() {
 		expect(is.string(candidate)).toEqual(false);
 	});
@@ -397,6 +417,10 @@ describe('When checking a null value', function() {
 
 	it("it should not be an integer", function() {
 		expect(is.integer(candidate)).toEqual(false);
+	});
+
+	it("it should not be an large integer", function() {
+		expect(is.large(candidate)).toEqual(false);
 	});
 
 	it("it should not be a string", function() {
@@ -483,5 +507,63 @@ describe('When checking an undefined value', function() {
 
 	it("it should be undefined", function() {
 		expect(is.undefined(candidate)).toEqual(true);
+	});
+});
+
+describe('When checking a large integer (exceeding 32-bits)', function() {
+	'use strict';
+
+	var candidate;
+
+	beforeEach(function() {
+		candidate = 1502373984424;
+	});
+
+	it("it should be a number", function() {
+		expect(is.number(candidate)).toEqual(true);
+	});
+
+	it("it should not be nan", function() {
+		expect(is.nan(candidate)).toEqual(false);
+	});
+
+	it("it should be an integer", function() {
+		expect(is.integer(candidate)).toEqual(false);
+	});
+
+	it("it should be an large integer", function() {
+		expect(is.large(candidate)).toEqual(true);
+	});
+
+	it("it should not be a string", function() {
+		expect(is.string(candidate)).toEqual(false);
+	});
+
+	it("it should not be a Date", function() {
+		expect(is.date(candidate)).toEqual(false);
+	});
+
+	it("it should not be a function", function() {
+		expect(is.fn(candidate)).toEqual(false);
+	});
+
+	it("it should not be an array", function() {
+		expect(is.array(candidate)).toEqual(false);
+	});
+
+	it("it should not be a boolean", function() {
+		expect(is.boolean(candidate)).toEqual(false);
+	});
+
+	it("it should not be an object", function() {
+		expect(is.object(candidate)).toEqual(false);
+	});
+
+	it("it should not be null", function() {
+		expect(is.null(candidate)).toEqual(false);
+	});
+
+	it("it should not be undefined", function() {
+		expect(is.undefined(candidate)).toEqual(false);
 	});
 });

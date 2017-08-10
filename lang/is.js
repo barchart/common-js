@@ -13,7 +13,7 @@ module.exports = (() => {
 		 *
 		 * @static
 		 * @public
-		 * @param candidate
+		 * @param candidate {*}
 		 * @returns {boolean}
 		 */
 		number(candidate) {
@@ -25,7 +25,7 @@ module.exports = (() => {
 		 *
 		 * @static
 		 * @public
-		 * @param candidate
+		 * @param {*} candidate
 		 * @returns {boolean}
 		 */
 		nan(candidate) {
@@ -33,15 +33,26 @@ module.exports = (() => {
 		},
 
 		/**
-		 * Returns true, if the argument is a valid integer.
+		 * Returns true, if the argument is a valid 32-bit integer.
 		 *
 		 * @static
 		 * @public
-		 * @param candidate
+		 * @param {*} candidate
 		 * @returns {boolean}
 		 */
 		integer(candidate) {
 			return typeof(candidate) === 'number' && !isNaN(candidate) && (candidate | 0) === candidate;
+		},
+
+		/**
+		 * Returns true, if the argument is a valid integer (which can exceed 32 bits); however,
+		 * the check can fail above the value of Number.MAX_SAFE_INTEGER.
+		 *
+		 * @param {*) candidate
+		 * @returns {boolean}
+		 */
+		large(candidate) {
+			return typeof(candidate) === 'number' && !isNaN(candidate) && isFinite(candidate) && Math.floor(candidate) === candidate;
 		},
 
 		/**

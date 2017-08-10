@@ -1,8 +1,6 @@
 const assert = require('./assert'),
 	is = require('./is');
 
-const Big = require('big.js');
-
 module.exports = (() => {
 	'use strict';
 
@@ -84,7 +82,7 @@ module.exports = (() => {
 		}
 
 		toString() {
-			return '[Decimal]';
+			return '[Day]';
 		}
 	}
 
