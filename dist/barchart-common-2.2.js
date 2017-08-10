@@ -1752,6 +1752,7 @@ module.exports = function () {
    * @static
    * @param {Array} a
    * @param {Function} keySelector - The function, when applied to an item yields a unique key.
+   * @returns {Array}
    */
 		unique: function unique(a) {
 			assert.argumentIsArray(a, 'a');
@@ -1768,6 +1769,7 @@ module.exports = function () {
    * @static
    * @param {Array} a
    * @param {Function} keySelector - The function, when applied to an item yields a unique key.
+   * @returns {Array}
    */
 		uniqueBy: function uniqueBy(a, keySelector) {
 			assert.argumentIsArray(a, 'a');
@@ -2063,12 +2065,16 @@ module.exports = function () {
 		var message = void 0;
 
 		if (typeof index === 'number') {
-			message = 'The argument [' + (variableName || 'unspecified') + '], at index [' + index.toString() + '] must be a [' + (typeDescription || 'unknown') + ']';
+			message = 'The argument [ ' + (variableName || 'unspecified') + ' ], at index [ ' + index.toString() + ' ] must be a [ ' + (typeDescription || 'unknown') + ' ]';
 		} else {
-			message = 'The argument [' + (variableName || 'unspecified') + '] must be a ' + (typeDescription || 'Object');
+			message = 'The argument [ ' + (variableName || 'unspecified') + ' ] must be a [ ' + (typeDescription || 'Object') + ' ]';
 		}
 
 		throw new Error(message);
+	}
+
+	function throwCustomValidationError(variableName, predicateDescription) {
+		throw new Error('The argument [ ' + (variableName || 'unspecified') + ' ] failed a validation check. [ ' + (predicateDescription || 'No description available') + ' ]');
 	}
 
 	/**
@@ -2079,7 +2085,8 @@ module.exports = function () {
   */
 	return {
 		/**
-   * Throws an error if an argument doesn't conform to the desired specification.
+   * Throws an error if an argument doesn't conform to the desired specification (as
+   * determined by a type check).
    *
    * @static
    * @param {*} variable - The value to check.
@@ -2101,12 +2108,16 @@ module.exports = function () {
    * @param {*} type - The expected type of the argument.
    * @param {String=} typeDescription - The description of the expected type (used for formatting an error message).
    */
-		argumentIsOptional: function argumentIsOptional(variable, variableName, type, typeDescription) {
+		argumentIsOptional: function argumentIsOptional(variable, variableName, type, typeDescription, predicate, predicateDescription) {
 			if (variable === null || variable === undefined) {
 				return;
 			}
 
 			checkArgumentType(variable, variableName, type, typeDescription);
+
+			if (is.fn(predicate) && !predicate(variable)) {
+				throwCustomValidationError(variableName, predicateDescription);
+			}
 		},
 		argumentIsArray: function argumentIsArray(variable, variableName, itemConstraint, itemConstraintDescription) {
 			this.argumentIsRequired(variable, variableName, Array);
@@ -2127,6 +2138,22 @@ module.exports = function () {
 				variable.forEach(function (v, i) {
 					itemValidator(v, i);
 				});
+			}
+		},
+
+		/**
+   * Throws an error if an argument doesn't conform to the desired specification
+   * (as determined by a predicate).
+   *
+   * @static
+   * @param {*} variable - The value to check.
+   * @param {String} variableName - The name of the value (used for formatting an error message).
+   * @param {Function=} predicate - A function used to validate the item (beyond type checking).
+   * @param {Function=} predicateDescription - A description of the assertion made by the predicate (e.g. "is an integer") that is used for formatting an error message.
+   */
+		argumentIsValid: function argumentIsValid(variable, variableName, predicate, predicateDescription) {
+			if (!predicate(variable)) {
+				throwCustomValidationError(variableName, predicateDescription);
 			}
 		},
 		areEqual: function areEqual(a, b, descriptionA, descriptionB) {
@@ -2150,75 +2177,6 @@ var assert = require('./assert'),
 
 module.exports = function () {
 	'use strict';
-
-	var attributes = {
-		has: function has(target, propertyNames, separator) {
-			assert.argumentIsRequired(target, 'target', Object);
-
-			if (is.array(propertyNames)) {
-				assert.argumentIsArray(propertyNames, 'propertyNames', String);
-			} else {
-				assert.argumentIsRequired(propertyNames, 'propertyNames', String);
-			}
-
-			var propertyNameArray = getPropertyNameArray(propertyNames, separator);
-			var propertyTarget = getPropertyTarget(target, propertyNameArray, false);
-
-			return propertyTarget !== null && propertyTarget.hasOwnProperty(last(propertyNameArray));
-		},
-		read: function read(target, propertyNames, separator) {
-			assert.argumentIsRequired(target, 'target', Object);
-
-			if (is.array(propertyNames)) {
-				assert.argumentIsArray(propertyNames, 'propertyNames', String);
-			} else {
-				assert.argumentIsRequired(propertyNames, 'propertyNames', String);
-			}
-
-			var propertyNameArray = getPropertyNameArray(propertyNames, separator);
-			var propertyTarget = getPropertyTarget(target, propertyNameArray, false);
-
-			var returnRef = void 0;
-
-			if (propertyTarget) {
-				var propertyName = last(propertyNameArray);
-
-				returnRef = propertyTarget[propertyName];
-			} else {
-				returnRef = undefined;
-			}
-
-			return returnRef;
-		},
-		write: function write(target, propertyNames, value, separator) {
-			assert.argumentIsRequired(target, 'target', Object);
-
-			if (is.array(propertyNames)) {
-				assert.argumentIsArray(propertyNames, 'propertyNames', String);
-			} else {
-				assert.argumentIsRequired(propertyNames, 'propertyNames', String);
-			}
-
-			var propertyNameArray = getPropertyNameArray(propertyNames, separator);
-			var propertyTarget = getPropertyTarget(target, propertyNameArray, true);
-
-			var propertyName = last(propertyNameArray);
-
-			propertyTarget[propertyName] = value;
-		},
-		erase: function erase(target, propertyNames, separator) {
-			if (!attributes.has(target, propertyNames)) {
-				return;
-			}
-
-			var propertyNameArray = getPropertyNameArray(propertyNames, separator);
-			var propertyTarget = getPropertyTarget(target, propertyNameArray, true);
-
-			var propertyName = last(propertyNameArray);
-
-			delete propertyTarget[propertyName];
-		}
-	};
 
 	function getPropertyNameArray(propertyNames) {
 		var separator = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '.';
@@ -2264,7 +2222,120 @@ module.exports = function () {
 		}
 	}
 
-	return attributes;
+	/**
+  * Utilities for reading and writing "complex" properties to
+  * objects. For example, the property "name.first" reads the
+  * "first" property on the "name" object of the target.
+  *
+  * @public
+  * @module lang/attributes
+  */
+	return {
+		/**
+   * Checks to see if an attribute exists on the target object.
+   *
+   * @static
+   * @param {Object} target - The object to check for existence of the property.
+   * @param {String|Array<String>} propertyNames - The property to check -- either a string with separators, or an array of strings (already split by separator).
+   * @param {String=} separator - The separator (defaults to a period character).
+   * @returns {boolean}
+   */
+		has: function has(target, propertyNames, separator) {
+			assert.argumentIsRequired(target, 'target', Object);
+
+			if (is.array(propertyNames)) {
+				assert.argumentIsArray(propertyNames, 'propertyNames', String);
+			} else {
+				assert.argumentIsRequired(propertyNames, 'propertyNames', String);
+			}
+
+			var propertyNameArray = getPropertyNameArray(propertyNames, separator);
+			var propertyTarget = getPropertyTarget(target, propertyNameArray, false);
+
+			return propertyTarget !== null && propertyTarget.hasOwnProperty(last(propertyNameArray));
+		},
+
+		/**
+   * Returns a value from the target object. If the property doesn't exist; undefined
+   * is returned.
+   *
+   * @static
+   * @param {Object} target - The object to read from.
+   * @param {String|Array<String>} propertyNames - The property to read -- either a string with separators, or an array of strings (already split by separator).
+   * @param {String=} separator - The separator (defaults to a period character).
+   * @returns {*}
+   */
+		read: function read(target, propertyNames, separator) {
+			assert.argumentIsRequired(target, 'target', Object);
+
+			if (is.array(propertyNames)) {
+				assert.argumentIsArray(propertyNames, 'propertyNames', String);
+			} else {
+				assert.argumentIsRequired(propertyNames, 'propertyNames', String);
+			}
+
+			var propertyNameArray = getPropertyNameArray(propertyNames, separator);
+			var propertyTarget = getPropertyTarget(target, propertyNameArray, false);
+
+			var returnRef = void 0;
+
+			if (propertyTarget) {
+				var propertyName = last(propertyNameArray);
+
+				returnRef = propertyTarget[propertyName];
+			} else {
+				returnRef = undefined;
+			}
+
+			return returnRef;
+		},
+
+		/**
+   * Writes a value to the target object.
+   *
+   * @static
+   * @param {Object} target - The object to write to.
+   * @param {String|Array<String>} propertyNames - The property to write -- either a string with separators, or an array of strings (already split by separator).
+   * @param {String=} separator - The separator (defaults to a period character).
+   */
+		write: function write(target, propertyNames, value, separator) {
+			assert.argumentIsRequired(target, 'target', Object);
+
+			if (is.array(propertyNames)) {
+				assert.argumentIsArray(propertyNames, 'propertyNames', String);
+			} else {
+				assert.argumentIsRequired(propertyNames, 'propertyNames', String);
+			}
+
+			var propertyNameArray = getPropertyNameArray(propertyNames, separator);
+			var propertyTarget = getPropertyTarget(target, propertyNameArray, true);
+
+			var propertyName = last(propertyNameArray);
+
+			propertyTarget[propertyName] = value;
+		},
+
+		/**
+   * Erases a property from the target object.
+   *
+   * @static
+   * @param {Object} target - The object to erase a property from.
+   * @param {String|Array<String>} propertyNames - The property to write -- either a string with separators, or an array of strings (already split by separator).
+   * @param {String=} separator - The separator (defaults to a period character).
+   */
+		erase: function erase(target, propertyNames, separator) {
+			if (!this.has(target, propertyNames)) {
+				return;
+			}
+
+			var propertyNameArray = getPropertyNameArray(propertyNames, separator);
+			var propertyTarget = getPropertyTarget(target, propertyNameArray, true);
+
+			var propertyName = last(propertyNameArray);
+
+			delete propertyTarget[propertyName];
+		}
+	};
 }();
 
 },{"./assert":17,"./is":23}],19:[function(require,module,exports){
@@ -2416,7 +2487,7 @@ module.exports = function () {
      *
      * @static
      * @public
-     * @param candidate
+     * @param candidate {*}
      * @returns {boolean}
      */
     number: function number(candidate) {
@@ -2428,7 +2499,7 @@ module.exports = function () {
      *
      * @static
      * @public
-     * @param candidate
+     * @param {*} candidate
      * @returns {boolean}
      */
     nan: function nan(candidate) {
@@ -2436,15 +2507,26 @@ module.exports = function () {
     },
 
     /**
-     * Returns true, if the argument is a valid integer.
+     * Returns true, if the argument is a valid 32-bit integer.
      *
      * @static
      * @public
-     * @param candidate
+     * @param {*} candidate
      * @returns {boolean}
      */
     integer: function integer(candidate) {
       return typeof candidate === 'number' && !isNaN(candidate) && (candidate | 0) === candidate;
+    },
+
+    /**
+     * Returns true, if the argument is a valid integer (which can exceed 32 bits); however,
+     * the check can fail above the value of Number.MAX_SAFE_INTEGER.
+     *
+     * @param {*) candidate
+     * @returns {boolean}
+     */
+    large: function large(candidate) {
+      return typeof candidate === 'number' && !isNaN(candidate) && isFinite(candidate) && Math.floor(candidate) === candidate;
     },
 
     /**
@@ -18290,7 +18372,7 @@ module.exports = function () {
 					_this2._counter = _this2._counter + 1;
 
 					_this2._workQueue.enqueue(function () {
-						return Promise.resolve().then(function () {
+						Promise.resolve().then(function () {
 							if (_this2.getIsDisposed()) {
 								throw new Error('Unable to process Serializer action, the serializer has been disposed.');
 							}
