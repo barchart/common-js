@@ -3118,25 +3118,51 @@ var moment = require('moment-timezone/builds/moment-timezone-with-data-2010-2020
     assert = require('./assert');
 
 module.exports = function () {
-	'use strict';
+  'use strict';
 
-	var timezone = {
-		getTimezones: function getTimezones() {
-			return moment.tz.names();
-		},
-		hasTimezone: function hasTimezone(name) {
-			assert.argumentIsRequired(name, 'name', String);
+  /**
+   * Utilities for working with arrays.
+   *
+   * @public
+   * @module lang/array
+   */
 
-			return timezone.getTimezones().some(function (candidate) {
-				return candidate === name;
-			});
-		},
-		guessTimezone: function guessTimezone() {
-			return moment.tz.guess() || null;
-		}
-	};
+  return {
+    /**
+     * Gets a list of names in the tz database (see https://en.wikipedia.org/wiki/Tz_database
+     * and https://en.wikipedia.org/wiki/List_of_tz_database_time_zones.
+     *
+     * @static
+     * @returns {Array<String>}
+     */
+    getTimezones: function getTimezones() {
+      return moment.tz.names();
+    },
 
-	return timezone;
+    /**
+     * Indicates if a timezone name exists.
+     *
+     * @static
+     * @param {String} name - The timezone name to find.
+     * @returns {Boolean}
+     */
+    hasTimezone: function hasTimezone(name) {
+      assert.argumentIsRequired(name, 'name', String);
+
+      return this.getTimezones().some(function (candidate) {
+        return candidate === name;
+      });
+    },
+
+    /**
+     * Attempts to guess the current timezone.
+     *
+     * @returns {String|null}
+     */
+    guessTimezone: function guessTimezone() {
+      return moment.tz.guess() || null;
+    }
+  };
 }();
 
 },{"./assert":17,"moment-timezone/builds/moment-timezone-with-data-2010-2020":55}],31:[function(require,module,exports){
