@@ -2168,9 +2168,9 @@ module.exports = function () {
   * @param {String=} timezone
   */
 
-	var Moment = function () {
-		function Moment(timestamp, timezone) {
-			_classCallCheck(this, Moment);
+	var Timestamp = function () {
+		function Timestamp(timestamp, timezone) {
+			_classCallCheck(this, Timestamp);
 
 			assert.argumentIsValid(timestamp, 'timestamp', is.large, 'is an integer');
 			assert.argumentIsOptional(timezone, 'timezone', String);
@@ -2187,10 +2187,10 @@ module.exports = function () {
    * @returns {Number}
    */
 
-		_createClass(Moment, [{
+		_createClass(Timestamp, [{
 			key: 'toString',
 			value: function toString() {
-				return '[Moment]';
+				return '[Timestamp]';
 			}
 		}, {
 			key: 'timestamp',
@@ -2219,10 +2219,10 @@ module.exports = function () {
 			}
 		}]);
 
-		return Moment;
+		return Timestamp;
 	}();
 
-	return Moment;
+	return Timestamp;
 }();
 
 },{"./assert":17,"./is":20,"moment-timezone":33}],16:[function(require,module,exports){
@@ -13500,15 +13500,15 @@ describe('When a Disposable.fromAction creates a Disposable', function () {
 },{"./../../../lang/Disposable":14}],59:[function(require,module,exports){
 'use strict';
 
-var Moment = require('./../../../lang/Moment');
+var Timestamp = require('./../../../lang/Timestamp');
 
-describe('When moment is created from a timestamp (1502372574350)', function () {
+describe('When Timestamp is created from a timestamp (1502372574350)', function () {
 	'use strict';
 
 	var instance;
 
 	beforeEach(function () {
-		instance = new Moment(1502372574350);
+		instance = new Timestamp(1502372574350);
 	});
 
 	it('should not have instantiated the underlying moment', function () {
@@ -13548,7 +13548,7 @@ describe('When moment is created from a timestamp (1502372574350)', function () 
 	});
 });
 
-},{"./../../../lang/Moment":15}],60:[function(require,module,exports){
+},{"./../../../lang/Timestamp":15}],60:[function(require,module,exports){
 'use strict';
 
 var array = require('./../../../lang/array');
@@ -19914,4 +19914,4 @@ module.exports = function () {
 	return WindowCounter;
 }();
 
-},{"./../collections/Queue":1,"./../lang/assert":17}]},{},[48,49,50,51,52,46,47,53,54,55,60,61,62,56,57,58,63,64,65,66,59,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86]);
+},{"./../collections/Queue":1,"./../lang/assert":17}]},{},[48,49,50,51,52,46,47,53,54,55,60,61,62,56,57,58,63,64,65,66,67,68,69,70,59,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86]);
