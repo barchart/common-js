@@ -13,7 +13,7 @@ module.exports = (() => {
 	 * @param {Number} timestamp
 	 * @param {String=} timezone
 	 */
-	class Moment {
+	class Timestamp {
 		constructor(timestamp, timezone) {
 			assert.argumentIsValid(timestamp, 'timestamp', is.large, 'is an integer');
 			assert.argumentIsOptional(timezone, 'timezone', String);
@@ -51,9 +51,9 @@ module.exports = (() => {
 		}
 
 		toString() {
-			return '[Moment]';
+			return '[Timestamp]';
 		}
 	}
 
-	return Moment;
+	return Timestamp;
 })();

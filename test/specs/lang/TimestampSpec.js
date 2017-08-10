@@ -1,12 +1,12 @@
-var Moment = require('./../../../lang/Moment');
+var Timestamp = require('./../../../lang/Timestamp');
 
-describe('When moment is created from a timestamp (1502372574350)', function() {
+describe('When Timestamp is created from a timestamp (1502372574350)', function() {
 	'use strict';
 
 	var instance;
 
 	beforeEach(function() {
-		instance = new Moment(1502372574350);
+		instance = new Timestamp(1502372574350);
 	});
 
 	it('should not have instantiated the underlying moment', function() {
