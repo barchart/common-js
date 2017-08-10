@@ -37,12 +37,16 @@ module.exports = (() => {
 		let message;
 
 		if (typeof(index) === 'number') {
-			message = `The argument [${(variableName || 'unspecified')}], at index [${index.toString()}] must be a [${(typeDescription || 'unknown')}]`;
+			message = `The argument [ ${(variableName || 'unspecified')} ], at index [ ${index.toString()} ] must be a [ ${(typeDescription || 'unknown')} ]`;
 		} else {
-			message = `The argument [${(variableName || 'unspecified')}] must be a ${(typeDescription || 'Object')}`;
+			message = `The argument [ ${(variableName || 'unspecified')} ] must be a [ ${(typeDescription || 'Object')} ]`;
 		}
 
 		throw new Error(message);
+	}
+
+	function throwCustomValidationError(variableName, predicateDescription) {
+		throw new Error(`The argument [ ${(variableName || 'unspecified')} ] failed a validation check. [ ${(predicateDescription || 'No description available')} ]`);
 	}
 
 	/**
@@ -53,7 +57,8 @@ module.exports = (() => {
 	 */
 	return {
 		/**
-		 * Throws an error if an argument doesn't conform to the desired specification.
+		 * Throws an error if an argument doesn't conform to the desired specification (as
+		 * determined by a type check).
 		 *
 		 * @static
 		 * @param {*} variable - The value to check.
@@ -75,12 +80,16 @@ module.exports = (() => {
 		 * @param {*} type - The expected type of the argument.
 		 * @param {String=} typeDescription - The description of the expected type (used for formatting an error message).
 		 */
-		argumentIsOptional(variable, variableName, type, typeDescription) {
+		argumentIsOptional(variable, variableName, type, typeDescription, predicate, predicateDescription) {
 			if (variable === null || variable === undefined) {
 				return;
 			}
 
 			checkArgumentType(variable, variableName, type, typeDescription);
+
+			if (is.fn(predicate) && !predicate(variable)) {
+				throwCustomValidationError(variableName, predicateDescription);
+			}
 		},
 
 		argumentIsArray(variable, variableName, itemConstraint, itemConstraintDescription) {
@@ -98,6 +107,22 @@ module.exports = (() => {
 				variable.forEach((v, i) => {
 					itemValidator(v, i);
 				});
+			}
+		},
+
+		/**
+		 * Throws an error if an argument doesn't conform to the desired specification
+		 * (as determined by a predicate).
+		 *
+		 * @static
+		 * @param {*} variable - The value to check.
+		 * @param {String} variableName - The name of the value (used for formatting an error message).
+		 * @param {Function=} predicate - A function used to validate the item (beyond type checking).
+		 * @param {Function=} predicateDescription - A description of the assertion made by the predicate (e.g. "is an integer") that is used for formatting an error message.
+		 */
+		argumentIsValid(variable, variableName, predicate, predicateDescription) {
+			if (!predicate(variable)) {
+				throwCustomValidationError(variableName, predicateDescription);
 			}
 		},
 
