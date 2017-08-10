@@ -2633,7 +2633,19 @@ module.exports = function () {
       return undefined;
     }(function (candidate) {
       return candidate === undefined;
-    })
+    }),
+
+    /**
+     * Given two classes, determines if the "child" class extends
+     * the "parent" class (without instantiation).
+     *
+     * @param {Function} parent
+     * @param {Function} child
+     * @returns {Boolean}
+     */
+    extension: function extension(parent, child) {
+      return this.fn(parent) && this.fn(child) && child.prototype instanceof parent;
+    }
   };
 }();
 
