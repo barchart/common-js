@@ -2341,19 +2341,33 @@ module.exports = function () {
 },{"./assert":17,"./is":23}],19:[function(require,module,exports){
 'use strict';
 
+var is = require('./is');
+
 module.exports = function () {
-	'use strict';
+  'use strict';
 
-	var connection = {
-		getIsSecure: function getIsSecure(secure) {
-			return typeof secure === 'boolean' && secure;
-		}
-	};
+  /**
+   * Utilities checking HTTP connections.
+   *
+   * @public
+   * @module lang/connection
+   * @deprecated
+   */
 
-	return connection;
+  return {
+    /**
+     * Returns true, if the input is a true boolean value; otherwise false.
+     *
+     * @param {Boolean=} secure
+     * @returns {Boolean}
+     */
+    getIsSecure: function getIsSecure(secure) {
+      return is.boolean(secure) && secure;
+    }
+  };
 }();
 
-},{}],20:[function(require,module,exports){
+},{"./is":23}],20:[function(require,module,exports){
 'use strict';
 
 module.exports = function () {
