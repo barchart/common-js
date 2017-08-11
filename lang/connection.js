@@ -10,7 +10,7 @@ module.exports = (() => {
 	 * @module lang/connection
 	 * @deprecated
 	 */
-	const connection = {
+	return  {
 		/**
 		 * Returns true, if the input is a true boolean value; otherwise false.
 		 *
@@ -21,6 +21,4 @@ module.exports = (() => {
 			return is.boolean(secure) && secure;
 		}
 	};
-
-	return connection;
 })();
