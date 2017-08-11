@@ -671,5 +671,4 @@ describe('When "attributes.read" is used with a non-default separator', function
 			expect(attributes.read(target, 'another|key', '|')).toEqual(undefined);
 		});
 	});
-
 });
