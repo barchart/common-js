@@ -81,7 +81,7 @@ module.exports = (() => {
 			assert.argumentIsRequired(places, 'places', Number);
 			assert.argumentIsRequired(mode, 'mode', RoundingMode, 'RoundingMode');
 
-			return new Decimal(this._big.round(places, mode.code));
+			return new Decimal(this._big.round(places, mode.value));
 		}
 
 		/**
