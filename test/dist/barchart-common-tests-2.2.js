@@ -1893,7 +1893,7 @@ module.exports = function () {
 		}, {
 			key: 'getIsGreaterThan',
 			value: function getIsGreaterThan(other) {
-				return this._big().gt(getBig(other));
+				return this._big.gt(getBig(other));
 			}
 
 			/**
@@ -1907,7 +1907,7 @@ module.exports = function () {
 		}, {
 			key: 'getIsLessThan',
 			value: function getIsLessThan(other) {
-				return this._big().lt(getBig(other));
+				return this._big.lt(getBig(other));
 			}
 
 			/**
@@ -1921,7 +1921,7 @@ module.exports = function () {
 		}, {
 			key: 'getIsEqual',
 			value: function getIsEqual(other) {
-				return this._big().eq(getBig(other));
+				return this._big.eq(getBig(other));
 			}
 
 			/**
