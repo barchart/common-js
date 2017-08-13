@@ -1,4 +1,6 @@
 const assert = require('./assert'),
+	ComparatorBuilder = require('./../sorting/ComparatorBuilder'),
+	comparators = require('./../sorting/comparators'),
 	is = require('./is');
 
 module.exports = (() => {
@@ -81,6 +83,21 @@ module.exports = (() => {
 				!(day > 31);
 		}
 
+		/**
+		 * A comparator function for {@link Day} instances.
+		 *
+		 * @public
+		 * @param {Day} a
+		 * @param {Day} b
+		 * @returns {Number}
+		 */
+		static compareDays(a, b) {
+			assert.argumentIsRequired(a, 'a', Day, 'Day');
+			assert.argumentIsRequired(b, 'b', Day, 'Day');
+
+			return comparator(a, b);
+		}
+
 		toString() {
 			return '[Day]';
 		}
@@ -91,6 +108,11 @@ module.exports = (() => {
 	function leftPad(value) {
 		return value < 10 ? `0${value}` : `${value}`;
 	}
+
+	const comparator = ComparatorBuilder.startWith(comparators.compareNumbers(a.year, b.year))
+		.thenBy(comparators.compareNumbers(a.month, b.month))
+		.thenBy(comparators.compareNumbers(a.day, b.day))
+		.toComparator();
 
 	return Day;
 })();

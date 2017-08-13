@@ -229,6 +229,27 @@ module.exports = (() => {
 			return instance.getIsPositive() || instance.getIsZero();
 		}
 
+		/**
+		 * A comparator function for {@link Decimal} instances.
+		 *
+		 * @public
+		 * @param {Decimal} a
+		 * @param {Decimal} b
+		 * @returns {Number}
+		 */
+		static compareDecimals(a, b) {
+			assert.argumentIsRequired(a, 'a', Decimal, 'Decimal');
+			assert.argumentIsRequired(b, 'b', Decimal, 'Decimal');
+
+			if (a._big.gt(b)) {
+				return 1;
+			} else if (a._big.lt(b)) {
+				return -1;
+			} else {
+				return 0;
+			}
+		}
+
 		toString() {
 			return '[Decimal]';
 		}
