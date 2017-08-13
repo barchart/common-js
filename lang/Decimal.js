@@ -197,6 +197,17 @@ module.exports = (() => {
 		}
 
 		/**
+		 * Checks an instance to see if its negative or zero.
+		 *
+		 * @param {Decimal} instance
+		 */
+		static getIsNotPositive(instance) {
+			assert.argumentIsRequired(instance, 'instance', Decimal, 'Decimal');
+
+			return instance.getIsNegative() || instance.getIsZero();
+		}
+
+		/**
 		 * Runs {@link Decimal#getIsNegative} and returns the result.
 		 *
 		 * @param {Decimal} instance
@@ -205,6 +216,17 @@ module.exports = (() => {
 			assert.argumentIsRequired(instance, 'instance', Decimal, 'Decimal');
 
 			return instance.getIsNegative();
+		}
+
+		/**
+		 * Checks an instance to see if its positive or zero.
+		 *
+		 * @param {Decimal} instance
+		 */
+		static getIsNotNegative(instance) {
+			assert.argumentIsRequired(instance, 'instance', Decimal, 'Decimal');
+
+			return instance.getIsPositive() || instance.getIsZero();
 		}
 
 		toString() {
