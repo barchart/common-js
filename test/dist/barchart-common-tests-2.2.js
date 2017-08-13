@@ -1543,6 +1543,18 @@ module.exports = function () {
 			value: function format() {
 				return this._year + '-' + leftPad(this._month) + '-' + leftPad(this._day);
 			}
+
+			/**
+    * Returns the JSON representation.
+    *
+    * @returns {String}
+    */
+
+		}, {
+			key: 'toJSON',
+			value: function toJSON() {
+				return this.format();
+			}
 		}, {
 			key: 'toString',
 			value: function toString() {
@@ -1902,6 +1914,18 @@ module.exports = function () {
 			key: 'toFixed',
 			value: function toFixed() {
 				return this._big.toFixed();
+			}
+
+			/**
+    * Returns the JSON representation.
+    *
+    * @returns {String}
+    */
+
+		}, {
+			key: 'toJSON',
+			value: function toJSON() {
+				return this.toFixed();
 			}
 
 			/**
