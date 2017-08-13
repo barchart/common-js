@@ -1529,6 +1529,7 @@ module.exports = function () {
 		/**
    * The year.
    *
+   * @public
    * @returns {Number}
    */
 
@@ -1538,6 +1539,7 @@ module.exports = function () {
 			/**
     * Outputs the date as the formatted string: {year}-{month}-{day}.
     *
+    * @public
     * @returns {String}
     */
 			value: function format() {
@@ -1547,6 +1549,7 @@ module.exports = function () {
 			/**
     * Returns the JSON representation.
     *
+    * @public
     * @returns {String}
     */
 
@@ -1555,6 +1558,16 @@ module.exports = function () {
 			value: function toJSON() {
 				return this.format();
 			}
+
+			/**
+    * Converts a string (which matches the output of {@link Day#format} into
+    * a {@link Day} instance.
+    *
+    * @public
+    * @param {String} value
+    * @returns {Day}
+    */
+
 		}, {
 			key: 'toString',
 			value: function toString() {
@@ -1569,6 +1582,7 @@ module.exports = function () {
 			/**
     * The month of the year (January is one, December is twelve).
     *
+    * @public
     * @returns {*}
     */
 
@@ -1581,6 +1595,7 @@ module.exports = function () {
 			/**
     * The day of the month.
     *
+    * @public
     * @returns {Number}
     */
 
@@ -1602,6 +1617,18 @@ module.exports = function () {
 
 				return new Day(parseInt(match[1]), parseInt(match[2]), parseInt(match[3]));
 			}
+
+			/**
+    * Validates the year, month, and day combination is valid. At this point,
+    * leap year isn't accounted for -- instead, February is always allowed to
+    * have 29 days.
+    *
+    * @param {Number} year
+    * @param {Number} month
+    * @param {Number} day
+    * @returns {Boolean}
+    */
+
 		}, {
 			key: 'validate',
 			value: function validate(year, month, day) {
@@ -1650,6 +1677,8 @@ module.exports = function () {
 },{"./../collections/sorting/ComparatorBuilder":4,"./../collections/sorting/comparators":5,"./assert":19,"./is":23}],13:[function(require,module,exports){
 'use strict';
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 var _createClass = function () {
 	function defineProperties(target, props) {
 		for (var i = 0; i < props.length; i++) {
@@ -1660,6 +1689,18 @@ var _createClass = function () {
 	};
 }();
 
+function _possibleConstructorReturn(self, call) {
+	if (!self) {
+		throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+	}return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+}
+
+function _inherits(subClass, superClass) {
+	if (typeof superClass !== "function" && superClass !== null) {
+		throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
+	}subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+}
+
 function _classCallCheck(instance, Constructor) {
 	if (!(instance instanceof Constructor)) {
 		throw new TypeError("Cannot call a class as a function");
@@ -1667,6 +1708,7 @@ function _classCallCheck(instance, Constructor) {
 }
 
 var assert = require('./assert'),
+    Enum = require('./Enum'),
     is = require('./is');
 
 var Big = require('big.js');
@@ -1766,7 +1808,7 @@ module.exports = function () {
 				assert.argumentIsRequired(places, 'places', Number);
 				assert.argumentIsRequired(mode, 'mode', RoundingMode, 'RoundingMode');
 
-				return new Decimal(this._big.round(places, mode.code));
+				return new Decimal(this._big.round(places, mode.value));
 			}
 
 			/**
@@ -1919,6 +1961,7 @@ module.exports = function () {
 			/**
     * Returns the JSON representation.
     *
+    * @public
     * @returns {String}
     */
 
@@ -1931,6 +1974,7 @@ module.exports = function () {
 			/**
     * Returns an instance with the value of zero.
     *
+    * @public
     * @returns {Decimal}
     */
 
@@ -1945,6 +1989,7 @@ module.exports = function () {
 			/**
     * Runs {@link Decimal#getIsPositive} and returns the result.
     *
+    * @public
     * @param {Decimal} instance
     */
 			value: function getIsPositive(instance) {
@@ -1956,6 +2001,7 @@ module.exports = function () {
 			/**
     * Checks an instance to see if its negative or zero.
     *
+    * @public
     * @param {Decimal} instance
     */
 
@@ -1970,6 +2016,7 @@ module.exports = function () {
 			/**
     * Runs {@link Decimal#getIsNegative} and returns the result.
     *
+    * @public
     * @param {Decimal} instance
     */
 
@@ -1984,6 +2031,7 @@ module.exports = function () {
 			/**
     * Checks an instance to see if its positive or zero.
     *
+    * @public
     * @param {Decimal} instance
     */
 
@@ -2027,6 +2075,7 @@ module.exports = function () {
 			/**
     * Returns an instance with the value of one.
     *
+    * @public
     * @returns {Decimal}
     */
 
@@ -2039,6 +2088,7 @@ module.exports = function () {
 			/**
     * Returns an instance with the value of one.
     *
+    * @public
     * @returns {Decimal}
     */
 
@@ -2049,6 +2099,8 @@ module.exports = function () {
 			}
 
 			/**
+    * The enumeration for rounding modes.
+    *
     * @public
     * @returns {RoundingMode}
     * @constructor
@@ -2082,19 +2134,17 @@ module.exports = function () {
 		}
 	}
 
-	var RoundingMode = function () {
-		function RoundingMode(description, code) {
+	var RoundingMode = function (_Enum) {
+		_inherits(RoundingMode, _Enum);
+
+		function RoundingMode(value, description) {
 			_classCallCheck(this, RoundingMode);
 
-			this._description = description;
-			this._code = code;
-		}
+			var _this = _possibleConstructorReturn(this, (RoundingMode.__proto__ || Object.getPrototypeOf(RoundingMode)).call(this, value.toString(), description));
 
-		/**
-   * Description of the rounding mode.
-   *
-   * @returns {String}
-   */
+			_this._value = value;
+			return _this;
+		}
 
 		_createClass(RoundingMode, [{
 			key: 'toString',
@@ -2102,21 +2152,9 @@ module.exports = function () {
 				return '[RoundingMode]';
 			}
 		}, {
-			key: 'description',
+			key: 'value',
 			get: function get() {
-				return this._description;
-			}
-
-			/**
-    * Code assigned to rounding mode.
-    *
-    * @returns {Number}
-    */
-
-		}, {
-			key: 'code',
-			get: function get() {
-				return this._code;
+				return this._value;
 			}
 
 			/**
@@ -2157,16 +2195,16 @@ module.exports = function () {
 		}]);
 
 		return RoundingMode;
-	}();
+	}(Enum);
 
-	var up = new RoundingMode('up', 3);
-	var down = new RoundingMode('down', 0);
-	var normal = new RoundingMode('normal', 1);
+	var up = new RoundingMode(3, 'up');
+	var down = new RoundingMode(0, 'down');
+	var normal = new RoundingMode(1, 'normal');
 
 	return Decimal;
 }();
 
-},{"./assert":19,"./is":23,"big.js":35}],14:[function(require,module,exports){
+},{"./Enum":15,"./assert":19,"./is":23,"big.js":35}],14:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -2519,10 +2557,23 @@ module.exports = function () {
 		/**
    * The timestamp.
    *
+   * @public
    * @returns {Number}
    */
 
 		_createClass(Timestamp, [{
+			key: 'toJSON',
+
+			/**
+    * Returns the JSON representation.
+    *
+    * @public
+    * @returns {Number}
+    */
+			value: function toJSON() {
+				return this.timestamp;
+			}
+		}, {
 			key: 'toString',
 			value: function toString() {
 				return '[Timestamp]';
@@ -2536,6 +2587,7 @@ module.exports = function () {
 			/**
     * The moment instance.
     *
+    * @public
     * @returns {moment}
     */
 
