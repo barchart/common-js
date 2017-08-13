@@ -185,6 +185,28 @@ module.exports = (() => {
 			return RoundingMode;
 		}
 
+		/**
+		 * Runs {@link Decimal#getIsPositive} and returns the result.
+		 *
+		 * @param {Decimal} instance
+		 */
+		static getIsPositive(instance) {
+			assert.argumentIsRequired(instance, 'instance', Decimal, 'Decimal');
+
+			return instance.getIsPositive();
+		}
+
+		/**
+		 * Runs {@link Decimal#getIsNegative} and returns the result.
+		 *
+		 * @param {Decimal} instance
+		 */
+		static getIsNegative(instance) {
+			assert.argumentIsRequired(instance, 'instance', Decimal, 'Decimal');
+
+			return instance.getIsNegative();
+		}
+
 		toString() {
 			return '[Decimal]';
 		}
