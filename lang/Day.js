@@ -26,6 +26,7 @@ module.exports = (() => {
 		/**
 		 * The year.
 		 *
+		 * @public
 		 * @returns {Number}
 		 */
 		get year() {
@@ -35,6 +36,7 @@ module.exports = (() => {
 		/**
 		 * The month of the year (January is one, December is twelve).
 		 *
+		 * @public
 		 * @returns {*}
 		 */
 		get month() {
@@ -44,6 +46,7 @@ module.exports = (() => {
 		/**
 		 * The day of the month.
 		 *
+		 * @public
 		 * @returns {Number}
 		 */
 		get day() {
@@ -53,6 +56,7 @@ module.exports = (() => {
 		/**
 		 * Outputs the date as the formatted string: {year}-{month}-{day}.
 		 *
+		 * @public
 		 * @returns {String}
 		 */
 		format() {
@@ -62,12 +66,21 @@ module.exports = (() => {
 		/**
 		 * Returns the JSON representation.
 		 *
+		 * @public
 		 * @returns {String}
 		 */
 		toJSON() {
 			return this.format();
 		}
 
+		/**
+		 * Converts a string (which matches the output of {@link Day#format} into
+		 * a {@link Day} instance.
+		 *
+		 * @public
+		 * @param {String} value
+		 * @returns {Day}
+		 */
 		static parse(value) {
 			assert.argumentIsRequired(value, 'value', String);
 
@@ -80,6 +93,16 @@ module.exports = (() => {
 			return new Day(parseInt(match[1]), parseInt(match[2]), parseInt(match[3]));
 		}
 
+		/**
+		 * Validates the year, month, and day combination is valid. At this point,
+		 * leap year isn't accounted for -- instead, February is always allowed to
+		 * have 29 days.
+		 *
+		 * @param {Number} year
+		 * @param {Number} month
+		 * @param {Number} day
+		 * @returns {Boolean}
+		 */
 		static validate(year, month, day) {
 			return is.integer(year) &&
 				is.integer(month) &&

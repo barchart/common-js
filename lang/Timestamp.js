@@ -27,6 +27,7 @@ module.exports = (() => {
 		/**
 		 * The timestamp.
 		 *
+		 * @public
 		 * @returns {Number}
 		 */
 		get timestamp() {
@@ -36,6 +37,7 @@ module.exports = (() => {
 		/**
 		 * The moment instance.
 		 *
+		 * @public
 		 * @returns {moment}
 		 */
 		get moment() {
@@ -48,6 +50,16 @@ module.exports = (() => {
 			}
 
 			return this._moment;
+		}
+
+		/**
+		 * Returns the JSON representation.
+		 *
+		 * @public
+		 * @returns {Number}
+		 */
+		toJSON() {
+			return this.timestamp;
 		}
 
 		toString() {

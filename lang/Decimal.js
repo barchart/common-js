@@ -1,4 +1,5 @@
 const assert = require('./assert'),
+	Enum = require('./Enum'),
 	is = require('./is');
 
 const Big = require('big.js');
@@ -203,6 +204,7 @@ module.exports = (() => {
 		/**
 		 * Returns the JSON representation.
 		 *
+		 * @public
 		 * @returns {String}
 		 */
 		toJSON() {
@@ -212,6 +214,7 @@ module.exports = (() => {
 		/**
 		 * Returns an instance with the value of zero.
 		 *
+		 * @public
 		 * @returns {Decimal}
 		 */
 		static get ZERO() {
@@ -221,6 +224,7 @@ module.exports = (() => {
 		/**
 		 * Returns an instance with the value of one.
 		 *
+		 * @public
 		 * @returns {Decimal}
 		 */
 		static get ONE() {
@@ -230,6 +234,7 @@ module.exports = (() => {
 		/**
 		 * Returns an instance with the value of one.
 		 *
+		 * @public
 		 * @returns {Decimal}
 		 */
 		static get NEGATIVE_ONE() {
@@ -237,6 +242,8 @@ module.exports = (() => {
 		}
 
 		/**
+		 * The enumeration for rounding modes.
+		 *
 		 * @public
 		 * @returns {RoundingMode}
 		 * @constructor
@@ -248,6 +255,7 @@ module.exports = (() => {
 		/**
 		 * Runs {@link Decimal#getIsPositive} and returns the result.
 		 *
+		 * @public
 		 * @param {Decimal} instance
 		 */
 		static getIsPositive(instance) {
@@ -259,6 +267,7 @@ module.exports = (() => {
 		/**
 		 * Checks an instance to see if its negative or zero.
 		 *
+		 * @public
 		 * @param {Decimal} instance
 		 */
 		static getIsNotPositive(instance) {
@@ -270,6 +279,7 @@ module.exports = (() => {
 		/**
 		 * Runs {@link Decimal#getIsNegative} and returns the result.
 		 *
+		 * @public
 		 * @param {Decimal} instance
 		 */
 		static getIsNegative(instance) {
@@ -281,6 +291,7 @@ module.exports = (() => {
 		/**
 		 * Checks an instance to see if its positive or zero.
 		 *
+		 * @public
 		 * @param {Decimal} instance
 		 */
 		static getIsNotNegative(instance) {
@@ -333,28 +344,15 @@ module.exports = (() => {
 		}
 	}
 
-	class RoundingMode {
-		constructor(description, code) {
-			this._description = description;
-			this._code = code;
+	class RoundingMode extends Enum {
+		constructor(value, description) {
+			super(value.toString(), description);
+
+			this._value = value;
 		}
 
-		/**
-		 * Description of the rounding mode.
-		 *
-		 * @returns {String}
-		 */
-		get description() {
-			return this._description;
-		}
-
-		/**
-		 * Code assigned to rounding mode.
-		 *
-		 * @returns {Number}
-		 */
-		get code() {
-			return this._code;
+		get value() {
+			return this._value;
 		}
 
 		/**
@@ -389,9 +387,9 @@ module.exports = (() => {
 		}
 	}
 
-	const up = new RoundingMode('up', 3);
-	const down = new RoundingMode('down', 0);
-	const normal = new RoundingMode('normal', 1);
+	const up = new RoundingMode(3, 'up');
+	const down = new RoundingMode(0, 'down');
+	const normal = new RoundingMode(1, 'normal');
 
 	return Decimal;
 })();
