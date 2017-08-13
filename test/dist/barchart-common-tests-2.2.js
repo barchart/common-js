@@ -1846,6 +1846,61 @@ module.exports = function () {
 				return '[Decimal]';
 			}
 		}], [{
+			key: 'getIsPositive',
+
+			/**
+    * Runs {@link Decimal#getIsPositive} and returns the result.
+    *
+    * @param {Decimal} instance
+    */
+			value: function getIsPositive(instance) {
+				assert.argumentIsRequired(instance, 'instance', Decimal, 'Decimal');
+
+				return instance.getIsPositive();
+			}
+
+			/**
+    * Checks an instance to see if its negative or zero.
+    *
+    * @param {Decimal} instance
+    */
+
+		}, {
+			key: 'getIsNotPositive',
+			value: function getIsNotPositive(instance) {
+				assert.argumentIsRequired(instance, 'instance', Decimal, 'Decimal');
+
+				return instance.getIsNegative() || instance.getIsZero();
+			}
+
+			/**
+    * Runs {@link Decimal#getIsNegative} and returns the result.
+    *
+    * @param {Decimal} instance
+    */
+
+		}, {
+			key: 'getIsNegative',
+			value: function getIsNegative(instance) {
+				assert.argumentIsRequired(instance, 'instance', Decimal, 'Decimal');
+
+				return instance.getIsNegative();
+			}
+
+			/**
+    * Checks an instance to see if its positive or zero.
+    *
+    * @param {Decimal} instance
+    */
+
+		}, {
+			key: 'getIsNotNegative',
+			value: function getIsNotNegative(instance) {
+				assert.argumentIsRequired(instance, 'instance', Decimal, 'Decimal');
+
+				return instance.getIsPositive() || instance.getIsZero();
+			}
+		}, {
 			key: 'ZERO',
 			get: function get() {
 				return decimalZero;
