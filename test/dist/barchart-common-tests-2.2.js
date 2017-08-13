@@ -1499,6 +1499,8 @@ function _classCallCheck(instance, Constructor) {
 }
 
 var assert = require('./assert'),
+    ComparatorBuilder = require('./../collections/sorting/ComparatorBuilder'),
+    comparators = require('./../collections/sorting/comparators'),
     is = require('./is');
 
 module.exports = function () {
@@ -1593,6 +1595,24 @@ module.exports = function () {
 			value: function validate(year, month, day) {
 				return is.integer(year) && is.integer(month) && is.integer(day) && !(month < 1) && !(month > 12) && !(day < 1) && !(day > 29 && month === 2) && !(day > 30 && (month === 4 || month === 6 || month === 9 || month === 11)) && !(day > 31);
 			}
+
+			/**
+    * A comparator function for {@link Day} instances.
+    *
+    * @public
+    * @param {Day} a
+    * @param {Day} b
+    * @returns {Number}
+    */
+
+		}, {
+			key: 'compareDays',
+			value: function compareDays(a, b) {
+				assert.argumentIsRequired(a, 'a', Day, 'Day');
+				assert.argumentIsRequired(b, 'b', Day, 'Day');
+
+				return comparator(a, b);
+			}
 		}]);
 
 		return Day;
@@ -1604,10 +1624,18 @@ module.exports = function () {
 		return value < 10 ? '0' + value : '' + value;
 	}
 
+	var comparator = ComparatorBuilder.startWith(function (a, b) {
+		return comparators.compareNumbers(a.year, b.year);
+	}).thenBy(function (a, b) {
+		return comparators.compareNumbers(a.month, b.month);
+	}).thenBy(function (a, b) {
+		return comparators.compareNumbers(a.day, b.day);
+	}).toComparator();
+
 	return Day;
 }();
 
-},{"./assert":19,"./is":23}],13:[function(require,module,exports){
+},{"./../collections/sorting/ComparatorBuilder":4,"./../collections/sorting/comparators":5,"./assert":19,"./is":23}],13:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
@@ -1801,6 +1829,48 @@ module.exports = function () {
 			}
 
 			/**
+    * Returns true if the current instance is greater than the value.
+    *
+    * @public
+    * @param {Decimal|Number|String} value - The value to compare.
+    * @returns {Boolean}
+    */
+
+		}, {
+			key: 'getIsGreaterThan',
+			value: function getIsGreaterThan(other) {
+				return this._big().gt(getBig(other));
+			}
+
+			/**
+    * Returns true if the current instance is less than the value.
+    *
+    * @public
+    * @param {Decimal|Number|String} value - The value to compare.
+    * @returns {Boolean}
+    */
+
+		}, {
+			key: 'getIsLessThan',
+			value: function getIsLessThan(other) {
+				return this._big().lt(getBig(other));
+			}
+
+			/**
+    * Returns true if the current instance is equal to the value.
+    *
+    * @public
+    * @param {Decimal|Number|String} value - The value to compare.
+    * @returns {Boolean}
+    */
+
+		}, {
+			key: 'getIsEqual',
+			value: function getIsEqual(other) {
+				return this._big().eq(getBig(other));
+			}
+
+			/**
     * Emits a floating point value that approximates the value of the current
     * instance.
     *
@@ -1900,10 +1970,58 @@ module.exports = function () {
 
 				return instance.getIsPositive() || instance.getIsZero();
 			}
+
+			/**
+    * A comparator function for {@link Decimal} instances.
+    *
+    * @public
+    * @param {Decimal} a
+    * @param {Decimal} b
+    * @returns {Number}
+    */
+
+		}, {
+			key: 'compareDecimals',
+			value: function compareDecimals(a, b) {
+				assert.argumentIsRequired(a, 'a', Decimal, 'Decimal');
+				assert.argumentIsRequired(b, 'b', Decimal, 'Decimal');
+
+				if (a._big.gt(b)) {
+					return 1;
+				} else if (a._big.lt(b)) {
+					return -1;
+				} else {
+					return 0;
+				}
+			}
 		}, {
 			key: 'ZERO',
 			get: function get() {
 				return decimalZero;
+			}
+
+			/**
+    * Returns an instance with the value of one.
+    *
+    * @returns {Decimal}
+    */
+
+		}, {
+			key: 'ONE',
+			get: function get() {
+				return decimalOne;
+			}
+
+			/**
+    * Returns an instance with the value of one.
+    *
+    * @returns {Decimal}
+    */
+
+		}, {
+			key: 'NEGATIVE_ONE',
+			get: function get() {
+				return decimalNegativeOne;
 			}
 
 			/**
@@ -1926,6 +2044,10 @@ module.exports = function () {
 	var positiveOne = new Big(1);
 	var negativeOne = new Big(-1);
 
+	var decimalZero = new Decimal(zero);
+	var decimalOne = new Decimal(positiveOne);
+	var decimalNegativeOne = new Decimal(negativeOne);
+
 	function getBig(value) {
 		if (value instanceof Big) {
 			return value;
@@ -1935,8 +2057,6 @@ module.exports = function () {
 			return new Big(value);
 		}
 	}
-
-	var decimalZero = new Decimal(0);
 
 	var RoundingMode = function () {
 		function RoundingMode(description, code) {
