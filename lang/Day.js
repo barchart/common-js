@@ -1,6 +1,6 @@
 const assert = require('./assert'),
-	ComparatorBuilder = require('./../sorting/ComparatorBuilder'),
-	comparators = require('./../sorting/comparators'),
+	ComparatorBuilder = require('./../collections/sorting/ComparatorBuilder'),
+	comparators = require('./../collections/sorting/comparators'),
 	is = require('./is');
 
 module.exports = (() => {
@@ -109,9 +109,9 @@ module.exports = (() => {
 		return value < 10 ? `0${value}` : `${value}`;
 	}
 
-	const comparator = ComparatorBuilder.startWith(comparators.compareNumbers(a.year, b.year))
-		.thenBy(comparators.compareNumbers(a.month, b.month))
-		.thenBy(comparators.compareNumbers(a.day, b.day))
+	const comparator = ComparatorBuilder.startWith((a, b) => comparators.compareNumbers(a.year, b.year))
+		.thenBy((a, b) => comparators.compareNumbers(a.month, b.month))
+		.thenBy((a, b) => comparators.compareNumbers(a.day, b.day))
 		.toComparator();
 
 	return Day;

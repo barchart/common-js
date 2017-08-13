@@ -140,6 +140,39 @@ module.exports = (() => {
 		}
 
 		/**
+		 * Returns true if the current instance is greater than the value.
+		 *
+		 * @public
+		 * @param {Decimal|Number|String} value - The value to compare.
+		 * @returns {Boolean}
+		 */
+		getIsGreaterThan(other) {
+			return this._big().gt(getBig(other));
+		}
+
+		/**
+		 * Returns true if the current instance is less than the value.
+		 *
+		 * @public
+		 * @param {Decimal|Number|String} value - The value to compare.
+		 * @returns {Boolean}
+		 */
+		getIsLessThan(other) {
+			return this._big().lt(getBig(other));
+		}
+
+		/**
+		 * Returns true if the current instance is equal to the value.
+		 *
+		 * @public
+		 * @param {Decimal|Number|String} value - The value to compare.
+		 * @returns {Boolean}
+		 */
+		getIsEqual(other) {
+			return this._big().eq(getBig(other));
+		}
+
+		/**
 		 * Emits a floating point value that approximates the value of the current
 		 * instance.
 		 *
@@ -174,6 +207,24 @@ module.exports = (() => {
 		 */
 		static get ZERO() {
 			return decimalZero;
+		}
+
+		/**
+		 * Returns an instance with the value of one.
+		 *
+		 * @returns {Decimal}
+		 */
+		static get ONE() {
+			return decimalOne;
+		}
+
+		/**
+		 * Returns an instance with the value of one.
+		 *
+		 * @returns {Decimal}
+		 */
+		static get NEGATIVE_ONE() {
+			return decimalNegativeOne;
 		}
 
 		/**
@@ -259,6 +310,10 @@ module.exports = (() => {
 	const positiveOne = new Big(1);
 	const negativeOne = new Big(-1);
 
+	const decimalZero = new Decimal(zero);
+	const decimalOne = new Decimal(positiveOne);
+	const decimalNegativeOne = new Decimal(negativeOne);
+
 	function getBig(value) {
 		if (value instanceof Big) {
 			return value;
@@ -268,8 +323,6 @@ module.exports = (() => {
 			return new Big(value);
 		}
 	}
-
-	const decimalZero = new Decimal(0);
 
 	class RoundingMode {
 		constructor(description, code) {
