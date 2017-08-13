@@ -148,7 +148,7 @@ module.exports = (() => {
 		 * @returns {Boolean}
 		 */
 		getIsGreaterThan(other) {
-			return this._big().gt(getBig(other));
+			return this._big.gt(getBig(other));
 		}
 
 		/**
@@ -159,7 +159,7 @@ module.exports = (() => {
 		 * @returns {Boolean}
 		 */
 		getIsLessThan(other) {
-			return this._big().lt(getBig(other));
+			return this._big.lt(getBig(other));
 		}
 
 		/**
@@ -170,7 +170,7 @@ module.exports = (() => {
 		 * @returns {Boolean}
 		 */
 		getIsEqual(other) {
-			return this._big().eq(getBig(other));
+			return this._big.eq(getBig(other));
 		}
 
 		/**
