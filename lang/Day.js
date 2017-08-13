@@ -59,6 +59,15 @@ module.exports = (() => {
 			return `${this._year}-${leftPad(this._month)}-${leftPad(this._day)}`;
 		}
 
+		/**
+		 * Returns the JSON representation.
+		 *
+		 * @returns {String}
+		 */
+		toJSON() {
+			return this.format();
+		}
+
 		static parse(value) {
 			assert.argumentIsRequired(value, 'value', String);
 

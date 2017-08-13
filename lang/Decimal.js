@@ -201,6 +201,15 @@ module.exports = (() => {
 		}
 
 		/**
+		 * Returns the JSON representation.
+		 *
+		 * @returns {String}
+		 */
+		toJSON() {
+			return this.toFixed();
+		}
+
+		/**
 		 * Returns an instance with the value of zero.
 		 *
 		 * @returns {Decimal}
