@@ -30,8 +30,8 @@ describe('When "2017-08-31 is parsed as a Day', function() {
 
 describe('When an invalid string is parsed as a Day', function() {
 	function expectError(value) {
-		expect(function() { Day.parse(value) }).toThrow();
-	};
+		expect(function() { Day.parse(value); }).toThrow();
+	}
 
 	it('an error should be thrown parsing a null value', function() {
 		expectError(null);
