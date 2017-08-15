@@ -95,6 +95,20 @@ module.exports = function () {
 			value: function empty() {
 				return this._array.length === 0;
 			}
+
+			/**
+    * Outputs an array of the queue's items; without affecting the
+    * queue's internal state;
+    *
+    * @public
+    * @returns {Array}
+    */
+
+		}, {
+			key: 'toArray',
+			value: function toArray() {
+				return this._array.slice(0);
+			}
 		}, {
 			key: 'toString',
 			value: function toString() {
@@ -204,6 +218,20 @@ module.exports = function () {
 			key: 'empty',
 			value: function empty() {
 				return this._array.length === 0;
+			}
+
+			/**
+    * Outputs an array of the stacks's items; without affecting the
+    * queue's internal state;
+    *
+    * @public
+    * @returns {Array}
+    */
+
+		}, {
+			key: 'toArray',
+			value: function toArray() {
+				return this._array.slice(0).reverse();
 			}
 		}, {
 			key: 'toString',
