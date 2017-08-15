@@ -46,7 +46,7 @@ module.exports = (() => {
 	}
 
 	function throwCustomValidationError(variableName, predicateDescription) {
-		throw new Error(`The argument [ ${(variableName || 'unspecified')} ] failed a validation check. [ ${(predicateDescription || 'No description available')} ]`);
+		throw new Error(`The argument [ ${(variableName || 'unspecified')} ] failed a validation check [ ${(predicateDescription || 'No description available')} ]`);
 	}
 
 	/**
