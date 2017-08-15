@@ -43,7 +43,7 @@ describe('When a Stack is constructed', function() {
 				peek = stack.peek();
 			});
 
-			it('the peek result the item pushed onto the stack', function() {
+			it('the peek result should be the item pushed onto the stack', function() {
 				expect(peek).toBe(first);
 			});
 
@@ -59,7 +59,7 @@ describe('When a Stack is constructed', function() {
 				pop = stack.pop();
 			});
 
-			it('the pop result the item pushed onto the stack', function() {
+			it('the pop result should be the item pushed onto the stack', function() {
 				expect(pop).toBe(first);
 			});
 
@@ -86,7 +86,7 @@ describe('When a Stack is constructed', function() {
 					peek = stack.peek();
 				});
 
-				it('the peek result the second item pushed onto the stack', function() {
+				it('the peek result should be the second item pushed onto the stack', function() {
 					expect(peek).toBe(second);
 				});
 
@@ -102,8 +102,32 @@ describe('When a Stack is constructed', function() {
 					pop = stack.pop();
 				});
 
-				it('the pop result the second item pushed onto the stack', function() {
+				it('the pop result should be the second item pushed onto the stack', function() {
 					expect(pop).toBe(second);
+				});
+
+				it('should not be empty', function() {
+					expect(stack.empty()).toEqual(false);
+				});
+			});
+
+			describe('and the queue is exported to an array', function() {
+				var a;
+
+				beforeEach(function() {
+					a = stack.toArray();
+				});
+
+				it('should return an array with two items', function() {
+					expect(a.length).toEqual(2);
+				});
+
+				it('the first item should be the second item pushed', function() {
+					expect(a[0]).toBe(first);
+				});
+
+				it('the second item should be the first item pushed', function() {
+					expect(a[1]).toBe(second);
 				});
 
 				it('should not be empty', function() {

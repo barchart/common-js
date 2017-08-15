@@ -62,6 +62,18 @@ module.exports = (() => {
 			return this._array.length === 0;
 		}
 
+		/**
+		 * Outputs an array of the stacks's items; without affecting the
+		 * queue's internal state;
+		 *
+		 * @public
+		 * @returns {Array}
+		 */
+		toArray() {
+			return this._array.slice(0).reverse();
+		}
+
+
 		toString() {
 			return '[Stack]';
 		}
