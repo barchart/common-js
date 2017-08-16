@@ -17,6 +17,8 @@ function _classCallCheck(instance, Constructor) {
 	}
 }
 
+var assert = require('./../lang/assert');
+
 module.exports = function () {
 	'use strict';
 
@@ -97,6 +99,23 @@ module.exports = function () {
 			}
 
 			/**
+    * Runs an action on each item in the queue.
+    *
+    * @public
+    * @param {Function} action - The action to run.
+    */
+
+		}, {
+			key: 'scan',
+			value: function scan(action) {
+				assert.argumentIsRequired(action, 'action', Function);
+
+				this._array.forEach(function (x) {
+					return action(x);
+				});
+			}
+
+			/**
     * Outputs an array of the queue's items; without affecting the
     * queue's internal state;
     *
@@ -122,7 +141,7 @@ module.exports = function () {
 	return Queue;
 }();
 
-},{}],2:[function(require,module,exports){
+},{"./../lang/assert":17}],2:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
@@ -140,6 +159,8 @@ function _classCallCheck(instance, Constructor) {
 		throw new TypeError("Cannot call a class as a function");
 	}
 }
+
+var assert = require('./../lang/assert');
 
 module.exports = function () {
 	'use strict';
@@ -221,6 +242,23 @@ module.exports = function () {
 			}
 
 			/**
+    * Runs an action on each item in the stack.
+    *
+    * @public
+    * @param {Function} action - The action to run.
+    */
+
+		}, {
+			key: 'scan',
+			value: function scan(action) {
+				assert.argumentIsRequired(action, 'action', Function);
+
+				this._array.forEach(function (x) {
+					return action(x);
+				});
+			}
+
+			/**
     * Outputs an array of the stacks's items; without affecting the
     * queue's internal state;
     *
@@ -231,7 +269,7 @@ module.exports = function () {
 		}, {
 			key: 'toArray',
 			value: function toArray() {
-				return this._array.slice(0).reverse();
+				return this._array.slice(0);
 			}
 		}, {
 			key: 'toString',
@@ -246,7 +284,7 @@ module.exports = function () {
 	return Stack;
 }();
 
-},{}],3:[function(require,module,exports){
+},{"./../lang/assert":17}],3:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
@@ -2102,7 +2140,7 @@ module.exports = function () {
 	}
 
 	function throwCustomValidationError(variableName, predicateDescription) {
-		throw new Error('The argument [ ' + (variableName || 'unspecified') + ' ] failed a validation check. [ ' + (predicateDescription || 'No description available') + ' ]');
+		throw new Error('The argument [ ' + (variableName || 'unspecified') + ' ] failed a validation check [ ' + (predicateDescription || 'No description available') + ' ]');
 	}
 
 	/**
