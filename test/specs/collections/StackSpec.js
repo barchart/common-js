@@ -123,15 +123,38 @@ describe('When a Stack is constructed', function() {
 				});
 
 				it('the first item should be the second item pushed', function() {
-					expect(a[0]).toBe(first);
+					expect(a[0]).toBe(second);
 				});
 
 				it('the second item should be the first item pushed', function() {
-					expect(a[1]).toBe(second);
+					expect(a[1]).toBe(first);
 				});
 
 				it('should not be empty', function() {
 					expect(stack.empty()).toEqual(false);
+				});
+			});
+
+			describe('and the stack is scanned', function() {
+				var spy;
+
+				beforeEach(function() {
+					spy = jasmine.createSpy();
+
+					stack.scan(spy);
+				});
+
+				it('should call the delegate one time for each item in the queue', function() {
+					expect(spy.calls.count()).toEqual(2);
+				});
+
+
+				it('should pass the second item to be pushed to the delegate first', function() {
+					expect(spy.calls.argsFor(0)[0]).toBe(second);
+				});
+
+				it('should pass the first item to be pushed to the delegate second', function() {
+					expect(spy.calls.argsFor(1)[0]).toBe(first);
 				});
 			});
 		});

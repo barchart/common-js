@@ -1,3 +1,5 @@
+const assert = require('./../lang/assert');
+
 module.exports = (() => {
 	'use strict';
 
@@ -60,6 +62,18 @@ module.exports = (() => {
 		 */
 		empty() {
 			return this._array.length === 0;
+		}
+
+		/**
+		 * Runs an action on each item in the queue.
+		 *
+		 * @public
+		 * @param {Function} action - The action to run.
+		 */
+		scan(action) {
+			assert.argumentIsRequired(action, 'action', Function);
+
+			this._array.forEach(x => action(x));
 		}
 
 		/**

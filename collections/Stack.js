@@ -1,3 +1,5 @@
+const assert = require('./../lang/assert');
+
 module.exports = (() => {
 	'use strict';
 
@@ -63,6 +65,18 @@ module.exports = (() => {
 		}
 
 		/**
+		 * Runs an action on each item in the stack.
+		 *
+		 * @public
+		 * @param {Function} action - The action to run.
+		 */
+		scan(action) {
+			assert.argumentIsRequired(action, 'action', Function);
+
+			this._array.forEach(x => action(x));
+		}
+
+		/**
 		 * Outputs an array of the stacks's items; without affecting the
 		 * queue's internal state;
 		 *
@@ -70,9 +84,8 @@ module.exports = (() => {
 		 * @returns {Array}
 		 */
 		toArray() {
-			return this._array.slice(0).reverse();
+			return this._array.slice(0);
 		}
-
 
 		toString() {
 			return '[Stack]';

@@ -17,6 +17,8 @@ function _classCallCheck(instance, Constructor) {
 	}
 }
 
+var assert = require('./../lang/assert');
+
 module.exports = function () {
 	'use strict';
 
@@ -97,6 +99,23 @@ module.exports = function () {
 			}
 
 			/**
+    * Runs an action on each item in the queue.
+    *
+    * @public
+    * @param {Function} action - The action to run.
+    */
+
+		}, {
+			key: 'scan',
+			value: function scan(action) {
+				assert.argumentIsRequired(action, 'action', Function);
+
+				this._array.forEach(function (x) {
+					return action(x);
+				});
+			}
+
+			/**
     * Outputs an array of the queue's items; without affecting the
     * queue's internal state;
     *
@@ -122,7 +141,7 @@ module.exports = function () {
 	return Queue;
 }();
 
-},{}],2:[function(require,module,exports){
+},{"./../lang/assert":19}],2:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
@@ -140,6 +159,8 @@ function _classCallCheck(instance, Constructor) {
 		throw new TypeError("Cannot call a class as a function");
 	}
 }
+
+var assert = require('./../lang/assert');
 
 module.exports = function () {
 	'use strict';
@@ -221,6 +242,23 @@ module.exports = function () {
 			}
 
 			/**
+    * Runs an action on each item in the stack.
+    *
+    * @public
+    * @param {Function} action - The action to run.
+    */
+
+		}, {
+			key: 'scan',
+			value: function scan(action) {
+				assert.argumentIsRequired(action, 'action', Function);
+
+				this._array.forEach(function (x) {
+					return action(x);
+				});
+			}
+
+			/**
     * Outputs an array of the stacks's items; without affecting the
     * queue's internal state;
     *
@@ -231,7 +269,7 @@ module.exports = function () {
 		}, {
 			key: 'toArray',
 			value: function toArray() {
-				return this._array.slice(0).reverse();
+				return this._array.slice(0);
 			}
 		}, {
 			key: 'toString',
@@ -246,7 +284,7 @@ module.exports = function () {
 	return Stack;
 }();
 
-},{}],3:[function(require,module,exports){
+},{"./../lang/assert":19}],3:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
@@ -3076,7 +3114,7 @@ module.exports = function () {
 	}
 
 	function throwCustomValidationError(variableName, predicateDescription) {
-		throw new Error('The argument [ ' + (variableName || 'unspecified') + ' ] failed a validation check. [ ' + (predicateDescription || 'No description available') + ' ]');
+		throw new Error('The argument [ ' + (variableName || 'unspecified') + ' ] failed a validation check [ ' + (predicateDescription || 'No description available') + ' ]');
 	}
 
 	/**
@@ -13615,6 +13653,28 @@ describe('When a Queue is constructed', function () {
 					expect(queue.empty()).toEqual(false);
 				});
 			});
+
+			describe('and the queue is scanned', function () {
+				var spy;
+
+				beforeEach(function () {
+					spy = jasmine.createSpy();
+
+					queue.scan(spy);
+				});
+
+				it('should call the delegate one time for each item in the queue', function () {
+					expect(spy.calls.count()).toEqual(2);
+				});
+
+				it('should pass the first item to be pushed to the delegate first', function () {
+					expect(spy.calls.argsFor(0)[0]).toBe(first);
+				});
+
+				it('should pass the second item to be pushed to the delegate second', function () {
+					expect(spy.calls.argsFor(1)[0]).toBe(second);
+				});
+			});
 		});
 	});
 });
@@ -13747,15 +13807,37 @@ describe('When a Stack is constructed', function () {
 				});
 
 				it('the first item should be the second item pushed', function () {
-					expect(a[0]).toBe(first);
+					expect(a[0]).toBe(second);
 				});
 
 				it('the second item should be the first item pushed', function () {
-					expect(a[1]).toBe(second);
+					expect(a[1]).toBe(first);
 				});
 
 				it('should not be empty', function () {
 					expect(stack.empty()).toEqual(false);
+				});
+			});
+
+			describe('and the stack is scanned', function () {
+				var spy;
+
+				beforeEach(function () {
+					spy = jasmine.createSpy();
+
+					stack.scan(spy);
+				});
+
+				it('should call the delegate one time for each item in the queue', function () {
+					expect(spy.calls.count()).toEqual(2);
+				});
+
+				it('should pass the second item to be pushed to the delegate first', function () {
+					expect(spy.calls.argsFor(0)[0]).toBe(second);
+				});
+
+				it('should pass the first item to be pushed to the delegate second', function () {
+					expect(spy.calls.argsFor(1)[0]).toBe(first);
 				});
 			});
 		});

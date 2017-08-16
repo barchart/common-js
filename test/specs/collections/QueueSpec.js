@@ -134,6 +134,29 @@ describe('When a Queue is constructed', function() {
 					expect(queue.empty()).toEqual(false);
 				});
 			});
+
+			describe('and the queue is scanned', function() {
+				var spy;
+
+				beforeEach(function() {
+					spy = jasmine.createSpy();
+
+					queue.scan(spy);
+				});
+
+				it('should call the delegate one time for each item in the queue', function() {
+					expect(spy.calls.count()).toEqual(2);
+				});
+
+
+				it('should pass the first item to be pushed to the delegate first', function() {
+					expect(spy.calls.argsFor(0)[0]).toBe(first);
+				});
+
+				it('should pass the second item to be pushed to the delegate second', function() {
+					expect(spy.calls.argsFor(1)[0]).toBe(second);
+				});
+			});
 		});
 	});
 });
