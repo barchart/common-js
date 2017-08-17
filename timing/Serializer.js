@@ -60,7 +60,7 @@ module.exports = (() => {
 				this._counter = this._counter + 1;
 
 				this._workQueue.enqueue(() => {
-					Promise.resolve()
+					return Promise.resolve()
 						.then(() => {
 							if (this.getIsDisposed()) {
 								throw new Error('Unable to process Serializer action, the serializer has been disposed.');
@@ -73,21 +73,11 @@ module.exports = (() => {
 							resolveCallback(result);
 						}).catch((error) => {
 							rejectCallback(error);
-						}).then(() => {
-							this._running = false;
-
-							checkStart.call(this);
 						});
 				});
 
 				checkStart.call(this);
 			});
-		}
-
-		_onDispose() {
-			while (!this._stack.empty()) {
-				this._stack.pop().dispose();
-			}
 		}
 
 		toString() {
@@ -104,7 +94,12 @@ module.exports = (() => {
 
 		const actionToExecute = this._workQueue.dequeue();
 
-		actionToExecute();
+		actionToExecute()
+			.then(() => {
+				this._running = false;
+
+				checkStart.call(this);
+			});
 	}
 
 	return Serializer;
