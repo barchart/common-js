@@ -10,6 +10,9 @@ module.exports = (() => {
 
 	/**
 	 * Executes REST-ful actions from a browser, using the "xhr" module.
+	 *
+	 * @public
+	 * @extends {RestProviderBase}
 	 */
 	class XhrRestProvider extends RestProviderBase {
 		constructor(baseUrl, port, secure) {

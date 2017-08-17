@@ -13,6 +13,7 @@ module.exports = (() => {
 	 * is disposed in order.
 	 *
 	 * @public
+	 * @extends {Disposable}
 	 */
 	class DisposableStack extends Disposable {
 		constructor() {

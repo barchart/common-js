@@ -13,6 +13,7 @@ module.exports = (() => {
 	 * processed.
 	 *
 	 * @public
+	 * @extends {Disposable}
 	 */
 	class RateLimiter extends Disposable {
 		/**

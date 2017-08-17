@@ -14,6 +14,7 @@ module.exports = (() => {
 	 *
 	 * @public
 	 * @param {String} code - The timezone name
+	 * @extends {Enum}
 	 */
 	class Timezones extends Enum {
 		constructor(code) {

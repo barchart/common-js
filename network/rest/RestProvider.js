@@ -13,6 +13,7 @@ module.exports = (() => {
 	 * Executes REST-ful action inside a Node.js server.
 	 *
 	 * @public
+	 * @extends {RestProviderBase}
 	 */
 	class RestProvider extends RestProviderBase {
 		constructor(host, port, secure) {

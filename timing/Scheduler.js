@@ -9,6 +9,9 @@ module.exports = (() => {
 
 	/**
 	 * An object that wraps asynchronous delays (i.e. timeout and interval).
+	 *
+	 * @public
+	 * @extends {Disposable}
 	 */
 	class Scheduler extends Disposable {
 		constructor() {

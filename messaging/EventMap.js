@@ -8,6 +8,9 @@ module.exports = (() => {
 	/**
 	 * A container for {@link Event} instances where each event is
 	 * keyed by name.
+	 *
+	 * @public
+	 * @extends {Disposable}
 	 */
 	class EventMap extends Disposable {
 		constructor() {

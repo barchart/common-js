@@ -11,6 +11,7 @@ module.exports = (() => {
 	 * A work queue that processes actions in sequence.
 	 *
 	 * @public
+	 * @extends {Disposable}
 	 */
 	class Serializer extends Disposable {
 		constructor() {
