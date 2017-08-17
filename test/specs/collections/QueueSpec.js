@@ -156,6 +156,10 @@ describe('When a Queue is constructed', function() {
 				it('should pass the second item to be pushed to the delegate second', function() {
 					expect(spy.calls.argsFor(1)[0]).toBe(second);
 				});
+
+				it('should not be empty', function() {
+					expect(queue.empty()).toEqual(false);
+				});
 			});
 		});
 	});
