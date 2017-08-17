@@ -4,6 +4,15 @@ const assert = require('./../../lang/assert'),
 module.exports = (() => {
 	'use strict';
 
+	/**
+	 * A builder for compound comparator functions (e.g. sort by last name,
+	 * then by first name, then by social security number) that uses a fluent
+	 * interface.
+	 *
+	 * @public
+	 * @param {Function} comparator - The initial comparator.
+	 * @param {Boolean=} invert - Indicates if the comparator should sort in descending order.
+	 */
 	class ComparatorBuilder {
 		constructor(comparator, invert, previous) {
 			assert.argumentIsRequired(comparator, 'comparator', Function);
@@ -14,6 +23,13 @@ module.exports = (() => {
 			this._previous = previous || null;
 		}
 
+		/**
+		 * Adds a new comparator to the list of comparators to use.
+		 *
+		 * @param {Function} comparator - The next comparator function.
+		 * @param {Boolean=} invert - Indicates if the comparator should sort in descending order.
+		 * @returns {ComparatorBuilder}
+		 */
 		thenBy(comparator, invert) {
 			assert.argumentIsRequired(comparator, 'comparator', Function);
 			assert.argumentIsOptional(invert, 'invert', Boolean);
@@ -21,6 +37,11 @@ module.exports = (() => {
 			return new ComparatorBuilder(comparator, invert, this);
 		}
 
+		/**
+		 * Flips the order of the comparator (e.g. ascending to descending).
+		 *
+		 * @returns {ComparatorBuilder}
+		 */
 		invert() {
 			let previous;
 
@@ -33,6 +54,11 @@ module.exports = (() => {
 			return new ComparatorBuilder(this._comparator, !this._invert, previous);
 		}
 
+		/**
+		 * Returns the comparator function.
+		 *
+		 * @returns {Function}
+		 */
 		toComparator() {
 			let previousComparator;
 
@@ -68,6 +94,14 @@ module.exports = (() => {
 			return '[ComparatorBuilder]';
 		}
 
+		/**
+		 * Creates a {@link ComparatorBuilder}, given an initial comparator function.
+		 *
+		 * @public
+		 * @param {Function} comparator - The initial comparator.
+		 * @param {Boolean=} invert - Indicates if the comparator should sort in descending order.
+		 * @returns {ComparatorBuilder}
+		 */
 		static startWith(comparator, invert) {
 			return new ComparatorBuilder(comparator, invert);
 		}
