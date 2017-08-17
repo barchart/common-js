@@ -609,6 +609,16 @@ var assert = require('./../../lang/assert'),
 module.exports = function () {
 	'use strict';
 
+	/**
+  * A builder for compound comparator functions (e.g. sort by last name,
+  * then by first name, then by social security number) that uses a fluent
+  * interface.
+  *
+  * @public
+  * @param {Function} comparator - The initial comparator.
+  * @param {Boolean=} invert - Indicates if the comparator should sort in descending order.
+  */
+
 	var ComparatorBuilder = function () {
 		function ComparatorBuilder(comparator, invert, previous) {
 			_classCallCheck(this, ComparatorBuilder);
@@ -621,6 +631,14 @@ module.exports = function () {
 			this._previous = previous || null;
 		}
 
+		/**
+   * Adds a new comparator to the list of comparators to use.
+   *
+   * @param {Function} comparator - The next comparator function.
+   * @param {Boolean=} invert - Indicates if the comparator should sort in descending order.
+   * @returns {ComparatorBuilder}
+   */
+
 		_createClass(ComparatorBuilder, [{
 			key: 'thenBy',
 			value: function thenBy(comparator, invert) {
@@ -629,6 +647,13 @@ module.exports = function () {
 
 				return new ComparatorBuilder(comparator, invert, this);
 			}
+
+			/**
+    * Flips the order of the comparator (e.g. ascending to descending).
+    *
+    * @returns {ComparatorBuilder}
+    */
+
 		}, {
 			key: 'invert',
 			value: function invert() {
@@ -642,6 +667,13 @@ module.exports = function () {
 
 				return new ComparatorBuilder(this._comparator, !this._invert, previous);
 			}
+
+			/**
+    * Returns the comparator function.
+    *
+    * @returns {Function}
+    */
+
 		}, {
 			key: 'toComparator',
 			value: function toComparator() {
@@ -681,6 +713,16 @@ module.exports = function () {
 			value: function toString() {
 				return '[ComparatorBuilder]';
 			}
+
+			/**
+    * Creates a {@link ComparatorBuilder}, given an initial comparator function.
+    *
+    * @public
+    * @param {Function} comparator - The initial comparator.
+    * @param {Boolean=} invert - Indicates if the comparator should sort in descending order.
+    * @returns {ComparatorBuilder}
+    */
+
 		}], [{
 			key: 'startWith',
 			value: function startWith(comparator, invert) {
@@ -700,34 +742,73 @@ module.exports = function () {
 var assert = require('./../../lang/assert');
 
 module.exports = function () {
-	'use strict';
+  'use strict';
 
-	return {
-		compareDates: function compareDates(a, b) {
-			assert.argumentIsRequired(a, 'a', Date);
-			assert.argumentIsRequired(b, 'b', Date);
+  /**
+   * Functions that can use used as comparators.
+   *
+   * @public
+   * @module collections/sorting/comparators
+   */
 
-			return a - b;
-		},
+  return {
+    /**
+     * Compares two dates (in ascending order).
+     *
+     * @static
+     * @param {Date} a
+     * @param {Date} b
+     * @returns {Number}
+     */
+    compareDates: function compareDates(a, b) {
+      assert.argumentIsRequired(a, 'a', Date);
+      assert.argumentIsRequired(b, 'b', Date);
 
-		compareNumbers: function compareNumbers(a, b) {
-			assert.argumentIsRequired(a, 'a', Number);
-			assert.argumentIsRequired(b, 'b', Number);
+      return a - b;
+    },
 
-			return a - b;
-		},
+    /**
+     * Compares two numbers (in ascending order).
+     *
+     * @static
+     * @param {Number} a
+     * @param {Number} b
+     * @returns {Number}
+     */
+    compareNumbers: function compareNumbers(a, b) {
+      assert.argumentIsRequired(a, 'a', Number);
+      assert.argumentIsRequired(b, 'b', Number);
 
-		compareStrings: function compareStrings(a, b) {
-			assert.argumentIsRequired(a, 'a', String);
-			assert.argumentIsRequired(b, 'b', String);
+      return a - b;
+    },
 
-			return a.localeCompare(b);
-		},
+    /**
+     * Compares two strings (in ascending order), using {@link String#localeCompare}.
+     *
+     * @static
+     * @param {Number} a
+     * @param {Number} b
+     * @returns {Number}
+     */
+    compareStrings: function compareStrings(a, b) {
+      assert.argumentIsRequired(a, 'a', String);
+      assert.argumentIsRequired(b, 'b', String);
 
-		empty: function empty(a, b) {
-			return 0;
-		}
-	};
+      return a.localeCompare(b);
+    },
+
+    /**
+     * Compares two objects, always returning zero.
+     *
+     * @static
+     * @param {*} a
+     * @param {*} b
+     * @returns {Number}
+     */
+    empty: function empty(a, b) {
+      return 0;
+    }
+  };
 }();
 
 },{"./../../lang/assert":17}],7:[function(require,module,exports){
@@ -778,6 +859,7 @@ module.exports = function () {
   * is disposed in order.
   *
   * @public
+  * @extends {Disposable}
   */
 
 	var DisposableStack = function (_Disposable) {
@@ -3288,6 +3370,7 @@ module.exports = function () {
   * An implementation of the observer pattern.
   *
   * @param {*} sender - The object which owns the event.
+  * @extends {Disposable}
   */
 
 	var Event = function (_Disposable) {
@@ -3480,6 +3563,9 @@ module.exports = function () {
 	/**
   * A container for {@link Event} instances where each event is
   * keyed by name.
+  *
+  * @public
+  * @extends {Disposable}
   */
 
 	var EventMap = function (_Disposable) {
@@ -4355,6 +4441,7 @@ module.exports = function () {
   * Executes REST-ful action inside a Node.js server.
   *
   * @public
+  * @extends {RestProviderBase}
   */
 
 	var RestProvider = function (_RestProviderBase) {
@@ -18009,6 +18096,7 @@ module.exports = function () {
   * processed.
   *
   * @public
+  * @extends {Disposable}
   */
 
 	var RateLimiter = function (_Disposable) {
@@ -18173,6 +18261,9 @@ module.exports = function () {
 
 	/**
   * An object that wraps asynchronous delays (i.e. timeout and interval).
+  *
+  * @public
+  * @extends {Disposable}
   */
 
 	var Scheduler = function (_Disposable) {
@@ -18426,6 +18517,7 @@ module.exports = function () {
   * A work queue that processes actions in sequence.
   *
   * @public
+  * @extends {Disposable}
   */
 
 	var Serializer = function (_Disposable) {
@@ -18438,28 +18530,59 @@ module.exports = function () {
 
 			_this._workQueue = new Queue();
 
-			_this._counter = 0;
-			_this._current = 0;
+			_this._enqueued = 0;
+			_this._processed = 0;
 
 			_this._running = false;
 			return _this;
 		}
 
+		/**
+   * Gets the sequence of the item that was last processed.
+   *
+   * @public
+   * @returns {Number}
+   */
+
 		_createClass(Serializer, [{
 			key: 'getCurrent',
 			value: function getCurrent() {
-				return this._current;
+				return this._processed;
 			}
+
+			/**
+    * The the total number of items that have been added to the queue.
+    *
+    * @public
+    * @returns {Number}
+    */
+
 		}, {
 			key: 'getTotal',
 			value: function getTotal() {
-				return this._counter;
+				return this._enqueued;
 			}
+
+			/**
+    * The number of items that are currently pending.
+    *
+    * @public
+    * @returns {Number}
+    */
+
 		}, {
 			key: 'getPending',
 			value: function getPending() {
-				return this._counter - this._current;
+				return this._enqueued - this._processed;
 			}
+
+			/**
+    * Indicates if a work item is currently being processed.
+    * 
+    * @public
+    * @returns {Boolean}
+    */
+
 		}, {
 			key: 'getRunning',
 			value: function getRunning() {
@@ -18487,37 +18610,39 @@ module.exports = function () {
 						throw new Error('Unable to add action to the Serializer, it has been disposed.');
 					}
 
-					_this2._counter = _this2._counter + 1;
+					_this2._enqueued = _this2._enqueued + 1;
 
-					_this2._workQueue.enqueue(function () {
-						Promise.resolve().then(function () {
+					_this2._getWorkQueue().enqueue(function () {
+						return Promise.resolve().then(function () {
 							if (_this2.getIsDisposed()) {
 								throw new Error('Unable to process Serializer action, the serializer has been disposed.');
 							}
 
-							_this2._current = _this2._current + 1;
+							_this2._processed = _this2._processed + 1;
 
 							return actionToEnqueue();
 						}).then(function (result) {
 							resolveCallback(result);
 						}).catch(function (error) {
 							rejectCallback(error);
-						}).then(function () {
-							_this2._running = false;
-
-							checkStart.call(_this2);
 						});
 					});
 
 					checkStart.call(_this2);
 				});
 			}
+
+			/**
+    * Allows an inheriting class to override the internal {@link Queue} implementation.
+    * 
+    * @protected
+    * @returns {Queue|*}
+    */
+
 		}, {
-			key: '_onDispose',
-			value: function _onDispose() {
-				while (!this._stack.empty()) {
-					this._stack.pop().dispose();
-				}
+			key: '_getWorkQueue',
+			value: function _getWorkQueue() {
+				return this._workQueue;
 			}
 		}, {
 			key: 'toString',
@@ -18530,15 +18655,23 @@ module.exports = function () {
 	}(Disposable);
 
 	function checkStart() {
-		if (this._workQueue.empty() || this._running) {
+		var _this3 = this;
+
+		var workQueue = this._getWorkQueue();
+
+		if (workQueue.empty() || this._running) {
 			return;
 		}
 
 		this._running = true;
 
-		var actionToExecute = this._workQueue.dequeue();
+		var actionToExecute = workQueue.dequeue();
 
-		actionToExecute();
+		actionToExecute().then(function () {
+			_this3._running = false;
+
+			checkStart.call(_this3);
+		});
 	}
 
 	return Serializer;

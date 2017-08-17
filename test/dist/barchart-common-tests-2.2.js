@@ -22241,28 +22241,59 @@ module.exports = function () {
 
 			_this._workQueue = new Queue();
 
-			_this._counter = 0;
-			_this._current = 0;
+			_this._enqueued = 0;
+			_this._processed = 0;
 
 			_this._running = false;
 			return _this;
 		}
 
+		/**
+   * Gets the sequence of the item that was last processed.
+   *
+   * @public
+   * @returns {Number}
+   */
+
 		_createClass(Serializer, [{
 			key: 'getCurrent',
 			value: function getCurrent() {
-				return this._current;
+				return this._processed;
 			}
+
+			/**
+    * The the total number of items that have been added to the queue.
+    *
+    * @public
+    * @returns {Number}
+    */
+
 		}, {
 			key: 'getTotal',
 			value: function getTotal() {
-				return this._counter;
+				return this._enqueued;
 			}
+
+			/**
+    * The number of items that are currently pending.
+    *
+    * @public
+    * @returns {Number}
+    */
+
 		}, {
 			key: 'getPending',
 			value: function getPending() {
-				return this._counter - this._current;
+				return this._enqueued - this._processed;
 			}
+
+			/**
+    * Indicates if a work item is currently being processed.
+    * 
+    * @public
+    * @returns {Boolean}
+    */
+
 		}, {
 			key: 'getRunning',
 			value: function getRunning() {
@@ -22290,15 +22321,15 @@ module.exports = function () {
 						throw new Error('Unable to add action to the Serializer, it has been disposed.');
 					}
 
-					_this2._counter = _this2._counter + 1;
+					_this2._enqueued = _this2._enqueued + 1;
 
-					_this2._workQueue.enqueue(function () {
+					_this2._getWorkQueue().enqueue(function () {
 						return Promise.resolve().then(function () {
 							if (_this2.getIsDisposed()) {
 								throw new Error('Unable to process Serializer action, the serializer has been disposed.');
 							}
 
-							_this2._current = _this2._current + 1;
+							_this2._processed = _this2._processed + 1;
 
 							return actionToEnqueue();
 						}).then(function (result) {
@@ -22310,6 +22341,19 @@ module.exports = function () {
 
 					checkStart.call(_this2);
 				});
+			}
+
+			/**
+    * Allows an inheriting class to override the internal {@link Queue} implementation.
+    * 
+    * @protected
+    * @returns {Queue|*}
+    */
+
+		}, {
+			key: '_getWorkQueue',
+			value: function _getWorkQueue() {
+				return this._workQueue;
 			}
 		}, {
 			key: 'toString',
@@ -22324,13 +22368,15 @@ module.exports = function () {
 	function checkStart() {
 		var _this3 = this;
 
-		if (this._workQueue.empty() || this._running) {
+		var workQueue = this._getWorkQueue();
+
+		if (workQueue.empty() || this._running) {
 			return;
 		}
 
 		this._running = true;
 
-		var actionToExecute = this._workQueue.dequeue();
+		var actionToExecute = workQueue.dequeue();
 
 		actionToExecute().then(function () {
 			_this3._running = false;
