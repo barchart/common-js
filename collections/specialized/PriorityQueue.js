@@ -12,6 +12,7 @@ module.exports = (() => {
 	 * insert performance.
 	 *
 	 * @public
+	 * @extends {Queue}
 	 */
 	class PriorityQueue extends Queue {
 		constructor(comparator) {
@@ -23,13 +24,6 @@ module.exports = (() => {
 			this._dirty = false;
 		}
 
-		/**
-		 * Adds an item to the queue.
-		 *
-		 * @public
-		 * @param {object} item
-		 * @returns {object} - The item added to the queue.
-		 */
 		enqueue(item) {
 			this._array.push(item);
 
