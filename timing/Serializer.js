@@ -19,24 +19,48 @@ module.exports = (() => {
 
 			this._workQueue = new Queue();
 
-			this._counter = 0;
-			this._current = 0;
+			this._enqueued = 0;
+			this._processed = 0;
 
 			this._running = false;
 		}
 
+		/**
+		 * Gets the sequence of the item that was last processed.
+		 *
+		 * @public
+		 * @returns {Number}
+		 */
 		getCurrent() {
-			return this._current;
+			return this._processed;
 		}
 
+		/**
+		 * The the total number of items that have been added to the queue.
+		 *
+		 * @public
+		 * @returns {Number}
+		 */
 		getTotal() {
-			return this._counter;
+			return this._enqueued;
 		}
 
+		/**
+		 * The number of items that are currently pending.
+		 *
+		 * @public
+		 * @returns {Number}
+		 */
 		getPending() {
-			return this._counter - this._current;
+			return this._enqueued - this._processed;
 		}
 
+		/**
+		 * Indicates if a work item is currently being processed.
+		 * 
+		 * @public
+		 * @returns {Boolean}
+		 */
 		getRunning() {
 			return this._running;
 		}
@@ -57,16 +81,16 @@ module.exports = (() => {
 					throw new Error('Unable to add action to the Serializer, it has been disposed.');
 				}
 
-				this._counter = this._counter + 1;
+				this._enqueued = this._enqueued + 1;
 
-				this._workQueue.enqueue(() => {
+				this._getWorkQueue().enqueue(() => {
 					return Promise.resolve()
 						.then(() => {
 							if (this.getIsDisposed()) {
 								throw new Error('Unable to process Serializer action, the serializer has been disposed.');
 							}
 
-							this._current = this._current + 1;
+							this._processed = this._processed + 1;
 
 							return actionToEnqueue();
 						}).then((result) => {
@@ -80,19 +104,31 @@ module.exports = (() => {
 			});
 		}
 
+		/**
+		 * Allows an inheriting class to override the internal {@link Queue} implementation.
+		 * 
+		 * @protected
+		 * @returns {Queue|*}
+		 */
+		_getWorkQueue() {
+			return this._workQueue;
+		}
+		
 		toString() {
 			return '[Serializer]';
 		}
 	}
 
 	function checkStart() {
-		if (this._workQueue.empty() || this._running) {
+		const workQueue = this._getWorkQueue();
+
+		if (workQueue.empty() || this._running) {
 			return;
 		}
 
 		this._running = true;
 
-		const actionToExecute = this._workQueue.dequeue();
+		const actionToExecute = workQueue.dequeue();
 
 		actionToExecute()
 			.then(() => {
