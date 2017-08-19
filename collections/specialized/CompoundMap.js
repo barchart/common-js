@@ -1,4 +1,5 @@
-const assert = require('./../../lang/assert');
+const assert = require('./../../lang/assert'),
+	is = require('./../../lang/is');
 
 module.exports = (() => {
 	'use strict';
@@ -56,7 +57,9 @@ module.exports = (() => {
 			let final = keys.length - 1;
 
 			keys.forEach((k, i) => {
-				if (i < final) {
+				if (i === final) {
+					target[k] = value;
+				} else {
 					if (!target.hasOwnProperty(k)) {
 						target[k] = { };
 					}
@@ -64,8 +67,6 @@ module.exports = (() => {
 					target = target[k];
 				}
 			});
-
-			target[k] = value;
 		}
 
 		/**
