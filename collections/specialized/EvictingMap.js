@@ -8,6 +8,7 @@ module.exports = (() => {
 	 * item would exceed the capacity; the oldest item is removed.
 	 *
 	 * @public
+	 * @param {Number=} capacity - The maximum number of items the map can contain (defaults to ten).
 	 */
 	class EvictingMap {
 		constructor(capacity) {
@@ -23,10 +24,24 @@ module.exports = (() => {
 			this._size = 0;
 		}
 
+		/**
+		 * Returns true, if the map contains the item; otherwise false.
+		 *
+		 * @public
+		 * @param {String} key
+		 * @returns {boolean}
+		 */
 		has(key) {
 			return this._map.hasOwnProperty(key);
 		}
 
+		/**
+		 * Puts an item into the map (possibly causing eviction, if the size of the
+		 * list exceeds the capacity).
+		 *
+		 * @public
+		 * @param {*} item
+		 */
 		put(key, value) {
 			this.remove(key);
 
@@ -52,6 +67,14 @@ module.exports = (() => {
 			}
 		}
 
+		/**
+		 * Gets an item from the map, returning a null value if the no item
+		 * for the given key exists.
+		 *
+		 * @public
+		 * @param {string} key
+		 * @returns {*}
+		 */
 		get(key) {
 			let returnRef;
 
@@ -78,6 +101,12 @@ module.exports = (() => {
 			return returnRef;
 		}
 
+		/**
+		 * Removes an item from the map.
+		 *
+		 * @public
+		 * @param {string} key
+		 */
 		remove(key) {
 			const item = this._map[key];
 
@@ -103,14 +132,33 @@ module.exports = (() => {
 			}
 		}
 
+		/**
+		 * Returns true, if the map contains no items; otherwise false.
+		 *
+		 * @public
+		 * @param {String} key
+		 * @returns {boolean}
+		 */
 		empty() {
 			return this._size === 0;
 		}
 
+		/**
+		 * Returns the number of items stored in the map.
+		 *
+		 * @public
+		 * @returns {Number}
+		 */
 		getSize() {
 			return this._size;
 		}
 
+		/**
+		 * The capacity of the map.
+		 *
+		 * @public
+		 * @returns {Number}
+		 */
 		getCapacity() {
 			return this._capacity;
 		}
