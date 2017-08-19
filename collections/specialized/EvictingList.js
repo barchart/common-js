@@ -10,6 +10,7 @@ module.exports = (() => {
 	 * item would exceed the capacity; the oldest item is removed.
 	 *
 	 * @public
+	 * @param {Number=} capacity - The maximum number of items the list can contain (defaults to ten).
 	 */
 	class EvictingList {
 		constructor(capacity) {
@@ -26,10 +27,23 @@ module.exports = (() => {
 			this._head = null;
 		}
 
+		/**
+		 * Adds an item to the list (possibly causing eviction, if the size of the
+		 * list exceeds the capacity).
+		 *
+		 * @public
+		 * @param {*} item
+		 */
 		add(item) {
 			this._array[this._head = getNextIndex(this._head, this._capacity)] = item;
 		}
 
+		/**
+		 * Returns the first item in the list, throwing an error if the list is empty.
+		 *
+		 * @public
+		 * @returns {*}
+		 */
 		peek() {
 			if (this.empty()) {
 				throw new Error('EvictingList is empty');
@@ -38,14 +52,31 @@ module.exports = (() => {
 			return this._array[this._head];
 		}
 
+		/**
+		 * Returns true, if the list is empty; otherwise false.
+		 *
+		 * @public
+		 * @returns {Boolean}
+		 */
 		empty() {
 			return this._head === null;
 		}
 
+		/**
+		 * The capacity of the list.
+		 *
+		 * @public
+		 * @returns {Number}
+		 */
 		getCapacity() {
 			return this._capacity;
 		}
 
+		/**
+		 * Copies the items in the list to a new array.
+		 *
+		 * @returns {Array}
+		 */
 		toArray() {
 			let returnRef = [ ];
 
