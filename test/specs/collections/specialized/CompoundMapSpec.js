@@ -29,7 +29,7 @@ describe('When an CompoundMap is constructed', function() {
 
 		describe('and an item with one key is put into the map', function() {
 			it('should throw an error', function() {
-				expect(function() { map.put('bryan', 'b', 'r')}).toThrow();
+				expect(function() { map.put('bryan', 'b', 'r'); }).toThrow();
 			});
 		});
 	});
@@ -105,7 +105,7 @@ describe('When an CompoundMap is constructed', function() {
 
 		describe('and an item with one key is put into the map', function() {
 			it('should throw an error', function() {
-				expect(function() { map.put('bryan', 'b')}).toThrow();
+				expect(function() { map.put('bryan', 'b'); }).toThrow();
 			});
 		});
 	});
