@@ -26,6 +26,7 @@ module.exports = (() => {
 		/**
 		 * Adds a new comparator to the list of comparators to use.
 		 *
+		 * @public
 		 * @param {Function} comparator - The next comparator function.
 		 * @param {Boolean=} invert - Indicates if the comparator should sort in descending order.
 		 * @returns {ComparatorBuilder}
@@ -40,6 +41,7 @@ module.exports = (() => {
 		/**
 		 * Flips the order of the comparator (e.g. ascending to descending).
 		 *
+		 * @public
 		 * @returns {ComparatorBuilder}
 		 */
 		invert() {
@@ -57,6 +59,7 @@ module.exports = (() => {
 		/**
 		 * Returns the comparator function.
 		 *
+		 * @public
 		 * @returns {Function}
 		 */
 		toComparator() {
