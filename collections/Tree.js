@@ -7,12 +7,10 @@ module.exports = (() => {
 	 * children nodes.
 	 *
 	 * @public
+	 * @param {object} value - The value of the node.
+	 * @param {Tree} parent - The parent node. If not supplied, this will be the root node.
 	 */
 	class Tree {
-		/**
-		 * @param {object} value - The value of the node.
-		 * @param {Tree} parent - The parent node. If not supplied, this will be the root node.
-		 */
 		constructor(value, parent) {
 			this._value = value;
 
