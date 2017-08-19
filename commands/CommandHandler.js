@@ -7,6 +7,7 @@ module.exports = (() => {
 	 * An object that can perform an action.
 	 *
 	 * @public
+	 * @interface
 	 */
 	class CommandHandler {
 		constructor() {
