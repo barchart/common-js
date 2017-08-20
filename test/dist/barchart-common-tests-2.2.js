@@ -312,13 +312,11 @@ module.exports = function () {
   * children nodes.
   *
   * @public
+  * @param {object} value - The value of the node.
+  * @param {Tree} parent - The parent node. If not supplied, this will be the root node.
   */
 
 	var Tree = function () {
-		/**
-   * @param {object} value - The value of the node.
-   * @param {Tree} parent - The parent node. If not supplied, this will be the root node.
-   */
 		function Tree(value, parent) {
 			_classCallCheck(this, Tree);
 
@@ -602,6 +600,7 @@ module.exports = function () {
 		/**
    * Adds a new comparator to the list of comparators to use.
    *
+   * @public
    * @param {Function} comparator - The next comparator function.
    * @param {Boolean=} invert - Indicates if the comparator should sort in descending order.
    * @returns {ComparatorBuilder}
@@ -619,6 +618,7 @@ module.exports = function () {
 			/**
     * Flips the order of the comparator (e.g. ascending to descending).
     *
+    * @public
     * @returns {ComparatorBuilder}
     */
 
@@ -639,6 +639,7 @@ module.exports = function () {
 			/**
     * Returns the comparator function.
     *
+    * @public
     * @returns {Function}
     */
 
@@ -1095,6 +1096,7 @@ module.exports = function () {
   * item would exceed the capacity; the oldest item is removed.
   *
   * @public
+  * @param {Number=} capacity - The maximum number of items the list can contain (defaults to ten).
   */
 
 	var EvictingList = function () {
@@ -1114,11 +1116,27 @@ module.exports = function () {
 			this._head = null;
 		}
 
+		/**
+   * Adds an item to the list (possibly causing eviction, if the size of the
+   * list exceeds the capacity).
+   *
+   * @public
+   * @param {*} item
+   */
+
 		_createClass(EvictingList, [{
 			key: 'add',
 			value: function add(item) {
 				this._array[this._head = getNextIndex(this._head, this._capacity)] = item;
 			}
+
+			/**
+    * Returns the first item in the list, throwing an error if the list is empty.
+    *
+    * @public
+    * @returns {*}
+    */
+
 		}, {
 			key: 'peek',
 			value: function peek() {
@@ -1128,16 +1146,39 @@ module.exports = function () {
 
 				return this._array[this._head];
 			}
+
+			/**
+    * Returns true, if the list is empty; otherwise false.
+    *
+    * @public
+    * @returns {Boolean}
+    */
+
 		}, {
 			key: 'empty',
 			value: function empty() {
 				return this._head === null;
 			}
+
+			/**
+    * The capacity of the list.
+    *
+    * @public
+    * @returns {Number}
+    */
+
 		}, {
 			key: 'getCapacity',
 			value: function getCapacity() {
 				return this._capacity;
 			}
+
+			/**
+    * Copies the items in the list to a new array.
+    *
+    * @returns {Array}
+    */
+
 		}, {
 			key: 'toArray',
 			value: function toArray() {
@@ -1235,6 +1276,7 @@ module.exports = function () {
   * item would exceed the capacity; the oldest item is removed.
   *
   * @public
+  * @param {Number=} capacity - The maximum number of items the map can contain (defaults to ten).
   */
 
 	var EvictingMap = function () {
@@ -1253,11 +1295,28 @@ module.exports = function () {
 			this._size = 0;
 		}
 
+		/**
+   * Returns true, if the map contains the item; otherwise false.
+   *
+   * @public
+   * @param {String} key
+   * @returns {boolean}
+   */
+
 		_createClass(EvictingMap, [{
 			key: 'has',
 			value: function has(key) {
 				return this._map.hasOwnProperty(key);
 			}
+
+			/**
+    * Puts an item into the map (possibly causing eviction, if the size of the
+    * list exceeds the capacity).
+    *
+    * @public
+    * @param {*} item
+    */
+
 		}, {
 			key: 'put',
 			value: function put(key, value) {
@@ -1284,6 +1343,16 @@ module.exports = function () {
 					this.remove(this._tail.getItem());
 				}
 			}
+
+			/**
+    * Gets an item from the map, returning a null value if the no item
+    * for the given key exists.
+    *
+    * @public
+    * @param {string} key
+    * @returns {*}
+    */
+
 		}, {
 			key: 'get',
 			value: function get(key) {
@@ -1311,6 +1380,14 @@ module.exports = function () {
 
 				return returnRef;
 			}
+
+			/**
+    * Removes an item from the map.
+    *
+    * @public
+    * @param {string} key
+    */
+
 		}, {
 			key: 'remove',
 			value: function remove(key) {
@@ -1337,16 +1414,41 @@ module.exports = function () {
 					this._size--;
 				}
 			}
+
+			/**
+    * Returns true, if the map contains no items; otherwise false.
+    *
+    * @public
+    * @param {String} key
+    * @returns {boolean}
+    */
+
 		}, {
 			key: 'empty',
 			value: function empty() {
 				return this._size === 0;
 			}
+
+			/**
+    * Returns the number of items stored in the map.
+    *
+    * @public
+    * @returns {Number}
+    */
+
 		}, {
 			key: 'getSize',
 			value: function getSize() {
 				return this._size;
 			}
+
+			/**
+    * The capacity of the map.
+    *
+    * @public
+    * @returns {Number}
+    */
+
 		}, {
 			key: 'getCapacity',
 			value: function getCapacity() {
@@ -1669,16 +1771,37 @@ var assert = require('./../lang/assert');
 module.exports = function () {
 	'use strict';
 
+	/**
+  * An object that can perform an action.
+  *
+  * @public
+  * @interface
+  */
+
 	var CommandHandler = function () {
 		function CommandHandler() {
 			_classCallCheck(this, CommandHandler);
 		}
+
+		/**
+   * Execute the action.
+   *
+   * @param {*} data
+   * @returns {*}
+   */
 
 		_createClass(CommandHandler, [{
 			key: 'process',
 			value: function process(data) {
 				return this._process(data);
 			}
+
+			/**
+    * @protected
+    * @param {*} data
+    * @returns {*}
+    */
+
 		}, {
 			key: '_process',
 			value: function _process(data) {
@@ -1689,6 +1812,15 @@ module.exports = function () {
 			value: function toString() {
 				return '[CommandHandler]';
 			}
+
+			/**
+    * Returns a function which executes the command.
+    *
+    * @public
+    * @param {CommandHandler} commandHandler
+    * @returns {function(*=)}
+    */
+
 		}], [{
 			key: 'toFunction',
 			value: function toFunction(commandHandler) {
@@ -1698,6 +1830,16 @@ module.exports = function () {
 					return commandHandler.process(data);
 				};
 			}
+
+			/**
+    * Returns a {@link CommandHandler} that where execution is delegated
+    * to a function.
+    *
+    * @public
+    * @param {Function} handler - The function which the command delegates to.
+    * @returns {CommandHandler}
+    */
+
 		}, {
 			key: 'fromFunction',
 			value: function fromFunction(handler) {
