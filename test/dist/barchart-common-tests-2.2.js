@@ -4038,11 +4038,37 @@ module.exports = function () {
      * Returns true, if the argument is a valid integer (which can exceed 32 bits); however,
      * the check can fail above the value of Number.MAX_SAFE_INTEGER.
      *
+     * @static
+     * @public
      * @param {*) candidate
      * @returns {boolean}
      */
     large: function large(candidate) {
       return typeof candidate === 'number' && !isNaN(candidate) && isFinite(candidate) && Math.floor(candidate) === candidate;
+    },
+
+    /**
+     * Returns true, if the argument is a number that is positive.
+     *
+     * @static
+     * @public
+     * @param candidate
+     * @returns {boolean}
+     */
+    positive: function positive(candidate) {
+      return this.number(candidate) && candidate > 0;
+    },
+
+    /**
+     * Returns true, if the argument is a number that is negative.
+     *
+     * @static
+     * @public
+     * @param candidate
+     * @returns {*|boolean}
+     */
+    negative: function negative(candidate) {
+      return this.number(candidate) && candidate < 0;
     },
 
     /**
