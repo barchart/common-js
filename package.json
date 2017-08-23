@@ -1,6 +1,6 @@
 {
-  "name": "common",
-  "version": "2.2.27",
+  "name": "@barchart/common-js",
+  "version": "3.0.0",
   "description": "Library of common javascript utilities",
   "author": {
     "name": "Bryan Ingle",
@@ -9,13 +9,11 @@
   },
   "main": "./index.js",
   "scripts": {
-    "test": "echo \"Error: Please use gulp to run tests\" && exit 1",
-    "build": "browserify index.js -t [ babelify --presets [es2015] ] -s Barchart.Common -o dist/barchart-common.js",
-    "watch": "watchify index.js -t [ babelify --presets [es2015] ] -s Barchart.Common -o dist/barchart-common.js"
+    "test": "echo \"Error: Please use gulp to run tests\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://github.com/barchart/barchart-common-js"
+    "url": "git+ssh://git@github.com/barchart/barchart-common-js.git"
   },
   "keywords": [
     "Barchart",
@@ -64,6 +62,13 @@
       ]
     ]
   },
-  "license": "UNLICENSED",
-  "private": true
+  "license": "MIT",
+  "private": true,
+  "bugs": {
+    "url": "https://github.com/barchart/barchart-common-js/issues"
+  },
+  "homepage": "https://github.com/barchart/barchart-common-js#readme",
+  "directories": {
+    "test": "test"
+  }
 }
