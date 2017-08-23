@@ -63,7 +63,6 @@
     ]
   },
   "license": "MIT",
-  "private": true,
   "bugs": {
     "url": "https://github.com/barchart/barchart-common-js/issues"
   },
