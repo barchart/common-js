@@ -17,7 +17,6 @@ module.exports = (() => {
 		 *
 		 * @static
 		 * @param {Array} a
-		 * @param {Function} keySelector - The function, when applied to an item yields a unique key.
 		 * @returns {Array}
 		 */
 		unique(a) {
