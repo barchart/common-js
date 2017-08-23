@@ -27,6 +27,12 @@ Gulp is used to check "linting" and run unit tests, as follows:
     > gulp lint
     > gulp test
 
+## Build
+
+Polyfills for ES6 are required:
+
+* Promise
+
 ## License
 
 This software is provided under the MIT license.
