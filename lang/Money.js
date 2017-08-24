@@ -1,23 +1,43 @@
 const assert = require('./assert'),
 	is = require('./is');
 
-const Decimal = require('./Decimal');
+const Decimal = require('./Decimal'),
+	Currency = require('./Currency');
 
 module.exports = (() => {
 	'use strict';
 
+	/**
+	 * A structure for storing money amounts.
+	 *
+	 * @public
+	 * @param {Decimal|Number|String} - A amount, which can be parsed as a {@link Decimal}
+	 * @param {Currecny} - The currency.
+	 */
 	class Money {
 		constructor(value, currency) {
-			assert.argumentIsRequired(currency, 'currency', String);
+			assert.argumentIsRequired(currency, 'currency', Currency, 'Currency');
 
 			this._decimal = getDecimal(value);
 			this._currency = currency;
 		}
 
+		/**
+		 * The currency amount.
+		 *
+		 * @public
+		 * @returns {Decimal}
+		 */
 		get decimal() {
 			return this._decimal;
 		}
 
+		/**
+		 * The currency.
+		 *
+		 * @public
+		 * @returns {Currency}
+		 */
 		get currency() {
 			return this._currency;
 		}
