@@ -12,14 +12,11 @@ module.exports = (() => {
 	 * URI that can be used to call the endpoint.
 	 *
 	 * @public
+	 * @param {RestAction} action - The action supported by the endpoint
+	 * @param {Array<String>} pathProperties - The parameters required by the endpoint
+	 * @param {String=} payloadProperty - The property name of the object to use as a payload for the REST action
 	 */
 	class RestEndpoint {
-		/**
-		 *
-		 * @param {RestAction} action - The action supported by the endpoint
-		 * @param {Array<String>} pathProperties - The parameters required by the endpoint
-		 * @param {String=} payloadProperty - The property name of the object to use as a payload for the REST action
-		 */
 		constructor(action, pathProperties, payloadProperty) {
 			assert.argumentIsRequired(action, 'action', RestAction, 'RestAction');
 			assert.argumentIsArray(pathProperties, 'pathProperties', String);
