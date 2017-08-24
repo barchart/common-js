@@ -17,15 +17,17 @@ module.exports = (() => {
 	 * @param {String=} payloadProperty - The property name of the object to use as a payload for the REST action
 	 */
 	class RestEndpoint {
-		constructor(action, pathProperties, payloadProperty) {
+		constructor(action, pathProperties, payloadProperty, suppressQueryString) {
 			assert.argumentIsRequired(action, 'action', RestAction, 'RestAction');
 			assert.argumentIsArray(pathProperties, 'pathProperties', String);
 			assert.argumentIsOptional(payloadProperty, 'payloadProperty', String);
+			assert.argumentIsOptional(suppressQueryString, 'suppressQueryString', Boolean);
 
 			this._action = action;
 
 			this._pathProperties = pathProperties;
 			this._payloadProperty = payloadProperty || null;
+			this._suppressQueryString = suppressQueryString || null;
 		}
 
 		/**
@@ -36,6 +38,10 @@ module.exports = (() => {
 		 */
 		getAction() {
 			return this._action;
+		}
+
+		getSuppressedQueryString() {
+			return this._suppressQueryString;
 		}
 
 		/**

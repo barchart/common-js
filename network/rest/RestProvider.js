@@ -31,10 +31,11 @@ module.exports = (() => {
 				}
 
 				let action = endpoint.getAction();
+				let query = endpoint.getSuppressedQueryString();
 				let path = endpoint.getPath(data);
 				let payload = endpoint.getPayload(data);
 
-				if (action.getUseQuerystring()) {
+				if (action.getUseQuerystring() && !query) {
 					const qs = querystring.stringify(payload);
 
 					if (qs) {
