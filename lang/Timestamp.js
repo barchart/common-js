@@ -62,6 +62,10 @@ module.exports = (() => {
 			return this.timestamp;
 		}
 
+		static parse(value) {
+			return new Timestamp(value);
+		}
+
 		toString() {
 			return '[Timestamp]';
 		}

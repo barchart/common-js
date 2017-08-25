@@ -211,6 +211,10 @@ module.exports = (() => {
 			return this.toFixed();
 		}
 
+		static parse(value) {
+			return new Decimal(value);
+		}
+
 		/**
 		 * Returns an instance with the value of zero.
 		 *

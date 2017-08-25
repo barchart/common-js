@@ -4,7 +4,7 @@ module.exports = (() => {
 	/**
 	 * A tree data structure. Each instance represents a node, holding
 	 * an item, a reference to the parent node, and a reference to
-	 * children nodes.
+	 * children nodes. Children are stored in insertion order.
 	 *
 	 * @public
 	 * @param {object} value - The value of the node.
