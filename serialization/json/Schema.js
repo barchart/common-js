@@ -27,6 +27,8 @@ module.exports = (() => {
 			this._components = components || [ ];
 
 			this._strict = is.boolean(strict) && strict;
+
+			this._reviverItems = getReviverItems(this._attributes, this._components);
 		}
 
 		/**
@@ -88,7 +90,19 @@ module.exports = (() => {
 		 * @returns {Function}
 		 */
 		getReviver() {
-			return buildCompositeReviver(this);
+			let reviverIndex = 0;
+
+			return (key, value) => {
+				const reviverItem = this._reviverItems[reviverIndex];
+
+				if (key === reviverItem.name) {
+					reviverIndex = reviverIndex + 1;
+
+					return reviverItem.reviver(value);
+				} else {
+					return value;
+				}
+			};
 		}
 
 		toString() {
@@ -96,7 +110,7 @@ module.exports = (() => {
 		}
 	}
 
-	class ReviverNode {
+	class ReviverItem {
 		constructor(name, reviver) {
 			this._name = name;
 			this._reviver = reviver || (x => x);
@@ -111,22 +125,22 @@ module.exports = (() => {
 		}
 	}
 
-	function buildCompositeReviver(schema) {
-		const root = new Tree(new ReviverNode(''));
+	function getReviverItems(attributes, components) {
+		const root = new Tree(new ReviverItem(''));
 
-		schema.attributes.forEach((attribute) => {
+		attributes.forEach((attribute) => {
 			const names = attribute.name.split('.');
 
 			let node = root;
 
 			names.forEach((name, i) => {
 				if (names.length === i + 1) {
-					node.addChild(new ReviverNode(name, attribute.dataType.reviver));
+					node.addChild(new ReviverItem(name, attribute.dataType.reviver));
 				} else {
-					let child = node.findChild(rn => rn.name === name);
+					let child = node.findChild(n => n.name === name);
 
 					if (!child) {
-						child = node.addChild(new ReviverNode(name));
+						child = node.addChild(new ReviverItem(name));
 					}
 
 					node = child;
@@ -134,22 +148,11 @@ module.exports = (() => {
 			});
 		});
 
-		const reviverData = [ ];
+		const reviverItems = [ ];
 
-		root.walk(rn => reviverData.push(rn), true, true);
+		root.walk(n => reviverItems.push(n), false, true);
 
-		let reviverIndex = 0;
-		let reviverItem = reviverData[reviverIndex];
-
-		return (key, value) => {
-			if (key === reviverItem.name) {
-				reviverItem = reviverData[++reviverIndex];
-
-				return reviverItem.reviver.call(this, value);
-			} else {
-				return value;
-			}
-		};
+		return reviverItems;
 	}
 
 	return Schema;

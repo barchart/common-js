@@ -168,7 +168,7 @@ module.exports = (() => {
 	const dataTypeObject = new DataType('Object');
 
 	const dataTypeDecimal = new DataType('Decimal', null, x => Decimal.parse(x));
-	const dataTypeDay = new DataType('Day', null, x => Day.parse(c));
+	const dataTypeDay = new DataType('Day', null, x => Day.parse(x));
 	const dataTypeTimestamp = new DataType('Timestamp', null, x => Timestamp.parse(x));
 
 	const dataTypes = [
