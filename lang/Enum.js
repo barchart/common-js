@@ -62,6 +62,10 @@ module.exports = (() => {
 			return other === this || (other instanceof Enum && other.constructor === this.constructor && other.code === this.code);
 		}
 
+		toJSON() {
+			return this.code;
+		}
+
 		/**
 		 * Looks up a enumeration item; given the enumeration type and the enumeration
 		 * item's value. If no matching item can be found, a null value is returned.
