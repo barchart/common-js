@@ -309,7 +309,7 @@ module.exports = function () {
 	/**
   * A tree data structure. Each instance represents a node, holding
   * an item, a reference to the parent node, and a reference to
-  * children nodes.
+  * children nodes. Children are stored in insertion order.
   *
   * @public
   * @param {object} value - The value of the node.
@@ -2752,9 +2752,10 @@ module.exports = function () {
 			}
 
 			/**
-    * Returns an instance with the value of zero.
+    * Parses the value emitted by {@link Decimal#toJSON}.
     *
     * @public
+    * @param {String} value
     * @returns {Decimal}
     */
 
@@ -2764,6 +2765,19 @@ module.exports = function () {
 				return '[Decimal]';
 			}
 		}], [{
+			key: 'parse',
+			value: function parse(value) {
+				return new Decimal(value);
+			}
+
+			/**
+    * Returns an instance with the value of zero.
+    *
+    * @public
+    * @returns {Decimal}
+    */
+
+		}, {
 			key: 'getIsPositive',
 
 			/**
@@ -3226,6 +3240,11 @@ module.exports = function () {
 			value: function equals(other) {
 				return other === this || other instanceof Enum && other.constructor === this.constructor && other.code === this.code;
 			}
+		}, {
+			key: 'toJSON',
+			value: function toJSON() {
+				return this.code;
+			}
 
 			/**
     * Looks up a enumeration item; given the enumeration type and the enumeration
@@ -3319,7 +3338,7 @@ module.exports = function () {
   *
   * @public
   * @param {Decimal|Number|String} - A amount, which can be parsed as a {@link Decimal}
-  * @param {Currecny} - The currency.
+  * @param {Currency} - The currency.
   */
 
 	var Money = function () {
@@ -3344,6 +3363,30 @@ module.exports = function () {
 			value: function toAmount(places, mode) {
 				return new Money(this._decimal.round(getPlaces(places), mode), this._currency);
 			}
+
+			/**
+    * Returns the JSON representation.
+    *
+    * @public
+    * @returns {Object}
+    */
+
+		}, {
+			key: 'toJSON',
+			value: function toJSON() {
+				return {
+					decimal: this._decimal,
+					currency: this._currency
+				};
+			}
+			/**
+    * Parses the value emitted by {@link Decimal#toJSON}.
+    *
+    * @public
+    * @param {Object} value
+    * @returns {Money}
+    */
+
 		}, {
 			key: 'toString',
 			value: function toString() {
@@ -3366,6 +3409,11 @@ module.exports = function () {
 			key: 'currency',
 			get: function get() {
 				return this._currency;
+			}
+		}], [{
+			key: 'parse',
+			value: function parse(value) {
+				return new Money(value.decimal, value.currency);
 			}
 		}]);
 
@@ -3577,6 +3625,15 @@ module.exports = function () {
 			value: function toJSON() {
 				return this.timestamp;
 			}
+
+			/**
+    * Parses the value emitted by {@link Timestamp#toJSON}.
+    *
+    * @public
+    * @param {String} value
+    * @returns {Timestamp}
+    */
+
 		}, {
 			key: 'toString',
 			value: function toString() {
@@ -3607,6 +3664,11 @@ module.exports = function () {
 				}
 
 				return this._moment;
+			}
+		}], [{
+			key: 'parse',
+			value: function parse(value) {
+				return new Timestamp(value);
 			}
 		}]);
 
