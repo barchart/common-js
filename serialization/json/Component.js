@@ -1,22 +1,26 @@
 const assert = require('./../../lang/assert'),
-	is = require('./../../lang/is');
+	Currency = require('./../../lang/Currency'),
+	is = require('./../../lang/is'),
+	Money = require('./../../lang/Money');
 
-const ComponentType = require('./ComponentType');
+const DataType = require('./DataType'),
+	Field = require('./Field');
 
 module.exports = (() => {
 	'use strict';
 
 	/**
-	 * A complex field, which when serialized, requires many data points.
+	 * A complex field built from many fields.
 	 *
 	 * @public
 	 * @param {String} name
-	 * @param {ComponentType} componentType
+	 * @param {Array<Field>} componentType
 	 */
 	class Component {
-		constructor(name, componentType) {
+		constructor(name, fields, reviver) {
 			this._name = name;
-			this._componentType = componentType;
+			this._fields = fields;
+			this._reviver = reviver;
 		}
 
 		/**
@@ -35,8 +39,30 @@ module.exports = (() => {
 		 * @public
 		 * @returns {ComponentType}
 		 */
-		get componentType() {
-			return this._componentType;
+		get fields() {
+			return this._fields;
+		}
+
+		/**
+		 * The reviver used to rebuild the entire component.
+		 *
+		 * @returns {Function}
+		 */
+		get reviver() {
+			return this._reviver;
+		}
+
+		/**
+		 * The builds a {@link Component} for {@link Money}.
+		 *
+		 * @public
+		 * @returns {Component}
+		 */
+		static forMoney(name) {
+			return new Component(name, [
+				new Field('decimal', DataType.DECIMAL),
+				new Field('currency', DataType.forEnum(Currency, 'Currency'))
+			], x => Money.parse(x));
 		}
 
 		toString() {

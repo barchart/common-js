@@ -13,7 +13,7 @@ module.exports = (() => {
 	 * @param {String} name
 	 * @param {DataType} dataType
 	 */
-	class Attribute {
+	class Field {
 		constructor(name, dataType) {
 			this._name = name;
 			this._dataType = dataType;
@@ -40,9 +40,9 @@ module.exports = (() => {
 		}
 
 		toString() {
-			return `[Attribute (name=${this._name})]`;
+			return `[Field (name=${this._name})]`;
 		}
 	}
 
-	return Attribute;
+	return Field;
 })();

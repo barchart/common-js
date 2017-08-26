@@ -62,6 +62,13 @@ module.exports = (() => {
 			return this.timestamp;
 		}
 
+		/**
+		 * Parses the value emitted by {@link Timestamp#toJSON}.
+		 *
+		 * @public
+		 * @param {String} value
+		 * @returns {Timestamp}
+		 */
 		static parse(value) {
 			return new Timestamp(value);
 		}

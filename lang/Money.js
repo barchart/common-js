@@ -12,7 +12,7 @@ module.exports = (() => {
 	 *
 	 * @public
 	 * @param {Decimal|Number|String} - A amount, which can be parsed as a {@link Decimal}
-	 * @param {Currecny} - The currency.
+	 * @param {Currency} - The currency.
 	 */
 	class Money {
 		constructor(value, currency) {
@@ -44,6 +44,29 @@ module.exports = (() => {
 
 		toAmount(places, mode) {
 			return new Money(this._decimal.round(getPlaces(places), mode), this._currency);
+		}
+
+		/**
+		 * Returns the JSON representation.
+		 *
+		 * @public
+		 * @returns {Object}
+		 */
+		toJSON() {
+			return {
+				decimal: this._decimal,
+				currency: this._currency
+			};
+		}
+		/**
+		 * Parses the value emitted by {@link Decimal#toJSON}.
+		 *
+		 * @public
+		 * @param {Object} value
+		 * @returns {Money}
+		 */
+		static parse(value) {
+			return new Money(value.decimal, value.currency);
 		}
 
 		toString() {

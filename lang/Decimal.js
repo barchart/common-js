@@ -211,6 +211,13 @@ module.exports = (() => {
 			return this.toFixed();
 		}
 
+		/**
+		 * Parses the value emitted by {@link Decimal#toJSON}.
+		 *
+		 * @public
+		 * @param {String} value
+		 * @returns {Decimal}
+		 */
 		static parse(value) {
 			return new Decimal(value);
 		}

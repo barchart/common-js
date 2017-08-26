@@ -4,7 +4,7 @@ const array = require('./../../lang/array'),
 
 const Tree = require('./../../collections/Tree');
 
-const Attribute = require('./Attribute'),
+const Field = require('./Field'),
 	Component = require('./Component');
 
 module.exports = (() => {
@@ -15,20 +15,20 @@ module.exports = (() => {
 	 *
 	 * @public
 	 * @param {String} name - The name of the schema
-	 * @param {Array<Attribute>} attributes
+	 * @param {Array<Field>} fields
 	 * @param {Array<Component>} components
 	 * @param {Boolean=} strict
 	 */
 	class Schema {
-		constructor(name, attributes, components, strict) {
+		constructor(name, fields, components, strict) {
 			this._name = name;
 
-			this._attributes = attributes || [ ];
+			this._fields = fields || [ ];
 			this._components = components || [ ];
 
 			this._strict = is.boolean(strict) && strict;
 
-			this._reviverItems = getReviverItems(this._attributes, this._components);
+			this._reviverItems = getReviverItems(this._fields, this._components);
 		}
 
 		/**
@@ -42,13 +42,13 @@ module.exports = (() => {
 		}
 
 		/**
-		 * The attributes of the table.
+		 * The fields of the table.
 		 *
 		 * @public
-		 * @returns {Array<Attributes>}
+		 * @returns {Array<Fields>}
 		 */
-		get attributes() {
-			return [...this._attributes];
+		get fields() {
+			return [...this._fields];
 		}
 
 		/**
@@ -62,7 +62,7 @@ module.exports = (() => {
 		}
 
 		/**
-		 * If true, only the explicitly defined attributes and components will
+		 * If true, only the explicitly defined fields and components will
 		 * be serialized.
 		 *
 		 * @public
@@ -80,7 +80,7 @@ module.exports = (() => {
 		validate(candidate) {
 			let returnVal = is.object(candidate);
 
-			return returnVal;
+			return false;
 		}
 
 		/**
@@ -125,17 +125,20 @@ module.exports = (() => {
 		}
 	}
 
-	function getReviverItems(attributes, components) {
+	function getReviverItems(fields, components) {
 		const root = new Tree(new ReviverItem(''));
 
-		attributes.forEach((attribute) => {
-			const names = attribute.name.split('.');
+		// 2017/08/26, BRI. The Field and Component types could inherit a common
+		// type, allowing the following duplication to be avoided with polymorphism.
+
+		fields.forEach((field) => {
+			const names = field.name.split('.');
 
 			let node = root;
 
 			names.forEach((name, i) => {
 				if (names.length === i + 1) {
-					node.addChild(new ReviverItem(name, attribute.dataType.reviver));
+					node.addChild(new ReviverItem(name, field.dataType.reviver));
 				} else {
 					let child = node.findChild(n => n.name === name);
 
@@ -146,6 +149,28 @@ module.exports = (() => {
 					node = child;
 				}
 			});
+		});
+
+		components.forEach((component) => {
+			let node = root;
+
+			const names = component.name.split('.');
+
+			names.forEach((name, i) => {
+				if (names.length === i + 1) {
+					node = node.addChild(new ReviverItem(name, component.reviver));
+				} else {
+					let child = node.findChild(n => n.name === name);
+
+					if (!child) {
+						child = node.addChild(new ReviverItem(name));
+					}
+
+					node = child;
+				}
+			});
+
+			component.fields.forEach((f) => node.addChild(new ReviverItem(f.name, f.dataType.reviver)));
 		});
 
 		const reviverItems = [ ];
