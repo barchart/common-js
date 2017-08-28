@@ -119,8 +119,8 @@ module.exports = (() => {
 		 * @public
 		 * @returns {DataType}
 		 */
-		static get JSON() {
-			return dataTypeJson;
+		static get OBJECT() {
+			return dataTypeObject;
 		}
 
 		/**
