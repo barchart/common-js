@@ -2150,7 +2150,7 @@ module.exports = function () {
 	return namespaces;
 }();
 
-},{"./collections/index":4,"./commands/index":15,"./lang/index":32,"./lang/object":37,"./messaging/index":44,"./models/index":46,"./network/index":47,"./specifications/index":112,"./timing/index":117}],17:[function(require,module,exports){
+},{"./collections/index":4,"./commands/index":15,"./lang/index":32,"./lang/object":37,"./messaging/index":44,"./models/index":46,"./network/index":47,"./specifications/index":113,"./timing/index":118}],17:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -2998,7 +2998,7 @@ module.exports = function () {
 	return Decimal;
 }();
 
-},{"./Enum":21,"./assert":27,"./is":33,"big.js":53}],20:[function(require,module,exports){
+},{"./Enum":21,"./assert":27,"./is":33,"big.js":54}],20:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -3678,7 +3678,7 @@ module.exports = function () {
 	return Timestamp;
 }();
 
-},{"./assert":27,"./is":33,"moment-timezone":69}],25:[function(require,module,exports){
+},{"./assert":27,"./is":33,"moment-timezone":70}],25:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -5284,7 +5284,7 @@ module.exports = function () {
   };
 }();
 
-},{"./assert":27,"moment-timezone/builds/moment-timezone-with-data-2010-2020":67}],42:[function(require,module,exports){
+},{"./assert":27,"moment-timezone/builds/moment-timezone-with-data-2010-2020":68}],42:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -6010,8 +6010,10 @@ module.exports = function () {
 	};
 }();
 
-},{"./rest/RestAction":48,"./rest/RestEndpoint":49,"./rest/RestProvider":50,"./rest/RestProviderBase":51}],48:[function(require,module,exports){
+},{"./rest/RestAction":48,"./rest/RestEndpoint":49,"./rest/RestProvider":51,"./rest/RestProviderBase":52}],48:[function(require,module,exports){
 'use strict';
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var _createClass = function () {
 	function defineProperties(target, props) {
@@ -6029,33 +6031,54 @@ function _classCallCheck(instance, Constructor) {
 	}
 }
 
-var assert = require('./../../lang/assert');
+function _possibleConstructorReturn(self, call) {
+	if (!self) {
+		throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+	}return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+}
+
+function _inherits(subClass, superClass) {
+	if (typeof superClass !== "function" && superClass !== null) {
+		throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
+	}subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+}
+
+var assert = require('./../../lang/assert'),
+    Enum = require('./../../lang/Enum');
 
 module.exports = function () {
 	'use strict';
 
 	/**
-  * Maps an action (e.g.. create) to an HTTP verb (e.g. POST).
+  * Maps an action (e.g. create) to an HTTP verb (e.g. POST).
   *
   * @public
+  * @extends {Enum}
   */
 
-	var RestAction = function () {
-		function RestAction(action, httpVerb, requiresQuery, requiresPayload, useQueryString) {
+	var RestAction = function (_Enum) {
+		_inherits(RestAction, _Enum);
+
+		function RestAction(action, httpVerb, requiresPath, requiresPayload, allowQuerystring, allowBody) {
 			_classCallCheck(this, RestAction);
+
+			var _this = _possibleConstructorReturn(this, (RestAction.__proto__ || Object.getPrototypeOf(RestAction)).call(this, action, action));
 
 			assert.argumentIsRequired(action, 'action', String);
 			assert.argumentIsRequired(httpVerb, 'httpVerb', String);
-			assert.argumentIsRequired(requiresQuery, 'requiresQuery', Boolean);
+			assert.argumentIsRequired(requiresPath, 'requiresPath', Boolean);
 			assert.argumentIsRequired(requiresPayload, 'requiresPayload', Boolean);
-			assert.argumentIsRequired(useQueryString, 'useQueryString', Boolean);
+			assert.argumentIsRequired(allowQuerystring, 'allowQuerystring', Boolean);
+			assert.argumentIsRequired(allowBody, 'allowBody', Boolean);
 
-			this._action = action;
+			_this._action = action;
 
-			this._httpVerb = httpVerb;
-			this._requiresQuery = requiresQuery;
-			this._requiresPayload = requiresPayload;
-			this._useQuerystring = useQueryString;
+			_this._httpVerb = httpVerb;
+			_this._requiresPath = requiresPath;
+			_this._requiresPayload = requiresPayload;
+			_this._allowQuerystring = allowQuerystring;
+			_this._allowBody = allowBody;
+			return _this;
 		}
 
 		/**
@@ -6083,11 +6106,28 @@ module.exports = function () {
 			value: function getHttpVerb() {
 				return this._httpVerb;
 			}
+
+			/**
+    * Indicates if a path, beyond the base URL, is required.
+    * 
+    * @public
+    * @returns {Boolean}
+    */
+
 		}, {
-			key: 'getQueryIsRequired',
-			value: function getQueryIsRequired() {
-				return this._requiresQuery;
+			key: 'getPathIsRequired',
+			value: function getPathIsRequired() {
+				return this._requiresPath;
 			}
+
+			/**
+    * Indicates if a payload is required, either for the purpose of formulating a
+    * request body or querystring, is required.
+    *
+    * @public
+    * @returns {*}
+    */
+
 		}, {
 			key: 'getPayloadIsRequired',
 			value: function getPayloadIsRequired() {
@@ -6095,16 +6135,29 @@ module.exports = function () {
 			}
 
 			/**
-    * Indicates if it is appropriate to use a querystring with this action.
+    * Indicates if a querystring is allowed with this action.
     *
     * @public
     * @returns {Boolean}
     */
 
 		}, {
-			key: 'getUseQuerystring',
-			value: function getUseQuerystring() {
-				return this._useQuerystring;
+			key: 'getAllowQuerystring',
+			value: function getAllowQuerystring() {
+				return this._allowQuerystring;
+			}
+
+			/**
+    * Indicates if a request body is allowed with this action.
+    *
+    * @public
+    * @returns {Boolean}
+    */
+
+		}, {
+			key: 'getAllowBody',
+			value: function getAllowBody() {
+				return this._allowBody;
 			}
 
 			/**
@@ -6114,11 +6167,6 @@ module.exports = function () {
     * @returns {RestAction}
     */
 
-		}, {
-			key: 'toString',
-			value: function toString() {
-				return '[RestAction (action=' + this._action + ')]';
-			}
 		}], [{
 			key: 'Create',
 			get: function get() {
@@ -6179,18 +6227,18 @@ module.exports = function () {
 		}]);
 
 		return RestAction;
-	}();
+	}(Enum);
 
-	var CREATE = new RestAction('Create', 'POST', false, true, false);
-	var UPDATE = new RestAction('Update', 'PUT', true, true, false);
-	var RETRIEVE = new RestAction('Retrieve', 'GET', true, false, true);
-	var DELETE = new RestAction('Delete', 'DELETE', true, false, false);
-	var QUERY = new RestAction('Query', 'GET', false, false, true);
+	var CREATE = new RestAction('Create', 'POST', false, true, false, true);
+	var UPDATE = new RestAction('Update', 'PUT', true, true, false, true);
+	var RETRIEVE = new RestAction('Retrieve', 'GET', true, false, true, false);
+	var DELETE = new RestAction('Delete', 'DELETE', true, false, false, false);
+	var QUERY = new RestAction('Query', 'GET', false, false, true, false);
 
 	return RestAction;
 }();
 
-},{"./../../lang/assert":27}],49:[function(require,module,exports){
+},{"./../../lang/Enum":21,"./../../lang/assert":27}],49:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
@@ -6213,7 +6261,8 @@ var assert = require('./../../lang/assert'),
     attributes = require('./../../lang/attributes'),
     is = require('./../../lang/is');
 
-var RestAction = require('./RestAction');
+var RestAction = require('./RestAction'),
+    RestParser = require('./RestParser');
 
 module.exports = function () {
 	'use strict';
@@ -6226,22 +6275,26 @@ module.exports = function () {
   * @param {RestAction} action - The action supported by the endpoint
   * @param {Array<String>} pathProperties - The parameters required by the endpoint
   * @param {String=} payloadProperty - The property name of the object to use as a payload for the REST action
+  * @param {Boolean=} suppressQuerystring - If true, the querystring will be omitted when making the HTTP request
   */
 
 	var RestEndpoint = function () {
-		function RestEndpoint(action, pathProperties, payloadProperty, suppressQueryString) {
+		function RestEndpoint(action, pathProperties, payloadProperty, suppressQuerystring, responseParser) {
 			_classCallCheck(this, RestEndpoint);
 
 			assert.argumentIsRequired(action, 'action', RestAction, 'RestAction');
 			assert.argumentIsArray(pathProperties, 'pathProperties', String);
 			assert.argumentIsOptional(payloadProperty, 'payloadProperty', String);
-			assert.argumentIsOptional(suppressQueryString, 'suppressQueryString', Boolean);
+			assert.argumentIsOptional(suppressQuerystring, 'suppressQuerystring', Boolean);
+			assert.argumentIsOptional(responseParser, 'responseParser', RestParser, 'RestParser');
 
 			this._action = action;
 
 			this._pathProperties = pathProperties;
 			this._payloadProperty = payloadProperty || null;
-			this._suppressQueryString = suppressQueryString || null;
+			this._suppressQuerystring = is.boolean(suppressQuerystring) && suppressQuerystring;
+
+			this._responseParser = responseParser || RestParser.JSON;
 		}
 
 		/**
@@ -6256,10 +6309,19 @@ module.exports = function () {
 			value: function getAction() {
 				return this._action;
 			}
+
+			/**
+    * Indicates if the querystring should be omitted when making the HTTP
+    * request.
+    * 
+    * @public
+    * @returns {Boolean}
+    */
+
 		}, {
-			key: 'getSuppressedQueryString',
-			value: function getSuppressedQueryString() {
-				return this._suppressQueryString;
+			key: 'getSuppressQuerystring',
+			value: function getSuppressQuerystring() {
+				return this._suppressQuerystring;
 			}
 
 			/**
@@ -6282,7 +6344,7 @@ module.exports = function () {
 
 				var path = this.getPath(data, true);
 
-				if (this.getAction().getQueryIsRequired() && path.length === 0) {
+				if (this.getAction().getPathIsRequired() && path.length === 0) {
 					throw new Error('Unable to generate REST query path.');
 				}
 
@@ -6346,6 +6408,16 @@ module.exports = function () {
 
 				return returnRef;
 			}
+		}, {
+			key: 'parseResponse',
+			value: function parseResponse(response) {
+				return this._responseParser.parse(response);
+			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[RestEndpoint]';
+			}
 		}]);
 
 		return RestEndpoint;
@@ -6354,7 +6426,175 @@ module.exports = function () {
 	return RestEndpoint;
 }();
 
-},{"./../../lang/assert":27,"./../../lang/attributes":28,"./../../lang/is":33,"./RestAction":48}],50:[function(require,module,exports){
+},{"./../../lang/assert":27,"./../../lang/attributes":28,"./../../lang/is":33,"./RestAction":48,"./RestParser":50}],50:[function(require,module,exports){
+'use strict';
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _createClass = function () {
+	function defineProperties(target, props) {
+		for (var i = 0; i < props.length; i++) {
+			var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+		}
+	}return function (Constructor, protoProps, staticProps) {
+		if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+	};
+}();
+
+function _possibleConstructorReturn(self, call) {
+	if (!self) {
+		throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+	}return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+}
+
+function _inherits(subClass, superClass) {
+	if (typeof superClass !== "function" && superClass !== null) {
+		throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
+	}subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+}
+
+function _classCallCheck(instance, Constructor) {
+	if (!(instance instanceof Constructor)) {
+		throw new TypeError("Cannot call a class as a function");
+	}
+}
+
+var assert = require('./../../lang/assert');
+
+var RestEndpoint = require('./RestEndpoint'),
+    RestParser = require('./RestParser');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * Parses the response received by a {@link RestProivderBase}, the
+  * default implementation simply returns the response string.
+  *
+  * @public
+  */
+
+	var RestParser = function () {
+		function RestParser() {
+			_classCallCheck(this, RestParser);
+		}
+
+		/**
+   * Parses a response.
+   *
+   * @public
+   * @param {String=} response.
+   * @returns {*}
+   */
+
+		_createClass(RestParser, [{
+			key: 'parse',
+			value: function parse(response) {
+				assert.argumentIsOptional(response, 'response', String);
+
+				return this._parse(response);
+			}
+
+			/**
+    * @protected
+    * @abstract
+    * @ignore
+    */
+
+		}, {
+			key: '_parse',
+			value: function _parse(response) {
+				return response;
+			}
+
+			/**
+    * Returns a {@link RestParser} that does nothing -- it just returns
+    * the response string that it is given.
+    *
+    * @public
+    * @returns {RestParser}
+    */
+
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[RestParser]';
+			}
+		}], [{
+			key: 'getJsonParser',
+
+			/**
+    * Returns a {@link RestParser} parses the does customized JSON parsing
+    * using a "reviver" function.
+    *
+    * @public
+    * @param {Function} reviver
+    * @returns {RestParser}
+    */
+			value: function getJsonParser(reviver) {
+				return new DelegatedRestParser(function (x) {
+					return JSON.parse(x, reviver);
+				});
+			}
+		}, {
+			key: 'DEFAULT',
+			get: function get() {
+				return restParserDefault;
+			}
+
+			/**
+    * Returns a {@link RestParser} parses the response string as JSON.
+    *
+    * @public
+    * @returns {RestParser}
+    */
+
+		}, {
+			key: 'JSON',
+			get: function get() {
+				return restParserJson;
+			}
+		}]);
+
+		return RestParser;
+	}();
+
+	var DelegatedRestParser = function (_RestParser) {
+		_inherits(DelegatedRestParser, _RestParser);
+
+		function DelegatedRestParser(delegate) {
+			_classCallCheck(this, DelegatedRestParser);
+
+			var _this = _possibleConstructorReturn(this, (DelegatedRestParser.__proto__ || Object.getPrototypeOf(DelegatedRestParser)).call(this));
+
+			_this._delegate = delegate;
+			return _this;
+		}
+
+		_createClass(DelegatedRestParser, [{
+			key: '_parse',
+			value: function _parse(response) {
+				return this._delegate(response);
+			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[DelegatedRestParser]';
+			}
+		}]);
+
+		return DelegatedRestParser;
+	}(RestParser);
+
+	var restParserDefault = new RestParser();
+	var restParserJson = new DelegatedRestParser(function (x) {
+		return JSON.parse(x);
+	});
+
+	return RestParser;
+}();
+
+},{"./../../lang/assert":27,"./RestEndpoint":49,"./RestParser":50}],51:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -6427,11 +6667,10 @@ module.exports = function () {
 					}
 
 					var action = endpoint.getAction();
-					var query = endpoint.getSuppressedQueryString();
 					var path = endpoint.getPath(data);
 					var payload = endpoint.getPayload(data);
 
-					if (action.getUseQuerystring() && !query) {
+					if (action.getAllowQuerystring() && !endpoint.getSuppressQuerystring()) {
 						var qs = querystring.stringify(payload);
 
 						if (qs) {
@@ -6463,16 +6702,21 @@ module.exports = function () {
 						});
 
 						response.on('end', function () {
-							resolveCallback(JSON.parse(responseText));
+							resolveCallback(endpoint.parseResponse(responseText));
 						});
 					});
 
-					if (!action.getUseQuerystring() && payload) {
+					if (action.getAllowBody() && payload) {
 						request.write(JSON.stringify(payload));
 					}
 
 					request.end();
 				});
+			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[RestProvider]';
 			}
 		}]);
 
@@ -6482,7 +6726,7 @@ module.exports = function () {
 	return RestProvider;
 }();
 
-},{"./../../lang/promise":38,"./RestProviderBase":51,"http":90,"https":61,"querystring":78}],51:[function(require,module,exports){
+},{"./../../lang/promise":38,"./RestProviderBase":52,"http":91,"https":62,"querystring":79}],52:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
@@ -6503,7 +6747,8 @@ function _classCallCheck(instance, Constructor) {
 
 var assert = require('./../../lang/assert');
 
-var RestEndpoint = require('./RestEndpoint');
+var RestEndpoint = require('./RestEndpoint'),
+    RestParser = require('./RestParser');
 
 module.exports = function () {
 	'use strict';
@@ -6511,16 +6756,14 @@ module.exports = function () {
 	/**
   * Executes REST-ful actions.
   *
+  * @public
+  * @param {String} host - The host name to call
+  * @param {Number=} port - The port
+  * @param {Boolean=} secure - If true, HTTPS is used; otherwise HTTP.
   * @interface
   */
 
 	var RestProviderBase = function () {
-		/**
-   * @public
-   * @param {String} host - The host name to call
-   * @param {Number=} port - The port
-   * @param {Boolean=} secure - If true, HTTPS is used; otherwise HTTP.
-   */
 		function RestProviderBase(host, port, secure) {
 			_classCallCheck(this, RestProviderBase);
 
@@ -6565,6 +6808,11 @@ module.exports = function () {
 			value: function _call(endpoint, data, host, port, secure) {
 				return true;
 			}
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[RestProviderBase]';
+			}
 		}]);
 
 		return RestProviderBase;
@@ -6573,7 +6821,7 @@ module.exports = function () {
 	return RestProviderBase;
 }();
 
-},{"./../../lang/assert":27,"./RestEndpoint":49}],52:[function(require,module,exports){
+},{"./../../lang/assert":27,"./RestEndpoint":49,"./RestParser":50}],53:[function(require,module,exports){
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 ;(function (exports) {
@@ -6699,7 +6947,7 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 	exports.fromByteArray = uint8ToBase64
 }(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
 
-},{}],53:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 /* big.js v3.1.3 https://github.com/MikeMcl/big.js/LICENCE */
 ;(function (global) {
     'use strict';
@@ -7843,9 +8091,9 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
     }
 })(this);
 
-},{}],54:[function(require,module,exports){
-
 },{}],55:[function(require,module,exports){
+
+},{}],56:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -8031,7 +8279,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],56:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 (function (global){
 /*!
  * The buffer module from node.js, for the browser.
@@ -9583,7 +9831,7 @@ function blitBuffer (src, dst, offset, length) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"base64-js":52,"ieee754":62,"isarray":66}],57:[function(require,module,exports){
+},{"base64-js":53,"ieee754":63,"isarray":67}],58:[function(require,module,exports){
 module.exports = {
   "100": "Continue",
   "101": "Switching Protocols",
@@ -9644,7 +9892,7 @@ module.exports = {
   "511": "Network Authentication Required"
 }
 
-},{}],58:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 (function (Buffer){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -9755,7 +10003,7 @@ function objectToString(o) {
 }
 
 }).call(this,{"isBuffer":require("../../is-buffer/index.js")})
-},{"../../is-buffer/index.js":65}],59:[function(require,module,exports){
+},{"../../is-buffer/index.js":66}],60:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -10058,7 +10306,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],60:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
 
 var hasOwn = Object.prototype.hasOwnProperty;
 var toString = Object.prototype.toString;
@@ -10082,7 +10330,7 @@ module.exports = function forEach (obj, fn, ctx) {
 };
 
 
-},{}],61:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 var http = require('http');
 
 var https = module.exports;
@@ -10098,7 +10346,7 @@ https.request = function (params, cb) {
     return http.request.call(this, params, cb);
 }
 
-},{"http":90}],62:[function(require,module,exports){
+},{"http":91}],63:[function(require,module,exports){
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
   var eLen = nBytes * 8 - mLen - 1
@@ -10184,7 +10432,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],63:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 
 var indexOf = [].indexOf;
 
@@ -10195,7 +10443,7 @@ module.exports = function(arr, obj){
   }
   return -1;
 };
-},{}],64:[function(require,module,exports){
+},{}],65:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -10220,7 +10468,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],65:[function(require,module,exports){
+},{}],66:[function(require,module,exports){
 /*!
  * Determine if an object is a Buffer
  *
@@ -10243,14 +10491,14 @@ function isSlowBuffer (obj) {
   return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isBuffer(obj.slice(0, 0))
 }
 
-},{}],66:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
 var toString = {}.toString;
 
 module.exports = Array.isArray || function (arr) {
   return toString.call(arr) == '[object Array]';
 };
 
-},{}],67:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 //! moment-timezone.js
 //! version : 0.5.11
 //! Copyright (c) JS Foundation and other contributors
@@ -11452,7 +11700,7 @@ module.exports = Array.isArray || function (arr) {
 	return moment;
 }));
 
-},{"moment":71}],68:[function(require,module,exports){
+},{"moment":72}],69:[function(require,module,exports){
 module.exports={
 	"version": "2016j",
 	"zones": [
@@ -12052,11 +12300,11 @@ module.exports={
 		"Pacific/Pohnpei|Pacific/Ponape"
 	]
 }
-},{}],69:[function(require,module,exports){
+},{}],70:[function(require,module,exports){
 var moment = module.exports = require("./moment-timezone");
 moment.tz.load(require('./data/packed/latest.json'));
 
-},{"./data/packed/latest.json":68,"./moment-timezone":70}],70:[function(require,module,exports){
+},{"./data/packed/latest.json":69,"./moment-timezone":71}],71:[function(require,module,exports){
 //! moment-timezone.js
 //! version : 0.5.11
 //! Copyright (c) JS Foundation and other contributors
@@ -12659,7 +12907,7 @@ moment.tz.load(require('./data/packed/latest.json'));
 	return moment;
 }));
 
-},{"moment":71}],71:[function(require,module,exports){
+},{"moment":72}],72:[function(require,module,exports){
 //! moment.js
 //! version : 2.18.1
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
@@ -17124,7 +17372,7 @@ return hooks;
 
 })));
 
-},{}],72:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
 'use strict';
 
 // modified from https://github.com/es-shims/es5-shim
@@ -17266,7 +17514,7 @@ keysShim.shim = function shimObjectKeys() {
 
 module.exports = keysShim;
 
-},{"./isArguments":73}],73:[function(require,module,exports){
+},{"./isArguments":74}],74:[function(require,module,exports){
 'use strict';
 
 var toStr = Object.prototype.toString;
@@ -17285,7 +17533,7 @@ module.exports = function isArguments(value) {
 	return isArgs;
 };
 
-},{}],74:[function(require,module,exports){
+},{}],75:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -17332,7 +17580,7 @@ function nextTick(fn, arg1, arg2, arg3) {
 }
 
 }).call(this,require('_process'))
-},{"_process":55}],75:[function(require,module,exports){
+},{"_process":56}],76:[function(require,module,exports){
 (function (global){
 /*! https://mths.be/punycode v1.4.1 by @mathias */
 ;(function(root) {
@@ -17869,7 +18117,7 @@ function nextTick(fn, arg1, arg2, arg3) {
 }(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],76:[function(require,module,exports){
+},{}],77:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -17955,7 +18203,7 @@ var isArray = Array.isArray || function (xs) {
   return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{}],77:[function(require,module,exports){
+},{}],78:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -18042,16 +18290,16 @@ var objectKeys = Object.keys || function (obj) {
   return res;
 };
 
-},{}],78:[function(require,module,exports){
+},{}],79:[function(require,module,exports){
 'use strict';
 
 exports.decode = exports.parse = require('./decode');
 exports.encode = exports.stringify = require('./encode');
 
-},{"./decode":76,"./encode":77}],79:[function(require,module,exports){
+},{"./decode":77,"./encode":78}],80:[function(require,module,exports){
 module.exports = require("./lib/_stream_duplex.js")
 
-},{"./lib/_stream_duplex.js":80}],80:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":81}],81:[function(require,module,exports){
 // a duplex stream is just a stream that is both readable and writable.
 // Since JS doesn't have multiple prototypal inheritance, this class
 // prototypally inherits from Readable, and then parasitically from
@@ -18127,7 +18375,7 @@ function forEach(xs, f) {
     f(xs[i], i);
   }
 }
-},{"./_stream_readable":82,"./_stream_writable":84,"core-util-is":58,"inherits":64,"process-nextick-args":74}],81:[function(require,module,exports){
+},{"./_stream_readable":83,"./_stream_writable":85,"core-util-is":59,"inherits":65,"process-nextick-args":75}],82:[function(require,module,exports){
 // a passthrough stream.
 // basically just the most minimal sort of Transform stream.
 // Every written chunk gets output as-is.
@@ -18154,7 +18402,7 @@ function PassThrough(options) {
 PassThrough.prototype._transform = function (chunk, encoding, cb) {
   cb(null, chunk);
 };
-},{"./_stream_transform":83,"core-util-is":58,"inherits":64}],82:[function(require,module,exports){
+},{"./_stream_transform":84,"core-util-is":59,"inherits":65}],83:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -19037,7 +19285,7 @@ function indexOf(xs, x) {
   return -1;
 }
 }).call(this,require('_process'))
-},{"./_stream_duplex":80,"_process":55,"buffer":56,"core-util-is":58,"events":59,"inherits":64,"isarray":66,"process-nextick-args":74,"string_decoder/":94,"util":54}],83:[function(require,module,exports){
+},{"./_stream_duplex":81,"_process":56,"buffer":57,"core-util-is":59,"events":60,"inherits":65,"isarray":67,"process-nextick-args":75,"string_decoder/":95,"util":55}],84:[function(require,module,exports){
 // a transform stream is a readable/writable stream where you do
 // something with the data.  Sometimes it's called a "filter",
 // but that's not a great name for it, since that implies a thing where
@@ -19218,7 +19466,7 @@ function done(stream, er) {
 
   return stream.push(null);
 }
-},{"./_stream_duplex":80,"core-util-is":58,"inherits":64}],84:[function(require,module,exports){
+},{"./_stream_duplex":81,"core-util-is":59,"inherits":65}],85:[function(require,module,exports){
 (function (process){
 // A bit simpler than readable streams.
 // Implement an async ._write(chunk, encoding, cb), and it'll handle all
@@ -19737,10 +19985,10 @@ function CorkedRequest(state) {
   };
 }
 }).call(this,require('_process'))
-},{"./_stream_duplex":80,"_process":55,"buffer":56,"core-util-is":58,"events":59,"inherits":64,"process-nextick-args":74,"util-deprecate":96}],85:[function(require,module,exports){
+},{"./_stream_duplex":81,"_process":56,"buffer":57,"core-util-is":59,"events":60,"inherits":65,"process-nextick-args":75,"util-deprecate":97}],86:[function(require,module,exports){
 module.exports = require("./lib/_stream_passthrough.js")
 
-},{"./lib/_stream_passthrough.js":81}],86:[function(require,module,exports){
+},{"./lib/_stream_passthrough.js":82}],87:[function(require,module,exports){
 var Stream = (function (){
   try {
     return require('st' + 'ream'); // hack to fix a circular dependency issue when used with browserify
@@ -19754,13 +20002,13 @@ exports.Duplex = require('./lib/_stream_duplex.js');
 exports.Transform = require('./lib/_stream_transform.js');
 exports.PassThrough = require('./lib/_stream_passthrough.js');
 
-},{"./lib/_stream_duplex.js":80,"./lib/_stream_passthrough.js":81,"./lib/_stream_readable.js":82,"./lib/_stream_transform.js":83,"./lib/_stream_writable.js":84}],87:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":81,"./lib/_stream_passthrough.js":82,"./lib/_stream_readable.js":83,"./lib/_stream_transform.js":84,"./lib/_stream_writable.js":85}],88:[function(require,module,exports){
 module.exports = require("./lib/_stream_transform.js")
 
-},{"./lib/_stream_transform.js":83}],88:[function(require,module,exports){
+},{"./lib/_stream_transform.js":84}],89:[function(require,module,exports){
 module.exports = require("./lib/_stream_writable.js")
 
-},{"./lib/_stream_writable.js":84}],89:[function(require,module,exports){
+},{"./lib/_stream_writable.js":85}],90:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -19889,7 +20137,7 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"events":59,"inherits":64,"readable-stream/duplex.js":79,"readable-stream/passthrough.js":85,"readable-stream/readable.js":86,"readable-stream/transform.js":87,"readable-stream/writable.js":88}],90:[function(require,module,exports){
+},{"events":60,"inherits":65,"readable-stream/duplex.js":80,"readable-stream/passthrough.js":86,"readable-stream/readable.js":87,"readable-stream/transform.js":88,"readable-stream/writable.js":89}],91:[function(require,module,exports){
 var ClientRequest = require('./lib/request')
 var extend = require('xtend')
 var statusCodes = require('builtin-status-codes')
@@ -19964,7 +20212,7 @@ http.METHODS = [
 	'UNLOCK',
 	'UNSUBSCRIBE'
 ]
-},{"./lib/request":92,"builtin-status-codes":57,"url":95,"xtend":97}],91:[function(require,module,exports){
+},{"./lib/request":93,"builtin-status-codes":58,"url":96,"xtend":98}],92:[function(require,module,exports){
 (function (global){
 exports.fetch = isFunction(global.fetch) && isFunction(global.ReadableByteStream)
 
@@ -20008,7 +20256,7 @@ function isFunction (value) {
 xhr = null // Help gc
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],92:[function(require,module,exports){
+},{}],93:[function(require,module,exports){
 (function (process,global,Buffer){
 // var Base64 = require('Base64')
 var capability = require('./capability')
@@ -20290,7 +20538,7 @@ var unsafeHeaders = [
 ]
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer)
-},{"./capability":91,"./response":93,"_process":55,"buffer":56,"foreach":60,"indexof":63,"inherits":64,"object-keys":72,"stream":89}],93:[function(require,module,exports){
+},{"./capability":92,"./response":94,"_process":56,"buffer":57,"foreach":61,"indexof":64,"inherits":65,"object-keys":73,"stream":90}],94:[function(require,module,exports){
 (function (process,global,Buffer){
 var capability = require('./capability')
 var foreach = require('foreach')
@@ -20467,7 +20715,7 @@ IncomingMessage.prototype._onXHRProgress = function () {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer)
-},{"./capability":91,"_process":55,"buffer":56,"foreach":60,"inherits":64,"stream":89}],94:[function(require,module,exports){
+},{"./capability":92,"_process":56,"buffer":57,"foreach":61,"inherits":65,"stream":90}],95:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -20690,7 +20938,7 @@ function base64DetectIncompleteChar(buffer) {
   this.charLength = this.charReceived ? 3 : 0;
 }
 
-},{"buffer":56}],95:[function(require,module,exports){
+},{"buffer":57}],96:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -21399,7 +21647,7 @@ function isNullOrUndefined(arg) {
   return  arg == null;
 }
 
-},{"punycode":75,"querystring":78}],96:[function(require,module,exports){
+},{"punycode":76,"querystring":79}],97:[function(require,module,exports){
 (function (global){
 
 /**
@@ -21470,7 +21718,7 @@ function config (name) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],97:[function(require,module,exports){
+},{}],98:[function(require,module,exports){
 module.exports = extend
 
 var hasOwnProperty = Object.prototype.hasOwnProperty;
@@ -21491,7 +21739,7 @@ function extend() {
     return target
 }
 
-},{}],98:[function(require,module,exports){
+},{}],99:[function(require,module,exports){
 'use strict';
 
 var Specification = require('./Specification');
@@ -21502,7 +21750,7 @@ module.exports = function () {
 	return Specification.AndSpecification;
 }();
 
-},{"./Specification":110}],99:[function(require,module,exports){
+},{"./Specification":111}],100:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -21576,7 +21824,7 @@ module.exports = function () {
 	return ContainedSpecification;
 }();
 
-},{"./../lang/assert":27,"./Specification":110}],100:[function(require,module,exports){
+},{"./../lang/assert":27,"./Specification":111}],101:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -21648,7 +21896,7 @@ module.exports = function () {
 	return ContainsSpecification;
 }();
 
-},{"./Specification":110}],101:[function(require,module,exports){
+},{"./Specification":111}],102:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -21716,7 +21964,7 @@ module.exports = function () {
 	return EqualsSpecification;
 }();
 
-},{"./Specification":110}],102:[function(require,module,exports){
+},{"./Specification":111}],103:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -21781,7 +22029,7 @@ module.exports = function () {
 	return FailSpecification;
 }();
 
-},{"./Specification":110}],103:[function(require,module,exports){
+},{"./Specification":111}],104:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -21855,7 +22103,7 @@ module.exports = function () {
 	return GreaterThanSpecification;
 }();
 
-},{"./../lang/assert":27,"./Specification":110}],104:[function(require,module,exports){
+},{"./../lang/assert":27,"./Specification":111}],105:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -21929,7 +22177,7 @@ module.exports = function () {
 	return LessThanSpecification;
 }();
 
-},{"./../lang/assert":27,"./Specification":110}],105:[function(require,module,exports){
+},{"./../lang/assert":27,"./Specification":111}],106:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -21996,7 +22244,7 @@ module.exports = function () {
 	return NanSpecification;
 }();
 
-},{"./../lang/is":33,"./Specification":110}],106:[function(require,module,exports){
+},{"./../lang/is":33,"./Specification":111}],107:[function(require,module,exports){
 'use strict';
 
 var Specification = require('./Specification');
@@ -22007,7 +22255,7 @@ module.exports = function () {
 	return Specification.NotSpecification;
 }();
 
-},{"./Specification":110}],107:[function(require,module,exports){
+},{"./Specification":111}],108:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -22074,7 +22322,7 @@ module.exports = function () {
 	return NumericSpecification;
 }();
 
-},{"./../lang/is":33,"./Specification":110}],108:[function(require,module,exports){
+},{"./../lang/is":33,"./Specification":111}],109:[function(require,module,exports){
 'use strict';
 
 var Specification = require('./Specification');
@@ -22085,7 +22333,7 @@ module.exports = function () {
 	return Specification.OrSpecification;
 }();
 
-},{"./Specification":110}],109:[function(require,module,exports){
+},{"./Specification":111}],110:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -22150,7 +22398,7 @@ module.exports = function () {
 	return PassSpecification;
 }();
 
-},{"./Specification":110}],110:[function(require,module,exports){
+},{"./Specification":111}],111:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -22330,7 +22578,7 @@ module.exports = function () {
 	return Specification;
 }();
 
-},{"./../lang/assert":27}],111:[function(require,module,exports){
+},{"./../lang/assert":27}],112:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -22404,7 +22652,7 @@ module.exports = function () {
 	return TranslateSpecification;
 }();
 
-},{"./../lang/assert":27,"./Specification":110}],112:[function(require,module,exports){
+},{"./../lang/assert":27,"./Specification":111}],113:[function(require,module,exports){
 'use strict';
 
 var AndSpecification = require('./AndSpecification'),
@@ -22443,7 +22691,7 @@ module.exports = function () {
 	};
 }();
 
-},{"./AndSpecification":98,"./ContainedSpecification":99,"./ContainsSpecification":100,"./EqualsSpecification":101,"./FailSpecification":102,"./GreaterThanSpecification":103,"./LessThanSpecification":104,"./NanSpecification":105,"./NotSpecification":106,"./NumericSpecification":107,"./OrSpecification":108,"./PassSpecification":109,"./Specification":110,"./TranslateSpecification":111}],113:[function(require,module,exports){
+},{"./AndSpecification":99,"./ContainedSpecification":100,"./ContainsSpecification":101,"./EqualsSpecification":102,"./FailSpecification":103,"./GreaterThanSpecification":104,"./LessThanSpecification":105,"./NanSpecification":106,"./NotSpecification":107,"./NumericSpecification":108,"./OrSpecification":109,"./PassSpecification":110,"./Specification":111,"./TranslateSpecification":112}],114:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -22612,7 +22860,7 @@ module.exports = function () {
 	return RateLimiter;
 }();
 
-},{"./../collections/Queue":1,"./../lang/Disposable":20,"./../lang/assert":27,"./../lang/promise":38,"./Scheduler":114}],114:[function(require,module,exports){
+},{"./../collections/Queue":1,"./../lang/Disposable":20,"./../lang/assert":27,"./../lang/promise":38,"./Scheduler":115}],115:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -22866,7 +23114,7 @@ module.exports = function () {
 	return Scheduler;
 }();
 
-},{"./../lang/Disposable":20,"./../lang/assert":27,"./../lang/is":33,"./../lang/object":37,"./../lang/promise":38}],115:[function(require,module,exports){
+},{"./../lang/Disposable":20,"./../lang/assert":27,"./../lang/is":33,"./../lang/object":37,"./../lang/promise":38}],116:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -23072,7 +23320,7 @@ module.exports = function () {
 	return Serializer;
 }();
 
-},{"./../collections/Queue":1,"./../lang/Disposable":20,"./../lang/assert":27,"./../lang/promise":38}],116:[function(require,module,exports){
+},{"./../collections/Queue":1,"./../lang/Disposable":20,"./../lang/assert":27,"./../lang/promise":38}],117:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
@@ -23233,7 +23481,7 @@ module.exports = function () {
 	return WindowCounter;
 }();
 
-},{"./../collections/Queue":1,"./../lang/assert":27}],117:[function(require,module,exports){
+},{"./../collections/Queue":1,"./../lang/assert":27}],118:[function(require,module,exports){
 'use strict';
 
 var RateLimiter = require('./RateLimiter'),
@@ -23252,5 +23500,5 @@ module.exports = function () {
 	};
 }();
 
-},{"./RateLimiter":113,"./Scheduler":114,"./Serializer":115,"./WindowCounter":116}]},{},[16])(16)
+},{"./RateLimiter":114,"./Scheduler":115,"./Serializer":116,"./WindowCounter":117}]},{},[16])(16)
 });
