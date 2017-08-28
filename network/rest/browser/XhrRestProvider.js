@@ -9,7 +9,7 @@ module.exports = (() => {
 	'use strict';
 
 	/**
-	 * Executes REST-ful actions from a browser, using the "xhr" module.
+	 * Executes REST-ful actions the "xhr" module. Intended for browser use.
 	 *
 	 * @public
 	 * @extends {RestProviderBase}
@@ -21,11 +21,19 @@ module.exports = (() => {
 
 		_call(endpoint, data, host, port, secure) {
 			return promise.build((resolveCallback, rejectCallback) => {
+				const action = endpoint.getAction();
+
 				const options = {
 					url: endpoint.getUrl(data, host, port, secure),
-					method: endpoint.getAction().getHttpVerb(),
-					json: endpoint.getPayload(data)
+					method: action.getHttpVerb(),
+					headers: {
+						'Content-Type': 'application/json'
+					}
 				};
+
+				if (action.getAllowBody() || (action.getAllowQuerstring() && !endpoint.getSuppressQuerystring())) {
+					options.body = JSON.stringify(endpoint.getPayload(data));
+				}
 
 				xhr(options, (error, response, body) => {
 					if (error) {
@@ -41,7 +49,7 @@ module.exports = (() => {
 
 						rejectCallback(new Error(message));
 					} else {
-						resolveCallback(body);
+						resolveCallback(endpoint.parseResponse(body));
 					}
 				});
 			});

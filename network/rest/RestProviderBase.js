@@ -16,16 +16,14 @@ module.exports = (() => {
 	 * @interface
 	 */
 	class RestProviderBase {
-		constructor(host, port, secure, parser) {
+		constructor(host, port, secure) {
 			assert.argumentIsRequired(host, 'host', String);
 			assert.argumentIsRequired(port, 'port', Number);
 			assert.argumentIsRequired(secure, 'secure', Boolean);
-			assert.argumentIsOptional(parser, 'parser', RestParser, 'RestParser');
 
 			this._host = host;
 			this._port = port;
 			this._secure = secure;
-			this._parser = parser || RestParser.DEFAULT;
 		}
 
 		/**

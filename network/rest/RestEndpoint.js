@@ -2,7 +2,8 @@ const assert = require('./../../lang/assert'),
 	attributes = require('./../../lang/attributes'),
 	is = require('./../../lang/is');
 
-const RestAction = require('./RestAction');
+const RestAction = require('./RestAction'),
+	RestParser = require('./RestParser');
 
 module.exports = (() => {
 	'use strict';
@@ -15,19 +16,23 @@ module.exports = (() => {
 	 * @param {RestAction} action - The action supported by the endpoint
 	 * @param {Array<String>} pathProperties - The parameters required by the endpoint
 	 * @param {String=} payloadProperty - The property name of the object to use as a payload for the REST action
+	 * @param {Boolean=} suppressQuerystring - If true, the querystring will be omitted when making the HTTP request
 	 */
 	class RestEndpoint {
-		constructor(action, pathProperties, payloadProperty, suppressQueryString) {
+		constructor(action, pathProperties, payloadProperty, suppressQuerystring, responseParser) {
 			assert.argumentIsRequired(action, 'action', RestAction, 'RestAction');
 			assert.argumentIsArray(pathProperties, 'pathProperties', String);
 			assert.argumentIsOptional(payloadProperty, 'payloadProperty', String);
-			assert.argumentIsOptional(suppressQueryString, 'suppressQueryString', Boolean);
+			assert.argumentIsOptional(suppressQuerystring, 'suppressQuerystring', Boolean);
+			assert.argumentIsOptional(responseParser, 'responseParser', RestParser, 'RestParser');
 
 			this._action = action;
 
 			this._pathProperties = pathProperties;
 			this._payloadProperty = payloadProperty || null;
-			this._suppressQueryString = suppressQueryString || null;
+			this._suppressQuerystring = is.boolean(suppressQuerystring) && suppressQuerystring;
+
+			this._responseParser = responseParser || RestParser.JSON;
 		}
 
 		/**
@@ -40,8 +45,15 @@ module.exports = (() => {
 			return this._action;
 		}
 
-		getSuppressedQueryString() {
-			return this._suppressQueryString;
+		/**
+		 * Indicates if the querystring should be omitted when making the HTTP
+		 * request.
+		 * 
+		 * @public
+		 * @returns {Boolean}
+		 */
+		getSuppressQuerystring() {
+			return this._suppressQuerystring;
 		}
 
 		/**
@@ -61,7 +73,7 @@ module.exports = (() => {
 
 			const path = this.getPath(data, true);
 
-			if (this.getAction().getQueryIsRequired() && path.length === 0) {
+			if (this.getAction().getPathIsRequired() && path.length === 0) {
 				throw new Error('Unable to generate REST query path.');
 			}
 
@@ -122,6 +134,10 @@ module.exports = (() => {
 			}
 
 			return returnRef;
+		}
+
+		parseResponse(response) {
+			return this._responseParser.parse(response);
 		}
 
 		toString() {

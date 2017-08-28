@@ -11,21 +11,23 @@ module.exports = (() => {
 	 * @extends {Enum}
 	 */
 	class RestAction extends Enum {
-		constructor(action, httpVerb, requiresQuery, requiresPayload, useQueryString) {
+		constructor(action, httpVerb, requiresPath, requiresPayload, allowQuerystring, allowBody) {
 			super(action, action);
 
 			assert.argumentIsRequired(action, 'action', String);
 			assert.argumentIsRequired(httpVerb, 'httpVerb', String);
-			assert.argumentIsRequired(requiresQuery, 'requiresQuery', Boolean);
+			assert.argumentIsRequired(requiresPath, 'requiresPath', Boolean);
 			assert.argumentIsRequired(requiresPayload, 'requiresPayload', Boolean);
-			assert.argumentIsRequired(useQueryString, 'useQueryString', Boolean);
+			assert.argumentIsRequired(allowQuerystring, 'allowQuerystring', Boolean);
+			assert.argumentIsRequired(allowBody, 'allowBody', Boolean);
 
 			this._action = action;
 
 			this._httpVerb = httpVerb;
-			this._requiresQuery = requiresQuery;
+			this._requiresPath = requiresPath;
 			this._requiresPayload = requiresPayload;
-			this._useQuerystring = useQueryString;
+			this._allowQuerystring = allowQuerystring;
+			this._allowBody = allowBody;
 		}
 
 		/**
@@ -48,22 +50,45 @@ module.exports = (() => {
 			return this._httpVerb;
 		}
 
-		getQueryIsRequired() {
-			return this._requiresQuery;
+		/**
+		 * Indicates if a path, beyond the base URL, is required.
+		 * 
+		 * @public
+		 * @returns {Boolean}
+		 */
+		getPathIsRequired() {
+			return this._requiresPath;
 		}
 
+		/**
+		 * Indicates if a payload is required, either for the purpose of formulating a
+		 * request body or querystring, is required.
+		 *
+		 * @public
+		 * @returns {*}
+		 */
 		getPayloadIsRequired() {
 			return this._requiresPayload;
 		}
 
 		/**
-		 * Indicates if it is appropriate to use a querystring with this action.
+		 * Indicates if a querystring is allowed with this action.
 		 *
 		 * @public
 		 * @returns {Boolean}
 		 */
-		getUseQuerystring() {
-			return this._useQuerystring;
+		getAllowQuerystring() {
+			return this._allowQuerystring;
+		}
+
+		/**
+		 * Indicates if a request body is allowed with this action.
+		 *
+		 * @public
+		 * @returns {Boolean}
+		 */
+		getAllowBody() {
+			return this._allowBody;
 		}
 
 		/**
@@ -117,11 +142,11 @@ module.exports = (() => {
 		}
 	}
 
-	const CREATE = new RestAction('Create', 'POST', false, true, false);
-	const UPDATE = new RestAction('Update', 'PUT', true, true, false);
-	const RETRIEVE = new RestAction('Retrieve', 'GET', true, false, true);
-	const DELETE = new RestAction('Delete', 'DELETE', true, false, false);
-	const QUERY = new RestAction('Query', 'GET', false, false, true);
+	const CREATE = new RestAction('Create', 'POST', false, true, false, true);
+	const UPDATE = new RestAction('Update', 'PUT', true, true, false, true);
+	const RETRIEVE = new RestAction('Retrieve', 'GET', true, false, true, false);
+	const DELETE = new RestAction('Delete', 'DELETE', true, false, false, false);
+	const QUERY = new RestAction('Query', 'GET', false, false, true, false);
 
 	return RestAction;
 })();

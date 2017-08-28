@@ -31,11 +31,10 @@ module.exports = (() => {
 				}
 
 				let action = endpoint.getAction();
-				let query = endpoint.getSuppressedQueryString();
 				let path = endpoint.getPath(data);
 				let payload = endpoint.getPayload(data);
 
-				if (action.getUseQuerystring() && !query) {
+				if (action.getAllowQuerystring() && !endpoint.getSuppressQuerystring()) {
 					const qs = querystring.stringify(payload);
 
 					if (qs) {
@@ -67,11 +66,11 @@ module.exports = (() => {
 					});
 
 					response.on('end', () => {
-						resolveCallback(JSON.parse(responseText));
+						resolveCallback(endpoint.parseResponse(responseText));
 					});
 				});
 
-				if (!action.getUseQuerystring() && payload) {
+				if (action.getAllowBody() && payload) {
 					request.write(JSON.stringify(payload));
 				}
 
