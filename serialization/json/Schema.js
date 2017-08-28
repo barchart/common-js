@@ -4,8 +4,8 @@ const array = require('./../../lang/array'),
 
 const Tree = require('./../../collections/Tree');
 
-const Field = require('./Field'),
-	Component = require('./Component');
+const Component = require('./Component'),
+	Field = require('./Field');
 
 module.exports = (() => {
 	'use strict';

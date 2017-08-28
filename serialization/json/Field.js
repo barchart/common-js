@@ -1,6 +1,3 @@
-const assert = require('./../../lang/assert'),
-	is = require('./../../lang/is');
-
 const DataType = require('./DataType');
 
 module.exports = (() => {

@@ -1,6 +1,4 @@
-const assert = require('./../../lang/assert'),
-	Currency = require('./../../lang/Currency'),
-	is = require('./../../lang/is'),
+const Currency = require('./../../lang/Currency'),
 	Money = require('./../../lang/Money');
 
 const DataType = require('./DataType'),
@@ -19,7 +17,7 @@ module.exports = (() => {
 	class Component {
 		constructor(name, fields, reviver) {
 			this._name = name;
-			this._fields = fields;
+			this._fields = fields || [ ];
 			this._reviver = reviver;
 		}
 
