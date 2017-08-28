@@ -46,6 +46,10 @@ module.exports = (() => {
 				});
 			});
 		}
+
+		toString() {
+			return '[XhrRestProvider]';
+		}
 	}
 
 	return XhrRestProvider;

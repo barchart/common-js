@@ -1,6 +1,7 @@
 const assert = require('./../../lang/assert');
 
-const RestEndpoint = require('./RestEndpoint');
+const RestEndpoint = require('./RestEndpoint'),
+	RestParser = require('./RestParser');
 
 module.exports = (() => {
 	'use strict';
@@ -8,23 +9,23 @@ module.exports = (() => {
 	/**
 	 * Executes REST-ful actions.
 	 *
+	 * @public
+	 * @param {String} host - The host name to call
+	 * @param {Number=} port - The port
+	 * @param {Boolean=} secure - If true, HTTPS is used; otherwise HTTP.
 	 * @interface
 	 */
 	class RestProviderBase {
-		/**
-		 * @public
-		 * @param {String} host - The host name to call
-		 * @param {Number=} port - The port
-		 * @param {Boolean=} secure - If true, HTTPS is used; otherwise HTTP.
-		 */
-		constructor(host, port, secure) {
+		constructor(host, port, secure, parser) {
 			assert.argumentIsRequired(host, 'host', String);
 			assert.argumentIsRequired(port, 'port', Number);
 			assert.argumentIsRequired(secure, 'secure', Boolean);
+			assert.argumentIsOptional(parser, 'parser', RestParser, 'RestParser');
 
 			this._host = host;
 			this._port = port;
 			this._secure = secure;
+			this._parser = parser || RestParser.DEFAULT;
 		}
 
 		/**
@@ -51,6 +52,10 @@ module.exports = (() => {
 		 */
 		_call(endpoint, data, host, port, secure) {
 			return true;
+		}
+
+		toString() {
+			return '[RestProviderBase]';
 		}
 	}
 

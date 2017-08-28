@@ -1,15 +1,19 @@
-const assert = require('./../../lang/assert');
+const assert = require('./../../lang/assert'),
+	Enum = require('./../../lang/Enum');
 
 module.exports = (() => {
 	'use strict';
 
 	/**
-	 * Maps an action (e.g.. create) to an HTTP verb (e.g. POST).
+	 * Maps an action (e.g. create) to an HTTP verb (e.g. POST).
 	 *
 	 * @public
+	 * @extends {Enum}
 	 */
-	class RestAction {
+	class RestAction extends Enum {
 		constructor(action, httpVerb, requiresQuery, requiresPayload, useQueryString) {
+			super(action, action);
+
 			assert.argumentIsRequired(action, 'action', String);
 			assert.argumentIsRequired(httpVerb, 'httpVerb', String);
 			assert.argumentIsRequired(requiresQuery, 'requiresQuery', Boolean);
@@ -110,10 +114,6 @@ module.exports = (() => {
 		 */
 		static get Query() {
 			return QUERY;
-		}
-
-		toString() {
-			return `[RestAction (action=${this._action})]`;
 		}
 	}
 

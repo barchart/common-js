@@ -78,6 +78,10 @@ module.exports = (() => {
 				request.end();
 			});
 		}
+
+		toString() {
+			return '[RestProvider]';
+		}
 	}
 
 	return RestProvider;

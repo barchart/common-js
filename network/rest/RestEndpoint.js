@@ -123,6 +123,10 @@ module.exports = (() => {
 
 			return returnRef;
 		}
+
+		toString() {
+			return '[RestEndpoint]';
+		}
 	}
 
 	return RestEndpoint;
