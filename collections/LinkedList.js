@@ -53,14 +53,16 @@ module.exports = (() => {
 		 * @param {*} value
 		 * @returns {LinkedList}
 		 */
-		add(value) {
-			var next = new LinkedList(value);
+		insert(value) {
+			const next = new LinkedList(value);
 
 			if (this._next) {
 				next._next = this._next;
 			}
 
 			this._next = next;
+
+			return next;
 		}
 
 		toString() {
