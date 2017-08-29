@@ -1,8 +1,9 @@
 const assert = require('./../../lang/assert'),
-	is = require('./../../lang/is'),
-	functions = require('./../../lang/functions');
+	functions = require('./../../lang/functions'),
+	is = require('./../../lang/is');
 
-const Tree = require('./../../collections/Tree');
+const LinkedList = require('./../../collections/LinkedList'),
+	Tree = require('./../../collections/Tree');
 
 const Component = require('./Component'),
 	Field = require('./Field');
@@ -28,7 +29,7 @@ module.exports = (() => {
 
 			this._strict = is.boolean(strict) && strict;
 
-			this._reviverItems = getReviverItems(this._fields, this._components);
+			this._revivers = getReviverItems(this._fields, this._components);
 		}
 
 		/**
@@ -75,6 +76,7 @@ module.exports = (() => {
 		/**
 		 * Returns true, if an object complies with the schema.
 		 *
+		 * @public
 		 * @param {*} candidate
 		 */
 		validate(candidate) {
@@ -90,24 +92,38 @@ module.exports = (() => {
 		 * @returns {Function}
 		 */
 		getReviver() {
-			let reviverIndex = 0;
-			let reviverLength = this._reviverItems.length;
+			let head = this._revivers;
+			let node = null;
 
-			return (key, value) => {
-				const reviverItem = this._reviverItems[reviverIndex];
-
-				if (!(key === reviverItem.name || reviverItem.reset || (key === '' && reviverIndex === 0))) {
-					throw new Error(`Schema parsing is using strict mode, unexpected key found [ ${key} ]`);
+			const advance = (key) => {
+				if (node === null) {
+					node = head;
+				} else {
+					node = node.getNext();
 				}
 
-				reviverIndex = (reviverIndex + 1) % reviverLength;
+				let item = node.getValue();
 
-				return reviverItem.reviver(value);
+				if (key !== item.name) {
+					if (item.reset || (key === '' && node === head)) {
+						node = null;
+					} else if (item.optional) {
+						item = advance(key);
+					} else {
+						throw new Error(`Schema parsing is using strict mode, unexpected key found [ ${key} / ${item.name} ]`);
+					}
+				}
+
+				return item;
+			};
+
+			return (key, value) => {
+				return advance(key).reviver(value);
 			};
 		}
 
 		/**
-		 * Returns a function that will genenrate a *new* reviver function
+		 * Returns a function that will generate a *new* reviver function
 		 * (see {@link Schema#getReviver}.
 		 *
 		 * @public
@@ -190,11 +206,20 @@ module.exports = (() => {
 			component.fields.forEach((f) => node.addChild(new ReviverItem(f.name, f.dataType.reviver)));
 		});
 
-		const reviverItems = [ ];
+		let head = null;
+		let current = null;
 
-		root.walk(n => reviverItems.push(n), false, true);
+		const addItemToList = (item) => {
+			if (current === null) {
+				current = head = new LinkedList(item);
+			} else {
+				current = current.insert(item);
+			}
+		};
 
-		return reviverItems;
+		root.walk(addItemToList, false, true);
+
+		return head;
 	}
 
 	return Schema;

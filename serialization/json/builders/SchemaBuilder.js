@@ -38,7 +38,7 @@ module.exports = (() => {
 		 * @public
 		 * @param {String} name - The name of the new field.
 		 * @param {DataType} dataType - The type of the new field.
-		 * @param {Boolean} optional - The
+		 * @param {Boolean} optional - If true, the field is not required and may be omitted.
 		 * @returns {SchemaBuilder}
 		 */
 		withField(name, dataType, optional) {
@@ -47,7 +47,6 @@ module.exports = (() => {
 			assert.argumentIsOptional(optional, 'optional', Boolean);
 
 			const optionalToUse = is.boolean(optional) && optional;
-
 			const fields = this._schema.fields.concat([ new Field(name, dataType, optionalToUse) ]);
 
 			this._schema = new Schema(this._schema.name, fields, this._schema.components, this._schema.strict);
