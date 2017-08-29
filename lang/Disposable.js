@@ -18,6 +18,8 @@ module.exports = (() => {
 		 * Invokes end-of-life logic. Once this function has been
 		 * invoked, further interaction with the object is not
 		 * recommended.
+		 *
+		 * @public
 		 */
 		dispose() {
 			if (this._disposed) {
@@ -41,6 +43,7 @@ module.exports = (() => {
 		/**
 		 * Returns true if the {@link Disposable#dispose} function has been invoked.
 		 *
+		 * @public
 		 * @returns {boolean}
 		 */
 		getIsDisposed() {
@@ -55,8 +58,8 @@ module.exports = (() => {
 		 * Creates and returns a {@link Disposable} object with end-of-life logic
 		 * delegated to a function.
 		 *
+		 * @public
 		 * @param disposeAction {Function}
-		 *
 		 * @returns {Disposable}
 		 */
 		static fromAction(disposeAction) {
@@ -69,6 +72,7 @@ module.exports = (() => {
 		 * Creates and returns a {@link Disposable} object whose end-of-life
 		 * logic does nothing.
 		 *
+		 * @public
 		 * @returns {Disposable}
 		 */
 		static getEmpty() {
