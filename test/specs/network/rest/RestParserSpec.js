@@ -7,9 +7,13 @@ describe('Using a customized JSON REST parser is created', function() {
 	var spy;
 
 	beforeEach(function () {
-		parser = RestParser.getJsonParser(spy = jasmine.createSpy('spy').and.callFake(function (k, v) {
-			return k === 'fizz' ? 3 : v;
-		}));
+		function parserFactory() {
+			return spy = jasmine.createSpy('spy').and.callFake(function (k, v) {
+				return k === 'fizz' ? 3 : v;
+			});
+		}
+
+		parser = RestParser.getJsonParser(parserFactory);
 	});
 
 	describe('and JSON string is parsed (that represents a simple object)', function () {
@@ -41,9 +45,13 @@ describe('Using another customized JSON REST parser is created', function() {
 	var spy;
 
 	beforeEach(function () {
-		parser = RestParser.getJsonParser(spy = jasmine.createSpy('spy').and.callFake(function (k, v) {
-			return k === 'fizz' ? 3 : v;
-		}));
+		function parserFactory() {
+			return spy = jasmine.createSpy('spy').and.callFake(function (k, v) {
+				return k === 'fizz' ? 3 : v;
+			});
+		}
+
+		parser = RestParser.getJsonParser(parserFactory);
 	});
 
 	describe('and JSON string is parsed (that represents an array of simple objects)', function () {

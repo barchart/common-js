@@ -106,6 +106,17 @@ module.exports = (() => {
 			};
 		}
 
+		/**
+		 * Returns a function that will genenrate a *new* reviver function
+		 * (see {@link Schema#getReviver}.
+		 *
+		 * @public
+		 * @returns {Function}
+		 */
+		getReviverFactory() {
+			return () => this.getReviver();
+		}
+
 		toString() {
 			return `[Schema (name=${this._name})]`;
 		}

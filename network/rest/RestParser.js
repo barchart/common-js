@@ -65,11 +65,11 @@ module.exports = (() => {
 		 * using a "reviver" function.
 		 *
 		 * @public
-		 * @param {Function} reviver
+		 * @param {Function} reviverFactory - A function that returns a JSON.parse reviver function
 		 * @returns {RestParser}
 		 */
-		static getJsonParser(reviver) {
-			return new DelegatedRestParser(x => JSON.parse(x, reviver));
+		static getJsonParser(reviverFactory) {
+			return new DelegatedRestParser(x => JSON.parse(x, reviverFactory()));
 		}
 
 		toString() {
