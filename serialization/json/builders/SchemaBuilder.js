@@ -1,4 +1,5 @@
-const assert = require('./../../../lang/assert');
+const assert = require('./../../../lang/assert'),
+	is = require('./../../../lang/is');
 
 const Component = require('./../Component'),
 	DataType = require('./../DataType'),
@@ -37,13 +38,17 @@ module.exports = (() => {
 		 * @public
 		 * @param {String} name - The name of the new field.
 		 * @param {DataType} dataType - The type of the new field.
+		 * @param {Boolean} optional - The
 		 * @returns {SchemaBuilder}
 		 */
-		withField(name, dataType) {
+		withField(name, dataType, optional) {
 			assert.argumentIsRequired(name, 'name', String);
 			assert.argumentIsRequired(dataType, 'dataType', DataType, 'DataType');
+			assert.argumentIsOptional(optional, 'optional', Boolean);
 
-			const fields = this._schema.fields.concat([ new Field(name, dataType) ]);
+			const optionalToUse = is.boolean(optional) && optional;
+
+			const fields = this._schema.fields.concat([ new Field(name, dataType, optionalToUse) ]);
 
 			this._schema = new Schema(this._schema.name, fields, this._schema.components, this._schema.strict);
 

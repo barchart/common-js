@@ -9,11 +9,13 @@ module.exports = (() => {
 	 * @public
 	 * @param {String} name
 	 * @param {DataType} dataType
+	 * @param {Boolean} optional
 	 */
 	class Field {
-		constructor(name, dataType) {
+		constructor(name, dataType, optional) {
 			this._name = name;
 			this._dataType = dataType;
+			this._optional = optional || false;
 		}
 
 		/**
@@ -34,6 +36,16 @@ module.exports = (() => {
 		 */
 		get dataType() {
 			return this._dataType;
+		}
+
+		/**
+		 * Indicates if the field can be omitted without violating the schema.
+		 *
+		 * @public
+		 * @returns {Boolean}
+		 */
+		get optional() {
+			return this._optional;
 		}
 
 		toString() {

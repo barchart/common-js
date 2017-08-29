@@ -1,5 +1,4 @@
-const array = require('./../../lang/array'),
-	assert = require('./../../lang/assert'),
+const assert = require('./../../lang/assert'),
 	is = require('./../../lang/is'),
 	functions = require('./../../lang/functions');
 
@@ -97,7 +96,7 @@ module.exports = (() => {
 			return (key, value) => {
 				const reviverItem = this._reviverItems[reviverIndex];
 
-				if (!reviverItem.reset && key !== reviverItem.name) {
+				if (!(key === reviverItem.name || reviverItem.reset || (key === '' && reviverIndex === 0))) {
 					throw new Error(`Schema parsing is using strict mode, unexpected key found [ ${key} ]`);
 				}
 
@@ -116,7 +115,7 @@ module.exports = (() => {
 		constructor(name, reviver, reset) {
 			this._name = name;
 			this._reviver = reviver || functions.getTautology();
-			this._reset = true;
+			this._reset = is.boolean(reset) && reset;
 		}
 
 		get name() {
@@ -133,7 +132,7 @@ module.exports = (() => {
 	}
 
 	function getReviverItems(fields, components) {
-		const root = new Tree(new ReviverItem(''));
+		const root = new Tree(new ReviverItem(null, null, true));
 
 		// 2017/08/26, BRI. The Field and Component types could inherit a common
 		// type, allowing the following duplication to be avoided with polymorphism.
