@@ -1,6 +1,7 @@
 const array = require('./../../lang/array'),
 	assert = require('./../../lang/assert'),
-	is = require('./../../lang/is');
+	is = require('./../../lang/is'),
+	functions = require('./../../lang/functions');
 
 const Tree = require('./../../collections/Tree');
 
@@ -91,17 +92,18 @@ module.exports = (() => {
 		 */
 		getReviver() {
 			let reviverIndex = 0;
+			let reviverLength = this._reviverItems.length;
 
 			return (key, value) => {
 				const reviverItem = this._reviverItems[reviverIndex];
 
-				if (key === reviverItem.name) {
-					reviverIndex = reviverIndex + 1;
-
-					return reviverItem.reviver(value);
-				} else {
-					return value;
+				if (!reviverItem.reset && key !== reviverItem.name) {
+					throw new Error(`Schema parsing is using strict mode, unexpected key found [ ${key} ]`);
 				}
+
+				reviverIndex = (reviverIndex + 1) % reviverLength;
+
+				return reviverItem.reviver(value);
 			};
 		}
 
@@ -111,9 +113,10 @@ module.exports = (() => {
 	}
 
 	class ReviverItem {
-		constructor(name, reviver) {
+		constructor(name, reviver, reset) {
 			this._name = name;
-			this._reviver = reviver || (x => x);
+			this._reviver = reviver || functions.getTautology();
+			this._reset = true;
 		}
 
 		get name() {
@@ -122,6 +125,10 @@ module.exports = (() => {
 
 		get reviver() {
 			return this._reviver;
+		}
+
+		get reset() {
+			return this._reset;
 		}
 	}
 

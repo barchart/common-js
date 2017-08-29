@@ -53,6 +53,60 @@ describe('When a person schema is created (first and last names)', function() {
 			});
 		});
 	});
+
+	describe('and a schema-compliant array is created', function() {
+		var object;
+
+		beforeEach(function() {
+			object = [ {
+				first: 'bryan',
+				last: 'ingle'
+			}, {
+				first: 'borja',
+				last: 'yanes'
+			} ];
+		});
+
+		describe('and the object is "stringified" as JSON', function() {
+			var serialized;
+
+			beforeEach(function() {
+				serialized = JSON.stringify(object);
+			});
+
+			describe('and the object is rehydrated using the schema reviver', function() {
+				var deserialized;
+
+				beforeEach(function() {
+					try {
+						deserialized = JSON.parse(serialized, schema.getReviver());
+					} catch (e) {
+						console.log(e);
+					}
+				});
+
+				it('should be an array with two items', function() {
+					expect(deserialized.length).toEqual(2);
+				});
+
+				it('the first item should have a "first" property with the expected value', function() {
+					expect(deserialized[0].first).toEqual('bryan');
+				});
+
+				it('the first item should have a "last" property with the expected value', function() {
+					expect(deserialized[0].last).toEqual('ingle');
+				});
+
+				it('the second item should have a "first" property with the expected value', function() {
+					expect(deserialized[1].first).toEqual('borja');
+				});
+
+				it('the second item should have a "last" property with the expected value', function() {
+					expect(deserialized[1].last).toEqual('yanes');
+				});
+			});
+		});
+	});
 });
 
 describe('When a person schema is created (grouped first and last names with a birthday)', function() {
@@ -228,6 +282,78 @@ describe('When an account schema is created (using the Money component with nest
 				it('should have a "balances.today" property with the expected value', function() {
 					expect(deserialized.balances.today.currency).toEqual(Currency.USD);
 					expect(deserialized.balances.today.decimal.getIsEqual(271.83)).toEqual(true);
+				});
+			});
+		});
+	});
+
+	describe('and a schema-compliant array is created', function() {
+		var object;
+
+		beforeEach(function() {
+			object = [ {
+				number: 987654321,
+				balances: {
+					yesterday: new Money(314.15, Currency.USD),
+					today: new Money(271.83, Currency.USD)
+				}
+			}, {
+				number: 123456789,
+				balances: {
+					yesterday: new Money(141.42, Currency.USD),
+					today: new Money(173.20, Currency.USD)
+				}
+			} ];
+		});
+
+		describe('and the object is "stringified" as JSON', function() {
+			var serialized;
+
+			beforeEach(function() {
+				serialized = JSON.stringify(object);
+			});
+
+			describe('and the object is rehydrated using the schema reviver', function() {
+				var deserialized;
+
+				beforeEach(function() {
+					try {
+						deserialized = JSON.parse(serialized, schema.getReviver());
+					} catch (e) {
+						console.log(e);
+					}
+				});
+
+				it('should be an array with two items', function() {
+					expect(deserialized.length).toEqual(2);
+				});
+
+				it('the first item should have a "number" property with the expected value', function() {
+					expect(deserialized[0].number).toEqual(987654321);
+				});
+
+				it('the first item should have a "balances.yesterday" property with the expected value', function() {
+					expect(deserialized[0].balances.yesterday.currency).toEqual(Currency.USD);
+					expect(deserialized[0].balances.yesterday.decimal.getIsEqual(314.15)).toEqual(true);
+				});
+
+				it('the first item should have a "balances.today" property with the expected value', function() {
+					expect(deserialized[0].balances.today.currency).toEqual(Currency.USD);
+					expect(deserialized[0].balances.today.decimal.getIsEqual(271.83)).toEqual(true);
+				});
+
+				it('the second item should have a "number" property with the expected value', function() {
+					expect(deserialized[1].number).toEqual(123456789);
+				});
+
+				it('the second item should have a "balances.yesterday" property with the expected value', function() {
+					expect(deserialized[1].balances.yesterday.currency).toEqual(Currency.USD);
+					expect(deserialized[1].balances.yesterday.decimal.getIsEqual(141.42)).toEqual(true);
+				});
+
+				it('the second item should have a "balances.today" property with the expected value', function() {
+					expect(deserialized[1].balances.today.currency).toEqual(Currency.USD);
+					expect(deserialized[1].balances.today.decimal.getIsEqual(173.20)).toEqual(true);
 				});
 			});
 		});
