@@ -312,7 +312,7 @@ module.exports = function () {
   * children nodes. Children are stored in insertion order.
   *
   * @public
-  * @param {object} value - The value of the node.
+  * @param {*} value - The value of the node.
   * @param {Tree} parent - The parent node. If not supplied, this will be the root node.
   */
 
@@ -356,7 +356,7 @@ module.exports = function () {
     * Returns the value associated with the current node.
     *
     * @public
-    * @returns {object}
+    * @returns {*}
     */
 
 		}, {
@@ -396,7 +396,7 @@ module.exports = function () {
     * to the child node.
     *
     * @public
-    * @param {object} value - The value of the child.
+    * @param {*} value - The value of the child.
     * @returns {Tree}
     */
 
@@ -3462,17 +3462,29 @@ var assert = require('./assert'),
     is = require('./is'),
     memoize = require('./memoize');
 
-var Decimal = require('./Decimal');
+var Currency = require('./Currency'),
+    Decimal = require('./Decimal');
 
 module.exports = function () {
 	'use strict';
 
+	/**
+  * A component that represents an exchange rate, composed of a {@link Decimal}
+  * value and two currencies -- a quote (i.e. the numerator) currency and a
+  * base (i.e. denominator) currency.
+  *
+  * @public
+  * @param {Number|String|Decimal} value - The rate
+  * @param {Currency} numerator - The quote currency
+  * @param {Currency} denominator - The base currency
+  */
+
 	var Rate = function () {
-		function Rate(value, denominator, numerator) {
+		function Rate(value, numerator, denominator) {
 			_classCallCheck(this, Rate);
 
-			assert.argumentIsRequired(numerator, 'numerator', String);
-			assert.argumentIsRequired(denominator, 'denominator', String);
+			assert.argumentIsRequired(numerator, 'numerator', Currency, 'Currency');
+			assert.argumentIsRequired(denominator, 'denominator', Currency, 'Currency');
 
 			if (numerator === denominator) {
 				throw new Error('A rate cannot use two identical currencies.');
@@ -3483,13 +3495,38 @@ module.exports = function () {
 			this._denominator = denominator;
 		}
 
+		/**
+   * The rate.
+   *
+   * @public
+   * @returns {Decimal}
+   */
+
 		_createClass(Rate, [{
 			key: 'formatPair',
+
+			/**
+    * Formats the currency pair as a string (e.g. "EURUSD" or "^EURUSD").
+    *
+    * @public
+    * @param {Boolean=} useCarat - If true, a carat is used as a prefix to the resulting string.
+    * @returns {string}
+    */
 			value: function formatPair(useCarat) {
 				assert.argumentIsOptional(useCarat, 'useCarat', Boolean);
 
 				return '' + (useCarat ? '^' : '') + this._numerator + this._denominator;
 			}
+
+			/**
+    * Creates a {@link Rate} instance, when given a value
+    *
+    * @public
+    * @param {Number|String|Decimal} value - The rate.
+    * @param {Currency} pair - A string that can be parsed as a currency pair.
+    * @returns {Rate}
+    */
+
 		}, {
 			key: 'toString',
 			value: function toString() {
@@ -3500,21 +3537,57 @@ module.exports = function () {
 			get: function get() {
 				return this._decimal;
 			}
+
+			/**
+    * The numerator (i.e. quote) currency. In other words,
+    * this is EUR of the EURUSD pair.
+    *
+    * @public
+    * @returns {Currency}
+    */
+
 		}, {
 			key: 'numerator',
 			get: function get() {
 				return this._numerator;
 			}
+
+			/**
+    * The quote (i.e. numerator) currency. In other words,
+    * this is EUR of the EURUSD pair.
+    *
+    * @public
+    * @returns {Currency}
+    */
+
 		}, {
 			key: 'quote',
 			get: function get() {
 				return this._numerator;
 			}
+
+			/**
+    * The denominator (i.e. base) currency. In other words,
+    * this is USD of the EURUSD pair.
+    *
+    * @public
+    * @returns {Currency}
+    */
+
 		}, {
 			key: 'denominator',
 			get: function get() {
 				return this._denominator;
 			}
+
+			/**
+    * The base (i.e. denominator) currency. In other words,
+    * this is USD of the EURUSD pair.
+    *
+    * @public
+    * @returns {Currency}
+    */
+
 		}, {
 			key: 'base',
 			get: function get() {
@@ -3558,7 +3631,7 @@ module.exports = function () {
 	return Rate;
 }();
 
-},{"./Decimal":19,"./assert":27,"./is":33,"./memoize":36}],24:[function(require,module,exports){
+},{"./Currency":17,"./Decimal":19,"./assert":27,"./is":33,"./memoize":36}],24:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
@@ -6528,12 +6601,12 @@ module.exports = function () {
     * using a "reviver" function.
     *
     * @public
-    * @param {Function} reviver
+    * @param {Function} reviverFactory - A function that returns a JSON.parse reviver function
     * @returns {RestParser}
     */
-			value: function getJsonParser(reviver) {
+			value: function getJsonParser(reviverFactory) {
 				return new DelegatedRestParser(function (x) {
-					return JSON.parse(x, reviver);
+					return JSON.parse(x, reviverFactory());
 				});
 			}
 		}, {
