@@ -7,7 +7,7 @@ module.exports = (() => {
 	 * children nodes. Children are stored in insertion order.
 	 *
 	 * @public
-	 * @param {object} value - The value of the node.
+	 * @param {*} value - The value of the node.
 	 * @param {Tree} parent - The parent node. If not supplied, this will be the root node.
 	 */
 	class Tree {
@@ -42,7 +42,7 @@ module.exports = (() => {
 		 * Returns the value associated with the current node.
 		 *
 		 * @public
-		 * @returns {object}
+		 * @returns {*}
 		 */
 		getValue() {
 			return this._value;
@@ -73,7 +73,7 @@ module.exports = (() => {
 		 * to the child node.
 		 *
 		 * @public
-		 * @param {object} value - The value of the child.
+		 * @param {*} value - The value of the child.
 		 * @returns {Tree}
 		 */
 		addChild(value) {
