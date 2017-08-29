@@ -21,10 +21,22 @@ module.exports = (() => {
 			super(code, code);
 		}
 
+		/**
+		 * America/Chicago
+		 *
+		 * @public
+		 * @returns {Timezones}
+		 */
 		static get AMERICA_CHICAGO() {
 			return america_chicago;
 		}
 
+		/**
+		 * America/New_York
+		 *
+		 * @public
+		 * @returns {Timezones}
+		 */
 		static get AMERICA_NEW_YORK() {
 			return america_new_york;
 		}
