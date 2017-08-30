@@ -74,14 +74,16 @@ module.exports = (() => {
 		 *
 		 * @public
 		 * @param {Number} places - The number of decimal places to retain.
-		 * @param {RoundingMode} mode - The strategy to use for rounding.
+		 * @param {RoundingMode=} mode - The strategy to use for rounding.
 		 * @returns {Decimal}
 		 */
 		round(places, mode) {
 			assert.argumentIsRequired(places, 'places', Number);
-			assert.argumentIsRequired(mode, 'mode', RoundingMode, 'RoundingMode');
+			assert.argumentIsOptional(mode, 'mode', RoundingMode, 'RoundingMode');
 
-			return new Decimal(this._big.round(places, mode.value));
+			const modeToUse = mode || RoundingMode.NORMAL;
+
+			return new Decimal(this._big.round(places, modeToUse.value));
 		}
 
 		/**
