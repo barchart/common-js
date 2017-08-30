@@ -88,6 +88,13 @@ module.exports = (() => {
 			return new Day(shiftedYear, shiftedMonth, shiftedDay);
 		}
 
+		/**
+		 * Calculates a new {@link Day} in the past (or future).
+		 *
+		 * @public
+		 * @param {Number} days - The number of days to subtract (negative numbers can be used for addition).
+		 * @returns {Day}
+		 */
 		subtractDays(days) {
 			return this.addDays(days, true);
 		}
