@@ -3,6 +3,8 @@ const assert = require('./../../lang/assert');
 const RestEndpoint = require('./RestEndpoint'),
 	RestParser = require('./RestParser');
 
+const Schema = require('./../../serialization/json/Schema');
+
 module.exports = (() => {
 	'use strict';
 
@@ -72,6 +74,20 @@ module.exports = (() => {
 			return new DelegatedRestParser(x => JSON.parse(x, reviverFactory()));
 		}
 
+		/**
+		 * Returns a {@link RestParser} parses the does customized JSON parsing
+		 * based on a JSON {@link Schema}.
+		 *
+		 * @public
+		 * @param {Schema} schema
+		 * @returns {RestParser}
+		 */
+		static getJsonParserForSchema(schema) {
+			assert.argumentIsRequired(schema, 'schema', Schema, 'Schema');
+
+			return RestParser.getJsonParser(schema.getReviverFactory());
+		}
+
 		toString() {
 			return '[RestParser]';
 		}
@@ -80,6 +96,8 @@ module.exports = (() => {
 	class DelegatedRestParser extends RestParser {
 		constructor(delegate) {
 			super();
+
+			assert.argumentIsRequired(delegate, 'delegate', Function);
 
 			this._delegate = delegate;
 		}
