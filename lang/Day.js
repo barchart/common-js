@@ -113,7 +113,7 @@ module.exports = (() => {
 		 * The month of the year (January is one, December is twelve).
 		 *
 		 * @public
-		 * @returns {*}
+		 * @returns {Number}
 		 */
 		get month() {
 			return this._month;
@@ -170,7 +170,7 @@ module.exports = (() => {
 		}
 
 		/**
-		 * Validates the year, month, and day combination is valid.
+		 * Returns true if the year, month, and day combination is valid; otherwise false.
 		 *
 		 * @public
 		 * @param {Number} year
