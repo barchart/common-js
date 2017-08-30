@@ -36,13 +36,44 @@ module.exports = (() => {
 			assert.argumentIsOptional(inverse, inverse, Boolean);
 			assert.argumentIsValid(days, 'days', is.large, 'is an integer');
 
-			let daysToAdd;
+			let daysToAdd = days;
 
-			if (inverse) {
+			let newDay = this._day;
+			let newMonth = this._month;
+			let newYear = this._year;
+
+			if (inverse) { // Subtract
 				daysToAdd = daysToAdd * -1;
+				for (var i=0; i < Math.abs(daysToAdd); i++) {
+					if (newDay > 1) {
+						newDay--;
+					} else {
+						if (newMonth === 1) {
+							newMonth = 12;
+							newYear--;
+						} else {
+							newMonth--;
+						}
+						newDay = Day.getDaysInMonth(newYear, newMonth);
+					}
+				}
+			} else { // Add
+				for (var i=0; i < daysToAdd; i++) {
+					if (newDay < Day.getDaysInMonth(newYear, newMonth)) {
+						newDay++;
+					} else {
+						newDay = 1;
+						if (newMonth === 12) {
+							newMonth = 1;
+							newYear++;
+						} else {
+							newMonth++;
+						}
+					}
+				}
 			}
 
-			return new Day(this._year, this._month, this._day);
+			return new Day(newYear, newMonth, newDay);
 		}
 
 		subtractDays(days) {
@@ -146,7 +177,31 @@ module.exports = (() => {
 		 * @param {number} month - The month number (e.g. 2 -- for February)
 		 */
 		static getDaysInMonth(year, month) {
-			return 31; // need to fix this....
+			var febDays;
+
+			if (((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0)) { // leap year
+				febDays = 29;
+			} else {
+				febDays = 28;
+			}
+
+			switch(month) {
+				case 1:
+				case 3:
+				case 5:
+				case 7:
+				case 8:
+				case 10:
+				case 12:
+					return 31;
+				case 4:
+				case 6:
+				case 9:
+				case 11:
+					return 30;
+				case 2:
+					return febDays;
+			}
 		}
 
 		/**
