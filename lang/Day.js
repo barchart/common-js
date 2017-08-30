@@ -49,12 +49,15 @@ module.exports = (() => {
 			let shiftedYear = this._year;
 
 			while (totalDaysToShift !== 0) {
+				let monthDaysAvailable;
 				let monthDaysToShift;
 
 				if (positive) {
-					monthDaysToShift = Math.min(totalDaysToShift, Day.getDaysInMonth(shiftedYear, shiftedMonth) - shiftedDay);
+					monthDaysAvailable = Day.getDaysInMonth(shiftedYear, shiftedMonth) - shiftedDay;
+					monthDaysToShift = Math.min(totalDaysToShift, monthDaysAvailable);
 				} else {
-					monthDaysToShift = Math.max(totalDaysToShift, 1 - shiftedDay);
+					monthDaysAvailable = 1 - shiftedDay;
+					monthDaysToShift = Math.max(totalDaysToShift, monthDaysAvailable);
 				}
 
 				totalDaysToShift = totalDaysToShift - monthDaysToShift;
