@@ -2333,13 +2333,95 @@ module.exports = function () {
 		}
 
 		/**
-   * The year.
+   * Calculates a new {@link Day} in the future (or past).
    *
    * @public
-   * @returns {Number}
+   * @param {Number} days - The number of days to add (negative numbers can be used for subtraction).
+   * @param {Boolean=} inverse - If true, the sign of the "days" value will be flipped.
+   * @returns {Day}
    */
 
 		_createClass(Day, [{
+			key: 'addDays',
+			value: function addDays(days, inverse) {
+				assert.argumentIsRequired(days, 'days', Number);
+				assert.argumentIsOptional(inverse, inverse, Boolean);
+				assert.argumentIsValid(days, 'days', is.large, 'is an integer');
+
+				var totalDaysToShift = days;
+
+				if (inverse) {
+					totalDaysToShift = totalDaysToShift * -1;
+				}
+
+				var positive = is.positive(totalDaysToShift);
+
+				var shiftedDay = this._day;
+				var shiftedMonth = this._month;
+				var shiftedYear = this._year;
+
+				while (totalDaysToShift !== 0) {
+					var monthDaysAvailable = void 0;
+					var monthDaysToShift = void 0;
+
+					if (positive) {
+						monthDaysAvailable = Day.getDaysInMonth(shiftedYear, shiftedMonth) - shiftedDay;
+						monthDaysToShift = Math.min(totalDaysToShift, monthDaysAvailable);
+					} else {
+						monthDaysAvailable = 1 - shiftedDay;
+						monthDaysToShift = Math.max(totalDaysToShift, monthDaysAvailable);
+					}
+
+					totalDaysToShift = totalDaysToShift - monthDaysToShift;
+
+					if (totalDaysToShift === 0) {
+						shiftedDay = shiftedDay + monthDaysToShift;
+					} else if (positive) {
+						shiftedMonth++;
+
+						if (shiftedMonth > 12) {
+							shiftedYear++;
+							shiftedMonth = 1;
+						}
+
+						shiftedDay = 0;
+					} else {
+						shiftedMonth--;
+
+						if (shiftedMonth < 1) {
+							shiftedYear--;
+							shiftedMonth = 12;
+						}
+
+						shiftedDay = Day.getDaysInMonth(shiftedYear, shiftedMonth) + 1;
+					}
+				}
+
+				return new Day(shiftedYear, shiftedMonth, shiftedDay);
+			}
+
+			/**
+    * Calculates a new {@link Day} in the past (or future).
+    *
+    * @public
+    * @param {Number} days - The number of days to subtract (negative numbers can be used for addition).
+    * @returns {Day}
+    */
+
+		}, {
+			key: 'subtractDays',
+			value: function subtractDays(days) {
+				return this.addDays(days, true);
+			}
+
+			/**
+    * The year.
+    *
+    * @public
+    * @returns {Number}
+    */
+
+		}, {
 			key: 'format',
 
 			/**
@@ -2389,7 +2471,7 @@ module.exports = function () {
     * The month of the year (January is one, December is twelve).
     *
     * @public
-    * @returns {*}
+    * @returns {Number}
     */
 
 		}, {
@@ -2425,10 +2507,9 @@ module.exports = function () {
 			}
 
 			/**
-    * Validates the year, month, and day combination is valid. At this point,
-    * leap year isn't accounted for -- instead, February is always allowed to
-    * have 29 days.
+    * Returns true if the year, month, and day combination is valid; otherwise false.
     *
+    * @public
     * @param {Number} year
     * @param {Number} month
     * @param {Number} day
@@ -2438,7 +2519,47 @@ module.exports = function () {
 		}, {
 			key: 'validate',
 			value: function validate(year, month, day) {
-				return is.integer(year) && is.integer(month) && is.integer(day) && !(month < 1) && !(month > 12) && !(day < 1) && !(day > 29 && month === 2) && !(day > 30 && (month === 4 || month === 6 || month === 9 || month === 11)) && !(day > 31);
+				return is.integer(year) && is.integer(month) && is.integer(day) && !(month < 1) && !(month > 12) && !(day < 1) && !(day > Day.getDaysInMonth(year, month));
+			}
+
+			/**
+    * Returns the number of days in a given month.
+    *
+    * @public
+    * @param {number} year - The year number (e.g. 2017)
+    * @param {number} month - The month number (e.g. 2 is February)
+    */
+
+		}, {
+			key: 'getDaysInMonth',
+			value: function getDaysInMonth(year, month) {
+				switch (month) {
+					case 1:
+					case 3:
+					case 5:
+					case 7:
+					case 8:
+					case 10:
+					case 12:
+						{
+							return 31;
+						}
+					case 4:
+					case 6:
+					case 9:
+					case 11:
+						{
+							return 30;
+						}
+					case 2:
+						{
+							if (year % 4 === 0 && year % 100 !== 0 || year % 400 === 0) {
+								return 29;
+							} else {
+								return 28;
+							}
+						}
+				}
 			}
 
 			/**
@@ -2604,7 +2725,7 @@ module.exports = function () {
     *
     * @public
     * @param {Number} places - The number of decimal places to retain.
-    * @param {RoundingMode} mode - The strategy to use for rounding.
+    * @param {RoundingMode=} mode - The strategy to use for rounding.
     * @returns {Decimal}
     */
 
@@ -2612,9 +2733,11 @@ module.exports = function () {
 			key: 'round',
 			value: function round(places, mode) {
 				assert.argumentIsRequired(places, 'places', Number);
-				assert.argumentIsRequired(mode, 'mode', RoundingMode, 'RoundingMode');
+				assert.argumentIsOptional(mode, 'mode', RoundingMode, 'RoundingMode');
 
-				return new Decimal(this._big.round(places, mode.value));
+				var modeToUse = mode || RoundingMode.NORMAL;
+
+				return new Decimal(this._big.round(places, modeToUse.value));
 			}
 
 			/**
@@ -3080,6 +3203,8 @@ module.exports = function () {
    * Invokes end-of-life logic. Once this function has been
    * invoked, further interaction with the object is not
    * recommended.
+   *
+   * @public
    */
 
 		_createClass(Disposable, [{
@@ -3109,6 +3234,7 @@ module.exports = function () {
 			/**
     * Returns true if the {@link Disposable#dispose} function has been invoked.
     *
+    * @public
     * @returns {boolean}
     */
 
@@ -3127,8 +3253,8 @@ module.exports = function () {
     * Creates and returns a {@link Disposable} object with end-of-life logic
     * delegated to a function.
     *
+    * @public
     * @param disposeAction {Function}
-    *
     * @returns {Disposable}
     */
 
@@ -3144,6 +3270,7 @@ module.exports = function () {
     * Creates and returns a {@link Disposable} object whose end-of-life
     * logic does nothing.
     *
+    * @public
     * @returns {Disposable}
     */
 
@@ -3646,6 +3773,13 @@ module.exports = function () {
 			return _possibleConstructorReturn(this, (Timezones.__proto__ || Object.getPrototypeOf(Timezones)).call(this, code, code));
 		}
 
+		/**
+   * America/Chicago
+   *
+   * @public
+   * @returns {Timezones}
+   */
+
 		_createClass(Timezones, [{
 			key: 'toString',
 			value: function toString() {
@@ -3656,6 +3790,14 @@ module.exports = function () {
 			get: function get() {
 				return america_chicago;
 			}
+
+			/**
+    * America/New_York
+    *
+    * @public
+    * @returns {Timezones}
+    */
+
 		}, {
 			key: 'AMERICA_NEW_YORK',
 			get: function get() {
@@ -6307,6 +6449,8 @@ var assert = require('./../../lang/assert');
 var RestEndpoint = require('./RestEndpoint'),
     RestParser = require('./RestParser');
 
+var Schema = require('./../../serialization/json/Schema');
+
 module.exports = function () {
 	'use strict';
 
@@ -6379,6 +6523,23 @@ module.exports = function () {
 					return JSON.parse(x, reviverFactory());
 				});
 			}
+
+			/**
+    * Returns a {@link RestParser} parses the does customized JSON parsing
+    * based on a JSON {@link Schema}.
+    *
+    * @public
+    * @param {Schema} schema
+    * @returns {RestParser}
+    */
+
+		}, {
+			key: 'getJsonParserForSchema',
+			value: function getJsonParserForSchema(schema) {
+				assert.argumentIsRequired(schema, 'schema', Schema, 'Schema');
+
+				return RestParser.getJsonParser(schema.getReviverFactory());
+			}
 		}, {
 			key: 'DEFAULT',
 			get: function get() {
@@ -6410,6 +6571,8 @@ module.exports = function () {
 
 			var _this = _possibleConstructorReturn(this, (DelegatedRestParser.__proto__ || Object.getPrototypeOf(DelegatedRestParser)).call(this));
 
+			assert.argumentIsRequired(delegate, 'delegate', Function);
+
 			_this._delegate = delegate;
 			return _this;
 		}
@@ -6437,7 +6600,7 @@ module.exports = function () {
 	return RestParser;
 }();
 
-},{"./../../lang/assert":24,"./RestEndpoint":42,"./RestParser":43}],44:[function(require,module,exports){
+},{"./../../lang/assert":24,"./../../serialization/json/Schema":53,"./RestEndpoint":42,"./RestParser":43}],44:[function(require,module,exports){
 /* big.js v3.1.3 https://github.com/MikeMcl/big.js/LICENCE */
 ;(function (global) {
     'use strict';
@@ -14935,10 +15098,11 @@ function _classCallCheck(instance, Constructor) {
 }
 
 var assert = require('./../../lang/assert'),
-    is = require('./../../lang/is'),
-    functions = require('./../../lang/functions');
+    functions = require('./../../lang/functions'),
+    is = require('./../../lang/is');
 
-var Tree = require('./../../collections/Tree');
+var LinkedList = require('./../../collections/LinkedList'),
+    Tree = require('./../../collections/Tree');
 
 var Component = require('./Component'),
     Field = require('./Field');
@@ -14967,7 +15131,7 @@ module.exports = function () {
 
 			this._strict = is.boolean(strict) && strict;
 
-			this._reviverItems = getReviverItems(this._fields, this._components);
+			this._revivers = getReviverItems(this._fields, this._components);
 		}
 
 		/**
@@ -14983,6 +15147,7 @@ module.exports = function () {
 			/**
     * Returns true, if an object complies with the schema.
     *
+    * @public
     * @param {*} candidate
     */
 			value: function validate(candidate) {
@@ -15001,26 +15166,38 @@ module.exports = function () {
 		}, {
 			key: 'getReviver',
 			value: function getReviver() {
-				var _this = this;
+				var head = this._revivers;
+				var node = null;
 
-				var reviverIndex = 0;
-				var reviverLength = this._reviverItems.length;
-
-				return function (key, value) {
-					var reviverItem = _this._reviverItems[reviverIndex];
-
-					if (!(key === reviverItem.name || reviverItem.reset || key === '' && reviverIndex === 0)) {
-						throw new Error('Schema parsing is using strict mode, unexpected key found [ ' + key + ' ]');
+				var advance = function advance(key) {
+					if (node === null) {
+						node = head;
+					} else {
+						node = node.getNext();
 					}
 
-					reviverIndex = (reviverIndex + 1) % reviverLength;
+					var item = node.getValue();
 
-					return reviverItem.reviver(value);
+					if (key !== item.name) {
+						if (item.reset || key === '' && node === head) {
+							node = null;
+						} else if (item.optional) {
+							item = advance(key);
+						} else {
+							throw new Error('Schema parsing is using strict mode, unexpected key found [ ' + key + ' / ' + item.name + ' ]');
+						}
+					}
+
+					return item;
+				};
+
+				return function (key, value) {
+					return advance(key).reviver(value);
 				};
 			}
 
 			/**
-    * Returns a function that will genenrate a *new* reviver function
+    * Returns a function that will generate a *new* reviver function
     * (see {@link Schema#getReviver}.
     *
     * @public
@@ -15030,10 +15207,10 @@ module.exports = function () {
 		}, {
 			key: 'getReviverFactory',
 			value: function getReviverFactory() {
-				var _this2 = this;
+				var _this = this;
 
 				return function () {
-					return _this2.getReviver();
+					return _this.getReviver();
 				};
 			}
 		}, {
@@ -15174,19 +15351,26 @@ module.exports = function () {
 			});
 		});
 
-		var reviverItems = [];
+		var head = null;
+		var current = null;
 
-		root.walk(function (n) {
-			return reviverItems.push(n);
-		}, false, true);
+		var addItemToList = function addItemToList(item) {
+			if (current === null) {
+				current = head = new LinkedList(item);
+			} else {
+				current = current.insert(item);
+			}
+		};
 
-		return reviverItems;
+		root.walk(addItemToList, false, true);
+
+		return head;
 	}
 
 	return Schema;
 }();
 
-},{"./../../collections/Tree":4,"./../../lang/assert":24,"./../../lang/functions":28,"./../../lang/is":29,"./Component":50,"./Field":52}],54:[function(require,module,exports){
+},{"./../../collections/LinkedList":1,"./../../collections/Tree":4,"./../../lang/assert":24,"./../../lang/functions":28,"./../../lang/is":29,"./Component":50,"./Field":52}],54:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
@@ -15355,7 +15539,7 @@ module.exports = function () {
     * @public
     * @param {String} name - The name of the new field.
     * @param {DataType} dataType - The type of the new field.
-    * @param {Boolean} optional - The
+    * @param {Boolean} optional - If true, the field is not required and may be omitted.
     * @returns {SchemaBuilder}
     */
 			value: function withField(name, dataType, optional) {
@@ -15364,7 +15548,6 @@ module.exports = function () {
 				assert.argumentIsOptional(optional, 'optional', Boolean);
 
 				var optionalToUse = is.boolean(optional) && optional;
-
 				var fields = this._schema.fields.concat([new Field(name, dataType, optionalToUse)]);
 
 				this._schema = new Schema(this._schema.name, fields, this._schema.components, this._schema.strict);
@@ -18087,6 +18270,128 @@ describe('When an invalid string is parsed as a Day', function () {
 
 	it('an should be thrown when using 32 days in December', function () {
 		expectError('2017-12-32');
+	});
+});
+
+describe('When checking to see if a Day is valid', function () {
+	'use strict';
+
+	it('should consider Jan 1, 2017 to be valid', function () {
+		expect(Day.validate(2017, 1, 1)).toEqual(true);
+	});
+
+	it('should consider Dec 31, 2017 to be valid', function () {
+		expect(Day.validate(2017, 12, 31)).toEqual(true);
+	});
+
+	it('should not consider Feb 29, 2017 to be valid', function () {
+		expect(Day.validate(2017, 2, 29)).toEqual(false);
+	});
+
+	it('should not consider Feb 29, 2018 to be valid', function () {
+		expect(Day.validate(2018, 2, 29)).toEqual(false);
+	});
+
+	it('should not consider Feb 29, 2019 to be valid', function () {
+		expect(Day.validate(2019, 2, 29)).toEqual(false);
+	});
+
+	it('should consider Feb 29, 2020 to be valid', function () {
+		expect(Day.validate(2020, 2, 29)).toEqual(true);
+	});
+});
+
+describe('When adding days to a Day', function () {
+	'use strict';
+
+	it('should return January 2, 2017 when adding 1 day to January 1, 2017', function () {
+		var now = new Day(2017, 1, 1);
+		var then = now.addDays(1);
+
+		expect(then.year).toEqual(2017);
+		expect(then.month).toEqual(1);
+		expect(then.day).toEqual(2);
+	});
+
+	it('should return March 1, 2017 when adding 1 day to Feb 28, 2017', function () {
+		var now = new Day(2017, 2, 28);
+		var then = now.addDays(1);
+
+		expect(then.year).toEqual(2017);
+		expect(then.month).toEqual(3);
+		expect(then.day).toEqual(1);
+	});
+
+	it('should return Feb 29, 2020 when adding 1 day Feb 28, 2020', function () {
+		var now = new Day(2020, 2, 28);
+		var then = now.addDays(1);
+
+		expect(then.year).toEqual(2020);
+		expect(then.month).toEqual(2);
+		expect(then.day).toEqual(29);
+	});
+
+	it('should return Aug 18, 2018 when adding 400 days to Jul 14, 2017', function () {
+		var now = new Day(2017, 7, 14);
+		var then = now.addDays(400);
+
+		expect(then.year).toEqual(2018);
+		expect(then.month).toEqual(8);
+		expect(then.day).toEqual(18);
+	});
+
+	it('should return Aug 18, 2017 when subtracting 1 day from Aug 19, 2017 (using inverse)', function () {
+		var now = new Day(2017, 8, 19);
+		var then = now.subtractDays(1);
+
+		expect(then.year).toEqual(2017);
+		expect(then.month).toEqual(8);
+		expect(then.day).toEqual(18);
+	});
+
+	it('should return Aug 18, 2017 when adding 1 "inverse" day to Aug 19, 2017', function () {
+		var now = new Day(2017, 8, 19);
+		var then = now.addDays(1, true);
+
+		expect(then.year).toEqual(2017);
+		expect(then.month).toEqual(8);
+		expect(then.day).toEqual(18);
+	});
+
+	it('should return Aug 18, 2017 when adding -1 day to Aug 19, 2017', function () {
+		var now = new Day(2017, 8, 19);
+		var then = now.addDays(-1);
+
+		expect(then.year).toEqual(2017);
+		expect(then.month).toEqual(8);
+		expect(then.day).toEqual(18);
+	});
+
+	it('should return Jul 30, 2017 when subtracting 2 days from Aug 1, 2017', function () {
+		var now = new Day(2017, 8, 1);
+		var then = now.addDays(2, true);
+
+		expect(then.year).toEqual(2017);
+		expect(then.month).toEqual(7);
+		expect(then.day).toEqual(30);
+	});
+
+	it('should return Dec 31, 2017 when subtracting 2 days from Jan 10, 2018', function () {
+		var now = new Day(2018, 1, 10);
+		var then = now.addDays(10, true);
+
+		expect(then.year).toEqual(2017);
+		expect(then.month).toEqual(12);
+		expect(then.day).toEqual(31);
+	});
+
+	it('should return Feb 29, 2020 when subtracting 1 day from Mar 1, 2020', function () {
+		var now = new Day(2020, 3, 1);
+		var then = now.addDays(1, true);
+
+		expect(then.year).toEqual(2020);
+		expect(then.month).toEqual(2);
+		expect(then.day).toEqual(29);
 	});
 });
 
