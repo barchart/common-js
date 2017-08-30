@@ -24,6 +24,32 @@ module.exports = (() => {
 		}
 
 		/**
+		 * Calculates a new {@link Day} in the future (or past).
+		 *
+		 * @public
+		 * @param {Number} days - The number of days to add (negative numbers can be used for subtraction).
+		 * @param {Boolean=} inverse - If true, the sign of the "days" value will be flipped.
+		 * @returns {Day}
+		 */
+		addDays(days, inverse) {
+			assert.argumentIsRequired(days, 'days', Number);
+			assert.argumentIsOptional(inverse, inverse, Boolean);
+			assert.argumentIsValid(days, 'days', is.large, 'is an integer');
+
+			let daysToAdd;
+
+			if (inverse) {
+				daysToAdd = daysToAdd * -1;
+			}
+
+			return new Day(this._year, this._month, this._day);
+		}
+
+		subtractDays(days) {
+			return this.addDays(days, true);
+		}
+
+		/**
 		 * The year.
 		 *
 		 * @public
@@ -94,10 +120,9 @@ module.exports = (() => {
 		}
 
 		/**
-		 * Validates the year, month, and day combination is valid. At this point,
-		 * leap year isn't accounted for -- instead, February is always allowed to
-		 * have 29 days.
+		 * Validates the year, month, and day combination is valid.
 		 *
+		 * @public
 		 * @param {Number} year
 		 * @param {Number} month
 		 * @param {Number} day
@@ -110,9 +135,18 @@ module.exports = (() => {
 				!(month  < 1) &&
 				!(month > 12) &&
 				!(day  < 1) &&
-				!(day > 29 && month === 2) &&
-				!(day > 30 && (month === 4 || month === 6 || month === 9 || month === 11)) &&
-				!(day > 31);
+				!(day > Day.getDaysInMonth(year, month));
+		}
+
+		/**
+		 * Returns the number of days in a given month.
+		 *
+		 * @public
+		 * @param {number} year - The year number (e.g. 2017)
+		 * @param {number} month - The month number (e.g. 2 -- for February)
+		 */
+		static getDaysInMonth(year, month) {
+			return 31; // need to fix this....
 		}
 
 		/**

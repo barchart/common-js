@@ -105,3 +105,62 @@ describe('When an invalid string is parsed as a Day', function() {
 		expectError('2017-12-32');
 	});
 });
+
+describe('When checking to see if a Day is valid', function() {
+	'use strict';
+
+	it('should consider Jan 1, 2017 to be valid', function() {
+		expect(Day.validate(2017, 1, 1)).toEqual(true);
+	});
+
+	it('should consider Dec 31, 2017 to be valid', function() {
+		expect(Day.validate(2017, 12, 31)).toEqual(true);
+	});
+
+	it('should not consider Feb 29, 2017 to be valid', function() {
+		expect(Day.validate(2017, 2, 29)).toEqual(false);
+	});
+
+	it('should not consider Feb 29, 2018 to be valid', function() {
+		expect(Day.validate(2018, 2, 29)).toEqual(false);
+	});
+
+	it('should not consider Feb 29, 2019 to be valid', function() {
+		expect(Day.validate(2019, 2, 29)).toEqual(false);
+	});
+
+	it('should consider Feb 29, 2020 to be valid', function() {
+		expect(Day.validate(2020, 2, 29)).toEqual(true);
+	});
+});
+
+describe('When adding days to a Day', function() {
+	'use strict';
+
+	it('should return January 2, 2017 when adding 1 to January 1, 2017', function () {
+		const now = new Day(2017, 1, 1);
+		const then = now.addDays(1);
+
+		expect(then.year).toEqual(2017);
+		expect(then.month).toEqual(1);
+		expect(then.day).toEqual(2);
+	});
+
+	it('should return March 1, 2017 when adding 1 to Feb 28, 2017', function () {
+		const now = new Day(2017, 2, 28);
+		const then = now.addDays(1);
+
+		expect(then.year).toEqual(2017);
+		expect(then.month).toEqual(3);
+		expect(then.day).toEqual(1);
+	});
+
+	it('should return Feb 29, 2020 when adding 1 to Feb 28, 2020', function () {
+		const now = new Day(2020, 2, 28);
+		const then = now.addDays(1);
+
+		expect(then.year).toEqual(2020);
+		expect(then.month).toEqual(2);
+		expect(then.day).toEqual(29);
+	});
+});
