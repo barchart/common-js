@@ -137,7 +137,7 @@ describe('When checking to see if a Day is valid', function() {
 describe('When adding days to a Day', function() {
 	'use strict';
 
-	it('should return January 2, 2017 when adding 1 to January 1, 2017', function () {
+	it('should return January 2, 2017 when adding 1 day to January 1, 2017', function () {
 		const now = new Day(2017, 1, 1);
 		const then = now.addDays(1);
 
@@ -146,7 +146,7 @@ describe('When adding days to a Day', function() {
 		expect(then.day).toEqual(2);
 	});
 
-	it('should return March 1, 2017 when adding 1 to Feb 28, 2017', function () {
+	it('should return March 1, 2017 when adding 1 day to Feb 28, 2017', function () {
 		const now = new Day(2017, 2, 28);
 		const then = now.addDays(1);
 
@@ -155,7 +155,7 @@ describe('When adding days to a Day', function() {
 		expect(then.day).toEqual(1);
 	});
 
-	it('should return Feb 29, 2020 when adding 1 to Feb 28, 2020', function () {
+	it('should return Feb 29, 2020 when adding 1 day Feb 28, 2020', function () {
 		const now = new Day(2020, 2, 28);
 		const then = now.addDays(1);
 
@@ -164,7 +164,7 @@ describe('When adding days to a Day', function() {
 		expect(then.day).toEqual(29);
 	});
 
-	it('should return Aug 18, 2018 when adding 400 to Jul 14, 2017', function () {
+	it('should return Aug 18, 2018 when adding 400 days to Jul 14, 2017', function () {
 		const now = new Day(2017, 7, 14);
 		const then = now.addDays(400);
 
@@ -173,7 +173,16 @@ describe('When adding days to a Day', function() {
 		expect(then.day).toEqual(18);
 	});
 
-	it('should return Aug 18, 2017 when subtracting 1 to Aug 19, 2017', function () {
+	it('should return Aug 18, 2017 when subtracting 1 day from Aug 19, 2017 (using inverse)', function () {
+		const now = new Day(2017, 8, 19);
+		const then = now.subtractDays(1);
+
+		expect(then.year).toEqual(2017);
+		expect(then.month).toEqual(8);
+		expect(then.day).toEqual(18);
+	});
+
+	it('should return Aug 18, 2017 when adding 1 "inverse" day to Aug 19, 2017', function () {
 		const now = new Day(2017, 8, 19);
 		const then = now.addDays(1, true);
 
@@ -182,7 +191,16 @@ describe('When adding days to a Day', function() {
 		expect(then.day).toEqual(18);
 	});
 
-	it('should return Jul 30, 2017 when subtracting 2 to Aug 1, 2017', function () {
+	it('should return Aug 18, 2017 when adding -1 day to Aug 19, 2017', function () {
+		const now = new Day(2017, 8, 19);
+		const then = now.addDays(-1);
+
+		expect(then.year).toEqual(2017);
+		expect(then.month).toEqual(8);
+		expect(then.day).toEqual(18);
+	});
+
+	it('should return Jul 30, 2017 when subtracting 2 days from Aug 1, 2017', function () {
 		const now = new Day(2017, 8, 1);
 		const then = now.addDays(2, true);
 
@@ -191,7 +209,7 @@ describe('When adding days to a Day', function() {
 		expect(then.day).toEqual(30);
 	});
 
-	it('should return Dec 31, 2017 when subtracting 2 to Jan 10, 2018', function () {
+	it('should return Dec 31, 2017 when subtracting 2 days from Jan 10, 2018', function () {
 		const now = new Day(2018, 1, 10);
 		const then = now.addDays(10, true);
 
@@ -200,7 +218,7 @@ describe('When adding days to a Day', function() {
 		expect(then.day).toEqual(31);
 	});
 
-	it('should return Feb 29, 2020 when subtracting 1 to Mar 1, 2020', function () {
+	it('should return Feb 29, 2020 when subtracting 1 day from Mar 1, 2020', function () {
 		const now = new Day(2020, 3, 1);
 		const then = now.addDays(1, true);
 
@@ -208,5 +226,4 @@ describe('When adding days to a Day', function() {
 		expect(then.month).toEqual(2);
 		expect(then.day).toEqual(29);
 	});
-
 });

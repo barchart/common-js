@@ -36,44 +36,53 @@ module.exports = (() => {
 			assert.argumentIsOptional(inverse, inverse, Boolean);
 			assert.argumentIsValid(days, 'days', is.large, 'is an integer');
 
-			let daysToAdd = days;
+			let totalDaysToShift = days;
 
-			let newDay = this._day;
-			let newMonth = this._month;
-			let newYear = this._year;
+			if (inverse) {
+				totalDaysToShift = totalDaysToShift * -1;
+			}
 
-			if (inverse) { // Subtract
-				daysToAdd = daysToAdd * -1;
-				for (var i=0; i < Math.abs(daysToAdd); i++) {
-					if (newDay > 1) {
-						newDay--;
-					} else {
-						if (newMonth === 1) {
-							newMonth = 12;
-							newYear--;
-						} else {
-							newMonth--;
-						}
-						newDay = Day.getDaysInMonth(newYear, newMonth);
-					}
+			const positive = is.positive(totalDaysToShift);
+
+			let shiftedDay = this._day;
+			let shiftedMonth = this._month;
+			let shiftedYear = this._year;
+
+			while (totalDaysToShift !== 0) {
+				let monthDaysToShift;
+
+				if (positive) {
+					monthDaysToShift = Math.min(totalDaysToShift, Day.getDaysInMonth(shiftedYear, shiftedMonth) - shiftedDay);
+				} else {
+					monthDaysToShift = Math.max(totalDaysToShift, 1 - shiftedDay);
 				}
-			} else { // Add
-				for (var i=0; i < daysToAdd; i++) {
-					if (newDay < Day.getDaysInMonth(newYear, newMonth)) {
-						newDay++;
-					} else {
-						newDay = 1;
-						if (newMonth === 12) {
-							newMonth = 1;
-							newYear++;
-						} else {
-							newMonth++;
-						}
+
+				totalDaysToShift = totalDaysToShift - monthDaysToShift;
+
+				if (totalDaysToShift === 0) {
+					shiftedDay = shiftedDay + monthDaysToShift;
+				} else if (positive) {
+					shiftedMonth++;
+
+					if (shiftedMonth > 12) {
+						shiftedYear++;
+						shiftedMonth = 1;
 					}
+
+					shiftedDay = 0;
+				} else {
+					shiftedMonth--;
+
+					if (shiftedMonth < 1) {
+						shiftedYear--;
+						shiftedMonth = 12;
+					}
+
+					shiftedDay = Day.getDaysInMonth(shiftedYear, shiftedMonth) + 1;
 				}
 			}
 
-			return new Day(newYear, newMonth, newDay);
+			return new Day(shiftedYear, shiftedMonth, shiftedDay);
 		}
 
 		subtractDays(days) {
@@ -174,33 +183,32 @@ module.exports = (() => {
 		 *
 		 * @public
 		 * @param {number} year - The year number (e.g. 2017)
-		 * @param {number} month - The month number (e.g. 2 -- for February)
+		 * @param {number} month - The month number (e.g. 2 is February)
 		 */
 		static getDaysInMonth(year, month) {
-			var febDays;
-
-			if (((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0)) { // leap year
-				febDays = 29;
-			} else {
-				febDays = 28;
-			}
-
-			switch(month) {
+			switch (month) {
 				case 1:
 				case 3:
 				case 5:
 				case 7:
 				case 8:
 				case 10:
-				case 12:
+				case 12: {
 					return 31;
+				}
 				case 4:
 				case 6:
 				case 9:
-				case 11:
+				case 11: {
 					return 30;
-				case 2:
-					return febDays;
+				}
+				case 2: {
+					if (((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0)) {
+						return 29;
+					} else {
+						return 28;
+					}
+				}
 			}
 		}
 
