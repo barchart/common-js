@@ -226,4 +226,13 @@ describe('When adding days to a Day', function() {
 		expect(then.month).toEqual(2);
 		expect(then.day).toEqual(29);
 	});
+
+	it('should return Mar 1, 2020 when adding 0 days from Mar 1, 2020', function () {
+		const now = new Day(2020, 3, 1);
+		const then = now.addDays(0);
+
+		expect(then.year).toEqual(2020);
+		expect(then.month).toEqual(3);
+		expect(then.day).toEqual(1);
+	});
 });
