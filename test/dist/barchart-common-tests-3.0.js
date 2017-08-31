@@ -5233,6 +5233,13 @@ var assert = require('./assert'),
 module.exports = function () {
 	'use strict';
 
+	/**
+  * Utilities checking arguments.
+  *
+  * @public
+  * @module lang/string
+  */
+
 	return {
 		startCase: function startCase(s) {
 			return s.split(' ').reduce(function (phrase, word) {
@@ -5260,6 +5267,42 @@ module.exports = function () {
 			}
 
 			return character.repeat(length - s.length) + s;
+		},
+
+		/**
+   * Performs a simple token replacement on a string; where the tokens
+   * are braced numbers (e.g. {0}, {1}, {2}).
+   *
+   * @public
+   * @static
+   * @param {String} s - The string to format (e.g. 'my first name is {0} and my last name is {1}')
+   * @param {Array<String>} data - The replacement data
+   * @returns {String}
+   */
+		format: function format(s) {
+			for (var _len = arguments.length, data = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+				data[_key - 1] = arguments[_key];
+			}
+
+			assert.argumentIsRequired(s, 's', String);
+
+			return s.replace(/{(\d+)}/g, function (match, i) {
+				var replacement = void 0;
+
+				if (i < data.length) {
+					var item = data[i];
+
+					if (!is.undefined(item) && !is.null(item)) {
+						replacement = item.toString();
+					} else {
+						replacement = match;
+					}
+				} else {
+					replacement = match;
+				}
+
+				return replacement;
+			});
 		}
 	};
 }();
@@ -18393,6 +18436,15 @@ describe('When adding days to a Day', function () {
 		expect(then.month).toEqual(2);
 		expect(then.day).toEqual(29);
 	});
+
+	it('should return Mar 1, 2020 when adding 0 days from Mar 1, 2020', function () {
+		var now = new Day(2020, 3, 1);
+		var then = now.addDays(0);
+
+		expect(then.year).toEqual(2020);
+		expect(then.month).toEqual(3);
+		expect(then.day).toEqual(1);
+	});
 });
 
 },{"./../../../lang/Day":16}],81:[function(require,module,exports){
@@ -22708,6 +22760,36 @@ describe('When left padding a string', function () {
 		it('the final characters should be the base string', function () {
 			expect(result.substring(count - base.length, result.length)).toEqual(base);
 		});
+	});
+});
+
+describe('When a formattable string ("&startDate={0}&endDate={1}"', function () {
+	'use strict';
+
+	var stringToFormat = void 0;
+
+	beforeEach(function () {
+		stringToFormat = '&startDate={0}&endDate={1}';
+	});
+
+	it('formatted with ("2017-08-31" and  "2017-09-30")', function () {
+		expect(string.format(stringToFormat, '2017-08-31', '2017-09-30')).toEqual('&startDate=2017-08-31&endDate=2017-09-30');
+	});
+
+	it('formatted with ("0" and  "0")', function () {
+		expect(string.format(stringToFormat, 0, 0)).toEqual('&startDate=0&endDate=0');
+	});
+
+	it('formatted with ("hello")', function () {
+		expect(string.format(stringToFormat, 'hello')).toEqual('&startDate=hello&endDate={1}');
+	});
+
+	it('formatted with ("xin" and "bryan" and "dave")', function () {
+		expect(string.format(stringToFormat, 'xin', 'bryan', 'dave')).toEqual('&startDate=xin&endDate=bryan');
+	});
+
+	it('formatted with nothing', function () {
+		expect(string.format(stringToFormat)).toEqual('&startDate={0}&endDate={1}');
 	});
 });
 

@@ -5570,6 +5570,13 @@ var assert = require('./assert'),
 module.exports = function () {
 	'use strict';
 
+	/**
+  * Utilities checking arguments.
+  *
+  * @public
+  * @module lang/string
+  */
+
 	return {
 		startCase: function startCase(s) {
 			return s.split(' ').reduce(function (phrase, word) {
@@ -5597,6 +5604,42 @@ module.exports = function () {
 			}
 
 			return character.repeat(length - s.length) + s;
+		},
+
+		/**
+   * Performs a simple token replacement on a string; where the tokens
+   * are braced numbers (e.g. {0}, {1}, {2}).
+   *
+   * @public
+   * @static
+   * @param {String} s - The string to format (e.g. 'my first name is {0} and my last name is {1}')
+   * @param {Array<String>} data - The replacement data
+   * @returns {String}
+   */
+		format: function format(s) {
+			for (var _len = arguments.length, data = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+				data[_key - 1] = arguments[_key];
+			}
+
+			assert.argumentIsRequired(s, 's', String);
+
+			return s.replace(/{(\d+)}/g, function (match, i) {
+				var replacement = void 0;
+
+				if (i < data.length) {
+					var item = data[i];
+
+					if (!is.undefined(item) && !is.null(item)) {
+						replacement = item.toString();
+					} else {
+						replacement = match;
+					}
+				} else {
+					replacement = match;
+				}
+
+				return replacement;
+			});
 		}
 	};
 }();
