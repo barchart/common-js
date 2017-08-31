@@ -139,3 +139,33 @@ describe('When left padding a string', function() {
 		});
 	});
 });
+
+describe('When a formattable string ("&startDate={0}&endDate={1}"', function() {
+	'use strict';
+
+	let stringToFormat;
+
+	beforeEach(function() {
+        stringToFormat = '&startDate={0}&endDate={1}';
+    });
+
+	it('formatted with ("2017-08-31" and  "2017-09-30")', function() {
+		expect(string.format(stringToFormat, '2017-08-31', '2017-09-30')).toEqual('&startDate=2017-08-31&endDate=2017-09-30');
+	});
+
+	it('formatted with ("0" and  "0")', function() {
+		expect(string.format(stringToFormat, 0, 0)).toEqual('&startDate=0&endDate=0');
+	});
+
+	it('formatted with ("hello")', function() {
+		expect(string.format(stringToFormat, 'hello')).toEqual('&startDate=hello&endDate={1}');
+	});
+
+	it('formatted with ("xin" and "bryan" and "dave")', function() {
+		expect(string.format(stringToFormat, 'xin', 'bryan', 'dave')).toEqual('&startDate=xin&endDate=bryan');
+	});
+
+	it('formatted with nothing', function() {
+		expect(string.format(stringToFormat)).toEqual('&startDate={0}&endDate={1}');
+	});
+});

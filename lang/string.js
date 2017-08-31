@@ -4,6 +4,12 @@ const assert = require('./assert'),
 module.exports = (() => {
 	'use strict';
 
+	/**
+	 * Utilities checking arguments.
+	 *
+	 * @public
+	 * @module lang/string
+	 */
 	return {
 		startCase(s) {
 			return s.split(' ').reduce((phrase, word) => {
@@ -33,6 +39,38 @@ module.exports = (() => {
 			}
 
 			return character.repeat(length - s.length) + s;
+		},
+
+		/**
+		 * Performs a simple token replacement on a string; where the tokens
+		 * are braced numbers (e.g. {0}, {1}, {2}).
+		 *
+		 * @public
+		 * @static
+		 * @param {String} s - The string to format (e.g. 'my first name is {0} and my last name is {1}')
+		 * @param {Array<String>} data - The replacement data
+		 * @returns {String}
+		 */
+		format(s, ...data) {
+			assert.argumentIsRequired(s, 's', String);
+
+            return s.replace(/{(\d+)}/g, (match, i) => {
+            	let replacement;
+
+            	if (i < data.length) {
+            		const item = data[i];
+
+            		if (!is.undefined(item) && !is.null(item)) {
+			            replacement = item.toString();
+		            } else {
+			            replacement = match;
+		            }
+				} else {
+		            replacement = match;
+				}
+
+				return replacement;
+            });
 		}
 	};
 })();
