@@ -13,13 +13,11 @@ module.exports = (() => {
 	 * processed.
 	 *
 	 * @public
+	 * @param {number} - windowMaximumCount - The maximum number of items which can be processed during a timeframe.
+	 * @param {number} - windowDurationMilliseconds - The number of milliseconds in the timeframe.
 	 * @extends {Disposable}
 	 */
 	class RateLimiter extends Disposable {
-		/**
-		 * @param {number} - windowMaximumCount - The maximum number of items which can be processed during a timeframe.
-		 * @param {number} - windowDurationMilliseconds - The number of milliseconds in the timeframe.
-		 */
 		constructor(windowMaximumCount, windowDurationMilliseconds) {
 			super();
 
