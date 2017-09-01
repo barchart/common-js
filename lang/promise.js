@@ -50,6 +50,16 @@ module.exports = (() => {
 				});
 		},
 
+		/**
+		 * A mapping function that works asynchronously. Given an array of items, each item through
+		 * a mapping function, which can return a promise. Then, this function returns a single promise
+		 * which is the result of each mapped promise.
+		 *
+		 * @param {Array} items - The items to map
+		 * @param {Function} mapper - The mapping function (e.g. given an item, return a promise).
+		 * @param {Number} concurrency - The maximum number of promises that are allowed to run at once.
+		 * @returns {Promise.<Array>}
+		 */
 		map(items, mapper, concurrency) {
 			return Promise.resolve()
 				.then(() => {
