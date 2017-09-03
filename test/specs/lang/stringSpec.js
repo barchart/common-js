@@ -143,7 +143,7 @@ describe('When left padding a string', function() {
 describe('When a formattable string ("&startDate={0}&endDate={1}"', function() {
 	'use strict';
 
-	let stringToFormat;
+	var stringToFormat;
 
 	beforeEach(function() {
         stringToFormat = '&startDate={0}&endDate={1}';

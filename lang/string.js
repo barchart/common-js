@@ -5,7 +5,7 @@ module.exports = (() => {
 	'use strict';
 
 	/**
-	 * Utilities checking arguments.
+	 * Utility functions for strings.
 	 *
 	 * @public
 	 * @module lang/string
@@ -21,6 +21,17 @@ module.exports = (() => {
 			}, [ ]).join(' ');
 		},
 
+		/**
+		 * If a string exceeds a desired length, it is truncated and a poor man's
+		 * ellipsis (i.e. three periods) is appended. Otherwise, the original
+		 * string is returned.
+		 *
+		 * @public
+		 * @static
+		 * @param {String} s
+		 * @param {Number} length
+		 * @returns {String}
+		 */
 		truncate(s, length) {
 			if (is.string(s) && s.length > length) {
 				return s.substring(0, length) + ' ...';
@@ -29,6 +40,16 @@ module.exports = (() => {
 			}
 		},
 
+		/**
+		 * Adds leading characters to a string, until the string length is a desired size.
+		 *
+		 * @public
+		 * @static
+		 * @param {String} s - The string to pad.
+		 * @param {Number} length - The desired overall length of the string.
+		 * @param {String} character - The character to use for padding.
+		 * @returns {String}
+		 */
 		padLeft(s, length, character) {
 			assert.argumentIsRequired(s, 's', String);
 			assert.argumentIsRequired(length, 'length', Number);
