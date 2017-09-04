@@ -5417,6 +5417,17 @@ module.exports = function () {
 				});
 			});
 		},
+
+		/**
+   * A mapping function that works asynchronously. Given an array of items, each item through
+   * a mapping function, which can return a promise. Then, this function returns a single promise
+   * which is the result of each mapped promise.
+   *
+   * @param {Array} items - The items to map
+   * @param {Function} mapper - The mapping function (e.g. given an item, return a promise).
+   * @param {Number} concurrency - The maximum number of promises that are allowed to run at once.
+   * @returns {Promise.<Array>}
+   */
 		map: function map(items, mapper, concurrency) {
 			var _this2 = this;
 
@@ -5571,7 +5582,7 @@ module.exports = function () {
 	'use strict';
 
 	/**
-  * Utilities checking arguments.
+  * Utility functions for strings.
   *
   * @public
   * @module lang/string
@@ -5587,6 +5598,18 @@ module.exports = function () {
 				return phrase;
 			}, []).join(' ');
 		},
+
+		/**
+   * If a string exceeds a desired length, it is truncated and a poor man's
+   * ellipsis (i.e. three periods) is appended. Otherwise, the original
+   * string is returned.
+   *
+   * @public
+   * @static
+   * @param {String} s
+   * @param {Number} length
+   * @returns {String}
+   */
 		truncate: function truncate(s, length) {
 			if (is.string(s) && s.length > length) {
 				return s.substring(0, length) + ' ...';
@@ -5594,6 +5617,17 @@ module.exports = function () {
 				return s;
 			}
 		},
+
+		/**
+   * Adds leading characters to a string, until the string length is a desired size.
+   *
+   * @public
+   * @static
+   * @param {String} s - The string to pad.
+   * @param {Number} length - The desired overall length of the string.
+   * @param {String} character - The character to use for padding.
+   * @returns {String}
+   */
 		padLeft: function padLeft(s, length, character) {
 			assert.argumentIsRequired(s, 's', String);
 			assert.argumentIsRequired(length, 'length', Number);
@@ -23926,16 +23960,14 @@ module.exports = function () {
   * processed.
   *
   * @public
+  * @param {number} - windowMaximumCount - The maximum number of items which can be processed during a timeframe.
+  * @param {number} - windowDurationMilliseconds - The number of milliseconds in the timeframe.
   * @extends {Disposable}
   */
 
 	var RateLimiter = function (_Disposable) {
 		_inherits(RateLimiter, _Disposable);
 
-		/**
-   * @param {number} - windowMaximumCount - The maximum number of items which can be processed during a timeframe.
-   * @param {number} - windowDurationMilliseconds - The number of milliseconds in the timeframe.
-   */
 		function RateLimiter(windowMaximumCount, windowDurationMilliseconds) {
 			_classCallCheck(this, RateLimiter);
 
