@@ -552,7 +552,7 @@ module.exports = function () {
     * predicate.
     *
     * @public
-    * @param {Function} predicate - A predicate that tests each child node. The predicate takes two arguments -- the node's value, and the node itself.
+    * @param {Tree~nodePredicate} predicate - A predicate that tests each child node. The predicate takes two arguments -- the node's value, and the node itself.
     * @returns {Tree|null}
     */
 
@@ -578,9 +578,9 @@ module.exports = function () {
     * Searches the tree recursively, starting with the current node.
     *
     * @public
-    * @param {Function} predicate - A predicate that tests each child node. The predicate takes two arguments -- the node's value, and the node itself.
-    * @param {boolean=} childrenFirst - True if the tree should be searched depth first.
-    * @param {boolean=} includeCurrentNode - True if the current node should be checked against the predicate.
+    * @param {Tree~nodePredicate} predicate - A predicate that tests each child node. The predicate takes two arguments -- the node's value, and the node itself.
+    * @param {boolean=} childrenFirst - True, if the tree should be searched depth first.
+    * @param {boolean=} includeCurrentNode - True, if the current node should be checked against the predicate.
     * @returns {Tree|null}
     */
 
@@ -614,7 +614,7 @@ module.exports = function () {
     * Walks the children of the current node -- current node down to the lead nodes, running an action on each node.
     *
     * @public
-    * @param {Function} walkAction - A action to apply to each node. The action takes two arguments -- the node's value, and the node itself.
+    * @param {Tree~nodeAction} walkAction - A action to apply to each node. The action takes two arguments -- the node's value, and the node itself.
     * @param {boolean=} childrenFirst - True if the tree should be walked depth first.
     * @param {boolean=} includeCurrentNode - True if the current node should be applied to the action.
     */
@@ -635,7 +635,7 @@ module.exports = function () {
     * Climbs the parents of the current node -- current node up to the root node, running an action on each node.
     *
     * @public
-    * @param {Function} climbAction - A action to apply to each node. The action takes two arguments -- the node's value, and the node itself.
+    * @param {Tree~nodeAction} climbAction - A action to apply to each node. The action takes two arguments -- the node's value, and the node itself.
     * @param {boolean=} includeCurrentNode - True if the current node should be applied to the action.
     */
 
@@ -659,6 +659,23 @@ module.exports = function () {
 
 		return Tree;
 	}();
+
+	/**
+  * A predicate that is used to check a node (i.e. {@link Tree}).
+  *
+  * @callback Tree~nodePredicate
+  * @param {*} item - The candidate node's item
+  * @param {Tree} node - The candidate node.
+  * @returns {Boolean}
+  */
+
+	/**
+  * An action that is run on a node (i.e. {@link Tree}).
+  *
+  * @callback Tree~nodeAction
+  * @param {*} item - The candidate node's item
+  * @param {Tree} node - The candidate node.
+  */
 
 	return Tree;
 }();
@@ -22584,8 +22601,6 @@ function _classCallCheck(instance, Constructor) {
 	}
 }
 
-var DataType = require('./DataType');
-
 module.exports = function () {
 	'use strict';
 
@@ -22658,7 +22673,7 @@ module.exports = function () {
 	return Field;
 }();
 
-},{"./DataType":102}],104:[function(require,module,exports){
+},{}],104:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
@@ -22859,11 +22874,12 @@ module.exports = function () {
 	}();
 
 	var ReviverItem = function () {
-		function ReviverItem(name, reviver, reset) {
+		function ReviverItem(name, reviver, optional, reset) {
 			_classCallCheck(this, ReviverItem);
 
 			this._name = name;
 			this._reviver = reviver || functions.getTautology();
+			this._optional = is.boolean(optional) && optional;
 			this._reset = is.boolean(reset) && reset;
 		}
 
@@ -22878,6 +22894,11 @@ module.exports = function () {
 				return this._reviver;
 			}
 		}, {
+			key: 'optional',
+			get: function get() {
+				return this._optional;
+			}
+		}, {
 			key: 'reset',
 			get: function get() {
 				return this._reset;
@@ -22888,7 +22909,7 @@ module.exports = function () {
 	}();
 
 	function getReviverItems(fields, components) {
-		var root = new Tree(new ReviverItem(null, null, true));
+		var root = new Tree(new ReviverItem(null, null, false, true));
 
 		// 2017/08/26, BRI. The Field and Component types could inherit a common
 		// type, allowing the following duplication to be avoided with polymorphism.
@@ -22900,7 +22921,7 @@ module.exports = function () {
 
 			names.forEach(function (name, i) {
 				if (names.length === i + 1) {
-					node.addChild(new ReviverItem(name, field.dataType.reviver));
+					node.addChild(new ReviverItem(name, field.dataType.reviver, field.optional));
 				} else {
 					var child = node.findChild(function (n) {
 						return n.name === name;
@@ -22944,11 +22965,25 @@ module.exports = function () {
 		var head = null;
 		var current = null;
 
-		var addItemToList = function addItemToList(item) {
-			if (current === null) {
-				current = head = new LinkedList(item);
+		var addItemToList = function addItemToList(item, node) {
+			var itemToUse = item;
+
+			if (!node.getIsLeaf()) {
+				var required = node.search(function (i, n) {
+					return n.getIsLeaf() && !i.optional;
+				}, true, false) !== null;
+
+				if (!required) {
+					itemToUse = new ReviverItem(item.name, item.reviver, true, item.reset);
+				}
 			} else {
-				current = current.insert(item);
+				itemToUse = item;
+			}
+
+			if (current === null) {
+				current = head = new LinkedList(itemToUse);
+			} else {
+				current = current.insert(itemToUse);
 			}
 		};
 

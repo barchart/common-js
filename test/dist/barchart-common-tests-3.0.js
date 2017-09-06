@@ -552,7 +552,7 @@ module.exports = function () {
     * predicate.
     *
     * @public
-    * @param {Function} predicate - A predicate that tests each child node. The predicate takes two arguments -- the node's value, and the node itself.
+    * @param {Tree~nodePredicate} predicate - A predicate that tests each child node. The predicate takes two arguments -- the node's value, and the node itself.
     * @returns {Tree|null}
     */
 
@@ -578,9 +578,9 @@ module.exports = function () {
     * Searches the tree recursively, starting with the current node.
     *
     * @public
-    * @param {Function} predicate - A predicate that tests each child node. The predicate takes two arguments -- the node's value, and the node itself.
-    * @param {boolean=} childrenFirst - True if the tree should be searched depth first.
-    * @param {boolean=} includeCurrentNode - True if the current node should be checked against the predicate.
+    * @param {Tree~nodePredicate} predicate - A predicate that tests each child node. The predicate takes two arguments -- the node's value, and the node itself.
+    * @param {boolean=} childrenFirst - True, if the tree should be searched depth first.
+    * @param {boolean=} includeCurrentNode - True, if the current node should be checked against the predicate.
     * @returns {Tree|null}
     */
 
@@ -614,7 +614,7 @@ module.exports = function () {
     * Walks the children of the current node -- current node down to the lead nodes, running an action on each node.
     *
     * @public
-    * @param {Function} walkAction - A action to apply to each node. The action takes two arguments -- the node's value, and the node itself.
+    * @param {Tree~nodeAction} walkAction - A action to apply to each node. The action takes two arguments -- the node's value, and the node itself.
     * @param {boolean=} childrenFirst - True if the tree should be walked depth first.
     * @param {boolean=} includeCurrentNode - True if the current node should be applied to the action.
     */
@@ -635,7 +635,7 @@ module.exports = function () {
     * Climbs the parents of the current node -- current node up to the root node, running an action on each node.
     *
     * @public
-    * @param {Function} climbAction - A action to apply to each node. The action takes two arguments -- the node's value, and the node itself.
+    * @param {Tree~nodeAction} climbAction - A action to apply to each node. The action takes two arguments -- the node's value, and the node itself.
     * @param {boolean=} includeCurrentNode - True if the current node should be applied to the action.
     */
 
@@ -659,6 +659,23 @@ module.exports = function () {
 
 		return Tree;
 	}();
+
+	/**
+  * A predicate that is used to check a node (i.e. {@link Tree}).
+  *
+  * @callback Tree~nodePredicate
+  * @param {*} item - The candidate node's item
+  * @param {Tree} node - The candidate node.
+  * @returns {Boolean}
+  */
+
+	/**
+  * An action that is run on a node (i.e. {@link Tree}).
+  *
+  * @callback Tree~nodeAction
+  * @param {*} item - The candidate node's item
+  * @param {Tree} node - The candidate node.
+  */
 
 	return Tree;
 }();
@@ -15071,8 +15088,6 @@ function _classCallCheck(instance, Constructor) {
 	}
 }
 
-var DataType = require('./DataType');
-
 module.exports = function () {
 	'use strict';
 
@@ -15145,7 +15160,7 @@ module.exports = function () {
 	return Field;
 }();
 
-},{"./DataType":51}],53:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
@@ -15346,11 +15361,12 @@ module.exports = function () {
 	}();
 
 	var ReviverItem = function () {
-		function ReviverItem(name, reviver, reset) {
+		function ReviverItem(name, reviver, optional, reset) {
 			_classCallCheck(this, ReviverItem);
 
 			this._name = name;
 			this._reviver = reviver || functions.getTautology();
+			this._optional = is.boolean(optional) && optional;
 			this._reset = is.boolean(reset) && reset;
 		}
 
@@ -15365,6 +15381,11 @@ module.exports = function () {
 				return this._reviver;
 			}
 		}, {
+			key: 'optional',
+			get: function get() {
+				return this._optional;
+			}
+		}, {
 			key: 'reset',
 			get: function get() {
 				return this._reset;
@@ -15375,7 +15396,7 @@ module.exports = function () {
 	}();
 
 	function getReviverItems(fields, components) {
-		var root = new Tree(new ReviverItem(null, null, true));
+		var root = new Tree(new ReviverItem(null, null, false, true));
 
 		// 2017/08/26, BRI. The Field and Component types could inherit a common
 		// type, allowing the following duplication to be avoided with polymorphism.
@@ -15387,7 +15408,7 @@ module.exports = function () {
 
 			names.forEach(function (name, i) {
 				if (names.length === i + 1) {
-					node.addChild(new ReviverItem(name, field.dataType.reviver));
+					node.addChild(new ReviverItem(name, field.dataType.reviver, field.optional));
 				} else {
 					var child = node.findChild(function (n) {
 						return n.name === name;
@@ -15431,11 +15452,25 @@ module.exports = function () {
 		var head = null;
 		var current = null;
 
-		var addItemToList = function addItemToList(item) {
-			if (current === null) {
-				current = head = new LinkedList(item);
+		var addItemToList = function addItemToList(item, node) {
+			var itemToUse = item;
+
+			if (!node.getIsLeaf()) {
+				var required = node.search(function (i, n) {
+					return n.getIsLeaf() && !i.optional;
+				}, true, false) !== null;
+
+				if (!required) {
+					itemToUse = new ReviverItem(item.name, item.reviver, true, item.reset);
+				}
 			} else {
-				current = current.insert(item);
+				itemToUse = item;
+			}
+
+			if (current === null) {
+				current = head = new LinkedList(itemToUse);
+			} else {
+				current = current.insert(itemToUse);
 			}
 		};
 
@@ -15616,7 +15651,7 @@ module.exports = function () {
     * @public
     * @param {String} name - The name of the new field.
     * @param {DataType} dataType - The type of the new field.
-    * @param {Boolean} optional - If true, the field is not required and may be omitted.
+    * @param {Boolean=} optional - If true, the field is not required and may be omitted.
     * @returns {SchemaBuilder}
     */
 			value: function withField(name, dataType, optional) {
@@ -23530,6 +23565,95 @@ describe('When a person schema is created (first and last names)', function () {
 	});
 });
 
+describe('When a person schema is created (first and last names, with optional middle name)', function () {
+	'use strict';
+
+	var schema;
+
+	beforeEach(function () {
+		schema = new Schema('person', [new Field('first', DataType.STRING), new Field('middle', DataType.STRING, true), new Field('last', DataType.STRING)]);
+	});
+
+	describe('and a schema-compliant object is created (with middle name)', function () {
+		var object;
+
+		beforeEach(function () {
+			object = {
+				first: 'bryan',
+				middle: 'ray',
+				last: 'ingle'
+			};
+		});
+
+		describe('and the object is "stringified" as JSON', function () {
+			var serialized;
+
+			beforeEach(function () {
+				serialized = JSON.stringify(object);
+			});
+
+			describe('and the object is rehydrated using the schema reviver', function () {
+				var deserialized;
+
+				beforeEach(function () {
+					deserialized = JSON.parse(serialized, schema.getReviver());
+				});
+
+				it('should have a "first" property with the expected value', function () {
+					expect(deserialized.first).toEqual('bryan');
+				});
+
+				it('should have a "middle" property with the expected value', function () {
+					expect(deserialized.middle).toEqual('ray');
+				});
+
+				it('should have a "last" property with the expected value', function () {
+					expect(deserialized.last).toEqual('ingle');
+				});
+			});
+		});
+	});
+
+	describe('and a schema-compliant object is created (without middle name)', function () {
+		var object;
+
+		beforeEach(function () {
+			object = {
+				first: 'bryan',
+				last: 'ingle'
+			};
+		});
+
+		describe('and the object is "stringified" as JSON', function () {
+			var serialized;
+
+			beforeEach(function () {
+				serialized = JSON.stringify(object);
+			});
+
+			describe('and the object is rehydrated using the schema reviver', function () {
+				var deserialized;
+
+				beforeEach(function () {
+					deserialized = JSON.parse(serialized, schema.getReviver());
+				});
+
+				it('should have a "first" property with the expected value', function () {
+					expect(deserialized.first).toEqual('bryan');
+				});
+
+				it('should not have a "middle" property', function () {
+					expect(deserialized.hasOwnProperty('middle')).toEqual(false);
+				});
+
+				it('should have a "last" property with the expected value', function () {
+					expect(deserialized.last).toEqual('ingle');
+				});
+			});
+		});
+	});
+});
+
 describe('When a person schema is created (grouped first and last names with a birthday)', function () {
 	'use strict';
 
@@ -23762,6 +23886,117 @@ describe('When an account schema is created (using the Money component with nest
 				it('the second item should have a "balances.today" property with the expected value', function () {
 					expect(deserialized[1].balances.today.currency).toEqual(Currency.USD);
 					expect(deserialized[1].balances.today.decimal.getIsEqual(173.20)).toEqual(true);
+				});
+			});
+		});
+	});
+});
+
+describe('When a schema is created (having a nested group of optional fields)', function () {
+	'use strict';
+
+	var schema;
+
+	beforeEach(function () {
+		schema = new Schema('thing', [new Field('required.a', DataType.NUMBER), new Field('optional.b', DataType.NUMBER, true), new Field('optional.c', DataType.NUMBER, true), new Field('name', DataType.STRING)]);
+	});
+
+	describe('and a schema-compliant object is created (using one optional field)', function () {
+		var object;
+
+		beforeEach(function () {
+			object = {
+				required: {
+					a: 1
+				},
+				optional: {
+					b: 2
+				},
+				name: 'swamp'
+			};
+		});
+
+		describe('and the object is "stringified" as JSON', function () {
+			var serialized;
+
+			beforeEach(function () {
+				serialized = JSON.stringify(object);
+			});
+
+			describe('and the object is rehydrated using the schema reviver', function () {
+				var deserialized;
+
+				beforeEach(function () {
+					deserialized = JSON.parse(serialized, schema.getReviver());
+				});
+
+				it('should have a "required" property', function () {
+					expect(deserialized.hasOwnProperty('required')).toEqual(true);
+				});
+
+				it('should have a "required.a" property, with the expected value', function () {
+					expect(deserialized.required.a).toEqual(1);
+				});
+
+				it('should have an "optional" property', function () {
+					expect(deserialized.hasOwnProperty('optional')).toEqual(true);
+				});
+
+				it('should have a "optional.b" property, with the expected value', function () {
+					expect(deserialized.optional.b).toEqual(2);
+				});
+
+				it('should not have a "optional.c" property', function () {
+					expect(deserialized.optional.hasOwnProperty('c')).toEqual(false);
+				});
+
+				it('should have a "name" property, with the expected value', function () {
+					expect(deserialized.name).toEqual('swamp');
+				});
+			});
+		});
+	});
+
+	describe('and a schema-compliant object is created (using no optional fields)', function () {
+		var object;
+
+		beforeEach(function () {
+			object = {
+				required: {
+					a: 1
+				},
+				name: 'swamp'
+			};
+		});
+
+		describe('and the object is "stringified" as JSON', function () {
+			var serialized;
+
+			beforeEach(function () {
+				serialized = JSON.stringify(object);
+			});
+
+			describe('and the object is rehydrated using the schema reviver', function () {
+				var deserialized;
+
+				beforeEach(function () {
+					deserialized = JSON.parse(serialized, schema.getReviver());
+				});
+
+				it('should have a "required" property', function () {
+					expect(deserialized.hasOwnProperty('required')).toEqual(true);
+				});
+
+				it('should have a "required.a" property, with the expected value', function () {
+					expect(deserialized.required.a).toEqual(1);
+				});
+
+				it('should not have an "optional" property', function () {
+					expect(deserialized.hasOwnProperty('optional')).toEqual(false);
+				});
+
+				it('should have a "name" property, with the expected value', function () {
+					expect(deserialized.name).toEqual('swamp');
 				});
 			});
 		});
