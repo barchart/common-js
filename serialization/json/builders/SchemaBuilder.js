@@ -38,7 +38,7 @@ module.exports = (() => {
 		 * @public
 		 * @param {String} name - The name of the new field.
 		 * @param {DataType} dataType - The type of the new field.
-		 * @param {Boolean} optional - If true, the field is not required and may be omitted.
+		 * @param {Boolean=} optional - If true, the field is not required and may be omitted.
 		 * @returns {SchemaBuilder}
 		 */
 		withField(name, dataType, optional) {
