@@ -110,7 +110,7 @@ module.exports = (() => {
 		 * predicate.
 		 *
 		 * @public
-		 * @param {Function} predicate - A predicate that tests each child node. The predicate takes two arguments -- the node's value, and the node itself.
+		 * @param {Tree~nodePredicate} predicate - A predicate that tests each child node. The predicate takes two arguments -- the node's value, and the node itself.
 		 * @returns {Tree|null}
 		 */
 		findChild(predicate) {
@@ -133,9 +133,9 @@ module.exports = (() => {
 		 * Searches the tree recursively, starting with the current node.
 		 *
 		 * @public
-		 * @param {Function} predicate - A predicate that tests each child node. The predicate takes two arguments -- the node's value, and the node itself.
-		 * @param {boolean=} childrenFirst - True if the tree should be searched depth first.
-		 * @param {boolean=} includeCurrentNode - True if the current node should be checked against the predicate.
+		 * @param {Tree~nodePredicate} predicate - A predicate that tests each child node. The predicate takes two arguments -- the node's value, and the node itself.
+		 * @param {boolean=} childrenFirst - True, if the tree should be searched depth first.
+		 * @param {boolean=} includeCurrentNode - True, if the current node should be checked against the predicate.
 		 * @returns {Tree|null}
 		 */
 		search(predicate, childrenFirst, includeCurrentNode) {
@@ -166,7 +166,7 @@ module.exports = (() => {
 		 * Walks the children of the current node -- current node down to the lead nodes, running an action on each node.
 		 *
 		 * @public
-		 * @param {Function} walkAction - A action to apply to each node. The action takes two arguments -- the node's value, and the node itself.
+		 * @param {Tree~nodeAction} walkAction - A action to apply to each node. The action takes two arguments -- the node's value, and the node itself.
 		 * @param {boolean=} childrenFirst - True if the tree should be walked depth first.
 		 * @param {boolean=} includeCurrentNode - True if the current node should be applied to the action.
 		 */
@@ -184,7 +184,7 @@ module.exports = (() => {
 		 * Climbs the parents of the current node -- current node up to the root node, running an action on each node.
 		 *
 		 * @public
-		 * @param {Function} climbAction - A action to apply to each node. The action takes two arguments -- the node's value, and the node itself.
+		 * @param {Tree~nodeAction} climbAction - A action to apply to each node. The action takes two arguments -- the node's value, and the node itself.
 		 * @param {boolean=} includeCurrentNode - True if the current node should be applied to the action.
 		 */
 		climb(climbAction, includeCurrentNode) {
@@ -201,6 +201,23 @@ module.exports = (() => {
 			return '[Tree]';
 		}
 	}
+
+	/**
+	 * A predicate that is used to check a node (i.e. {@link Tree}).
+	 *
+	 * @callback Tree~nodePredicate
+	 * @param {*} item - The candidate node's item
+	 * @param {Tree} node - The candidate node.
+	 * @returns {Boolean}
+	 */
+
+	/**
+	 * An action that is run on a node (i.e. {@link Tree}).
+	 *
+	 * @callback Tree~nodeAction
+	 * @param {*} item - The candidate node's item
+	 * @param {Tree} node - The candidate node.
+	 */
 
 	return Tree;
 })();
