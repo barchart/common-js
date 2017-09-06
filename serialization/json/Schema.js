@@ -139,9 +139,10 @@ module.exports = (() => {
 	}
 
 	class ReviverItem {
-		constructor(name, reviver, reset) {
+		constructor(name, reviver, optional, reset) {
 			this._name = name;
 			this._reviver = reviver || functions.getTautology();
+			this._optional = is.boolean(optional) && optional;
 			this._reset = is.boolean(reset) && reset;
 		}
 
@@ -153,13 +154,17 @@ module.exports = (() => {
 			return this._reviver;
 		}
 
+		get optional() {
+			return this._optional;
+		}
+
 		get reset() {
 			return this._reset;
 		}
 	}
 
 	function getReviverItems(fields, components) {
-		const root = new Tree(new ReviverItem(null, null, true));
+		const root = new Tree(new ReviverItem(null, null, false, true));
 
 		// 2017/08/26, BRI. The Field and Component types could inherit a common
 		// type, allowing the following duplication to be avoided with polymorphism.
@@ -171,7 +176,7 @@ module.exports = (() => {
 
 			names.forEach((name, i) => {
 				if (names.length === i + 1) {
-					node.addChild(new ReviverItem(name, field.dataType.reviver));
+					node.addChild(new ReviverItem(name, field.dataType.reviver, field.optional));
 				} else {
 					let child = node.findChild(n => n.name === name);
 
@@ -209,11 +214,23 @@ module.exports = (() => {
 		let head = null;
 		let current = null;
 
-		const addItemToList = (item) => {
-			if (current === null) {
-				current = head = new LinkedList(item);
+		const addItemToList = (item, node) => {
+			let itemToUse = item;
+
+			if (!node.getIsLeaf()) {
+				const required = node.search((i, n) => n.getIsLeaf() && !i.optional, true, false) !== null;
+
+				if (!required) {
+					itemToUse = new ReviverItem(item.name, item.reviver, true, item.reset);
+				}
 			} else {
-				current = current.insert(item);
+				itemToUse = item;
+			}
+
+			if (current === null) {
+				current = head = new LinkedList(itemToUse);
+			} else {
+				current = current.insert(itemToUse);
 			}
 		};
 

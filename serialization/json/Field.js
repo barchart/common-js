@@ -1,5 +1,3 @@
-const DataType = require('./DataType');
-
 module.exports = (() => {
 	'use strict';
 

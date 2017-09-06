@@ -109,6 +109,99 @@ describe('When a person schema is created (first and last names)', function() {
 	});
 });
 
+describe('When a person schema is created (first and last names, with optional middle name)', function() {
+	'use strict';
+
+	var schema;
+
+	beforeEach(function() {
+		schema = new Schema('person', [
+			new Field('first', DataType.STRING),
+			new Field('middle', DataType.STRING, true),
+			new Field('last', DataType.STRING)
+		]);
+	});
+
+	describe('and a schema-compliant object is created (with middle name)', function() {
+		var object;
+
+		beforeEach(function() {
+			object = {
+				first: 'bryan',
+				middle: 'ray',
+				last: 'ingle'
+			};
+		});
+
+		describe('and the object is "stringified" as JSON', function() {
+			var serialized;
+
+			beforeEach(function() {
+				serialized = JSON.stringify(object);
+			});
+
+			describe('and the object is rehydrated using the schema reviver', function() {
+				var deserialized;
+
+				beforeEach(function() {
+					deserialized = JSON.parse(serialized, schema.getReviver());
+				});
+
+				it('should have a "first" property with the expected value', function() {
+					expect(deserialized.first).toEqual('bryan');
+				});
+
+				it('should have a "middle" property with the expected value', function() {
+					expect(deserialized.middle).toEqual('ray');
+				});
+
+				it('should have a "last" property with the expected value', function() {
+					expect(deserialized.last).toEqual('ingle');
+				});
+			});
+		});
+	});
+
+	describe('and a schema-compliant object is created (without middle name)', function() {
+		var object;
+
+		beforeEach(function() {
+			object = {
+				first: 'bryan',
+				last: 'ingle'
+			};
+		});
+
+		describe('and the object is "stringified" as JSON', function() {
+			var serialized;
+
+			beforeEach(function() {
+				serialized = JSON.stringify(object);
+			});
+
+			describe('and the object is rehydrated using the schema reviver', function() {
+				var deserialized;
+
+				beforeEach(function() {
+					deserialized = JSON.parse(serialized, schema.getReviver());
+				});
+
+				it('should have a "first" property with the expected value', function() {
+					expect(deserialized.first).toEqual('bryan');
+				});
+
+				it('should not have a "middle" property', function() {
+					expect(deserialized.hasOwnProperty('middle')).toEqual(false);
+				});
+
+				it('should have a "last" property with the expected value', function() {
+					expect(deserialized.last).toEqual('ingle');
+				});
+			});
+		});
+	});
+});
+
 describe('When a person schema is created (grouped first and last names with a birthday)', function() {
 	'use strict';
 
@@ -354,6 +447,122 @@ describe('When an account schema is created (using the Money component with nest
 				it('the second item should have a "balances.today" property with the expected value', function() {
 					expect(deserialized[1].balances.today.currency).toEqual(Currency.USD);
 					expect(deserialized[1].balances.today.decimal.getIsEqual(173.20)).toEqual(true);
+				});
+			});
+		});
+	});
+});
+
+describe('When a schema is created (having a nested group of optional fields)', function() {
+	'use strict';
+
+	var schema;
+
+	beforeEach(function() {
+		schema = new Schema('thing', [
+			new Field('required.a', DataType.NUMBER),
+			new Field('optional.b', DataType.NUMBER, true),
+			new Field('optional.c', DataType.NUMBER, true),
+			new Field('name', DataType.STRING)
+		]);
+	});
+
+	describe('and a schema-compliant object is created (using one optional field)', function() {
+		var object;
+
+		beforeEach(function() {
+			object = {
+				required: {
+					a: 1
+				},
+				optional: {
+					b: 2
+				},
+				name: 'swamp'
+			};
+		});
+
+		describe('and the object is "stringified" as JSON', function() {
+			var serialized;
+
+			beforeEach(function() {
+				serialized = JSON.stringify(object);
+			});
+
+			describe('and the object is rehydrated using the schema reviver', function() {
+				var deserialized;
+
+				beforeEach(function() {
+					deserialized = JSON.parse(serialized, schema.getReviver());
+				});
+
+				it('should have a "required" property', function() {
+					expect(deserialized.hasOwnProperty('required')).toEqual(true);
+				});
+
+				it('should have a "required.a" property, with the expected value', function() {
+					expect(deserialized.required.a).toEqual(1);
+				});
+
+				it('should have an "optional" property', function() {
+					expect(deserialized.hasOwnProperty('optional')).toEqual(true);
+				});
+
+				it('should have a "optional.b" property, with the expected value', function() {
+					expect(deserialized.optional.b).toEqual(2);
+				});
+
+				it('should not have a "optional.c" property', function() {
+					expect(deserialized.optional.hasOwnProperty('c')).toEqual(false);
+				});
+
+				it('should have a "name" property, with the expected value', function() {
+					expect(deserialized.name).toEqual('swamp');
+				});
+			});
+		});
+	});
+
+	describe('and a schema-compliant object is created (using no optional fields)', function() {
+		var object;
+
+		beforeEach(function() {
+			object = {
+				required: {
+					a: 1
+				},
+				name: 'swamp'
+			};
+		});
+
+		describe('and the object is "stringified" as JSON', function() {
+			var serialized;
+
+			beforeEach(function() {
+				serialized = JSON.stringify(object);
+			});
+
+			describe('and the object is rehydrated using the schema reviver', function() {
+				var deserialized;
+
+				beforeEach(function() {
+					deserialized = JSON.parse(serialized, schema.getReviver());
+				});
+
+				it('should have a "required" property', function() {
+					expect(deserialized.hasOwnProperty('required')).toEqual(true);
+				});
+
+				it('should have a "required.a" property, with the expected value', function() {
+					expect(deserialized.required.a).toEqual(1);
+				});
+
+				it('should not have an "optional" property', function() {
+					expect(deserialized.hasOwnProperty('optional')).toEqual(false);
+				});
+
+				it('should have a "name" property, with the expected value', function() {
+					expect(deserialized.name).toEqual('swamp');
 				});
 			});
 		});
