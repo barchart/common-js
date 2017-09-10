@@ -11,16 +11,33 @@ module.exports = (() => {
 	 * @public
 	 * @param {String} code - Currency code (e.g. "USD")
 	 * @param {String} description - The description (e.g. "US Dollar")
+	 * @param {Number} precision - The number of decimal places possible for by a real world transaction.
 	 * @extends {Enum}
 	 */
 	class Currency extends Enum {
-		constructor(code, description) {
+		constructor(code, description, precision) {
 			super(code, description);
+
+			assert.argumentIsRequired(precision, 'precision', Number);
+			assert.argumentIsValid(precision, 'precision', is.integer, 'is an integer');
+
+			this._precision = precision;
+		}
+
+		/**
+		 * The maximum number of decimal places supported by a real world transaction.
+		 *
+		 * @public
+		 * @returns {Number}
+		 */
+		get precision() {
+			return this._precision;
 		}
 
 		/**
 		 * The Canadian Dollar.
 		 *
+		 * @public
 		 * @returns {Currency}
 		 */
 		static get CAD() {
@@ -30,6 +47,7 @@ module.exports = (() => {
 		/**
 		 * The Euro.
 		 *
+		 * @public
 		 * @returns {Currency}
 		 */
 		static EUR() {
@@ -39,6 +57,7 @@ module.exports = (() => {
 		/**
 		 * The US Dollar.
 		 *
+		 * @public
 		 * @returns {Currency}
 		 */
 		static get USD() {
@@ -50,9 +69,9 @@ module.exports = (() => {
 		}
 	}
 
-	const cad = new Currency('CAD', 'Canadian Dollar');
-	const eur = new Currency('EUR', 'Euro');
-	const usd = new Currency('USD', 'US Dollar');
+	const cad = new Currency('CAD', 'Canadian Dollar', 2);
+	const eur = new Currency('EUR', 'Euro', 2);
+	const usd = new Currency('USD', 'US Dollar', 2);
 
 	return Currency;
 })();
