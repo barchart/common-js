@@ -357,6 +357,13 @@ module.exports = (() => {
 		}
 	}
 
+	/**
+	 * An enumeration of strategies for rouding a {@link Decimal} instance.
+	 *
+	 * @public
+	 * @inner
+	 * @extends {Enum}
+	 */
 	class RoundingMode extends Enum {
 		constructor(value, description) {
 			super(value.toString(), description);
@@ -364,6 +371,12 @@ module.exports = (() => {
 			this._value = value;
 		}
 
+		/**
+		 * The code used by the Big.js library.
+		 *
+		 * @ignore
+		 * @returns {Number}
+		 */
 		get value() {
 			return this._value;
 		}
@@ -371,6 +384,7 @@ module.exports = (() => {
 		/**
 		 * Rounds away from zero.
 		 *
+		 * @public
 		 * @returns {RoundingMode}
 		 */
 		static get UP() {
@@ -380,6 +394,7 @@ module.exports = (() => {
 		/**
 		 * Rounds towards zero.
 		 *
+		 * @public
 		 * @returns {RoundingMode}
 		 */
 		static get DOWN() {
@@ -389,6 +404,7 @@ module.exports = (() => {
 		/**
 		 * Rounds towards nearest neighbor. If equidistant, rounds away from zero.
 		 *
+		 * @public
 		 * @returns {RoundingMode}
 		 */
 		static get NORMAL() {
