@@ -2239,22 +2239,30 @@ module.exports = function () {
   * @public
   * @param {String} code - Currency code (e.g. "USD")
   * @param {String} description - The description (e.g. "US Dollar")
+  * @param {Number} precision - The number of decimal places possible for by a real world transaction.
   * @extends {Enum}
   */
 
 	var Currency = function (_Enum) {
 		_inherits(Currency, _Enum);
 
-		function Currency(code, description) {
+		function Currency(code, description, precision) {
 			_classCallCheck(this, Currency);
 
-			return _possibleConstructorReturn(this, (Currency.__proto__ || Object.getPrototypeOf(Currency)).call(this, code, description));
+			var _this = _possibleConstructorReturn(this, (Currency.__proto__ || Object.getPrototypeOf(Currency)).call(this, code, description));
+
+			assert.argumentIsRequired(precision, 'precision', Number);
+			assert.argumentIsValid(precision, 'precision', is.integer, 'is an integer');
+
+			_this._precision = precision;
+			return _this;
 		}
 
 		/**
-   * The Canadian Dollar.
+   * The maximum number of decimal places supported by a real world transaction.
    *
-   * @returns {Currency}
+   * @public
+   * @returns {Number}
    */
 
 		_createClass(Currency, [{
@@ -2262,12 +2270,26 @@ module.exports = function () {
 			value: function toString() {
 				return '[Currency (code=' + this.code + ')]';
 			}
+		}, {
+			key: 'precision',
+			get: function get() {
+				return this._precision;
+			}
+
+			/**
+    * The Canadian Dollar.
+    *
+    * @public
+    * @returns {Currency}
+    */
+
 		}], [{
 			key: 'EUR',
 
 			/**
     * The Euro.
     *
+    * @public
     * @returns {Currency}
     */
 			value: function EUR() {
@@ -2277,6 +2299,7 @@ module.exports = function () {
 			/**
     * The US Dollar.
     *
+    * @public
     * @returns {Currency}
     */
 
@@ -2295,9 +2318,9 @@ module.exports = function () {
 		return Currency;
 	}(Enum);
 
-	var cad = new Currency('CAD', 'Canadian Dollar');
-	var eur = new Currency('EUR', 'Euro');
-	var usd = new Currency('USD', 'US Dollar');
+	var cad = new Currency('CAD', 'Canadian Dollar', 2);
+	var eur = new Currency('EUR', 'Euro', 2);
+	var usd = new Currency('USD', 'US Dollar', 2);
 
 	return Currency;
 }();
@@ -2832,7 +2855,7 @@ module.exports = function () {
     * Returns true if the current instance is greater than the value.
     *
     * @public
-    * @param {Decimal|Number|String} value - The value to compare.
+    * @param {Decimal|Number|String} other - The value to compare.
     * @returns {Boolean}
     */
 
@@ -2846,7 +2869,7 @@ module.exports = function () {
     * Returns true if the current instance is less than the value.
     *
     * @public
-    * @param {Decimal|Number|String} value - The value to compare.
+    * @param {Decimal|Number|String} other - The value to compare.
     * @returns {Boolean}
     */
 
@@ -2860,7 +2883,7 @@ module.exports = function () {
     * Returns true if the current instance is equal to the value.
     *
     * @public
-    * @param {Decimal|Number|String} value - The value to compare.
+    * @param {Decimal|Number|String} other - The value to compare.
     * @returns {Boolean}
     */
 
@@ -3059,11 +3082,10 @@ module.exports = function () {
 			}
 
 			/**
-    * The enumeration for rounding modes.
+    * Return the {@link RoundingMode} enumeration.
     *
     * @public
     * @returns {RoundingMode}
-    * @constructor
     */
 
 		}, {
@@ -3094,6 +3116,14 @@ module.exports = function () {
 		}
 	}
 
+	/**
+  * An enumeration of strategies for rouding a {@link Decimal} instance.
+  *
+  * @public
+  * @inner
+  * @extends {Enum}
+  */
+
 	var RoundingMode = function (_Enum) {
 		_inherits(RoundingMode, _Enum);
 
@@ -3105,6 +3135,13 @@ module.exports = function () {
 			_this._value = value;
 			return _this;
 		}
+
+		/**
+   * The code used by the Big.js library.
+   *
+   * @ignore
+   * @returns {Number}
+   */
 
 		_createClass(RoundingMode, [{
 			key: 'toString',
@@ -3120,6 +3157,7 @@ module.exports = function () {
 			/**
     * Rounds away from zero.
     *
+    * @public
     * @returns {RoundingMode}
     */
 
@@ -3132,6 +3170,7 @@ module.exports = function () {
 			/**
     * Rounds towards zero.
     *
+    * @public
     * @returns {RoundingMode}
     */
 
@@ -3144,6 +3183,7 @@ module.exports = function () {
 			/**
     * Rounds towards nearest neighbor. If equidistant, rounds away from zero.
     *
+    * @public
     * @returns {RoundingMode}
     */
 
