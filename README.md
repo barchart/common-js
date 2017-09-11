@@ -21,8 +21,9 @@ The code is documented with [JSDoc](http://usejsdoc.org/). While the output hasn
 
 ## Development
 
-Gulp is used to check "linting" and run unit tests, as follows:
+Gulp is used to check "linting" and to run unit tests.
 
+    > nvm use 6.10.1
     > npm install
     > gulp lint
     > gulp test

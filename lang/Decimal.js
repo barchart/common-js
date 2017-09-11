@@ -146,7 +146,7 @@ module.exports = (() => {
 		 * Returns true if the current instance is greater than the value.
 		 *
 		 * @public
-		 * @param {Decimal|Number|String} value - The value to compare.
+		 * @param {Decimal|Number|String} other - The value to compare.
 		 * @returns {Boolean}
 		 */
 		getIsGreaterThan(other) {
@@ -157,7 +157,7 @@ module.exports = (() => {
 		 * Returns true if the current instance is less than the value.
 		 *
 		 * @public
-		 * @param {Decimal|Number|String} value - The value to compare.
+		 * @param {Decimal|Number|String} other - The value to compare.
 		 * @returns {Boolean}
 		 */
 		getIsLessThan(other) {
@@ -168,7 +168,7 @@ module.exports = (() => {
 		 * Returns true if the current instance is equal to the value.
 		 *
 		 * @public
-		 * @param {Decimal|Number|String} value - The value to compare.
+		 * @param {Decimal|Number|String} other - The value to compare.
 		 * @returns {Boolean}
 		 */
 		getIsEqual(other) {
@@ -255,11 +255,10 @@ module.exports = (() => {
 		}
 
 		/**
-		 * The enumeration for rounding modes.
+		 * Return the {@link RoundingMode} enumeration.
 		 *
 		 * @public
 		 * @returns {RoundingMode}
-		 * @constructor
 		 */
 		static get ROUNDING_MODE() {
 			return RoundingMode;
