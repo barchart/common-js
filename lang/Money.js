@@ -42,10 +42,6 @@ module.exports = (() => {
 			return this._currency;
 		}
 
-		convert(currency, rates) {
-
-		}
-
 		toAmount(places, mode) {
 			return new Money(this._decimal.round(getPlaces(places), mode), this._currency);
 		}
