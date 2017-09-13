@@ -2364,27 +2364,21 @@ module.exports = function () {
 			}
 
 			/**
-    * The Canadian Dollar.
+    * Given a code, returns the enumeration item.
     *
     * @public
-    * @returns {Currency}
+    * @param {String} code
+    * @returns {Currency|null}
     */
 
 		}], [{
-			key: 'EUR',
-
-			/**
-    * The Euro.
-    *
-    * @public
-    * @returns {Currency}
-    */
-			value: function EUR() {
-				return eur;
+			key: 'parse',
+			value: function parse(code) {
+				return Enum.fromCode(Currency, code);
 			}
 
 			/**
-    * The US Dollar.
+    * The Canadian Dollar.
     *
     * @public
     * @returns {Currency}
@@ -2395,6 +2389,27 @@ module.exports = function () {
 			get: function get() {
 				return cad;
 			}
+
+			/**
+    * The Euro.
+    *
+    * @public
+    * @returns {Currency}
+    */
+
+		}, {
+			key: 'EUR',
+			get: function get() {
+				return eur;
+			}
+
+			/**
+    * The US Dollar.
+    *
+    * @public
+    * @returns {Currency}
+    */
+
 		}, {
 			key: 'USD',
 			get: function get() {
@@ -3537,6 +3552,14 @@ module.exports = function () {
 			value: function equals(other) {
 				return other === this || other instanceof Enum && other.constructor === this.constructor && other.code === this.code;
 			}
+
+			/**
+    * Returns the JSON representation.
+    *
+    * @public
+    * @returns {String}
+    */
+
 		}, {
 			key: 'toJSON',
 			value: function toJSON() {
@@ -3549,7 +3572,7 @@ module.exports = function () {
     *
     * @param {Function} type - The enumeration type.
     * @param {String} code - The enumeration item's code.
-    * @returns {Enum|null}
+    * @returns {*|null}
     */
 
 		}, {
@@ -3760,7 +3783,8 @@ var assert = require('./assert'),
     memoize = require('./memoize');
 
 var Currency = require('./Currency'),
-    Decimal = require('./Decimal');
+    Decimal = require('./Decimal'),
+    Enum = require('./Enum');
 
 module.exports = function () {
 	'use strict';
@@ -3787,7 +3811,13 @@ module.exports = function () {
 				throw new Error('A rate cannot use two identical currencies.');
 			}
 
-			this._decimal = getDecimal(value);
+			var decimal = getDecimal(value);
+
+			if (!decimal.getIsPositive()) {
+				throw new Error('Rate value must be positive.');
+			}
+
+			this._decimal = decimal;
 			this._numerator = numerator;
 			this._denominator = denominator;
 		}
@@ -3800,7 +3830,18 @@ module.exports = function () {
    */
 
 		_createClass(Rate, [{
-			key: 'formatPair',
+			key: 'invert',
+
+			/**
+    * Returns the equivalent rate with the numerator and denominator (i.e. the qoute and base)
+    * currencies.
+    *
+    * @public
+    * @returns {Rate}
+    */
+			value: function invert() {
+				return new Rate(Decimal.ONE.divide(this._decimal), this._denominator, this._numerator);
+			}
 
 			/**
     * Formats the currency pair as a string (e.g. "EURUSD" or "^EURUSD").
@@ -3809,6 +3850,9 @@ module.exports = function () {
     * @param {Boolean=} useCarat - If true, a carat is used as a prefix to the resulting string.
     * @returns {string}
     */
+
+		}, {
+			key: 'formatPair',
 			value: function formatPair(useCarat) {
 				assert.argumentIsOptional(useCarat, 'useCarat', Boolean);
 
@@ -3820,7 +3864,7 @@ module.exports = function () {
     *
     * @public
     * @param {Number|String|Decimal} value - The rate.
-    * @param {Currency} pair - A string that can be parsed as a currency pair.
+    * @param {String} symbol - A string that can be parsed as a currency pair.
     * @returns {Rate}
     */
 
@@ -3892,10 +3936,65 @@ module.exports = function () {
 			}
 		}], [{
 			key: 'fromPair',
-			value: function fromPair(value, pair) {
-				assert.argumentIsRequired(pair, 'pair', String);
+			value: function fromPair(value, symbol) {
+				assert.argumentIsRequired(symbol, 'symbol', String);
 
-				return new Rate(value, pair.numerator, pair.denominator);
+				var pair = parsePair(symbol);
+
+				return new Rate(value, Currency.parse(pair.numerator), Currency.parse(pair.denominator));
+			}
+
+			/**
+    * Given a {@link Decimal} value in a known currency, output
+    * a {@link Decimal} converted to an alternate currency.
+    *
+    * @public
+    * @param {Decimal} amount - The amount to convert.
+    * @param {Currency} currency - The currency of the amount.
+    * @param {Currency} desiredCurrency - The currency to convert to.
+    * @param {...Rate} rates - A list of exchange rates to be used for the conversion.
+    * @returns {Decimal}
+    */
+
+		}, {
+			key: 'convert',
+			value: function convert(amount, currency, desiredCurrency) {
+				assert.argumentIsRequired(amount, 'amount', Decimal, 'Decimal');
+				assert.argumentIsRequired(currency, 'currency', Currency, 'Currency');
+				assert.argumentIsRequired(desiredCurrency, 'desiredCurrency', Currency, 'Currency');
+
+				for (var _len = arguments.length, rates = Array(_len > 3 ? _len - 3 : 0), _key = 3; _key < _len; _key++) {
+					rates[_key - 3] = arguments[_key];
+				}
+
+				assert.argumentIsArray(rates, 'rates', Rate, 'Rate');
+
+				var converted = void 0;
+
+				if (currency === desiredCurrency) {
+					converted = amount;
+				} else {
+					var numerator = desiredCurrency;
+					var denominator = currency;
+
+					var rate = rates.find(function (r) {
+						return r.numerator === numerator && r.denominator === denominator || r.numerator === denominator && r.denominator === numerator;
+					});
+
+					if (rate) {
+						if (rate.numerator === denominator) {
+							rate = rate.invert();
+						}
+					}
+
+					if (!rate) {
+						throw new Error('Unable to perform conversion, given the rates provided.');
+					}
+
+					converted = amount.multiply(rate.decimal);
+				}
+
+				return converted;
 			}
 		}]);
 
@@ -3912,8 +4011,8 @@ module.exports = function () {
 		}
 	}
 
-	var parsePair = memoize.simple(function (pair) {
-		var match = pair.match(pairExpression);
+	var parsePair = memoize.simple(function (symbol) {
+		var match = symbol.match(pairExpression);
 
 		if (match === null) {
 			throw new Error('The "pair" argument cannot be parsed.');
@@ -3928,7 +4027,7 @@ module.exports = function () {
 	return Rate;
 }();
 
-},{"./Currency":18,"./Decimal":20,"./assert":28,"./is":35,"./memoize":38}],25:[function(require,module,exports){
+},{"./Currency":18,"./Decimal":20,"./Enum":22,"./assert":28,"./is":35,"./memoize":38}],25:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
@@ -4110,10 +4209,11 @@ module.exports = function () {
 		}
 
 		/**
-   * America/Chicago
+   * Given a code, returns the enumeration item.
    *
    * @public
-   * @returns {Timezones}
+   * @param {String} code
+   * @returns {Timezones|null}
    */
 
 		_createClass(Timezones, [{
@@ -4122,6 +4222,19 @@ module.exports = function () {
 				return '[Timezone (name=' + this.code + ')]';
 			}
 		}], [{
+			key: 'parse',
+			value: function parse(code) {
+				return Enum.fromCode(Timezones, code);
+			}
+
+			/**
+    * America/Chicago
+    *
+    * @public
+    * @returns {Timezones}
+    */
+
+		}, {
 			key: 'AMERICA_CHICAGO',
 			get: function get() {
 				return america_chicago;
@@ -6614,7 +6727,7 @@ module.exports = function () {
 
 			/**
     * Indicates if a path, beyond the base URL, is required.
-    * 
+    *
     * @public
     * @returns {Boolean}
     */
@@ -6666,13 +6779,27 @@ module.exports = function () {
 			}
 
 			/**
+    * Given a code, returns the enumeration item.
+    *
+    * @public
+    * @param {String} code
+    * @returns {RestAction|null}
+    */
+
+		}], [{
+			key: 'parse',
+			value: function parse(code) {
+				return Enum.fromCode(RestAction, code);
+			}
+
+			/**
     * The REST-ful action to create an object.
     *
     * @public
     * @returns {RestAction}
     */
 
-		}], [{
+		}, {
 			key: 'Create',
 			get: function get() {
 				return CREATE;
