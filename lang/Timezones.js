@@ -22,6 +22,17 @@ module.exports = (() => {
 		}
 
 		/**
+		 * Given a code, returns the enumeration item.
+		 *
+		 * @public
+		 * @param {String} code
+		 * @returns {Timezones|null}
+		 */
+		static parse(code) {
+			return Enum.fromCode(Timezones, code);
+		}
+
+		/**
 		 * America/Chicago
 		 *
 		 * @public

@@ -52,7 +52,7 @@ module.exports = (() => {
 
 		/**
 		 * Indicates if a path, beyond the base URL, is required.
-		 * 
+		 *
 		 * @public
 		 * @returns {Boolean}
 		 */
@@ -89,6 +89,17 @@ module.exports = (() => {
 		 */
 		getAllowBody() {
 			return this._allowBody;
+		}
+
+		/**
+		 * Given a code, returns the enumeration item.
+		 *
+		 * @public
+		 * @param {String} code
+		 * @returns {RestAction|null}
+		 */
+		static parse(code) {
+			return Enum.fromCode(RestAction, code);
 		}
 
 		/**

@@ -254,7 +254,7 @@ module.exports = function () {
 	return Queue;
 }();
 
-},{"./../lang/assert":24}],3:[function(require,module,exports){
+},{"./../lang/assert":25}],3:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
@@ -397,7 +397,7 @@ module.exports = function () {
 	return Stack;
 }();
 
-},{"./../lang/assert":24}],4:[function(require,module,exports){
+},{"./../lang/assert":25}],4:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
@@ -835,7 +835,7 @@ module.exports = function () {
 	return ComparatorBuilder;
 }();
 
-},{"./../../lang/assert":24,"./comparators":6}],6:[function(require,module,exports){
+},{"./../../lang/assert":25,"./comparators":6}],6:[function(require,module,exports){
 'use strict';
 
 var assert = require('./../../lang/assert');
@@ -910,7 +910,7 @@ module.exports = function () {
   };
 }();
 
-},{"./../../lang/assert":24}],7:[function(require,module,exports){
+},{"./../../lang/assert":25}],7:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
@@ -1066,7 +1066,7 @@ module.exports = function () {
 	return CompoundMap;
 }();
 
-},{"./../../lang/assert":24,"./../../lang/is":29}],8:[function(require,module,exports){
+},{"./../../lang/assert":25,"./../../lang/is":30}],8:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -1195,7 +1195,7 @@ module.exports = function () {
 	return DisposableStack;
 }();
 
-},{"./../../lang/Disposable":18,"./../../lang/assert":24,"./../../lang/is":29,"./../Stack":3}],9:[function(require,module,exports){
+},{"./../../lang/Disposable":18,"./../../lang/assert":25,"./../../lang/is":30,"./../Stack":3}],9:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
@@ -1377,7 +1377,7 @@ module.exports = function () {
 	return EvictingList;
 }();
 
-},{"./../../lang/assert":24}],10:[function(require,module,exports){
+},{"./../../lang/assert":25}],10:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
@@ -1725,7 +1725,7 @@ module.exports = function () {
 	return EvictingMap;
 }();
 
-},{"./../../lang/assert":24}],11:[function(require,module,exports){
+},{"./../../lang/assert":25}],11:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -1863,7 +1863,7 @@ module.exports = function () {
 	return PriorityQueue;
 }();
 
-},{"./../../lang/assert":24,"./../Queue":2}],12:[function(require,module,exports){
+},{"./../../lang/assert":25,"./../Queue":2}],12:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -2007,7 +2007,7 @@ module.exports = function () {
 	return CommandHandler;
 }();
 
-},{"./../lang/assert":24}],13:[function(require,module,exports){
+},{"./../lang/assert":25}],13:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -2081,7 +2081,7 @@ module.exports = function () {
 	return CompositeCommandHandler;
 }();
 
-},{"./../lang/assert":24,"./CommandHandler":12}],14:[function(require,module,exports){
+},{"./../lang/assert":25,"./CommandHandler":12}],14:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -2193,7 +2193,7 @@ module.exports = function () {
 	return MappedCommandHandler;
 }();
 
-},{"./../lang/assert":24,"./CommandHandler":12}],15:[function(require,module,exports){
+},{"./../lang/assert":25,"./CommandHandler":12}],15:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -2277,27 +2277,21 @@ module.exports = function () {
 			}
 
 			/**
-    * The Canadian Dollar.
+    * Given a code, returns the enumeration item.
     *
     * @public
-    * @returns {Currency}
+    * @param {String} code
+    * @returns {Currency|null}
     */
 
 		}], [{
-			key: 'EUR',
-
-			/**
-    * The Euro.
-    *
-    * @public
-    * @returns {Currency}
-    */
-			value: function EUR() {
-				return eur;
+			key: 'parse',
+			value: function parse(code) {
+				return Enum.fromCode(Currency, code);
 			}
 
 			/**
-    * The US Dollar.
+    * The Canadian Dollar.
     *
     * @public
     * @returns {Currency}
@@ -2308,6 +2302,27 @@ module.exports = function () {
 			get: function get() {
 				return cad;
 			}
+
+			/**
+    * The Euro.
+    *
+    * @public
+    * @returns {Currency}
+    */
+
+		}, {
+			key: 'EUR',
+			get: function get() {
+				return eur;
+			}
+
+			/**
+    * The US Dollar.
+    *
+    * @public
+    * @returns {Currency}
+    */
+
 		}, {
 			key: 'USD',
 			get: function get() {
@@ -2325,7 +2340,7 @@ module.exports = function () {
 	return Currency;
 }();
 
-},{"./Enum":19,"./assert":24,"./is":29}],16:[function(require,module,exports){
+},{"./Enum":19,"./assert":25,"./is":30}],16:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
@@ -2641,7 +2656,7 @@ module.exports = function () {
 	return Day;
 }();
 
-},{"./../collections/sorting/ComparatorBuilder":5,"./../collections/sorting/comparators":6,"./assert":24,"./is":29}],17:[function(require,module,exports){
+},{"./../collections/sorting/ComparatorBuilder":5,"./../collections/sorting/comparators":6,"./assert":25,"./is":30}],17:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -3204,7 +3219,7 @@ module.exports = function () {
 	return Decimal;
 }();
 
-},{"./Enum":19,"./assert":24,"./is":29,"big.js":44}],18:[function(require,module,exports){
+},{"./Enum":19,"./assert":25,"./is":30,"big.js":45}],18:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -3374,7 +3389,7 @@ module.exports = function () {
 	return Disposable;
 }();
 
-},{"./assert":24}],19:[function(require,module,exports){
+},{"./assert":25}],19:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
@@ -3450,6 +3465,14 @@ module.exports = function () {
 			value: function equals(other) {
 				return other === this || other instanceof Enum && other.constructor === this.constructor && other.code === this.code;
 			}
+
+			/**
+    * Returns the JSON representation.
+    *
+    * @public
+    * @returns {String}
+    */
+
 		}, {
 			key: 'toJSON',
 			value: function toJSON() {
@@ -3462,7 +3485,7 @@ module.exports = function () {
     *
     * @param {Function} type - The enumeration type.
     * @param {String} code - The enumeration item's code.
-    * @returns {Enum|null}
+    * @returns {*|null}
     */
 
 		}, {
@@ -3515,7 +3538,7 @@ module.exports = function () {
 	return Enum;
 }();
 
-},{"./assert":24}],20:[function(require,module,exports){
+},{"./assert":25}],20:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
@@ -3649,7 +3672,275 @@ module.exports = function () {
 	return Money;
 }();
 
-},{"./Currency":15,"./Decimal":17,"./assert":24,"./is":29}],21:[function(require,module,exports){
+},{"./Currency":15,"./Decimal":17,"./assert":25,"./is":30}],21:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () {
+	function defineProperties(target, props) {
+		for (var i = 0; i < props.length; i++) {
+			var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+		}
+	}return function (Constructor, protoProps, staticProps) {
+		if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+	};
+}();
+
+function _classCallCheck(instance, Constructor) {
+	if (!(instance instanceof Constructor)) {
+		throw new TypeError("Cannot call a class as a function");
+	}
+}
+
+var assert = require('./assert'),
+    is = require('./is'),
+    memoize = require('./memoize');
+
+var Currency = require('./Currency'),
+    Decimal = require('./Decimal'),
+    Enum = require('./Enum');
+
+module.exports = function () {
+	'use strict';
+
+	/**
+  * A component that represents an exchange rate, composed of a {@link Decimal}
+  * value and two currencies -- a quote (i.e. the numerator) currency and a
+  * base (i.e. denominator) currency.
+  *
+  * @public
+  * @param {Number|String|Decimal} value - The rate
+  * @param {Currency} numerator - The quote currency
+  * @param {Currency} denominator - The base currency
+  */
+
+	var Rate = function () {
+		function Rate(value, numerator, denominator) {
+			_classCallCheck(this, Rate);
+
+			assert.argumentIsRequired(numerator, 'numerator', Currency, 'Currency');
+			assert.argumentIsRequired(denominator, 'denominator', Currency, 'Currency');
+
+			if (numerator === denominator) {
+				throw new Error('A rate cannot use two identical currencies.');
+			}
+
+			var decimal = getDecimal(value);
+
+			if (!decimal.getIsPositive()) {
+				throw new Error('Rate value must be positive.');
+			}
+
+			this._decimal = decimal;
+			this._numerator = numerator;
+			this._denominator = denominator;
+		}
+
+		/**
+   * The rate.
+   *
+   * @public
+   * @returns {Decimal}
+   */
+
+		_createClass(Rate, [{
+			key: 'invert',
+
+			/**
+    * Returns the equivalent rate with the numerator and denominator (i.e. the qoute and base)
+    * currencies.
+    *
+    * @public
+    * @returns {Rate}
+    */
+			value: function invert() {
+				return new Rate(Decimal.ONE.divide(this._decimal), this._denominator, this._numerator);
+			}
+
+			/**
+    * Formats the currency pair as a string (e.g. "EURUSD" or "^EURUSD").
+    *
+    * @public
+    * @param {Boolean=} useCarat - If true, a carat is used as a prefix to the resulting string.
+    * @returns {string}
+    */
+
+		}, {
+			key: 'formatPair',
+			value: function formatPair(useCarat) {
+				assert.argumentIsOptional(useCarat, 'useCarat', Boolean);
+
+				return '' + (useCarat ? '^' : '') + this._numerator + this._denominator;
+			}
+
+			/**
+    * Creates a {@link Rate} instance, when given a value
+    *
+    * @public
+    * @param {Number|String|Decimal} value - The rate.
+    * @param {String} symbol - A string that can be parsed as a currency pair.
+    * @returns {Rate}
+    */
+
+		}, {
+			key: 'toString',
+			value: function toString() {
+				return '[Rate]';
+			}
+		}, {
+			key: 'decimal',
+			get: function get() {
+				return this._decimal;
+			}
+
+			/**
+    * The numerator (i.e. quote) currency. In other words,
+    * this is EUR of the EURUSD pair.
+    *
+    * @public
+    * @returns {Currency}
+    */
+
+		}, {
+			key: 'numerator',
+			get: function get() {
+				return this._numerator;
+			}
+
+			/**
+    * The quote (i.e. numerator) currency. In other words,
+    * this is EUR of the EURUSD pair.
+    *
+    * @public
+    * @returns {Currency}
+    */
+
+		}, {
+			key: 'quote',
+			get: function get() {
+				return this._numerator;
+			}
+
+			/**
+    * The denominator (i.e. base) currency. In other words,
+    * this is USD of the EURUSD pair.
+    *
+    * @public
+    * @returns {Currency}
+    */
+
+		}, {
+			key: 'denominator',
+			get: function get() {
+				return this._denominator;
+			}
+
+			/**
+    * The base (i.e. denominator) currency. In other words,
+    * this is USD of the EURUSD pair.
+    *
+    * @public
+    * @returns {Currency}
+    */
+
+		}, {
+			key: 'base',
+			get: function get() {
+				return this._denominator;
+			}
+		}], [{
+			key: 'fromPair',
+			value: function fromPair(value, symbol) {
+				assert.argumentIsRequired(symbol, 'symbol', String);
+
+				var pair = parsePair(symbol);
+
+				return new Rate(value, Currency.parse(pair.numerator), Currency.parse(pair.denominator));
+			}
+
+			/**
+    * Given a {@link Decimal} value in a known currency, output
+    * a {@link Decimal} converted to an alternate currency.
+    *
+    * @public
+    * @param {Decimal} amount - The amount to convert.
+    * @param {Currency} currency - The currency of the amount.
+    * @param {Currency} desiredCurrency - The currency to convert to.
+    * @param {...Rate} rates - A list of exchange rates to be used for the conversion.
+    * @returns {Decimal}
+    */
+
+		}, {
+			key: 'convert',
+			value: function convert(amount, currency, desiredCurrency) {
+				assert.argumentIsRequired(amount, 'amount', Decimal, 'Decimal');
+				assert.argumentIsRequired(currency, 'currency', Currency, 'Currency');
+				assert.argumentIsRequired(desiredCurrency, 'desiredCurrency', Currency, 'Currency');
+
+				for (var _len = arguments.length, rates = Array(_len > 3 ? _len - 3 : 0), _key = 3; _key < _len; _key++) {
+					rates[_key - 3] = arguments[_key];
+				}
+
+				assert.argumentIsArray(rates, 'rates', Rate, 'Rate');
+
+				var converted = void 0;
+
+				if (currency === desiredCurrency) {
+					converted = amount;
+				} else {
+					var numerator = desiredCurrency;
+					var denominator = currency;
+
+					var rate = rates.find(function (r) {
+						return r.numerator === numerator && r.denominator === denominator || r.numerator === denominator && r.denominator === numerator;
+					});
+
+					if (rate) {
+						if (rate.numerator === denominator) {
+							rate = rate.invert();
+						}
+					}
+
+					if (!rate) {
+						throw new Error('Unable to perform conversion, given the rates provided.');
+					}
+
+					converted = amount.multiply(rate.decimal);
+				}
+
+				return converted;
+			}
+		}]);
+
+		return Rate;
+	}();
+
+	var pairExpression = /^\^?([A-Z]{3})([A-Z]{3})$/;
+
+	function getDecimal(value) {
+		if (value instanceof Decimal) {
+			return value;
+		} else {
+			return new Decimal(value);
+		}
+	}
+
+	var parsePair = memoize.simple(function (symbol) {
+		var match = symbol.match(pairExpression);
+
+		if (match === null) {
+			throw new Error('The "pair" argument cannot be parsed.');
+		}
+
+		return {
+			numerator: match[2],
+			denominator: match[1]
+		};
+	});
+
+	return Rate;
+}();
+
+},{"./Currency":15,"./Decimal":17,"./Enum":19,"./assert":25,"./is":30,"./memoize":33}],22:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
@@ -3769,7 +4060,7 @@ module.exports = function () {
 	return Timestamp;
 }();
 
-},{"./assert":24,"./is":29,"moment-timezone":47}],22:[function(require,module,exports){
+},{"./assert":25,"./is":30,"moment-timezone":48}],23:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -3831,10 +4122,11 @@ module.exports = function () {
 		}
 
 		/**
-   * America/Chicago
+   * Given a code, returns the enumeration item.
    *
    * @public
-   * @returns {Timezones}
+   * @param {String} code
+   * @returns {Timezones|null}
    */
 
 		_createClass(Timezones, [{
@@ -3843,6 +4135,19 @@ module.exports = function () {
 				return '[Timezone (name=' + this.code + ')]';
 			}
 		}], [{
+			key: 'parse',
+			value: function parse(code) {
+				return Enum.fromCode(Timezones, code);
+			}
+
+			/**
+    * America/Chicago
+    *
+    * @public
+    * @returns {Timezones}
+    */
+
+		}, {
 			key: 'AMERICA_CHICAGO',
 			get: function get() {
 				return america_chicago;
@@ -3875,7 +4180,7 @@ module.exports = function () {
 	return Timezones;
 }();
 
-},{"./Enum":19,"./assert":24,"./is":29,"./timezone":37}],23:[function(require,module,exports){
+},{"./Enum":19,"./assert":25,"./is":30,"./timezone":38}],24:[function(require,module,exports){
 'use strict';
 
 var assert = require('./assert'),
@@ -4169,7 +4474,7 @@ module.exports = function () {
 	};
 }();
 
-},{"./assert":24,"./is":29}],24:[function(require,module,exports){
+},{"./assert":25,"./is":30}],25:[function(require,module,exports){
 'use strict';
 
 var is = require('./is');
@@ -4315,7 +4620,7 @@ module.exports = function () {
 	};
 }();
 
-},{"./is":29}],25:[function(require,module,exports){
+},{"./is":30}],26:[function(require,module,exports){
 'use strict';
 
 var assert = require('./assert'),
@@ -4484,7 +4789,7 @@ module.exports = function () {
 	};
 }();
 
-},{"./assert":24,"./is":29}],26:[function(require,module,exports){
+},{"./assert":25,"./is":30}],27:[function(require,module,exports){
 'use strict';
 
 var is = require('./is');
@@ -4513,7 +4818,7 @@ module.exports = function () {
   };
 }();
 
-},{"./is":29}],27:[function(require,module,exports){
+},{"./is":30}],28:[function(require,module,exports){
 'use strict';
 
 module.exports = function () {
@@ -4563,7 +4868,7 @@ module.exports = function () {
 	return utilities;
 }();
 
-},{}],28:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 'use strict';
 
 module.exports = function () {
@@ -4606,7 +4911,7 @@ module.exports = function () {
 	};
 }();
 
-},{}],29:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 'use strict';
 
 var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -4821,7 +5126,7 @@ module.exports = function () {
   };
 }();
 
-},{}],30:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 'use strict';
 
 var assert = require('./assert'),
@@ -4868,7 +5173,7 @@ module.exports = function () {
 	return mask;
 }();
 
-},{"./assert":24,"./is":29}],31:[function(require,module,exports){
+},{"./assert":25,"./is":30}],32:[function(require,module,exports){
 'use strict';
 
 var is = require('./is');
@@ -4901,7 +5206,7 @@ module.exports = function () {
 	};
 }();
 
-},{"./is":29}],32:[function(require,module,exports){
+},{"./is":30}],33:[function(require,module,exports){
 'use strict';
 
 var is = require('./is');
@@ -4939,7 +5244,7 @@ module.exports = function () {
 	};
 }();
 
-},{"./is":29}],33:[function(require,module,exports){
+},{"./is":30}],34:[function(require,module,exports){
 'use strict';
 
 var array = require('./array'),
@@ -5081,7 +5386,7 @@ module.exports = function () {
 	return object;
 }();
 
-},{"./array":23,"./is":29}],34:[function(require,module,exports){
+},{"./array":24,"./is":30}],35:[function(require,module,exports){
 'use strict';
 
 var assert = require('./assert');
@@ -5270,7 +5575,7 @@ module.exports = function () {
 	};
 }();
 
-},{"./assert":24}],35:[function(require,module,exports){
+},{"./assert":25}],36:[function(require,module,exports){
 'use strict';
 
 var assert = require('./assert'),
@@ -5292,7 +5597,7 @@ module.exports = function () {
 	};
 }();
 
-},{"./assert":24,"./is":29}],36:[function(require,module,exports){
+},{"./assert":25,"./is":30}],37:[function(require,module,exports){
 'use strict';
 
 var assert = require('./assert'),
@@ -5398,7 +5703,7 @@ module.exports = function () {
 	};
 }();
 
-},{"./assert":24,"./is":29}],37:[function(require,module,exports){
+},{"./assert":25,"./is":30}],38:[function(require,module,exports){
 'use strict';
 
 var moment = require('moment-timezone/builds/moment-timezone-with-data-2010-2020'),
@@ -5452,7 +5757,7 @@ module.exports = function () {
   };
 }();
 
-},{"./assert":24,"moment-timezone/builds/moment-timezone-with-data-2010-2020":45}],38:[function(require,module,exports){
+},{"./assert":25,"moment-timezone/builds/moment-timezone-with-data-2010-2020":46}],39:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -5645,7 +5950,7 @@ module.exports = function () {
 	return Event;
 }();
 
-},{"./../lang/Disposable":18,"./../lang/assert":24}],39:[function(require,module,exports){
+},{"./../lang/Disposable":18,"./../lang/assert":25}],40:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -5876,7 +6181,7 @@ module.exports = function () {
 	return EventMap;
 }();
 
-},{"./../lang/Disposable":18,"./../lang/assert":24,"./Event":38}],40:[function(require,module,exports){
+},{"./../lang/Disposable":18,"./../lang/assert":25,"./Event":39}],41:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -6129,7 +6434,7 @@ module.exports = function () {
 	return Model;
 }();
 
-},{"./../lang/Disposable":18,"./../lang/assert":24,"./../lang/is":29,"./../messaging/Event":38}],41:[function(require,module,exports){
+},{"./../lang/Disposable":18,"./../lang/assert":25,"./../lang/is":30,"./../messaging/Event":39}],42:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -6228,7 +6533,7 @@ module.exports = function () {
 
 			/**
     * Indicates if a path, beyond the base URL, is required.
-    * 
+    *
     * @public
     * @returns {Boolean}
     */
@@ -6280,13 +6585,27 @@ module.exports = function () {
 			}
 
 			/**
+    * Given a code, returns the enumeration item.
+    *
+    * @public
+    * @param {String} code
+    * @returns {RestAction|null}
+    */
+
+		}], [{
+			key: 'parse',
+			value: function parse(code) {
+				return Enum.fromCode(RestAction, code);
+			}
+
+			/**
     * The REST-ful action to create an object.
     *
     * @public
     * @returns {RestAction}
     */
 
-		}], [{
+		}, {
 			key: 'Create',
 			get: function get() {
 				return CREATE;
@@ -6357,7 +6676,7 @@ module.exports = function () {
 	return RestAction;
 }();
 
-},{"./../../lang/Enum":19,"./../../lang/assert":24}],42:[function(require,module,exports){
+},{"./../../lang/Enum":19,"./../../lang/assert":25}],43:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
@@ -6545,7 +6864,7 @@ module.exports = function () {
 	return RestEndpoint;
 }();
 
-},{"./../../lang/assert":24,"./../../lang/attributes":25,"./../../lang/is":29,"./RestAction":41,"./RestParser":43}],43:[function(require,module,exports){
+},{"./../../lang/assert":25,"./../../lang/attributes":26,"./../../lang/is":30,"./RestAction":42,"./RestParser":44}],44:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -6734,7 +7053,7 @@ module.exports = function () {
 	return RestParser;
 }();
 
-},{"./../../lang/assert":24,"./../../serialization/json/Schema":53,"./RestEndpoint":42,"./RestParser":43}],44:[function(require,module,exports){
+},{"./../../lang/assert":25,"./../../serialization/json/Schema":54,"./RestEndpoint":43,"./RestParser":44}],45:[function(require,module,exports){
 /* big.js v3.1.3 https://github.com/MikeMcl/big.js/LICENCE */
 ;(function (global) {
     'use strict';
@@ -7878,7 +8197,7 @@ module.exports = function () {
     }
 })(this);
 
-},{}],45:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 //! moment-timezone.js
 //! version : 0.5.11
 //! Copyright (c) JS Foundation and other contributors
@@ -9080,7 +9399,7 @@ module.exports = function () {
 	return moment;
 }));
 
-},{"moment":49}],46:[function(require,module,exports){
+},{"moment":50}],47:[function(require,module,exports){
 module.exports={
 	"version": "2016j",
 	"zones": [
@@ -9680,11 +9999,11 @@ module.exports={
 		"Pacific/Pohnpei|Pacific/Ponape"
 	]
 }
-},{}],47:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 var moment = module.exports = require("./moment-timezone");
 moment.tz.load(require('./data/packed/latest.json'));
 
-},{"./data/packed/latest.json":46,"./moment-timezone":48}],48:[function(require,module,exports){
+},{"./data/packed/latest.json":47,"./moment-timezone":49}],49:[function(require,module,exports){
 //! moment-timezone.js
 //! version : 0.5.11
 //! Copyright (c) JS Foundation and other contributors
@@ -10287,7 +10606,7 @@ moment.tz.load(require('./data/packed/latest.json'));
 	return moment;
 }));
 
-},{"moment":49}],49:[function(require,module,exports){
+},{"moment":50}],50:[function(require,module,exports){
 //! moment.js
 //! version : 2.18.1
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
@@ -14752,7 +15071,7 @@ return hooks;
 
 })));
 
-},{}],50:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
@@ -14862,7 +15181,7 @@ module.exports = function () {
 	return Component;
 }();
 
-},{"./../../lang/Currency":15,"./../../lang/Money":20,"./DataType":51,"./Field":52}],51:[function(require,module,exports){
+},{"./../../lang/Currency":15,"./../../lang/Money":20,"./DataType":52,"./Field":53}],52:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
@@ -15109,7 +15428,7 @@ module.exports = function () {
 	return DataType;
 }();
 
-},{"./../../lang/Day":16,"./../../lang/Decimal":17,"./../../lang/Enum":19,"./../../lang/Timestamp":21,"./../../lang/assert":24,"./../../lang/is":29}],52:[function(require,module,exports){
+},{"./../../lang/Day":16,"./../../lang/Decimal":17,"./../../lang/Enum":19,"./../../lang/Timestamp":22,"./../../lang/assert":25,"./../../lang/is":30}],53:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
@@ -15200,7 +15519,7 @@ module.exports = function () {
 	return Field;
 }();
 
-},{}],53:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
@@ -15522,7 +15841,7 @@ module.exports = function () {
 	return Schema;
 }();
 
-},{"./../../collections/LinkedList":1,"./../../collections/Tree":4,"./../../lang/assert":24,"./../../lang/functions":28,"./../../lang/is":29,"./Component":50,"./Field":52}],54:[function(require,module,exports){
+},{"./../../collections/LinkedList":1,"./../../collections/Tree":4,"./../../lang/assert":25,"./../../lang/functions":29,"./../../lang/is":30,"./Component":51,"./Field":53}],55:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
@@ -15629,7 +15948,7 @@ module.exports = function () {
 	return ComponentBuilder;
 }();
 
-},{"./../../../lang/assert":24,"./../Component":50,"./../DataType":51,"./../Field":52}],55:[function(require,module,exports){
+},{"./../../../lang/assert":25,"./../Component":51,"./../DataType":52,"./../Field":53}],56:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
@@ -15782,7 +16101,7 @@ module.exports = function () {
 	return SchemaBuilder;
 }();
 
-},{"./../../../lang/assert":24,"./../../../lang/is":29,"./../Component":50,"./../DataType":51,"./../Field":52,"./../Schema":53,"./ComponentBuilder":54}],56:[function(require,module,exports){
+},{"./../../../lang/assert":25,"./../../../lang/is":30,"./../Component":51,"./../DataType":52,"./../Field":53,"./../Schema":54,"./ComponentBuilder":55}],57:[function(require,module,exports){
 'use strict';
 
 var Specification = require('./Specification');
@@ -15793,7 +16112,7 @@ module.exports = function () {
 	return Specification.AndSpecification;
 }();
 
-},{"./Specification":65}],57:[function(require,module,exports){
+},{"./Specification":66}],58:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -15867,7 +16186,7 @@ module.exports = function () {
 	return ContainedSpecification;
 }();
 
-},{"./../lang/assert":24,"./Specification":65}],58:[function(require,module,exports){
+},{"./../lang/assert":25,"./Specification":66}],59:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -15939,7 +16258,7 @@ module.exports = function () {
 	return ContainsSpecification;
 }();
 
-},{"./Specification":65}],59:[function(require,module,exports){
+},{"./Specification":66}],60:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -16004,7 +16323,7 @@ module.exports = function () {
 	return FailSpecification;
 }();
 
-},{"./Specification":65}],60:[function(require,module,exports){
+},{"./Specification":66}],61:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -16071,7 +16390,7 @@ module.exports = function () {
 	return NanSpecification;
 }();
 
-},{"./../lang/is":29,"./Specification":65}],61:[function(require,module,exports){
+},{"./../lang/is":30,"./Specification":66}],62:[function(require,module,exports){
 'use strict';
 
 var Specification = require('./Specification');
@@ -16082,7 +16401,7 @@ module.exports = function () {
 	return Specification.NotSpecification;
 }();
 
-},{"./Specification":65}],62:[function(require,module,exports){
+},{"./Specification":66}],63:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -16149,7 +16468,7 @@ module.exports = function () {
 	return NumericSpecification;
 }();
 
-},{"./../lang/is":29,"./Specification":65}],63:[function(require,module,exports){
+},{"./../lang/is":30,"./Specification":66}],64:[function(require,module,exports){
 'use strict';
 
 var Specification = require('./Specification');
@@ -16160,7 +16479,7 @@ module.exports = function () {
 	return Specification.OrSpecification;
 }();
 
-},{"./Specification":65}],64:[function(require,module,exports){
+},{"./Specification":66}],65:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -16225,7 +16544,7 @@ module.exports = function () {
 	return PassSpecification;
 }();
 
-},{"./Specification":65}],65:[function(require,module,exports){
+},{"./Specification":66}],66:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -16405,7 +16724,7 @@ module.exports = function () {
 	return Specification;
 }();
 
-},{"./../lang/assert":24}],66:[function(require,module,exports){
+},{"./../lang/assert":25}],67:[function(require,module,exports){
 'use strict';
 
 var LinkedList = require('./../../../collections/LinkedList');
@@ -16484,7 +16803,7 @@ describe('When "doe" is used to start a linked list', function () {
 	});
 });
 
-},{"./../../../collections/LinkedList":1}],67:[function(require,module,exports){
+},{"./../../../collections/LinkedList":1}],68:[function(require,module,exports){
 'use strict';
 
 var Queue = require('./../../../collections/Queue');
@@ -16653,7 +16972,7 @@ describe('When a Queue is constructed', function () {
 	});
 });
 
-},{"./../../../collections/Queue":2}],68:[function(require,module,exports){
+},{"./../../../collections/Queue":2}],69:[function(require,module,exports){
 'use strict';
 
 var Stack = require('./../../../collections/Stack');
@@ -16818,7 +17137,7 @@ describe('When a Stack is constructed', function () {
 	});
 });
 
-},{"./../../../collections/Stack":3}],69:[function(require,module,exports){
+},{"./../../../collections/Stack":3}],70:[function(require,module,exports){
 'use strict';
 
 var Tree = require('./../../../collections/Tree');
@@ -16877,7 +17196,7 @@ describe('When a Tree is constructed', function () {
 	});
 });
 
-},{"./../../../collections/Tree":4}],70:[function(require,module,exports){
+},{"./../../../collections/Tree":4}],71:[function(require,module,exports){
 'use strict';
 
 var ComparatorBuilder = require('./../../../../collections/sorting/ComparatorBuilder');
@@ -16967,7 +17286,7 @@ describe('When a ComparatorBuilder is composed with two comparators', function (
     });
 });
 
-},{"./../../../../collections/sorting/ComparatorBuilder":5}],71:[function(require,module,exports){
+},{"./../../../../collections/sorting/ComparatorBuilder":5}],72:[function(require,module,exports){
 'use strict';
 
 var comparators = require('./../../../../collections/sorting/comparators');
@@ -17074,7 +17393,7 @@ describe('When using the "compareStrings" comparator', function () {
 	});
 });
 
-},{"./../../../../collections/sorting/comparators":6}],72:[function(require,module,exports){
+},{"./../../../../collections/sorting/comparators":6}],73:[function(require,module,exports){
 'use strict';
 
 var CompoundMap = require('./../../../../collections/specialized/CompoundMap');
@@ -17194,7 +17513,7 @@ describe('When an CompoundMap is constructed', function () {
 	});
 });
 
-},{"./../../../../collections/specialized/CompoundMap":7}],73:[function(require,module,exports){
+},{"./../../../../collections/specialized/CompoundMap":7}],74:[function(require,module,exports){
 'use strict';
 
 var Disposable = require('./../../../../lang/Disposable');
@@ -17405,7 +17724,7 @@ describe('When an DisposableStack is constructed', function () {
 	});
 });
 
-},{"./../../../../collections/specialized/DisposableStack":8,"./../../../../lang/Disposable":18}],74:[function(require,module,exports){
+},{"./../../../../collections/specialized/DisposableStack":8,"./../../../../lang/Disposable":18}],75:[function(require,module,exports){
 'use strict';
 
 var EvictingList = require('./../../../../collections/specialized/EvictingList');
@@ -17630,7 +17949,7 @@ describe('When an EvictingList is constructed (with a capacity of 3)', function 
 	});
 });
 
-},{"./../../../../collections/specialized/EvictingList":9}],75:[function(require,module,exports){
+},{"./../../../../collections/specialized/EvictingList":9}],76:[function(require,module,exports){
 'use strict';
 
 var EvictingMap = require('./../../../../collections/specialized/EvictingMap');
@@ -17913,7 +18232,7 @@ describe('When an EvictingMap is constructed (with a capacity of 3)', function (
 	});
 });
 
-},{"./../../../../collections/specialized/EvictingMap":10}],76:[function(require,module,exports){
+},{"./../../../../collections/specialized/EvictingMap":10}],77:[function(require,module,exports){
 'use strict';
 
 var PriorityQueue = require('./../../../../collections/specialized/PriorityQueue');
@@ -18093,7 +18412,7 @@ describe('When a Queue is constructed, using a "ladies first" comparator', funct
 	});
 });
 
-},{"./../../../../collections/specialized/PriorityQueue":11}],77:[function(require,module,exports){
+},{"./../../../../collections/specialized/PriorityQueue":11}],78:[function(require,module,exports){
 'use strict';
 
 var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -18168,7 +18487,7 @@ describe('When a CommandHandler is created from a function', function () {
 	});
 });
 
-},{"./../../../commands/CommandHandler":12}],78:[function(require,module,exports){
+},{"./../../../commands/CommandHandler":12}],79:[function(require,module,exports){
 'use strict';
 
 var CommandHandler = require('./../../../commands/CommandHandler');
@@ -18230,7 +18549,7 @@ describe('When a CompositeCommandHandler is created', function () {
 	});
 });
 
-},{"./../../../commands/CommandHandler":12,"./../../../commands/CompositeCommandHandler":13}],79:[function(require,module,exports){
+},{"./../../../commands/CommandHandler":12,"./../../../commands/CompositeCommandHandler":13}],80:[function(require,module,exports){
 'use strict';
 
 var CommandHandler = require('./../../../commands/CommandHandler');
@@ -18312,7 +18631,7 @@ describe('When a MappedCommandHandler is created with two mapped commands', func
 	});
 });
 
-},{"./../../../commands/CommandHandler":12,"./../../../commands/MappedCommandHandler":14}],80:[function(require,module,exports){
+},{"./../../../commands/CommandHandler":12,"./../../../commands/MappedCommandHandler":14}],81:[function(require,module,exports){
 'use strict';
 
 var Day = require('./../../../lang/Day');
@@ -18556,7 +18875,7 @@ describe('When adding days to a Day', function () {
 	});
 });
 
-},{"./../../../lang/Day":16}],81:[function(require,module,exports){
+},{"./../../../lang/Day":16}],82:[function(require,module,exports){
 'use strict';
 
 var Decimal = require('./../../../lang/Decimal');
@@ -18794,7 +19113,7 @@ describe('When instantiating a Decimal', function () {
 	});
 });
 
-},{"./../../../lang/Decimal":17}],82:[function(require,module,exports){
+},{"./../../../lang/Decimal":17}],83:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -18953,7 +19272,7 @@ describe('When a Disposable.fromAction creates a Disposable', function () {
 	});
 });
 
-},{"./../../../lang/Disposable":18}],83:[function(require,module,exports){
+},{"./../../../lang/Disposable":18}],84:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -19039,7 +19358,98 @@ describe('When Enum is extended (as types EnumA and EnumB) and type items are ad
 	});
 });
 
-},{"./../../../lang/Enum":19}],84:[function(require,module,exports){
+},{"./../../../lang/Enum":19}],85:[function(require,module,exports){
+'use strict';
+
+var Currency = require('./../../../lang/Currency');
+var Decimal = require('./../../../lang/Decimal');
+var Rate = require('./../../../lang/Rate');
+
+describe('When parsing an "^EURUSD" rate of 1.2', function () {
+	'use strict';
+
+	var rate;
+
+	beforeEach(function () {
+		rate = Rate.fromPair(1.2, '^EURUSD');
+	});
+
+	it('the quote currency should be USD', function () {
+		expect(rate.quote.code).toEqual('USD');
+	});
+
+	it('the base currency should be EUR', function () {
+		expect(rate.base.code).toEqual('EUR');
+	});
+
+	it('the numerator currency should be USD', function () {
+		expect(rate.numerator.code).toEqual('USD');
+	});
+
+	it('the denominator currency should be EUR', function () {
+		expect(rate.denominator.code).toEqual('EUR');
+	});
+
+	it('the value should be 1.2', function () {
+		expect(rate.decimal.getIsEqual(1.2)).toEqual(true);
+	});
+
+	describe('When converting 10 USD to EUR', function () {
+		it('should be 8.33 EUR', function () {
+			expect(Rate.convert(new Decimal(10), Currency.USD, Currency.EUR, rate).round(2).getIsEqual(8.33)).toEqual(true);
+		});
+	});
+
+	describe('When converting 10 EUR to USD', function () {
+		it('should be 12 USD', function () {
+			expect(Rate.convert(new Decimal(10), Currency.EUR, Currency.USD, rate).round(2).getIsEqual(12)).toEqual(true);
+		});
+	});
+});
+
+describe('When parsing an "^USDEUR" rate of 0.8333', function () {
+	'use strict';
+
+	var rate;
+
+	beforeEach(function () {
+		rate = Rate.fromPair(0.8333, '^USDEUR');
+	});
+
+	it('the quote currency should be EUR', function () {
+		expect(rate.quote.code).toEqual('EUR');
+	});
+
+	it('the base currency should be USD', function () {
+		expect(rate.base.code).toEqual('USD');
+	});
+
+	it('the numerator currency should be EUR', function () {
+		expect(rate.numerator.code).toEqual('EUR');
+	});
+
+	it('the denominator currency should be USD', function () {
+		expect(rate.denominator.code).toEqual('USD');
+	});
+
+	it('the value should be 0.8333', function () {
+		expect(rate.decimal.getIsEqual(0.8333)).toEqual(true);
+	});
+
+	describe('When converting 10 USD to EUR', function () {
+		it('should be 8.33 EUR', function () {
+			expect(Rate.convert(new Decimal(10), Currency.USD, Currency.EUR, rate).round(2).getIsEqual(8.33)).toEqual(true);
+		});
+	});
+
+	describe('When converting 10 EUR to USD', function () {
+		it('should be 12 USD', function () {
+			expect(Rate.convert(new Decimal(10), Currency.EUR, Currency.USD, rate).round(2).getIsEqual(12)).toEqual(true);
+		});
+	});
+});
+
+},{"./../../../lang/Currency":15,"./../../../lang/Decimal":17,"./../../../lang/Rate":21}],86:[function(require,module,exports){
 'use strict';
 
 var Timestamp = require('./../../../lang/Timestamp');
@@ -19090,7 +19500,7 @@ describe('When Timestamp is created from a timestamp (1502372574350)', function 
 	});
 });
 
-},{"./../../../lang/Timestamp":21}],85:[function(require,module,exports){
+},{"./../../../lang/Timestamp":22}],87:[function(require,module,exports){
 'use strict';
 
 var Enum = require('./../../../lang/Enum'),
@@ -19108,7 +19518,7 @@ describe('When accessing static items', function () {
 	});
 });
 
-},{"./../../../lang/Enum":19,"./../../../lang/Timezones":22}],86:[function(require,module,exports){
+},{"./../../../lang/Enum":19,"./../../../lang/Timezones":23}],88:[function(require,module,exports){
 'use strict';
 
 var array = require('./../../../lang/array');
@@ -19725,7 +20135,7 @@ describe('when calculating the "symmetric difference" of two arrays', function (
 	});
 });
 
-},{"./../../../lang/array":23}],87:[function(require,module,exports){
+},{"./../../../lang/array":24}],89:[function(require,module,exports){
 'use strict';
 
 var attributes = require('./../../../lang/attributes');
@@ -20396,7 +20806,7 @@ describe('When "attributes.read" is used with a non-default separator', function
 	});
 });
 
-},{"./../../../lang/attributes":25}],88:[function(require,module,exports){
+},{"./../../../lang/attributes":26}],90:[function(require,module,exports){
 'use strict';
 
 var connection = require('./../../../lang/connection');
@@ -20421,7 +20831,7 @@ describe('When "getIsSecure is invoked', function () {
 	});
 });
 
-},{"./../../../lang/connection":26}],89:[function(require,module,exports){
+},{"./../../../lang/connection":27}],91:[function(require,module,exports){
 'use strict';
 
 var dateUtilities = require('./../../../lang/date');
@@ -20436,7 +20846,7 @@ describe('When extracting the "short" day of week', function () {
 	});
 });
 
-},{"./../../../lang/date":27}],90:[function(require,module,exports){
+},{"./../../../lang/date":28}],92:[function(require,module,exports){
 'use strict';
 
 var functions = require('./../../../lang/functions');
@@ -20469,7 +20879,7 @@ describe('when using the tautology function', function () {
 	});
 });
 
-},{"./../../../lang/functions":28}],91:[function(require,module,exports){
+},{"./../../../lang/functions":29}],93:[function(require,module,exports){
 'use strict';
 
 var is = require('./../../../lang/is');
@@ -21134,7 +21544,7 @@ describe('When checking a large integer (exceeding 32-bits)', function () {
 	});
 });
 
-},{"./../../../lang/is":29}],92:[function(require,module,exports){
+},{"./../../../lang/is":30}],94:[function(require,module,exports){
 'use strict';
 
 var mask = require('./../../../lang/mask');
@@ -21291,7 +21701,7 @@ describe('When working with an empty flags collection', function () {
 	});
 });
 
-},{"./../../../lang/mask":30}],93:[function(require,module,exports){
+},{"./../../../lang/mask":31}],95:[function(require,module,exports){
 'use strict';
 
 var math = require('./../../../lang/math');
@@ -21354,7 +21764,7 @@ describe('When using math.approximate', function () {
 	});
 });
 
-},{"./../../../lang/math":31}],94:[function(require,module,exports){
+},{"./../../../lang/math":32}],96:[function(require,module,exports){
 'use strict';
 
 var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -21452,7 +21862,7 @@ describe('When using memoize.simple', function () {
 	});
 });
 
-},{"./../../../lang/memoize":32}],95:[function(require,module,exports){
+},{"./../../../lang/memoize":33}],97:[function(require,module,exports){
 'use strict';
 
 var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -21705,7 +22115,7 @@ describe('When running a deep comparison', function () {
 	});
 });
 
-},{"./../../../lang/object":33}],96:[function(require,module,exports){
+},{"./../../../lang/object":34}],98:[function(require,module,exports){
 'use strict';
 
 var promise = require('./../../../lang/promise');
@@ -22683,7 +23093,7 @@ describe('When "promise.build" is used to create a promise', function () {
 	});
 });
 
-},{"./../../../lang/promise":34}],97:[function(require,module,exports){
+},{"./../../../lang/promise":35}],99:[function(require,module,exports){
 'use strict';
 
 var random = require('./../../../lang/random');
@@ -22727,7 +23137,7 @@ describe('When generating a random number with a range of multiple values', func
 	});
 });
 
-},{"./../../../lang/random":35}],98:[function(require,module,exports){
+},{"./../../../lang/random":36}],100:[function(require,module,exports){
 'use strict';
 
 var string = require('./../../../lang/string');
@@ -22902,7 +23312,7 @@ describe('When a formattable string ("&startDate={0}&endDate={1}"', function () 
 	});
 });
 
-},{"./../../../lang/string":36}],99:[function(require,module,exports){
+},{"./../../../lang/string":37}],101:[function(require,module,exports){
 'use strict';
 
 var EventMap = require('./../../../messaging/EventMap');
@@ -23080,7 +23490,7 @@ describe('When an EventMap is constructed', function () {
 	});
 });
 
-},{"./../../../messaging/EventMap":39}],100:[function(require,module,exports){
+},{"./../../../messaging/EventMap":40}],102:[function(require,module,exports){
 'use strict';
 
 var Disposable = require('./../../../lang/Disposable');
@@ -23264,7 +23674,7 @@ describe('When an Event is constructed', function () {
 	});
 });
 
-},{"./../../../lang/Disposable":18,"./../../../messaging/Event":38}],101:[function(require,module,exports){
+},{"./../../../lang/Disposable":18,"./../../../messaging/Event":39}],103:[function(require,module,exports){
 'use strict';
 
 var Disposable = require('./../../../lang/Disposable');
@@ -23401,7 +23811,7 @@ describe('When an Model is constructed with "firstName" and "lastName" propertie
 	});
 });
 
-},{"./../../../lang/Disposable":18,"./../../../models/Model":40}],102:[function(require,module,exports){
+},{"./../../../lang/Disposable":18,"./../../../models/Model":41}],104:[function(require,module,exports){
 'use strict';
 
 var RestParser = require('./../../../../network/rest/RestParser');
@@ -23494,7 +23904,7 @@ describe('Using another customized JSON REST parser is created', function () {
 	});
 });
 
-},{"./../../../../network/rest/RestParser":43}],103:[function(require,module,exports){
+},{"./../../../../network/rest/RestParser":44}],105:[function(require,module,exports){
 'use strict';
 
 var Currency = require('./../../../../lang/Currency');
@@ -24043,7 +24453,7 @@ describe('When a schema is created (having a nested group of optional fields)', 
 	});
 });
 
-},{"./../../../../lang/Currency":15,"./../../../../lang/Day":16,"./../../../../lang/Money":20,"./../../../../serialization/json/Component":50,"./../../../../serialization/json/DataType":51,"./../../../../serialization/json/Field":52,"./../../../../serialization/json/Schema":53}],104:[function(require,module,exports){
+},{"./../../../../lang/Currency":15,"./../../../../lang/Day":16,"./../../../../lang/Money":20,"./../../../../serialization/json/Component":51,"./../../../../serialization/json/DataType":52,"./../../../../serialization/json/Field":53,"./../../../../serialization/json/Schema":54}],106:[function(require,module,exports){
 'use strict';
 
 var Component = require('./../../../../../serialization/json/Component');
@@ -24200,7 +24610,7 @@ describe('When using the schema builder to create a "Person" schema', function (
 	});
 });
 
-},{"./../../../../../serialization/json/Component":50,"./../../../../../serialization/json/DataType":51,"./../../../../../serialization/json/builders/SchemaBuilder":55}],105:[function(require,module,exports){
+},{"./../../../../../serialization/json/Component":51,"./../../../../../serialization/json/DataType":52,"./../../../../../serialization/json/builders/SchemaBuilder":56}],107:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -24340,7 +24750,7 @@ describe('When an AndSpecification is constructed', function () {
 	});
 });
 
-},{"./../../../specifications/AndSpecification":56,"./../../../specifications/Specification":65}],106:[function(require,module,exports){
+},{"./../../../specifications/AndSpecification":57,"./../../../specifications/Specification":66}],108:[function(require,module,exports){
 'use strict';
 
 var ContainedSpecification = require('./../../../specifications/ContainedSpecification');
@@ -24404,7 +24814,7 @@ describe('When a ContainedSpecification is constructed', function () {
 	});
 });
 
-},{"./../../../specifications/ContainedSpecification":57}],107:[function(require,module,exports){
+},{"./../../../specifications/ContainedSpecification":58}],109:[function(require,module,exports){
 'use strict';
 
 var ContainsSpecification = require('./../../../specifications/ContainsSpecification');
@@ -24456,7 +24866,7 @@ describe('When a ContainsSpecification is constructed', function () {
 	});
 });
 
-},{"./../../../specifications/ContainsSpecification":58}],108:[function(require,module,exports){
+},{"./../../../specifications/ContainsSpecification":59}],110:[function(require,module,exports){
 'use strict';
 
 var FailSpecification = require('./../../../specifications/FailSpecification');
@@ -24508,7 +24918,7 @@ describe('When a FailSpecification is constructed', function () {
 	});
 });
 
-},{"./../../../specifications/FailSpecification":59}],109:[function(require,module,exports){
+},{"./../../../specifications/FailSpecification":60}],111:[function(require,module,exports){
 'use strict';
 
 var NanSpecification = require('./../../../specifications/NanSpecification');
@@ -24583,7 +24993,7 @@ describe('When a NanSpecification is constructed', function () {
 	});
 });
 
-},{"./../../../specifications/NanSpecification":60}],110:[function(require,module,exports){
+},{"./../../../specifications/NanSpecification":61}],112:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -24793,7 +25203,7 @@ describe('When a Specification (that always succeeds) is constructed', function 
 	});
 });
 
-},{"./../../../specifications/NotSpecification":61,"./../../../specifications/Specification":65}],111:[function(require,module,exports){
+},{"./../../../specifications/NotSpecification":62,"./../../../specifications/Specification":66}],113:[function(require,module,exports){
 'use strict';
 
 var NumericSpecification = require('./../../../specifications/NumericSpecification');
@@ -24856,7 +25266,7 @@ describe('When a NumericSpecification is constructed', function () {
 	});
 });
 
-},{"./../../../specifications/NumericSpecification":62}],112:[function(require,module,exports){
+},{"./../../../specifications/NumericSpecification":63}],114:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -24996,7 +25406,7 @@ describe('When an OrSpecification is constructed', function () {
 	});
 });
 
-},{"./../../../specifications/OrSpecification":63,"./../../../specifications/Specification":65}],113:[function(require,module,exports){
+},{"./../../../specifications/OrSpecification":64,"./../../../specifications/Specification":66}],115:[function(require,module,exports){
 'use strict';
 
 var PassSpecification = require('./../../../specifications/PassSpecification');
@@ -25048,7 +25458,7 @@ describe('When a PassSpecification is constructed', function () {
 	});
 });
 
-},{"./../../../specifications/PassSpecification":64}],114:[function(require,module,exports){
+},{"./../../../specifications/PassSpecification":65}],116:[function(require,module,exports){
 'use strict';
 
 var RateLimiter = require('./../../../timing/RateLimiter');
@@ -25282,7 +25692,7 @@ describe('When a RateLimiter is constructed (2 execution per 25 milliseconds)', 
 	});
 });
 
-},{"./../../../timing/RateLimiter":118}],115:[function(require,module,exports){
+},{"./../../../timing/RateLimiter":120}],117:[function(require,module,exports){
 'use strict';
 
 var Scheduler = require('./../../../timing/Scheduler');
@@ -25506,7 +25916,7 @@ describe('When a backoff is used', function () {
 	});
 });
 
-},{"./../../../timing/Scheduler":119}],116:[function(require,module,exports){
+},{"./../../../timing/Scheduler":121}],118:[function(require,module,exports){
 'use strict';
 
 var Serializer = require('./../../../timing/Serializer');
@@ -25643,7 +26053,7 @@ function getSpy(results, fail) {
 	});
 }
 
-},{"./../../../timing/Serializer":120}],117:[function(require,module,exports){
+},{"./../../../timing/Serializer":122}],119:[function(require,module,exports){
 'use strict';
 
 var WindowCounter = require('./../../../timing/WindowCounter');
@@ -25709,7 +26119,7 @@ describe('When a WindowCounter is constructed', function () {
 	});
 });
 
-},{"./../../../timing/WindowCounter":121}],118:[function(require,module,exports){
+},{"./../../../timing/WindowCounter":123}],120:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -25876,7 +26286,7 @@ module.exports = function () {
 	return RateLimiter;
 }();
 
-},{"./../collections/Queue":2,"./../lang/Disposable":18,"./../lang/assert":24,"./../lang/promise":34,"./Scheduler":119}],119:[function(require,module,exports){
+},{"./../collections/Queue":2,"./../lang/Disposable":18,"./../lang/assert":25,"./../lang/promise":35,"./Scheduler":121}],121:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -26130,7 +26540,7 @@ module.exports = function () {
 	return Scheduler;
 }();
 
-},{"./../lang/Disposable":18,"./../lang/assert":24,"./../lang/is":29,"./../lang/object":33,"./../lang/promise":34}],120:[function(require,module,exports){
+},{"./../lang/Disposable":18,"./../lang/assert":25,"./../lang/is":30,"./../lang/object":34,"./../lang/promise":35}],122:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -26336,7 +26746,7 @@ module.exports = function () {
 	return Serializer;
 }();
 
-},{"./../collections/Queue":2,"./../lang/Disposable":18,"./../lang/assert":24,"./../lang/promise":34}],121:[function(require,module,exports){
+},{"./../collections/Queue":2,"./../lang/Disposable":18,"./../lang/assert":25,"./../lang/promise":35}],123:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () {
@@ -26497,4 +26907,4 @@ module.exports = function () {
 	return WindowCounter;
 }();
 
-},{"./../collections/Queue":2,"./../lang/assert":24}]},{},[66,67,70,71,72,73,74,75,76,68,69,77,78,79,86,87,88,89,80,81,82,83,90,91,92,93,94,95,96,97,98,84,85,99,100,101,102,104,103,105,106,107,108,109,110,111,112,113,114,115,116,117]);
+},{"./../collections/Queue":2,"./../lang/assert":25}]},{},[67,68,71,72,73,74,75,76,77,69,70,78,79,80,88,89,90,91,81,82,83,84,92,93,94,95,96,97,98,99,85,100,86,87,101,102,103,104,106,105,107,108,109,110,111,112,113,114,115,116,117,118,119]);
