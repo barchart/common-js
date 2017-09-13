@@ -35,6 +35,17 @@ module.exports = (() => {
 		}
 
 		/**
+		 * Given a code, returns the enumeration item.
+		 *
+		 * @public
+		 * @param {String} code
+		 * @returns {Currency|null}
+		 */
+		static parse(code) {
+			return Enum.fromCode(Currency, code);
+		}
+
+		/**
 		 * The Canadian Dollar.
 		 *
 		 * @public
@@ -50,7 +61,7 @@ module.exports = (() => {
 		 * @public
 		 * @returns {Currency}
 		 */
-		static EUR() {
+		static get EUR() {
 			return eur;
 		}
 

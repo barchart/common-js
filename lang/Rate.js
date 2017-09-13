@@ -3,7 +3,8 @@ const assert = require('./assert'),
 	memoize = require('./memoize');
 
 const Currency = require('./Currency'),
-	Decimal = require('./Decimal');
+	Decimal = require('./Decimal'),
+	Enum = require('./Enum');
 
 module.exports = (() => {
 	'use strict';
@@ -27,7 +28,13 @@ module.exports = (() => {
 				throw new Error('A rate cannot use two identical currencies.');
 			}
 
-			this._decimal = getDecimal(value);
+			const decimal = getDecimal(value);
+
+			if (!decimal.getIsPositive()) {
+				throw new Error('Rate value must be positive.');
+			}
+
+			this._decimal = decimal;
 			this._numerator = numerator;
 			this._denominator = denominator;
 		}
@@ -87,6 +94,17 @@ module.exports = (() => {
 		}
 
 		/**
+		 * Returns the equivalent rate with the numerator and denominator (i.e. the qoute and base)
+		 * currencies.
+		 *
+		 * @public
+		 * @returns {Rate}
+		 */
+		invert() {
+			return new Rate(Decimal.ONE.divide(this._decimal), this._denominator, this._numerator);
+		}
+
+		/**
 		 * Formats the currency pair as a string (e.g. "EURUSD" or "^EURUSD").
 		 *
 		 * @public
@@ -104,13 +122,58 @@ module.exports = (() => {
 		 *
 		 * @public
 		 * @param {Number|String|Decimal} value - The rate.
-		 * @param {Currency} pair - A string that can be parsed as a currency pair.
+		 * @param {String} symbol - A string that can be parsed as a currency pair.
 		 * @returns {Rate}
 		 */
-		static fromPair(value, pair) {
-			assert.argumentIsRequired(pair, 'pair', String);
+		static fromPair(value, symbol) {
+			assert.argumentIsRequired(symbol, 'symbol', String);
 
-			return new Rate(value, pair.numerator, pair.denominator);
+			const pair = parsePair(symbol);
+
+			return new Rate(value, Currency.parse(pair.numerator), Currency.parse(pair.denominator));
+		}
+
+		/**
+		 * Given a {@link Decimal} value in a known currency, output
+		 * a {@link Decimal} converted to an alternate currency.
+		 *
+		 * @public
+		 * @param {Decimal} amount - The amount to convert.
+		 * @param {Currency} currency - The currency of the amount.
+		 * @param {Currency} desiredCurrency - The currency to convert to.
+		 * @param {...Rate} rates - A list of exchange rates to be used for the conversion.
+		 * @returns {Decimal}
+		 */
+		static convert(amount, currency, desiredCurrency, ...rates) {
+			assert.argumentIsRequired(amount, 'amount', Decimal, 'Decimal');
+			assert.argumentIsRequired(currency, 'currency', Currency, 'Currency');
+			assert.argumentIsRequired(desiredCurrency, 'desiredCurrency', Currency, 'Currency');
+			assert.argumentIsArray(rates, 'rates', Rate, 'Rate');
+
+			let converted;
+
+			if (currency === desiredCurrency) {
+				converted = amount;
+			} else {
+				const numerator = desiredCurrency;
+				const denominator = currency;
+
+				let rate = rates.find(r => (r.numerator === numerator && r.denominator === denominator) || (r.numerator === denominator && r.denominator === numerator));
+
+				if (rate) {
+					if (rate.numerator === denominator) {
+						rate = rate.invert();
+					}
+				}
+
+				if (!rate) {
+					throw new Error('Unable to perform conversion, given the rates provided.');
+				}
+
+				converted = amount.multiply(rate.decimal);
+			}
+
+			return converted;
 		}
 
 		toString() {
@@ -128,8 +191,8 @@ module.exports = (() => {
 		}
 	}
 
-	const parsePair = memoize.simple((pair) => {
-		const match = pair.match(pairExpression);
+	const parsePair = memoize.simple((symbol) => {
+		const match = symbol.match(pairExpression);
 
 		if (match === null) {
 			throw new Error('The "pair" argument cannot be parsed.');

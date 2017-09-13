@@ -62,6 +62,12 @@ module.exports = (() => {
 			return other === this || (other instanceof Enum && other.constructor === this.constructor && other.code === this.code);
 		}
 
+		/**
+		 * Returns the JSON representation.
+		 *
+		 * @public
+		 * @returns {String}
+		 */
 		toJSON() {
 			return this.code;
 		}
@@ -72,7 +78,7 @@ module.exports = (() => {
 		 *
 		 * @param {Function} type - The enumeration type.
 		 * @param {String} code - The enumeration item's code.
-		 * @returns {Enum|null}
+		 * @returns {*|null}
 		 */
 		static fromCode(type, code) {
 			return Enum.getItems(type).find(x => x.code === code) || null;
