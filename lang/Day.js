@@ -100,6 +100,39 @@ module.exports = (() => {
 		}
 
 		/**
+		 * Indicates if another {@link Day} occurs before the current instance.
+		 *
+		 * @public
+		 * @param {Day} other
+		 * @returns {boolean}
+		 */
+		getIsBefore(other) {
+			return Day.compareDays(this, other) > 0;
+		}
+
+		/**
+		 * Indicates if another {@link Day} occurs after the current instance.
+		 *
+		 * @public
+		 * @param {Day} other
+		 * @returns {boolean}
+		 */
+		getIsAfter(other) {
+			return Day.compareDays(this, other) < 0;
+		}
+
+		/**
+		 * Indicates if another {@link Day} occurs after the current instance.
+		 *
+		 * @public
+		 * @param {Day} other
+		 * @returns {boolean}
+		 */
+		getIsEqual(other) {
+			return Day.compareDays(this, other) === 0;
+		}
+
+		/**
 		 * The year.
 		 *
 		 * @public
