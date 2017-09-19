@@ -1,5 +1,47 @@
 var Day = require('./../../../lang/Day');
 
+describe('When "1900-01-01 is parsed as a Day', function() {
+	'use strict';
+
+	var day;
+
+	beforeEach(function() {
+		day = Day.parse('1900-01-01');
+	});
+
+	it('the year should be 1900', function() {
+		expect(day.year).toEqual(1900);
+	});
+
+	it('the month should be 1', function() {
+		expect(day.month).toEqual(1);
+	});
+
+	it('the day should be 1', function() {
+		expect(day.day).toEqual(1);
+	});
+
+	describe('and 41635 is added to the Day', function() {
+		var future;
+
+		beforeEach(function() {
+			future = day.addDays(41635);
+		});
+
+		it('the year should be 2013', function() {
+			expect(future.year).toEqual(2013);
+		});
+
+		it('the month should be 12', function() {
+			expect(future.month).toEqual(12);
+		});
+
+		it('the day should be 29', function() {
+			expect(future.day).toEqual(29);
+		});
+	});
+});
+
 describe('When "2017-08-31 is parsed as a Day', function() {
 	'use strict';
 
