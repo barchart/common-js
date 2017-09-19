@@ -107,7 +107,7 @@ module.exports = (() => {
 		 * @returns {boolean}
 		 */
 		getIsBefore(other) {
-			return Day.compareDays(this, other) > 0;
+			return Day.compareDays(this, other) < 0;
 		}
 
 		/**
@@ -118,7 +118,7 @@ module.exports = (() => {
 		 * @returns {boolean}
 		 */
 		getIsAfter(other) {
-			return Day.compareDays(this, other) < 0;
+			return Day.compareDays(this, other) > 0;
 		}
 
 		/**
