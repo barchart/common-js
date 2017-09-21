@@ -1,6 +1,5 @@
 const assert = require('./assert'),
 	Enum = require('./Enum'),
-	is = require('./is'),
 	timezone = require('./timezone');
 
 module.exports = (() => {
