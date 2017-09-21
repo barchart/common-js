@@ -2470,6 +2470,48 @@ module.exports = function () {
 			}
 
 			/**
+    * Indicates if another {@link Day} occurs before the current instance.
+    *
+    * @public
+    * @param {Day} other
+    * @returns {boolean}
+    */
+
+		}, {
+			key: 'getIsBefore',
+			value: function getIsBefore(other) {
+				return Day.compareDays(this, other) < 0;
+			}
+
+			/**
+    * Indicates if another {@link Day} occurs after the current instance.
+    *
+    * @public
+    * @param {Day} other
+    * @returns {boolean}
+    */
+
+		}, {
+			key: 'getIsAfter',
+			value: function getIsAfter(other) {
+				return Day.compareDays(this, other) > 0;
+			}
+
+			/**
+    * Indicates if another {@link Day} occurs after the current instance.
+    *
+    * @public
+    * @param {Day} other
+    * @returns {boolean}
+    */
+
+		}, {
+			key: 'getIsEqual',
+			value: function getIsEqual(other) {
+				return Day.compareDays(this, other) === 0;
+			}
+
+			/**
     * The year.
     *
     * @public
@@ -4095,7 +4137,6 @@ function _inherits(subClass, superClass) {
 
 var assert = require('./assert'),
     Enum = require('./Enum'),
-    is = require('./is'),
     timezone = require('./timezone');
 
 module.exports = function () {
@@ -4180,7 +4221,7 @@ module.exports = function () {
 	return Timezones;
 }();
 
-},{"./Enum":19,"./assert":25,"./is":30,"./timezone":38}],24:[function(require,module,exports){
+},{"./Enum":19,"./assert":25,"./timezone":38}],24:[function(require,module,exports){
 'use strict';
 
 var assert = require('./assert'),
@@ -18872,6 +18913,98 @@ describe('When adding days to a Day', function () {
 		expect(then.year).toEqual(2020);
 		expect(then.month).toEqual(3);
 		expect(then.day).toEqual(1);
+	});
+});
+
+describe('When "1900-01-01 is parsed as a Day', function () {
+	'use strict';
+
+	var day;
+
+	beforeEach(function () {
+		day = Day.parse('1900-01-01');
+	});
+
+	it('the year should be 1900', function () {
+		expect(day.year).toEqual(1900);
+	});
+
+	it('the month should be 1', function () {
+		expect(day.month).toEqual(1);
+	});
+
+	it('the day should be 1', function () {
+		expect(day.day).toEqual(1);
+	});
+
+	describe('and 41635 days are added', function () {
+		var future;
+
+		beforeEach(function () {
+			future = day.addDays(41635);
+		});
+
+		it('the year should be 2013', function () {
+			expect(future.year).toEqual(2013);
+		});
+
+		it('the month should be 12', function () {
+			expect(future.month).toEqual(12);
+		});
+
+		it('the day should be 29', function () {
+			expect(future.day).toEqual(29);
+		});
+	});
+});
+
+describe('When comparing days', function () {
+	it('The day "2017-07-18" should be before "2017-07-19"', function () {
+		expect(Day.parse('2017-07-18').getIsBefore(Day.parse('2017-07-19'))).toEqual(true);
+	});
+
+	it('The day "2017-07-18" should be before "2017-08-18"', function () {
+		expect(Day.parse('2017-07-18').getIsBefore(Day.parse('2017-08-18'))).toEqual(true);
+	});
+
+	it('The day "2017-07-18" should be before "2018-07-18"', function () {
+		expect(Day.parse('2017-07-18').getIsBefore(Day.parse('2018-07-18'))).toEqual(true);
+	});
+
+	it('The day "2017-07-18" should not be after "2017-07-19"', function () {
+		expect(Day.parse('2017-07-18').getIsAfter(Day.parse('2017-07-19'))).toEqual(false);
+	});
+
+	it('The day "2017-07-18" should not be after "2017-08-18"', function () {
+		expect(Day.parse('2017-07-18').getIsAfter(Day.parse('2017-08-18'))).toEqual(false);
+	});
+
+	it('The day "2017-07-18" should bit be afte "2018-07-18"', function () {
+		expect(Day.parse('2017-07-18').getIsAfter(Day.parse('2018-07-18'))).toEqual(false);
+	});
+
+	it('The day "2017-07-18" should not be before "2017-07-17"', function () {
+		expect(Day.parse('2017-07-18').getIsBefore(Day.parse('2017-07-17'))).toEqual(false);
+	});
+
+	it('The day "2017-07-18" should not be before "2017-06-18"', function () {
+		expect(Day.parse('2017-07-18').getIsBefore(Day.parse('2017-06-18'))).toEqual(false);
+	});
+
+	it('The day "2017-07-18" should not be before "2016-07-18"', function () {
+		expect(Day.parse('2017-07-18').getIsBefore(Day.parse('2016-07-18'))).toEqual(false);
+	});
+
+	it('The day "2017-07-18" should be after "2017-07-17"', function () {
+		expect(Day.parse('2017-07-18').getIsAfter(Day.parse('2017-07-17'))).toEqual(true);
+	});
+
+	it('The day "2017-07-18" should be after "2017-06-18"', function () {
+		expect(Day.parse('2017-07-18').getIsAfter(Day.parse('2017-06-18'))).toEqual(true);
+	});
+
+	it('The day "2017-07-18" should be after "2016-07-18"', function () {
+		expect(Day.parse('2017-07-18').getIsAfter(Day.parse('2016-07-18'))).toEqual(true);
 	});
 });
 

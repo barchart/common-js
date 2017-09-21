@@ -2557,6 +2557,48 @@ module.exports = function () {
 			}
 
 			/**
+    * Indicates if another {@link Day} occurs before the current instance.
+    *
+    * @public
+    * @param {Day} other
+    * @returns {boolean}
+    */
+
+		}, {
+			key: 'getIsBefore',
+			value: function getIsBefore(other) {
+				return Day.compareDays(this, other) < 0;
+			}
+
+			/**
+    * Indicates if another {@link Day} occurs after the current instance.
+    *
+    * @public
+    * @param {Day} other
+    * @returns {boolean}
+    */
+
+		}, {
+			key: 'getIsAfter',
+			value: function getIsAfter(other) {
+				return Day.compareDays(this, other) > 0;
+			}
+
+			/**
+    * Indicates if another {@link Day} occurs after the current instance.
+    *
+    * @public
+    * @param {Day} other
+    * @returns {boolean}
+    */
+
+		}, {
+			key: 'getIsEqual',
+			value: function getIsEqual(other) {
+				return Day.compareDays(this, other) === 0;
+			}
+
+			/**
     * The year.
     *
     * @public
@@ -4182,7 +4224,6 @@ function _inherits(subClass, superClass) {
 
 var assert = require('./assert'),
     Enum = require('./Enum'),
-    is = require('./is'),
     timezone = require('./timezone');
 
 module.exports = function () {
@@ -4267,7 +4308,7 @@ module.exports = function () {
 	return Timezones;
 }();
 
-},{"./Enum":22,"./assert":28,"./is":35,"./timezone":43}],27:[function(require,module,exports){
+},{"./Enum":22,"./assert":28,"./timezone":43}],27:[function(require,module,exports){
 'use strict';
 
 var assert = require('./assert'),
