@@ -4277,7 +4277,7 @@ module.exports = function () {
 
 		/**
    * Splits array into groups and returns an object (where the properties have
-   * are arrays). Unlike the indexBy function, there can be many items
+   * arrays). Unlike the indexBy function, there can be many items
    * which share the same key.
    *
    * @static
@@ -4300,6 +4300,38 @@ module.exports = function () {
 
 				return groups;
 			}, {});
+		},
+
+		/**
+   * Splits array into groups and returns an array of arrays where the items of each
+   * nested array share a common key.
+   *
+   * @static
+   * @param {Array} a
+   * @param {Function} keySelector - The function, when applied to an item yields a key.
+   * @returns {Array}
+   */
+		batchBy: function batchBy(a, keySelector) {
+			assert.argumentIsArray(a, 'a');
+			assert.argumentIsRequired(keySelector, 'keySelector', Function);
+
+			var currentKey = null;
+			var currentBatch = null;
+
+			return a.reduce(function (batches, item) {
+				var key = keySelector(item);
+
+				if (currentBatch === null || currentKey !== key) {
+					currentKey = key;
+
+					currentBatch = [];
+					batches.push(currentBatch);
+				}
+
+				currentBatch.push(item);
+
+				return batches;
+			}, []);
 		},
 
 		/**
@@ -7305,25 +7337,28 @@ module.exports = function () {
             e = n.length;
         }
 
+        nL = n.length;
+
         // Determine leading zeros.
-        for (i = 0; n.charAt(i) == '0'; i++) {
+        for (i = 0; i < nL && n.charAt(i) == '0'; i++) {
         }
 
-        if (i == (nL = n.length)) {
+        if (i == nL) {
 
             // Zero.
             x.c = [ x.e = 0 ];
         } else {
 
             // Determine trailing zeros.
-            for (; n.charAt(--nL) == '0';) {
+            for (; nL > 0 && n.charAt(--nL) == '0';) {
             }
 
             x.e = e - i - 1;
             x.c = [];
 
             // Convert string to array of digits without leading/trailing zeros.
-            for (e = 0; i <= nL; x.c[e++] = +n.charAt(i++)) {
+            //for (e = 0; i <= nL; x.c[e++] = +n.charAt(i++)) {
+            for (; i <= nL; x.c.push(+n.charAt(i++))) {
             }
         }
 
@@ -8231,6 +8266,7 @@ module.exports = function () {
     // Node and other CommonJS-like environments that support module.exports.
     } else if (typeof module !== 'undefined' && module.exports) {
         module.exports = Big;
+        module.exports.Big = Big;
 
     //Browser.
     } else {
@@ -19955,6 +19991,66 @@ describe('when grouping an array', function () {
 			it('should have the first object at key one', function () {
 				expect(groups[3]).toBe(three);
 			});
+		});
+	});
+});
+
+describe('when batching an array', function () {
+	describe('when keys are sorted', function () {
+		var batches;
+		var one, two, three, four, five;
+
+		beforeEach(function () {
+			batches = array.batchBy([one = { value: 'a' }, two = { value: 'b' }, three = { value: 'b' }, four = { value: 'c' }, five = { value: 'c' }], function (item) {
+				return item.value;
+			});
+		});
+
+		it('should contain 3 batches', function () {
+			expect(batches.length).toEqual(3);
+		});
+
+		it('should have 1 item in first batch', function () {
+			expect(batches[0].length).toEqual(1);
+		});
+
+		it('should have 2 items in second batch', function () {
+			expect(batches[1].length).toEqual(2);
+		});
+
+		it('should have 2 items in third batch', function () {
+			expect(batches[2].length).toEqual(2);
+		});
+	});
+
+	describe('when keys are not sorted', function () {
+		var batches;
+		var one, two, three, four, five;
+
+		beforeEach(function () {
+			batches = array.batchBy([one = { value: 'a' }, two = { value: 'b' }, three = { value: 'c' }, four = { value: 'a' }, five = { value: 'a' }], function (item) {
+				return item.value;
+			});
+		});
+
+		it('should contain 4 batches', function () {
+			expect(batches.length).toEqual(4);
+		});
+
+		it('should have 1 item in first batch', function () {
+			expect(batches[0].length).toEqual(1);
+		});
+
+		it('should have 1 item in second batch', function () {
+			expect(batches[1].length).toEqual(1);
+		});
+
+		it('should have 1 item in third batch', function () {
+			expect(batches[2].length).toEqual(1);
+		});
+
+		it('should have 2 items in fourth batch', function () {
+			expect(batches[3].length).toEqual(2);
 		});
 	});
 });

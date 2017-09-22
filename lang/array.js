@@ -48,7 +48,7 @@ module.exports = (() => {
 
 		/**
 		 * Splits array into groups and returns an object (where the properties have
-		 * are arrays). Unlike the indexBy function, there can be many items
+		 * arrays). Unlike the indexBy function, there can be many items
 		 * which share the same key.
 		 *
 		 * @static
@@ -71,6 +71,38 @@ module.exports = (() => {
 
 				return groups;
 			}, { });
+		},
+
+		/**
+		 * Splits array into groups and returns an array of arrays where the items of each
+		 * nested array share a common key.
+		 *
+		 * @static
+		 * @param {Array} a
+		 * @param {Function} keySelector - The function, when applied to an item yields a key.
+		 * @returns {Array}
+		 */
+		batchBy(a, keySelector) {
+			assert.argumentIsArray(a, 'a');
+			assert.argumentIsRequired(keySelector, 'keySelector', Function);
+
+			let currentKey = null;
+			let currentBatch = null;
+
+			return a.reduce((batches, item) => {
+				const key = keySelector(item);
+
+				if (currentBatch === null || currentKey !== key) {
+					currentKey = key;
+
+					currentBatch = [];
+					batches.push(currentBatch);
+				}
+
+				currentBatch.push(item);
+
+				return batches;
+			}, []);
 		},
 
 		/**

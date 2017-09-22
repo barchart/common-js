@@ -297,6 +297,62 @@ describe('when grouping an array', function() {
 	});
 });
 
+describe('when batching an array', function() {
+	describe('when keys are sorted', function() {
+		var batches;
+		var one, two, three, four, five;
+
+		beforeEach(function() {
+			batches = array.batchBy([ one = { value: 'a' }, two = { value: 'b' }, three ={ value: 'b' }, four ={ value: 'c' }, five ={ value: 'c' } ], function(item) { return item.value; });
+		});
+
+		it('should contain 3 batches', function() {
+			expect(batches.length).toEqual(3);
+		});
+
+		it('should have 1 item in first batch', function() {
+			expect(batches[0].length).toEqual(1);
+		});
+
+		it('should have 2 items in second batch', function() {
+			expect(batches[1].length).toEqual(2);
+		});
+
+		it('should have 2 items in third batch', function() {
+			expect(batches[2].length).toEqual(2);
+		});
+	});
+
+	describe('when keys are not sorted', function() {
+		var batches;
+		var one, two, three, four, five;
+
+		beforeEach(function() {
+			batches = array.batchBy([ one = { value: 'a' }, two = { value: 'b' }, three ={ value: 'c' }, four ={ value: 'a' }, five ={ value: 'a' } ], function(item) { return item.value; });
+		});
+
+		it('should contain 4 batches', function() {
+			expect(batches.length).toEqual(4);
+		});
+
+		it('should have 1 item in first batch', function() {
+			expect(batches[0].length).toEqual(1);
+		});
+
+		it('should have 1 item in second batch', function() {
+			expect(batches[1].length).toEqual(1);
+		});
+
+		it('should have 1 item in third batch', function() {
+			expect(batches[2].length).toEqual(1);
+		});
+
+		it('should have 2 items in fourth batch', function() {
+			expect(batches[3].length).toEqual(2);
+		});
+	});
+});
+
 describe('when calculating the "difference" between two arrays', function() {
 	describe('and the arrays are empty', function() {
 		var difference;
