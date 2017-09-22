@@ -4364,7 +4364,7 @@ module.exports = function () {
 
 		/**
    * Splits array into groups and returns an object (where the properties have
-   * are arrays). Unlike the indexBy function, there can be many items
+   * arrays). Unlike the indexBy function, there can be many items
    * which share the same key.
    *
    * @static
@@ -4387,6 +4387,38 @@ module.exports = function () {
 
 				return groups;
 			}, {});
+		},
+
+		/**
+   * Splits array into groups and returns an array of arrays where the items of each
+   * nested array share a common key.
+   *
+   * @static
+   * @param {Array} a
+   * @param {Function} keySelector - The function, when applied to an item yields a key.
+   * @returns {Array}
+   */
+		batchBy: function batchBy(a, keySelector) {
+			assert.argumentIsArray(a, 'a');
+			assert.argumentIsRequired(keySelector, 'keySelector', Function);
+
+			var currentKey = null;
+			var currentBatch = null;
+
+			return a.reduce(function (batches, item) {
+				var key = keySelector(item);
+
+				if (currentBatch === null || currentKey !== key) {
+					currentKey = key;
+
+					currentBatch = [];
+					batches.push(currentBatch);
+				}
+
+				currentBatch.push(item);
+
+				return batches;
+			}, []);
 		},
 
 		/**
@@ -7852,25 +7884,28 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
             e = n.length;
         }
 
+        nL = n.length;
+
         // Determine leading zeros.
-        for (i = 0; n.charAt(i) == '0'; i++) {
+        for (i = 0; i < nL && n.charAt(i) == '0'; i++) {
         }
 
-        if (i == (nL = n.length)) {
+        if (i == nL) {
 
             // Zero.
             x.c = [ x.e = 0 ];
         } else {
 
             // Determine trailing zeros.
-            for (; n.charAt(--nL) == '0';) {
+            for (; nL > 0 && n.charAt(--nL) == '0';) {
             }
 
             x.e = e - i - 1;
             x.c = [];
 
             // Convert string to array of digits without leading/trailing zeros.
-            for (e = 0; i <= nL; x.c[e++] = +n.charAt(i++)) {
+            //for (e = 0; i <= nL; x.c[e++] = +n.charAt(i++)) {
+            for (; i <= nL; x.c.push(+n.charAt(i++))) {
             }
         }
 
@@ -8778,6 +8813,7 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
     // Node and other CommonJS-like environments that support module.exports.
     } else if (typeof module !== 'undefined' && module.exports) {
         module.exports = Big;
+        module.exports.Big = Big;
 
     //Browser.
     } else {
