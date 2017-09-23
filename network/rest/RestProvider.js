@@ -20,7 +20,7 @@ module.exports = (() => {
 			super(host, port, secure);
 		}
 
-		_call(endpoint, data, host, port, secure) {
+		_call(endpoint, data, host, port, secure, token) {
 			return promise.build((resolveCallback, rejectCallback) => {
 				let connector;
 
@@ -42,7 +42,7 @@ module.exports = (() => {
 					}
 				}
 
-				const options = {
+				let options = {
 					method: action.getHttpVerb(),
 					hostname: host,
 					path: '/' + path,
@@ -51,6 +51,10 @@ module.exports = (() => {
 						'Content-Type': 'application/json'
 					}
 				};
+
+				if (token) {
+					options.headers['Authorization'] = token;
+				}
 
 				const request = connector.request(options, (response) => {
 					response.setEncoding('utf8');

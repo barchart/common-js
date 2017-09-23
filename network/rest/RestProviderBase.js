@@ -34,12 +34,12 @@ module.exports = (() => {
 		 * @param {object} data - The data to pass to the endpoint.
  		 * @returns {Promise.<TResult>}
 		 */
-		call(endpoint, data) {
+		call(endpoint, data, token) {
 			return Promise.resolve()
 				.then(() => {
 					assert.argumentIsRequired(endpoint, endpoint, RestEndpoint, 'RestEndpoint');
 
-					return this._call(endpoint, data, this._host, this._port, this._secure);
+					return this._call(endpoint, data, this._host, this._port, this._secure, token);
 				});
 		}
 
