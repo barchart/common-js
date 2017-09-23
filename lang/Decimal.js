@@ -265,6 +265,30 @@ module.exports = (() => {
 		}
 
 		/**
+		 * Runs {@link Decimal#getIsZero} and returns the result.
+		 *
+		 * @public
+		 * @param {Decimal} instance
+		 */
+		static getIsZero(instance) {
+			assert.argumentIsRequired(instance, 'instance', Decimal, 'Decimal');
+
+			return instance.getIsZero();
+		}
+
+		/**
+		 * Runs {@link Decimal#getIsZero} and returns the inverse.
+		 *
+		 * @public
+		 * @param {Decimal} instance
+		 */
+		static getIsNotZero(instance) {
+			assert.argumentIsRequired(instance, 'instance', Decimal, 'Decimal');
+
+			return !instance.getIsZero();
+		}
+
+		/**
 		 * Runs {@link Decimal#getIsPositive} and returns the result.
 		 *
 		 * @public
