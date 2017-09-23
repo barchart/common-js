@@ -269,6 +269,7 @@ module.exports = (() => {
 		 *
 		 * @public
 		 * @param {Decimal} instance
+		 * @return {Boolean}
 		 */
 		static getIsZero(instance) {
 			assert.argumentIsRequired(instance, 'instance', Decimal, 'Decimal');
@@ -281,6 +282,7 @@ module.exports = (() => {
 		 *
 		 * @public
 		 * @param {Decimal} instance
+		 * @return {Boolean}
 		 */
 		static getIsNotZero(instance) {
 			assert.argumentIsRequired(instance, 'instance', Decimal, 'Decimal');
@@ -293,6 +295,7 @@ module.exports = (() => {
 		 *
 		 * @public
 		 * @param {Decimal} instance
+		 * @return {Boolean}
 		 */
 		static getIsPositive(instance) {
 			assert.argumentIsRequired(instance, 'instance', Decimal, 'Decimal');
@@ -305,6 +308,7 @@ module.exports = (() => {
 		 *
 		 * @public
 		 * @param {Decimal} instance
+		 * @return {Boolean}
 		 */
 		static getIsNotPositive(instance) {
 			assert.argumentIsRequired(instance, 'instance', Decimal, 'Decimal');
@@ -317,6 +321,7 @@ module.exports = (() => {
 		 *
 		 * @public
 		 * @param {Decimal} instance
+		 * @return {Boolean}
 		 */
 		static getIsNegative(instance) {
 			assert.argumentIsRequired(instance, 'instance', Decimal, 'Decimal');
@@ -329,6 +334,7 @@ module.exports = (() => {
 		 *
 		 * @public
 		 * @param {Decimal} instance
+		 * @return {Boolean}
 		 */
 		static getIsNotNegative(instance) {
 			assert.argumentIsRequired(instance, 'instance', Decimal, 'Decimal');
