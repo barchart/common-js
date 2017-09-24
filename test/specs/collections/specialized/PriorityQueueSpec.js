@@ -175,3 +175,155 @@ describe('When a Queue is constructed, using a "ladies first" comparator', funct
 		});
 	});
 });
+
+describe('When a Queue is constructed, using a simple (ascending) numeric comparator', function() {
+	'use strict';
+
+	var queue;
+
+	var comparator = function(a, b) {
+		return a - b;
+	};
+
+	beforeEach(function() {
+		queue = new PriorityQueue(comparator);
+	});
+
+	describe('and the following values are enqueued: 3, 2, and 1', function() {
+		beforeEach(function () {
+			queue.enqueue(3);
+			queue.enqueue(2);
+			queue.enqueue(1);
+		});
+
+		describe('and three items are dequeued', function() {
+			var a, b, c;
+
+			beforeEach(function() {
+				a = queue.dequeue();
+				b = queue.dequeue();
+				c = queue.dequeue();
+			});
+
+			it('the dequeued items should be ordered property', function() {
+				expect(a).toEqual(1);
+				expect(b).toEqual(2);
+				expect(c).toEqual(3);
+			});
+		});
+	});
+
+	describe('and the following values are enqueued: 1, 2, and 3', function() {
+		beforeEach(function () {
+			queue.enqueue(1);
+			queue.enqueue(2);
+			queue.enqueue(3);
+		});
+
+		describe('and three items are dequeued', function() {
+			var a, b, c;
+
+			beforeEach(function() {
+				a = queue.dequeue();
+				b = queue.dequeue();
+				c = queue.dequeue();
+			});
+
+			it('the dequeued items should be ordered property', function() {
+				expect(a).toEqual(1);
+				expect(b).toEqual(2);
+				expect(c).toEqual(3);
+			});
+		});
+	});
+
+	describe('and the following values are enqueued: 2, 3, and 1', function() {
+		beforeEach(function () {
+			queue.enqueue(2);
+			queue.enqueue(3);
+			queue.enqueue(1);
+		});
+
+		describe('and three items are dequeued', function() {
+			var a, b, c;
+
+			beforeEach(function() {
+				a = queue.dequeue();
+				b = queue.dequeue();
+				c = queue.dequeue();
+			});
+
+			it('the dequeued items should be ordered property', function() {
+				expect(a).toEqual(1);
+				expect(b).toEqual(2);
+				expect(c).toEqual(3);
+			});
+		});
+	});
+
+	describe('and the following values are enqueued: 3, 1, 2', function() {
+		beforeEach(function () {
+			queue.enqueue(3);
+			queue.enqueue(1);
+			queue.enqueue(2);
+		});
+
+		describe('and three items are dequeued', function() {
+			var a, b, c;
+
+			beforeEach(function() {
+				a = queue.dequeue();
+				b = queue.dequeue();
+				c = queue.dequeue();
+			});
+
+			it('the dequeued items should be ordered property', function() {
+				expect(a).toEqual(1);
+				expect(b).toEqual(2);
+				expect(c).toEqual(3);
+			});
+		});
+	});
+
+	describe('and the following values are enqueued: 3, 1, 2', function() {
+		beforeEach(function () {
+			queue.enqueue(8);
+			queue.enqueue(7);
+			queue.enqueue(9);
+			queue.enqueue(3);
+			queue.enqueue(1);
+			queue.enqueue(2);
+			queue.enqueue(4);
+			queue.enqueue(6);
+			queue.enqueue(5);
+		});
+
+		describe('and three items are dequeued', function() {
+			var a, b, c, d, e, f, g, h, i;
+
+			beforeEach(function() {
+				a = queue.dequeue();
+				b = queue.dequeue();
+				c = queue.dequeue();
+				d = queue.dequeue();
+				e = queue.dequeue();
+				f = queue.dequeue();
+				g = queue.dequeue();
+				h = queue.dequeue();
+				i = queue.dequeue();
+			});
+
+			it('the dequeued items should be ordered property', function() {
+				expect(a).toEqual(1);
+				expect(b).toEqual(2);
+				expect(c).toEqual(3);
+				expect(d).toEqual(4);
+				expect(e).toEqual(5);
+				expect(f).toEqual(6);
+				expect(g).toEqual(7);
+				expect(h).toEqual(8);
+				expect(i).toEqual(9);
+			});
+		});
+	});
+});

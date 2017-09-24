@@ -21,50 +21,38 @@ module.exports = (() => {
 			assert.argumentIsRequired(comparator, 'comparator', Function);
 
 			this._comparator = comparator;
-			this._dirty = false;
 		}
 
 		enqueue(item) {
-			this._array.push(item);
-
-			this._dirty = true;
+			if (this._array.length === 0 || !(this._comparator(item, this._array[this._array.length - 1]) < 0)) {
+				this._array.push(item);
+			} else if (this._comparator(item, this._array[0]) < 0) {
+				this._array.unshift(item);
+			} else {
+				this._array.splice(this._array.findIndex(i => this._comparator(item, i) < 0), 0, item);
+			}
 
 			return item;
 		}
 
 		dequeue() {
-			checkSortQueue.call(this);
-
 			return super.dequeue();
 		}
 
 		peek() {
-			checkSortQueue.call(this);
-
 			return super.peek();
 		}
 
 		scan(action) {
-			checkSortQueue.call(this);
-
 			return super.scan(action);
 		}
 
 		toArray() {
-			checkSortQueue.call(this);
-
 			return super.toArray();
 		}
 
 		toString() {
 			return '[PriorityQueue]';
-		}
-	}
-
-	function checkSortQueue() {
-		if (this._dirty) {
-			this._array.sort(this._comparator);
-			this._dirty = false;
 		}
 	}
 
