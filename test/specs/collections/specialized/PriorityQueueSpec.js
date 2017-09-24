@@ -196,7 +196,7 @@ describe('When a Queue is constructed, using a simple (ascending) numeric compar
 			queue.enqueue(1);
 		});
 
-		describe('and three items are dequeued', function() {
+		describe('and all items are dequeued', function() {
 			var a, b, c;
 
 			beforeEach(function() {
@@ -220,7 +220,7 @@ describe('When a Queue is constructed, using a simple (ascending) numeric compar
 			queue.enqueue(3);
 		});
 
-		describe('and three items are dequeued', function() {
+		describe('and all items are dequeued', function() {
 			var a, b, c;
 
 			beforeEach(function() {
@@ -244,7 +244,7 @@ describe('When a Queue is constructed, using a simple (ascending) numeric compar
 			queue.enqueue(1);
 		});
 
-		describe('and three items are dequeued', function() {
+		describe('and all items are dequeued', function() {
 			var a, b, c;
 
 			beforeEach(function() {
@@ -268,7 +268,7 @@ describe('When a Queue is constructed, using a simple (ascending) numeric compar
 			queue.enqueue(2);
 		});
 
-		describe('and three items are dequeued', function() {
+		describe('and all items are dequeued', function() {
 			var a, b, c;
 
 			beforeEach(function() {
@@ -298,7 +298,7 @@ describe('When a Queue is constructed, using a simple (ascending) numeric compar
 			queue.enqueue(5);
 		});
 
-		describe('and three items are dequeued', function() {
+		describe('and all items are dequeued', function() {
 			var a, b, c, d, e, f, g, h, i;
 
 			beforeEach(function() {
