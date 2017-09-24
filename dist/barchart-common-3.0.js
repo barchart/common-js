@@ -1838,45 +1838,44 @@ module.exports = function () {
 			assert.argumentIsRequired(comparator, 'comparator', Function);
 
 			_this._comparator = comparator;
-			_this._dirty = false;
 			return _this;
 		}
 
 		_createClass(PriorityQueue, [{
 			key: 'enqueue',
 			value: function enqueue(item) {
-				this._array.push(item);
+				var _this2 = this;
 
-				this._dirty = true;
+				if (this._array.length === 0 || !(this._comparator(item, this._array[this._array.length - 1]) < 0)) {
+					this._array.push(item);
+				} else if (this._comparator(item, this._array[0]) < 0) {
+					this._array.unshift(item);
+				} else {
+					this._array.splice(this._array.findIndex(function (i) {
+						return _this2._comparator(item, i) < 0;
+					}), 0, item);
+				}
 
 				return item;
 			}
 		}, {
 			key: 'dequeue',
 			value: function dequeue() {
-				checkSortQueue.call(this);
-
 				return _get(PriorityQueue.prototype.__proto__ || Object.getPrototypeOf(PriorityQueue.prototype), 'dequeue', this).call(this);
 			}
 		}, {
 			key: 'peek',
 			value: function peek() {
-				checkSortQueue.call(this);
-
 				return _get(PriorityQueue.prototype.__proto__ || Object.getPrototypeOf(PriorityQueue.prototype), 'peek', this).call(this);
 			}
 		}, {
 			key: 'scan',
 			value: function scan(action) {
-				checkSortQueue.call(this);
-
 				return _get(PriorityQueue.prototype.__proto__ || Object.getPrototypeOf(PriorityQueue.prototype), 'scan', this).call(this, action);
 			}
 		}, {
 			key: 'toArray',
 			value: function toArray() {
-				checkSortQueue.call(this);
-
 				return _get(PriorityQueue.prototype.__proto__ || Object.getPrototypeOf(PriorityQueue.prototype), 'toArray', this).call(this);
 			}
 		}, {
@@ -1888,13 +1887,6 @@ module.exports = function () {
 
 		return PriorityQueue;
 	}(Queue);
-
-	function checkSortQueue() {
-		if (this._dirty) {
-			this._array.sort(this._comparator);
-			this._dirty = false;
-		}
-	}
 
 	return PriorityQueue;
 }();
@@ -3118,6 +3110,7 @@ module.exports = function () {
     *
     * @public
     * @param {Decimal} instance
+    * @return {Boolean}
     */
 			value: function getIsZero(instance) {
 				assert.argumentIsRequired(instance, 'instance', Decimal, 'Decimal');
@@ -3130,6 +3123,7 @@ module.exports = function () {
     *
     * @public
     * @param {Decimal} instance
+    * @return {Boolean}
     */
 
 		}, {
@@ -3145,6 +3139,7 @@ module.exports = function () {
     *
     * @public
     * @param {Decimal} instance
+    * @return {Boolean}
     */
 
 		}, {
@@ -3160,6 +3155,7 @@ module.exports = function () {
     *
     * @public
     * @param {Decimal} instance
+    * @return {Boolean}
     */
 
 		}, {
@@ -3175,6 +3171,7 @@ module.exports = function () {
     *
     * @public
     * @param {Decimal} instance
+    * @return {Boolean}
     */
 
 		}, {
@@ -3190,6 +3187,7 @@ module.exports = function () {
     *
     * @public
     * @param {Decimal} instance
+    * @return {Boolean}
     */
 
 		}, {
