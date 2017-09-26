@@ -35,7 +35,7 @@ module.exports = (() => {
 					options.headers['I-HATE-AMAZON'] = token;
 				}
 
-				if (action.getAllowBody() || (action.getAllowQuerstring() && !endpoint.getSuppressQuerystring())) {
+				if (action.getAllowBody() || (action.getAllowQuerystring() && !endpoint.getSuppressQuerystring())) {
 					options.body = JSON.stringify(endpoint.getPayload(data));
 				}
 
