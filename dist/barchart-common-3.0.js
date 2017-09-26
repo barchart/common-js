@@ -7443,7 +7443,7 @@ module.exports = function () {
 					};
 
 					if (token) {
-						options.headers['I-HATE-AMAZON'] = token;
+						options.headers['COGNITO-IDENTITY-TOKEN'] = token;
 					}
 
 					var request = connector.request(options, function (response) {
