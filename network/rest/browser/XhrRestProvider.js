@@ -32,7 +32,7 @@ module.exports = (() => {
 				};
 
 				if (token) {
-					options.headers['I-HATE-AMAZON'] = token;
+					options.headers['COGNITO-IDENTITY-TOKEN'] = token;
 				}
 
 				if (action.getAllowBody() || (action.getAllowQuerystring() && !endpoint.getSuppressQuerystring())) {
