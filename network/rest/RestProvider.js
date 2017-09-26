@@ -53,7 +53,7 @@ module.exports = (() => {
 				};
 
 				if (token) {
-					options.headers['Authorization'] = token;
+					options.headers['I-HATE-AMAZON'] = token;
 				}
 
 				const request = connector.request(options, (response) => {

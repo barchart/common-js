@@ -19,7 +19,7 @@ module.exports = (() => {
 			super(baseUrl, port, secure);
 		}
 
-		_call(endpoint, data, host, port, secure) {
+		_call(endpoint, data, host, port, secure, token) {
 			return promise.build((resolveCallback, rejectCallback) => {
 				const action = endpoint.getAction();
 
@@ -30,6 +30,10 @@ module.exports = (() => {
 						'Content-Type': 'application/json'
 					}
 				};
+
+				if (token) {
+					options.headers['I-HATE-AMAZON'] = token;
+				}
 
 				if (action.getAllowBody() || (action.getAllowQuerstring() && !endpoint.getSuppressQuerystring())) {
 					options.body = JSON.stringify(endpoint.getPayload(data));
