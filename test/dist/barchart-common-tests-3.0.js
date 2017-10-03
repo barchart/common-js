@@ -7365,28 +7365,25 @@ module.exports = function () {
             e = n.length;
         }
 
-        nL = n.length;
-
         // Determine leading zeros.
-        for (i = 0; i < nL && n.charAt(i) == '0'; i++) {
+        for (i = 0; n.charAt(i) == '0'; i++) {
         }
 
-        if (i == nL) {
+        if (i == (nL = n.length)) {
 
             // Zero.
             x.c = [ x.e = 0 ];
         } else {
 
             // Determine trailing zeros.
-            for (; nL > 0 && n.charAt(--nL) == '0';) {
+            for (; n.charAt(--nL) == '0';) {
             }
 
             x.e = e - i - 1;
             x.c = [];
 
             // Convert string to array of digits without leading/trailing zeros.
-            //for (e = 0; i <= nL; x.c[e++] = +n.charAt(i++)) {
-            for (; i <= nL; x.c.push(+n.charAt(i++))) {
+            for (e = 0; i <= nL; x.c[e++] = +n.charAt(i++)) {
             }
         }
 
@@ -8294,7 +8291,6 @@ module.exports = function () {
     // Node and other CommonJS-like environments that support module.exports.
     } else if (typeof module !== 'undefined' && module.exports) {
         module.exports = Big;
-        module.exports.Big = Big;
 
     //Browser.
     } else {
