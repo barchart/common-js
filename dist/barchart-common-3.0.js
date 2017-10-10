@@ -7460,7 +7460,22 @@ module.exports = function () {
 						});
 
 						response.on('end', function () {
-							resolveCallback(endpoint.parseResponse(responseText));
+							var parsed = void 0;
+							var error = void 0;
+
+							try {
+								parsed = endpoint.parseResponse(responseText);
+								error = false;
+							} catch (e) {
+								parsed = null;
+								error = true;
+							}
+
+							if (error) {
+								rejectCallback(new Error('Unable to parse JSON response.'));
+							} else {
+								resolveCallback(parsed);
+							}
 						});
 					});
 
