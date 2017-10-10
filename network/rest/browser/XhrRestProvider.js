@@ -53,7 +53,22 @@ module.exports = (() => {
 
 						rejectCallback(new Error(message));
 					} else {
-						resolveCallback(endpoint.parseResponse(body));
+						let parsed;
+						let error;
+
+						try {
+							parsed = endpoint.parseResponse(body);
+							error = false;
+						} catch (e) {
+							parsed = null;
+							error = true;
+						}
+
+						if (error) {
+							rejectCallback(new Error('Unable to parse JSON response.'));
+						} else {
+							resolveCallback(parsed);
+						}
 					}
 				});
 			});

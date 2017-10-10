@@ -70,7 +70,22 @@ module.exports = (() => {
 					});
 
 					response.on('end', () => {
-						resolveCallback(endpoint.parseResponse(responseText));
+						let parsed;
+						let error;
+
+						try {
+							parsed = endpoint.parseResponse(responseText);
+							error = false;
+						} catch (e) {
+							parsed = null;
+							error = true;
+						}
+
+						if (error) {
+							rejectCallback(new Error('Unable to parse JSON response.'));
+						} else {
+							resolveCallback(parsed);
+						}
 					});
 				});
 
