@@ -13,7 +13,7 @@ module.exports = (() => {
 	 * @public
 	 * @interface
 	 * @param {String} - The unique code of the enumeration item.
-	 * @param {Description} - A description of the enumeration item.
+	 * @param {String} - A description of the enumeration item.
 	 */
 	class Enum {
 		constructor(code, description) {
@@ -38,6 +38,8 @@ module.exports = (() => {
 
 		/**
 		 * The unique code.
+		 *
+		 * @returns {String}
 		 */
 		get code() {
 			return this._code;
@@ -46,14 +48,15 @@ module.exports = (() => {
 		/**
 		 * The description.
 		 *
-		 * @returns {*}
+		 * @returns {String}
 		 */
 		get description() {
 			return this._description;
 		}
 
 		/**
-		 * Returns true if the provided {@link Enum} instance equals
+		 * Returns true if the provided {@link Enum} argument is equal
+		 * to the instance.
 		 *
 		 * @param {Enum} other
 		 * @returns {boolean}
