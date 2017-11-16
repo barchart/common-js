@@ -2683,6 +2683,38 @@ module.exports = function () {
 			}
 
 			/**
+    * Creates a {@link Day} from the year, month, and day properties (in local time)
+    * of the {@link Date} argument.
+    *
+    * @param {Date} date
+    * @returns {Day}
+    */
+
+		}, {
+			key: 'fromDate',
+			value: function fromDate(date) {
+				assert.argumentIsRequired(date, 'date', Date);
+
+				return new Day(date.getFullYear(), date.getMonth() + 1, date.getDate());
+			}
+
+			/**
+    * Creates a {@link Day} from the year, month, and day properties (in UTC)
+    * of the {@link Date} argument.
+    *
+    * @param {Date} date
+    * @returns {Day}
+    */
+
+		}, {
+			key: 'fromDateUtc',
+			value: function fromDateUtc(date) {
+				assert.argumentIsRequired(date, 'date', Date);
+
+				return new Day(date.getUTCFullYear(), date.getUTCMonth() + 1, date.getUTCDate());
+			}
+
+			/**
     * Returns true if the year, month, and day combination is valid; otherwise false.
     *
     * @public
@@ -3580,7 +3612,7 @@ module.exports = function () {
   * @public
   * @interface
   * @param {String} - The unique code of the enumeration item.
-  * @param {Description} - A description of the enumeration item.
+  * @param {String} - A description of the enumeration item.
   */
 
 	var Enum = function () {
@@ -3608,13 +3640,16 @@ module.exports = function () {
 
 		/**
    * The unique code.
+   *
+   * @returns {String}
    */
 
 		_createClass(Enum, [{
 			key: 'equals',
 
 			/**
-    * Returns true if the provided {@link Enum} instance equals
+    * Returns true if the provided {@link Enum} argument is equal
+    * to the instance.
     *
     * @param {Enum} other
     * @returns {boolean}
@@ -3659,7 +3694,7 @@ module.exports = function () {
 			/**
     * The description.
     *
-    * @returns {*}
+    * @returns {String}
     */
 
 		}, {
@@ -4208,6 +4243,19 @@ module.exports = function () {
 			key: 'parse',
 			value: function parse(value) {
 				return new Timestamp(value);
+			}
+
+			/**
+    * Returns a new {@link Timestamp} instance, representing the current moment.
+    *
+    * @public
+    * @returns {Timestamp}
+    */
+
+		}, {
+			key: 'now',
+			value: function now() {
+				return new Timestamp(new Date().getTime());
 			}
 		}]);
 

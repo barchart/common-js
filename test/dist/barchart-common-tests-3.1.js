@@ -2596,6 +2596,38 @@ module.exports = function () {
 			}
 
 			/**
+    * Creates a {@link Day} from the year, month, and day properties (in local time)
+    * of the {@link Date} argument.
+    *
+    * @param {Date} date
+    * @returns {Day}
+    */
+
+		}, {
+			key: 'fromDate',
+			value: function fromDate(date) {
+				assert.argumentIsRequired(date, 'date', Date);
+
+				return new Day(date.getFullYear(), date.getMonth() + 1, date.getDate());
+			}
+
+			/**
+    * Creates a {@link Day} from the year, month, and day properties (in UTC)
+    * of the {@link Date} argument.
+    *
+    * @param {Date} date
+    * @returns {Day}
+    */
+
+		}, {
+			key: 'fromDateUtc',
+			value: function fromDateUtc(date) {
+				assert.argumentIsRequired(date, 'date', Date);
+
+				return new Day(date.getUTCFullYear(), date.getUTCMonth() + 1, date.getUTCDate());
+			}
+
+			/**
     * Returns true if the year, month, and day combination is valid; otherwise false.
     *
     * @public
@@ -3493,7 +3525,7 @@ module.exports = function () {
   * @public
   * @interface
   * @param {String} - The unique code of the enumeration item.
-  * @param {Description} - A description of the enumeration item.
+  * @param {String} - A description of the enumeration item.
   */
 
 	var Enum = function () {
@@ -3521,13 +3553,16 @@ module.exports = function () {
 
 		/**
    * The unique code.
+   *
+   * @returns {String}
    */
 
 		_createClass(Enum, [{
 			key: 'equals',
 
 			/**
-    * Returns true if the provided {@link Enum} instance equals
+    * Returns true if the provided {@link Enum} argument is equal
+    * to the instance.
     *
     * @param {Enum} other
     * @returns {boolean}
@@ -3572,7 +3607,7 @@ module.exports = function () {
 			/**
     * The description.
     *
-    * @returns {*}
+    * @returns {String}
     */
 
 		}, {
@@ -4121,6 +4156,19 @@ module.exports = function () {
 			key: 'parse',
 			value: function parse(value) {
 				return new Timestamp(value);
+			}
+
+			/**
+    * Returns a new {@link Timestamp} instance, representing the current moment.
+    *
+    * @public
+    * @returns {Timestamp}
+    */
+
+		}, {
+			key: 'now',
+			value: function now() {
+				return new Timestamp(new Date().getTime());
 			}
 		}]);
 
@@ -18917,6 +18965,52 @@ describe('When "2017-08-31 is parsed as a Day', function () {
 	});
 });
 
+describe('When converting a Date (2017-11-16 at 17:40:01.002 local) to a Day', function () {
+	'use strict';
+
+	var date;
+	var day;
+
+	beforeEach(function () {
+		day = Day.fromDate(date = new Date(2017, 10, 16, 17, 40, 1, 2));
+	});
+
+	it('the year should be 2017', function () {
+		expect(day.year).toEqual(2017);
+	});
+
+	it('the month should be 11', function () {
+		expect(day.month).toEqual(11);
+	});
+
+	it('the day should be 16', function () {
+		expect(day.day).toEqual(16);
+	});
+});
+
+describe('When converting a Date (2017-11-16 at 23:40:01.002 local) to a UTC Day', function () {
+	'use strict';
+
+	var date;
+	var day;
+
+	beforeEach(function () {
+		day = Day.fromDateUtc(date = new Date(2017, 10, 16, 23, 40, 1, 2));
+	});
+
+	it('the year should be correct', function () {
+		expect(day.year).toEqual(date.getUTCFullYear());
+	});
+
+	it('the month should be correct', function () {
+		expect(day.month).toEqual(date.getUTCMonth() + 1);
+	});
+
+	it('the day should be correct', function () {
+		expect(day.day).toEqual(date.getUTCDate());
+	});
+});
+
 describe('When an invalid string is parsed as a Day', function () {
 	function expectError(value) {
 		expect(function () {
@@ -19842,6 +19936,22 @@ describe('When Timestamp is created from a timestamp (1502372574350)', function 
 				expect(m).toBe(n);
 			});
 		});
+	});
+});
+
+describe('When Timestamp is created for the current moment', function () {
+	'use strict';
+
+	var instance;
+
+	beforeEach(function () {
+		instance = Timestamp.now();
+	});
+
+	it('should not be close to the current time', function () {
+		var milliseconds = new Date().getTime();
+
+		expect(milliseconds - instance.timestamp < 500).toEqual(true);
 	});
 });
 
