@@ -73,6 +73,16 @@ module.exports = (() => {
 			return new Timestamp(value);
 		}
 
+		/**
+		 * Returns a new {@link Timestamp} instance, representing the current moment.
+		 *
+		 * @public
+		 * @returns {Timestamp}
+		 */
+		static now() {
+			return new Timestamp((new Date()).getTime());
+		}
+
 		toString() {
 			return '[Timestamp]';
 		}

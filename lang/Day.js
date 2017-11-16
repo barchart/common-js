@@ -203,6 +203,32 @@ module.exports = (() => {
 		}
 
 		/**
+		 * Creates a {@link Day} from the year, month, and day properties (in local time)
+		 * of the {@link Date} argument.
+		 *
+		 * @param {Date} date
+		 * @returns {Day}
+		 */
+		static fromDate(date) {
+			assert.argumentIsRequired(date, 'date', Date);
+
+			return new Day(date.getFullYear(), date.getMonth() + 1, date.getDate());
+		}
+
+		/**
+		 * Creates a {@link Day} from the year, month, and day properties (in UTC)
+		 * of the {@link Date} argument.
+		 *
+		 * @param {Date} date
+		 * @returns {Day}
+		 */
+		static fromDateUtc(date) {
+			assert.argumentIsRequired(date, 'date', Date);
+
+			return new Day(date.getUTCFullYear(), date.getUTCMonth() + 1, date.getUTCDate());
+		}
+
+		/**
 		 * Returns true if the year, month, and day combination is valid; otherwise false.
 		 *
 		 * @public

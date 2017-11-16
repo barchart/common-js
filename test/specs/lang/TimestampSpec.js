@@ -45,3 +45,19 @@ describe('When Timestamp is created from a timestamp (1502372574350)', function(
 		});
 	});
 });
+
+describe('When Timestamp is created for the current moment', function() {
+	'use strict';
+
+	var instance;
+
+	beforeEach(function() {
+		instance = Timestamp.now();
+	});
+
+	it('should not be close to the current time', function() {
+		const milliseconds = (new Date()).getTime();
+
+		expect(milliseconds - instance.timestamp < 500).toEqual(true);
+	});
+});

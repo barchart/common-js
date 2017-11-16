@@ -28,6 +28,52 @@ describe('When "2017-08-31 is parsed as a Day', function() {
 	});
 });
 
+describe('When converting a Date (2017-11-16 at 17:40:01.002 local) to a Day', function() {
+	'use strict';
+
+	var date;
+	var day;
+
+	beforeEach(function() {
+		day = Day.fromDate(date = new Date(2017, 10, 16, 17, 40, 1, 2));
+	});
+
+	it('the year should be 2017', function() {
+		expect(day.year).toEqual(2017);
+	});
+
+	it('the month should be 11', function() {
+		expect(day.month).toEqual(11);
+	});
+
+	it('the day should be 16', function() {
+		expect(day.day).toEqual(16);
+	});
+});
+
+describe('When converting a Date (2017-11-16 at 23:40:01.002 local) to a UTC Day', function() {
+	'use strict';
+
+	var date;
+	var day;
+
+	beforeEach(function() {
+		day = Day.fromDateUtc(date = new Date(2017, 10, 16, 23, 40, 1, 2));
+	});
+
+	it('the year should be correct', function() {
+		expect(day.year).toEqual(date.getUTCFullYear());
+	});
+
+	it('the month should be correct', function() {
+		expect(day.month).toEqual(date.getUTCMonth() + 1);
+	});
+
+	it('the day should be correct', function() {
+		expect(day.day).toEqual(date.getUTCDate());
+	});
+});
+
 describe('When an invalid string is parsed as a Day', function() {
 	function expectError(value) {
 		expect(function() { Day.parse(value); }).toThrow();
