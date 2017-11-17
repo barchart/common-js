@@ -10,7 +10,7 @@ Features include:
 * Simple collections (queues, stacks, trees, etc)
 * Specialized collections (priority queues, evicting lists, evicting maps, etc)
 * Timing utilities (wrappers for setTimeout and setInterval)
-* More
+* More...
 
 ## Documentation
 
