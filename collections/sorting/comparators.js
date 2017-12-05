@@ -4,7 +4,7 @@ module.exports = (() => {
 	'use strict';
 
 	/**
-	 * Functions that can use used as comparators.
+	 * Functions that can be used as comparators.
 	 *
 	 * @public
 	 * @module collections/sorting/comparators
