@@ -67,7 +67,7 @@ module.exports = (() => {
 		 * be serialized.
 		 *
 		 * @public
-		 * @returns {*|boolean}
+		 * @returns {boolean}
 		 */
 		get strict() {
 			return this._strict;
@@ -110,7 +110,7 @@ module.exports = (() => {
 					} else if (item.optional) {
 						item = advance(key);
 					} else {
-						throw new Error(`Schema parsing is using strict mode, unexpected key found [ ${key} / ${item.name} ]`);
+						throw new Error(`Schema parsing is using strict mode, unexpected key found [ found: ${key}, expected: ${item.name} ]`);
 					}
 				}
 
