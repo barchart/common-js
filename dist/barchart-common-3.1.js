@@ -880,7 +880,7 @@ module.exports = function () {
   'use strict';
 
   /**
-   * Functions that can use used as comparators.
+   * Functions that can be used as comparators.
    *
    * @public
    * @module collections/sorting/comparators
@@ -23124,7 +23124,7 @@ module.exports = function () {
 						} else if (item.optional) {
 							item = advance(key);
 						} else {
-							throw new Error('Schema parsing is using strict mode, unexpected key found [ ' + key + ' / ' + item.name + ' ]');
+							throw new Error('Schema parsing is using strict mode, unexpected key found [ found: ' + key + ', expected: ' + item.name + ' ]');
 						}
 					}
 
@@ -23195,7 +23195,7 @@ module.exports = function () {
     * be serialized.
     *
     * @public
-    * @returns {*|boolean}
+    * @returns {boolean}
     */
 
 		}, {
