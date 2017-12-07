@@ -1,5 +1,5 @@
-# barchart-common-js
-## Common JavaScript classes, utilities, and functions
+# @barchart/common-js
+## Library of JavaScript utilities
 
 Utilities that can be used in a browser or Node.js environment.
 
