@@ -1,7 +1,7 @@
 {
   "name": "@barchart/common-js",
   "version": "3.1.6",
-  "description": "Library of common javascript utilities",
+  "description": "Library of common JavaScript utilities maintained by Barchart",
   "author": {
     "name": "Bryan Ingle",
     "email": "bryan.ingle@barchart.com",
