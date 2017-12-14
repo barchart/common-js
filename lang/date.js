@@ -22,7 +22,7 @@ module.exports = (() => {
 				returnRef = 'st';
 			} else if (remainder === 2 && d !== 12) {
 				returnRef = 'nd';
-			} else if (remainder === 3) {
+			} else if (remainder === 3 && d !== 13) {
 				returnRef = 'rd';
 			} else {
 				returnRef = 'th';

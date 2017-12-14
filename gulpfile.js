@@ -7,14 +7,12 @@ var bump = require('gulp-bump');
 var git = require('gulp-git');
 var gitStatus = require('git-get-status');
 var glob = require('glob');
-var helpers = require('babelify-external-helpers');
 var jasmine = require('gulp-jasmine');
 var jsdoc = require('gulp-jsdoc3');
 var jshint = require('gulp-jshint');
 var rename = require('gulp-rename');
 var runSequence = require('run-sequence');
 var source = require('vinyl-source-stream');
-var uglify = require('gulp-uglify');
 var util = require('gulp-util');
 
 var fs = require('fs');
@@ -53,7 +51,7 @@ gulp.task('document', function (cb) {
 });
 
 gulp.task('commit-changes', function () {
-    return gulp.src([ './', './dist/', './test/', './package.json' ])
+    return gulp.src([ './', './test/', './package.json' ])
         .pipe(git.add())
         .pipe(git.commit('Release. Bump version number'));
 });
@@ -74,28 +72,23 @@ gulp.task('create-tag', function (cb) {
     });
 });
 
-gulp.task('build-browser', function() {
-    return browserify('./index.js', { standalone: 'Barchart.Common' })
-        .transform('babelify', {presets: ['es2015']})
-        .bundle()
-        .pipe(source('barchart-common-' + getVersionForComponent() + '.js'))
-        .pipe(buffer())
-        .pipe(gulp.dest('./dist'))
-        .pipe(uglify())
-        .pipe(rename('barchart-common-' + getVersionForComponent() + '-min.js'))
-        .pipe(gulp.dest('dist/'));
+gulp.task('build-example-bundle', function() {
+	return browserify('./lib/index.js', { standalone: 'Barchart.Search' })
+		.bundle()
+		.pipe(source('example.js'))
+		.pipe(buffer())
+		.pipe(gulp.dest('./example/browser'));
 });
 
-gulp.task('build-browser-tests', function () {
-    return browserify({ entries: glob.sync('test/specs/**/*.js') })
-        .transform('babelify', {presets: ['es2015']})
-        .bundle()
-        .pipe(source('barchart-common-tests-' + getVersionForComponent() + '.js'))
-        .pipe(buffer())
-        .pipe(gulp.dest('test/dist'));
+gulp.task('build-test-bundle', function () {
+	return browserify({ entries: glob.sync('test/specs/**/*.js') })
+		.bundle()
+		.pipe(source('SpecRunner.js'))
+		.pipe(buffer())
+		.pipe(gulp.dest('test'));
 });
 
-gulp.task('build-browser-components', [ 'build-browser' ]);
+gulp.task('build-browser-components', [ 'build-example-bundle' ]);
 
 gulp.task('build', [ 'build-browser-components' ]);
 
@@ -111,7 +104,7 @@ gulp.task('execute-node-tests', function () {
 
 gulp.task('execute-tests', function (callback) {
     runSequence(
-        'build-browser-tests',
+        'build-test-bundle',
         'execute-browser-tests',
         'execute-node-tests',
 
@@ -128,7 +121,7 @@ gulp.task('release', function (callback) {
     runSequence(
         'ensure-clean-working-directory',
         'build',
-        'build-browser-tests',
+        'build-test-bundle',
         'execute-browser-tests',
         'execute-node-tests',
 		'document',
