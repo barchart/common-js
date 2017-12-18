@@ -7,7 +7,6 @@
     "email": "bryan.ingle@barchart.com",
     "url": "http://www.barchart.com"
   },
-  "main": "./index.js",
   "scripts": {
     "test": "echo \"Error: Please use gulp to run tests\" && exit 1"
   },

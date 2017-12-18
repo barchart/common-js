@@ -86,7 +86,7 @@ gulp.task('execute-browser-tests', function () {
 });
 
 gulp.task('execute-node-tests', function () {
-    return gulp.src(['index.js', 'test/specs/**/*.js'])
+    return gulp.src(['test/specs/**/*.js'])
         .pipe(jasmine());
 });
 
