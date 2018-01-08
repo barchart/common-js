@@ -1,7 +1,6 @@
 const assert = require('./../../lang/assert');
 
-const RestEndpoint = require('./RestEndpoint'),
-	RestParser = require('./RestParser');
+const RestParser = require('./RestParser');
 
 const Schema = require('./../../serialization/json/Schema');
 
