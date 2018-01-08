@@ -17,6 +17,7 @@ module.exports = (() => {
 	 * @param {Array<String>} pathProperties - The parameters required by the endpoint
 	 * @param {String=} payloadProperty - The property name of the object to use as a payload for the REST action
 	 * @param {Boolean=} suppressQuerystring - If true, the querystring will be omitted when making the HTTP request
+	 * @param {RestParser=} responseParser - If supplied, used to parse the response.
 	 */
 	class RestEndpoint {
 		constructor(action, pathProperties, payloadProperty, suppressQuerystring, responseParser) {

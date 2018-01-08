@@ -9,7 +9,7 @@ module.exports = (() => {
 	'use strict';
 
 	/**
-	 * Parses the response received by a {@link RestProivderBase}, the
+	 * Parses the response received by a {@link RestProviderBase}, the
 	 * default implementation simply returns the response string.
 	 *
 	 * @public
