@@ -1,5 +1,4 @@
-const assert = require('./../../lang/assert'),
-	functions = require('./../../lang/functions'),
+const functions = require('./../../lang/functions'),
 	is = require('./../../lang/is');
 
 const LinkedList = require('./../../collections/LinkedList'),
@@ -46,7 +45,7 @@ module.exports = (() => {
 		 * The fields of the table.
 		 *
 		 * @public
-		 * @returns {Array<Fields>}
+		 * @returns {Array<Field>}
 		 */
 		get fields() {
 			return [...this._fields];
