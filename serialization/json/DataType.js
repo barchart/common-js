@@ -9,7 +9,7 @@ module.exports = (() => {
 	'use strict';
 
 	/**
-	 * The formal definition of a data type which is used by an {@link Attribute}.
+	 * The formal definition of a data type which is used by an {@link Field}.
 	 *
 	 * @public
 	 * @param {String} description
