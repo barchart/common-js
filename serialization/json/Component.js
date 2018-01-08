@@ -8,7 +8,7 @@ module.exports = (() => {
 	'use strict';
 
 	/**
-	 * A complex field built from many fields.
+	 * A complex object built from many {@link Field} instances.
 	 *
 	 * @public
 	 * @param {String} name
