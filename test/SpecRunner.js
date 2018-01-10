@@ -1788,8 +1788,7 @@ module.exports = function () {
 			}
 
 			/**
-    * Returns a {@link CommandHandler} that where execution is delegated
-    * to a function.
+    * Returns a {@link CommandHandler} that delegates execution to a function.
     *
     * @public
     * @param {Function} handler - The function which the command delegates to.
@@ -5557,7 +5556,7 @@ module.exports = function () {
   * Utilities for working with arrays.
   *
   * @public
-  * @module lang/array
+  * @module lang/timezone
   */
 
 	return {
@@ -14267,7 +14266,7 @@ module.exports = function () {
 	'use strict';
 
 	/**
-  * A complex field built from many fields.
+  * A complex object built from many {@link Field} instances.
   *
   * @public
   * @param {String} name
