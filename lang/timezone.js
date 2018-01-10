@@ -8,7 +8,7 @@ module.exports = (() => {
 	 * Utilities for working with arrays.
 	 *
 	 * @public
-	 * @module lang/array
+	 * @module lang/timezone
 	 */
 	return {
 		/**
