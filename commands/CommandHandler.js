@@ -52,8 +52,7 @@ module.exports = (() => {
 		}
 
 		/**
-		 * Returns a {@link CommandHandler} that where execution is delegated
-		 * to a function.
+		 * Returns a {@link CommandHandler} that delegates execution to a function.
 		 *
 		 * @public
 		 * @param {Function} handler - The function which the command delegates to.
