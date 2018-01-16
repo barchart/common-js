@@ -3230,8 +3230,8 @@ module.exports = function () {
   *
   * @public
   * @interface
-  * @param {String} - The unique code of the enumeration item.
-  * @param {String} - A description of the enumeration item.
+  * @param {String} code - The unique code of the enumeration item.
+  * @param {String} description - A description of the enumeration item.
   */
 
 	var Enum = function () {
