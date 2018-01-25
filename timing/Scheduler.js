@@ -24,6 +24,7 @@ module.exports = (() => {
 		/**
 		 * Schedules an action to execute in the future, returning a Promise.
 		 *
+		 * @public
 		 * @param {Function} actionToSchedule - The action to execute.
 		 * @param {number} millisecondDelay - Milliseconds before the action can be started.
 		 * @param {string=} actionDescription - A description of the action, used for logging purposes.
@@ -97,6 +98,7 @@ module.exports = (() => {
 		/**
 		 * Attempts an action, repeating if necessary, using an exponential backoff.
 		 *
+		 * @public
 		 * @param {Function} actionToBackoff - The action to attempt. If it fails -- because an error is thrown, a promise is rejected, or the function returns a falsey value -- the action will be invoked again.
 		 * @param {number=} millisecondDelay - The amount of time to wait to execute the action. Subsequent failures are multiply this value by 2 ^ [number of failures]. So, a 1000 millisecond backoff would schedule attempts using the following delays: 0, 1000, 2000, 4000, 8000, etc. If not specified, the first attemopt will execute immediately, then a value of 1000 will be used.
 		 * @param {string=} actionDescription - Description of the action to attempt, used for logging purposes.
