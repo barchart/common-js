@@ -103,7 +103,7 @@ module.exports = (() => {
 		 * @param {number=} millisecondDelay - The amount of time to wait to execute the action. Subsequent failures are multiply this value by 2 ^ [number of failures]. So, a 1000 millisecond backoff would schedule attempts using the following delays: 0, 1000, 2000, 4000, 8000, etc. If not specified, the first attemopt will execute immediately, then a value of 1000 will be used.
 		 * @param {string=} actionDescription - Description of the action to attempt, used for logging purposes.
 		 * @param {number=} maximumAttempts - The number of attempts to before giving up.
-		 * @param {Function=} maximumAttempts - If provided, will be invoked if a function is considered to be failing.
+		 * @param {Function=} failureCallback - If provided, will be invoked if a function is considered to be failing.
 		 * @param {Object=} failureValue - If provided, will consider the result to have failed, if this value is returned (a deep equality check is used). If not provided, a "falsey" value will trigger a retry.
 		 */
 		backoff(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts, failureCallback, failureValue) {
