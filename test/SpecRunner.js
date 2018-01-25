@@ -25741,13 +25741,25 @@ module.exports = function () {
 						throw new Error('The Scheduler has been disposed.');
 					}
 
-					var scheduleBackoff = function scheduleBackoff(failureCount) {
+					var scheduleBackoff = function scheduleBackoff(failureCount, e) {
 						if (failureCount > 0 && is.fn(failureCallback)) {
 							failureCallback(failureCount);
 						}
 
 						if (maximumAttempts > 0 && failureCount > maximumAttempts) {
-							return Promise.reject('Maximum failures reached for ' + actionDescription);
+							var message = 'Maximum failures reached for ' + actionDescription;
+
+							var rejection = void 0;
+
+							if (e) {
+								e.backoff = message;
+
+								rejection = e;
+							} else {
+								rejection = message;
+							}
+
+							return Promise.reject(rejection);
 						}
 
 						var backoffDelay = void 0;
@@ -25777,7 +25789,7 @@ module.exports = function () {
 								return scheduleBackoff(++failureCount);
 							}
 						}).catch(function (e) {
-							return scheduleBackoff(++failureCount);
+							return scheduleBackoff(++failureCount, e);
 						});
 					};
 
