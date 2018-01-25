@@ -38,7 +38,7 @@ describe('When a Scheduler is constructed', function() {
 			scheduler.dispose();
 		});
 
-		it('and a task is scheduled', function() {
+		describe('and a task is scheduled', function() {
 			var spy;
 			var success;
 
