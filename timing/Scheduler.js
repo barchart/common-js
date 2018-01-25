@@ -119,13 +119,25 @@ module.exports = (() => {
 						throw new Error('The Scheduler has been disposed.');
 					}
 
-					const scheduleBackoff = (failureCount) => {
+					const scheduleBackoff = (failureCount, e) => {
 						if (failureCount > 0 && is.fn(failureCallback)) {
 							failureCallback(failureCount);
 						}
 
 						if (maximumAttempts > 0 && failureCount > maximumAttempts) {
-							return Promise.reject(`Maximum failures reached for ${actionDescription}`);
+							let message = `Maximum failures reached for ${actionDescription}`;
+
+							let rejection;
+
+							if (e) {
+								e.backoff = message;
+
+								rejection = e;
+							} else {
+								rejection = message;
+							}
+
+							return Promise.reject(rejection);
 						}
 
 						let backoffDelay;
@@ -154,7 +166,7 @@ module.exports = (() => {
 									return scheduleBackoff(++failureCount);
 								}
 							}).catch((e) => {
-								return scheduleBackoff(++failureCount);
+								return scheduleBackoff(++failureCount, e);
 							});
 					};
 
