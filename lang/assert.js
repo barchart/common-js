@@ -118,7 +118,7 @@ module.exports = (() => {
 		 * @param {*} variable - The value to check.
 		 * @param {String} variableName - The name of the value (used for formatting an error message).
 		 * @param {Function=} predicate - A function used to validate the item (beyond type checking).
-		 * @param {Function=} predicateDescription - A description of the assertion made by the predicate (e.g. "is an integer") that is used for formatting an error message.
+		 * @param {String=} predicateDescription - A description of the assertion made by the predicate (e.g. "is an integer") that is used for formatting an error message.
 		 */
 		argumentIsValid(variable, variableName, predicate, predicateDescription) {
 			if (!predicate(variable)) {
