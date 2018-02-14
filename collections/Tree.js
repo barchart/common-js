@@ -163,7 +163,7 @@ module.exports = (() => {
 		}
 
 		/**
-		 * Walks the children of the current node -- current node down to the lead nodes, running an action on each node.
+		 * Walks the children of the current node, running an action on each node.
 		 *
 		 * @public
 		 * @param {Tree~nodeAction} walkAction - A action to apply to each node. The action takes two arguments -- the node's value, and the node itself.
