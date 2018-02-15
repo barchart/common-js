@@ -34,10 +34,11 @@ module.exports = (() => {
 		 * @param {String} key
 		 * @param {Function} delegate
 		 * @param (Boolean=} optional
+		 * @param {Function=} serializer
 		 * @returns {ParametersBuilder}
 		 */
-		withDelegateParameter(key, delegate, optional) {
-			addParameter.call(this, new Parameter(key, buildDelegateExtractor(delegate), optional));
+		withDelegateParameter(key, delegate, optional, serializer) {
+			addParameter.call(this, new Parameter(key, buildDelegateExtractor(delegate, buildSerializer(serializer)), optional));
 
 			return this;
 		}
@@ -63,10 +64,11 @@ module.exports = (() => {
 		 * @param {String} key
 		 * @param {Function} delegate
 		 * @param (Boolean=} optional
+		 * @param {Function=} serializer
 		 * @returns {ParametersBuilder}
 		 */
-		withVariableParameter(key, variable, optional) {
-			addParameter.call(this, new Parameter(key, buildVariableExtractor(variable), optional));
+		withVariableParameter(key, variable, optional, serializer) {
+			addParameter.call(this, new Parameter(key, buildVariableExtractor(variable, buildSerializer(serializer)), optional));
 
 			return this;
 		}
@@ -84,13 +86,25 @@ module.exports = (() => {
 		this._parameters = new Parameters(items);
 	}
 
-	function buildDelegateExtractor(fn) {
+	function buildSerializer(serializer) {
+		let returnRef;
+
+		if (is.fn(serializer)) {
+			returnRef = serializer;
+		} else {
+			returnRef = (x) => x;
+		}
+
+		return returnRef;
+	}
+
+	function buildDelegateExtractor(fn, serializer) {
 		assert.argumentIsRequired(fn, 'fn', Function);
 
 		return (payload) => {
 			return Promise.resolve()
 				.then(() => {
-					return fn(payload);
+					return serializer(fn(payload));
 				});
 		};
 	}
@@ -101,7 +115,7 @@ module.exports = (() => {
 		return (payload) => Promise.resolve(value);
 	}
 
-	function buildVariableExtractor(variable) {
+	function buildVariableExtractor(variable, serializer) {
 		assert.argumentIsRequired(variable, 'variable', String);
 
 		return buildDelegateExtractor((payload) => {
@@ -110,7 +124,7 @@ module.exports = (() => {
 			} else {
 				return null;
 			}
-		});
+		}, serializer);
 	}
 
 	return ParametersBuilder;

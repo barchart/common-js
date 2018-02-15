@@ -32,33 +32,43 @@ module.exports = (() => {
 		}
 
 		/**
-		 * Unable to initiate request due to missing data.
+		 * One or more data points is missing.
 		 *
 		 * @static
 		 * @returns {FailureType}
 		 */
 		static get REQUEST_CONSTRUCTION_FAILURE() {
-			return gatewayFailureRequestConstructionFailure;
+			return failureTypeRequestConstructionFailure;
 		}
 
 		/**
-		 * Unable to initiate request because user identity could not be determined.
+		 * A data point is missing.
+		 *
+		 * @static
+		 * @returns {FailureType}
+		 */
+		static get REQUEST_PARAMETER_MISSING_FAILURE() {
+			return failureTypeRequestParameterMissingFailure;
+		}
+
+		/**
+		 * User identity could not be determined.
 		 *
 		 * @static
 		 * @returns {FailureType}
 		 */
 		static get REQUEST_IDENTITY_FAILURE() {
-			return gatewayFailureRequestIdentifyFailure;
+			return failureTypeRequestIdentifyFailure;
 		}
 
 		/**
-		 * Request initiated; however, user authorization failed.
+		 * User authorization failed.
 		 *
 		 * @static
 		 * @returns {FailureType}
 		 */
 		static get REQUEST_AUTHORIZATION_FAILURE() {
-			return gatewayFailureRequestAuthorizationFailure;
+			return failureTypeRequestAuthorizationFailure;
 		}
 
 		toString() {
@@ -66,9 +76,10 @@ module.exports = (() => {
 		}
 	}
 
-	const gatewayFailureRequestConstructionFailure = new FailureType('REQUEST_CONSTRUCTION_FAILURE', '{U|root.description} operation cannot be executed, some required information is missing.');
-	const gatewayFailureRequestIdentifyFailure = new FailureType('REQUEST_IDENTITY_FAILURE', 'Unable to process {U|root.description} operation because your identify could not be determined.');
-	const gatewayFailureRequestAuthorizationFailure = new FailureType('REQUEST_AUTHORIZATION_FAILURE', '{U|root.description} operation failed due to authentication failure.');
+	const failureTypeRequestConstructionFailure = new FailureType('REQUEST_CONSTRUCTION_FAILURE', '{u|root.endpoint.description} operation cannot be executed, some required information is missing.');
+	const failureTypeRequestParameterMissingFailure = new FailureType('REQUEST_PARAMETER_MISSING', 'The {L|name} field is required.');
+	const failureTypeRequestIdentifyFailure = new FailureType('REQUEST_IDENTITY_FAILURE', 'Unable to process {u|root.endpoint.description} operation because your identify could not be determined.');
+	const failureTypeRequestAuthorizationFailure = new FailureType('REQUEST_AUTHORIZATION_FAILURE', '{u|root.endpoint.description} operation failed due to authentication failure.');
 
 	return FailureType;
 })();

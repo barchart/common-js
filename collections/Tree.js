@@ -1,3 +1,5 @@
+const is = require('./../lang/is');
+
 module.exports = (() => {
 	'use strict';
 
@@ -201,12 +203,21 @@ module.exports = (() => {
 		 * Creates a representation of the tree using JavaScript objects and arrays.
 		 *
 		 * @public
+		 * @param {Function=} valueConverter - An optional function for converting the value of each node.
 		 * @returns {Object}
 		 */
-		toJSObj() {
+		toJSObj(valueConverter) {
+			let valueConverterToUse;
+
+			if (is.fn(valueConverter)) {
+				valueConverterToUse = valueConverter;
+			} else {
+				valueConverterToUse = (x) => x;
+			}
+
 			return {
-				value: this._value,
-				children: this._children.map((child) => child.toJSObj())
+				value: valueConverterToUse(this._value),
+				children: this._children.map((child) => child.toJSObj(valueConverter))
 			};
 		}
 

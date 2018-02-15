@@ -17,8 +17,6 @@ module.exports = (() => {
 	 */
 	class FailureReason {
 		constructor(data) {
-			assert.argumentIsRequired(type, 'type', FailureType, 'FailureType');
-
 			this._data = data || null;
 
 			this._head = new Tree();
@@ -62,10 +60,14 @@ module.exports = (() => {
 		 * Returns a tree of strings, describing the reason(s) for API failure.
 		 *
 		 * @public
-		 * @returns {String}
+		 * @returns {Array}
 		 */
 		formatTree() {
+			const reasons = this._head.toJSObj((item) => {
+				return item ? item.format(this._data) : null;
+			});
 
+			return reasons.children;
 		}
 
 		/**

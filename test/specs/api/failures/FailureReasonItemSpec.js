@@ -2,7 +2,7 @@ var Enum = require('./../../../../lang/Enum'),
 	FailureReasonItem = require('./../../../../api/failures/FailureReasonItem'),
 	FailureType = require('./../../../../api/failures/FailureType');
 
-describe('When a type is created with a template string that references root level data', function() {
+describe('When a FailureType is created with a template string that references root level data', function() {
 	'use strict';
 
 	var code;
@@ -16,7 +16,7 @@ describe('When a type is created with a template string that references root lev
 		type = Enum.fromCode(FailureType, code) || new FailureType(code, template);
 	});
 
-	describe('and a FailureReasonItem is created using this type', function() {
+	describe('and a FailureReasonItem is created using this FailureType', function() {
 		var item;
 		var root;
 
@@ -42,7 +42,7 @@ describe('When a type is created with a template string that references root lev
 	});
 });
 
-describe('When a type is created with a template string that references with data points', function() {
+describe('When a FailureType is created with a template string that references with data points', function() {
 	'use strict';
 
 	var code;
@@ -56,7 +56,7 @@ describe('When a type is created with a template string that references with dat
 		type = Enum.fromCode(FailureType, code) || new FailureType(code, template);
 	});
 
-	describe('and a FailureReasonItem is created using this type', function() {
+	describe('and a FailureReasonItem is created using this FailureType', function() {
 		var item;
 		var root;
 		var data;
@@ -90,7 +90,7 @@ describe('When a type is created with a template string that references with dat
 	});
 });
 
-describe('When a type is created with a template string that references data points with casing changes', function() {
+describe('When a FailureType is created with a template string that references data points with casing changes', function() {
 	'use strict';
 
 	var code;
@@ -104,7 +104,7 @@ describe('When a type is created with a template string that references data poi
 		type = Enum.fromCode(FailureType, code) || new FailureType(code, template);
 	});
 
-	describe('and a FailureReasonItem is created using this type', function() {
+	describe('and a FailureReasonItem is created using this FailureType', function() {
 		var item;
 		var root;
 		var data;
