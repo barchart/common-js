@@ -197,6 +197,19 @@ module.exports = (() => {
 			}
 		}
 
+		/**
+		 * Creates a representation of the tree using JavaScript objects and arrays.
+		 *
+		 * @public
+		 * @returns {Object}
+		 */
+		toJSObj() {
+			return {
+				value: this._value,
+				children: this._children.map((child) => child.toJSObj())
+			};
+		}
+
 		toString() {
 			return '[Tree]';
 		}
