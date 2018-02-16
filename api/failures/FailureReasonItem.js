@@ -23,6 +23,15 @@ module.exports = (() => {
 		}
 
 		/**
+		 * The {@link FailureType} of the item.
+		 *
+		 * @returns {FailureType}
+		 */
+		get type() {
+			return this._type;
+		}
+
+		/**
 		 * Formats a human-readable message, describing the failure.
 		 *
 		 * @public

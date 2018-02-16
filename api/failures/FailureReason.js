@@ -64,7 +64,10 @@ module.exports = (() => {
 		 */
 		formatTree() {
 			const reasons = this._head.toJSObj((item) => {
-				return item ? item.format(this._data) : null;
+				return {
+					code: item ? item.type.code : null,
+					message: item ? item.format(this._data) : null
+				};
 			});
 
 			return reasons.children;
