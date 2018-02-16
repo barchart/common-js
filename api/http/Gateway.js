@@ -8,6 +8,9 @@ const BodyType = require('./definitions/BodyType'),
 	Endpoint = require('./definitions/Endpoint'),
 	VerbType = require('./definitions/VerbType');
 
+const FailureReason = require('./../failures/FailureReason'),
+	FailureType = require('./../failures/FailureType');
+
 module.exports = (() => {
 	'use strict';
 
@@ -35,8 +38,10 @@ module.exports = (() => {
 				.then(() => {
 					assert.argumentIsRequired(endpoint, 'endpoint', Endpoint, 'Endpoint');
 
-					return Promise.resolve({ })
-						.then((options) => {
+					return Promise.resolve({ endpoint: endpoint, options: { } })
+						.then((context) => {
+							const options = context.options;
+
 							return Promise.resolve([ ])
 								.then((url) => {
 									url.push(endpoint.protocol.prefix);
@@ -55,6 +60,11 @@ module.exports = (() => {
 												previous.push(value);
 
 												return previous;
+											}).catch((e) => {
+												const failure = getOrCreateRequestConstructionFailure(context)
+													.addItem(FailureType)
+
+												return previous;
 											});
 									}), [ ]).then((paths) => {
 										url.push(paths.join('/'));
@@ -65,7 +75,7 @@ module.exports = (() => {
 									options.method = verbs.get(endpoint.verb);
 									options.url = url;
 
-									return options;
+									return context;
 								});
 						}).then((options) => {
 							const headerParameters = endpoint.headers.parameters;
@@ -163,6 +173,15 @@ module.exports = (() => {
 		toString() {
 			return `[Gateway]`;
 		}
+	}
+
+	function getOrCreateRequestConstructionFailure(context) {
+		if (!context.failure) {
+			context.failure = FailureReason.forRequest({ endpoint: context.endpoint })
+				.addItem(FailureType.REQUEST_CONSTRUCTION_FAILURE, null, true);
+		}
+
+		return context.failure;
 	}
 
 	const verbs = new Map();
