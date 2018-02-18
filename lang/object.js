@@ -34,15 +34,19 @@ module.exports = (() => {
 					returnVal = false;
 				}
 			} else if (is.object(a) && is.object(b)) {
-				const keysA = object.keys(a);
-				const keysB = object.keys(b);
+				if (is.fn(a.equals) && is.fn(b.equals)) {
+					returnVal = a.equals(b);
+				} else {
+					const keysA = object.keys(a);
+					const keysB = object.keys(b);
 
-				returnVal = array.differenceSymmetric(keysA, keysB).length === 0 && keysA.every((key) => {
-					const valueA = a[key];
-					const valueB = b[key];
+					returnVal = array.differenceSymmetric(keysA, keysB).length === 0 && keysA.every((key) => {
+						const valueA = a[key];
+						const valueB = b[key];
 
-					return object.equals(valueA, valueB);
-				});
+						return object.equals(valueA, valueB);
+					});
+				}
 			} else {
 				returnVal = false;
 			}

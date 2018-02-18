@@ -185,7 +185,7 @@ describe('When running a deep comparison', function() {
 		});
 	});
 
-	describe('against an complex object, with the same properties and values', function() {
+	describe('against a complex object, with the same properties and values', function() {
 		it('the result should be true', function() {
 			var a = {
 				hi: {
@@ -215,7 +215,7 @@ describe('When running a deep comparison', function() {
 		});
 	});
 
-	describe('against an complex object, with the different properties and values', function() {
+	describe('against a complex object, with the different properties and values', function() {
 		it('the result should be false', function() {
 			var a = {
 				hi: {
@@ -242,6 +242,46 @@ describe('When running a deep comparison', function() {
 			};
 
 			expect(object.equals(a, b)).toEqual(false);
+		});
+	});
+
+	describe('against a complex object, where both objects have equals methods (somewhere in the object model tree)', function() {
+		it('the result should be true', function() {
+			var a = {
+				hi: {
+					my: {
+						name: [
+							'Elvis',
+							'Presley'
+						],
+						home: {
+							name: 'Graceland',
+							equals: function(other) {
+								return other.name === 'Graceland';
+							}
+						}
+					}
+				}
+			};
+
+			var b = {
+				hi: {
+					my: {
+						name: [
+							'Elvis',
+							'Presley'
+						],
+						home: {
+							name: 'Graceland',
+							equals: function(other) {
+								return other.name === 'Graceland';
+							}
+						}
+					}
+				}
+			};
+
+			expect(object.equals(a, b)).toEqual(true);
 		});
 	});
 
