@@ -105,6 +105,7 @@ module.exports = (() => {
 		 * @param {number=} maximumAttempts - The number of attempts to before giving up.
 		 * @param {Function=} failureCallback - If provided, will be invoked if a function is considered to be failing.
 		 * @param {Object=} failureValue - If provided, will consider the result to have failed, if this value is returned (a deep equality check is used). If not provided, a "falsey" value will trigger a retry.
+		 * @returns {Promise}
 		 */
 		backoff(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts, failureCallback, failureValue) {
 			return Promise.resolve()
