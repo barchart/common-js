@@ -52,7 +52,7 @@ module.exports = (() => {
 		 *
 		 * @param {String} description
 		 * @param {String} key
-		 * @param {Function} delegate
+		 * @param {*} value
 		 * @param (Boolean=} optional
 		 * @returns {ParametersBuilder}
 		 */
@@ -68,7 +68,7 @@ module.exports = (() => {
 		 *
 		 * @param {String} description
 		 * @param {String} key
-		 * @param {Function} delegate
+		 * @param {String} variable
 		 * @param (Boolean=} optional
 		 * @param {Function=} serializer
 		 * @returns {ParametersBuilder}
