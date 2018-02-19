@@ -45,10 +45,6 @@ module.exports = (() => {
 			return this;
 		}
 
-		getCount() {
-
-		}
-
 		/**
 		 * Resets the current node to the head of the tree.
 		 *
@@ -73,7 +69,7 @@ module.exports = (() => {
 					code: item ? item.type.code : null,
 					message: item ? item.format(this._data) : null
 				};
-			});
+			}, false);
 
 			return reasons.children;
 		}

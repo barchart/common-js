@@ -204,9 +204,10 @@ module.exports = (() => {
 		 *
 		 * @public
 		 * @param {Function=} valueConverter - An optional function for converting the value of each node.
+		 * @param {Boolean=} valueConverter - If true, empty children arrays will be excluded from output.
 		 * @returns {Object}
 		 */
-		toJSObj(valueConverter) {
+		toJSObj(valueConverter, omitEmptyChildren) {
 			let valueConverterToUse;
 
 			if (is.fn(valueConverter)) {
@@ -219,7 +220,7 @@ module.exports = (() => {
 				value: valueConverterToUse(this._value)
 			};
 
-			if (this._children.length !== 0) {
+			if (is.boolean(omitEmptyChildren) && omitEmptyChildren && this._children.length !== 0) {
 				converted.children = this._children.map((child) => child.toJSObj(valueConverter));
 			}
 
