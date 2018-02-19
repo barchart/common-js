@@ -61,7 +61,7 @@ module.exports = (() => {
 				throw new Error('Parameter key must be a non-zero length string');
 			}
 
-			if (!is.fn(this.value)) {
+			if (!is.fn(this._extractor)) {
 				throw new Error('Parameter extractor must be a function.');
 			}
 		}
