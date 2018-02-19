@@ -80,14 +80,6 @@ describe('When a Tree is constructed', function() {
 				it('should have the correct value for the second child', function() {
 					expect(object.children[1].value).toBe(three);
 				});
-
-				it('the first child should have no children', function() {
-					expect(object.children[0].children.length).toEqual(0);
-				});
-
-				it('the second child should have no children', function() {
-					expect(object.children[1].children.length).toEqual(0);
-				});
 			});
 		});
 	});

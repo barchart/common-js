@@ -348,7 +348,7 @@ module.exports = function () {
 		return FailureType;
 	}(Enum);
 
-	var failureTypeRequestConstructionFailure = new FailureType('REQUEST_CONSTRUCTION_FAILURE', '{u|root.endpoint.description} operation cannot be executed, some required information is missing.');
+	var failureTypeRequestConstructionFailure = new FailureType('REQUEST_CONSTRUCTION_FAILURE', '{u|root.endpoint.description} failed, some required information is missing.');
 	var failureTypeRequestParameterMissingFailure = new FailureType('REQUEST_PARAMETER_MISSING', 'The {L|name} field is required.');
 	var failureTypeRequestIdentifyFailure = new FailureType('REQUEST_IDENTITY_FAILURE', 'Unable to process {u|root.endpoint.description} operation because your identify could not be determined.');
 	var failureTypeRequestAuthorizationFailure = new FailureType('REQUEST_AUTHORIZATION_FAILURE', '{u|root.endpoint.description} operation failed due to authentication failure.');
@@ -988,12 +988,17 @@ module.exports = function () {
 					};
 				}
 
-				return {
-					value: valueConverterToUse(this._value),
-					children: this._children.map(function (child) {
-						return child.toJSObj(valueConverter);
-					})
+				var converted = {
+					value: valueConverterToUse(this._value)
 				};
+
+				if (this._children.length !== 0) {
+					converted.children = this._children.map(function (child) {
+						return child.toJSObj(valueConverter);
+					});
+				}
+
+				return converted;
 			}
 		}, {
 			key: 'toString',
@@ -16242,7 +16247,7 @@ describe('When a FailureReason is created', function () {
 		});
 
 		it('should have the correct primary message', function () {
-			expect(human[0].value.message).toEqual('Mock operation cannot be executed, some required information is missing.');
+			expect(human[0].value.message).toEqual('Mock failed, some required information is missing.');
 		});
 
 		it('should have the correct secondary message (1)', function () {
@@ -16762,14 +16767,6 @@ describe('When a Tree is constructed', function () {
 
 				it('should have the correct value for the second child', function () {
 					expect(object.children[1].value).toBe(three);
-				});
-
-				it('the first child should have no children', function () {
-					expect(object.children[0].children.length).toEqual(0);
-				});
-
-				it('the second child should have no children', function () {
-					expect(object.children[1].children.length).toEqual(0);
 				});
 			});
 		});

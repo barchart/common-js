@@ -35,7 +35,7 @@ describe('When a FailureReason is created', function() {
 		});
 
 		it('should have the correct primary message', function() {
-			expect(human[0].value.message).toEqual('Mock operation cannot be executed, some required information is missing.');
+			expect(human[0].value.message).toEqual('Mock failed, some required information is missing.');
 		});
 
 		it('should have the correct secondary message (1)', function() {
