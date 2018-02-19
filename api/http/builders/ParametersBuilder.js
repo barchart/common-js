@@ -12,10 +12,13 @@ module.exports = (() => {
 	 * Fluent interface for building a {@link Parameters} collection.
 	 *
 	 * @public
+	 * @param {Boolean} required - If true, all parameters will be marked as required.
 	 */
 	class ParametersBuilder {
-		constructor() {
+		constructor(required) {
 			this._parameters = new Parameters();
+
+			this._required = is.boolean(required) && required;
 		}
 
 		/**
@@ -31,14 +34,15 @@ module.exports = (() => {
 		/**
 		 * Adds a new parameter that extracts its value from a delegate.
 		 *
+		 * @param {String} description
 		 * @param {String} key
 		 * @param {Function} delegate
 		 * @param (Boolean=} optional
 		 * @param {Function=} serializer
 		 * @returns {ParametersBuilder}
 		 */
-		withDelegateParameter(key, delegate, optional, serializer) {
-			addParameter.call(this, new Parameter(key, buildDelegateExtractor(delegate, buildSerializer(serializer)), optional));
+		withDelegateParameter(description, key, delegate, optional, serializer) {
+			addParameter.call(this, new Parameter(description, key, buildDelegateExtractor(delegate, buildSerializer(serializer)), optional || this._required));
 
 			return this;
 		}
@@ -46,13 +50,14 @@ module.exports = (() => {
 		/**
 		 * Adds a new parameter with a literal value.
 		 *
+		 * @param {String} description
 		 * @param {String} key
 		 * @param {Function} delegate
 		 * @param (Boolean=} optional
 		 * @returns {ParametersBuilder}
 		 */
-		withLiteralParameter(key, value, optional) {
-			addParameter.call(this, new Parameter(key, buildLiteralExtractor(value || key), optional));
+		withLiteralParameter(description, key, value, optional) {
+			addParameter.call(this, new Parameter(description, key, buildLiteralExtractor(value || key), optional || this._required));
 
 			return this;
 		}
@@ -61,14 +66,15 @@ module.exports = (() => {
 		 * Adds a new parameter that reads its value from the a variable
 		 * on the request payload.
 		 *
+		 * @param {String} description
 		 * @param {String} key
 		 * @param {Function} delegate
 		 * @param (Boolean=} optional
 		 * @param {Function=} serializer
 		 * @returns {ParametersBuilder}
 		 */
-		withVariableParameter(key, variable, optional, serializer) {
-			addParameter.call(this, new Parameter(key, buildVariableExtractor(variable, buildSerializer(serializer)), optional));
+		withVariableParameter(description, key, variable, optional, serializer) {
+			addParameter.call(this, new Parameter(description, key, buildVariableExtractor(variable, buildSerializer(serializer)), optional || this._required));
 
 			return this;
 		}
@@ -92,7 +98,7 @@ module.exports = (() => {
 		if (is.fn(serializer)) {
 			returnRef = serializer;
 		} else {
-			returnRef = (x) => x;
+			returnRef = x => x;
 		}
 
 		return returnRef;

@@ -34,6 +34,7 @@ module.exports = (() => {
 		 */
 		addItem(type, data, group) {
 			assert.argumentIsRequired(type, 'type', FailureType, 'FailureType');
+			assert.argumentIsOptional(group, 'group', Boolean);
 
 			const node = this._current.addChild(new FailureReasonItem(type, data));
 
@@ -42,6 +43,10 @@ module.exports = (() => {
 			}
 
 			return this;
+		}
+
+		getCount() {
+
 		}
 
 		/**
@@ -62,7 +67,7 @@ module.exports = (() => {
 		 * @public
 		 * @returns {Array}
 		 */
-		formatTree() {
+		format() {
 			const reasons = this._head.toJSObj((item) => {
 				return {
 					code: item ? item.type.code : null,

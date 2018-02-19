@@ -215,10 +215,15 @@ module.exports = (() => {
 				valueConverterToUse = (x) => x;
 			}
 
-			return {
-				value: valueConverterToUse(this._value),
-				children: this._children.map((child) => child.toJSObj(valueConverter))
+			const converted = {
+				value: valueConverterToUse(this._value)
 			};
+
+			if (this._children.length !== 0) {
+				converted.children = this._children.map((child) => child.toJSObj(valueConverter));
+			}
+
+			return converted;
 		}
 
 		toString() {

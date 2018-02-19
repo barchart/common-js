@@ -2,9 +2,7 @@ const assert = require('./../../../lang/assert');
 
 const ParametersBuilder = require('./ParametersBuilder');
 
-const Body = require('./../definitions/Body'),
-	BodyType = require('./../definitions/BodyType'),
-	Endpoint = require('./../definitions/Endpoint'),
+const Endpoint = require('./../definitions/Endpoint'),
 	Parameters = require('./../definitions/Parameters'),
 	ProtocolType = require('./../definitions/ProtocolType'),
 	VerbType = require('./../definitions/VerbType');
@@ -132,7 +130,7 @@ module.exports = (() => {
 		withPathBuilder(callback) {
 			assert.argumentIsRequired(callback, 'callback', Function);
 
-			const builder = new ParametersBuilder();
+			const builder = new ParametersBuilder(true);
 
 			callback(builder);
 
@@ -165,17 +163,20 @@ module.exports = (() => {
 		}
 
 		/**
-		 * Adds a body to the request, selecting the value from a variable
-		 * on the request payload.
+		 * Adds a {@link Parameters} collection, describing the request body, using a callback.
 		 *
 		 * @public
-		 * @param {String} variable - The name of the variable whose value contains the body.
+		 * @param {EndpointBuilder~parametersBuilderCallback} callback
 		 * @returns {EndpointBuilder}
 		 */
-		withVariableBody(variable) {
-			assert.argumentIsRequired(variable, 'variable', String);
+		withBodyBuilder(callback) {
+			assert.argumentIsRequired(callback, 'callback', Function);
 
-			const body = new Body(variable, BodyType.VARIABLE);
+			const builder = new ParametersBuilder();
+
+			callback(builder);
+
+			const body = builder.parameters;
 
 			this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, body, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor);
 
@@ -183,17 +184,18 @@ module.exports = (() => {
 		}
 
 		/**
-		 * Adds a body to the request using the entire payload.
+		 * Adds a body to the request.
 		 *
 		 * @public
+		 * @public {String=} description - The human-readable description of the request body.
 		 * @returns {EndpointBuilder}
 		 */
-		withEntireBody() {
-			const body = new Body(name, BodyType.ENTIRE);
+		withBody(description) {
+			assert.argumentIsOptional(description, 'description', String);
 
-			this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, body, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor);
-
-			return this;
+			return this.withBodyBuilder((bodyBuilder) => {
+				bodyBuilder.withDelegateParameter((description || 'request payload'), 'body', x => x);
+			});
 		}
 
 		/**

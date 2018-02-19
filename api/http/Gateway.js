@@ -1,11 +1,11 @@
 const axios = require('axios');
 
-const assert = require('./../../lang/assert'),
+const array = require('./../../lang/array'),
+	assert = require('./../../lang/assert'),
 	attributes = require('./../../lang/attributes'),
 	promise = require('./../../lang/promise');
 
-const BodyType = require('./definitions/BodyType'),
-	Endpoint = require('./definitions/Endpoint'),
+const Endpoint = require('./definitions/Endpoint'),
 	VerbType = require('./definitions/VerbType');
 
 const FailureReason = require('./../failures/FailureReason'),
@@ -34,154 +34,168 @@ module.exports = (() => {
 		 * @returns {Promise.<Object>}
 		 */
 		static invoke(endpoint, payload) {
-			return Promise.resolve({ })
+			return Promise.resolve()
 				.then(() => {
 					assert.argumentIsRequired(endpoint, 'endpoint', Endpoint, 'Endpoint');
 
-					return Promise.resolve({ endpoint: endpoint, options: { } })
-						.then((context) => {
-							const options = context.options;
+					const pathParameters = endpoint.path.parameters;
+					const headerParameters = endpoint.headers.parameters;
+					const queryParameters = endpoint.query.parameters;
+					const bodyParameters = endpoint.body.parameters;
 
-							return Promise.resolve([ ])
-								.then((url) => {
-									url.push(endpoint.protocol.prefix);
-									url.push(endpoint.host);
+					const extractParameter = (parameter) => {
+						return parameter.extractor(payload)
+							.catch((e) => {
+								return null;
+							});
+					};
 
-									if (endpoint.port !== endpoint.protocol.defaultPort) {
-										url.push(':');
-										url.push(endpoint.port);
-									}
+					return Promise.all([
+						promise.map(pathParameters, extractParameter),
+						promise.map(headerParameters, extractParameter),
+						promise.map(queryParameters, extractParameter),
+						promise.map(bodyParameters, extractParameter)
+					]).then((groups) => {
+						const pathValues = groups[0];
+						const headerValues = groups[1];
+						const queryValues = groups[2];
+						const bodyValues = groups[3];
+						
+						const parameters = array.flatten([ pathParameters, headerParameters, queryParameters, bodyParameters ]);
+						const values = array.flatten([ pathValues, headerValues, queryValues, bodyValues ]);
 
-									url.push('/');
+						const failure = values.reduce((accumulator, value, i) => {
+							let failure = accumulator;
 
-									return promise.pipeline(endpoint.path.parameters.map((parameter) => (previous) => {
-										return parameter.extractor(payload)
-											.then((value) => {
-												previous.push(value);
+							const parameter = parameters[i];
 
-												return previous;
-											}).catch((e) => {
-												const failure = getOrCreateRequestConstructionFailure(context)
-													.addItem(FailureType)
+							if (value === null && !parameter.optional) {
+								if (accumulator === null) {
+									failure = FailureReason.forRequest({ endpoint: endpoint })
+										.addItem(FailureType.REQUEST_CONSTRUCTION_FAILURE, null, true);
+								}
 
-												return previous;
-											});
-									}), [ ]).then((paths) => {
-										url.push(paths.join('/'));
+								failure.addItem(FailureType.REQUEST_PARAMETER_MISSING_FAILURE, { name: parameter.description });
+							}
 
-										return url.join('');
-									});
+							return failure;
+						}, null);
+
+						if (failure !== null) {
+							throw failure.format();
+						}
+
+						return Promise.resolve({ })
+							.then((options) => {
+								if (pathParameters.length === 0) {
+									return options;
+								}
+
+								const url = [ ];
+
+								url.push(endpoint.protocol.prefix);
+								url.push(endpoint.host);
+
+								if (endpoint.port !== endpoint.protocol.defaultPort) {
+									url.push(':');
+									url.push(endpoint.port);
+								}
+
+								url.push('/');
+
+								return promise.pipeline(pathValues.map((value) => (previous) => {
+									previous.push(value);
+
+									return previous;
+								}), [ ]).then((paths) => {
+									url.push(paths.join('/'));
+
+									return url.join('');
 								}).then((url) => {
 									options.method = verbs.get(endpoint.verb);
 									options.url = url;
 
-									return context;
-								});
-						}).then((options) => {
-							const headerParameters = endpoint.headers.parameters;
-
-							if (headerParameters.length === 0) {
-								return Promise.resolve(options);
-							}
-
-							return Promise.resolve({ })
-								.then((headers) => {
-									return promise.pipeline(headerParameters.map((parameter) => (previous) => {
-										return parameter.extractor(payload)
-											.then((value) => {
-												if (value !== null) {
-													previous[parameter.key] = value;
-												} else if (!parameter.optional) {
-													throw new Error(`Unable to extract header parameter [ ${parameter.key} ]`);
-												}
-
-												return previous;
-											});
-									}), headers);
-								}).then((headers) => {
-									options.headers = headers;
-
 									return options;
 								});
-						}).then((options) => {
-							const queryParameters = endpoint.query.parameters;
-
-							if (queryParameters.length === 0) {
-								return Promise.resolve(options);
-							}
-
-							return Promise.resolve({ })
-								.then((query) => {
-									return promise.pipeline(queryParameters.map((parameter) => (previous) => {
-										return parameter.extractor(payload)
-											.then((value) => {
-												if (value !== null) {
-													previous[parameter.key] = value;
-												} else if (!parameter.optional) {
-													throw new Error(`Unable to extract query parameter [ ${parameter.key} ]`);
-												}
-
-												return previous;
-											});
-									}), query);
-								}).then((query) => {
-									options.params = query;
-
+							}).then((options) => {
+								if (headerParameters.length === 0) {
 									return options;
-								});
-						}).then((options) => {
-							const body = endpoint.body;
-
-							if (body.type === BodyType.ENTIRE) {
-								options.data = payload;
-							} else if (body.type === BodyType.VARIABLE) {
-								if (attributes.has(payload, body.name)) {
-									options.data = attributes.read(payload, body.name);
-								} else {
-									throw new Error(`Unable construct web service request, payload is missing variable [ ${body} ].`);
 								}
-							}
 
-							return options;
-						}).then((options) => {
-							if (endpoint.requestInterceptor) {
-								return endpoint.requestInterceptor.process(options);
-							} else {
-								return Promise.resolve(options);
-							}
-						}).then((options) => {
-							return promise.build((resolve, reject) => {
-								axios.request(options)
+								return promise.pipeline(headerValues.map((value, i) => (accumulator) => {
+									const parameter = headerParameters[i];
+
+									accumulator[parameter.key] = value;
+
+									return accumulator;
+								}), {}).then((headers) => {
+									if (headers.length !== 0) {
+										options.headers = headers;
+									}
+
+									return options;
+								});
+							}).then((options) => {
+								if (queryParameters.length === 0) {
+									return options;
+								}
+
+								return promise.pipeline(queryValues.map((value, i) => (accumulator) => {
+									const parameter = queryParameters[i];
+
+									accumulator[parameter.key] = value;
+
+									return accumulator;
+								}), {}).then((query) => {
+									if (query.length !== 0) {
+										options.params = query;
+									}
+
+									return options;
+								});
+							}).then((options) => {
+								if (bodyParameters.length === 0) {
+									return options;
+								}
+
+								return promise.pipeline(bodyValues.map((value, i) => (accumulator) => {
+									const parameter = bodyParameters[i];
+
+									attributes.write(accumulator, parameter.key, value);
+
+									return accumulator;
+								}), { }).then((body) => {
+									options.data = body.body;
+
+									return options;
+								});
+							}).then((options) => {
+								if (endpoint.requestInterceptor) {
+									return endpoint.requestInterceptor.process(options);
+								} else {
+									return options;
+								}
+							}).then((options) => {
+								return axios.request(options)
 									.then((response) => {
 										let responsePromise;
 
 										if (endpoint.responseInterceptor) {
 											responsePromise = endpoint.responseInterceptor.process(response);
 										} else {
-											responsePromise = resolve(response);
+											responsePromise = Promise.resolve(response);
 										}
 
-										return responsePromise.then((response) => resolve(response));
-									}).catch((e) => {
-										reject(e);
+										return Promise.resolve(responsePromise);
 									});
 							});
-						});
+					});
 				});
 		}
 
 		toString() {
 			return `[Gateway]`;
 		}
-	}
-
-	function getOrCreateRequestConstructionFailure(context) {
-		if (!context.failure) {
-			context.failure = FailureReason.forRequest({ endpoint: context.endpoint })
-				.addItem(FailureType.REQUEST_CONSTRUCTION_FAILURE, null, true);
-		}
-
-		return context.failure;
 	}
 
 	const verbs = new Map();

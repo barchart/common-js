@@ -1,8 +1,6 @@
-const assert = require('./../../../lang/assert'),
-	is = require('./../../../lang/is');
+const is = require('./../../../lang/is');
 
-const Body = require('./Body'),
-	Parameter = require('./Parameter'),
+const Parameter = require('./Parameter'),
 	Parameters = require('./Parameters'),
 	ProtocolType = require('./ProtocolType'),
 	VerbType = require('./VerbType');
@@ -26,7 +24,7 @@ module.exports = (() => {
 	 * @param {Parameters=} path
 	 * @param {Parameters=} query
 	 * @param {Parameters=} headers
-	 * @param {Body=} body
+	 * @param {Parameters=} body
 	 * @param {RequestInterceptor} requestInterceptor
 	 * @param {ResponseInterceptor} responseInterceptor
 	 */
@@ -41,7 +39,7 @@ module.exports = (() => {
 			this._path = path || new Parameters();
 			this._query = query || new Parameters();
 			this._headers = headers || new Parameters();
-			this._body = body || new Body();
+			this._body = body || new Parameters();
 			this._requestInterceptor = requestInterceptor || RequestInterceptor.EMPTY;
 			this._responseInterceptor = responseInterceptor || ResponseInterceptor.EMPTY;
 		}
@@ -140,7 +138,7 @@ module.exports = (() => {
 		 * The body definition of the endpoint.
 		 *
 		 * @public
-		 * @returns {Body}
+		 * @returns {Parameters}
 		 */
 		get body() {
 			return this._body;
@@ -202,8 +200,8 @@ module.exports = (() => {
 
 			this.headers.validate();
 
-			if (!(this.body instanceof Body)) {
-				throw new Error('The body must be a Body instance.');
+			if (!(this.body instanceof Parameters)) {
+				throw new Error('The body must be a Parameters collection.');
 			}
 
 			this.body.validate();

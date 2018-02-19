@@ -48,6 +48,7 @@ module.exports = function () {
 			key: 'addItem',
 			value: function addItem(type, data, group) {
 				assert.argumentIsRequired(type, 'type', FailureType, 'FailureType');
+				assert.argumentIsOptional(group, 'group', Boolean);
 
 				var node = this._current.addChild(new FailureReasonItem(type, data));
 
@@ -57,6 +58,9 @@ module.exports = function () {
 
 				return this;
 			}
+		}, {
+			key: 'getCount',
+			value: function getCount() {}
 
 			/**
     * Resets the current node to the head of the tree.
@@ -81,12 +85,15 @@ module.exports = function () {
     */
 
 		}, {
-			key: 'formatTree',
-			value: function formatTree() {
+			key: 'format',
+			value: function format() {
 				var _this = this;
 
 				var reasons = this._head.toJSObj(function (item) {
-					return item ? item.format(_this._data) : null;
+					return {
+						code: item ? item.type.code : null,
+						message: item ? item.format(_this._data) : null
+					};
 				});
 
 				return reasons.children;
@@ -154,16 +161,23 @@ module.exports = function () {
 		}
 
 		/**
-   * Formats a human-readable message, describing the failure.
+   * The {@link FailureType} of the item.
    *
-   * @public
-   * @param {Object=} root - Root data from the {@link FailureReason}.
-   * @returns {String}
+   * @returns {FailureType}
    */
 
 
 		_createClass(FailureReasonItem, [{
 			key: 'format',
+
+
+			/**
+    * Formats a human-readable message, describing the failure.
+    *
+    * @public
+    * @param {Object=} root - Root data from the {@link FailureReason}.
+    * @returns {String}
+    */
 			value: function format(root) {
 				var _this = this;
 
@@ -200,6 +214,11 @@ module.exports = function () {
 			key: 'toString',
 			value: function toString() {
 				return '[FailureReasonItem]';
+			}
+		}, {
+			key: 'type',
+			get: function get() {
+				return this._type;
 			}
 		}]);
 
@@ -5487,15 +5506,19 @@ module.exports = function () {
 					returnVal = false;
 				}
 			} else if (is.object(a) && is.object(b)) {
-				var keysA = object.keys(a);
-				var keysB = object.keys(b);
+				if (is.fn(a.equals) && is.fn(b.equals)) {
+					returnVal = a.equals(b);
+				} else {
+					var keysA = object.keys(a);
+					var keysB = object.keys(b);
 
-				returnVal = array.differenceSymmetric(keysA, keysB).length === 0 && keysA.every(function (key) {
-					var valueA = a[key];
-					var valueB = b[key];
+					returnVal = array.differenceSymmetric(keysA, keysB).length === 0 && keysA.every(function (key) {
+						var valueA = a[key];
+						var valueB = b[key];
 
-					return object.equals(valueA, valueB);
-				});
+						return object.equals(valueA, valueB);
+					});
+				}
 			} else {
 				returnVal = false;
 			}
@@ -16203,7 +16226,7 @@ describe('When a FailureReason is created', function () {
 		var human;
 
 		beforeEach(function () {
-			human = reason.formatTree();
+			human = reason.format();
 		});
 
 		it('should have one primary reason', function () {
@@ -16214,16 +16237,28 @@ describe('When a FailureReason is created', function () {
 			expect(human[0].children.length).toEqual(2);
 		});
 
-		it('should have the correct primary reason value', function () {
-			expect(human[0].value).toEqual('Mock operation cannot be executed, some required information is missing.');
+		it('should have the correct primary code', function () {
+			expect(human[0].value.code).toEqual(FailureType.REQUEST_CONSTRUCTION_FAILURE.code);
 		});
 
-		it('should have the correct secondary reason value (1)', function () {
-			expect(human[0].children[0].value).toEqual('The first field is required.');
+		it('should have the correct primary message', function () {
+			expect(human[0].value.message).toEqual('Mock operation cannot be executed, some required information is missing.');
 		});
 
-		it('should have the correct secondary reason value (2)', function () {
-			expect(human[0].children[1].value).toEqual('The second field is required.');
+		it('should have the correct secondary message (1)', function () {
+			expect(human[0].children[0].value.message).toEqual('The first field is required.');
+		});
+
+		it('should have the correct secondary code (1)', function () {
+			expect(human[0].children[0].value.code).toEqual(FailureType.REQUEST_PARAMETER_MISSING_FAILURE.code);
+		});
+
+		it('should have the correct secondary message (2)', function () {
+			expect(human[0].children[1].value.message).toEqual('The second field is required.');
+		});
+
+		it('should have the correct secondary code (2)', function () {
+			expect(human[0].children[1].value.code).toEqual(FailureType.REQUEST_PARAMETER_MISSING_FAILURE.code);
 		});
 	});
 });
@@ -22047,7 +22082,7 @@ describe('When running a deep comparison', function () {
 		});
 	});
 
-	describe('against an complex object, with the same properties and values', function () {
+	describe('against a complex object, with the same properties and values', function () {
 		it('the result should be true', function () {
 			var a = {
 				hi: {
@@ -22071,7 +22106,7 @@ describe('When running a deep comparison', function () {
 		});
 	});
 
-	describe('against an complex object, with the different properties and values', function () {
+	describe('against a complex object, with the different properties and values', function () {
 		it('the result should be false', function () {
 			var a = {
 				hi: {
@@ -22092,6 +22127,40 @@ describe('When running a deep comparison', function () {
 			};
 
 			expect(object.equals(a, b)).toEqual(false);
+		});
+	});
+
+	describe('against a complex object, where both objects have equals methods (somewhere in the object model tree)', function () {
+		it('the result should be true', function () {
+			var a = {
+				hi: {
+					my: {
+						name: ['Elvis', 'Presley'],
+						home: {
+							name: 'Graceland',
+							equals: function equals(other) {
+								return other.name === 'Graceland';
+							}
+						}
+					}
+				}
+			};
+
+			var b = {
+				hi: {
+					my: {
+						name: ['Elvis', 'Presley'],
+						home: {
+							name: 'Graceland',
+							equals: function equals(other) {
+								return other.name === 'Graceland';
+							}
+						}
+					}
+				}
+			};
+
+			expect(object.equals(a, b)).toEqual(true);
 		});
 	});
 

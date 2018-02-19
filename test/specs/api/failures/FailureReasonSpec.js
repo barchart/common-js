@@ -19,7 +19,7 @@ describe('When a FailureReason is created', function() {
 		var human;
 
 		beforeEach(function() {
-			human = reason.formatTree();
+			human = reason.format();
 		});
 
 		it('should have one primary reason', function() {
