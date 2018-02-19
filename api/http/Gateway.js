@@ -87,10 +87,6 @@ module.exports = (() => {
 
 						return Promise.resolve({ })
 							.then((options) => {
-								if (pathParameters.length === 0) {
-									return options;
-								}
-
 								const url = [ ];
 
 								url.push(endpoint.protocol.prefix);
