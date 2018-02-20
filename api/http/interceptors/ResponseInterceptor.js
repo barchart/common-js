@@ -18,20 +18,21 @@ module.exports = (() => {
 
 		/**
 		 * Adjusts incoming response data before the response is forwarded
-		 * back to the orginal caller.
+		 * back to the original caller.
 		 *
 		 * @public
 		 * @param {Object} request
+		 * @param {Endpoint} endpoint - The endpoint which is originating the request.
 		 * @returns {Promise.<TResult>}
 		 */
-		process(response) {
+		process(response, endpoint) {
 			return Promise.resolve()
 				.then(() => {
-					return this._onProcess(response);
+					return this._onProcess(response, endpoint);
 				});
 		}
 
-		_onProcess(response) {
+		_onProcess(response, endpoint) {
 			return response;
 		}
 

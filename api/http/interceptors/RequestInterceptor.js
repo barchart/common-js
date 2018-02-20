@@ -20,16 +20,17 @@ module.exports = (() => {
 		 *
 		 * @public
 		 * @param {Object} request
+		 * @param {Endpoint} endpoint - The endpoint which is originating the request.
 		 * @returns {Promise.<TResult>}
 		 */
-		process(request) {
+		process(request, endpoint) {
 			return Promise.resolve()
 				.then(() => {
 					return this._onProcess(request);
 				});
 		}
 
-		_onProcess(request, payload) {
+		_onProcess(request, endpoint) {
 			return request;
 		}
 

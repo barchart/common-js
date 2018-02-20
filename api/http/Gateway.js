@@ -167,7 +167,7 @@ module.exports = (() => {
 								});
 							}).then((options) => {
 								if (endpoint.requestInterceptor) {
-									return endpoint.requestInterceptor.process(options);
+									return endpoint.requestInterceptor.process(options, endpoint);
 								} else {
 									return options;
 								}
@@ -177,7 +177,7 @@ module.exports = (() => {
 										let responsePromise;
 
 										if (endpoint.responseInterceptor) {
-											responsePromise = endpoint.responseInterceptor.process(response);
+											responsePromise = endpoint.responseInterceptor.process(response, endpoint);
 										} else {
 											responsePromise = Promise.resolve(response);
 										}
