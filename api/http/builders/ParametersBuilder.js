@@ -52,7 +52,7 @@ module.exports = (() => {
 		 *
 		 * @param {String} description
 		 * @param {String} key
-		 * @param {*} value
+		 * @param {*=} value
 		 * @param (Boolean=} optional
 		 * @returns {ParametersBuilder}
 		 */
