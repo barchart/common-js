@@ -58,9 +58,6 @@ module.exports = function () {
 
 				return this;
 			}
-		}, {
-			key: 'getCount',
-			value: function getCount() {}
 
 			/**
     * Resets the current node to the head of the tree.
@@ -972,12 +969,13 @@ module.exports = function () {
     *
     * @public
     * @param {Function=} valueConverter - An optional function for converting the value of each node.
+    * @param {Boolean=} valueConverter - If true, empty children arrays will be excluded from output.
     * @returns {Object}
     */
 
 		}, {
 			key: 'toJSObj',
-			value: function toJSObj(valueConverter) {
+			value: function toJSObj(valueConverter, omitEmptyChildren) {
 				var valueConverterToUse = void 0;
 
 				if (is.fn(valueConverter)) {
@@ -992,9 +990,9 @@ module.exports = function () {
 					value: valueConverterToUse(this._value)
 				};
 
-				if (this._children.length !== 0) {
+				if (!(is.boolean(omitEmptyChildren) && omitEmptyChildren && this._children.length === 0)) {
 					converted.children = this._children.map(function (child) {
-						return child.toJSObj(valueConverter);
+						return child.toJSObj(valueConverter, omitEmptyChildren);
 					});
 				}
 
@@ -26382,6 +26380,7 @@ module.exports = function () {
     * @param {number=} maximumAttempts - The number of attempts to before giving up.
     * @param {Function=} failureCallback - If provided, will be invoked if a function is considered to be failing.
     * @param {Object=} failureValue - If provided, will consider the result to have failed, if this value is returned (a deep equality check is used). If not provided, a "falsey" value will trigger a retry.
+    * @returns {Promise}
     */
 
 		}, {
