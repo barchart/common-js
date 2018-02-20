@@ -58,8 +58,8 @@ module.exports = (() => {
 		 * @static
 		 * @returns {ErrorInterceptor}
 		 */
-		static get LAMBDA_CUSTOM_AUTHORIZER() {
-			return errorInterceptorLambda;
+		static get LAMBDA_AUTHORIZATION_FAILURE() {
+			return errorInterceptorLambdaAuthorization;
 		}
 
 		/**
@@ -99,7 +99,7 @@ module.exports = (() => {
 
 	const errorInterceptorEmpty = new ErrorInterceptor();
 
-	const errorInterceptorLambda = new DelegateErrorInterceptor((error, endpoint) => {
+	const errorInterceptorLambdaAuthorization = new DelegateErrorInterceptor((error, endpoint) => {
 		if (is.undefined(error.response) && error.message === 'Network Error') {
 			const failure = FailureReason.forRequest({ endpoint: endpoint })
 				.addItem(FailureType.REQUEST_AUTHORIZATION_FAILURE)
