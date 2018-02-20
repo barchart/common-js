@@ -76,10 +76,10 @@ module.exports = (() => {
 		}
 	}
 
-	const failureTypeRequestConstructionFailure = new FailureType('REQUEST_CONSTRUCTION_FAILURE', '{u|root.endpoint.description} failed, some required information is missing.');
-	const failureTypeRequestParameterMissingFailure = new FailureType('REQUEST_PARAMETER_MISSING', 'The {L|name} field is required.');
-	const failureTypeRequestIdentifyFailure = new FailureType('REQUEST_IDENTITY_FAILURE', 'Unable to process {L|root.endpoint.description} operation because your identity could not be determined.');
-	const failureTypeRequestAuthorizationFailure = new FailureType('REQUEST_AUTHORIZATION_FAILURE', '{u|root.endpoint.description} operation failed due to authentication failure.');
+	const failureTypeRequestConstructionFailure = new FailureType('REQUEST_CONSTRUCTION_FAILURE', 'An attempt to {L|root.endpoint.description} failed because some required information is missing.');
+	const failureTypeRequestParameterMissingFailure = new FailureType('REQUEST_PARAMETER_MISSING', 'The "{L|name}" field is required.');
+	const failureTypeRequestIdentifyFailure = new FailureType('REQUEST_IDENTITY_FAILURE', 'An attempt to {L|root.endpoint.description} failed because your identity could not be determined.');
+	const failureTypeRequestAuthorizationFailure = new FailureType('REQUEST_AUTHORIZATION_FAILURE', 'An attempt to {L|root.endpoint.description} failed due to authentication failure.');
 
 	return FailureType;
 })();

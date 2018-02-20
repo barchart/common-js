@@ -1,6 +1,9 @@
 const assert = require('./../../../lang/assert'),
 	is = require('./../../../lang/is');
 
+const FailureReason = require('./../../failures/FailureReason'),
+	FailureType = require('./../../failures/FailureType');
+
 module.exports = (() => {
 	'use strict';
 
@@ -37,7 +40,7 @@ module.exports = (() => {
 		}
 
 		/**
-		 * A no-op request interceptor (which will return the raw response).
+		 * A no-op error interceptor (which will return the raw response).
 		 *
 		 * @public
 		 * @static
@@ -45,6 +48,18 @@ module.exports = (() => {
 		 */
 		static get EMPTY() {
 			return errorInterceptorEmpty;
+		}
+
+		/**
+		 * An error interceptor to handle unauthorized and forbidden responses
+		 * from a typical Lambda (custom authorizer).
+		 *
+		 * @public
+		 * @static
+		 * @returns {ErrorInterceptor}
+		 */
+		static get LAMBDA_CUSTOM_AUTHORIZER() {
+			return errorInterceptorLambda;
 		}
 
 		/**
@@ -83,6 +98,18 @@ module.exports = (() => {
 	}
 
 	const errorInterceptorEmpty = new ErrorInterceptor();
+
+	const errorInterceptorLambda = new DelegateErrorInterceptor((error, endpoint) => {
+		if (is.undefined(error.response) && error.message === 'Network Error') {
+			const failure = FailureReason.forRequest({ endpoint: endpoint })
+				.addItem(FailureType.REQUEST_AUTHORIZATION_FAILURE)
+				.format();
+
+			return Promise.reject(failure);
+		} else {
+			return Promise.reject(error);
+		}
+	});
 
 	return ErrorInterceptor;
 })();
