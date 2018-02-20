@@ -69,7 +69,7 @@ module.exports = (() => {
 					code: item ? item.type.code : null,
 					message: item ? item.format(this._data) : null
 				};
-			}, false);
+			});
 
 			return reasons.children;
 		}

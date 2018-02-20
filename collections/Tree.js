@@ -220,8 +220,8 @@ module.exports = (() => {
 				value: valueConverterToUse(this._value)
 			};
 
-			if (is.boolean(omitEmptyChildren) && omitEmptyChildren && this._children.length !== 0) {
-				converted.children = this._children.map((child) => child.toJSObj(valueConverter));
+			if (!(is.boolean(omitEmptyChildren) && omitEmptyChildren && this._children.length === 0)) {
+				converted.children = this._children.map((child) => child.toJSObj(valueConverter, omitEmptyChildren));
 			}
 
 			return converted;
