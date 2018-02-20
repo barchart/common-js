@@ -85,8 +85,8 @@ module.exports = (() => {
 			this._delegate = delegate;
 		}
 
-		_onProcess(response) {
-			return this._delegate(response);
+		_onProcess(response, endpoint) {
+			return this._delegate(response, endpoint);
 		}
 
 		toString() {
@@ -96,7 +96,7 @@ module.exports = (() => {
 
 	const responseInterceptorEmpty = new ResponseInterceptor();
 
-	const responseInterceptorData = new DelegateResponseInterceptor((response) => {
+	const responseInterceptorData = new DelegateResponseInterceptor((response, ignored) => {
 		return response.data;
 	});
 

@@ -71,8 +71,8 @@ module.exports = (() => {
 			this._delegate = delegate;
 		}
 
-		_onProcess(request) {
-			return this._delegate(request);
+		_onProcess(request, endpoint) {
+			return this._delegate(request, endpoint);
 		}
 
 		toString() {
