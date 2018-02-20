@@ -44,7 +44,7 @@ module.exports = (() => {
 			this._body = body || new Parameters();
 			this._requestInterceptor = requestInterceptor || RequestInterceptor.EMPTY;
 			this._responseInterceptor = responseInterceptor || ResponseInterceptor.EMPTY;
-			this._responseInterceptor = errorInterceptor || ErrorInterceptor.EMPTY;
+			this._errorInterceptor = errorInterceptor || ErrorInterceptor.EMPTY;
 		}
 
 		/**
@@ -174,7 +174,7 @@ module.exports = (() => {
 		 * @returns {ErrorInterceptor|null}
 		 */
 		get errorInterceptor() {
-			return this._responseInterceptor;
+			return this._errorInterceptor;
 		}
 
 		/**
