@@ -187,7 +187,7 @@ module.exports = (() => {
 		 * Adds a body to the request.
 		 *
 		 * @public
-		 * @public {String=} description - The human-readable description of the request body.
+		 * @param {String=} description - The human-readable description of the request body.
 		 * @returns {EndpointBuilder}
 		 */
 		withBody(description) {
