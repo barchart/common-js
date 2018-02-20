@@ -5,7 +5,8 @@ const Parameter = require('./Parameter'),
 	ProtocolType = require('./ProtocolType'),
 	VerbType = require('./VerbType');
 
-const RequestInterceptor = require('./../interceptors/RequestInterceptor'),
+const ErrorInterceptor = require('./../interceptors/ErrorInterceptor'),
+	RequestInterceptor = require('./../interceptors/RequestInterceptor'),
 	ResponseInterceptor = require('./../interceptors/ResponseInterceptor');
 
 module.exports = (() => {
@@ -27,9 +28,10 @@ module.exports = (() => {
 	 * @param {Parameters=} body
 	 * @param {RequestInterceptor} requestInterceptor
 	 * @param {ResponseInterceptor} responseInterceptor
+	 * @param {ErrorInterceptor} errorInterceptor
 	 */
 	class Endpoint {
-		constructor(name, description, verb, protocol, host, port, path, query, headers, body, requestInterceptor, responseInterceptor) {
+		constructor(name, description, verb, protocol, host, port, path, query, headers, body, requestInterceptor, responseInterceptor, errorInterceptor) {
 			this._name = name || null;
 			this._description = description || null;
 			this._verb = verb || VerbType.GET;
@@ -42,6 +44,7 @@ module.exports = (() => {
 			this._body = body || new Parameters();
 			this._requestInterceptor = requestInterceptor || RequestInterceptor.EMPTY;
 			this._responseInterceptor = responseInterceptor || ResponseInterceptor.EMPTY;
+			this._responseInterceptor = errorInterceptor || ErrorInterceptor.EMPTY;
 		}
 
 		/**
@@ -155,12 +158,22 @@ module.exports = (() => {
 		}
 
 		/**
-		 * The request interceptor of the endpoint.
+		 * The response interceptor of the endpoint.
 		 *
 		 * @public
 		 * @returns {ResponseInterceptor|null}
 		 */
 		get responseInterceptor() {
+			return this._responseInterceptor;
+		}
+
+		/**
+		 * The error interceptor of the endpoint.
+		 *
+		 * @public
+		 * @returns {ErrorInterceptor|null}
+		 */
+		get errorInterceptor() {
 			return this._responseInterceptor;
 		}
 
@@ -212,6 +225,10 @@ module.exports = (() => {
 
 			if (this.responseInterceptor && !(this.responseInterceptor instanceof ResponseInterceptor)) {
 				throw new Error('Endpoint response interceptor must be an instance of ResponseInterceptor.');
+			}
+
+			if (this.errorInterceptor && !(this.errorInterceptor instanceof ErrorInterceptor)) {
+				throw new Error('Endpoint error interceptor must be an instance of ErrorInterceptor.');
 			}
 		}
 

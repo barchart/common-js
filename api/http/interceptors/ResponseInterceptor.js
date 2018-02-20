@@ -72,7 +72,7 @@ module.exports = (() => {
 		}
 
 		toString() {
-			return `[ResponseInterceptor]`;
+			return '[ResponseInterceptor]';
 		}
 	}
 
@@ -90,7 +90,7 @@ module.exports = (() => {
 		}
 
 		toString() {
-			return `[DelegateResponseInterceptor]`;
+			return '[DelegateResponseInterceptor]';
 		}
 	}
 

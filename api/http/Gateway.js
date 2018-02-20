@@ -183,6 +183,12 @@ module.exports = (() => {
 										}
 
 										return Promise.resolve(responsePromise);
+									}).catch((e) => {
+										if (endpoint.errorInterceptor) {
+											return endpoint.errorInterceptor.process(e, endpoint);
+										} else {
+											throw e;
+										}
 									});
 							});
 					});

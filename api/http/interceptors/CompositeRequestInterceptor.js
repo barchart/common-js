@@ -1,5 +1,4 @@
-const assert = require('./../../../lang/assert'),
-	is = require('./../../../lang/is');
+const assert = require('./../../../lang/assert');
 
 const RequestInterceptor = require('./RequestInterceptor');
 
@@ -25,15 +24,15 @@ module.exports = (() => {
 			this._b = b;
 		}
 
-		_onProcess(request) {
-			return this._a.process(request)
+		_onProcess(request, endpoint) {
+			return this._a.process(request, endpoint)
 				.then((adjusted) => {
-					return this._b.process(adjusted);
+					return this._b.process(adjusted, endpoint);
 				});
 		}
 
 		toString() {
-			return `[CompositeRequestInterceptor]`;
+			return '[CompositeRequestInterceptor]';
 		}
 	}
 

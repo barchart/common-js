@@ -7,8 +7,10 @@ const Endpoint = require('./../definitions/Endpoint'),
 	ProtocolType = require('./../definitions/ProtocolType'),
 	VerbType = require('./../definitions/VerbType');
 
-const CompositeResponseInterceptor = require('./../interceptors/CompositeResponseInterceptor'),
+const CompositeErrorInterceptor = require('./../interceptors/CompositeErrorInterceptor'),
+	CompositeResponseInterceptor = require('./../interceptors/CompositeResponseInterceptor'),
 	CompositeRequestInterceptor = require('./../interceptors/CompositeRequestInterceptor'),
+	ErrorInterceptor = require('./../interceptors/ErrorInterceptor'),
 	ResponseInterceptor = require('./../interceptors/ResponseInterceptor'),
 	RequestInterceptor = require('./../interceptors/RequestInterceptor');
 
@@ -49,7 +51,7 @@ module.exports = (() => {
 		withVerb(verb) {
 			assert.argumentIsRequired(verb, 'verb', VerbType, 'VerbType');
 
-			this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor);
+			this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
 
 			return this;
 		}
@@ -64,7 +66,7 @@ module.exports = (() => {
 		withProtocol(protocol) {
 			assert.argumentIsRequired(protocol, 'protocol', ProtocolType, 'ProtocolType');
 
-			this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor);
+			this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
 
 			return this;
 		}
@@ -79,7 +81,7 @@ module.exports = (() => {
 		withHost(host) {
 			assert.argumentIsRequired(host, 'host', String);
 
-			this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor);
+			this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
 
 			return this;
 		}
@@ -94,7 +96,7 @@ module.exports = (() => {
 		withPort(port) {
 			assert.argumentIsRequired(port, 'port', Number);
 
-			this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor);
+			this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
 
 			return this;
 		}
@@ -115,7 +117,7 @@ module.exports = (() => {
 
 			const headers = builder.parameters;
 
-			this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, headers, this.endpoint.body, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor);
+			this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, headers, this.endpoint.body, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
 
 			return this;
 		}
@@ -136,7 +138,7 @@ module.exports = (() => {
 
 			const path = builder.parameters;
 
-			this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor);
+			this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
 
 			return this;
 		}
@@ -157,7 +159,7 @@ module.exports = (() => {
 
 			const query = builder.parameters;
 
-			this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, query, this.endpoint.headers, this.endpoint.body, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor);
+			this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, query, this.endpoint.headers, this.endpoint.body, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
 
 			return this;
 		}
@@ -178,7 +180,7 @@ module.exports = (() => {
 
 			const body = builder.parameters;
 
-			this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, body, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor);
+			this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, body, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
 
 			return this;
 		}
@@ -211,19 +213,19 @@ module.exports = (() => {
 			let existingRequestInterceptor = this.endpoint.requestInterceptor;
 			let updatedRequestInterceptor;
 
-			if (existingRequestInterceptor) {
+			if (existingRequestInterceptor && existingRequestInterceptor !== RequestInterceptor.EMPTY) {
 				updatedRequestInterceptor = new CompositeRequestInterceptor(existingRequestInterceptor, requestInterceptor);
 			} else {
 				updatedRequestInterceptor = requestInterceptor;
 			}
 
-			this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, updatedRequestInterceptor, this.endpoint.responseInterceptor);
+			this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, updatedRequestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
 
 			return this;
 		}
 
 		/**
-		 * Adds a {@link ResponseInterceptor}.
+		 * Adds a {@link ResponseInterceptor} for successful web service responses.
 		 *
 		 * @public
 		 * @param {ResponseInterceptor} responseInterceptor
@@ -235,13 +237,37 @@ module.exports = (() => {
 			let existingResponseInterceptor = this.endpoint.responseInterceptor;
 			let updatedResponseInterceptor;
 
-			if (existingResponseInterceptor) {
+			if (existingResponseInterceptor && existingResponseInterceptor !== ResponseInterceptor.EMPTY) {
 				updatedResponseInterceptor = new CompositeResponseInterceptor(existingResponseInterceptor, responseInterceptor);
 			} else {
 				updatedResponseInterceptor = responseInterceptor;
 			}
 
-			this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.requestInterceptor, updatedResponseInterceptor);
+			this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.requestInterceptor, updatedResponseInterceptor, this.endpoint.errorInterceptor);
+
+			return this;
+		}
+
+		/**
+		 * Adds a {@link ErrorInterceptor} for handling remote web service errors.
+		 *
+		 * @public
+		 * @param {ErrorInterceptor} responseInterceptor
+		 * @returns {EndpointBuilder}
+		 */
+		withErrorInterceptor(errorInterceptor) {
+			assert.argumentIsRequired(errorInterceptor, 'errorInterceptor', ErrorInterceptor, 'ErrorInterceptor');
+
+			let existingErrorInterceptor = this.endpoint.errorInterceptor;
+			let updatedErrorInterceptor;
+
+			if (existingErrorInterceptor && existingErrorInterceptor !== ErrorInterceptor.EMPTY) {
+				updatedErrorInterceptor = new CompositeErrorInterceptor(existingErrorInterceptor, errorInterceptor);
+			} else {
+				updatedErrorInterceptor = errorInterceptor;
+			}
+
+			this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, updatedErrorInterceptor);
 
 			return this;
 		}

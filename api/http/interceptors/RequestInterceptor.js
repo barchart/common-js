@@ -58,7 +58,7 @@ module.exports = (() => {
 		}
 
 		toString() {
-			return `[RequestInterceptor]`;
+			return '[RequestInterceptor]';
 		}
 	}
 
@@ -76,7 +76,7 @@ module.exports = (() => {
 		}
 
 		toString() {
-			return `[DelegateRequestInterceptor]`;
+			return '[DelegateRequestInterceptor]';
 		}
 	}
 
