@@ -74,6 +74,10 @@ module.exports = (() => {
 			return reasons.children;
 		}
 
+		toJSON() {
+			return JSON.stringify(this.format());
+		}
+
 		/**
 		 * Factory function for creating instances of {@link FailureReason}.
 		 *
