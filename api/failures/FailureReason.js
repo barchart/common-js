@@ -90,6 +90,29 @@ module.exports = (() => {
 			return new FailureReason(data);
 		}
 
+		/**
+		 * Returns an HTTP status code that would be suitable for use with the
+		 * failure type.
+		 *
+		 * @param {FailureType} reason
+		 * @returns {Number}
+		 */
+		static getHttpStatusCode(reason) {
+			assert.argumentIsRequired(reason, 'reason', FailureType, 'FailureType');
+
+			let returnVal = null;
+
+			reason._head.walk((item) => {
+				let code = FailureType.getHttpStatusCode(item.type);
+
+				if (returnVal === null || returnVal !== 400) {
+					returnVal = code;
+				}
+			}, false, false);
+
+			return returnVal;
+		}
+
 		toString() {
 			return '[FailureReason]';
 		}

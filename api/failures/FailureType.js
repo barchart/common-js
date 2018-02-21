@@ -71,6 +71,29 @@ module.exports = (() => {
 			return failureTypeRequestAuthorizationFailure;
 		}
 
+		/**
+		 * Returns an HTTP status code that would be suitable for use with the
+		 * failure type.
+		 *
+		 * @param {FailureType} type
+		 * @returns {Number}
+		 */
+		static getHttpStatusCode(type) {
+			assert.argumentIsRequired(type, 'type', FailureType, 'FailureType');
+
+			let returnVal;
+
+			if (type === FailureType.REQUEST_IDENTITY_FAILURE) {
+				returnVal = 401;
+			} else if (type === FailureType.REQUEST_AUTHORIZATION_FAILURE) {
+				returnVal = 403;
+			} else {
+				returnVal = 400;
+			}
+
+			return returnVal;
+		}
+
 		toString() {
 			return `[FailureType (code=${this.code})]`;
 		}
