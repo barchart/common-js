@@ -63,6 +63,18 @@ module.exports = (() => {
 		}
 
 		/**
+		 * An error interceptor to handle processing failures from a typical
+		 * Lambda function.
+		 *
+		 * @public
+		 * @static
+		 * @returns {ErrorInterceptor}
+		 */
+		static get LAMBDA_PROCESSING_FAILURE() {
+			return errorInterceptorLambdaProcessing;
+		}
+
+		/**
 		 * Returns a new {@link ErrorInterceptor} which delegates its work to another function.
 		 *
 		 * @public
@@ -106,6 +118,16 @@ module.exports = (() => {
 				.format();
 
 			return Promise.reject(failure);
+		} else {
+			return Promise.reject(error);
+		}
+	});
+
+	const errorInterceptorLambdaProcessing = new DelegateErrorInterceptor((error, endpoint) => {
+		const response = error.response;
+
+		if (is.object(response) && is.object(response.headers) && response.headers['content-type'] === 'application/json' && response.data) {
+			return Promise.reject(JSON.parse(response.data));
 		} else {
 			return Promise.reject(error);
 		}
