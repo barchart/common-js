@@ -132,7 +132,7 @@ module.exports = function () {
 		}, {
 			key: 'getHttpStatusCode',
 			value: function getHttpStatusCode(reason) {
-				assert.argumentIsRequired(reason, 'reason', FailureType, 'FailureType');
+				assert.argumentIsRequired(reason, 'reason', FailureReason, 'FailureReason');
 
 				var returnVal = null;
 
@@ -397,6 +397,19 @@ module.exports = function () {
 			get: function get() {
 				return failureTypeRequestAuthorizationFailure;
 			}
+
+			/**
+    * The request data cannot be parsed or interpreted.
+    *
+    * @static
+    * @returns {FailureType}
+    */
+
+		}, {
+			key: 'REQUEST_DATA_MALFORMED',
+			get: function get() {
+				return failureTypeRequestDataMalformedFailure;
+			}
 		}]);
 
 		return FailureType;
@@ -406,6 +419,7 @@ module.exports = function () {
 	var failureTypeRequestParameterMissingFailure = new FailureType('REQUEST_PARAMETER_MISSING', 'The "{L|name}" field is required.');
 	var failureTypeRequestIdentifyFailure = new FailureType('REQUEST_IDENTITY_FAILURE', 'An attempt to {L|root.endpoint.description} failed because your identity could not be determined.');
 	var failureTypeRequestAuthorizationFailure = new FailureType('REQUEST_AUTHORIZATION_FAILURE', 'An attempt to {L|root.endpoint.description} failed due to authentication failure.');
+	var failureTypeRequestDataMalformedFailure = new FailureType('REQUEST_DATA_MALFORMED', 'An attempt to {L|root.endpoint.description} failed, the data structure is invalid.');
 
 	return FailureType;
 }();
