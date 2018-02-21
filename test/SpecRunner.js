@@ -95,6 +95,11 @@ module.exports = function () {
 
 				return reasons.children;
 			}
+		}, {
+			key: 'toJSON',
+			value: function toJSON() {
+				return JSON.stringify(this.format());
+			}
 
 			/**
     * Factory function for creating instances of {@link FailureReason}.
@@ -114,6 +119,32 @@ module.exports = function () {
 			key: 'forRequest',
 			value: function forRequest(data) {
 				return new FailureReason(data);
+			}
+
+			/**
+    * Returns an HTTP status code that would be suitable for use with the
+    * failure reason.
+    *
+    * @param {FailureType} reason
+    * @returns {Number}
+    */
+
+		}, {
+			key: 'getHttpStatusCode',
+			value: function getHttpStatusCode(reason) {
+				assert.argumentIsRequired(reason, 'reason', FailureType, 'FailureType');
+
+				var returnVal = null;
+
+				reason._head.walk(function (item) {
+					var code = FailureType.getHttpStatusCode(item.type);
+
+					if (returnVal === null || returnVal !== 400) {
+						returnVal = code;
+					}
+				}, false, false);
+
+				return returnVal;
 			}
 		}]);
 
@@ -297,6 +328,32 @@ module.exports = function () {
     */
 
 		}], [{
+			key: 'getHttpStatusCode',
+
+
+			/**
+    * Returns an HTTP status code that would be suitable for use with the
+    * failure type.
+    *
+    * @param {FailureType} type
+    * @returns {Number}
+    */
+			value: function getHttpStatusCode(type) {
+				assert.argumentIsRequired(type, 'type', FailureType, 'FailureType');
+
+				var returnVal = void 0;
+
+				if (type === FailureType.REQUEST_IDENTITY_FAILURE) {
+					returnVal = 401;
+				} else if (type === FailureType.REQUEST_AUTHORIZATION_FAILURE) {
+					returnVal = 403;
+				} else {
+					returnVal = 400;
+				}
+
+				return returnVal;
+			}
+		}, {
 			key: 'REQUEST_CONSTRUCTION_FAILURE',
 			get: function get() {
 				return failureTypeRequestConstructionFailure;
@@ -345,10 +402,10 @@ module.exports = function () {
 		return FailureType;
 	}(Enum);
 
-	var failureTypeRequestConstructionFailure = new FailureType('REQUEST_CONSTRUCTION_FAILURE', '{u|root.endpoint.description} failed, some required information is missing.');
-	var failureTypeRequestParameterMissingFailure = new FailureType('REQUEST_PARAMETER_MISSING', 'The {L|name} field is required.');
-	var failureTypeRequestIdentifyFailure = new FailureType('REQUEST_IDENTITY_FAILURE', 'Unable to process {L|root.endpoint.description} operation because your identity could not be determined.');
-	var failureTypeRequestAuthorizationFailure = new FailureType('REQUEST_AUTHORIZATION_FAILURE', '{u|root.endpoint.description} operation failed due to authentication failure.');
+	var failureTypeRequestConstructionFailure = new FailureType('REQUEST_CONSTRUCTION_FAILURE', 'An attempt to {L|root.endpoint.description} failed because some required information is missing.');
+	var failureTypeRequestParameterMissingFailure = new FailureType('REQUEST_PARAMETER_MISSING', 'The "{L|name}" field is required.');
+	var failureTypeRequestIdentifyFailure = new FailureType('REQUEST_IDENTITY_FAILURE', 'An attempt to {L|root.endpoint.description} failed because your identity could not be determined.');
+	var failureTypeRequestAuthorizationFailure = new FailureType('REQUEST_AUTHORIZATION_FAILURE', 'An attempt to {L|root.endpoint.description} failed due to authentication failure.');
 
 	return FailureType;
 }();
@@ -16222,7 +16279,7 @@ describe('When a FailureReason is created', function () {
 	var itemTwo;
 
 	beforeEach(function () {
-		reason = FailureReason.forRequest({ endpoint: { description: 'mock' } }).addItem(FailureType.REQUEST_CONSTRUCTION_FAILURE, {}, true).addItem(FailureType.REQUEST_PARAMETER_MISSING_FAILURE, { name: 'First' }).addItem(FailureType.REQUEST_PARAMETER_MISSING_FAILURE, { name: 'Second' });
+		reason = FailureReason.forRequest({ endpoint: { description: 'do stuff' } }).addItem(FailureType.REQUEST_CONSTRUCTION_FAILURE, {}, true).addItem(FailureType.REQUEST_PARAMETER_MISSING_FAILURE, { name: 'First' }).addItem(FailureType.REQUEST_PARAMETER_MISSING_FAILURE, { name: 'Second' });
 	});
 
 	describe('and the FailureReason is converted to a human-readable form', function () {
@@ -16245,11 +16302,11 @@ describe('When a FailureReason is created', function () {
 		});
 
 		it('should have the correct primary message', function () {
-			expect(human[0].value.message).toEqual('Mock failed, some required information is missing.');
+			expect(human[0].value.message).toEqual('An attempt to do stuff failed because some required information is missing.');
 		});
 
 		it('should have the correct secondary message (1)', function () {
-			expect(human[0].children[0].value.message).toEqual('The first field is required.');
+			expect(human[0].children[0].value.message).toEqual('The "first" field is required.');
 		});
 
 		it('should have the correct secondary code (1)', function () {
@@ -16257,7 +16314,7 @@ describe('When a FailureReason is created', function () {
 		});
 
 		it('should have the correct secondary message (2)', function () {
-			expect(human[0].children[1].value.message).toEqual('The second field is required.');
+			expect(human[0].children[1].value.message).toEqual('The "second" field is required.');
 		});
 
 		it('should have the correct secondary code (2)', function () {
