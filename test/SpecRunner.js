@@ -367,7 +367,7 @@ module.exports = function () {
     */
 
 		}, {
-			key: 'REQUEST_PARAMETER_MISSING_FAILURE',
+			key: 'REQUEST_PARAMETER_MISSING',
 			get: function get() {
 				return requestParameterMissing;
 			}
@@ -16307,7 +16307,7 @@ describe('When a FailureReason is created', function () {
 	var itemTwo;
 
 	beforeEach(function () {
-		reason = FailureReason.forRequest({ endpoint: { description: 'do stuff' } }).addItem(FailureType.REQUEST_CONSTRUCTION_FAILURE, {}, true).addItem(FailureType.REQUEST_PARAMETER_MISSING_FAILURE, { name: 'First' }).addItem(FailureType.REQUEST_PARAMETER_MISSING_FAILURE, { name: 'Second' });
+		reason = FailureReason.forRequest({ endpoint: { description: 'do stuff' } }).addItem(FailureType.REQUEST_CONSTRUCTION_FAILURE, {}, true).addItem(FailureType.REQUEST_PARAMETER_MISSING, { name: 'First' }).addItem(FailureType.REQUEST_PARAMETER_MISSING, { name: 'Second' });
 	});
 
 	describe('and the FailureReason is converted to a human-readable form', function () {
@@ -16338,7 +16338,7 @@ describe('When a FailureReason is created', function () {
 		});
 
 		it('should have the correct secondary code (1)', function () {
-			expect(human[0].children[0].value.code).toEqual(FailureType.REQUEST_PARAMETER_MISSING_FAILURE.code);
+			expect(human[0].children[0].value.code).toEqual(FailureType.REQUEST_PARAMETER_MISSING.code);
 		});
 
 		it('should have the correct secondary message (2)', function () {
@@ -16346,7 +16346,7 @@ describe('When a FailureReason is created', function () {
 		});
 
 		it('should have the correct secondary code (2)', function () {
-			expect(human[0].children[1].value.code).toEqual(FailureType.REQUEST_PARAMETER_MISSING_FAILURE.code);
+			expect(human[0].children[1].value.code).toEqual(FailureType.REQUEST_PARAMETER_MISSING.code);
 		});
 	});
 });
