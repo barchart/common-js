@@ -38,7 +38,7 @@ module.exports = (() => {
 		 * @returns {FailureType}
 		 */
 		static get REQUEST_CONSTRUCTION_FAILURE() {
-			return failureTypeRequestConstructionFailure;
+			return requestConstructionFailure;
 		}
 
 		/**
@@ -48,7 +48,7 @@ module.exports = (() => {
 		 * @returns {FailureType}
 		 */
 		static get REQUEST_PARAMETER_MISSING_FAILURE() {
-			return failureTypeRequestParameterMissingFailure;
+			return requestParameterMissing;
 		}
 
 		/**
@@ -58,7 +58,7 @@ module.exports = (() => {
 		 * @returns {FailureType}
 		 */
 		static get REQUEST_IDENTITY_FAILURE() {
-			return failureTypeRequestIdentifyFailure;
+			return requestIdentifyFailure;
 		}
 
 		/**
@@ -68,7 +68,7 @@ module.exports = (() => {
 		 * @returns {FailureType}
 		 */
 		static get REQUEST_AUTHORIZATION_FAILURE() {
-			return failureTypeRequestAuthorizationFailure;
+			return requestAuthorizationFailure;
 		}
 
 		/**
@@ -77,8 +77,18 @@ module.exports = (() => {
 		 * @static
 		 * @returns {FailureType}
 		 */
-		static get REQUEST_DATA_MALFORMED() {
-			return failureTypeRequestDataMalformedFailure;
+		static get REQUEST_INPUT_MALFORMED() {
+			return requestInputMalformed;
+		}
+
+		/**
+		 * The request failed for unspecified reasons.
+		 *
+		 * @static
+		 * @returns {FailureType}
+		 */
+		static get REQUEST_GENERAL_FAILURE() {
+			return requestGeneralFailure;
 		}
 
 		/**
@@ -109,11 +119,12 @@ module.exports = (() => {
 		}
 	}
 
-	const failureTypeRequestConstructionFailure = new FailureType('REQUEST_CONSTRUCTION_FAILURE', 'An attempt to {L|root.endpoint.description} failed because some required information is missing.');
-	const failureTypeRequestParameterMissingFailure = new FailureType('REQUEST_PARAMETER_MISSING', 'The "{L|name}" field is required.');
-	const failureTypeRequestIdentifyFailure = new FailureType('REQUEST_IDENTITY_FAILURE', 'An attempt to {L|root.endpoint.description} failed because your identity could not be determined.');
-	const failureTypeRequestAuthorizationFailure = new FailureType('REQUEST_AUTHORIZATION_FAILURE', 'An attempt to {L|root.endpoint.description} failed due to authentication failure.');
-	const failureTypeRequestDataMalformedFailure = new FailureType('REQUEST_DATA_MALFORMED', 'An attempt to {L|root.endpoint.description} failed, the data structure is invalid.');
+	const requestConstructionFailure = new FailureType('REQUEST_CONSTRUCTION_FAILURE', 'An attempt to {L|root.endpoint.description} failed because some required information is missing.');
+	const requestParameterMissing = new FailureType('REQUEST_PARAMETER_MISSING', 'The "{L|name}" field is required.');
+	const requestIdentifyFailure = new FailureType('REQUEST_IDENTITY_FAILURE', 'An attempt to {L|root.endpoint.description} failed because your identity could not be determined.');
+	const requestAuthorizationFailure = new FailureType('REQUEST_AUTHORIZATION_FAILURE', 'An attempt to {L|root.endpoint.description} failed due to authentication failure.');
+	const requestInputMalformed = new FailureType('REQUEST_INPUT_MALFORMED', 'An attempt to {L|root.endpoint.description} failed, the data structure is invalid.');
+	const requestGeneralFailure = new FailureType('REQUEST_GENERAL_FAILURE', 'An attempt to {L|root.endpoint.description} failed for unspecified reason(s).');
 
 	return FailureType;
 })();
