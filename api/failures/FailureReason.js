@@ -98,7 +98,7 @@ module.exports = (() => {
 		 * @returns {Number}
 		 */
 		static getHttpStatusCode(reason) {
-			assert.argumentIsRequired(reason, 'reason', FailureType, 'FailureType');
+			assert.argumentIsRequired(reason, 'reason', FailureReason, 'FailureReason');
 
 			let returnVal = null;
 

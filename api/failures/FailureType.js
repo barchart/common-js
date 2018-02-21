@@ -72,6 +72,16 @@ module.exports = (() => {
 		}
 
 		/**
+		 * The request data cannot be parsed or interpreted.
+		 *
+		 * @static
+		 * @returns {FailureType}
+		 */
+		static get REQUEST_DATA_MALFORMED() {
+			return failureTypeRequestDataMalformedFailure;
+		}
+
+		/**
 		 * Returns an HTTP status code that would be suitable for use with the
 		 * failure type.
 		 *
@@ -103,6 +113,7 @@ module.exports = (() => {
 	const failureTypeRequestParameterMissingFailure = new FailureType('REQUEST_PARAMETER_MISSING', 'The "{L|name}" field is required.');
 	const failureTypeRequestIdentifyFailure = new FailureType('REQUEST_IDENTITY_FAILURE', 'An attempt to {L|root.endpoint.description} failed because your identity could not be determined.');
 	const failureTypeRequestAuthorizationFailure = new FailureType('REQUEST_AUTHORIZATION_FAILURE', 'An attempt to {L|root.endpoint.description} failed due to authentication failure.');
+	const failureTypeRequestDataMalformedFailure = new FailureType('REQUEST_DATA_MALFORMED', 'An attempt to {L|root.endpoint.description} failed, the data structure is invalid.');
 
 	return FailureType;
 })();
