@@ -75,7 +75,7 @@ module.exports = (() => {
 										.addItem(FailureType.REQUEST_CONSTRUCTION_FAILURE, null, true);
 								}
 
-								failure.addItem(FailureType.REQUEST_PARAMETER_MISSING_FAILURE, { name: parameter.description });
+								failure.addItem(FailureType.REQUEST_PARAMETER_MISSING, { name: parameter.description });
 							}
 
 							return failure;

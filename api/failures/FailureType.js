@@ -47,7 +47,7 @@ module.exports = (() => {
 		 * @static
 		 * @returns {FailureType}
 		 */
-		static get REQUEST_PARAMETER_MISSING_FAILURE() {
+		static get REQUEST_PARAMETER_MISSING() {
 			return requestParameterMissing;
 		}
 
