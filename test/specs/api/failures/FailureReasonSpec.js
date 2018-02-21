@@ -9,7 +9,7 @@ describe('When a FailureReason is created', function() {
 	var itemTwo;
 
 	beforeEach(function() {
-		reason = FailureReason.forRequest({ endpoint: { description: 'mock' }})
+		reason = FailureReason.forRequest({ endpoint: { description: 'do stuff' }})
 			.addItem(FailureType.REQUEST_CONSTRUCTION_FAILURE, { }, true)
 			.addItem(FailureType.REQUEST_PARAMETER_MISSING_FAILURE, { name: 'First' })
 			.addItem(FailureType.REQUEST_PARAMETER_MISSING_FAILURE, { name: 'Second' });
@@ -35,11 +35,11 @@ describe('When a FailureReason is created', function() {
 		});
 
 		it('should have the correct primary message', function() {
-			expect(human[0].value.message).toEqual('Mock failed, some required information is missing.');
+			expect(human[0].value.message).toEqual('An attempt to do stuff failed because some required information is missing.');
 		});
 
 		it('should have the correct secondary message (1)', function() {
-			expect(human[0].children[0].value.message).toEqual('The first field is required.');
+			expect(human[0].children[0].value.message).toEqual('The "first" field is required.');
 		});
 
 		it('should have the correct secondary code (1)', function() {
@@ -47,7 +47,7 @@ describe('When a FailureReason is created', function() {
 		});
 
 		it('should have the correct secondary message (2)', function() {
-			expect(human[0].children[1].value.message).toEqual('The second field is required.');
+			expect(human[0].children[1].value.message).toEqual('The "second" field is required.');
 		});
 
 		it('should have the correct secondary code (2)', function() {
