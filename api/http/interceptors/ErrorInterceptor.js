@@ -104,8 +104,8 @@ module.exports = (() => {
 
 		let rejectPromise;
 
-		if (is.object(response) && is.object(response.headers) && response.headers['content-type'] === 'application/json' && response.data) {
-			rejectPromise = Promise.reject(JSON.parse(response.data));
+		if (is.object(response) && is.object(response.headers) && response.headers['content-type'] === 'application/json' && is.object(response.data)) {
+			rejectPromise = Promise.reject(response.data);
 		} else if (is.undefined(response) && error.message === 'Network Error') {
 			rejectPromise = Promise.reject(
 				FailureReason.forRequest({endpoint: endpoint})
