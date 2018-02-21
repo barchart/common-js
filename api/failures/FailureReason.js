@@ -92,7 +92,7 @@ module.exports = (() => {
 
 		/**
 		 * Returns an HTTP status code that would be suitable for use with the
-		 * failure type.
+		 * failure reason.
 		 *
 		 * @param {FailureType} reason
 		 * @returns {Number}
