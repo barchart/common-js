@@ -21,7 +21,8 @@ module.exports = (() => {
 		}
 
 		/**
-		 * Returns true if the map has a value for the given key.
+		 * Returns true if the map has a value (or a grouping of values) at the
+		 * given key.
 		 *
 		 * @public
 		 * @param {...String} keys
@@ -70,8 +71,7 @@ module.exports = (() => {
 		}
 
 		/**
-		 * Gets a value from the map, returning null if the value does not
-		 * exist.
+		 * Gets a value from the map, returning null if the value does not exist.
 		 *
 		 * @public
 		 * @param {...String} keys

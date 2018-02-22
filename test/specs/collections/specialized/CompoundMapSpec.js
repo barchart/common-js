@@ -106,8 +106,14 @@ describe('When an CompoundMap is constructed', function() {
 				});
 
 				describe('and that item is deleted', function() {
+					var result;
+
 					beforeEach(function() {
-						map.remove(keyOneB, keyTwoB);
+						result = map.remove(keyOneB, keyTwoB);
+					});
+
+					it('should be a successful operation', function() {
+						expect(result).toEqual(true);
 					});
 
 					it('should not have the item', function() {
@@ -120,8 +126,14 @@ describe('When an CompoundMap is constructed', function() {
 				});
 
 				describe('and the entire group is deleted', function() {
+					var result;
+
 					beforeEach(function() {
-						map.remove(keyOneB);
+						result = map.remove(keyOneB);
+					});
+
+					it('should be a successful operation', function() {
+						expect(result).toEqual(true);
 					});
 
 					it('should not have the item', function() {
@@ -130,6 +142,18 @@ describe('When an CompoundMap is constructed', function() {
 
 					it('should not have the original item', function() {
 						expect(map.has(keyOne, keyTwo)).toEqual(false);
+					});
+				});
+
+				describe('and an attempt to delete a non-existent key is made', function() {
+					var result;
+
+					beforeEach(function() {
+						result = map.remove(keyOneB, 'xxx');
+					});
+
+					it('should be a failed operation', function() {
+						expect(result).toEqual(false);
 					});
 				});
 			});
