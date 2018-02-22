@@ -21,14 +21,14 @@ module.exports = (() => {
 		}
 
 		/**
-		 * Returns true if the map has a value for the key.
+		 * Returns true if the map has a value for the given key.
 		 *
 		 * @public
 		 * @param {...String} keys
 		 * @returns {Boolean}
 		 */
 		has(...keys) {
-			validateKeys(keys, this._depth);
+			validateKeys(keys, this._depth, false);
 
 			let target = this._map;
 
@@ -51,7 +51,7 @@ module.exports = (() => {
 		 * @param {...String} keys
 		 */
 		put(value, ...keys) {
-			validateKeys(keys, this._depth);
+			validateKeys(keys, this._depth, true);
 
 			let target = this._map;
 			let final = keys.length - 1;
@@ -70,15 +70,15 @@ module.exports = (() => {
 		}
 
 		/**
-		 * Gets a value into the map, returning null if the value does not
+		 * Gets a value from the map, returning null if the value does not
 		 * exist.
 		 *
 		 * @public
 		 * @param {...String} keys
-		 * @reeturns {*}
+		 * @returns {*}
 		 */
 		get(...keys) {
-			validateKeys(keys, this._depth);
+			validateKeys(keys, this._depth, true);
 
 			return keys.reduce((target, k) => {
 				let next;
@@ -93,13 +93,42 @@ module.exports = (() => {
 			}, this._map);
 		}
 
+		/**
+		 * Deletes a value (or a group of values) from the tree.
+		 *
+		 * @public
+		 * @param {...String} keys
+		 * @returns {Boolean}
+		 */
+		remove(...keys) {
+			validateKeys(keys, this._depth, false);
+
+			let returnVal = this.has(...keys);
+
+			if (returnVal) {
+				keys.reduce((target, k, i) => {
+					let next;
+
+					if (keys.length === (i + 1)) {
+						delete target[k];
+					} else {
+						next = target[k];
+					}
+
+					return next;
+				}, this._map);
+			}
+
+			return returnVal;
+		}
+
 		toString() {
 			return '[CompoundMap]';
 		}
 	}
 
-	function validateKeys(keys, depth) {
-		assert.argumentIsValid(keys, 'keys', k => k.length === depth, 'incorrect number of keys');
+	function validateKeys(keys, depth, exact) {
+		assert.argumentIsValid(keys, 'keys', k => (exact && k.length === depth) || (!exact && !(k.length > depth)), 'incorrect number of keys');
 	}
 
 	return CompoundMap;

@@ -51,6 +51,10 @@ describe('When an CompoundMap is constructed', function() {
 				map.put(value = 'bryan', keyOne = 'b', keyTwo = 'r');
 			});
 
+			it('should have the group', function() {
+				expect(map.has(keyOne)).toEqual(true);
+			});
+
 			it('should have the item', function() {
 				expect(map.has(keyOne, keyTwo)).toEqual(true);
 			});
@@ -59,7 +63,7 @@ describe('When an CompoundMap is constructed', function() {
 				expect(map.get(keyOne, keyTwo)).toEqual(value);
 			});
 
-			describe('and another items, with the same keys, is put into the map', function() {
+			describe('and another item, with the same keys, is put into the map', function() {
 				var replaced;
 
 				beforeEach(function() {
@@ -75,7 +79,7 @@ describe('When an CompoundMap is constructed', function() {
 				});
 			});
 
-			describe('and another items, with the same first key, is put into the map', function() {
+			describe('and another item, with the same first key, is put into the map', function() {
 				var valueB;
 
 				var keyOneB;
@@ -99,6 +103,34 @@ describe('When an CompoundMap is constructed', function() {
 
 				it('should still return the original value when asked', function() {
 					expect(map.get(keyOne, keyTwo)).toEqual(value);
+				});
+
+				describe('and that item is deleted', function() {
+					beforeEach(function() {
+						map.remove(keyOneB, keyTwoB);
+					});
+
+					it('should not have the item', function() {
+						expect(map.has(keyOneB, keyTwoB)).toEqual(false);
+					});
+
+					it('should still have the original item', function() {
+						expect(map.has(keyOne, keyTwo)).toEqual(true);
+					});
+				});
+
+				describe('and the entire group is deleted', function() {
+					beforeEach(function() {
+						map.remove(keyOneB);
+					});
+
+					it('should not have the item', function() {
+						expect(map.has(keyOneB, keyTwoB)).toEqual(false);
+					});
+
+					it('should not have the original item', function() {
+						expect(map.has(keyOne, keyTwo)).toEqual(false);
+					});
 				});
 			});
 		});
