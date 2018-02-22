@@ -431,7 +431,7 @@ module.exports = function () {
 	var requestConstructionFailure = new FailureType('REQUEST_CONSTRUCTION_FAILURE', 'An attempt to {L|root.endpoint.description} failed because some required information is missing.');
 	var requestParameterMissing = new FailureType('REQUEST_PARAMETER_MISSING', 'The "{L|name}" field is required.');
 	var requestIdentifyFailure = new FailureType('REQUEST_IDENTITY_FAILURE', 'An attempt to {L|root.endpoint.description} failed because your identity could not be determined.');
-	var requestAuthorizationFailure = new FailureType('REQUEST_AUTHORIZATION_FAILURE', 'An attempt to {L|root.endpoint.description} failed due to authentication failure.');
+	var requestAuthorizationFailure = new FailureType('REQUEST_AUTHORIZATION_FAILURE', 'An attempt to {L|root.endpoint.description} failed. You are not authorized to perform this action.');
 	var requestInputMalformed = new FailureType('REQUEST_INPUT_MALFORMED', 'An attempt to {L|root.endpoint.description} failed, the data structure is invalid.');
 	var requestGeneralFailure = new FailureType('REQUEST_GENERAL_FAILURE', 'An attempt to {L|root.endpoint.description} failed for unspecified reason(s).');
 
@@ -1365,7 +1365,8 @@ module.exports = function () {
 		}
 
 		/**
-   * Returns true if the map has a value for the key.
+   * Returns true if the map has a value (or a grouping of values) at the
+   * given key.
    *
    * @public
    * @param {...String} keys
@@ -1380,7 +1381,7 @@ module.exports = function () {
 					keys[_key] = arguments[_key];
 				}
 
-				validateKeys(keys, this._depth);
+				validateKeys(keys, this._depth, false);
 
 				var target = this._map;
 
@@ -1410,7 +1411,7 @@ module.exports = function () {
 					keys[_key2 - 1] = arguments[_key2];
 				}
 
-				validateKeys(keys, this._depth);
+				validateKeys(keys, this._depth, true);
 
 				var target = this._map;
 				var final = keys.length - 1;
@@ -1429,12 +1430,11 @@ module.exports = function () {
 			}
 
 			/**
-    * Gets a value into the map, returning null if the value does not
-    * exist.
+    * Gets a value from the map, returning null if the value does not exist.
     *
     * @public
     * @param {...String} keys
-    * @reeturns {*}
+    * @returns {*}
     */
 
 		}, {
@@ -1444,7 +1444,7 @@ module.exports = function () {
 					keys[_key3] = arguments[_key3];
 				}
 
-				validateKeys(keys, this._depth);
+				validateKeys(keys, this._depth, true);
 
 				return keys.reduce(function (target, k) {
 					var next = void 0;
@@ -1458,6 +1458,42 @@ module.exports = function () {
 					return next;
 				}, this._map);
 			}
+
+			/**
+    * Deletes a value (or a group of values) from the tree.
+    *
+    * @public
+    * @param {...String} keys
+    * @returns {Boolean}
+    */
+
+		}, {
+			key: 'remove',
+			value: function remove() {
+				for (var _len4 = arguments.length, keys = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+					keys[_key4] = arguments[_key4];
+				}
+
+				validateKeys(keys, this._depth, false);
+
+				var returnVal = this.has.apply(this, keys);
+
+				if (returnVal) {
+					keys.reduce(function (target, k, i) {
+						var next = void 0;
+
+						if (keys.length === i + 1) {
+							delete target[k];
+						} else {
+							next = target[k];
+						}
+
+						return next;
+					}, this._map);
+				}
+
+				return returnVal;
+			}
 		}, {
 			key: 'toString',
 			value: function toString() {
@@ -1468,9 +1504,9 @@ module.exports = function () {
 		return CompoundMap;
 	}();
 
-	function validateKeys(keys, depth) {
+	function validateKeys(keys, depth, exact) {
 		assert.argumentIsValid(keys, 'keys', function (k) {
-			return k.length === depth;
+			return exact && k.length === depth || !exact && !(k.length > depth);
 		}, 'incorrect number of keys');
 	}
 
@@ -17111,6 +17147,10 @@ describe('When an CompoundMap is constructed', function () {
 				map.put(value = 'bryan', keyOne = 'b', keyTwo = 'r');
 			});
 
+			it('should have the group', function () {
+				expect(map.has(keyOne)).toEqual(true);
+			});
+
 			it('should have the item', function () {
 				expect(map.has(keyOne, keyTwo)).toEqual(true);
 			});
@@ -17119,7 +17159,7 @@ describe('When an CompoundMap is constructed', function () {
 				expect(map.get(keyOne, keyTwo)).toEqual(value);
 			});
 
-			describe('and another items, with the same keys, is put into the map', function () {
+			describe('and another item, with the same keys, is put into the map', function () {
 				var replaced;
 
 				beforeEach(function () {
@@ -17135,7 +17175,7 @@ describe('When an CompoundMap is constructed', function () {
 				});
 			});
 
-			describe('and another items, with the same first key, is put into the map', function () {
+			describe('and another item, with the same first key, is put into the map', function () {
 				var valueB;
 
 				var keyOneB;
@@ -17159,6 +17199,58 @@ describe('When an CompoundMap is constructed', function () {
 
 				it('should still return the original value when asked', function () {
 					expect(map.get(keyOne, keyTwo)).toEqual(value);
+				});
+
+				describe('and that item is deleted', function () {
+					var result;
+
+					beforeEach(function () {
+						result = map.remove(keyOneB, keyTwoB);
+					});
+
+					it('should be a successful operation', function () {
+						expect(result).toEqual(true);
+					});
+
+					it('should not have the item', function () {
+						expect(map.has(keyOneB, keyTwoB)).toEqual(false);
+					});
+
+					it('should still have the original item', function () {
+						expect(map.has(keyOne, keyTwo)).toEqual(true);
+					});
+				});
+
+				describe('and the entire group is deleted', function () {
+					var result;
+
+					beforeEach(function () {
+						result = map.remove(keyOneB);
+					});
+
+					it('should be a successful operation', function () {
+						expect(result).toEqual(true);
+					});
+
+					it('should not have the item', function () {
+						expect(map.has(keyOneB, keyTwoB)).toEqual(false);
+					});
+
+					it('should not have the original item', function () {
+						expect(map.has(keyOne, keyTwo)).toEqual(false);
+					});
+				});
+
+				describe('and an attempt to delete a non-existent key is made', function () {
+					var result;
+
+					beforeEach(function () {
+						result = map.remove(keyOneB, 'xxx');
+					});
+
+					it('should be a failed operation', function () {
+						expect(result).toEqual(false);
+					});
 				});
 			});
 		});
