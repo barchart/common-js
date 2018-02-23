@@ -94,7 +94,7 @@ module.exports = (() => {
 		 * Returns an HTTP status code that would be suitable for use with the
 		 * failure reason.
 		 *
-		 * @param {FailureType} reason
+		 * @param {FailureReason} reason
 		 * @returns {Number}
 		 */
 		static getHttpStatusCode(reason) {
