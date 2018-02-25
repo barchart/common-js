@@ -125,7 +125,7 @@ module.exports = function () {
     * Returns an HTTP status code that would be suitable for use with the
     * failure reason.
     *
-    * @param {FailureType} reason
+    * @param {FailureReason} reason
     * @returns {Number}
     */
 
@@ -2976,7 +2976,7 @@ module.exports = function () {
 		return Day;
 	}();
 
-	var dayRegex = /^([0-9]{4}).([0-9]{2}).([0-9]{2})$/;
+	var dayRegex = /^([0-9]{4}).?([0-9]{2}).?([0-9]{2})$/;
 
 	function leftPad(value) {
 		return value < 10 ? '0' + value : '' + value;
