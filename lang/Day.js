@@ -301,7 +301,7 @@ module.exports = (() => {
 		}
 	}
 
-	const dayRegex = /^([0-9]{4}).([0-9]{2}).([0-9]{2})$/;
+	const dayRegex = /^([0-9]{4}).?([0-9]{2}).?([0-9]{2})$/;
 
 	function leftPad(value) {
 		return value < 10 ? `0${value}` : `${value}`;
