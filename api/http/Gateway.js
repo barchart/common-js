@@ -124,7 +124,7 @@ module.exports = (() => {
 									accumulator[parameter.key] = value;
 
 									return accumulator;
-								}), {}).then((headers) => {
+								}), { }).then((headers) => {
 									if (headers.length !== 0) {
 										options.headers = headers;
 									}
@@ -142,7 +142,7 @@ module.exports = (() => {
 									accumulator[parameter.key] = value;
 
 									return accumulator;
-								}), {}).then((query) => {
+								}), { }).then((query) => {
 									if (query.length !== 0) {
 										options.params = query;
 									}
