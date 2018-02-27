@@ -52,6 +52,16 @@ module.exports = (() => {
 		}
 
 		/**
+		 * A data point is malformed.
+		 *
+		 * @static
+		 * @returns {FailureType}
+		 */
+		static get REQUEST_PARAMETER_MALFORMED() {
+			return requestParameterMalformed;
+		}
+
+		/**
 		 * User identity could not be determined.
 		 *
 		 * @static
@@ -121,6 +131,7 @@ module.exports = (() => {
 
 	const requestConstructionFailure = new FailureType('REQUEST_CONSTRUCTION_FAILURE', 'An attempt to {L|root.endpoint.description} failed because some required information is missing.');
 	const requestParameterMissing = new FailureType('REQUEST_PARAMETER_MISSING', 'The "{L|name}" field is required.');
+	const requestParameterMalformed = new FailureType('REQUEST_PARAMETER_MALFORMED', 'The "{L|name}" field cannot be interpreted.');
 	const requestIdentifyFailure = new FailureType('REQUEST_IDENTITY_FAILURE', 'An attempt to {L|root.endpoint.description} failed because your identity could not be determined.');
 	const requestAuthorizationFailure = new FailureType('REQUEST_AUTHORIZATION_FAILURE', 'An attempt to {L|root.endpoint.description} failed. You are not authorized to perform this action.');
 	const requestInputMalformed = new FailureType('REQUEST_INPUT_MALFORMED', 'An attempt to {L|root.endpoint.description} failed, the data structure is invalid.');
