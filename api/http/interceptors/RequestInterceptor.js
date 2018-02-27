@@ -57,6 +57,18 @@ module.exports = (() => {
 			return new DelegateRequestInterceptor(delegate);
 		}
 
+		/**
+		 * A request interceptor that instructs the framework to skip parsing
+		 * of the response's data.
+		 *
+		 * @public
+		 * @static
+		 * @return {DelegateRequestInterceptor}
+		 */
+		static forPlainResponse() {
+			return requestInterceptorPlain;
+		}
+
 		toString() {
 			return '[RequestInterceptor]';
 		}
@@ -81,6 +93,12 @@ module.exports = (() => {
 	}
 
 	const requestInterceptorEmpty = new RequestInterceptor();
+
+	const requestInterceptorPlain = new DelegateRequestInterceptor((request) => {
+		request.transformResponse = (data) => data;
+
+		return request;
+	});
 
 	return RequestInterceptor;
 })();
