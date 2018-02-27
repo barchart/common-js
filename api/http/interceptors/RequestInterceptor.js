@@ -65,7 +65,7 @@ module.exports = (() => {
 		 * @static
 		 * @return {DelegateRequestInterceptor}
 		 */
-		static forPlainResponse() {
+		static get PLAIN_TEXT_RESPONSE() {
 			return requestInterceptorPlain;
 		}
 
