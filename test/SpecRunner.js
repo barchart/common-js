@@ -2647,6 +2647,9 @@ module.exports = function () {
   * without consideration for time or timezone.
   *
   * @public
+  * @param {Number} year
+  * @param {Number} month
+  * @param {Number} day
   */
 
 	var Day = function () {
@@ -2826,6 +2829,7 @@ module.exports = function () {
     * a {@link Day} instance.
     *
     * @public
+    * @static
     * @param {String} value
     * @returns {Day}
     */
@@ -2884,6 +2888,8 @@ module.exports = function () {
     * Creates a {@link Day} from the year, month, and day properties (in local time)
     * of the {@link Date} argument.
     *
+    * @public
+    * @static
     * @param {Date} date
     * @returns {Day}
     */
@@ -2900,6 +2906,8 @@ module.exports = function () {
     * Creates a {@link Day} from the year, month, and day properties (in UTC)
     * of the {@link Date} argument.
     *
+    * @public
+    * @static
     * @param {Date} date
     * @returns {Day}
     */
@@ -2913,9 +2921,24 @@ module.exports = function () {
 			}
 
 			/**
+    * Returns a {@link Day} instance using today's local date.
+    *
+    * @static
+    * @public
+    * @return {Day}
+    */
+
+		}, {
+			key: 'getToday',
+			value: function getToday() {
+				return Day.fromDate(new Date());
+			}
+
+			/**
     * Returns true if the year, month, and day combination is valid; otherwise false.
     *
     * @public
+    * @static
     * @param {Number} year
     * @param {Number} month
     * @param {Number} day
@@ -2932,6 +2955,7 @@ module.exports = function () {
     * Returns the number of days in a given month.
     *
     * @public
+    * @static
     * @param {number} year - The year number (e.g. 2017)
     * @param {number} month - The month number (e.g. 2 is February)
     */
@@ -2972,6 +2996,7 @@ module.exports = function () {
     * A comparator function for {@link Day} instances.
     *
     * @public
+    * @static
     * @param {Day} a
     * @param {Day} b
     * @returns {Number}
@@ -10263,7 +10288,7 @@ moment.tz.load(require('./data/packed/latest.json'));
 
 },{"moment":51}],51:[function(require,module,exports){
 //! moment.js
-//! version : 2.20.1
+//! version : 2.19.4
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
 //! license : MIT
 //! momentjs.com
@@ -10923,7 +10948,7 @@ var matchTimestamp = /[+-]?\d+(\.\d{1,3})?/; // 123456789 123456789.123
 
 // any word (or two) characters or numbers including two/three word month in arabic.
 // includes scottish gaelic two word and hyphenated months
-var matchWord = /[0-9]{0,256}['a-z\u00A0-\u05FF\u0700-\uD7FF\uF900-\uFDCF\uFDF0-\uFF07\uFF10-\uFFEF]{1,256}|[\u0600-\u06FF\/]{1,256}(\s*?[\u0600-\u06FF]{1,256}){1,2}/i;
+var matchWord = /[0-9]{0,256}['a-z\u00A0-\u05FF\u0700-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]{1,256}|[\u0600-\u06FF\/]{1,256}(\s*?[\u0600-\u06FF]{1,256}){1,2}/i;
 
 
 var regexes = {};
@@ -13564,24 +13589,19 @@ function toString () {
     return this.clone().locale('en').format('ddd MMM DD YYYY HH:mm:ss [GMT]ZZ');
 }
 
-function toISOString(keepOffset) {
+function toISOString() {
     if (!this.isValid()) {
         return null;
     }
-    var utc = keepOffset !== true;
-    var m = utc ? this.clone().utc() : this;
+    var m = this.clone().utc();
     if (m.year() < 0 || m.year() > 9999) {
-        return formatMoment(m, utc ? 'YYYYYY-MM-DD[T]HH:mm:ss.SSS[Z]' : 'YYYYYY-MM-DD[T]HH:mm:ss.SSSZ');
+        return formatMoment(m, 'YYYYYY-MM-DD[T]HH:mm:ss.SSS[Z]');
     }
     if (isFunction(Date.prototype.toISOString)) {
         // native implementation is ~50x faster, use it when we can
-        if (utc) {
-            return this.toDate().toISOString();
-        } else {
-            return new Date(this._d.valueOf()).toISOString().replace('Z', formatMoment(m, 'Z'));
-        }
+        return this.toDate().toISOString();
     }
-    return formatMoment(m, utc ? 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]' : 'YYYY-MM-DD[T]HH:mm:ss.SSSZ');
+    return formatMoment(m, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]');
 }
 
 /**
@@ -14749,7 +14769,7 @@ addParseToken('x', function (input, array, config) {
 // Side effect imports
 
 
-hooks.version = '2.20.1';
+hooks.version = '2.19.4';
 
 setHookCallback(createLocal);
 
@@ -14780,19 +14800,6 @@ hooks.relativeTimeRounding  = getSetRelativeTimeRounding;
 hooks.relativeTimeThreshold = getSetRelativeTimeThreshold;
 hooks.calendarFormat        = getCalendarFormat;
 hooks.prototype             = proto;
-
-// currently HTML5 input type only supports 24-hour formats
-hooks.HTML5_FMT = {
-    DATETIME_LOCAL: 'YYYY-MM-DDTHH:mm',             // <input type="datetime-local" />
-    DATETIME_LOCAL_SECONDS: 'YYYY-MM-DDTHH:mm:ss',  // <input type="datetime-local" step="1" />
-    DATETIME_LOCAL_MS: 'YYYY-MM-DDTHH:mm:ss.SSS',   // <input type="datetime-local" step="0.001" />
-    DATE: 'YYYY-MM-DD',                             // <input type="date" />
-    TIME: 'HH:mm',                                  // <input type="time" />
-    TIME_SECONDS: 'HH:mm:ss',                       // <input type="time" step="1" />
-    TIME_MS: 'HH:mm:ss.SSS',                        // <input type="time" step="0.001" />
-    WEEK: 'YYYY-[W]WW',                             // <input type="week" />
-    MONTH: 'YYYY-MM'                                // <input type="month" />
-};
 
 return hooks;
 
