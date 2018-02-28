@@ -11,6 +11,9 @@ module.exports = (() => {
 	 * without consideration for time or timezone.
 	 *
 	 * @public
+	 * @param {Number} year
+	 * @param {Number} month
+	 * @param {Number} day
 	 */
 	class Day {
 		constructor(year, month, day) {
@@ -187,6 +190,7 @@ module.exports = (() => {
 		 * a {@link Day} instance.
 		 *
 		 * @public
+		 * @static
 		 * @param {String} value
 		 * @returns {Day}
 		 */
@@ -206,6 +210,8 @@ module.exports = (() => {
 		 * Creates a {@link Day} from the year, month, and day properties (in local time)
 		 * of the {@link Date} argument.
 		 *
+		 * @public
+		 * @static
 		 * @param {Date} date
 		 * @returns {Day}
 		 */
@@ -219,6 +225,8 @@ module.exports = (() => {
 		 * Creates a {@link Day} from the year, month, and day properties (in UTC)
 		 * of the {@link Date} argument.
 		 *
+		 * @public
+		 * @static
 		 * @param {Date} date
 		 * @returns {Day}
 		 */
@@ -229,9 +237,21 @@ module.exports = (() => {
 		}
 
 		/**
+		 * Returns a {@link Day} instance using today's local date.
+		 *
+		 * @static
+		 * @public
+		 * @return {Day}
+		 */
+		static getToday() {
+			return Day.fromDate(new Date());
+		}
+
+		/**
 		 * Returns true if the year, month, and day combination is valid; otherwise false.
 		 *
 		 * @public
+		 * @static
 		 * @param {Number} year
 		 * @param {Number} month
 		 * @param {Number} day
@@ -251,6 +271,7 @@ module.exports = (() => {
 		 * Returns the number of days in a given month.
 		 *
 		 * @public
+		 * @static
 		 * @param {number} year - The year number (e.g. 2017)
 		 * @param {number} month - The month number (e.g. 2 is February)
 		 */
@@ -285,6 +306,7 @@ module.exports = (() => {
 		 * A comparator function for {@link Day} instances.
 		 *
 		 * @public
+		 * @static
 		 * @param {Day} a
 		 * @param {Day} b
 		 * @returns {Number}
