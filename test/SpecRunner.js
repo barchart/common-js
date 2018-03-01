@@ -6,6 +6,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var assert = require('./../../lang/assert'),
+    attributes = require('./../../lang/attributes'),
     is = require('./../../lang/is');
 
 var FailureReasonItem = require('./FailureReasonItem'),
@@ -161,7 +162,7 @@ module.exports = function () {
 					var failure = void 0;
 
 					schema.schema.fields.map(function (field) {
-						if (candidate[field.name] === undefined) {
+						if (attributes.read(candidate, field.name) === undefined) {
 							if (!failure) {
 								failure = FailureReason.forRequest({ endpoint: { description: 'serialize data into ' + schema } });
 							}
@@ -185,7 +186,7 @@ module.exports = function () {
 	return FailureReason;
 }();
 
-},{"./../../collections/Tree":7,"./../../lang/assert":28,"./../../lang/is":33,"./FailureReasonItem":2,"./FailureType":3}],2:[function(require,module,exports){
+},{"./../../collections/Tree":7,"./../../lang/assert":28,"./../../lang/attributes":29,"./../../lang/is":33,"./FailureReasonItem":2,"./FailureType":3}],2:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
