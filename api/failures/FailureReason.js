@@ -113,6 +113,35 @@ module.exports = (() => {
 			return returnVal;
 		}
 
+		/**
+		 * Validates that a candidate conforms to a schema
+		 * 
+		 * @param {Schema} schema
+		 * @param {Object} candidate
+		 */
+		static validateSchema(schema, candidate) {
+			return Promise.resolve()
+				.then(() => {
+					let failure;
+
+					schema.schema.fields.map((field) => {
+						if (candidate[field.name] === undefined) {
+							if (!failure) {
+								failure = FailureReason.forRequest({endpoint: {description: `serialize data into ${schema}`}});
+							}
+
+							failure.addItem(FailureType.REQUEST_PARAMETER_MISSING, {name: field.name});
+						}
+					});
+
+					if (failure) {
+						throw failure.format();
+					}
+
+					return candidate;
+				});
+		}
+
 		toString() {
 			return '[FailureReason]';
 		}
