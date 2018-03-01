@@ -1,4 +1,5 @@
 const assert = require('./../../lang/assert'),
+	attributes = require('./../../lang/attributes'),
 	is = require('./../../lang/is');
 
 const FailureReasonItem = require('./FailureReasonItem'),
@@ -125,7 +126,7 @@ module.exports = (() => {
 					let failure;
 
 					schema.schema.fields.map((field) => {
-						if (candidate[field.name] === undefined) {
+						if (attributes.read(candidate, field.name) === undefined) {
 							if (!failure) {
 								failure = FailureReason.forRequest({endpoint: {description: `serialize data into ${schema}`}});
 							}
