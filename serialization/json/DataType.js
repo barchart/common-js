@@ -16,10 +16,11 @@ module.exports = (() => {
 	 * @param {Function=} enumerationType
 	 */
 	class DataType {
-		constructor(description, enumerationType, reviver) {
+		constructor(description, enumerationType, reviver, validator) {
 			assert.argumentIsRequired(description, 'description', String);
 			assert.argumentIsOptional(enumerationType, 'enumerationType', Function);
 			assert.argumentIsOptional(reviver, 'reviver', Function);
+			assert.argumentIsOptional(validator, 'validator', Function);
 
 			if (enumerationType) {
 				assert.argumentIsValid(enumerationType, 'enumerationType', extendsEnumeration, 'is an enumeration');
@@ -39,6 +40,7 @@ module.exports = (() => {
 			}
 
 			this._reviver = reviverToUse;
+			this._validator = validator || ((candidate) => true);
 		}
 
 		/**
@@ -65,10 +67,21 @@ module.exports = (() => {
 		 * A function which "revives" a value after serialization to JSON.
 		 *
 		 * @public
-		 * @returns {Function}reviver
+		 * @returns {Function} reviver
 		 */
 		get reviver() {
 			return this._reviver;
+		}
+
+
+		/**
+		 * A function validates data, returning true or false.
+		 *
+		 * @public
+		 * @returns {Function} reviver
+		 */
+		get validator() {
+			return this._validator;
 		}
 
 		/**
@@ -162,14 +175,14 @@ module.exports = (() => {
 		return is.extension(Enum, EnumerationType);
 	}
 
-	const dataTypeString = new DataType('String');
-	const dataTypeNumber = new DataType('Number');
-	const dataTypeBoolean = new DataType('Boolean');
-	const dataTypeObject = new DataType('Object');
+	const dataTypeString = new DataType('String', null, null, is.string);
+	const dataTypeNumber = new DataType('Number', null, null, is.number);
+	const dataTypeBoolean = new DataType('Boolean', null, null, is.boolean);
+	const dataTypeObject = new DataType('Object', null, null, is.object);
 
-	const dataTypeDecimal = new DataType('Decimal', null, x => Decimal.parse(x));
-	const dataTypeDay = new DataType('Day', null, x => Day.parse(x));
-	const dataTypeTimestamp = new DataType('Timestamp', null, x => Timestamp.parse(x));
+	const dataTypeDecimal = new DataType('Decimal', null, x => Decimal.parse(x), x => x instanceof Decimal);
+	const dataTypeDay = new DataType('Day', null, x => Day.parse(x), x => x instanceof Day);
+	const dataTypeTimestamp = new DataType('Timestamp', null, x => Timestamp.parse(x), x => x instanceof Timestamp);
 
 	const dataTypes = [
 		dataTypeString,

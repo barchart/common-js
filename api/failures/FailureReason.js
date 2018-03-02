@@ -4,6 +4,7 @@ const assert = require('./../../lang/assert'),
 
 const FailureReasonItem = require('./FailureReasonItem'),
 	FailureType = require('./FailureType'),
+	Schema = require('./../../serialization/json/Schema'),
 	Tree = require('./../../collections/Tree');
 
 module.exports = (() => {
@@ -126,20 +127,21 @@ module.exports = (() => {
 					let failure;
 
 					schema.schema.fields.map((field) => {
-						if (attributes.read(candidate, field.name) === undefined) {
+						if (!attributes.has(candidate, field.name) || !field.dataType.validator.call(this, attributes.read(candidate, field.name))) {
 							if (!failure) {
-								failure = FailureReason.forRequest({endpoint: {description: `serialize data into ${schema}`}});
+								failure = FailureReason.forRequest({endpoint: {description: `serialize data into ${schema}`}})
+									.addItem(FailureType.REQUEST_INPUT_MALFORMED, { }, true);
 							}
 
-							failure.addItem(FailureType.REQUEST_PARAMETER_MISSING, {name: field.name});
+							failure.addItem(FailureType.REQUEST_PARAMETER_MALFORMED, { name: field.name });
 						}
 					});
 
 					if (failure) {
-						throw failure.format();
+						return Promise.reject(failure.format());
+					} else {
+						return Promise.resolve(null);
 					}
-
-					return candidate;
 				});
 		}
 
