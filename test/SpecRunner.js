@@ -11,6 +11,7 @@ var assert = require('./../../lang/assert'),
 
 var FailureReasonItem = require('./FailureReasonItem'),
     FailureType = require('./FailureType'),
+    Schema = require('./../../serialization/json/Schema'),
     Tree = require('./../../collections/Tree');
 
 module.exports = function () {
@@ -158,24 +159,26 @@ module.exports = function () {
 		}, {
 			key: 'validateSchema',
 			value: function validateSchema(schema, candidate) {
+				var _this2 = this;
+
 				return Promise.resolve().then(function () {
 					var failure = void 0;
 
 					schema.schema.fields.map(function (field) {
-						if (attributes.read(candidate, field.name) === undefined) {
+						if (!attributes.has(candidate, field.name) || !field.dataType.validator.call(_this2, attributes.read(candidate, field.name))) {
 							if (!failure) {
-								failure = FailureReason.forRequest({ endpoint: { description: 'serialize data into ' + schema } });
+								failure = FailureReason.forRequest({ endpoint: { description: 'serialize data into ' + schema } }).addItem(FailureType.REQUEST_INPUT_MALFORMED, {}, true);
 							}
 
-							failure.addItem(FailureType.REQUEST_PARAMETER_MISSING, { name: field.name });
+							failure.addItem(FailureType.REQUEST_PARAMETER_MALFORMED, { name: field.name });
 						}
 					});
 
 					if (failure) {
-						throw failure.format();
+						return Promise.reject(failure.format());
+					} else {
+						return Promise.resolve(null);
 					}
-
-					return candidate;
 				});
 			}
 		}]);
@@ -186,7 +189,7 @@ module.exports = function () {
 	return FailureReason;
 }();
 
-},{"./../../collections/Tree":7,"./../../lang/assert":28,"./../../lang/attributes":29,"./../../lang/is":33,"./FailureReasonItem":2,"./FailureType":3}],2:[function(require,module,exports){
+},{"./../../collections/Tree":7,"./../../lang/assert":28,"./../../lang/attributes":29,"./../../lang/is":33,"./../../serialization/json/Schema":55,"./FailureReasonItem":2,"./FailureType":3}],2:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -10320,7 +10323,7 @@ moment.tz.load(require('./data/packed/latest.json'));
 
 },{"moment":51}],51:[function(require,module,exports){
 //! moment.js
-//! version : 2.19.4
+//! version : 2.20.1
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
 //! license : MIT
 //! momentjs.com
@@ -10980,7 +10983,7 @@ var matchTimestamp = /[+-]?\d+(\.\d{1,3})?/; // 123456789 123456789.123
 
 // any word (or two) characters or numbers including two/three word month in arabic.
 // includes scottish gaelic two word and hyphenated months
-var matchWord = /[0-9]{0,256}['a-z\u00A0-\u05FF\u0700-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]{1,256}|[\u0600-\u06FF\/]{1,256}(\s*?[\u0600-\u06FF]{1,256}){1,2}/i;
+var matchWord = /[0-9]{0,256}['a-z\u00A0-\u05FF\u0700-\uD7FF\uF900-\uFDCF\uFDF0-\uFF07\uFF10-\uFFEF]{1,256}|[\u0600-\u06FF\/]{1,256}(\s*?[\u0600-\u06FF]{1,256}){1,2}/i;
 
 
 var regexes = {};
@@ -13621,19 +13624,24 @@ function toString () {
     return this.clone().locale('en').format('ddd MMM DD YYYY HH:mm:ss [GMT]ZZ');
 }
 
-function toISOString() {
+function toISOString(keepOffset) {
     if (!this.isValid()) {
         return null;
     }
-    var m = this.clone().utc();
+    var utc = keepOffset !== true;
+    var m = utc ? this.clone().utc() : this;
     if (m.year() < 0 || m.year() > 9999) {
-        return formatMoment(m, 'YYYYYY-MM-DD[T]HH:mm:ss.SSS[Z]');
+        return formatMoment(m, utc ? 'YYYYYY-MM-DD[T]HH:mm:ss.SSS[Z]' : 'YYYYYY-MM-DD[T]HH:mm:ss.SSSZ');
     }
     if (isFunction(Date.prototype.toISOString)) {
         // native implementation is ~50x faster, use it when we can
-        return this.toDate().toISOString();
+        if (utc) {
+            return this.toDate().toISOString();
+        } else {
+            return new Date(this._d.valueOf()).toISOString().replace('Z', formatMoment(m, 'Z'));
+        }
     }
-    return formatMoment(m, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]');
+    return formatMoment(m, utc ? 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]' : 'YYYY-MM-DD[T]HH:mm:ss.SSSZ');
 }
 
 /**
@@ -14801,7 +14809,7 @@ addParseToken('x', function (input, array, config) {
 // Side effect imports
 
 
-hooks.version = '2.19.4';
+hooks.version = '2.20.1';
 
 setHookCallback(createLocal);
 
@@ -14832,6 +14840,19 @@ hooks.relativeTimeRounding  = getSetRelativeTimeRounding;
 hooks.relativeTimeThreshold = getSetRelativeTimeThreshold;
 hooks.calendarFormat        = getCalendarFormat;
 hooks.prototype             = proto;
+
+// currently HTML5 input type only supports 24-hour formats
+hooks.HTML5_FMT = {
+    DATETIME_LOCAL: 'YYYY-MM-DDTHH:mm',             // <input type="datetime-local" />
+    DATETIME_LOCAL_SECONDS: 'YYYY-MM-DDTHH:mm:ss',  // <input type="datetime-local" step="1" />
+    DATETIME_LOCAL_MS: 'YYYY-MM-DDTHH:mm:ss.SSS',   // <input type="datetime-local" step="0.001" />
+    DATE: 'YYYY-MM-DD',                             // <input type="date" />
+    TIME: 'HH:mm',                                  // <input type="time" />
+    TIME_SECONDS: 'HH:mm:ss',                       // <input type="time" step="1" />
+    TIME_MS: 'HH:mm:ss.SSS',                        // <input type="time" step="0.001" />
+    WEEK: 'YYYY-[W]WW',                             // <input type="week" />
+    MONTH: 'YYYY-MM'                                // <input type="month" />
+};
 
 return hooks;
 
@@ -14962,12 +14983,13 @@ module.exports = function () {
   */
 
 	var DataType = function () {
-		function DataType(description, enumerationType, reviver) {
+		function DataType(description, enumerationType, reviver, validator) {
 			_classCallCheck(this, DataType);
 
 			assert.argumentIsRequired(description, 'description', String);
 			assert.argumentIsOptional(enumerationType, 'enumerationType', Function);
 			assert.argumentIsOptional(reviver, 'reviver', Function);
+			assert.argumentIsOptional(validator, 'validator', Function);
 
 			if (enumerationType) {
 				assert.argumentIsValid(enumerationType, 'enumerationType', extendsEnumeration, 'is an enumeration');
@@ -14991,6 +15013,9 @@ module.exports = function () {
 			}
 
 			this._reviver = reviverToUse;
+			this._validator = validator || function (candidate) {
+				return true;
+			};
 		}
 
 		/**
@@ -15029,13 +15054,26 @@ module.exports = function () {
     * A function which "revives" a value after serialization to JSON.
     *
     * @public
-    * @returns {Function}reviver
+    * @returns {Function} reviver
     */
 
 		}, {
 			key: 'reviver',
 			get: function get() {
 				return this._reviver;
+			}
+
+			/**
+    * A function validates data, returning true or false.
+    *
+    * @public
+    * @returns {Function} reviver
+    */
+
+		}, {
+			key: 'validator',
+			get: function get() {
+				return this._validator;
 			}
 
 			/**
@@ -15152,19 +15190,25 @@ module.exports = function () {
 		return is.extension(Enum, EnumerationType);
 	}
 
-	var dataTypeString = new DataType('String');
-	var dataTypeNumber = new DataType('Number');
-	var dataTypeBoolean = new DataType('Boolean');
-	var dataTypeObject = new DataType('Object');
+	var dataTypeString = new DataType('String', null, null, is.string);
+	var dataTypeNumber = new DataType('Number', null, null, is.number);
+	var dataTypeBoolean = new DataType('Boolean', null, null, is.boolean);
+	var dataTypeObject = new DataType('Object', null, null, is.object);
 
 	var dataTypeDecimal = new DataType('Decimal', null, function (x) {
 		return Decimal.parse(x);
+	}, function (x) {
+		return x instanceof Decimal;
 	});
 	var dataTypeDay = new DataType('Day', null, function (x) {
 		return Day.parse(x);
+	}, function (x) {
+		return x instanceof Day;
 	});
 	var dataTypeTimestamp = new DataType('Timestamp', null, function (x) {
 		return Timestamp.parse(x);
+	}, function (x) {
+		return x instanceof Timestamp;
 	});
 
 	var dataTypes = [dataTypeString, dataTypeNumber, dataTypeBoolean, dataTypeObject, dataTypeDecimal, dataTypeDay, dataTypeTimestamp];
