@@ -283,6 +283,113 @@ describe('When adding days to a Day', function() {
 	});
 });
 
+describe('When adding months to a Day', function() {
+	'use strict';
+
+	it('should return January 2, 2017 when adding 13 months to December 2, 2015', function () {
+		const now = new Day(2015, 12, 2);
+		const then = now.addMonths(13);
+
+		expect(then.year).toEqual(2017);
+		expect(then.month).toEqual(1);
+		expect(then.day).toEqual(2);
+	});
+
+	it('should return December 2, 2015 when subtracting 13 months from January 2, 2017', function () {
+		const now = new Day(2017, 1, 2);
+		const then = now.subtractMonths(13);
+
+		expect(then.year).toEqual(2015);
+		expect(then.month).toEqual(12);
+		expect(then.day).toEqual(2);
+	});
+
+	it('should return February 28, 2018 when adding a month to January 30, 2018', function () {
+		const now = new Day(2018, 1, 30);
+		const then = now.addMonths(1);
+
+		expect(then.year).toEqual(2018);
+		expect(then.month).toEqual(2);
+		expect(then.day).toEqual(28);
+	});
+
+	it('should return February 28, 2018 when subtracting a month to March 29, 2018', function () {
+		const now = new Day(2018, 3, 29);
+		const then = now.subtractMonths(1);
+
+		expect(then.year).toEqual(2018);
+		expect(then.month).toEqual(2);
+		expect(then.day).toEqual(28);
+	});
+});
+
+describe('When adding years to a Day', function() {
+	'use strict';
+
+	it('should return January 2, 2017 when adding 3 years to January 2, 2014', function () {
+		const now = new Day(2014, 1, 2);
+		const then = now.addYears(3);
+
+		expect(then.year).toEqual(2017);
+		expect(then.month).toEqual(1);
+		expect(then.day).toEqual(2);
+	});
+
+	it('should return January 2, 2014 when subtracting 3 years to January 2, 2017', function () {
+		const now = new Day(2017, 1, 2);
+		const then = now.subtractYears(3);
+
+		expect(then.year).toEqual(2014);
+		expect(then.month).toEqual(1);
+		expect(then.day).toEqual(2);
+	});
+
+	it('should return February 29, 2020 when adding 4 years to February 29, 2016', function () {
+		const now = new Day(2016, 2, 29);
+		const then = now.addYears(4);
+
+		expect(then.year).toEqual(2020);
+		expect(then.month).toEqual(2);
+		expect(then.day).toEqual(29);
+	});
+
+	it('should return February 29, 2016 when subtracting 4 years to February 29, 2020', function () {
+		const now = new Day(2020, 2, 29);
+		const then = now.subtractYears(4);
+
+		expect(then.year).toEqual(2016);
+		expect(then.month).toEqual(2);
+		expect(then.day).toEqual(29);
+	});
+
+	it('should return February 28, 2019 when adding 3 years to February 29, 2016', function () {
+		const now = new Day(2016, 2, 29);
+		const then = now.addYears(3);
+
+		expect(then.year).toEqual(2019);
+		expect(then.month).toEqual(2);
+		expect(then.day).toEqual(28);
+	});
+
+	it('should return February 28, 2016 when subtracting 3 years to February 28, 2019', function () {
+		const now = new Day(2019, 2, 28);
+		const then = now.subtractYears(3);
+
+		expect(then.year).toEqual(2016);
+		expect(then.month).toEqual(2);
+		expect(then.day).toEqual(28);
+	});
+
+	it('should return February 28, 2019 when subtracting 1 years to February 29, 2020', function () {
+		const now = new Day(2020, 2, 29);
+		const then = now.subtractYears(1);
+
+		expect(then.year).toEqual(2019);
+		expect(then.month).toEqual(2);
+		expect(then.day).toEqual(28);
+	});
+});
+
 describe('When "1900-01-01 is parsed as a Day', function() {
 	'use strict';
 

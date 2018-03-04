@@ -39,10 +39,12 @@ module.exports = (() => {
 			assert.argumentIsOptional(inverse, inverse, Boolean);
 			assert.argumentIsValid(days, 'days', is.large, 'is an integer');
 
-			let totalDaysToShift = days;
+			let totalDaysToShift;
 
-			if (inverse) {
-				totalDaysToShift = totalDaysToShift * -1;
+			if (is.boolean(inverse) && inverse) {
+				totalDaysToShift = days * -1;
+			} else {
+				totalDaysToShift = days;
 			}
 
 			const positive = is.positive(totalDaysToShift);
@@ -100,6 +102,109 @@ module.exports = (() => {
 		 */
 		subtractDays(days) {
 			return this.addDays(days, true);
+		}
+
+		/**
+		 * Calculates a new {@link Day} in the future (or past). If the new date is at the end of
+		 * the month and the new month has fewer days than the current month, days will be subtracted
+		 * as necessary (e.g. adding one month to March 31 will return April 30).
+		 *
+		 * @public
+		 * @param {Number} months - The number of months to add (negative numbers can be used for subtraction).
+		 * @param {Boolean=} inverse - If true, the sign of the "days" value will be flipped.
+		 * @returns {Day}
+		 */
+		addMonths(months, inverse) {
+			assert.argumentIsRequired(months, 'months', Number);
+			assert.argumentIsOptional(inverse, inverse, Boolean);
+			assert.argumentIsValid(months, 'months', is.large, 'is an integer');
+
+			let totalMonthsToShift;
+
+			if (is.boolean(inverse) && inverse) {
+				totalMonthsToShift = months * -1;
+			} else {
+				totalMonthsToShift = months;
+			}
+
+			const monthsToShift = totalMonthsToShift % 12;
+			const yearsToShift = (totalMonthsToShift - monthsToShift) / 12;
+
+			let shiftedYear = this.year + yearsToShift;
+			let shiftedMonth = this.month + monthsToShift;
+			let shiftedDay = this.day;
+
+			if (shiftedMonth > 12) {
+				shiftedYear = shiftedYear + 1;
+				shiftedMonth = shiftedMonth - 12;
+			}
+
+			if (shiftedMonth < 1) {
+				shiftedYear = shiftedYear - 1;
+				shiftedMonth = shiftedMonth + 12;
+			}
+
+			while (!Day.validate(shiftedYear, shiftedMonth, shiftedDay)) {
+				shiftedDay = shiftedDay - 1;
+			}
+
+			return new Day(shiftedYear, shiftedMonth, shiftedDay);
+		}
+
+		/**
+		 * Calculates a new {@link Day} in the past (or future).
+		 *
+		 * @public
+		 * @param {Number} months - The number of months to subtract (negative numbers can be used for addition).
+		 * @returns {Day}
+		 */
+		subtractMonths(months) {
+			return this.addMonths(months, true);
+		}
+
+		/**
+		 * Calculates a new {@link Day} in the future (or past). If the new date is at the end of
+		 * the month and the new month has fewer days than the current month, days will be subtracted
+		 * as necessary (e.g. adding one year to February 29 will return February 28).
+		 *
+		 * @public
+		 * @param {Number} years - The number of years to add (negative numbers can be used for subtraction).
+		 * @param {Boolean=} inverse - If true, the sign of the "days" value will be flipped.
+		 * @returns {Day}
+		 */
+		addYears(years, inverse) {
+			assert.argumentIsRequired(years, 'years', Number);
+			assert.argumentIsOptional(inverse, inverse, Boolean);
+			assert.argumentIsValid(years, 'years', is.large, 'is an integer');
+
+			let yearsToShift;
+
+			if (is.boolean(inverse) && inverse) {
+				yearsToShift = years * -1;
+			} else {
+				yearsToShift = years;
+			}
+
+			let shiftedYear = this.year + yearsToShift;
+			let shiftedMonth = this.month;
+			let shiftedDay = this.day;
+
+			while (!Day.validate(shiftedYear, shiftedMonth, shiftedDay)) {
+				shiftedDay = shiftedDay - 1;
+			}
+
+			return new Day(shiftedYear, shiftedMonth, shiftedDay);
+		}
+
+		/**
+		 * Calculates a new {@link Day} in the past (or future).
+		 *
+		 * @public
+		 * @param {Number} years - The number of years to subtract (negative numbers can be used for addition).
+		 * @returns {Day}
+		 */
+		subtractYears(years) {
+			return this.addYears(years, true);
 		}
 
 		/**
