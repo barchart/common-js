@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function(){function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s}return e})()({1:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -2717,10 +2717,12 @@ module.exports = function () {
 				assert.argumentIsOptional(inverse, inverse, Boolean);
 				assert.argumentIsValid(days, 'days', is.large, 'is an integer');
 
-				var totalDaysToShift = days;
+				var totalDaysToShift = void 0;
 
-				if (inverse) {
-					totalDaysToShift = totalDaysToShift * -1;
+				if (is.boolean(inverse) && inverse) {
+					totalDaysToShift = days * -1;
+				} else {
+					totalDaysToShift = days;
 				}
 
 				var positive = is.positive(totalDaysToShift);
@@ -2781,6 +2783,121 @@ module.exports = function () {
 			key: 'subtractDays',
 			value: function subtractDays(days) {
 				return this.addDays(days, true);
+			}
+
+			/**
+    * Calculates a new {@link Day} in the future (or past). If the new date is at the end of
+    * the month and the new month has fewer days than the current month, days will be subtracted
+    * as necessary (e.g. adding one month to March 31 will return April 30).
+    *
+    * @public
+    * @param {Number} months - The number of months to add (negative numbers can be used for subtraction).
+    * @param {Boolean=} inverse - If true, the sign of the "days" value will be flipped.
+    * @returns {Day}
+    */
+
+		}, {
+			key: 'addMonths',
+			value: function addMonths(months, inverse) {
+				assert.argumentIsRequired(months, 'months', Number);
+				assert.argumentIsOptional(inverse, inverse, Boolean);
+				assert.argumentIsValid(months, 'months', is.large, 'is an integer');
+
+				var totalMonthsToShift = void 0;
+
+				if (is.boolean(inverse) && inverse) {
+					totalMonthsToShift = months * -1;
+				} else {
+					totalMonthsToShift = months;
+				}
+
+				var monthsToShift = totalMonthsToShift % 12;
+				var yearsToShift = (totalMonthsToShift - monthsToShift) / 12;
+
+				var shiftedYear = this.year + yearsToShift;
+				var shiftedMonth = this.month + monthsToShift;
+				var shiftedDay = this.day;
+
+				if (shiftedMonth > 12) {
+					shiftedYear = shiftedYear + 1;
+					shiftedMonth = shiftedMonth - 12;
+				}
+
+				if (shiftedMonth < 1) {
+					shiftedYear = shiftedYear - 1;
+					shiftedMonth = shiftedMonth + 12;
+				}
+
+				while (!Day.validate(shiftedYear, shiftedMonth, shiftedDay)) {
+					shiftedDay = shiftedDay - 1;
+				}
+
+				return new Day(shiftedYear, shiftedMonth, shiftedDay);
+			}
+
+			/**
+    * Calculates a new {@link Day} in the past (or future).
+    *
+    * @public
+    * @param {Number} months - The number of months to subtract (negative numbers can be used for addition).
+    * @returns {Day}
+    */
+
+		}, {
+			key: 'subtractMonths',
+			value: function subtractMonths(months) {
+				return this.addMonths(months, true);
+			}
+
+			/**
+    * Calculates a new {@link Day} in the future (or past). If the new date is at the end of
+    * the month and the new month has fewer days than the current month, days will be subtracted
+    * as necessary (e.g. adding one year to February 29 will return February 28).
+    *
+    * @public
+    * @param {Number} years - The number of years to add (negative numbers can be used for subtraction).
+    * @param {Boolean=} inverse - If true, the sign of the "days" value will be flipped.
+    * @returns {Day}
+    */
+
+		}, {
+			key: 'addYears',
+			value: function addYears(years, inverse) {
+				assert.argumentIsRequired(years, 'years', Number);
+				assert.argumentIsOptional(inverse, inverse, Boolean);
+				assert.argumentIsValid(years, 'years', is.large, 'is an integer');
+
+				var yearsToShift = void 0;
+
+				if (is.boolean(inverse) && inverse) {
+					yearsToShift = years * -1;
+				} else {
+					yearsToShift = years;
+				}
+
+				var shiftedYear = this.year + yearsToShift;
+				var shiftedMonth = this.month;
+				var shiftedDay = this.day;
+
+				while (!Day.validate(shiftedYear, shiftedMonth, shiftedDay)) {
+					shiftedDay = shiftedDay - 1;
+				}
+
+				return new Day(shiftedYear, shiftedMonth, shiftedDay);
+			}
+
+			/**
+    * Calculates a new {@link Day} in the past (or future).
+    *
+    * @public
+    * @param {Number} years - The number of years to subtract (negative numbers can be used for addition).
+    * @returns {Day}
+    */
+
+		}, {
+			key: 'subtractYears',
+			value: function subtractYears(years) {
+				return this.addYears(years, true);
 			}
 
 			/**
@@ -10323,10 +10440,6 @@ moment.tz.load(require('./data/packed/latest.json'));
 
 },{"moment":51}],51:[function(require,module,exports){
 //! moment.js
-//! version : 2.20.1
-//! authors : Tim Wood, Iskren Chernev, Moment.js contributors
-//! license : MIT
-//! momentjs.com
 
 ;(function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
@@ -10984,7 +11097,6 @@ var matchTimestamp = /[+-]?\d+(\.\d{1,3})?/; // 123456789 123456789.123
 // any word (or two) characters or numbers including two/three word month in arabic.
 // includes scottish gaelic two word and hyphenated months
 var matchWord = /[0-9]{0,256}['a-z\u00A0-\u05FF\u0700-\uD7FF\uF900-\uFDCF\uFDF0-\uFF07\uFF10-\uFFEF]{1,256}|[\u0600-\u06FF\/]{1,256}(\s*?[\u0600-\u06FF]{1,256}){1,2}/i;
-
 
 var regexes = {};
 
@@ -12098,10 +12210,6 @@ function localeMeridiem (hours, minutes, isLower) {
 // this rule.
 var getSetHour = makeGetSet('Hours', true);
 
-// months
-// week
-// weekdays
-// meridiem
 var baseConfig = {
     calendar: defaultCalendar,
     longDateFormat: defaultLongDateFormat,
@@ -12155,7 +12263,7 @@ function chooseLocale(names) {
         }
         i++;
     }
-    return null;
+    return globalLocale;
 }
 
 function loadLocale(name) {
@@ -12190,6 +12298,12 @@ function getSetGlobalLocale (key, values) {
             // moment.duration._locale = moment._locale = data;
             globalLocale = data;
         }
+        else {
+            if ((typeof console !==  'undefined') && console.warn) {
+                //warn user if arguments are passed but the locale could not be set
+                console.warn('Locale ' + key +  ' not found. Did you forget to load it?');
+            }
+        }
     }
 
     return globalLocale._abbr;
@@ -12197,7 +12311,7 @@ function getSetGlobalLocale (key, values) {
 
 function defineLocale (name, config) {
     if (config !== null) {
-        var parentConfig = baseConfig;
+        var locale, parentConfig = baseConfig;
         config.abbr = name;
         if (locales[name] != null) {
             deprecateSimple('defineLocaleOverride',
@@ -12210,14 +12324,19 @@ function defineLocale (name, config) {
             if (locales[config.parentLocale] != null) {
                 parentConfig = locales[config.parentLocale]._config;
             } else {
-                if (!localeFamilies[config.parentLocale]) {
-                    localeFamilies[config.parentLocale] = [];
+                locale = loadLocale(config.parentLocale);
+                if (locale != null) {
+                    parentConfig = locale._config;
+                } else {
+                    if (!localeFamilies[config.parentLocale]) {
+                        localeFamilies[config.parentLocale] = [];
+                    }
+                    localeFamilies[config.parentLocale].push({
+                        name: name,
+                        config: config
+                    });
+                    return null;
                 }
-                localeFamilies[config.parentLocale].push({
-                    name: name,
-                    config: config
-                });
-                return null;
             }
         }
         locales[name] = new Locale(mergeConfigs(parentConfig, config));
@@ -13565,7 +13684,7 @@ function isSameOrBefore (input, units) {
 function diff (input, units, asFloat) {
     var that,
         zoneDelta,
-        delta, output;
+        output;
 
     if (!this.isValid()) {
         return NaN;
@@ -13638,7 +13757,7 @@ function toISOString(keepOffset) {
         if (utc) {
             return this.toDate().toISOString();
         } else {
-            return new Date(this._d.valueOf()).toISOString().replace('Z', formatMoment(m, 'Z'));
+            return new Date(this.valueOf() + this.utcOffset() * 60 * 1000).toISOString().replace('Z', formatMoment(m, 'Z'));
         }
     }
     return formatMoment(m, utc ? 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]' : 'YYYY-MM-DD[T]HH:mm:ss.SSSZ');
@@ -14192,48 +14311,26 @@ proto.toString          = toString;
 proto.unix              = unix;
 proto.valueOf           = valueOf;
 proto.creationData      = creationData;
-
-// Year
 proto.year       = getSetYear;
 proto.isLeapYear = getIsLeapYear;
-
-// Week Year
 proto.weekYear    = getSetWeekYear;
 proto.isoWeekYear = getSetISOWeekYear;
-
-// Quarter
 proto.quarter = proto.quarters = getSetQuarter;
-
-// Month
 proto.month       = getSetMonth;
 proto.daysInMonth = getDaysInMonth;
-
-// Week
 proto.week           = proto.weeks        = getSetWeek;
 proto.isoWeek        = proto.isoWeeks     = getSetISOWeek;
 proto.weeksInYear    = getWeeksInYear;
 proto.isoWeeksInYear = getISOWeeksInYear;
-
-// Day
 proto.date       = getSetDayOfMonth;
 proto.day        = proto.days             = getSetDayOfWeek;
 proto.weekday    = getSetLocaleDayOfWeek;
 proto.isoWeekday = getSetISODayOfWeek;
 proto.dayOfYear  = getSetDayOfYear;
-
-// Hour
 proto.hour = proto.hours = getSetHour;
-
-// Minute
 proto.minute = proto.minutes = getSetMinute;
-
-// Second
 proto.second = proto.seconds = getSetSecond;
-
-// Millisecond
 proto.millisecond = proto.milliseconds = getSetMillisecond;
-
-// Offset
 proto.utcOffset            = getSetOffset;
 proto.utc                  = setOffsetToUTC;
 proto.local                = setOffsetToLocal;
@@ -14244,12 +14341,8 @@ proto.isLocal              = isLocal;
 proto.isUtcOffset          = isUtcOffset;
 proto.isUtc                = isUtc;
 proto.isUTC                = isUtc;
-
-// Timezone
 proto.zoneAbbr = getZoneAbbr;
 proto.zoneName = getZoneName;
-
-// Deprecations
 proto.dates  = deprecate('dates accessor is deprecated. Use date instead.', getSetDayOfMonth);
 proto.months = deprecate('months accessor is deprecated. Use month instead', getSetMonth);
 proto.years  = deprecate('years accessor is deprecated. Use year instead', getSetYear);
@@ -14280,19 +14373,15 @@ proto$1.relativeTime    = relativeTime;
 proto$1.pastFuture      = pastFuture;
 proto$1.set             = set;
 
-// Month
 proto$1.months            =        localeMonths;
 proto$1.monthsShort       =        localeMonthsShort;
 proto$1.monthsParse       =        localeMonthsParse;
 proto$1.monthsRegex       = monthsRegex;
 proto$1.monthsShortRegex  = monthsShortRegex;
-
-// Week
 proto$1.week = localeWeek;
 proto$1.firstDayOfYear = localeFirstDayOfYear;
 proto$1.firstDayOfWeek = localeFirstDayOfWeek;
 
-// Day of Week
 proto$1.weekdays       =        localeWeekdays;
 proto$1.weekdaysMin    =        localeWeekdaysMin;
 proto$1.weekdaysShort  =        localeWeekdaysShort;
@@ -14302,7 +14391,6 @@ proto$1.weekdaysRegex       =        weekdaysRegex;
 proto$1.weekdaysShortRegex  =        weekdaysShortRegex;
 proto$1.weekdaysMinRegex    =        weekdaysMinRegex;
 
-// Hours
 proto$1.isPM = localeIsPM;
 proto$1.meridiem = localeMeridiem;
 
@@ -14409,6 +14497,7 @@ getSetGlobalLocale('en', {
 });
 
 // Side effect imports
+
 hooks.lang = deprecate('moment.lang is deprecated. Use moment.locale instead.', getSetGlobalLocale);
 hooks.langData = deprecate('moment.langData is deprecated. Use moment.localeData instead.', getLocale);
 
@@ -14784,7 +14873,6 @@ proto$2.toJSON         = toISOString$1;
 proto$2.locale         = locale;
 proto$2.localeData     = localeData;
 
-// Deprecations
 proto$2.toIsoString = deprecate('toIsoString() is deprecated. Please use toISOString() instead (notice the capitals)', toISOString$1);
 proto$2.lang = lang;
 
@@ -14809,7 +14897,7 @@ addParseToken('x', function (input, array, config) {
 // Side effect imports
 
 
-hooks.version = '2.20.1';
+hooks.version = '2.21.0';
 
 setHookCallback(createLocal);
 
@@ -18931,6 +19019,113 @@ describe('When adding days to a Day', function () {
 		expect(then.year).toEqual(2020);
 		expect(then.month).toEqual(3);
 		expect(then.day).toEqual(1);
+	});
+});
+
+describe('When adding months to a Day', function () {
+	'use strict';
+
+	it('should return January 2, 2017 when adding 13 months to December 2, 2015', function () {
+		var now = new Day(2015, 12, 2);
+		var then = now.addMonths(13);
+
+		expect(then.year).toEqual(2017);
+		expect(then.month).toEqual(1);
+		expect(then.day).toEqual(2);
+	});
+
+	it('should return December 2, 2015 when subtracting 13 months from January 2, 2017', function () {
+		var now = new Day(2017, 1, 2);
+		var then = now.subtractMonths(13);
+
+		expect(then.year).toEqual(2015);
+		expect(then.month).toEqual(12);
+		expect(then.day).toEqual(2);
+	});
+
+	it('should return February 28, 2018 when adding a month to January 30, 2018', function () {
+		var now = new Day(2018, 1, 30);
+		var then = now.addMonths(1);
+
+		expect(then.year).toEqual(2018);
+		expect(then.month).toEqual(2);
+		expect(then.day).toEqual(28);
+	});
+
+	it('should return February 28, 2018 when subtracting a month to March 29, 2018', function () {
+		var now = new Day(2018, 3, 29);
+		var then = now.subtractMonths(1);
+
+		expect(then.year).toEqual(2018);
+		expect(then.month).toEqual(2);
+		expect(then.day).toEqual(28);
+	});
+});
+
+describe('When adding years to a Day', function () {
+	'use strict';
+
+	it('should return January 2, 2017 when adding 3 years to January 2, 2014', function () {
+		var now = new Day(2014, 1, 2);
+		var then = now.addYears(3);
+
+		expect(then.year).toEqual(2017);
+		expect(then.month).toEqual(1);
+		expect(then.day).toEqual(2);
+	});
+
+	it('should return January 2, 2014 when subtracting 3 years to January 2, 2017', function () {
+		var now = new Day(2017, 1, 2);
+		var then = now.subtractYears(3);
+
+		expect(then.year).toEqual(2014);
+		expect(then.month).toEqual(1);
+		expect(then.day).toEqual(2);
+	});
+
+	it('should return February 29, 2020 when adding 4 years to February 29, 2016', function () {
+		var now = new Day(2016, 2, 29);
+		var then = now.addYears(4);
+
+		expect(then.year).toEqual(2020);
+		expect(then.month).toEqual(2);
+		expect(then.day).toEqual(29);
+	});
+
+	it('should return February 29, 2016 when subtracting 4 years to February 29, 2020', function () {
+		var now = new Day(2020, 2, 29);
+		var then = now.subtractYears(4);
+
+		expect(then.year).toEqual(2016);
+		expect(then.month).toEqual(2);
+		expect(then.day).toEqual(29);
+	});
+
+	it('should return February 28, 2019 when adding 3 years to February 29, 2016', function () {
+		var now = new Day(2016, 2, 29);
+		var then = now.addYears(3);
+
+		expect(then.year).toEqual(2019);
+		expect(then.month).toEqual(2);
+		expect(then.day).toEqual(28);
+	});
+
+	it('should return February 28, 2016 when subtracting 3 years to February 28, 2019', function () {
+		var now = new Day(2019, 2, 28);
+		var then = now.subtractYears(3);
+
+		expect(then.year).toEqual(2016);
+		expect(then.month).toEqual(2);
+		expect(then.day).toEqual(28);
+	});
+
+	it('should return February 28, 2019 when subtracting 1 years to February 29, 2020', function () {
+		var now = new Day(2020, 2, 29);
+		var then = now.subtractYears(1);
+
+		expect(then.year).toEqual(2019);
+		expect(then.month).toEqual(2);
+		expect(then.day).toEqual(28);
 	});
 });
 
