@@ -661,3 +661,37 @@ describe('when calculating the "symmetric difference" of two arrays', function()
 		});
 	});
 });
+
+describe('when taking the first item of an array', function() {
+	it('an undefined value should be returned from an empty array', function() {
+		var value = array.first([ ]);
+
+		expect(value).toEqual(undefined);
+	});
+
+	it('the first value should be returned from a non-empty array', function() {
+		var a = { };
+		var b = { };
+
+		var value = array.first([ a, b ]);
+
+		expect(value).toBe(a);
+	});
+});
+
+describe('when taking the last item of an array', function() {
+	it('an undefined value should be returned from an empty array', function() {
+		var value = array.last([ ]);
+
+		expect(value).toEqual(undefined);
+	});
+
+	it('the last value should be returned from a non-empty array', function() {
+		var a = { };
+		var b = { };
+
+		var value = array.last([ a, b ]);
+
+		expect(value).toBe(b);
+	});
+});

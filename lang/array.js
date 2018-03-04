@@ -152,6 +152,28 @@ module.exports = (() => {
 		},
 
 		/**
+		 * Returns the first item from an array, or an undefined value, if the
+		 * array is empty.
+		 *
+		 * @static
+		 * @param {Array} a
+		 * @returns {*|undefined}
+		 */
+		first(a) {
+			assert.argumentIsArray(a, 'a');
+
+			let returnRef;
+
+			if (a.length !== 0) {
+				returnRef = a[0];
+			} else {
+				returnRef = undefined;
+			}
+
+			return returnRef;
+		},
+
+		/**
 		 * Returns the last item from an array, or an undefined value, if the
 		 * array is empty.
 		 *
