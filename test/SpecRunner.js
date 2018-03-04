@@ -4823,6 +4823,29 @@ module.exports = function () {
 
 
 		/**
+   * Returns the first item from an array, or an undefined value, if the
+   * array is empty.
+   *
+   * @static
+   * @param {Array} a
+   * @returns {*|undefined}
+   */
+		first: function first(a) {
+			assert.argumentIsArray(a, 'a');
+
+			var returnRef = void 0;
+
+			if (a.length !== 0) {
+				returnRef = a[0];
+			} else {
+				returnRef = undefined;
+			}
+
+			return returnRef;
+		},
+
+
+		/**
    * Returns the last item from an array, or an undefined value, if the
    * array is empty.
    *
@@ -20518,6 +20541,40 @@ describe('when calculating the "symmetric difference" of two arrays', function (
 		it('the first element the "unique" object', function () {
 			expect(difference[0]).toBe(unique);
 		});
+	});
+});
+
+describe('when taking the first item of an array', function () {
+	it('an undefined value should be returned from an empty array', function () {
+		var value = array.first([]);
+
+		expect(value).toEqual(undefined);
+	});
+
+	it('the first value should be returned from a non-empty array', function () {
+		var a = {};
+		var b = {};
+
+		var value = array.first([a, b]);
+
+		expect(value).toBe(a);
+	});
+});
+
+describe('when taking the last item of an array', function () {
+	it('an undefined value should be returned from an empty array', function () {
+		var value = array.last([]);
+
+		expect(value).toEqual(undefined);
+	});
+
+	it('the last value should be returned from a non-empty array', function () {
+		var a = {};
+		var b = {};
+
+		var value = array.last([a, b]);
+
+		expect(value).toBe(b);
 	});
 });
 
