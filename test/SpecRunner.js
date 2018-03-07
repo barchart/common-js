@@ -165,6 +165,10 @@ module.exports = function () {
 					var failure = void 0;
 
 					schema.schema.fields.map(function (field) {
+						if (field.optional) {
+							return;
+						}
+
 						if (!attributes.has(candidate, field.name) || !field.dataType.validator.call(_this2, attributes.read(candidate, field.name))) {
 							if (!failure) {
 								failure = FailureReason.forRequest({ endpoint: { description: 'serialize data into ' + schema } }).addItem(FailureType.REQUEST_INPUT_MALFORMED, {}, true);
