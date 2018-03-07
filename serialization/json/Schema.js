@@ -109,7 +109,7 @@ module.exports = (() => {
 					} else if (item.optional) {
 						item = advance(key);
 					} else {
-						throw new Error(`Schema parsing is using strict mode, unexpected key found [ found: ${key}, expected: ${item.name} ]`);
+						throw new SchemaError(key, item.name, `Schema parsing is using strict mode, unexpected key found [ found: ${key}, expected: ${item.name} ]`);
 					}
 				}
 
@@ -134,6 +134,19 @@ module.exports = (() => {
 
 		toString() {
 			return `[Schema (name=${this._name})]`;
+		}
+	}
+
+	class SchemaError extends Error {
+		constructor(key, name, message) {
+			super(message);
+
+			this.key = key;
+			this.name = name;
+		}
+
+		toString() {
+			return `[SchemaError]`;
 		}
 	}
 
