@@ -127,6 +127,10 @@ module.exports = (() => {
 					let failure;
 
 					schema.schema.fields.map((field) => {
+						if (field.optional) {
+							return;
+						}
+
 						if (!attributes.has(candidate, field.name) || !field.dataType.validator.call(this, attributes.read(candidate, field.name))) {
 							if (!failure) {
 								failure = FailureReason.forRequest({endpoint: {description: `serialize data into ${schema}`}})
