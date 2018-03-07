@@ -97,6 +97,16 @@ module.exports = (() => {
 		 * @static
 		 * @returns {FailureType}
 		 */
+		static get SCHEMA_VALIDATION_FAILURE() {
+			return schemaValidationFailure;
+		}
+
+		/**
+		 * The request failed for unspecified reasons.
+		 *
+		 * @static
+		 * @returns {FailureType}
+		 */
 		static get REQUEST_GENERAL_FAILURE() {
 			return requestGeneralFailure;
 		}
@@ -135,6 +145,7 @@ module.exports = (() => {
 	const requestIdentifyFailure = new FailureType('REQUEST_IDENTITY_FAILURE', 'An attempt to {L|root.endpoint.description} failed because your identity could not be determined.');
 	const requestAuthorizationFailure = new FailureType('REQUEST_AUTHORIZATION_FAILURE', 'An attempt to {L|root.endpoint.description} failed. You are not authorized to perform this action.');
 	const requestInputMalformed = new FailureType('REQUEST_INPUT_MALFORMED', 'An attempt to {L|root.endpoint.description} failed, the data structure is invalid.');
+	const schemaValidationFailure = new FailureType('SCHEMA_VALIDATION_FAILURE', 'An attempt serialize JSON string failed "{L|root.key}" expected "{L.root.name}"');
 	const requestGeneralFailure = new FailureType('REQUEST_GENERAL_FAILURE', 'An attempt to {L|root.endpoint.description} failed for unspecified reason(s).');
 
 	return FailureType;
