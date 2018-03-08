@@ -1,3 +1,4 @@
+var AdHoc = require('./../../../../lang/AdHoc');
 var Currency = require('./../../../../lang/Currency');
 var Day = require('./../../../../lang/Day');
 var Money = require('./../../../../lang/Money');
@@ -258,6 +259,64 @@ describe('When a person schema is created (grouped first and last names with a b
 					expect(deserialized.birthday.year).toEqual(1974);
 					expect(deserialized.birthday.month).toEqual(10);
 					expect(deserialized.birthday.day).toEqual(20);
+				});
+			});
+		});
+	});
+});
+
+describe('When an account schema is created (using the AdHoc field)', function() {
+	'use strict';
+
+	var schema;
+
+	beforeEach(function() {
+		schema = new Schema('account', [
+			new Field('number', DataType.NUMBER),
+			new Field('junk', DataType.AD_HOC)
+		]);
+	});
+
+	describe('and a schema-compliant object is created', function() {
+		var object;
+
+		beforeEach(function() {
+			object = {
+				number: 123456789,
+				junk: new AdHoc({
+					address: '209 W. Jackson',
+					city: 'Chicago',
+					zip: '60603'
+				})
+			};
+		});
+
+		describe('and the object is "stringified" as JSON', function() {
+			var serialized;
+
+			beforeEach(function() {
+				serialized = JSON.stringify(object);
+			});
+
+			describe('and the object is rehydrated using the schema reviver', function() {
+				var deserialized;
+
+				beforeEach(function() {
+					try {
+						deserialized = JSON.parse(serialized, schema.getReviver());
+					} catch (e) {
+						console.log(e);
+					}
+				});
+
+				it('should have a "number" property with the expected value', function() {
+					expect(deserialized.number).toEqual(123456789);
+				});
+
+				it('should have a "junk" property with the expected value', function() {
+					expect(deserialized.junk.data.address).toEqual('209 W. Jackson');
+					expect(deserialized.junk.data.city).toEqual('Chicago');
+					expect(deserialized.junk.data.zip).toEqual('60603');
 				});
 			});
 		});

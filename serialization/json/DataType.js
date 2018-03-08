@@ -1,4 +1,5 @@
-const assert = require('./../../lang/assert'),
+const AdHoc = require('./../../lang/AdHoc'),
+	assert = require('./../../lang/assert'),
 	Day = require('./../../lang/Day'),
 	Decimal = require('./../../lang/Decimal'),
 	Enum = require('./../../lang/Enum'),
@@ -166,6 +167,17 @@ module.exports = (() => {
 			return dataTypeTimestamp;
 		}
 
+		/**
+		 * References a {@link Timestamp} instance.
+		 *
+		 * @public
+		 * @returns {DataType}
+		 */
+		static get AD_HOC() {
+			return dataTypeAdHoc;
+		}
+
+
 		toString() {
 			return `[DataType (description=${this._description})]`;
 		}
@@ -183,6 +195,7 @@ module.exports = (() => {
 	const dataTypeDecimal = new DataType('Decimal', null, x => Decimal.parse(x), x => x instanceof Decimal);
 	const dataTypeDay = new DataType('Day', null, x => Day.parse(x), x => x instanceof Day);
 	const dataTypeTimestamp = new DataType('Timestamp', null, x => Timestamp.parse(x), x => x instanceof Timestamp);
+	const dataTypeAdHoc = new DataType('AdHoc', null, x => AdHoc.parse(x), x => x instanceof AdHoc);
 
 	const dataTypes = [
 		dataTypeString,
@@ -191,7 +204,8 @@ module.exports = (() => {
 		dataTypeObject,
 		dataTypeDecimal,
 		dataTypeDay,
-		dataTypeTimestamp
+		dataTypeTimestamp,
+		dataTypeAdHoc
 	];
 
 	return DataType;
