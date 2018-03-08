@@ -68,7 +68,7 @@ module.exports = (() => {
 		 * A function which "revives" a value after serialization to JSON.
 		 *
 		 * @public
-		 * @returns {Function} reviver
+		 * @returns {Function}
 		 */
 		get reviver() {
 			return this._reviver;
@@ -79,7 +79,7 @@ module.exports = (() => {
 		 * A function validates data, returning true or false.
 		 *
 		 * @public
-		 * @returns {Function} reviver
+		 * @returns {Function}
 		 */
 		get validator() {
 			return this._validator;
@@ -101,6 +101,7 @@ module.exports = (() => {
 		 * References a string.
 		 *
 		 * @public
+		 * @static
 		 * @returns {DataType}
 		 */
 		static get STRING() {
@@ -111,6 +112,7 @@ module.exports = (() => {
 		 * References a number.
 		 *
 		 * @public
+		 * @static
 		 * @returns {DataType}
 		 */
 		static get NUMBER() {
@@ -121,6 +123,7 @@ module.exports = (() => {
 		 * References a Boolean value.
 		 *
 		 * @public
+		 * @static
 		 * @returns {DataType}
 		 */
 		static get BOOLEAN() {
@@ -131,6 +134,7 @@ module.exports = (() => {
 		 * References an object (serialized as JSON).
 		 *
 		 * @public
+		 * @static
 		 * @returns {DataType}
 		 */
 		static get OBJECT() {
@@ -141,6 +145,7 @@ module.exports = (() => {
 		 * References a {@link Decimal} instance.
 		 *
 		 * @public
+		 * @static
 		 * @returns {DataType}
 		 */
 		static get DECIMAL() {
@@ -151,6 +156,7 @@ module.exports = (() => {
 		 * References a {@link Day} instance.
 		 *
 		 * @public
+		 * @static
 		 * @returns {DataType}
 		 */
 		static get DAY() {
@@ -161,6 +167,7 @@ module.exports = (() => {
 		 * References a {@link Timestamp} instance.
 		 *
 		 * @public
+		 * @static
 		 * @returns {DataType}
 		 */
 		static get TIMESTAMP() {
@@ -171,6 +178,7 @@ module.exports = (() => {
 		 * References a {@link Timestamp} instance.
 		 *
 		 * @public
+		 * @static
 		 * @returns {DataType}
 		 */
 		static get AD_HOC() {
