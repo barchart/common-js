@@ -15190,6 +15190,8 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var moment = require('moment');
+
 var AdHoc = require('./../../lang/AdHoc'),
     assert = require('./../../lang/assert'),
     Day = require('./../../lang/Day'),
@@ -15210,13 +15212,15 @@ module.exports = function () {
   */
 
 	var DataType = function () {
-		function DataType(description, enumerationType, reviver, validator) {
+		function DataType(description, enumerationType, reviver, validator, builder) {
 			_classCallCheck(this, DataType);
 
 			assert.argumentIsRequired(description, 'description', String);
 			assert.argumentIsOptional(enumerationType, 'enumerationType', Function);
+
 			assert.argumentIsOptional(reviver, 'reviver', Function);
 			assert.argumentIsOptional(validator, 'validator', Function);
+			assert.argumentIsOptional(builder, 'builder', Function);
 
 			if (enumerationType) {
 				assert.argumentIsValid(enumerationType, 'enumerationType', extendsEnumeration, 'is an enumeration');
@@ -15240,20 +15244,55 @@ module.exports = function () {
 			}
 
 			this._reviver = reviverToUse;
-			this._validator = validator || function (candidate) {
-				return true;
-			};
+
+			var validatorToUse = void 0;
+
+			if (validator) {
+				validatorToUse = validator;
+			} else {
+				validatorToUse = function validatorToUse(candidate) {
+					return true;
+				};
+			}
+
+			this._validator = validatorToUse;
+
+			var builderToUse = void 0;
+
+			if (builder) {
+				builderToUse = builder;
+			} else {
+				builderToUse = function builderToUse(data) {
+					return data;
+				};
+			}
+
+			this._builder = builderToUse;
 		}
 
 		/**
-   * Description of the data type.
+   * A function that converts data into the desired format.
    *
    * @public
-   * @returns {String}
+   * @param {*} data
+   * @returns {*}
    */
 
 
 		_createClass(DataType, [{
+			key: 'convert',
+			value: function convert(data) {
+				return this._builder(data);
+			}
+
+			/**
+    * Description of the data type.
+    *
+    * @public
+    * @returns {String}
+    */
+
+		}, {
 			key: 'toString',
 			value: function toString() {
 				return '[DataType (description=' + this._description + ')]';
@@ -15315,7 +15354,9 @@ module.exports = function () {
 		}], [{
 			key: 'forEnum',
 			value: function forEnum(enumerationType, description) {
-				return new DataType(description, enumerationType);
+				return new DataType(description, enumerationType, null, function (x) {
+					return x instanceof enumerationType;
+				}, getBuilder(getEnumerationBuilder(enumerationType)));
 			}
 
 			/**
@@ -15447,29 +15488,79 @@ module.exports = function () {
 		return Decimal.parse(x);
 	}, function (x) {
 		return x instanceof Decimal;
-	});
+	}, getBuilder(buildDecimal));
 	var dataTypeDay = new DataType('Day', null, function (x) {
 		return Day.parse(x);
 	}, function (x) {
 		return x instanceof Day;
-	});
+	}, getBuilder(buildDay));
 	var dataTypeTimestamp = new DataType('Timestamp', null, function (x) {
 		return Timestamp.parse(x);
 	}, function (x) {
 		return x instanceof Timestamp;
-	});
+	}, getBuilder(buildTimestamp));
 	var dataTypeAdHoc = new DataType('AdHoc', null, function (x) {
 		return AdHoc.parse(x);
 	}, function (x) {
 		return x instanceof AdHoc;
-	});
+	}, getBuilder(buildAdHoc));
 
 	var dataTypes = [dataTypeString, dataTypeNumber, dataTypeBoolean, dataTypeObject, dataTypeDecimal, dataTypeDay, dataTypeTimestamp, dataTypeAdHoc];
+
+	function getBuilder(builder) {
+		return function (data) {
+			try {
+				return builder(data);
+			} catch (e) {
+				return data;
+			}
+		};
+	}
+
+	function buildDecimal(data) {
+		return new Decimal(data);
+	}
+
+	function buildDay(data) {
+		if (data instanceof Day) {
+			return new Day(data.year, data.month, data.day);
+		} else if (is.date(data)) {
+			return Day.fromDate(data);
+		} else if (is.string(data)) {
+			return Day.parse(data);
+		} else if (data instanceof moment) {
+			return new Day(data.year(), data.month() + 1, data.date());
+		} else {
+			return data;
+		}
+	}
+
+	function buildTimestamp(data) {
+		return new Timestamp(data);
+	}
+
+	function buildAdHoc(data) {
+		if (data instanceof AdHoc) {
+			return new AdHoc(data.data);
+		} else if (is.object(data)) {
+			return new AdHoc(data);
+		}
+	}
+
+	function getEnumerationBuilder(enumerationType) {
+		return function (data) {
+			if (is.string(data)) {
+				return Enum.fromCode(enumerationType, data);
+			} else {
+				return data;
+			}
+		};
+	}
 
 	return DataType;
 }();
 
-},{"./../../lang/AdHoc":18,"./../../lang/Day":20,"./../../lang/Decimal":21,"./../../lang/Enum":23,"./../../lang/Timestamp":26,"./../../lang/assert":29,"./../../lang/is":34}],55:[function(require,module,exports){
+},{"./../../lang/AdHoc":18,"./../../lang/Day":20,"./../../lang/Decimal":21,"./../../lang/Enum":23,"./../../lang/Timestamp":26,"./../../lang/assert":29,"./../../lang/is":34,"moment":52}],55:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -15562,7 +15653,8 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var functions = require('./../../lang/functions'),
+var attributes = require('./../../lang/attributes'),
+    functions = require('./../../lang/functions'),
     is = require('./../../lang/is');
 
 var LinkedList = require('./../../collections/LinkedList'),
@@ -15599,14 +15691,41 @@ module.exports = function () {
 		}
 
 		/**
-   * Name of the table.
+   * Accepts data and returns a new object which (should) conform to
+   * the schema.
    *
    * @public
-   * @returns {String}
+   * @param {data} data
+   * @returns {Object}
    */
 
 
 		_createClass(Schema, [{
+			key: 'format',
+			value: function format(data) {
+				var returnRef = {};
+
+				this._fields.forEach(function (field) {
+					formatField(returnRef, field, data);
+				});
+
+				this._components.forEach(function (component) {
+					component.fields.forEach(function (field) {
+						formatField(returnRef, field, data);
+					});
+				});
+
+				return returnRef;
+			}
+
+			/**
+    * Name of the table.
+    *
+    * @public
+    * @returns {String}
+    */
+
+		}, {
 			key: 'validate',
 
 
@@ -15876,10 +15995,16 @@ module.exports = function () {
 		return head;
 	}
 
+	function formatField(target, field, data) {
+		if (attributes.has(data, field.name)) {
+			attributes.write(target, field.name, field.dataType.convert(attributes.read(data, field.name)));
+		}
+	}
+
 	return Schema;
 }();
 
-},{"./../../collections/LinkedList":4,"./../../collections/Tree":7,"./../../lang/functions":33,"./../../lang/is":34,"./Component":53,"./Field":55}],57:[function(require,module,exports){
+},{"./../../collections/LinkedList":4,"./../../collections/Tree":7,"./../../lang/attributes":30,"./../../lang/functions":33,"./../../lang/is":34,"./Component":53,"./Field":55}],57:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -24720,15 +24845,38 @@ describe('Using another customized JSON REST parser is created', function () {
 },{"./../../../../network/rest/RestParser":46}],110:[function(require,module,exports){
 'use strict';
 
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 var AdHoc = require('./../../../../lang/AdHoc');
 var Currency = require('./../../../../lang/Currency');
 var Day = require('./../../../../lang/Day');
+var Decimal = require('./../../../../lang/Decimal');
+var Enum = require('./../../../../lang/Enum');
 var Money = require('./../../../../lang/Money');
 
 var Component = require('./../../../../serialization/json/Component');
 var Field = require('./../../../../serialization/json/Field');
 var DataType = require('./../../../../serialization/json/DataType');
 var Schema = require('./../../../../serialization/json/Schema');
+
+var Letter = function (_Enum) {
+	_inherits(Letter, _Enum);
+
+	function Letter(name) {
+		_classCallCheck(this, Letter);
+
+		return _possibleConstructorReturn(this, (Letter.__proto__ || Object.getPrototypeOf(Letter)).call(this, name, name));
+	}
+
+	return Letter;
+}(Enum);
+
+var LETTER_A = new Letter('A');
+var LETTER_B = new Letter('B');
 
 describe('When a person schema is created (first and last names)', function () {
 	'use strict';
@@ -25322,7 +25470,106 @@ describe('When a schema is created (having a nested group of optional fields)', 
 	});
 });
 
-},{"./../../../../lang/AdHoc":18,"./../../../../lang/Currency":19,"./../../../../lang/Day":20,"./../../../../lang/Money":24,"./../../../../serialization/json/Component":53,"./../../../../serialization/json/DataType":54,"./../../../../serialization/json/Field":55,"./../../../../serialization/json/Schema":56}],111:[function(require,module,exports){
+describe('When a complex schema is created (using custom data types)', function () {
+	'use strict';
+
+	var schema;
+
+	beforeEach(function () {
+		schema = new Schema('complex', [new Field('number', DataType.NUMBER), new Field('string', DataType.STRING), new Field('letter', DataType.forEnum(Letter, 'Letter')), new Field('day', DataType.DAY), new Field('decimal', DataType.DECIMAL), new Field('miscellany', DataType.AD_HOC)]);
+	});
+
+	describe('and data is basic data is formatted', function () {
+		var original;
+		var conversion;
+
+		beforeEach(function () {
+			conversion = schema.format(original = {
+				number: 1,
+				string: 'two',
+				letter: 'A',
+				day: '2018-06-09',
+				decimal: 12.34,
+				miscellany: {
+					stuff: 'is good'
+				}
+			});
+		});
+
+		it('the conversion to be a new object', function () {
+			expect(conversion).not.toBe(original);
+		});
+
+		it('the conversion should have copied the number value', function () {
+			expect(conversion.number).toEqual(original.number);
+		});
+
+		it('the conversion should have copied the string value', function () {
+			expect(conversion.string).toEqual(original.string);
+		});
+
+		it('the conversion should have converted the letter value into an enumeration', function () {
+			expect(conversion.letter).toBe(LETTER_A);
+		});
+
+		it('the conversion should have converted the day value into an Day instance', function () {
+			expect(conversion.day instanceof Day).toEqual(true);
+			expect(conversion.day.format()).toEqual(original.day);
+		});
+
+		it('the conversion should have converted the decimal value into an Decimal instance', function () {
+			expect(conversion.decimal instanceof Decimal).toEqual(true);
+			expect(conversion.decimal.getIsEqual(original.decimal)).toEqual(true);
+		});
+
+		it('the conversion should have converted the miscellany value into an AdHoc instance', function () {
+			expect(conversion.miscellany instanceof AdHoc).toEqual(true);
+			expect(conversion.miscellany.data.stuff).toEqual(original.miscellany.stuff);
+		});
+
+		describe('and the converted object is serialized', function () {
+			var serialized;
+
+			beforeEach(function () {
+				serialized = JSON.stringify(conversion);
+			});
+
+			describe('and the object is rehydrated using the schema reviver', function () {
+				var deserialized;
+
+				beforeEach(function () {
+					deserialized = JSON.parse(serialized, schema.getReviver());
+				});
+
+				it('the number field should be match the conversion', function () {
+					expect(deserialized.number).toEqual(conversion.number);
+				});
+
+				it('the string field should be match the conversion', function () {
+					expect(deserialized.string).toEqual(conversion.string);
+				});
+
+				it('the letter field should be match the conversion', function () {
+					expect(deserialized.letter).toBe(conversion.letter);
+				});
+
+				it('the day field should be match the conversion', function () {
+					expect(deserialized.day.format()).toEqual(conversion.day.format());
+				});
+
+				it('the decimal field should be match the conversion', function () {
+					expect(deserialized.decimal.getIsEqual(conversion.decimal)).toEqual(true);
+				});
+
+				it('the miscellany field should be match the conversion', function () {
+					expect(deserialized.miscellany.data.stuff).toEqual(conversion.miscellany.data.stuff);
+				});
+			});
+		});
+	});
+});
+
+},{"./../../../../lang/AdHoc":18,"./../../../../lang/Currency":19,"./../../../../lang/Day":20,"./../../../../lang/Decimal":21,"./../../../../lang/Enum":23,"./../../../../lang/Money":24,"./../../../../serialization/json/Component":53,"./../../../../serialization/json/DataType":54,"./../../../../serialization/json/Field":55,"./../../../../serialization/json/Schema":56}],111:[function(require,module,exports){
 'use strict';
 
 var Component = require('./../../../../../serialization/json/Component');
