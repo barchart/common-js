@@ -1,4 +1,5 @@
-const functions = require('./../../lang/functions'),
+const attributes = require('./../../lang/attributes'),
+	functions = require('./../../lang/functions'),
 	is = require('./../../lang/is');
 
 const LinkedList = require('./../../collections/LinkedList'),
@@ -29,6 +30,30 @@ module.exports = (() => {
 			this._strict = is.boolean(strict) && strict;
 
 			this._revivers = getReviverItems(this._fields, this._components);
+		}
+
+		/**
+		 * Accepts data and returns a new object which (should) conform to
+		 * the schema.
+		 *
+		 * @public
+		 * @param {data} data
+		 * @returns {Object}
+		 */
+		format(data) {
+			const returnRef = { };
+
+			this._fields.forEach((field) => {
+				formatField(returnRef, field, data);
+			});
+
+			this._components.forEach((component) => {
+				component.fields.forEach((field) => {
+					formatField(returnRef, field, data);
+				});
+			});
+
+			return returnRef;
 		}
 
 		/**
@@ -249,6 +274,12 @@ module.exports = (() => {
 		root.walk(addItemToList, false, true);
 
 		return head;
+	}
+
+	function formatField(target, field, data) {
+		if (attributes.has(data, field.name)) {
+			attributes.write(target, field.name, field.dataType.convert(attributes.read(data, field.name)));
+		}
 	}
 
 	return Schema;

@@ -1,12 +1,23 @@
 var AdHoc = require('./../../../../lang/AdHoc');
 var Currency = require('./../../../../lang/Currency');
 var Day = require('./../../../../lang/Day');
+var Decimal = require('./../../../../lang/Decimal');
+var Enum = require('./../../../../lang/Enum');
 var Money = require('./../../../../lang/Money');
 
 var Component = require('./../../../../serialization/json/Component');
 var Field = require('./../../../../serialization/json/Field');
 var DataType = require('./../../../../serialization/json/DataType');
 var Schema = require('./../../../../serialization/json/Schema');
+
+class Letter extends Enum {
+	constructor(name) {
+		super(name, name);
+	}
+}
+
+var LETTER_A = new Letter('A');
+var LETTER_B = new Letter('B');
 
 describe('When a person schema is created (first and last names)', function() {
 	'use strict';
@@ -622,6 +633,112 @@ describe('When a schema is created (having a nested group of optional fields)', 
 
 				it('should have a "name" property, with the expected value', function() {
 					expect(deserialized.name).toEqual('swamp');
+				});
+			});
+		});
+	});
+});
+
+describe('When a complex schema is created (using custom data types)', function() {
+	'use strict';
+
+	var schema;
+
+	beforeEach(function() {
+		schema = new Schema('complex', [
+			new Field('number', DataType.NUMBER),
+			new Field('string', DataType.STRING),
+			new Field('letter', DataType.forEnum(Letter, 'Letter')),
+			new Field('day', DataType.DAY),
+			new Field('decimal', DataType.DECIMAL),
+			new Field('miscellany', DataType.AD_HOC)
+		]);
+	});
+
+	describe('and data is basic data is formatted', function() {
+		var original;
+		var conversion;
+
+		beforeEach(function() {
+			conversion = schema.format(original = {
+				number: 1,
+				string: 'two',
+				letter: 'A',
+				day: '2018-06-09',
+				decimal: 12.34,
+				miscellany: {
+					stuff: 'is good'
+				}
+			});
+		});
+
+		it('the conversion to be a new object', function() {
+			expect(conversion).not.toBe(original);
+		});
+
+		it('the conversion should have copied the number value', function() {
+			expect(conversion.number).toEqual(original.number);
+		});
+
+		it('the conversion should have copied the string value', function() {
+			expect(conversion.string).toEqual(original.string);
+		});
+
+		it('the conversion should have converted the letter value into an enumeration', function() {
+			expect(conversion.letter).toBe(LETTER_A);
+		});
+
+		it('the conversion should have converted the day value into an Day instance', function() {
+			expect(conversion.day instanceof Day).toEqual(true);
+			expect(conversion.day.format()).toEqual(original.day);
+		});
+
+		it('the conversion should have converted the decimal value into an Decimal instance', function() {
+			expect(conversion.decimal instanceof Decimal).toEqual(true);
+			expect(conversion.decimal.getIsEqual(original.decimal)).toEqual(true);
+		});
+
+		it('the conversion should have converted the miscellany value into an AdHoc instance', function() {
+			expect(conversion.miscellany instanceof AdHoc).toEqual(true);
+			expect(conversion.miscellany.data.stuff).toEqual(original.miscellany.stuff);
+		});
+
+		describe('and the converted object is serialized', function() {
+			var serialized;
+
+			beforeEach(function() {
+				serialized = JSON.stringify(conversion);
+			});
+
+			describe('and the object is rehydrated using the schema reviver', function() {
+				var deserialized;
+
+				beforeEach(function() {
+					deserialized = JSON.parse(serialized, schema.getReviver());
+				});
+
+				it('the number field should be match the conversion', function() {
+					expect(deserialized.number).toEqual(conversion.number);
+				});
+
+				it('the string field should be match the conversion', function() {
+					expect(deserialized.string).toEqual(conversion.string);
+				});
+
+				it('the letter field should be match the conversion', function() {
+					expect(deserialized.letter).toBe(conversion.letter);
+				});
+
+				it('the day field should be match the conversion', function() {
+					expect(deserialized.day.format()).toEqual(conversion.day.format());
+				});
+
+				it('the decimal field should be match the conversion', function() {
+					expect(deserialized.decimal.getIsEqual(conversion.decimal)).toEqual(true);
+				});
+
+				it('the miscellany field should be match the conversion', function() {
+					expect(deserialized.miscellany.data.stuff).toEqual(conversion.miscellany.data.stuff);
 				});
 			});
 		});

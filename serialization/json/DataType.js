@@ -1,3 +1,5 @@
+const moment = require('moment');
+
 const AdHoc = require('./../../lang/AdHoc'),
 	assert = require('./../../lang/assert'),
 	Day = require('./../../lang/Day'),
@@ -17,11 +19,13 @@ module.exports = (() => {
 	 * @param {Function=} enumerationType
 	 */
 	class DataType {
-		constructor(description, enumerationType, reviver, validator) {
+		constructor(description, enumerationType, reviver, validator, builder) {
 			assert.argumentIsRequired(description, 'description', String);
 			assert.argumentIsOptional(enumerationType, 'enumerationType', Function);
+
 			assert.argumentIsOptional(reviver, 'reviver', Function);
 			assert.argumentIsOptional(validator, 'validator', Function);
+			assert.argumentIsOptional(builder, 'builder', Function);
 
 			if (enumerationType) {
 				assert.argumentIsValid(enumerationType, 'enumerationType', extendsEnumeration, 'is an enumeration');
@@ -41,7 +45,37 @@ module.exports = (() => {
 			}
 
 			this._reviver = reviverToUse;
-			this._validator = validator || ((candidate) => true);
+
+			let validatorToUse;
+
+			if (validator) {
+				validatorToUse = validator;
+			} else {
+				validatorToUse = (candidate) => true;
+			}
+
+			this._validator = validatorToUse;
+
+			let builderToUse;
+
+			if (builder) {
+				builderToUse = builder;
+			} else {
+				builderToUse = (data) => data;
+			}
+
+			this._builder = builderToUse;
+		}
+
+		/**
+		 * A function that converts data into the desired format.
+		 *
+		 * @public
+		 * @param {*} data
+		 * @returns {*}
+		 */
+		convert(data) {
+			return this._builder(data);
 		}
 
 		/**
@@ -74,7 +108,6 @@ module.exports = (() => {
 			return this._reviver;
 		}
 
-
 		/**
 		 * A function validates data, returning true or false.
 		 *
@@ -94,7 +127,7 @@ module.exports = (() => {
 		 * @returns {DataType}
 		 */
 		static forEnum(enumerationType, description) {
-			return new DataType(description, enumerationType);
+			return new DataType(description, enumerationType, null, x => x instanceof enumerationType, getBuilder(getEnumerationBuilder(enumerationType)));
 		}
 
 		/**
@@ -200,10 +233,10 @@ module.exports = (() => {
 	const dataTypeBoolean = new DataType('Boolean', null, null, is.boolean);
 	const dataTypeObject = new DataType('Object', null, null, is.object);
 
-	const dataTypeDecimal = new DataType('Decimal', null, x => Decimal.parse(x), x => x instanceof Decimal);
-	const dataTypeDay = new DataType('Day', null, x => Day.parse(x), x => x instanceof Day);
-	const dataTypeTimestamp = new DataType('Timestamp', null, x => Timestamp.parse(x), x => x instanceof Timestamp);
-	const dataTypeAdHoc = new DataType('AdHoc', null, x => AdHoc.parse(x), x => x instanceof AdHoc);
+	const dataTypeDecimal = new DataType('Decimal', null, x => Decimal.parse(x), x => x instanceof Decimal, getBuilder(buildDecimal));
+	const dataTypeDay = new DataType('Day', null, x => Day.parse(x), x => x instanceof Day, getBuilder(buildDay));
+	const dataTypeTimestamp = new DataType('Timestamp', null, x => Timestamp.parse(x), x => x instanceof Timestamp, getBuilder(buildTimestamp));
+	const dataTypeAdHoc = new DataType('AdHoc', null, x => AdHoc.parse(x), x => x instanceof AdHoc, getBuilder(buildAdHoc));
 
 	const dataTypes = [
 		dataTypeString,
@@ -215,6 +248,56 @@ module.exports = (() => {
 		dataTypeTimestamp,
 		dataTypeAdHoc
 	];
+
+	function getBuilder(builder) {
+		return (data) => {
+			try {
+				return builder(data);
+			} catch(e) {
+				return data;
+			}
+		}
+	}
+
+	function buildDecimal(data) {
+		return new Decimal(data);
+	}
+
+	function buildDay(data) {
+		if (data instanceof Day) {
+			return new Day(data.year, data.month, data.day);
+		} else if (is.date(data)) {
+			return Day.fromDate(data);
+		} else if (is.string(data)) {
+			return Day.parse(data);
+		} else if (data instanceof moment) {
+			return new Day(data.year(), data.month() + 1, data.date());
+		} else {
+			return data;
+		}
+	}
+
+	function buildTimestamp(data) {
+		return new Timestamp(data);
+	}
+
+	function buildAdHoc(data) {
+		if (data instanceof AdHoc) {
+			return new AdHoc(data.data);
+		} else if (is.object(data)) {
+			return new AdHoc(data);
+		}
+	}
+
+	function getEnumerationBuilder(enumerationType) {
+		return (data) => {
+			if (is.string(data)) {
+				return Enum.fromCode(enumerationType, data);
+			} else {
+				return data;
+			}
+		};
+	}
 
 	return DataType;
 })();
