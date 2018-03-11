@@ -481,3 +481,59 @@ describe('When comparing days', function() {
 		expect(Day.parse('2017-07-18').getIsAfter(Day.parse('2016-07-18'))).toEqual(true);
 	});
 });
+
+describe('When checking a days containment in a range of days', function() {
+	var day;
+
+	beforeEach(function() {
+		day = new Day(2018, 3, 11);
+	});
+
+	it('should return true when the date is between the range boundaries', function() {
+		expect(day.getIsContained(new Day(2018, 3, 10), new Day(2018, 3, 12))).toEqual(true);
+	});
+
+	it('should return true when the date is on the beginning boundary of the range', function() {
+		expect(day.getIsContained(new Day(2018, 3, 11), new Day(2018, 3, 12))).toEqual(true);
+	});
+
+	it('should return true when the date is on the end boundary of the range', function() {
+		expect(day.getIsContained(new Day(2018, 3, 10), new Day(2018, 3, 11))).toEqual(true);
+	});
+
+	it('should return true when no end boundary is specified, but the date is after the beginning boundary', function() {
+		expect(day.getIsContained(new Day(2018, 3, 10))).toEqual(true);
+	});
+
+	it('should return true when no beginning boundary is specified, but the date is before the end boundary', function() {
+		expect(day.getIsContained(null, new Day(2018, 3, 12))).toEqual(true);
+	});
+
+	it('should return true when no end boundary is specified, but the date is on the beginning boundary', function() {
+		expect(day.getIsContained(new Day(2018, 3, 11))).toEqual(true);
+	});
+
+	it('should return true when no beginning boundary is specified, but the date is on the end boundary', function() {
+		expect(day.getIsContained(null, new Day(2018, 3, 11))).toEqual(true);
+	});
+
+	it('should return false when the date is after range boundaries', function() {
+		expect(day.getIsContained(new Day(2018, 3, 8), new Day(2018, 3, 10))).toEqual(false);
+	});
+
+	it('should return false when the date is after before boundaries', function() {
+		expect(day.getIsContained(new Day(2018, 3, 12), new Day(2018, 3, 14))).toEqual(false);
+	});
+
+	it('should return false when no end boundary is specified, but the date is before the beginning boundary', function() {
+		expect(day.getIsContained(new Day(2018, 3, 12))).toEqual(false);
+	});
+
+	it('should return false when no beginning boundary is specified, but the date is after the end boundary', function() {
+		expect(day.getIsContained(null, new Day(2018, 3, 10))).toEqual(false);
+	});
+
+	it('should return false when the range is invalid', function() {
+		expect(day.getIsContained(new Day(2018, 3, 12), new Day(2018, 3, 10))).toEqual(false);
+	});
+});

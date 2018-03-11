@@ -230,6 +230,34 @@ module.exports = (() => {
 		}
 
 		/**
+		 * Indicates the current day falls between two other days, inclusive
+		 * of the range boundaries.
+		 *
+		 * @public
+		 * @param {Day=} first
+		 * @param {Day=} last
+		 * @param {boolean=} exclusive
+		 * @returns {boolean}
+		 */
+		getIsContained(first, last) {
+			assert.argumentIsOptional(first, 'first', Day, 'Day');
+			assert.argumentIsOptional(last, 'last', Day, 'Day');
+
+			let notAfter;
+			let notBefore;
+
+			if (first && last && first.getIsAfter(last)) {
+				notBefore = false;
+				notAfter = false;
+			} else {
+				notAfter = !(last instanceof Day) || !this.getIsAfter(last);
+				notBefore = !(first instanceof Day) || !this.getIsBefore(first);
+			}
+
+			return notAfter && notBefore;
+		}
+
+		/**
 		 * Indicates if another {@link Day} occurs after the current instance.
 		 *
 		 * @public
