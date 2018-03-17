@@ -84,3 +84,83 @@ describe('When using memoize.simple', function() {
 		});
 	});
 });
+
+describe('When using memoize.cache', function() {
+	'use strict';
+
+	describe("with a 10 millisecond cache duration", function() {
+		var spy;
+		var memo;
+
+		var counter;
+
+		beforeEach(function() {
+			counter = 0;
+
+			spy = jasmine.createSpy('spy').and.callFake(function(x) {
+				counter = counter + 1;
+
+				return counter;
+			});
+
+			memo = memoize.cache(spy, 10);
+		});
+
+		it('the memoized function should not have been called', function() {
+			expect(spy).not.toHaveBeenCalled();
+		});
+
+		describe("and the memoized function is called", function() {
+			var paramOne;
+			var resultOne;
+
+			beforeEach(function() {
+				resultOne = memo();
+			});
+
+			it('the memoized function to have been called', function() {
+				expect(spy.calls.count()).toEqual(1);
+			});
+
+			it('the result should be one', function() {
+				expect(resultOne).toEqual(1);
+			});
+
+			describe("and the memoized function is with the same value again", function() {
+				var resultTwo;
+
+				beforeEach(function() {
+					resultTwo = memo(paramOne);
+				});
+
+				it('the memoized function not to have been called again', function() {
+					expect(spy.calls.count()).toEqual(1);
+				});
+
+				it('the memoized function should have returned the cached value', function() {
+					expect(resultTwo).toEqual(1);
+				});
+			});
+
+			describe("and the memoized function is called after the cache expires", function() {
+				var resultThree;
+
+				beforeEach(function (done) {
+					setTimeout(() => {
+						resultThree = memo();
+
+						done();
+					}, 15);
+				});
+
+				it('the memoized function to have been called again', function () {
+					expect(spy.calls.count()).toEqual(2);
+				});
+
+				it('the result should be two', function () {
+					expect(resultThree).toEqual(2);
+				});
+			});
+		});
+	});
+});

@@ -1,4 +1,5 @@
-const is = require('./is');
+const assert = require('./assert'),
+	is = require('./is');
 
 module.exports = (() => {
 	'use strict';
@@ -27,6 +28,39 @@ module.exports = (() => {
 				} else {
 					return cache[x] = fn(x);
 				}
+			};
+		},
+
+		/**
+		 * Wraps a function. The resulting function will call the wrapped function
+		 * once and cache the result. If a specific duration is supplied, the
+		 * cache will be dropped after the duration expires and the wrapped
+		 * function will be invoked again.
+		 *
+		 * @public
+		 * @param {Function} fn
+		 * @param {Number} duration
+		 * @returns {Function}
+		 */
+		cache(fn, duration) {
+			assert.argumentIsRequired(fn, 'fn', Function);
+			assert.argumentIsOptional(duration, 'duration', Number);
+
+			const durationToUse = duration || 0;
+
+			let executionTime = null;
+			let cacheResult = null;
+
+			return () => {
+				const currentTime = (new Date()).getTime();
+
+				if (executionTime === null || (durationToUse > 0 && currentTime > (executionTime + durationToUse))) {
+					executionTime = currentTime;
+
+					cacheResult = fn();
+				}
+
+				return cacheResult;
 			};
 		}
 	};
