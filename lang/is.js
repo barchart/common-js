@@ -13,7 +13,7 @@ module.exports = (() => {
 		 *
 		 * @static
 		 * @public
-		 * @param candidate {*}
+		 * @param {*} candidate {*}
 		 * @returns {boolean}
 		 */
 		number(candidate) {
@@ -62,7 +62,7 @@ module.exports = (() => {
 		 *
 		 * @static
 		 * @public
-		 * @param candidate
+		 * @param {*} candidate
 		 * @returns {boolean}
 		 */
 		positive(candidate) {
@@ -74,7 +74,7 @@ module.exports = (() => {
 		 *
 		 * @static
 		 * @public
-		 * @param candidate
+		 * @param {*} candidate
 		 * @returns {*|boolean}
 		 */
 		negative(candidate) {
@@ -86,7 +86,7 @@ module.exports = (() => {
 		 *
 		 * @static
 		 * @public
-		 * @param candidate
+		 * @param {*} candidate
 		 * @returns {boolean}
 		 */
 		string(candidate) {
@@ -98,7 +98,7 @@ module.exports = (() => {
 		 *
 		 * @static
 		 * @public
-		 * @param candidate
+		 * @param {*} candidate
 		 * @returns {boolean}
 		 */
 		date(candidate) {
@@ -110,7 +110,7 @@ module.exports = (() => {
 		 *
 		 * @static
 		 * @public
-		 * @param candidate
+		 * @param {*} candidate
 		 * @returns {boolean}
 		 */
 		fn(candidate) {
@@ -122,7 +122,7 @@ module.exports = (() => {
 		 *
 		 * @static
 		 * @public
-		 * @param candidate
+		 * @param {*} candidate
 		 * @returns {boolean}
 		 */
 		array(candidate) {
@@ -134,7 +134,7 @@ module.exports = (() => {
 		 *
 		 * @static
 		 * @public
-		 * @param candidate
+		 * @param {*} candidate
 		 * @returns {boolean}
 		 */
 		boolean(candidate) {
@@ -146,7 +146,7 @@ module.exports = (() => {
 		 *
 		 * @static
 		 * @public
-		 * @param candidate
+		 * @param {*} candidate
 		 * @returns {boolean}
 		 */
 		object(candidate) {
@@ -158,7 +158,7 @@ module.exports = (() => {
 		 *
 		 * @static
 		 * @public
-		 * @param candidate
+		 * @param {*} candidate
 		 * @returns {boolean}
 		 */
 		null(candidate) {
@@ -170,7 +170,7 @@ module.exports = (() => {
 		 *
 		 * @static
 		 * @public
-		 * @param candidate
+		 * @param {*} candidate
 		 * @returns {boolean}
 		 */
 		undefined(candidate) {
