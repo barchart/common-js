@@ -14,11 +14,7 @@ describe('When an TimeMap is constructed (with a 10 millisecond time to live)', 
 		var item;
 
 		beforeEach(function() {
-			try {
-				map.set(key = 'a', item = {});
-			} catch (e) {
-				console.log(e);
-			}
+			map.set(key = 'a', item = {});
 		});
 
 		it('should contain the key', function() {
