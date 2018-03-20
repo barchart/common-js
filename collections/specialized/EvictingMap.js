@@ -40,7 +40,8 @@ module.exports = (() => {
 		 * list exceeds the capacity).
 		 *
 		 * @public
-		 * @param {*} item
+		 * @param {String} key
+		 * @param {*} value
 		 */
 		put(key, value) {
 			this.remove(key);
@@ -68,11 +69,23 @@ module.exports = (() => {
 		}
 
 		/**
+		 * Puts an item into the map (possibly causing eviction, if the size of the
+		 * list exceeds the capacity).
+		 *
+		 * @public
+		 * @param {String} key
+		 * @param {*} value
+		 */
+		set(key, value) {
+			this.put(key, value);
+		}
+
+		/**
 		 * Gets an item from the map, returning a null value if the no item
 		 * for the given key exists.
 		 *
 		 * @public
-		 * @param {string} key
+		 * @param {String} key
 		 * @returns {*}
 		 */
 		get(key) {
@@ -105,7 +118,7 @@ module.exports = (() => {
 		 * Removes an item from the map.
 		 *
 		 * @public
-		 * @param {string} key
+		 * @param {String} key
 		 */
 		remove(key) {
 			const item = this._map[key];
@@ -130,6 +143,16 @@ module.exports = (() => {
 
 				this._size--;
 			}
+		}
+
+		/**
+		 * Removes an item from the map.
+		 *
+		 * @public
+		 * @param {String} key
+		 */
+		delete(key) {
+			this.remove(key);
 		}
 
 		/**
