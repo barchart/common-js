@@ -256,7 +256,7 @@ module.exports = (() => {
 			} catch(e) {
 				return data;
 			}
-		}
+		};
 	}
 
 	function buildDecimal(data) {
