@@ -133,6 +133,25 @@ module.exports = (() => {
 		},
 
 		/**
+		 * Returns a new array containing all but the first item.
+		 *
+		 * @static
+		 * @param {Array} a
+		 * @returns {Array}
+		 */
+		dropLeft(a) {
+			assert.argumentIsArray(a, 'a');
+
+			let returnRef = Array.from(a);
+
+			if (returnRef.length !== 0) {
+				returnRef.shift();
+			}
+
+			return returnRef;
+		},
+
+		/**
 		 * Returns a new array containing all but the last item.
 		 *
 		 * @static
