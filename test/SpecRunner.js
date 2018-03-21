@@ -5152,6 +5152,26 @@ module.exports = function () {
 
 
 		/**
+   * Returns a new array containing all but the first item.
+   *
+   * @static
+   * @param {Array} a
+   * @returns {Array}
+   */
+		dropLeft: function dropLeft(a) {
+			assert.argumentIsArray(a, 'a');
+
+			var returnRef = Array.from(a);
+
+			if (returnRef.length !== 0) {
+				returnRef.shift();
+			}
+
+			return returnRef;
+		},
+
+
+		/**
    * Returns a new array containing all but the last item.
    *
    * @static
