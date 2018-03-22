@@ -2885,7 +2885,7 @@ module.exports = function () {
 	var Currency = function (_Enum) {
 		_inherits(Currency, _Enum);
 
-		function Currency(code, description, precision) {
+		function Currency(code, description, precision, alternateDescription) {
 			_classCallCheck(this, Currency);
 
 			var _this = _possibleConstructorReturn(this, (Currency.__proto__ || Object.getPrototypeOf(Currency)).call(this, code, description));
@@ -2893,7 +2893,11 @@ module.exports = function () {
 			assert.argumentIsRequired(precision, 'precision', Number);
 			assert.argumentIsValid(precision, 'precision', is.integer, 'is an integer');
 
+			assert.argumentIsOptional(alternateDescription, 'alternateDescription', String);
+
 			_this._precision = precision;
+
+			_this._alternateDescription = alternateDescription || description;
 			return _this;
 		}
 
@@ -2914,6 +2918,19 @@ module.exports = function () {
 			key: 'precision',
 			get: function get() {
 				return this._precision;
+			}
+
+			/**
+    * An alternate human-readable description.
+    *
+    * @public
+    * @returns {String}
+    */
+
+		}, {
+			key: 'alternateDescription',
+			get: function get() {
+				return this._alternateDescription;
 			}
 
 			/**
@@ -2973,9 +2990,9 @@ module.exports = function () {
 		return Currency;
 	}(Enum);
 
-	var cad = new Currency('CAD', 'Canadian Dollar', 2);
-	var eur = new Currency('EUR', 'Euro', 2);
-	var usd = new Currency('USD', 'US Dollar', 2);
+	var cad = new Currency('CAD', 'Canadian Dollar', 2, 'CAD$');
+	var eur = new Currency('EUR', 'Euro', 2, 'EUR');
+	var usd = new Currency('USD', 'US Dollar', 2, 'US$');
 
 	return Currency;
 }();
