@@ -15,13 +15,17 @@ module.exports = (() => {
 	 * @extends {Enum}
 	 */
 	class Currency extends Enum {
-		constructor(code, description, precision) {
+		constructor(code, description, precision, alternateDescription) {
 			super(code, description);
 
 			assert.argumentIsRequired(precision, 'precision', Number);
 			assert.argumentIsValid(precision, 'precision', is.integer, 'is an integer');
 
+			assert.argumentIsOptional(alternateDescription, 'alternateDescription', String);
+
 			this._precision = precision;
+
+			this._alternateDescription = alternateDescription || description;
 		}
 
 		/**
@@ -34,6 +38,16 @@ module.exports = (() => {
 			return this._precision;
 		}
 
+		/**
+		 * An alternate human-readable description.
+		 *
+		 * @public
+		 * @returns {String}
+		 */
+		get alternateDescription() {
+			return this._alternateDescription;
+		}
+		
 		/**
 		 * Given a code, returns the enumeration item.
 		 *
@@ -80,9 +94,9 @@ module.exports = (() => {
 		}
 	}
 
-	const cad = new Currency('CAD', 'Canadian Dollar', 2);
-	const eur = new Currency('EUR', 'Euro', 2);
-	const usd = new Currency('USD', 'US Dollar', 2);
+	const cad = new Currency('CAD', 'Canadian Dollar', 2, 'CAD$');
+	const eur = new Currency('EUR', 'Euro', 2, 'EUR');
+	const usd = new Currency('USD', 'US Dollar', 2, 'US$');
 
 	return Currency;
 })();
