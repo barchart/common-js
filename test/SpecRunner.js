@@ -3966,9 +3966,9 @@ module.exports = function () {
 				assert.argumentIsRequired(a, 'a', Decimal, 'Decimal');
 				assert.argumentIsRequired(b, 'b', Decimal, 'Decimal');
 
-				if (a._big.gt(b)) {
+				if (a._big.gt(b._big)) {
 					return 1;
-				} else if (a._big.lt(b)) {
+				} else if (a._big.lt(b._big)) {
 					return -1;
 				} else {
 					return 0;
@@ -4552,12 +4552,10 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var assert = require('./assert'),
-    is = require('./is'),
     memoize = require('./memoize');
 
 var Currency = require('./Currency'),
-    Decimal = require('./Decimal'),
-    Enum = require('./Enum');
+    Decimal = require('./Decimal');
 
 module.exports = function () {
 	'use strict';
@@ -4802,7 +4800,7 @@ module.exports = function () {
 	return Rate;
 }();
 
-},{"./Currency":20,"./Decimal":22,"./Enum":24,"./assert":30,"./is":35,"./memoize":38}],27:[function(require,module,exports){
+},{"./Currency":20,"./Decimal":22,"./assert":30,"./memoize":38}],27:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
