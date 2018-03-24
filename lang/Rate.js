@@ -1,10 +1,8 @@
 const assert = require('./assert'),
-	is = require('./is'),
 	memoize = require('./memoize');
 
 const Currency = require('./Currency'),
-	Decimal = require('./Decimal'),
-	Enum = require('./Enum');
+	Decimal = require('./Decimal');
 
 module.exports = (() => {
 	'use strict';
