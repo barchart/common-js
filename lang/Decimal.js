@@ -354,9 +354,9 @@ module.exports = (() => {
 			assert.argumentIsRequired(a, 'a', Decimal, 'Decimal');
 			assert.argumentIsRequired(b, 'b', Decimal, 'Decimal');
 
-			if (a._big.gt(b)) {
+			if (a._big.gt(b._big)) {
 				return 1;
-			} else if (a._big.lt(b)) {
+			} else if (a._big.lt(b._big)) {
 				return -1;
 			} else {
 				return 0;
