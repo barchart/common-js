@@ -146,7 +146,7 @@ module.exports = (() => {
 			assert.argumentIsRequired(amount, 'amount', Decimal, 'Decimal');
 			assert.argumentIsRequired(currency, 'currency', Currency, 'Currency');
 			assert.argumentIsRequired(desiredCurrency, 'desiredCurrency', Currency, 'Currency');
-			assert.argumentIsArray(rates, 'rates', Rate, 'Rate');
+			assert.argumentIsArray(rates, 'rates', x => x instanceof Rate, 'Rate');
 
 			let converted;
 
