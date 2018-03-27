@@ -4735,12 +4735,7 @@ module.exports = function () {
 				assert.argumentIsRequired(amount, 'amount', Decimal, 'Decimal');
 				assert.argumentIsRequired(currency, 'currency', Currency, 'Currency');
 				assert.argumentIsRequired(desiredCurrency, 'desiredCurrency', Currency, 'Currency');
-
-				for (var _len = arguments.length, rates = Array(_len > 3 ? _len - 3 : 0), _key = 3; _key < _len; _key++) {
-					rates[_key - 3] = arguments[_key];
-				}
-
-				assert.argumentIsArray(rates, 'rates', Rate, 'Rate');
+				//assert.argumentIsArray(rates, 'rates', Rate, 'Rate');
 
 				var converted = void 0;
 
@@ -4749,6 +4744,10 @@ module.exports = function () {
 				} else {
 					var numerator = desiredCurrency;
 					var denominator = currency;
+
+					for (var _len = arguments.length, rates = Array(_len > 3 ? _len - 3 : 0), _key = 3; _key < _len; _key++) {
+						rates[_key - 3] = arguments[_key];
+					}
 
 					var rate = rates.find(function (r) {
 						return r.numerator === numerator && r.denominator === denominator || r.numerator === denominator && r.denominator === numerator;
