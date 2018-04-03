@@ -154,6 +154,17 @@ module.exports = (() => {
 		}
 
 		/**
+		 * Returns true if the current instance is less than or equal to the value.
+		 *
+		 * @public
+		 * @param {Decimal|Number|String} other - The value to compare.
+		 * @returns {Boolean}
+		 */
+		getIsGreaterThanOrEqual(other) {
+			return this._big.gte(getBig(other));
+		}
+
+		/**
 		 * Returns true if the current instance is less than the value.
 		 *
 		 * @public
@@ -162,6 +173,17 @@ module.exports = (() => {
 		 */
 		getIsLessThan(other) {
 			return this._big.lt(getBig(other));
+		}
+
+		/**
+		 * Returns true if the current instance is less than or equal to the value.
+		 *
+		 * @public
+		 * @param {Decimal|Number|String} other - The value to compare.
+		 * @returns {Boolean}
+		 */
+		getIsLessThanOrEqual(other) {
+			return this._big.lte(getBig(other));
 		}
 
 		/**
