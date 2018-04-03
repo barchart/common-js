@@ -154,7 +154,7 @@ module.exports = (() => {
 		}
 
 		/**
-		 * Returns true if the current instance is less than or equal to the value.
+		 * Returns true if the current instance is greater than or equal to the value.
 		 *
 		 * @public
 		 * @param {Decimal|Number|String} other - The value to compare.
