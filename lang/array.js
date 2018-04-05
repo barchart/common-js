@@ -358,6 +358,8 @@ module.exports = (() => {
 		/**
 		 * Removes the first item from an array which matches a predicate.
 		 *
+		 * @static
+		 * @public
 		 * @param {Array} a
 		 * @param {Function} predicate
 		 */
