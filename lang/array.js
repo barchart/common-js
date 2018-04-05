@@ -353,6 +353,23 @@ module.exports = (() => {
 			});
 
 			return returnRef;
+		},
+
+		/**
+		 * Removes the first item from an array which matches a predicate.
+		 *
+		 * @param {Array} a
+		 * @param {Function} predicate
+		 */
+		remove(a, predicate) {
+			assert.argumentIsArray(a, 'a');
+			assert.argumentIsRequired(predicate, 'predicate', Function);
+
+			const index = a.findIndex(predicate);
+
+			if (!(index < 0)) {
+				a.splice(index, 1);
+			}
 		}
 	};
 })();

@@ -695,3 +695,30 @@ describe('when taking the last item of an array', function() {
 		expect(value).toBe(b);
 	});
 });
+
+describe('when removing an item from an array using a predicate', function() {
+	var a;
+	var item;
+
+	beforeEach(function() {
+		a = [ { }, item = { }, { } ];
+
+		var predicate = function(i) {
+			return i === item;
+		};
+
+		array.remove(a, predicate);
+	});
+
+	it('should have two items', function() {
+		expect(a.length).toEqual(2);
+	});
+
+	it('the first item should not be the removed item', function() {
+		expect(a[0]).not.toBe(item);
+	});
+
+	it('the second item should not be the removed item', function() {
+		expect(a[1]).not.toBe(item);
+	});
+});
