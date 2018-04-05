@@ -5442,6 +5442,26 @@ module.exports = function () {
 			});
 
 			return returnRef;
+		},
+
+
+		/**
+   * Removes the first item from an array which matches a predicate.
+   *
+   * @static
+   * @public
+   * @param {Array} a
+   * @param {Function} predicate
+   */
+		remove: function remove(a, predicate) {
+			assert.argumentIsArray(a, 'a');
+			assert.argumentIsRequired(predicate, 'predicate', Function);
+
+			var index = a.findIndex(predicate);
+
+			if (!(index < 0)) {
+				a.splice(index, 1);
+			}
 		}
 	};
 }();
@@ -21399,6 +21419,33 @@ describe('when taking the last item of an array', function () {
 		var value = array.last([a, b]);
 
 		expect(value).toBe(b);
+	});
+});
+
+describe('when removing an item from an array using a predicate', function () {
+	var a;
+	var item;
+
+	beforeEach(function () {
+		a = [{}, item = {}, {}];
+
+		var predicate = function predicate(i) {
+			return i === item;
+		};
+
+		array.remove(a, predicate);
+	});
+
+	it('should have two items', function () {
+		expect(a.length).toEqual(2);
+	});
+
+	it('the first item should not be the removed item', function () {
+		expect(a[0]).not.toBe(item);
+	});
+
+	it('the second item should not be the removed item', function () {
+		expect(a[1]).not.toBe(item);
 	});
 });
 
