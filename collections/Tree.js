@@ -108,6 +108,20 @@ module.exports = (() => {
 		}
 
 		/**
+		 * Removes the current node from the parent tree. Use on a root node
+		 * has no effect.
+		 *
+		 * @public
+		 */
+		sever() {
+			if (this.getIsRoot()) {
+				return;
+			}
+
+			this.getParent().removeChild(this);
+		}
+
+		/**
 		 * Searches the children nodes for the first child node that matches the
 		 * predicate.
 		 *

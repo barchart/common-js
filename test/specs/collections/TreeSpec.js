@@ -58,6 +58,24 @@ describe('When a Tree is constructed', function() {
 				secondChild = root.addChild(three = { });
 			});
 
+			describe('and the second child is severed', function() {
+				beforeEach(function() {
+					secondChild.sever();
+				});
+
+				it('the severed tree should no longer have a parent', function() {
+					expect(secondChild.getIsRoot()).toEqual(true);
+				});
+
+				it('the original tree should only contain one child', function() {
+					expect(root.getChildren().length).toEqual(1);
+				});
+
+				it('the original tree should not be the severed node', function() {
+					expect(root.getChildren()[0]).not.toBe(secondChild);
+				});
+			});
+
 			describe('and the tree is converted to a JavaScript object', function() {
 				var object;
 
