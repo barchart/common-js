@@ -904,14 +904,31 @@ module.exports = function () {
 		}
 
 		/**
-   * Returns the parent node. If this is the root node, a null value is returned.
+   * Gets the root node.
    *
    * @public
-   * @returns {Tree|null}
+   * @returns {Tree}
    */
 
 
 		_createClass(Tree, [{
+			key: 'getRoot',
+			value: function getRoot() {
+				if (this.getIsRoot()) {
+					return this;
+				} else {
+					return this._parent.getRoot();
+				}
+			}
+
+			/**
+    * Returns the parent node. If this is the root node, a null value is returned.
+    *
+    * @public
+    * @returns {Tree|null}
+    */
+
+		}, {
 			key: 'getParent',
 			value: function getParent() {
 				return this._parent;
@@ -17726,6 +17743,12 @@ describe('When a Tree is constructed', function () {
 		expect(root.getValue()).toBe(one);
 	});
 
+	describe('and the root node is retrieved from root node', function () {
+		it('should be itself', function () {
+			expect(root.getRoot()).toBe(root);
+		});
+	});
+
 	describe('and a child is added', function () {
 		var child;
 		var two;
@@ -17804,6 +17827,12 @@ describe('When a Tree is constructed', function () {
 				it('should have the correct value for the second child', function () {
 					expect(object.children[1].value).toBe(three);
 				});
+			});
+		});
+
+		describe('and the root node is retrieved from the child', function () {
+			it('should be the root node', function () {
+				expect(child.getRoot()).toBe(root);
 			});
 		});
 	});
