@@ -21,6 +21,20 @@ module.exports = (() => {
 		}
 
 		/**
+		 * Gets the root node.
+		 *
+		 * @public
+		 * @returns {Tree}
+		 */
+		getRoot() {
+			if (this.getIsRoot()) {
+				return this;
+			} else {
+				return this._parent.getRoot();
+			}
+		}
+
+		/**
 		 * Returns the parent node. If this is the root node, a null value is returned.
 		 *
 		 * @public

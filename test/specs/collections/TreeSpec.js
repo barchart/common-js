@@ -22,6 +22,12 @@ describe('When a Tree is constructed', function() {
 		expect(root.getValue()).toBe(one);
 	});
 
+	describe('and the root node is retrieved from root node', function() {
+		it('should be itself', function() {
+			expect(root.getRoot()).toBe(root);
+		});
+	});
+
 	describe('and a child is added', function() {
 		var child;
 		var two;
@@ -98,6 +104,12 @@ describe('When a Tree is constructed', function() {
 				it('should have the correct value for the second child', function() {
 					expect(object.children[1].value).toBe(three);
 				});
+			});
+		});
+
+		describe('and the root node is retrieved from the child', function() {
+			it('should be the root node', function() {
+				expect(child.getRoot()).toBe(root);
 			});
 		});
 	});
