@@ -37,9 +37,12 @@ describe('when reducing an array of objects to unique values', function() {
 		var one;
 		var two;
 		var three;
+		var four;
+		var five;
+		var six;
 
 		beforeEach(function() {
-			unique = array.uniqueBy([ one = { x: 1 }, { x: 1 }, { x: 1 }, { x: 1 }, two = { x: 2 }, { x: 1 }, { x: 1 }, three = { x: 3 }, { x: 3 }, { x: 1 } ], function(obj) { return obj.x; });
+			unique = array.uniqueBy([ one = { x: 1 }, two = { x: 2 }, three = { x: 3 }, four = { x: 1 }, five = { x: 2 }, six = { x: 3 } ], function(obj) { return obj.x; });
 		});
 
 		it('should only contain 3 unique elements', function() {
