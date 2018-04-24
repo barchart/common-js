@@ -228,6 +228,31 @@ module.exports = (() => {
 		}
 
 		/**
+		 * Climbs the tree, evaluating each parent until a predicate is matched. Once matched,
+		 * the {@link Tree} node is returned. Otherwise, if the predicate cannot be matched,
+		 * a null value is returned.
+		 *
+		 * @public
+		 * @param {Tree~nodePredicate} predicate - A predicate that tests each child node. The predicate takes two arguments -- the node's value, and the node itself.
+		 * @param {boolean=} includeCurrentNode - If true, the predicate will be applied to the current node.
+		 * @returns {Tree|null}
+		 */
+		findParent(predicate, includeCurrentNode) {
+			let returnRef;
+
+			if (is.boolean(includeCurrentNode) && includeCurrentNode && predicate(this.getValue(), this)) {
+				returnRef = this;
+			} else if (this._parent !== null) {
+				returnRef = this._parent.findParent(predicate, true);
+			} else {
+				returnRef = null;
+			}
+
+			return returnRef;
+		}
+
+
+		/**
 		 * Creates a representation of the tree using JavaScript objects and arrays.
 		 *
 		 * @public
