@@ -1151,6 +1151,33 @@ module.exports = function () {
 			}
 
 			/**
+    * Climbs the tree, evaluating each parent until a predicate is matched. Once matched,
+    * the {@link Tree} node is returned. Otherwise, if the predicate cannot be matched,
+    * a null value is returned.
+    *
+    * @public
+    * @param {Tree~nodePredicate} predicate - A predicate that tests each child node. The predicate takes two arguments -- the node's value, and the node itself.
+    * @param {boolean=} includeCurrentNode - If true, the predicate will be applied to the current node.
+    * @returns {Tree|null}
+    */
+
+		}, {
+			key: 'findParent',
+			value: function findParent(predicate, includeCurrentNode) {
+				var returnRef = void 0;
+
+				if (is.boolean(includeCurrentNode) && includeCurrentNode && predicate(this.getValue(), this)) {
+					returnRef = this;
+				} else if (this._parent !== null) {
+					returnRef = this._parent.findParent(predicate, true);
+				} else {
+					returnRef = null;
+				}
+
+				return returnRef;
+			}
+
+			/**
     * Creates a representation of the tree using JavaScript objects and arrays.
     *
     * @public
@@ -20782,9 +20809,12 @@ describe('when reducing an array of objects to unique values', function () {
 		var one;
 		var two;
 		var three;
+		var four;
+		var five;
+		var six;
 
 		beforeEach(function () {
-			unique = array.uniqueBy([one = { x: 1 }, { x: 1 }, { x: 1 }, { x: 1 }, two = { x: 2 }, { x: 1 }, { x: 1 }, three = { x: 3 }, { x: 3 }, { x: 1 }], function (obj) {
+			unique = array.uniqueBy([one = { x: 1 }, two = { x: 2 }, three = { x: 3 }, four = { x: 1 }, five = { x: 2 }, six = { x: 3 }], function (obj) {
 				return obj.x;
 			});
 		});
