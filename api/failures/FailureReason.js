@@ -76,6 +76,20 @@ module.exports = (() => {
 			return reasons.children;
 		}
 
+		/**
+		 * Indicates if the tree of {@link FailureReasonItem} instances contains
+		 * at least one item with a matching {@link FailureType}.
+		 *
+		 * @public
+		 * @param {FailureType} type
+		 * @returns {Boolean}
+		 */
+		hasFailureType(type) {
+			assert.argumentIsRequired(type, 'type', FailureType, 'FailureType');
+
+			return this._head.search(item => item.type === type, false, false) !== null;
+		}
+
 		toJSON() {
 			return JSON.stringify(this.format());
 		}
