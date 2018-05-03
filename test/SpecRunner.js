@@ -5168,7 +5168,7 @@ module.exports = function () {
    *
    * @static
    * @param {Array} a
-   * @param {Function} keySelector - The function, when applied to an item yields a unique key.
+   * @param {Function} keySelector - A function that returns a unique key for an item.
    * @returns {Array}
    */
 		uniqueBy: function uniqueBy(a, keySelector) {
@@ -5186,12 +5186,12 @@ module.exports = function () {
 
 		/**
    * Splits array into groups and returns an object (where the properties have
-   * arrays). Unlike the indexBy function, there can be many items
-   * which share the same key.
+   * arrays). Unlike the indexBy function, there can be many items which share
+   * the same key.
    *
    * @static
    * @param {Array} a
-   * @param {Function} keySelector - The function, when applied to an item yields a key.
+   * @param {Function} keySelector - A function that returns a unique key for an item.
    * @returns {Object}
    */
 		groupBy: function groupBy(a, keySelector) {
@@ -5218,7 +5218,7 @@ module.exports = function () {
    *
    * @static
    * @param {Array} a
-   * @param {Function} keySelector - The function, when applied to an item yields a key.
+   * @param {Function} keySelector - A function that returns a unique key for an item.
    * @returns {Array}
    */
 		batchBy: function batchBy(a, keySelector) {
@@ -5247,12 +5247,11 @@ module.exports = function () {
 
 		/**
    * Splits array into groups and returns an object (where the properties are items from the
-   * original array). Unlike the groupBy, Only one item can have a given key
-   * value.
+   * original array). Unlike the groupBy, only one item can have a given key value.
    *
    * @static
    * @param {Array} a
-   * @param {Function} keySelector - The function, when applied to an item yields a unique key.
+   * @param {Function} keySelector - A function that returns a unique key for an item.
    * @returns {Object}
    */
 		indexBy: function indexBy(a, keySelector) {
@@ -5418,14 +5417,31 @@ module.exports = function () {
    * @returns {Array}
    */
 		difference: function difference(a, b) {
+			return this.differenceBy(a, b, function (item) {
+				return item;
+			});
+		},
+
+
+		/**
+   * Set difference operation, where the uniqueness is determined by a delegate.
+   *
+   * @static
+   * @param {Array} a
+   * @param {Array} b
+   * @param {Function} keySelector - A function that returns a unique key for an item.
+   * @returns {Array}
+   */
+		differenceBy: function differenceBy(a, b, keySelector) {
 			assert.argumentIsArray(a, 'a');
 			assert.argumentIsArray(b, 'b');
+			assert.argumentIsRequired(keySelector, 'keySelector', Function);
 
 			var returnRef = [];
 
 			a.forEach(function (candidate) {
 				var exclude = b.some(function (comparison) {
-					return candidate === comparison;
+					return keySelector(candidate) === keySelector(comparison);
 				});
 
 				if (!exclude) {
@@ -5448,7 +5464,23 @@ module.exports = function () {
    * @returns {Array}
    */
 		differenceSymmetric: function differenceSymmetric(a, b) {
-			return this.union(this.difference(a, b), this.difference(b, a));
+			return this.differenceSymmetricBy(a, b, function (item) {
+				return item;
+			});
+		},
+
+
+		/**
+   * Set symmetric difference operation, where the uniqueness is determined by a delegate.
+   *
+   * @static
+   * @param {Array} a
+   * @param {Array} b
+   * @param {Function} keySelector - A function that returns a unique key for an item.
+   * @returns {Array}
+   */
+		differenceSymmetricBy: function differenceSymmetricBy(a, b, keySelector) {
+			return this.unionBy(this.differenceBy(a, b, keySelector), this.differenceBy(b, a, keySelector), keySelector);
 		},
 
 
@@ -5461,14 +5493,31 @@ module.exports = function () {
    * @returns {Array}
    */
 		union: function union(a, b) {
+			return this.unionBy(a, b, function (item) {
+				return item;
+			});
+		},
+
+
+		/**
+   * Set union operation, where the uniqueness is determined by a delegate.
+   *
+   * @static
+   * @param {Array} a
+   * @param {Array} b
+   * @param {Function} keySelector - A function that returns a unique key for an item.
+   * @returns {Array}
+   */
+		unionBy: function unionBy(a, b, keySelector) {
 			assert.argumentIsArray(a, 'a');
 			assert.argumentIsArray(b, 'b');
+			assert.argumentIsRequired(keySelector, 'keySelector', Function);
 
 			var returnRef = a.slice();
 
 			b.forEach(function (candidate) {
 				var exclude = returnRef.some(function (comparison) {
-					return candidate === comparison;
+					return keySelector(candidate) === keySelector(comparison);
 				});
 
 				if (!exclude) {
@@ -5489,6 +5538,22 @@ module.exports = function () {
    * @returns {Array}
    */
 		intersection: function intersection(a, b) {
+			return this.intersectionBy(a, b, function (item) {
+				return item;
+			});
+		},
+
+
+		/**
+   * Set intersection operation, where the uniqueness is determined by a delegate.
+   *
+   * @static
+   * @param {Array} a
+   * @param {Array} b
+   * @param {Function} keySelector - A function that returns a unique key for an item.
+   * @returns {Array}
+   */
+		intersectionBy: function intersectionBy(a, b, keySelector) {
 			assert.argumentIsArray(a, 'a');
 			assert.argumentIsArray(b, 'b');
 
@@ -5496,7 +5561,7 @@ module.exports = function () {
 
 			a.forEach(function (candidate) {
 				var include = b.some(function (comparison) {
-					return candidate === comparison;
+					return keySelector(candidate) === comparison;
 				});
 
 				if (include) {
