@@ -22,9 +22,7 @@ module.exports = (() => {
 		unique(a) {
 			assert.argumentIsArray(a, 'a');
 
-			return a.filter((item, index, array) => {
-				return array.indexOf(item) === index;
-			});
+			return this.uniqueBy(a, item => item);
 		},
 
 		/**
