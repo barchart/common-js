@@ -407,16 +407,20 @@ module.exports = (() => {
 		 * @public
 		 * @param {Array} a
 		 * @param {Function} predicate
+		 * @returns {Boolean}
 		 */
 		remove(a, predicate) {
 			assert.argumentIsArray(a, 'a');
 			assert.argumentIsRequired(predicate, 'predicate', Function);
 
 			const index = a.findIndex(predicate);
+			const found = !(index < 0);
 
-			if (!(index < 0)) {
+			if (found) {
 				a.splice(index, 1);
 			}
+
+			return found;
 		}
 	};
 })();
