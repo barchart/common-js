@@ -5156,8 +5156,8 @@ module.exports = function () {
 		unique: function unique(a) {
 			assert.argumentIsArray(a, 'a');
 
-			return a.filter(function (item, index, array) {
-				return array.indexOf(item) === index;
+			return this.uniqueBy(a, function (item) {
+				return item;
 			});
 		},
 
@@ -5580,16 +5580,20 @@ module.exports = function () {
    * @public
    * @param {Array} a
    * @param {Function} predicate
+   * @returns {Boolean}
    */
 		remove: function remove(a, predicate) {
 			assert.argumentIsArray(a, 'a');
 			assert.argumentIsRequired(predicate, 'predicate', Function);
 
 			var index = a.findIndex(predicate);
+			var found = !(index < 0);
 
-			if (!(index < 0)) {
+			if (found) {
 				a.splice(index, 1);
 			}
+
+			return found;
 		}
 	};
 }();
