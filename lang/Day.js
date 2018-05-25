@@ -374,7 +374,7 @@ module.exports = (() => {
 		 *
 		 * @static
 		 * @public
-		 * @return {Day}
+		 * @returns {Day}
 		 */
 		static getToday() {
 			return Day.fromDate(new Date());
