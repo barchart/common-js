@@ -148,6 +148,7 @@ module.exports = (() => {
 			return returnRef;
 		},
 
+
 		/**
 		 * Returns a new array containing all but the last item.
 		 *
