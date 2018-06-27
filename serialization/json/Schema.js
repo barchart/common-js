@@ -110,7 +110,7 @@ module.exports = (() => {
 		}
 
 		/**
-		 * Generates a function suitable for use by JSON.parse.
+		 * Generates a function suitable for use by {@link JSON.parse}.
 		 *
 		 * @public
 		 * @returns {Function}
