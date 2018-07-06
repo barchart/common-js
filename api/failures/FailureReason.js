@@ -91,7 +91,7 @@ module.exports = (() => {
 		}
 
 		toJSON() {
-			return JSON.stringify(this.format());
+			return this.format();
 		}
 
 		/**
