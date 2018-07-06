@@ -119,7 +119,7 @@ module.exports = function () {
 		}, {
 			key: 'toJSON',
 			value: function toJSON() {
-				return JSON.stringify(this.format());
+				return this.format();
 			}
 
 			/**
