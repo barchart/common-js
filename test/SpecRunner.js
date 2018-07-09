@@ -4969,7 +4969,7 @@ module.exports = function () {
     * Parses the value emitted by {@link Timestamp#toJSON}.
     *
     * @public
-    * @param {String} value
+    * @param {Number} value
     * @returns {Timestamp}
     */
 
