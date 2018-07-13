@@ -5813,7 +5813,7 @@ module.exports = function () {
    *
    * @static
    * @param {Object} target - The object to check for existence of the property.
-   * @param {String|Array<String>} propertyNames - The property to check -- either a string with separators, or an array of strings (already split by separator).
+   * @param {String|Array.<String>} propertyNames - The property to check -- either a string with separators, or an array of strings (already split by separator).
    * @param {String=} separator - The separator (defaults to a period character).
    * @returns {boolean}
    */
@@ -5839,7 +5839,7 @@ module.exports = function () {
    *
    * @static
    * @param {Object} target - The object to read from.
-   * @param {String|Array<String>} propertyNames - The property to read -- either a string with separators, or an array of strings (already split by separator).
+   * @param {String|Array.<String>} propertyNames - The property to read -- either a string with separators, or an array of strings (already split by separator).
    * @param {String=} separator - The separator (defaults to a period character).
    * @returns {*}
    */
@@ -5874,7 +5874,8 @@ module.exports = function () {
    *
    * @static
    * @param {Object} target - The object to write to.
-   * @param {String|Array<String>} propertyNames - The property to write -- either a string with separators, or an array of strings (already split by separator).
+   * @param {String|Array.<String>} propertyNames - The property to write -- either a string with separators, or an array of strings (already split by separator).
+   * @param {*} value - The value to assign.
    * @param {String=} separator - The separator (defaults to a period character).
    */
 		write: function write(target, propertyNames, value, separator) {
@@ -5900,7 +5901,7 @@ module.exports = function () {
    *
    * @static
    * @param {Object} target - The object to erase a property from.
-   * @param {String|Array<String>} propertyNames - The property to write -- either a string with separators, or an array of strings (already split by separator).
+   * @param {String|Array.<String>} propertyNames - The property to write -- either a string with separators, or an array of strings (already split by separator).
    * @param {String=} separator - The separator (defaults to a period character).
    */
 		erase: function erase(target, propertyNames, separator) {
