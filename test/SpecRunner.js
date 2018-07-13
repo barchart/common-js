@@ -3406,7 +3406,7 @@ module.exports = function () {
     * @returns {String}
     */
 			value: function format() {
-				return this._year + '-' + leftPad(this._month) + '-' + leftPad(this._day);
+				return leftPad(this._year, 4, '0') + '-' + leftPad(this._month, 2, '0') + '-' + leftPad(this._day, 2, '0');
 			}
 
 			/**
@@ -3615,8 +3615,11 @@ module.exports = function () {
 
 	var dayRegex = /^([0-9]{4}).?([0-9]{2}).?([0-9]{2})$/;
 
-	function leftPad(value) {
-		return value < 10 ? '0' + value : '' + value;
+	function leftPad(value, digits, character) {
+		var string = value.toString();
+		var padding = digits - string.length;
+
+		return '' + character.repeat(padding) + string;
 	}
 
 	var comparator = ComparatorBuilder.startWith(function (a, b) {
