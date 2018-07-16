@@ -39,6 +39,7 @@ module.exports = (() => {
 		/**
 		 * The unique code.
 		 *
+		 * @public
 		 * @returns {String}
 		 */
 		get code() {
@@ -48,6 +49,7 @@ module.exports = (() => {
 		/**
 		 * The description.
 		 *
+		 * @public
 		 * @returns {String}
 		 */
 		get description() {
@@ -58,6 +60,7 @@ module.exports = (() => {
 		 * Returns true if the provided {@link Enum} argument is equal
 		 * to the instance.
 		 *
+		 * @public
 		 * @param {Enum} other
 		 * @returns {boolean}
 		 */
@@ -79,6 +82,7 @@ module.exports = (() => {
 		 * Looks up a enumeration item; given the enumeration type and the enumeration
 		 * item's value. If no matching item can be found, a null value is returned.
 		 *
+		 * @public
 		 * @param {Function} type - The enumeration type.
 		 * @param {String} code - The enumeration item's code.
 		 * @returns {*|null}
@@ -90,6 +94,7 @@ module.exports = (() => {
 		/**
 		 * Returns all of the enumeration's items (given an enumeration type).
 		 *
+		 * @public
 		 * @param {Function} type - The enumeration to list.
 		 * @returns {Array}
 		 */
