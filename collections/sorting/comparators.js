@@ -44,8 +44,8 @@ module.exports = (() => {
 		 * Compares two strings (in ascending order), using {@link String#localeCompare}.
 		 *
 		 * @static
-		 * @param {Number} a
-		 * @param {Number} b
+		 * @param {String} a
+		 * @param {String} b
 		 * @returns {Number}
 		 */
 		compareStrings: (a, b) => {
