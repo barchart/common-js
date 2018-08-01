@@ -16,6 +16,7 @@ module.exports = (() => {
 		/**
 		 * Execute the action.
 		 *
+		 * @public
 		 * @param {*} data
 		 * @returns {*}
 		 */
