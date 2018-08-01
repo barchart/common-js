@@ -2615,6 +2615,7 @@ module.exports = function () {
 		/**
    * Execute the action.
    *
+   * @public
    * @param {*} data
    * @returns {*}
    */
