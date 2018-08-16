@@ -3894,6 +3894,20 @@ module.exports = function () {
 			}
 
 			/**
+    * Returns true if the current instance is an integer (i.e. has no decimal
+    * component).
+    *
+    * @public
+    * @return {Boolean}
+    */
+
+		}, {
+			key: 'getIsInteger',
+			value: function getIsInteger() {
+				return this.getIsEqual(this.round(0));
+			}
+
+			/**
     * Emits a floating point value that approximates the value of the current
     * instance.
     *
@@ -20466,6 +20480,40 @@ describe('When instantiating a Decimal', function () {
 		it('the fixed export should equal "1"', function () {
 			expect(d.toFixed()).toEqual('1');
 		});
+	});
+});
+
+describe('When checking for integers', function () {
+	'use strict';
+
+	it('should indicate a zero value is an integer', function () {
+		expect(new Decimal('0').getIsInteger()).toEqual(true);
+	});
+
+	it('should indicate a value of one is an integer', function () {
+		expect(new Decimal('1').getIsInteger()).toEqual(true);
+	});
+
+	it('should indicate a value of negative one is an integer', function () {
+		expect(new Decimal('-1').getIsInteger()).toEqual(true);
+	});
+
+	it('should indicate a value of one and a half is not an integer', function () {
+		expect(new Decimal('1.5').getIsInteger()).toEqual(false);
+	});
+
+	it('should indicate a value of slightly less than one is an not integer', function () {
+		var numerator = new Decimal('999999999');
+		var denominator = new Decimal('1000000000');
+
+		expect(numerator.divide(denominator).getIsInteger()).toEqual(false);
+	});
+
+	it('should indicate a value of slightly greater than one is an not integer', function () {
+		var numerator = new Decimal('1000000000');
+		var denominator = new Decimal('999999999');
+
+		expect(numerator.divide(denominator).getIsInteger()).toEqual(false);
 	});
 });
 
