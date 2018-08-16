@@ -233,3 +233,37 @@ describe('When instantiating a Decimal', function() {
 		});
 	});
 });
+
+describe('When checking for integers', function() {
+	'use strict';
+
+	it('should indicate a zero value is an integer', function() {
+		expect(new Decimal('0').getIsInteger()).toEqual(true);
+	});
+
+	it('should indicate a value of one is an integer', function() {
+		expect(new Decimal('1').getIsInteger()).toEqual(true);
+	});
+
+	it('should indicate a value of negative one is an integer', function() {
+		expect(new Decimal('-1').getIsInteger()).toEqual(true);
+	});
+
+	it('should indicate a value of one and a half is not an integer', function() {
+		expect(new Decimal('1.5').getIsInteger()).toEqual(false);
+	});
+
+	it('should indicate a value of slightly less than one is an not integer', function() {
+		const numerator = new Decimal('999999999');
+		const denominator = new Decimal('1000000000');
+
+		expect(numerator.divide(denominator).getIsInteger()).toEqual(false);
+	});
+
+	it('should indicate a value of slightly greater than one is an not integer', function() {
+		const numerator = new Decimal('1000000000');
+		const denominator = new Decimal('999999999');
+
+		expect(numerator.divide(denominator).getIsInteger()).toEqual(false);
+	});
+});

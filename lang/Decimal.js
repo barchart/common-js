@@ -198,6 +198,17 @@ module.exports = (() => {
 		}
 
 		/**
+		 * Returns true if the current instance is an integer (i.e. has no decimal
+		 * component).
+		 *
+		 * @public
+		 * @return {Boolean}
+		 */
+		getIsInteger() {
+			return this.getIsEqual(this.round(0));
+		}
+
+		/**
 		 * Emits a floating point value that approximates the value of the current
 		 * instance.
 		 *
