@@ -115,7 +115,7 @@ module.exports = (() => {
 
 			callback(builder);
 
-			const headers = builder.parameters;
+			const headers = Parameters.merge(this._endpoint.headers, builder.parameters);
 
 			this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, headers, this.endpoint.body, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
 

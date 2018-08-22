@@ -44,6 +44,10 @@ module.exports = (() => {
 			this._parameters.forEach(p => p.validate());
 		}
 
+		static merge(a, b) {
+			return new Parameters(a.parameters.slice(0).concat(b.parameters.filter(candidate => !a.parameters.some(existing => existing.key === candidate.key))));
+		}
+
 		toString() {
 			return `[Parameters]`;
 		}
