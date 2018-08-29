@@ -267,3 +267,59 @@ describe('When checking for integers', function() {
 		expect(numerator.divide(denominator).getIsInteger()).toEqual(false);
 	});
 });
+
+describe('When counting the number of decimal places', function() {
+	'use strict';
+
+	it('should indicate a value of zero has no decimal places', function() {
+		expect(new Decimal('0').getDecimalPlaces()).toEqual(0);
+	});
+
+	it('should indicate a value of one has no decimal places', function() {
+		expect(new Decimal('1').getDecimalPlaces()).toEqual(0);
+	});
+
+	it('should indicate a value of negative one has no decimal places', function() {
+		expect(new Decimal('-1').getDecimalPlaces()).toEqual(0);
+	});
+
+	it('should indicate a value of twenty three has no decimal places', function() {
+		expect(new Decimal('23').getDecimalPlaces()).toEqual(0);
+	});
+
+	it('should indicate a value of twenty three has no decimal places', function() {
+		expect(new Decimal('-23').getDecimalPlaces()).toEqual(0);
+	});
+
+	it('should indicate a value of one tenth has one decimal places', function() {
+		expect(new Decimal('0.1').getDecimalPlaces()).toEqual(1);
+	});
+
+	it('should indicate a value of negative one tenth has one decimal places', function() {
+		expect(new Decimal('-0.1').getDecimalPlaces()).toEqual(1);
+	});
+
+	it('should indicate a value of one eighth has one decimal places', function() {
+		expect(new Decimal('0.125').getDecimalPlaces()).toEqual(3);
+	});
+
+	it('should indicate a value of negative one eighth has one decimal places', function() {
+		expect(new Decimal('-0.125').getDecimalPlaces()).toEqual(3);
+	});
+
+	it('should indicate a value of one hundredth has one decimal places', function() {
+		expect(new Decimal('0.01').getDecimalPlaces()).toEqual(2);
+	});
+
+	it('should indicate a value of negative one hundredth has one decimal places', function() {
+		expect(new Decimal('-0.01').getDecimalPlaces()).toEqual(2);
+	});
+
+	it('should indicate a value of "123.123456789012345678901234 has 24 decimal places', function() {
+		expect(new Decimal('123.123456789012345678901234').getDecimalPlaces()).toEqual(24);
+	});
+
+	it('should indicate a value of "-123.123456789012345678901234 has 24 decimal places', function() {
+		expect(new Decimal('1123.123456789012345678901234').getDecimalPlaces()).toEqual(24);
+	});
+});

@@ -209,6 +209,26 @@ module.exports = (() => {
 		}
 
 		/**
+		 * Returns the number of decimal places used.
+		 *
+		 * @public
+		 * @returns {Number}
+		 */
+		getDecimalPlaces() {
+			const matches = this.toFixed().match(/-?\d*\.(\d*)/);
+
+			let returnVal;
+
+			if (matches === null) {
+				returnVal = 0;
+			} else {
+				returnVal = matches[1].length;
+			}
+
+			return returnVal;
+		}
+
+		/**
 		 * Emits a floating point value that approximates the value of the current
 		 * instance.
 		 *
