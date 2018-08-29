@@ -3786,15 +3786,17 @@ module.exports = function () {
     *
     * @public
     * @param {Boolean=} approximate
+    * @param {Number=} places
     * @returns {Boolean}
     */
 
 		}, {
 			key: 'getIsZero',
-			value: function getIsZero(approximate) {
+			value: function getIsZero(approximate, places) {
 				assert.argumentIsOptional(approximate, 'approximate', Boolean);
+				assert.argumentIsOptional(places, 'places', Number);
 
-				return this._big.eq(zero) || is.boolean(approximate) && approximate && this.round(20, RoundingMode.NORMAL).getIsZero();
+				return this._big.eq(zero) || is.boolean(approximate) && approximate && this.round(places || Big.DP, RoundingMode.NORMAL).getIsZero();
 			}
 
 			/**
@@ -20593,6 +20595,18 @@ describe('When counting the number of decimal places', function () {
 
 	it('should indicate a value of "-123.123456789012345678901234 has 24 decimal places', function () {
 		expect(new Decimal('-123.123456789012345678901234').getDecimalPlaces()).toEqual(24);
+	});
+});
+
+describe('When checking for values that approximate zero', function () {
+	'use strict';
+
+	it('A value of "0.01" should approximate zero, when rounding to one decimal places', function () {
+		expect(new Decimal('0.01').getIsZero(true, 1)).toEqual(true);
+	});
+
+	it('A value of "0.09" should not approximate zero, when rounding to one decimal places', function () {
+		expect(new Decimal('0.09').getIsZero(true, 1)).toEqual(false);
 	});
 });
 

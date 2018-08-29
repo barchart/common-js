@@ -114,12 +114,14 @@ module.exports = (() => {
 		 *
 		 * @public
 		 * @param {Boolean=} approximate
+		 * @param {Number=} places
 		 * @returns {Boolean}
 		 */
-		getIsZero(approximate) {
+		getIsZero(approximate, places) {
 			assert.argumentIsOptional(approximate, 'approximate', Boolean);
+			assert.argumentIsOptional(places, 'places', Number);
 
-			return this._big.eq(zero) || (is.boolean(approximate) && approximate && this.round(20, RoundingMode.NORMAL).getIsZero());
+			return this._big.eq(zero) || (is.boolean(approximate) && approximate && this.round(places || Big.DP, RoundingMode.NORMAL).getIsZero());
 		}
 
 		/**
