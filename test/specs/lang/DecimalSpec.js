@@ -320,6 +320,6 @@ describe('When counting the number of decimal places', function() {
 	});
 
 	it('should indicate a value of "-123.123456789012345678901234 has 24 decimal places', function() {
-		expect(new Decimal('1123.123456789012345678901234').getDecimalPlaces()).toEqual(24);
+		expect(new Decimal('-123.123456789012345678901234').getDecimalPlaces()).toEqual(24);
 	});
 });
