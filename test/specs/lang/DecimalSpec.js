@@ -334,4 +334,12 @@ describe('When checking for values that approximate zero', function() {
 	it('A value of "0.09" should not approximate zero, when rounding to one decimal places', function() {
 		expect(new Decimal('0.09').getIsZero(true, 1)).toEqual(false);
 	});
+
+	it('A value of "0.01" should not approximate zero, when rounding is not specified', function() {
+		expect(new Decimal('0.01').getIsZero(true)).toEqual(false);
+	});
+
+	it('A value of "0.09" should not approximate zero, when rounding is not specified', function() {
+		expect(new Decimal('0.09').getIsZero(true)).toEqual(false);
+	});
 });
