@@ -537,3 +537,33 @@ describe('When checking a days containment in a range of days', function() {
 		expect(day.getIsContained(new Day(2018, 3, 12), new Day(2018, 3, 10))).toEqual(false);
 	});
 });
+
+describe('When cloning a day', function() {
+	var source;
+	var clone;
+
+	beforeEach(function() {
+		source = new Day(2018, 3, 11);
+		clone = Day.clone(source);
+	});
+
+	it('the cloned instance should not be the same as the source instance', function() {
+		expect(clone).not.toBe(source);
+	});
+
+	it('the cloned year should be equal to the source year', function() {
+		expect(clone.year).toEqual(source.year);
+	});
+
+	it('the cloned month should be equal to the source month', function() {
+		expect(clone.year).toEqual(source.year);
+	});
+
+	it('the cloned day should be equal to the source day', function() {
+		expect(clone.year).toEqual(source.year);
+	});
+
+	it('the cloned instance should equal the source instance', function() {
+		expect(source.getIsEqual(clone)).toEqual(true);
+	});
+});

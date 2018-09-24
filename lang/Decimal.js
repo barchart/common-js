@@ -269,6 +269,20 @@ module.exports = (() => {
 		}
 
 		/**
+		 * Clones a {@link Decimal} instance.
+		 *
+		 * @public
+		 * @static
+		 * @param {Decimal} value
+		 * @returns {Decimal}
+		 */
+		static clone(value) {
+			assert.argumentIsRequired(value, 'value', Decimal, 'Decimal');
+
+			return new Decimal(value._big);
+		}
+
+		/**
 		 * Parses the value emitted by {@link Decimal#toJSON}.
 		 *
 		 * @public

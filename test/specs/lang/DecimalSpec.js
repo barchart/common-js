@@ -343,3 +343,23 @@ describe('When checking for values that approximate zero', function() {
 		expect(new Decimal('0.09').getIsZero(true)).toEqual(false);
 	});
 });
+
+describe('When cloning a decimal', function() {
+	'use strict';
+
+	var source;
+	var clone;
+
+	beforeEach(function() {
+		source = new Decimal(Math.PI);
+		clone = Decimal.clone(source);
+	});
+
+	it('the cloned instance should not be the same as the source instance', function() {
+		expect(clone).not.toBe(source);
+	});
+
+	it('the cloned instance should equal the source instance', function() {
+		expect(source.getIsEqual(clone)).toEqual(true);
+	});
+});

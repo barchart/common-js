@@ -319,6 +319,20 @@ module.exports = (() => {
 		}
 
 		/**
+		 * Clones a {@link Day} instance.
+		 *
+		 * @public
+		 * @static
+		 * @param {Day} value
+		 * @returns {Day}
+		 */
+		static clone(value) {
+			assert.argumentIsRequired(value, 'value', Day, 'Day');
+
+			return new Day(value.year, value.month, value.day);
+		}
+
+		/**
 		 * Converts a string (which matches the output of {@link Day#format} into
 		 * a {@link Day} instance.
 		 *
