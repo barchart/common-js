@@ -63,6 +63,20 @@ module.exports = (() => {
 		}
 
 		/**
+		 * Clones a {@link Timestamp} instance.
+		 *
+		 * @public
+		 * @static
+		 * @param {Timestamp} value
+		 * @returns {Timestamp}
+		 */
+		static clone(value) {
+			assert.argumentIsRequired(value, 'value', Timestamp, 'Timestamp');
+
+			return new Timestamp(value._timestamp, value._timezone);
+		}
+
+		/**
 		 * Parses the value emitted by {@link Timestamp#toJSON}.
 		 *
 		 * @public

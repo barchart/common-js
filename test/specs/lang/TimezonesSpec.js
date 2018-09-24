@@ -1,5 +1,4 @@
-var Enum = require('./../../../lang/Enum'),
-	Timezones = require('./../../../lang/Timezones');
+var Timezones = require('./../../../lang/Timezones');
 
 describe('When accessing static items', function() {
 	'use strict';
@@ -12,3 +11,4 @@ describe('When accessing static items', function() {
 		expect(Timezones.AMERICA_NEW_YORK.code).toEqual('America/New_York');
 	});
 });
+
