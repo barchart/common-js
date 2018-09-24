@@ -6534,18 +6534,22 @@ module.exports = function () {
    *
    * @static
    * @param {Object} source - The object to copy.
+   * @param {Function=} canExtract - An optional function which indicates if the "extractor" can be used.
+   * @param {Function=} extractor - An optional function which returns a cloned value for a property for assignment to the cloned object.
    * @returns {Object}
    */
-		clone: function clone(source) {
+		clone: function clone(source, canExtract, extractor) {
 			var c = void 0;
 
-			if (is.array(source)) {
+			if (is.fn(canExtract) && canExtract(source)) {
+				c = extractor(source);
+			} else if (is.array(source)) {
 				c = source.map(function (sourceItem) {
-					return object.clone(sourceItem);
+					return object.clone(sourceItem, canExtract, extractor);
 				});
 			} else if (is.object(source)) {
 				c = object.keys(source).reduce(function (accumulator, key) {
-					accumulator[key] = object.clone(source[key]);
+					accumulator[key] = object.clone(source[key], canExtract, extractor);
 
 					return accumulator;
 				}, {});
@@ -23953,6 +23957,80 @@ describe('When running a deep comparison', function () {
 		it('the result should be true', function () {
 			expect(object.equals([], [])).toEqual(true);
 		});
+	});
+});
+
+describe('When cloning a simple object (using a custom value extractor)', function () {
+	var source = void 0;
+	var clone = void 0;
+
+	var canExtract = void 0;
+	var extractor = void 0;
+
+	beforeEach(function () {
+		source = 42;
+
+		canExtract = function canExtract(value) {
+			return true;
+		};
+		extractor = function extractor(value) {
+			return ++value;
+		};
+
+		clone = object.clone(source, canExtract, extractor);
+	});
+
+	it('the cloned object should be 43', function () {
+		expect(clone).toBe(43);
+	});
+});
+
+describe('When cloning a complex object (using a custom value extractor)', function () {
+	var source = void 0;
+	var clone = void 0;
+
+	var canExtract = void 0;
+	var extractor = void 0;
+
+	beforeEach(function () {
+		source = { examples: { one: 1, two: 2, three: 3 }, game: { name: 'fizz' }, numbers: [0, 1, 2, 3, 4] };
+
+		canExtract = function canExtract(value) {
+			return typeof value === 'number';
+		};
+		extractor = function extractor(value) {
+			return value > 0 && value % 3 === 0 ? 'fizz' : value;
+		};
+
+		clone = object.clone(source, canExtract, extractor);
+	});
+
+	it('the cloned object should not be the source object', function () {
+		expect(clone).not.toBe(source);
+	});
+
+	it("the clone object's child objects should not be the same", function () {
+		expect(clone.examples).not.toBe(source.examples);
+		expect(clone.game).not.toBe(source.game);
+	});
+
+	it("the clone object's child arrays should not be the same", function () {
+		expect(clone.numbers).not.toBe(source.numbers);
+	});
+
+	it('the numbers divisible by three should be replaced with "fizz" (for object properties)', function () {
+		expect(clone.examples.three).toEqual('fizz');
+		expect(clone.numbers[3]).toEqual('fizz');
+	});
+
+	it('the numbers not divisible should be the same value (for object properties)', function () {
+		expect(clone.examples.one).toEqual(1);
+		expect(clone.examples.two).toEqual(2);
+
+		expect(clone.numbers[0]).toEqual(0);
+		expect(clone.numbers[1]).toEqual(1);
+		expect(clone.numbers[2]).toEqual(2);
+		expect(clone.numbers[4]).toEqual(4);
 	});
 });
 

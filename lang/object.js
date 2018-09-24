@@ -59,18 +59,22 @@ module.exports = (() => {
 		 *
 		 * @static
 		 * @param {Object} source - The object to copy.
+		 * @param {Function=} canExtract - An optional function which indicates if the "extractor" can be used.
+		 * @param {Function=} extractor - An optional function which returns a cloned value for a property for assignment to the cloned object.
 		 * @returns {Object}
 		 */
-		clone(source) {
+		clone(source, canExtract, extractor) {
 			let c;
 
-			if (is.array(source)) {
+			if (is.fn(canExtract) && canExtract(source)) {
+				c = extractor(source);
+			} else if (is.array(source)) {
 				c = source.map((sourceItem) => {
-					return object.clone(sourceItem);
+					return object.clone(sourceItem, canExtract, extractor);
 				});
 			} else if (is.object(source)) {
 				c = object.keys(source).reduce((accumulator, key) => {
-					accumulator[key] = object.clone(source[key]);
+					accumulator[key] = object.clone(source[key], canExtract, extractor);
 
 					return accumulator;
 				}, { });
