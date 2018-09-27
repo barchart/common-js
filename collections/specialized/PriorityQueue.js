@@ -7,10 +7,6 @@ module.exports = (() => {
 	/**
 	 * A queue that sorts items as they are inserted.
 	 *
-	 * This implementation has not been optimized for performance. It uses
-	 * the native Array sort implementation an may result in n-squared
-	 * insert performance.
-	 *
 	 * @public
 	 * @extends {Queue}
 	 */
