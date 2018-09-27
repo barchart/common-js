@@ -2349,19 +2349,24 @@ module.exports = function () {
 			return _this;
 		}
 
+		/**
+   * Adds one item to the queue.
+   *
+   * @public
+   * @param {Object} item
+   * @return {Object}
+   */
+
+
 		_createClass(PriorityQueue, [{
 			key: 'enqueue',
 			value: function enqueue(item) {
-				var _this2 = this;
-
 				if (this._array.length === 0 || !(this._comparator(item, this._array[this._array.length - 1]) < 0)) {
 					this._array.push(item);
 				} else if (this._comparator(item, this._array[0]) < 0) {
 					this._array.unshift(item);
 				} else {
-					this._array.splice(this._array.findIndex(function (i) {
-						return _this2._comparator(item, i) < 0;
-					}), 0, item);
+					this._array.splice(binarySearch(this._array, item, this._comparator, 0, this._array.length - 1), 0, item);
 				}
 
 				return item;
@@ -2395,6 +2400,37 @@ module.exports = function () {
 
 		return PriorityQueue;
 	}(Queue);
+
+	function binarySearch(array, item, comparator, start, end) {
+		if (start === end) {
+			return start;
+		}
+
+		var size = end - start;
+
+		var midpointIndex = start + Math.floor(size / 2);
+		var midpointItem = array[midpointIndex];
+
+		var comparison = comparator(item, midpointItem) > 0;
+
+		if (size === 1) {
+			if (comparison > 0) {
+				var finalIndex = array.length - 1;
+
+				if (end === finalIndex && comparator(item, array[finalIndex]) > 0) {
+					return end + 1;
+				} else {
+					return end;
+				}
+			} else {
+				return start;
+			}
+		} else if (comparison > 0) {
+			return binarySearch(array, item, comparator, midpointIndex, end);
+		} else {
+			return binarySearch(array, item, comparator, start, midpointIndex);
+		}
+	}
 
 	return PriorityQueue;
 }();
@@ -3424,12 +3460,11 @@ module.exports = function () {
 			}
 
 			/**
-    * Converts a string (which matches the output of {@link Day#format} into
-    * a {@link Day} instance.
+    * Clones a {@link Day} instance.
     *
     * @public
     * @static
-    * @param {String} value
+    * @param {Day} value
     * @returns {Day}
     */
 
@@ -3470,6 +3505,24 @@ module.exports = function () {
 				return this._day;
 			}
 		}], [{
+			key: 'clone',
+			value: function clone(value) {
+				assert.argumentIsRequired(value, 'value', Day, 'Day');
+
+				return new Day(value.year, value.month, value.day);
+			}
+
+			/**
+    * Converts a string (which matches the output of {@link Day#format} into
+    * a {@link Day} instance.
+    *
+    * @public
+    * @static
+    * @param {String} value
+    * @returns {Day}
+    */
+
+		}, {
 			key: 'parse',
 			value: function parse(value) {
 				assert.argumentIsRequired(value, 'value', String);
@@ -3980,10 +4033,11 @@ module.exports = function () {
 			}
 
 			/**
-    * Parses the value emitted by {@link Decimal#toJSON}.
+    * Clones a {@link Decimal} instance.
     *
     * @public
-    * @param {String} value
+    * @static
+    * @param {Decimal} value
     * @returns {Decimal}
     */
 
@@ -3993,6 +4047,22 @@ module.exports = function () {
 				return '[Decimal]';
 			}
 		}], [{
+			key: 'clone',
+			value: function clone(value) {
+				assert.argumentIsRequired(value, 'value', Decimal, 'Decimal');
+
+				return new Decimal(value._big);
+			}
+
+			/**
+    * Parses the value emitted by {@link Decimal#toJSON}.
+    *
+    * @public
+    * @param {String} value
+    * @returns {Decimal}
+    */
+
+		}, {
 			key: 'parse',
 			value: function parse(value) {
 				return new Decimal(value);
@@ -5014,10 +5084,11 @@ module.exports = function () {
 			}
 
 			/**
-    * Parses the value emitted by {@link Timestamp#toJSON}.
+    * Clones a {@link Timestamp} instance.
     *
     * @public
-    * @param {Number} value
+    * @static
+    * @param {Timestamp} value
     * @returns {Timestamp}
     */
 
@@ -5053,6 +5124,22 @@ module.exports = function () {
 				return this._moment;
 			}
 		}], [{
+			key: 'clone',
+			value: function clone(value) {
+				assert.argumentIsRequired(value, 'value', Timestamp, 'Timestamp');
+
+				return new Timestamp(value._timestamp, value._timezone);
+			}
+
+			/**
+    * Parses the value emitted by {@link Timestamp#toJSON}.
+    *
+    * @public
+    * @param {Number} value
+    * @returns {Timestamp}
+    */
+
+		}, {
 			key: 'parse',
 			value: function parse(value) {
 				return new Timestamp(value);
@@ -20274,6 +20361,36 @@ describe('When checking a days containment in a range of days', function () {
 	});
 });
 
+describe('When cloning a day', function () {
+	var source;
+	var clone;
+
+	beforeEach(function () {
+		source = new Day(2018, 3, 11);
+		clone = Day.clone(source);
+	});
+
+	it('the cloned instance should not be the same as the source instance', function () {
+		expect(clone).not.toBe(source);
+	});
+
+	it('the cloned year should be equal to the source year', function () {
+		expect(clone.year).toEqual(source.year);
+	});
+
+	it('the cloned month should be equal to the source month', function () {
+		expect(clone.year).toEqual(source.year);
+	});
+
+	it('the cloned day should be equal to the source day', function () {
+		expect(clone.year).toEqual(source.year);
+	});
+
+	it('the cloned instance should equal the source instance', function () {
+		expect(source.getIsEqual(clone)).toEqual(true);
+	});
+});
+
 },{"./../../../lang/Day":21}],89:[function(require,module,exports){
 'use strict';
 
@@ -20619,6 +20736,26 @@ describe('When checking for values that approximate zero', function () {
 
 	it('A value of "0.09" should not approximate zero, when rounding is not specified', function () {
 		expect(new Decimal('0.09').getIsZero(true)).toEqual(false);
+	});
+});
+
+describe('When cloning a decimal', function () {
+	'use strict';
+
+	var source;
+	var clone;
+
+	beforeEach(function () {
+		source = new Decimal(Math.PI);
+		clone = Decimal.clone(source);
+	});
+
+	it('the cloned instance should not be the same as the source instance', function () {
+		expect(clone).not.toBe(source);
+	});
+
+	it('the cloned instance should equal the source instance', function () {
+		expect(source.getIsEqual(clone)).toEqual(true);
 	});
 });
 
@@ -20992,8 +21129,7 @@ describe('When Timestamp is created for the current moment', function () {
 },{"./../../../lang/Timestamp":27}],94:[function(require,module,exports){
 'use strict';
 
-var Enum = require('./../../../lang/Enum'),
-    Timezones = require('./../../../lang/Timezones');
+var Timezones = require('./../../../lang/Timezones');
 
 describe('When accessing static items', function () {
 	'use strict';
@@ -21007,7 +21143,7 @@ describe('When accessing static items', function () {
 	});
 });
 
-},{"./../../../lang/Enum":24,"./../../../lang/Timezones":28}],95:[function(require,module,exports){
+},{"./../../../lang/Timezones":28}],95:[function(require,module,exports){
 'use strict';
 
 var array = require('./../../../lang/array');

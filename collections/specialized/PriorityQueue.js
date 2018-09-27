@@ -23,13 +23,20 @@ module.exports = (() => {
 			this._comparator = comparator;
 		}
 
+		/**
+		 * Adds one item to the queue.
+		 *
+		 * @public
+		 * @param {Object} item
+		 * @return {Object}
+		 */
 		enqueue(item) {
 			if (this._array.length === 0 || !(this._comparator(item, this._array[this._array.length - 1]) < 0)) {
 				this._array.push(item);
 			} else if (this._comparator(item, this._array[0]) < 0) {
 				this._array.unshift(item);
 			} else {
-				this._array.splice(this._array.findIndex(i => this._comparator(item, i) < 0), 0, item);
+				this._array.splice(binarySearch(this._array, item, this._comparator, 0, this._array.length - 1), 0, item);
 			}
 
 			return item;
@@ -53,6 +60,37 @@ module.exports = (() => {
 
 		toString() {
 			return '[PriorityQueue]';
+		}
+	}
+
+	function binarySearch(array, item, comparator, start, end) {
+		if (start === end) {
+			return start;
+		}
+
+		const size = end - start;
+
+		const midpointIndex = start + Math.floor(size / 2);
+		const midpointItem = array[ midpointIndex ];
+
+		const comparison = (comparator(item, midpointItem) > 0);
+
+		if (size === 1) {
+			if (comparison > 0) {
+				const finalIndex = array.length - 1;
+
+				if (end === finalIndex && comparator(item, array[ finalIndex ]) > 0) {
+					return end + 1;
+				} else {
+					return end;
+				}
+			} else {
+				return start;
+			}
+		} else if (comparison > 0) {
+			return binarySearch(array, item, comparator, midpointIndex, end);
+		} else {
+			return binarySearch(array, item, comparator, start, midpointIndex);
 		}
 	}
 
