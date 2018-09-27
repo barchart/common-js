@@ -19,13 +19,6 @@ module.exports = (() => {
 			this._comparator = comparator;
 		}
 
-		/**
-		 * Adds one item to the queue.
-		 *
-		 * @public
-		 * @param {Object} item
-		 * @return {Object}
-		 */
 		enqueue(item) {
 			if (this._array.length === 0 || !(this._comparator(item, this._array[this._array.length - 1]) < 0)) {
 				this._array.push(item);
