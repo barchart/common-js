@@ -2402,10 +2402,6 @@ module.exports = function () {
 	}(Queue);
 
 	function binarySearch(array, item, comparator, start, end) {
-		if (start === end) {
-			return start;
-		}
-
 		var size = end - start;
 
 		var midpointIndex = start + Math.floor(size / 2);
@@ -2413,7 +2409,7 @@ module.exports = function () {
 
 		var comparison = comparator(item, midpointItem) > 0;
 
-		if (size === 1) {
+		if (size < 2) {
 			if (comparison > 0) {
 				var finalIndex = array.length - 1;
 
