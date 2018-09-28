@@ -2327,10 +2327,6 @@ module.exports = function () {
 	/**
   * A queue that sorts items as they are inserted.
   *
-  * This implementation has not been optimized for performance. It uses
-  * the native Array sort implementation an may result in n-squared
-  * insert performance.
-  *
   * @public
   * @extends {Queue}
   */
@@ -2348,15 +2344,6 @@ module.exports = function () {
 			_this._comparator = comparator;
 			return _this;
 		}
-
-		/**
-   * Adds one item to the queue.
-   *
-   * @public
-   * @param {Object} item
-   * @return {Object}
-   */
-
 
 		_createClass(PriorityQueue, [{
 			key: 'enqueue',
