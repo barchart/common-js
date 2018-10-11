@@ -142,7 +142,13 @@ module.exports = (() => {
 			};
 
 			return (key, value) => {
-				return advance(key).reviver(value);
+				const item = advance(key);
+
+				if (key === '') {
+					return value;
+				} else {
+					return item.reviver(value);
+				}
 			};
 		}
 
