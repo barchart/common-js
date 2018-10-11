@@ -37,7 +37,7 @@ module.exports = (() => {
 		 * the schema.
 		 *
 		 * @public
-		 * @param {data} data
+		 * @param {Object} data
 		 * @returns {Object}
 		 */
 		format(data) {
