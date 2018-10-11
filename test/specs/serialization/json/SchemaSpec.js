@@ -744,3 +744,89 @@ describe('When a complex schema is created (using custom data types)', function(
 		});
 	});
 });
+
+describe('When a schema is created with only two days', function() {
+	'use strict';
+
+	var schema;
+
+	beforeEach(function() {
+		schema = new Schema('days', [
+			new Field('first', DataType.DAY),
+			new Field('last', DataType.DAY)
+		]);
+	});
+
+	describe('and a schema-compliant object is created', function() {
+		var object;
+
+		beforeEach(function() {
+			object = {
+				first: Day.getToday(),
+				last: Day.getToday()
+			};
+		});
+
+		describe('and the object is "stringified" as JSON', function() {
+			var serialized;
+
+			beforeEach(function() {
+				serialized = JSON.stringify(object);
+			});
+
+			describe('and the object is rehydrated using the schema reviver', function() {
+				var deserialized;
+
+				beforeEach(function() {
+					deserialized = JSON.parse(serialized, schema.getReviver());
+				});
+
+				it('should have a "first" property with the expected value', function() {
+					expect(deserialized.first.getIsEqual(object.first)).toEqual(true);
+				});
+
+				it('should have a "last" property with the expected value', function() {
+					expect(deserialized.last.getIsEqual(object.last)).toEqual(true);
+				});
+			});
+		});
+	});
+
+	describe('and a schema-compliant array is created', function() {
+		var object;
+
+		beforeEach(function() {
+			object = [ {
+				first: Day.getToday(),
+				last: Day.getToday()
+			}, {
+				first: Day.getToday(),
+				last: Day.getToday()
+			} ];
+		});
+
+		describe('and the object is "stringified" as JSON', function() {
+			var serialized;
+
+			beforeEach(function() {
+				serialized = JSON.stringify(object);
+			});
+
+			describe('and the object is rehydrated using the schema reviver', function() {
+				var deserialized;
+
+				beforeEach(function() {
+					try {
+						deserialized = JSON.parse(serialized, schema.getReviver());
+					} catch (e) {
+						console.log(e);
+					}
+				});
+
+				it('should be an array with two items', function() {
+					expect(deserialized.length).toEqual(2);
+				});
+			});
+		});
+	});
+});
