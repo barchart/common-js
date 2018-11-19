@@ -1,5 +1,4 @@
-const assert = require('./../lang/assert'),
-	Queue = require('./../collections/Queue');
+const assert = require('./../lang/assert');
 
 module.exports = (() => {
 	'use strict';
