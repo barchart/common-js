@@ -28944,8 +28944,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var assert = require('./../lang/assert'),
-    Queue = require('./../collections/Queue');
+var assert = require('./../lang/assert');
 
 module.exports = function () {
 	'use strict';
@@ -29086,4 +29085,4 @@ module.exports = function () {
 	return WindowCounter;
 }();
 
-},{"./../collections/Queue":5,"./../lang/assert":30}]},{},[70,71,72,73,76,77,78,79,80,81,82,83,74,75,84,85,86,87,95,96,97,98,88,89,90,91,99,100,101,102,103,104,105,106,92,107,93,94,108,109,110,111,113,112,114,115,116,117,118,119,120,121,122,123,124,125,126]);
+},{"./../lang/assert":30}]},{},[70,71,72,73,76,77,78,79,80,81,82,83,74,75,84,85,86,87,95,96,97,98,88,89,90,91,99,100,101,102,103,104,105,106,92,107,93,94,108,109,110,111,113,112,114,115,116,117,118,119,120,121,122,123,124,125,126]);
