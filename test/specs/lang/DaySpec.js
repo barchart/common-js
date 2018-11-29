@@ -567,3 +567,20 @@ describe('When cloning a day', function() {
 		expect(source.getIsEqual(clone)).toEqual(true);
 	});
 });
+
+describe('When getting end of the month', function() {
+	it('for 2018-02-28 should be 2018-02-28', function() {
+		const d = new Day(2018, 2, 28);
+
+		expect(d.getEndOfMonth().getIsEqual(new Day(2018, 2, 28))).toEqual(true);
+	});
+
+	it('for 2018-02-28 should not return the same object', function() {
+		const d = new Day(2018, 2, 28);
+
+		expect(d.getEndOfMonth() === d).toEqual(false);
+	});
+});
+
+
+

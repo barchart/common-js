@@ -208,6 +208,16 @@ module.exports = (() => {
 		}
 
 		/**
+		 * Returns a new Day instance for the end of the month of the current instance.
+		 *
+		 * @public
+		 * @returns {Day}
+		 */
+		getEndOfMonth() {
+			return new Day(this.year, this.month, Day.getDaysInMonth(this.year, this.month));
+		}
+
+		/**
 		 * Indicates if another {@link Day} occurs before the current instance.
 		 *
 		 * @public

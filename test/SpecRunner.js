@@ -3336,6 +3336,19 @@ module.exports = function () {
 			}
 
 			/**
+    * Returns a new Day instance for the end of the month of the current instance.
+    *
+    * @public
+    * @returns {Day}
+    */
+
+		}, {
+			key: 'getEndOfMonth',
+			value: function getEndOfMonth() {
+				return new Day(this.year, this.month, Day.getDaysInMonth(this.year, this.month));
+			}
+
+			/**
     * Indicates if another {@link Day} occurs before the current instance.
     *
     * @public
@@ -20377,6 +20390,20 @@ describe('When cloning a day', function () {
 
 	it('the cloned instance should equal the source instance', function () {
 		expect(source.getIsEqual(clone)).toEqual(true);
+	});
+});
+
+describe('When getting end of the month', function () {
+	it('for 2018-02-28 should be 2018-02-28', function () {
+		var d = new Day(2018, 2, 28);
+
+		expect(d.getEndOfMonth().getIsEqual(new Day(2018, 2, 28))).toEqual(true);
+	});
+
+	it('for 2018-02-28 should not return the same object', function () {
+		var d = new Day(2018, 2, 28);
+
+		expect(d.getEndOfMonth() === d).toEqual(false);
 	});
 });
 
