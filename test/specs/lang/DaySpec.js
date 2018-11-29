@@ -570,15 +570,17 @@ describe('When cloning a day', function() {
 
 describe('When getting end of the month', function() {
 	it('for 2018-02-28 should be 2018-02-28', function() {
-		const d = new Day(2018, 2, 28);
-
-		expect(d.getEndOfMonth().getIsEqual(new Day(2018, 2, 28))).toEqual(true);
+		expect(new Day(2018, 2, 28).getEndOfMonth().getIsEqual(new Day(2018, 2, 28))).toEqual(true);
 	});
 
-	it('for 2018-02-28 should not return the same object', function() {
+	it('for 2018-03-30 should be 2018-03-31', function() {
+		expect(new Day(2018, 3, 30).getEndOfMonth().getIsEqual(new Day(2018, 3, 31))).toEqual(true);
+	});
+
+	it('should not return the same object', function() {
 		const d = new Day(2018, 2, 28);
 
-		expect(d.getEndOfMonth() === d).toEqual(false);
+		expect(d.getEndOfMonth()).not.toBe(d);
 	});
 });
 
