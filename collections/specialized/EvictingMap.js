@@ -106,6 +106,8 @@ module.exports = (() => {
 					node.remove();
 
 					this._head = this._head.insertBefore(key);
+
+					item.setNode(this._head);
 				}
 			} else {
 				returnRef = null;
@@ -199,11 +201,6 @@ module.exports = (() => {
 			this._value = value;
 		}
 
-		setItem(key, value) {
-			this._key = key;
-			this._value = value;
-		}
-
 		getKey() {
 			return this._key;
 		}
@@ -214,6 +211,10 @@ module.exports = (() => {
 
 		getNode() {
 			return this._node;
+		}
+
+		setNode(node) {
+			this._node = node;
 		}
 	}
 

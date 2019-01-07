@@ -277,3 +277,73 @@ describe('When an EvictingMap is constructed (with a capacity of 3)', function()
 		});
 	});
 });
+
+
+describe('When an EvictingMap is constructed', function() {
+	'use strict';
+
+	var map;
+
+	beforeEach(function() {
+		map = new EvictingMap(3);
+	});
+
+	describe('and used in a write-read-write pattern', function() {
+		var a;
+		var b;
+		var c;
+		var x;
+		var y;
+
+		beforeEach(function () {
+			a = {key: 'a'};
+			b = {key: 'b'};
+			c = {key: 'c'};
+			x = {key: 'x'};
+			y = {key: 'y'};
+
+			map.put(a.key, a);
+			map.put(b.key, b);
+			map.put(c.key, c);
+
+			map.get(c.key);
+			map.get(a.key);
+			map.get(c.key);
+
+			map.put(a.key, a);
+			map.put(b.key, b);
+			map.put(c.key, c);
+
+			map.put(x.key, x);
+			map.put(y.key, y);
+		});
+
+		it('get "a" should not return the first item', function() {
+			expect(map.get(a.key)).toEqual(null);
+		});
+
+		it('get "b" should not return the second item', function() {
+			expect(map.get(b.key)).toEqual(null);
+		});
+
+		it('get "c" should return the third item', function() {
+			expect(map.get(c.key)).toBe(c);
+		});
+
+		it('get "x" should return the fourth item', function() {
+			expect(map.get(x.key)).toBe(x);
+		});
+
+		it('get "y" should return the fourth item', function() {
+			expect(map.get(y.key)).toBe(y);
+		});
+
+		it('should not be empty',function() {
+			expect(map.empty()).toEqual(false);
+		});
+
+		it('should have three items',function() {
+			expect(map.getSize()).toEqual(3);
+		});
+	});
+});
