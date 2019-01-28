@@ -75,7 +75,7 @@ module.exports = (() => {
 		 * @static
 		 * @public
 		 * @param {*} candidate
-		 * @returns {*|boolean}
+		 * @returns {boolean}
 		 */
 		negative(candidate) {
 			return this.number(candidate) && candidate < 0;
