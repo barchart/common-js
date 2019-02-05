@@ -36,10 +36,11 @@
     "gulp-bump": "~1.0.0",
     "gulp-git": "~1.6.0",
     "gulp-jasmine": "^2.2.1",
-    "gulp-jshint": "~1.11.2",
+    "gulp-jshint": "~2.1.0",
     "gulp-rename": "^1.2.2",
     "gulp-util": "^3.0.7",
     "jsdoc": "^3.5.5",
+    "jshint": "2.9.5",
     "run-sequence": "~1.1.4",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0"
