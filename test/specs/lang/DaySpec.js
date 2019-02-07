@@ -568,6 +568,22 @@ describe('When cloning a day', function() {
 	});
 });
 
+describe('When getting start of the month', function() {
+	it('for 2018-02-28 should be 2018-02-01', function() {
+		expect(new Day(2018, 2, 28).getStartOfMonth().getIsEqual(new Day(2018, 2, 1))).toEqual(true);
+	});
+
+	it('for 2018-03-30 should be 2018-03-01', function() {
+		expect(new Day(2018, 3, 30).getStartOfMonth().getIsEqual(new Day(2018, 3, 1))).toEqual(true);
+	});
+
+	it('should not return the same object', function() {
+		const d = new Day(2018, 2, 1);
+
+		expect(d.getStartOfMonth()).not.toBe(d);
+	});
+});
+
 describe('When getting end of the month', function() {
 	it('for 2018-02-28 should be 2018-02-28', function() {
 		expect(new Day(2018, 2, 28).getEndOfMonth().getIsEqual(new Day(2018, 2, 28))).toEqual(true);
@@ -583,6 +599,3 @@ describe('When getting end of the month', function() {
 		expect(d.getEndOfMonth()).not.toBe(d);
 	});
 });
-
-
-

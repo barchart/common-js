@@ -208,7 +208,17 @@ module.exports = (() => {
 		}
 
 		/**
-		 * Returns a new Day instance for the end of the month of the current instance.
+		 * Returns a new {@link Day} instance for the start of the month referenced by the current instance.
+		 *
+		 * @public
+		 * @returns {Day}
+		 */
+		getStartOfMonth() {
+			return new Day(this.year, this.month, 1);
+		}
+
+		/**
+		 * Returns a new instance for the {@link Day} end of the month referenced by the current instance.
 		 *
 		 * @public
 		 * @returns {Day}
@@ -298,7 +308,7 @@ module.exports = (() => {
 			return this._month;
 		}
 
-		/**
+		/**day
 		 * The day of the month.
 		 *
 		 * @public
