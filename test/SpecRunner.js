@@ -3337,7 +3337,20 @@ module.exports = function () {
 			}
 
 			/**
-    * Returns a new Day instance for the end of the month of the current instance.
+    * Returns a new {@link Day} instance for the start of the month referenced by the current instance.
+    *
+    * @public
+    * @returns {Day}
+    */
+
+		}, {
+			key: 'getStartOfMonth',
+			value: function getStartOfMonth() {
+				return new Day(this.year, this.month, 1);
+			}
+
+			/**
+    * Returns a new instance for the {@link Day} end of the month referenced by the current instance.
     *
     * @public
     * @returns {Day}
@@ -3489,7 +3502,7 @@ module.exports = function () {
 				return this._month;
 			}
 
-			/**
+			/**day
     * The day of the month.
     *
     * @public
@@ -20556,6 +20569,22 @@ describe('When cloning a day', function () {
 
 	it('the cloned instance should equal the source instance', function () {
 		expect(source.getIsEqual(clone)).toEqual(true);
+	});
+});
+
+describe('When getting start of the month', function () {
+	it('for 2018-02-28 should be 2018-02-01', function () {
+		expect(new Day(2018, 2, 28).getStartOfMonth().getIsEqual(new Day(2018, 2, 1))).toEqual(true);
+	});
+
+	it('for 2018-03-30 should be 2018-03-01', function () {
+		expect(new Day(2018, 3, 30).getStartOfMonth().getIsEqual(new Day(2018, 3, 1))).toEqual(true);
+	});
+
+	it('should not return the same object', function () {
+		var d = new Day(2018, 2, 1);
+
+		expect(d.getStartOfMonth()).not.toBe(d);
 	});
 });
 
