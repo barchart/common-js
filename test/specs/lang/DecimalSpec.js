@@ -394,6 +394,18 @@ describe('When checking for values that approximate each other', function() {
 	it('A value of "0.02" should not approximate a value of "0.01" (when using two significant digits)', function() {
 		expect(new Decimal('0.02').getIsApproximate(new Decimal('0.01'), 2)).toEqual(false);
 	});
+
+	it('A value of "0.01" should not approximate a value of "-0.01" (when using two significant digits)', function() {
+		expect(new Decimal('0.01').getIsApproximate(new Decimal('-0.01'), 2)).toEqual(false);
+	});
+
+	it('A value of "-0.01" should not approximate a value of "0.01" (when using two significant digits)', function() {
+		expect(new Decimal('-0.01').getIsApproximate(new Decimal('0.01'), 2)).toEqual(false);
+	});
+
+	it('A value of "1" should not approximate a value of "1" (when using ten significant digits)', function() {
+		expect(new Decimal('1').getIsApproximate(new Decimal('1'), 10)).toEqual(true);
+	});
 });
 
 describe('When cloning a decimal', function() {
