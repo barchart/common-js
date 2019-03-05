@@ -215,6 +215,28 @@ module.exports = (() => {
 		}
 
 		/**
+		 * Returns true is close to another value.
+		 *
+		 * @public
+		 * @param {Decimal|Number|String} other - The value to compare.
+		 * @param {Number} places - The significant digits.
+		 * @returns {Boolean}
+		 */
+		getIsApproximate(other, places) {
+			const difference = this.subtract(other).absolute();
+
+			let tolerance;
+
+			if (places === 0) {
+				tolerance = 1;
+			} else {
+				tolerance = Decimal.ONE.divide(new Decimal(10).raise(places));
+			}
+
+			return difference.getIsLessThan(tolerance);
+		}
+
+		/**
 		 * Returns true if the current instance is an integer (i.e. has no decimal
 		 * component).
 		 *
