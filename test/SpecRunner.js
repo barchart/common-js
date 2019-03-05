@@ -3988,15 +3988,12 @@ module.exports = function () {
 		}, {
 			key: 'getIsApproximate',
 			value: function getIsApproximate(other, places) {
-				var difference = this.subtract(other).absolute();
-
-				var tolerance = void 0;
-
 				if (places === 0) {
-					tolerance = 1;
-				} else {
-					tolerance = Decimal.ONE.divide(new Decimal(10).raise(places));
+					return this.getIsEqual(other);
 				}
+
+				var difference = this.subtract(other).absolute();
+				var tolerance = Decimal.ONE.divide(new Decimal(10).raise(places));
 
 				return difference.getIsLessThan(tolerance);
 			}
@@ -21014,6 +21011,22 @@ describe('When raising to a power', function () {
 describe('When checking for values that approximate each other', function () {
 	'use strict';
 
+	it('A value of "1" should approximate a value of "1" (when using ten significant digits)', function () {
+		expect(new Decimal('1').getIsApproximate(new Decimal('1'), 10)).toEqual(true);
+	});
+
+	it('A value of "10" should approximate a value of "10" (when using zero significant digits)', function () {
+		expect(new Decimal('10').getIsApproximate(new Decimal('10'), 0)).toEqual(true);
+	});
+
+	it('A value of "10" should not approximate a value of "10.0001" (when using zero significant digits)', function () {
+		expect(new Decimal('10').getIsApproximate(new Decimal('10.0001'), 0)).toEqual(false);
+	});
+
+	it('A value of "10.0001" should not approximate a value of "10" (when using zero significant digits)', function () {
+		expect(new Decimal('10.0001').getIsApproximate(new Decimal('10'), 0)).toEqual(false);
+	});
+
 	it('A value of "0.01" should approximate a value of "0.019" (when using two significant digits)', function () {
 		expect(new Decimal('0.01').getIsApproximate(new Decimal('0.019'), 2)).toEqual(true);
 	});
@@ -21044,6 +21057,14 @@ describe('When checking for values that approximate each other', function () {
 
 	it('A value of "0.02" should not approximate a value of "0.01" (when using two significant digits)', function () {
 		expect(new Decimal('0.02').getIsApproximate(new Decimal('0.01'), 2)).toEqual(false);
+	});
+
+	it('A value of "0.01" should not approximate a value of "-0.01" (when using two significant digits)', function () {
+		expect(new Decimal('0.01').getIsApproximate(new Decimal('-0.01'), 2)).toEqual(false);
+	});
+
+	it('A value of "-0.01" should not approximate a value of "0.01" (when using two significant digits)', function () {
+		expect(new Decimal('-0.01').getIsApproximate(new Decimal('0.01'), 2)).toEqual(false);
 	});
 });
 
