@@ -3795,6 +3795,24 @@ module.exports = function () {
 			}
 
 			/**
+    * Returns a new {@link Decimal} instance with a value that results
+    * from raising the current instance to the power of the exponent
+    * provided.
+    *
+    * @public
+    * @param {Decimal|Number|String} exponent
+    * @returns {Decimal}
+    */
+
+		}, {
+			key: 'raise',
+			value: function raise(exponent) {
+				assert.argumentIsRequired(exponent, 'exponent', Number);
+
+				return new Decimal(this._big.pow(exponent));
+			}
+
+			/**
     * Returns a new {@link Decimal} with a value resulting from a rounding
     * operation on the current value.
     *
@@ -20949,6 +20967,22 @@ describe('When checking for values that approximate zero', function () {
 
 	it('A value of "0.09" should not approximate zero, when rounding is not specified', function () {
 		expect(new Decimal('0.09').getIsZero(true)).toEqual(false);
+	});
+});
+
+describe('When raising to a power', function () {
+	'use strict';
+
+	it('The value of 2 raised to 8 should be 256', function () {
+		expect(new Decimal(2).raise(8).getIsEqual(256)).toEqual(true);
+	});
+
+	it('The value of 2 raised to -1 should be 0.5', function () {
+		expect(new Decimal(2).raise(-1).getIsEqual(0.5)).toEqual(true);
+	});
+
+	it('The value of 2 raised to 0 should be 1', function () {
+		expect(new Decimal(2).raise(0).getIsEqual(1)).toEqual(true);
 	});
 });
 

@@ -344,6 +344,22 @@ describe('When checking for values that approximate zero', function() {
 	});
 });
 
+describe('When raising to a power', function() {
+	'use strict';
+
+	it('The value of 2 raised to 8 should be 256', function() {
+		expect(new Decimal(2).raise(8).getIsEqual(256)).toEqual(true);
+	});
+
+	it('The value of 2 raised to -1 should be 0.5', function() {
+		expect(new Decimal(2).raise(-1).getIsEqual(0.5)).toEqual(true);
+	});
+
+	it('The value of 2 raised to 0 should be 1', function() {
+		expect(new Decimal(2).raise(0).getIsEqual(1)).toEqual(true);
+	});
+});
+
 describe('When cloning a decimal', function() {
 	'use strict';
 

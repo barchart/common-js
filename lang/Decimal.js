@@ -69,6 +69,21 @@ module.exports = (() => {
 		}
 
 		/**
+		 * Returns a new {@link Decimal} instance with a value that results
+		 * from raising the current instance to the power of the exponent
+		 * provided.
+		 *
+		 * @public
+		 * @param {Decimal|Number|String} exponent
+		 * @returns {Decimal}
+		 */
+		raise(exponent) {
+			assert.argumentIsRequired(exponent, 'exponent', Number);
+
+			return new Decimal(this._big.pow(exponent));
+		}
+
+		/**
 		 * Returns a new {@link Decimal} with a value resulting from a rounding
 		 * operation on the current value.
 		 *
