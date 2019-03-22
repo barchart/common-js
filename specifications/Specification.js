@@ -3,31 +3,74 @@ const assert = require('./../lang/assert');
 module.exports = (() => {
 	'use strict';
 
+	/**
+	 * Simple implementation of a specification pattern, where instances
+	 * can be combined to form complex predicates.
+	 *
+	 * @public
+	 */
 	class Specification {
 		constructor() {
 
 		}
 
+		/**
+		 * Evaluates the specification, returning true or false.
+		 *
+		 * @public
+		 * @param {*=} data
+		 * @returns {Boolean}
+		 */
 		evaluate(data) {
 			return this._evaluate(data);
 		}
 
+		/**
+		 * @protected
+		 */
 		_evaluate(data) {
 			return false;
 		}
 
+		/**
+		 * Wraps the current instance and another {@link Specification} into a new
+		 * specification which only evaluates to true when both wrapped specifications
+		 * evaluate to true.
+		 *
+		 * @public
+		 * @param {Specification} other
+		 * @returns {AndSpecification}
+		 */
 		and(other) {
 			assert.argumentIsRequired(other, 'other', Specification, 'Specification');
 
 			return new AndSpecification(this, other);
 		}
 
+		/**
+		 * Wraps the current instance and another {@link Specification} into a new
+		 * specification which only evaluates to true when either of the wrapped
+		 * specifications evaluate to true.
+		 *
+		 * @public
+		 * @param {Specification} other
+		 * @returns {OrSpecification}
+		 */
 		or(other) {
 			assert.argumentIsRequired(other, 'other', Specification, 'Specification');
 
 			return new OrSpecification(this, other);
 		}
 
+
+		/**
+		 * Wraps the current instance in a new {@link Specification} which evaluates
+		 * to the inverse result of the wrapped specification.
+		 *
+		 * @public
+		 * @param {Specification} other
+		 * @returns {NotSpecification}
+		 */
 		not() {
 			return new NotSpecification(this);
 		}
