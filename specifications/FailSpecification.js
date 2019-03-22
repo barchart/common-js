@@ -4,7 +4,7 @@ module.exports = (() => {
 	'use strict';
 
 	class FailSpecification extends Specification {
-		constructor(value) {
+		constructor() {
 			super();
 		}
 
