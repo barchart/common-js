@@ -909,7 +909,7 @@ module.exports = function () {
   *
   * @public
   * @param {*} value - The value of the node.
-  * @param {Tree} parent - The parent node. If not supplied, this will be the root node.
+  * @param {Tree=} parent - The parent node. If not supplied, this will be the root node.
   */
 
 	var Tree = function () {
@@ -2319,7 +2319,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var assert = require('./../../lang/assert'),
+var array = require('./../../lang/array'),
+    assert = require('./../../lang/assert'),
     Queue = require('./../Queue');
 
 module.exports = function () {
@@ -2349,13 +2350,7 @@ module.exports = function () {
 		_createClass(PriorityQueue, [{
 			key: 'enqueue',
 			value: function enqueue(item) {
-				if (this._array.length === 0 || !(this._comparator(item, this._array[this._array.length - 1]) < 0)) {
-					this._array.push(item);
-				} else if (this._comparator(item, this._array[0]) < 0) {
-					this._array.unshift(item);
-				} else {
-					this._array.splice(binarySearch(this._array, item, this._comparator, 0, this._array.length - 1), 0, item);
-				}
+				array.insert(this._array, item, this._comparator);
 
 				return item;
 			}
@@ -2389,37 +2384,10 @@ module.exports = function () {
 		return PriorityQueue;
 	}(Queue);
 
-	function binarySearch(array, item, comparator, start, end) {
-		var size = end - start;
-
-		var midpointIndex = start + Math.floor(size / 2);
-		var midpointItem = array[midpointIndex];
-
-		var comparison = comparator(item, midpointItem) > 0;
-
-		if (size < 2) {
-			if (comparison > 0) {
-				var finalIndex = array.length - 1;
-
-				if (end === finalIndex && comparator(item, array[finalIndex]) > 0) {
-					return end + 1;
-				} else {
-					return end;
-				}
-			} else {
-				return start;
-			}
-		} else if (comparison > 0) {
-			return binarySearch(array, item, comparator, midpointIndex, end);
-		} else {
-			return binarySearch(array, item, comparator, start, midpointIndex);
-		}
-	}
-
 	return PriorityQueue;
 }();
 
-},{"./../../lang/assert":30,"./../Queue":5}],15:[function(require,module,exports){
+},{"./../../lang/array":29,"./../../lang/assert":30,"./../Queue":5}],15:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -5779,8 +5747,62 @@ module.exports = function () {
 			}
 
 			return found;
+		},
+
+
+		/**
+   * Inserts an item into an array using a binary search is used to determine the
+   * proper point for insertion and returns the same array.
+   *
+   * @static
+   * @public
+   * @param {Array} a
+   * @param {*} item
+   * @param {Function} comparator
+   * @returns {Array}
+   */
+		insert: function insert(a, item, comparator) {
+			assert.argumentIsArray(a, 'a');
+			assert.argumentIsRequired(comparator, 'comparator', Function);
+
+			if (a.length === 0 || !(comparator(item, a[a.length - 1]) < 0)) {
+				a.push(item);
+			} else if (comparator(item, a[0]) < 0) {
+				a.unshift(item);
+			} else {
+				a.splice(binarySearch(a, item, comparator, 0, a.length - 1), 0, item);
+			}
+
+			return a;
 		}
 	};
+
+	function binarySearch(array, item, comparator, start, end) {
+		var size = end - start;
+
+		var midpointIndex = start + Math.floor(size / 2);
+		var midpointItem = array[midpointIndex];
+
+		var comparison = comparator(item, midpointItem) > 0;
+
+		if (size < 2) {
+			if (comparison > 0) {
+				var finalIndex = array.length - 1;
+
+				if (end === finalIndex && comparator(item, array[finalIndex]) > 0) {
+					return end + 1;
+				} else {
+					return end;
+				}
+			} else {
+				return start;
+			}
+		} else if (comparison > 0) {
+			return binarySearch(array, item, comparator, midpointIndex, end);
+		} else {
+			return binarySearch(array, item, comparator, start, midpointIndex);
+		}
+	}
 }();
 
 },{"./assert":30,"./is":35}],30:[function(require,module,exports){
