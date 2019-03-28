@@ -1,4 +1,5 @@
-const assert = require('./../../lang/assert'),
+const array = require('./../../lang/array'),
+	assert = require('./../../lang/assert'),
 	Queue = require('./../Queue');
 
 module.exports = (() => {
@@ -20,13 +21,7 @@ module.exports = (() => {
 		}
 
 		enqueue(item) {
-			if (this._array.length === 0 || !(this._comparator(item, this._array[this._array.length - 1]) < 0)) {
-				this._array.push(item);
-			} else if (this._comparator(item, this._array[0]) < 0) {
-				this._array.unshift(item);
-			} else {
-				this._array.splice(binarySearch(this._array, item, this._comparator, 0, this._array.length - 1), 0, item);
-			}
+			array.insert(this._array, item, this._comparator);
 
 			return item;
 		}
@@ -49,33 +44,6 @@ module.exports = (() => {
 
 		toString() {
 			return '[PriorityQueue]';
-		}
-	}
-
-	function binarySearch(array, item, comparator, start, end) {
-		const size = end - start;
-
-		const midpointIndex = start + Math.floor(size / 2);
-		const midpointItem = array[ midpointIndex ];
-
-		const comparison = (comparator(item, midpointItem) > 0);
-
-		if (size < 2) {
-			if (comparison > 0) {
-				const finalIndex = array.length - 1;
-
-				if (end === finalIndex && comparator(item, array[ finalIndex ]) > 0) {
-					return end + 1;
-				} else {
-					return end;
-				}
-			} else {
-				return start;
-			}
-		} else if (comparison > 0) {
-			return binarySearch(array, item, comparator, midpointIndex, end);
-		} else {
-			return binarySearch(array, item, comparator, start, midpointIndex);
 		}
 	}
 

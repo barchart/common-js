@@ -10,7 +10,7 @@ module.exports = (() => {
 	 *
 	 * @public
 	 * @param {*} value - The value of the node.
-	 * @param {Tree} parent - The parent node. If not supplied, this will be the root node.
+	 * @param {Tree=} parent - The parent node. If not supplied, this will be the root node.
 	 */
 	class Tree {
 		constructor(value, parent) {
@@ -250,7 +250,6 @@ module.exports = (() => {
 
 			return returnRef;
 		}
-
 
 		/**
 		 * Creates a representation of the tree using JavaScript objects and arrays.

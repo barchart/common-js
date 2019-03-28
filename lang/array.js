@@ -421,6 +421,59 @@ module.exports = (() => {
 			}
 
 			return found;
+		},
+
+		/**
+		 * Inserts an item into an array using a binary search is used to determine the
+		 * proper point for insertion and returns the same array.
+		 *
+		 * @static
+		 * @public
+		 * @param {Array} a
+		 * @param {*} item
+		 * @param {Function} comparator
+		 * @returns {Array}
+		 */
+		insert(a, item, comparator) {
+			assert.argumentIsArray(a, 'a');
+			assert.argumentIsRequired(comparator, 'comparator', Function);
+
+			if (a.length === 0 || !(comparator(item, a[a.length - 1]) < 0)) {
+				a.push(item);
+			} else if (comparator(item, a[0]) < 0) {
+				a.unshift(item);
+			} else {
+				a.splice(binarySearch(a, item, comparator, 0, a.length - 1), 0, item);
+			}
+
+			return a;
 		}
 	};
+
+	function binarySearch(array, item, comparator, start, end) {
+		const size = end - start;
+
+		const midpointIndex = start + Math.floor(size / 2);
+		const midpointItem = array[ midpointIndex ];
+
+		const comparison = (comparator(item, midpointItem) > 0);
+
+		if (size < 2) {
+			if (comparison > 0) {
+				const finalIndex = array.length - 1;
+
+				if (end === finalIndex && comparator(item, array[ finalIndex ]) > 0) {
+					return end + 1;
+				} else {
+					return end;
+				}
+			} else {
+				return start;
+			}
+		} else if (comparison > 0) {
+			return binarySearch(array, item, comparator, midpointIndex, end);
+		} else {
+			return binarySearch(array, item, comparator, start, midpointIndex);
+		}
+	}
 })();
