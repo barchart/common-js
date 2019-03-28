@@ -39,7 +39,7 @@ module.exports = (() => {
 		addChild(value) {
 			const returnRef = new SortedTree(value, this);
 
-			const comparatorNode = this.findParent((t) => t._comparator !== null, true);
+			const comparatorNode = this.findParent((t, n) => n._comparator !== null, true);
 
 			array.insert(this._children, returnRef, comparatorNode._comparator);
 
