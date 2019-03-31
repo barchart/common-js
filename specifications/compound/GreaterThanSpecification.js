@@ -5,6 +5,14 @@ const Specification = require('./../Specification');
 module.exports = (() => {
 	'use strict';
 
+	/**
+	 * A specification that determines if the first value
+	 * in an array is greater than the second value of an
+	 * array.
+	 *
+	 * @public
+	 * @extends {Specification}
+	 */
 	class GreaterThanSpecification extends Specification {
 		constructor() {
 			super();
