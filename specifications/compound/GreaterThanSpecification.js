@@ -6,9 +6,8 @@ module.exports = (() => {
 	'use strict';
 
 	/**
-	 * A specification that determines if the first value
-	 * in an array is greater than the second value of an
-	 * array.
+	 * A {@link Specification} that passes when the first item in an
+	 * array is greater than the second item in the array.
 	 *
 	 * @public
 	 * @extends {Specification}

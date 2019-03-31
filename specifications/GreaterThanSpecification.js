@@ -5,6 +5,14 @@ const Specification = require('./Specification');
 module.exports = (() => {
 	'use strict';
 
+	/**
+	 * A {@link Specification} that passes when the value of the data item
+	 * exceeds the value passed to the constructor.
+	 *
+	 * @public
+	 * @extends {Specification}
+	 * @param {Number} value
+	 */
 	class GreaterThanSpecification extends Specification {
 		constructor(value) {
 			super();

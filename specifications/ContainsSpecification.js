@@ -3,6 +3,14 @@ const Specification = require('./Specification');
 module.exports = (() => {
 	'use strict';
 
+	/**
+	 * A {@link Specification} that passes when an item (passed to the
+	 * constructor) is contained within an array.
+	 *
+	 * @public
+	 * @extends {Specification}
+	 * @param {*} value
+	 */
 	class ContainsSpecification extends Specification {
 		constructor(value) {
 			super();
