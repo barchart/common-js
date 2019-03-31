@@ -1,11 +1,11 @@
-const assert = require('./../lang/assert');
+const assert = require('./../../lang/assert');
 
 const Specification = require('./../Specification');
 
 module.exports = (() => {
 	'use strict';
 
-	class LessThanSpecification extends Specification {
+	class GreaterThanSpecification extends Specification {
 		constructor() {
 			super();
 		}
@@ -13,13 +13,13 @@ module.exports = (() => {
 		_evaluate(data) {
 			assert.argumentIsArray(data, 'data', Number);
 
-			return data.length === 2 && data[0] < data[1];
+			return data.length === 2 && data[0] > data[1];
 		}
 
 		toString() {
-			return '[LessThanSpecification]';
+			return '[GreaterThanSpecification]';
 		}
 	}
 
-	return LessThanSpecification;
+	return GreaterThanSpecification;
 })();
