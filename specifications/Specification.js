@@ -39,12 +39,12 @@ module.exports = (() => {
 		 *
 		 * @public
 		 * @param {Specification} other
-		 * @returns {AndSpecification}
+		 * @returns {And}
 		 */
 		and(other) {
 			assert.argumentIsRequired(other, 'other', Specification, 'Specification');
 
-			return new AndSpecification(this, other);
+			return new And(this, other);
 		}
 
 		/**
@@ -54,12 +54,12 @@ module.exports = (() => {
 		 *
 		 * @public
 		 * @param {Specification} other
-		 * @returns {OrSpecification}
+		 * @returns {Or}
 		 */
 		or(other) {
 			assert.argumentIsRequired(other, 'other', Specification, 'Specification');
 
-			return new OrSpecification(this, other);
+			return new Or(this, other);
 		}
 
 
@@ -69,10 +69,10 @@ module.exports = (() => {
 		 *
 		 * @public
 		 * @param {Specification} other
-		 * @returns {NotSpecification}
+		 * @returns {Not}
 		 */
 		not() {
-			return new NotSpecification(this);
+			return new Not(this);
 		}
 
 		toString() {
@@ -80,7 +80,7 @@ module.exports = (() => {
 		}
 	}
 
-	class AndSpecification extends Specification {
+	class And extends Specification {
 		constructor(specificationOne, specificationTwo) {
 			super();
 
@@ -96,11 +96,11 @@ module.exports = (() => {
 		}
 
 		toString() {
-			return '[AndSpecification]';
+			return '[And]';
 		}
 	}
 
-	class OrSpecification extends Specification {
+	class Or extends Specification {
 		constructor(specificationOne, specificationTwo) {
 			super();
 
@@ -116,11 +116,11 @@ module.exports = (() => {
 		}
 
 		toString() {
-			return '[OrSpecification]';
+			return '[Or]';
 		}
 	}
 
-	class NotSpecification extends Specification {
+	class Not extends Specification {
 		constructor(otherSpecification) {
 			super();
 
@@ -134,13 +134,13 @@ module.exports = (() => {
 		}
 
 		toString() {
-			return '[NotSpecification]';
+			return '[Not]';
 		}
 	}
 
-	Specification.AndSpecification = AndSpecification;
-	Specification.OrSpecification = OrSpecification;
-	Specification.NotSpecification = NotSpecification;
+	Specification.And = And;
+	Specification.Or = Or;
+	Specification.Not = Not;
 
 	return Specification;
 })();

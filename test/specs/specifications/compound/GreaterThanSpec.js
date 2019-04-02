@@ -1,12 +1,12 @@
-const GreaterThanSpecification = require('./../../../../specifications/compound/GreaterThanSpecification');
+const GreaterThan = require('./../../../../specifications/compound/GreaterThan');
 
-describe('When a GreaterThanSpecification is constructed', () => {
+describe('When a GreaterThan is constructed', () => {
 	'use strict';
 
 	let specification;
 
 	beforeEach(() => {
-		specification = new GreaterThanSpecification();
+		specification = new GreaterThan();
 	});
 
 	it('should pass when the first item is larger than the second item', () => {

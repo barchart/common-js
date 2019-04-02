@@ -1,7 +1,7 @@
 var Specification = require('./../../../specifications/Specification');
-var AndSpecification = require('./../../../specifications/AndSpecification');
+var Or = require('./../../../specifications/Or');
 
-describe('When an AndSpecification is constructed', function() {
+describe('When an Or is constructed', function() {
 	'use strict';
 
 	class SpecPass extends Specification {
@@ -38,35 +38,7 @@ describe('When an AndSpecification is constructed', function() {
 		var result;
 
 		beforeEach(function() {
-			specification = new AndSpecification(specPassOne = new SpecPass(), specPassTwo = new SpecPass());
-
-			result = specification.evaluate(data = {});
-		});
-
-		it('should call the first specification', function() {
-			expect(specPassOne._spy).toHaveBeenCalledWith(data);
-		});
-
-		it('should call the second specification', function() {
-			expect(specPassTwo._spy).toHaveBeenCalledWith(data);
-		});
-
-		it('should evaluate to true', function() {
-			expect(result).toEqual(true);
-		});
-	});
-
-	describe('where the first specifications will fail', function() {
-		var specification;
-
-		var specPassOne;
-		var specPassTwo;
-
-		var data;
-		var result;
-
-		beforeEach(function() {
-			specification = new AndSpecification(specPassOne = new SpecFail(), specPassTwo = new SpecPass());
+			specification = new Or(specPassOne = new SpecPass(), specPassTwo = new SpecPass());
 
 			result = specification.evaluate(data = {});
 		});
@@ -77,6 +49,34 @@ describe('When an AndSpecification is constructed', function() {
 
 		it('should not call the second specification', function() {
 			expect(specPassTwo._spy).not.toHaveBeenCalledWith(data);
+		});
+
+		it('should evaluate to false', function() {
+			expect(result).toEqual(true);
+		});
+	});
+
+	describe('with two specifications that will fail', function() {
+		var specification;
+
+		var specPassOne;
+		var specPassTwo;
+
+		var data;
+		var result;
+
+		beforeEach(function() {
+			specification = new Or(specPassOne = new SpecFail(), specPassTwo = new SpecFail());
+
+			result = specification.evaluate(data = {});
+		});
+
+		it('should call the first specification', function() {
+			expect(specPassOne._spy).toHaveBeenCalledWith(data);
+		});
+
+		it('should call the second specification', function() {
+			expect(specPassTwo._spy).toHaveBeenCalledWith(data);
 		});
 
 		it('should evaluate to false', function() {

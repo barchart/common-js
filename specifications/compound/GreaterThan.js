@@ -12,7 +12,7 @@ module.exports = (() => {
 	 * @public
 	 * @extends {Specification}
 	 */
-	class GreaterThanSpecification extends Specification {
+	class GreaterThan extends Specification {
 		constructor() {
 			super();
 		}
@@ -24,9 +24,9 @@ module.exports = (() => {
 		}
 
 		toString() {
-			return '[GreaterThanSpecification]';
+			return '[GreaterThan]';
 		}
 	}
 
-	return GreaterThanSpecification;
+	return GreaterThan;
 })();

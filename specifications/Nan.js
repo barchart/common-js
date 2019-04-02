@@ -13,7 +13,7 @@ module.exports = (() => {
 	 * @extends {Specification}
 	 * @param {*} value
 	 */
-	class NanSpecification extends Specification {
+	class Nan extends Specification {
 		constructor() {
 			super();
 		}
@@ -23,9 +23,9 @@ module.exports = (() => {
 		}
 
 		toString() {
-			return '[NanSpecification]';
+			return '[Nan]';
 		}
 	}
 
-	return NanSpecification;
+	return Nan;
 })();

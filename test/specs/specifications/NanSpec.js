@@ -1,12 +1,12 @@
-var NanSpecification = require('./../../../specifications/NanSpecification');
+var Nan = require('./../../../specifications/Nan');
 
-describe('When a NanSpecification is constructed', function() {
+describe('When a Nan is constructed', function() {
 	'use strict';
 
 	var specification;
 
 	beforeEach(function() {
-		specification = new NanSpecification();
+		specification = new Nan();
 	});
 
 	describe('and a string is evaluated', function() {

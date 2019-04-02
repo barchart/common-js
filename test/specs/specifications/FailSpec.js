@@ -1,13 +1,13 @@
-var PassSpecification = require('./../../../specifications/PassSpecification');
+var Fail = require('./../../../specifications/Fail');
 
-describe('When a PassSpecification is constructed', function() {
+describe('When a Fail is constructed', function() {
 	'use strict';
 
 	var specification;
 	var specificationValue;
 
 	beforeEach(function() {
-		specification = new PassSpecification(specificationValue = 'ignored');
+		specification = new Fail(specificationValue = 'ignored');
 	});
 
 	describe('and a string is evaluated', function() {
@@ -17,8 +17,8 @@ describe('When a PassSpecification is constructed', function() {
 			result = specification.evaluate('abc');
 		});
 
-		it('should pass', function() {
-			expect(result).toEqual(true);
+		it('should not pass', function() {
+			expect(result).toEqual(false);
 		});
 	});
 
@@ -29,8 +29,8 @@ describe('When a PassSpecification is constructed', function() {
 			result = specification.evaluate(null);
 		});
 
-		it('should pass', function() {
-			expect(result).toEqual(true);
+		it('should not pass', function() {
+			expect(result).toEqual(false);
 		});
 	});
 
@@ -41,8 +41,8 @@ describe('When a PassSpecification is constructed', function() {
 			result = specification.evaluate(undefined);
 		});
 
-		it('should pass', function() {
-			expect(result).toEqual(true);
+		it('should not pass', function() {
+			expect(result).toEqual(false);
 		});
 	});
 });

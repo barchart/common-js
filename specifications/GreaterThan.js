@@ -6,14 +6,14 @@ module.exports = (() => {
 	'use strict';
 
 	/**
-	 * A {@link Specification} that passes when the value of the item passed to
-	 * the constructor exceeds the value of the data item.
+	 * A {@link Specification} that passes when the value of the data item
+	 * exceeds the value passed to the constructor.
 	 *
 	 * @public
 	 * @extends {Specification}
 	 * @param {Number} value
 	 */
-	class LessThanSpecification extends Specification {
+	class GreaterThan extends Specification {
 		constructor(value) {
 			super();
 
@@ -25,13 +25,13 @@ module.exports = (() => {
 		_evaluate(data) {
 			assert.argumentIsRequired(data, 'data', Number);
 
-			return data < this._value;
+			return data > this._value;
 		}
 
 		toString() {
-			return '[LessThanSpecification]';
+			return '[GreaterThan]';
 		}
 	}
 
-	return LessThanSpecification;
+	return GreaterThan;
 })();

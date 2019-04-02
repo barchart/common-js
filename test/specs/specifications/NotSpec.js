@@ -1,7 +1,7 @@
-var NotSpecification = require('./../../../specifications/NotSpecification');
+var Not = require('./../../../specifications/Not');
 var Specification = require('./../../../specifications/Specification');
 
-describe('When a NotSpecification is constructed', function() {
+describe('When a Not is constructed', function() {
 	'use strict';
 
 	class DelegateSpecification extends Specification {
@@ -23,7 +23,7 @@ describe('When a NotSpecification is constructed', function() {
 		var result;
 
 		beforeEach(function() {
-			specification = new NotSpecification(
+			specification = new Not(
 				new DelegateSpecification(
 					spy = jasmine.createSpy('fn').and.callFake(function(data) {
 						return false;
@@ -51,7 +51,7 @@ describe('When a NotSpecification is constructed', function() {
 		var result;
 
 		beforeEach(function() {
-			specification = new NotSpecification(
+			specification = new Not(
 				new DelegateSpecification(
 					spy = jasmine.createSpy('fn').and.callFake(function(data) {
 						return true;

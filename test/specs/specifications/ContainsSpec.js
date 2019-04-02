@@ -1,13 +1,13 @@
-var ContainsSpecification = require('./../../../specifications/ContainsSpecification');
+var Contains = require('./../../../specifications/Contains');
 
-describe('When a ContainsSpecification is constructed', function() {
+describe('When a Contains is constructed', function() {
 	'use strict';
 
 	var specification;
 	var specificationValue;
 
 	beforeEach(function() {
-		specification = new ContainsSpecification(specificationValue = 'xyz');
+		specification = new Contains(specificationValue = 'xyz');
 	});
 
 	describe('and an array, containing the desired value, is evaluated', function() {

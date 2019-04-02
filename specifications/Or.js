@@ -3,5 +3,5 @@ const Specification = require('./Specification');
 module.exports = (() => {
 	'use strict';
 
-	return Specification.NotSpecification;
+	return Specification.Or;
 })();

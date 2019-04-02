@@ -12,7 +12,7 @@ module.exports = (() => {
 	 * @public
 	 * @extends {Specification}
 	 */
-	class LessThanSpecification extends Specification {
+	class LessThan extends Specification {
 		constructor() {
 			super();
 		}
@@ -24,9 +24,9 @@ module.exports = (() => {
 		}
 
 		toString() {
-			return '[LessThanSpecification]';
+			return '[LessThan]';
 		}
 	}
 
-	return LessThanSpecification;
+	return LessThan;
 })();

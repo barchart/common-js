@@ -11,7 +11,7 @@ module.exports = (() => {
 	 * @extends {Specification}
 	 * @param {*} value
 	 */
-	class EqualsSpecification extends Specification {
+	class Equals extends Specification {
 		constructor(value) {
 			super();
 
@@ -23,9 +23,9 @@ module.exports = (() => {
 		}
 
 		toString() {
-			return '[EqualsSpecification]';
+			return '[Equals]';
 		}
 	}
 
-	return EqualsSpecification;
+	return Equals;
 })();

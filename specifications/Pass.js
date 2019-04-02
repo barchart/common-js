@@ -9,7 +9,7 @@ module.exports = (() => {
 	 * @public
 	 * @extends {Specification}
 	 */
-	class PassSpecification extends Specification {
+	class Pass extends Specification {
 		constructor() {
 			super();
 		}
@@ -19,9 +19,9 @@ module.exports = (() => {
 		}
 
 		toString() {
-			return '[PassSpecification]';
+			return '[Pass]';
 		}
 	}
 
-	return PassSpecification;
+	return Pass;
 })();

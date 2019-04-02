@@ -1,13 +1,13 @@
-const EqualsSpecification = require('./../../../specifications/EqualsSpecification');
+const Equals = require('./../../../specifications/Equals');
 
-describe('When a EqualsSpecification is constructed', () => {
+describe('When a Equals is constructed', () => {
 	'use strict';
 
 	let specification;
 	let value;
 
 	beforeEach(() => {
-		specification = new EqualsSpecification(value = { });
+		specification = new Equals(value = { });
 	});
 
 	describe('and the same object is evaluated', () => {

@@ -1,12 +1,12 @@
-const LessThanSpecification = require('./../../../../specifications/compound/LessThanSpecification');
+const LessThan = require('./../../../../specifications/compound/LessThan');
 
-describe('When a LessThanSpecification is constructed', () => {
+describe('When a LessThan is constructed', () => {
 	'use strict';
 
 	let specification;
 
 	beforeEach(() => {
-		specification = new LessThanSpecification();
+		specification = new LessThan();
 	});
 
 	it('should pass when the first item is smaller than the second item', () => {

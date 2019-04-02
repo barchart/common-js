@@ -1,12 +1,12 @@
-var NumericSpecification = require('./../../../specifications/NumericSpecification');
+var Numeric = require('./../../../specifications/Numeric');
 
-describe('When a NumericSpecification is constructed', function() {
+describe('When a Numeric is constructed', function() {
 	'use strict';
 
 	var specification;
 
 	beforeEach(function() {
-		specification = new NumericSpecification();
+		specification = new Numeric();
 	});
 
 	describe('and a string is evaluated', function() {
