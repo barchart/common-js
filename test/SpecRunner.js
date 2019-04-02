@@ -27747,7 +27747,7 @@ describe('When a GreaterThan is constructed (with a range of 17 to 42)', functio
 	});
 
 	it('should pass pass when 18 is evaluated', function () {
-		expect(specification.evaluate(17)).toBe(true);
+		expect(specification.evaluate(18)).toBe(true);
 	});
 
 	it('should pass pass when 41 is evaluated', function () {
