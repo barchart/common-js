@@ -18,9 +18,7 @@ module.exports = (() => {
 		}
 
 		_evaluate(data) {
-			assert.argumentIsArray(data, 'data', Number);
-
-			return data.length === 2 && data[0] > data[1];
+			return Array.isArray(data) && data.length === 2 && data[0] > data[1];
 		}
 
 		toString() {
