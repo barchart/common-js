@@ -17784,9 +17784,7 @@ module.exports = function () {
 		_createClass(GreaterThan, [{
 			key: '_evaluate',
 			value: function _evaluate(data) {
-				assert.argumentIsArray(data, 'data', Number);
-
-				return data.length === 2 && data[0] > data[1];
+				return Array.isArray(data) && data.length === 2 && data[0] > data[1];
 			}
 		}, {
 			key: 'toString',
@@ -17839,9 +17837,7 @@ module.exports = function () {
 		_createClass(LessThan, [{
 			key: '_evaluate',
 			value: function _evaluate(data) {
-				assert.argumentIsArray(data, 'data', Number);
-
-				return data.length === 2 && data[0] < data[1];
+				return Array.isArray(data) && data.length === 2 && data[0] < data[1];
 			}
 		}, {
 			key: 'toString',
