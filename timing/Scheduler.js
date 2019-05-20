@@ -120,58 +120,63 @@ module.exports = (() => {
 						throw new Error('The Scheduler has been disposed.');
 					}
 
-					const scheduleBackoff = (failureCount, e) => {
-						if (failureCount > 0 && is.fn(failureCallback)) {
-							failureCallback(failureCount);
-						}
+					const processAction = (attempts) => {
+						return Promise.resolve()
+							.then(() => {
+								let delay;
 
-						if (maximumAttempts > 0 && failureCount > maximumAttempts) {
-							let message = `Maximum failures reached for ${actionDescription}`;
-
-							let rejection;
-
-							if (e) {
-								e.backoff = message;
-
-								rejection = e;
-							} else {
-								rejection = message;
-							}
-
-							return Promise.reject(rejection);
-						}
-
-						let backoffDelay;
-
-						if (failureCount === 0) {
-							backoffDelay = (millisecondDelay || 0);
-						} else {
-							backoffDelay = (millisecondDelay || 1000) * Math.pow(2, failureCount);
-						}
-
-						let successPredicate;
-
-						if (is.undefined(failureValue)) {
-							successPredicate = (value) => value;
-						} else {
-							successPredicate = (value) => {
-								return !object.equals(value, failureValue);
-							};
-						}
-
-						return this.schedule(actionToBackoff, backoffDelay, (actionDescription || 'unspecified') + ', attempt ' + (failureCount + 1))
-							.then((result) => {
-								if (successPredicate(result)) {
-									return result;
+								if (attempts === 1) {
+									delay = 0;
 								} else {
-									return scheduleBackoff(++failureCount);
+									delay = (millisecondDelay || 1000) * Math.pow(2, attempts - 1)
 								}
+
+								return this.schedule(actionToBackoff, delay, `Attempt [ ${attempts} ] for [ ${(actionDescription || 'unnamed action')} ]`);
+							}).then((result) => {
+								let resultPromise;
+
+								if (!is.undefined(failureValue) && object.equals(result, failureValue)) {
+									resultPromise = Promise.reject(`Attempt [ ${attempts} ] for [ ${(actionDescription || 'unnamed action')} ] failed due to invalid result`);
+								} else {
+									resultPromise = Promise.resolve(result);
+								}
+
+								return resultPromise;
 							}).catch((e) => {
-								return scheduleBackoff(++failureCount, e);
+								if (is.fn(failureCallback)) {
+									failureCallback(attempts);
+								}
+
+								return Promise.reject(e);
 							});
 					};
 
-					return scheduleBackoff(0);
+					let attempts = 0;
+
+					const processActionRecursive = () => {
+						return processAction(attempts++)
+							.catch((e) => {
+								if (maximumAttempts > 0 && attempts === maximumAttempts) {
+									let message = `Maximum failures reached for ${(actionDescription || 'unnamed action')}`;
+
+									let rejectPromise;
+
+									if (is.object(e)) {
+										e.backoff = message;
+
+										rejectPromise = Promise.reject(e);
+									} else {
+										rejectPromise = Promise.reject(message);
+									}
+
+									return rejectPromise;
+								} else {
+									return processActionRecursive();
+								}
+							});
+					};
+
+					return processActionRecursive();
 				});
 		}
 

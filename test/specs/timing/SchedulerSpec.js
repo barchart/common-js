@@ -194,12 +194,11 @@ describe('When a backoff is used', function() {
 		});
 	});
 
-	describe('final failure is declared after four attempts', function() {
+	describe('final failure is declared after three attempts', function() {
 		var spyAction;
 		var spyFailure;
 
 		var actualResult;
-		var successfulResult;
 
 		beforeEach(function(done) {
 			spyAction = jasmine.createSpy('spyAction').and.callFake(function () {
@@ -216,12 +215,50 @@ describe('When a backoff is used', function() {
 				});
 		});
 
-		it('should call the "backoff" action four times', function() {
-			expect(spyAction.calls.count()).toEqual(4);
+		it('should call the "backoff" action three times', function() {
+			expect(spyAction.calls.count()).toEqual(3);
 		});
 
-		it('the "failure" action should be called four times', function() {
-			expect(spyFailure.calls.count()).toEqual(4);
+		it('the "failure" action should be called three times', function() {
+			expect(spyFailure.calls.count()).toEqual(3);
+		});
+
+		it('the promise should be rejected (with an Error instance)', function() {
+			expect(actualResult instanceof Error).toEqual(true);
+		});
+	});
+
+	describe('final failure is declared after three attempts (using the "failureValue" argument)', function() {
+		var spyAction;
+		var spyFailure;
+
+		var actualResult;
+
+		beforeEach(function(done) {
+			spyAction = jasmine.createSpy('spyAction').and.callFake(function () {
+				return 'boom';
+			});
+
+			spyFailure = jasmine.createSpy('spyFailure');
+
+			scheduler.backoff(spyAction, 5, 'detonate', 3, spyFailure, 'boom')
+				.catch(function(r) {
+					actualResult = r;
+
+					done();
+				});
+		});
+
+		it('should call the "backoff" action three times', function() {
+			expect(spyAction.calls.count()).toEqual(3);
+		});
+
+		it('the "failure" action should be called three times', function() {
+			expect(spyFailure.calls.count()).toEqual(3);
+		});
+
+		it('the promise should be rejected', function() {
+			expect(actualResult).toEqual('Maximum failures reached for detonate');
 		});
 	});
 });
