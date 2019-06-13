@@ -125,7 +125,7 @@ module.exports = (() => {
 							.then(() => {
 								let delay;
 
-								if (attempts === 1) {
+								if (attempts === 0) {
 									delay = 0;
 								} else {
 									delay = (millisecondDelay || 1000) * Math.pow(2, attempts - 1)
