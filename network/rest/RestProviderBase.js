@@ -31,7 +31,7 @@ module.exports = (() => {
 		 * @public
 		 * @param {RestEndpoint} endpoint - The enpoint to call.
 		 * @param {object} data - The data to pass to the endpoint.
- 		 * @returns {Promise.<TResult>}
+ 		 * @returns {Promise<TResult>}
 		 */
 		call(endpoint, data, token) {
 			return Promise.resolve()

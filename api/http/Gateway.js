@@ -31,7 +31,7 @@ module.exports = (() => {
 		 * @static
 		 * @param {Endpoint} endpoint
 		 * @param {*=} payload
-		 * @returns {Promise.<Object>}
+		 * @returns {Promise<Object>}
 		 */
 		static invoke(endpoint, payload) {
 			return Promise.resolve()

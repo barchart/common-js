@@ -58,9 +58,10 @@ module.exports = (() => {
 		/**
 		 * Checks to see if an attribute exists on the target object.
 		 *
+		 * @public
 		 * @static
 		 * @param {Object} target - The object to check for existence of the property.
-		 * @param {String|Array.<String>} propertyNames - The property to check -- either a string with separators, or an array of strings (already split by separator).
+		 * @param {String|String[]} propertyNames - The property to check -- either a string with separators, or an array of strings (already split by separator).
 		 * @param {String=} separator - The separator (defaults to a period character).
 		 * @returns {boolean}
 		 */
@@ -83,9 +84,10 @@ module.exports = (() => {
 		 * Returns a value from the target object. If the property doesn't exist; undefined
 		 * is returned.
 		 *
+		 * @public
 		 * @static
 		 * @param {Object} target - The object to read from.
-		 * @param {String|Array.<String>} propertyNames - The property to read -- either a string with separators, or an array of strings (already split by separator).
+		 * @param {String|String[]} propertyNames - The property to read -- either a string with separators, or an array of strings (already split by separator).
 		 * @param {String=} separator - The separator (defaults to a period character).
 		 * @returns {*}
 		 */
@@ -117,9 +119,10 @@ module.exports = (() => {
 		/**
 		 * Writes a value to the target object.
 		 *
+		 * @public
 		 * @static
 		 * @param {Object} target - The object to write to.
-		 * @param {String|Array.<String>} propertyNames - The property to write -- either a string with separators, or an array of strings (already split by separator).
+		 * @param {String|String[]} propertyNames - The property to write -- either a string with separators, or an array of strings (already split by separator).
 		 * @param {*} value - The value to assign.
 		 * @param {String=} separator - The separator (defaults to a period character).
 		 */
@@ -143,9 +146,10 @@ module.exports = (() => {
 		/**
 		 * Erases a property from the target object.
 		 *
+		 * @public
 		 * @static
 		 * @param {Object} target - The object to erase a property from.
-		 * @param {String|Array.<String>} propertyNames - The property to write -- either a string with separators, or an array of strings (already split by separator).
+		 * @param {String|String} propertyNames - The property to write -- either a string with separators, or an array of strings (already split by separator).
 		 * @param {String=} separator - The separator (defaults to a period character).
 		 */
 		erase(target, propertyNames, separator) {

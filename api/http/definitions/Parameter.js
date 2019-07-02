@@ -87,7 +87,7 @@ module.exports = (() => {
 	 *
 	 * @callback Parameter~parameterValueCallback
 	 * @param {Object} payload
-	 * @returns {Promise.<String>}
+	 * @returns {Promise<String>}
 	 */
 
 	return Parameter;

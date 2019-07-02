@@ -21,7 +21,7 @@ module.exports = (() => {
 		 * @public
 		 * @param {Object} request
 		 * @param {Endpoint} endpoint - The endpoint which is originating the request.
-		 * @returns {Promise.<TResult>}
+		 * @returns {Promise<TResult>}
 		 */
 		process(request, endpoint) {
 			return Promise.resolve()

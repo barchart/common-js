@@ -55,10 +55,12 @@ module.exports = (() => {
 		 * a mapping function, which can return a promise. Then, this function returns a single promise
 		 * which is the result of each mapped promise.
 		 *
+		 * @public
+		 * @static
 		 * @param {Array} items - The items to map
 		 * @param {Function} mapper - The mapping function (e.g. given an item, return a promise).
 		 * @param {Number} concurrency - The maximum number of promises that are allowed to run at once.
-		 * @returns {Promise.<Array>}
+		 * @returns {Promise<Array>}
 		 */
 		map(items, mapper, concurrency) {
 			return Promise.resolve()
@@ -143,7 +145,7 @@ module.exports = (() => {
 		 * @public
 		 * @param {Function[]} functions - An array of functions, each expecting a single argument.
 		 * @param input - The argument to pass the first function.
-		 * @returns {Promise.<TResult>}
+		 * @returns {Promise<TResult>}
 		 */
 		pipeline(functions, input) {
 			return Promise.resolve()
@@ -161,8 +163,8 @@ module.exports = (() => {
 		 * is caught and the resulting promise is rejected (instead of letting the
 		 * error bubble up to the top-level handler).
 		 *
-		 * @static
 		 * @public
+		 * @static
 		 * @param {Function} executor - A function which has two callback parameters. The first is used to resolve the promise, the second rejects it.
 		 * @returns {Promise}
 		 */
