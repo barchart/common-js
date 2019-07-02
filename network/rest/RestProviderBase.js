@@ -26,7 +26,7 @@ module.exports = (() => {
 		}
 
 		/**
-		 * Triggers a REST action targetting a {@link RestEndpoint}.
+		 * Triggers a REST action targeting a {@link RestEndpoint}.
 		 *
 		 * @public
 		 * @param {RestEndpoint} endpoint - The enpoint to call.
