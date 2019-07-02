@@ -128,7 +128,7 @@ module.exports = (() => {
 								if (attempts === 0) {
 									delay = 0;
 								} else {
-									delay = (millisecondDelay || 1000) * Math.pow(2, attempts - 1)
+									delay = (millisecondDelay || 1000) * Math.pow(2, attempts - 1);
 								}
 
 								return this.schedule(actionToBackoff, delay, `Attempt [ ${attempts} ] for [ ${(actionDescription || 'unnamed action')} ]`);
