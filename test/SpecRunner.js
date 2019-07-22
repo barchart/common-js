@@ -16230,6 +16230,20 @@ module.exports = function () {
 			}
 
 			/**
+    * References an array.
+    *
+    * @public
+    * @static
+    * @returns {DataType}
+    */
+
+		}, {
+			key: 'ARRAY',
+			get: function get() {
+				return dataTypeArray;
+			}
+
+			/**
     * References a {@link Decimal} instance.
     *
     * @public
@@ -16297,6 +16311,7 @@ module.exports = function () {
 	var dataTypeNumber = new DataType('Number', null, null, is.number);
 	var dataTypeBoolean = new DataType('Boolean', null, null, is.boolean);
 	var dataTypeObject = new DataType('Object', null, null, is.object);
+	var dataTypeArray = new DataType('Array', null, null, is.array);
 
 	var dataTypeDecimal = new DataType('Decimal', null, function (x) {
 		return Decimal.parse(x);
@@ -16319,7 +16334,7 @@ module.exports = function () {
 		return x instanceof AdHoc;
 	}, getBuilder(buildAdHoc));
 
-	var dataTypes = [dataTypeString, dataTypeNumber, dataTypeBoolean, dataTypeObject, dataTypeDecimal, dataTypeDay, dataTypeTimestamp, dataTypeAdHoc];
+	var dataTypes = [dataTypeString, dataTypeNumber, dataTypeBoolean, dataTypeObject, dataTypeArray, dataTypeDecimal, dataTypeDay, dataTypeTimestamp, dataTypeAdHoc];
 
 	function getBuilder(builder) {
 		return function (data) {
