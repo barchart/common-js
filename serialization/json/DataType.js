@@ -175,6 +175,17 @@ module.exports = (() => {
 		}
 
 		/**
+		 * References an array.
+		 *
+		 * @public
+		 * @static
+		 * @returns {DataType}
+		 */
+		static get ARRAY() {
+			return dataTypeArray;
+		}
+
+		/**
 		 * References a {@link Decimal} instance.
 		 *
 		 * @public
@@ -232,6 +243,7 @@ module.exports = (() => {
 	const dataTypeNumber = new DataType('Number', null, null, is.number);
 	const dataTypeBoolean = new DataType('Boolean', null, null, is.boolean);
 	const dataTypeObject = new DataType('Object', null, null, is.object);
+	const dataTypeArray =  new DataType('Array', null, null, is.array);
 
 	const dataTypeDecimal = new DataType('Decimal', null, x => Decimal.parse(x), x => x instanceof Decimal, getBuilder(buildDecimal));
 	const dataTypeDay = new DataType('Day', null, x => Day.parse(x), x => x instanceof Day, getBuilder(buildDay));
@@ -243,6 +255,7 @@ module.exports = (() => {
 		dataTypeNumber,
 		dataTypeBoolean,
 		dataTypeObject,
+		dataTypeArray,
 		dataTypeDecimal,
 		dataTypeDay,
 		dataTypeTimestamp,
