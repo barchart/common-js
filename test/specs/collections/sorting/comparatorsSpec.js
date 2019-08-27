@@ -1,32 +1,46 @@
-var comparators = require('./../../../../collections/sorting/comparators');
+let comparators = require('./../../../../collections/sorting/comparators');
 
-describe('When using the "compareDates" comparator', function() {
+describe('When using the "compareDates" comparator', () => {
 	'use strict';
 
-	var first = new Date(2015, 12, 1);
-	var second = new Date(2015, 12, 31);
-	var third = new Date(2016, 1, 31);
+	let first = new Date(2015, 12, 1);
+	let second = new Date(2015, 12, 31);
+	let third = new Date(2016, 1, 31);
+	
+	describe('to rank Date instances', () => {
+		it('comparing 2019-08-27 with 2019-07-31 should return a positive value', () => {
+			expect(comparators.compareDates(new Date(2019, 7, 27), new Date(2019, 6, 31)) > 0).toEqual(true);
+		});
 
-	describe('to sort an array of Date instances', function() {
-		var arrayToSort;
+		it('comparing 2019-08-27 with 2019-07-31 should return a negative value', () => {
+			expect(comparators.compareDates(new Date(2019, 6, 31), new Date(2019, 7, 27)) < 0).toEqual(true);
+		});
 
-		beforeEach(function() {
+		it('comparing 2019-08-27 with 2019-08-27 should return a zero value', () => {
+			expect(comparators.compareDates(new Date(2019, 7, 27), new Date(2019, 7, 27))).toEqual(0);
+		});
+	});
+
+	describe('to sort an array of Date instances', () => {
+		let arrayToSort;
+
+		beforeEach(() => {
 			arrayToSort = [second, first, third];
 
 			arrayToSort.sort(comparators.compareDates);
 		});
 
-		it('the array should be in the correct order', function() {
+		it('the array should be in the correct order', () => {
 			expect(arrayToSort[0]).toBe(first);
 			expect(arrayToSort[1]).toBe(second);
 			expect(arrayToSort[2]).toBe(third);
 		});
 	});
 
-	describe('to sort an array that contains something other than Date instances', function() {
-		it('an error should be thrown', function() {
-			expect(function() {
-				var arrayToSort = [second, first, third, '1-1-2017'];
+	describe('to sort an array that contains something other than Date instances', () => {
+		it('an error should be thrown', () => {
+			expect(() => {
+				let arrayToSort = [second, first, third, '1-1-2017'];
 
 				arrayToSort.sort(comparators.compareDates);
 			}).toThrow();
@@ -34,33 +48,47 @@ describe('When using the "compareDates" comparator', function() {
 	});
 });
 
-describe('When using the "compareNumbers" comparator', function() {
+describe('When using the "compareNumbers" comparator', () => {
 	'use strict';
 
-	var first = -1;
-	var second = Math.E;
-	var third = Math.PI;
+	let first = -1;
+	let second = Math.E;
+	let third = Math.PI;
 
-	describe('to sort an array of numbers', function() {
-		var arrayToSort;
+	describe('to rank numbers', () => {
+		it('comparing 22 with 11 should return a positive value', () => {
+			expect(comparators.compareNumbers(22, 11) > 0).toEqual(true);
+		});
 
-		beforeEach(function() {
+		it('comparing 11 with 22 should return a negative value', () => {
+			expect(comparators.compareNumbers(11, 22) < 0).toEqual(true);
+		});
+
+		it('comparing 11 with 11 should return a zero value', () => {
+			expect(comparators.compareNumbers(11, 11)).toEqual(0);
+		});
+	});
+
+	describe('to sort an array of numbers', () => {
+		let arrayToSort;
+
+		beforeEach(() => {
 			arrayToSort = [second, first, third];
 
 			arrayToSort.sort(comparators.compareNumbers);
 		});
 
-		it('the array should be in the correct order', function() {
+		it('the array should be in the correct order', () => {
 			expect(arrayToSort[0]).toBe(first);
 			expect(arrayToSort[1]).toBe(second);
 			expect(arrayToSort[2]).toBe(third);
 		});
 	});
 
-	describe('to sort an array that contains something other than numbers', function() {
-		it('an error should be thrown', function() {
-			expect(function() {
-				var arrayToSort = [second, first, third, null];
+	describe('to sort an array that contains something other than numbers', () => {
+		it('an error should be thrown', () => {
+			expect(() => {
+				let arrayToSort = [second, first, third, null];
 
 				arrayToSort.sort(comparators.compareNumbers);
 			}).toThrow();
@@ -68,36 +96,89 @@ describe('When using the "compareNumbers" comparator', function() {
 	});
 });
 
-describe('When using the "compareStrings" comparator', function() {
+describe('When using the "compareStrings" comparator', () => {
 	'use strict';
 
-	var first = '';
-	var second = 'Bye now';
-	var third = 'Hi there';
+	let first = '';
+	let second = 'Bye now';
+	let third = 'Hi there';
 
-	describe('to sort an array of strings', function() {
-		var arrayToSort;
+	describe('to rank strings', () => {
+		it('comparing "abd" with "abc" should return a positive value', () => {
+			expect(comparators.compareStrings('abd', 'abc') > 0).toEqual(true);
+		});
 
-		beforeEach(function() {
+		it('comparing "abc" with "abd" should return a negative value', () => {
+			expect(comparators.compareStrings('abc', 'abd') < 0).toEqual(true);
+		});
+
+		it('comparing "abc" with "abc" should return a zero value', () => {
+			expect(comparators.compareStrings('abc', 'abc')).toEqual(0);
+		});
+	});
+
+	describe('to sort an array of strings', () => {
+		let arrayToSort;
+
+		beforeEach(() => {
 			arrayToSort = [third, first, second];
 
 			arrayToSort.sort(comparators.compareStrings);
 		});
 
-		it('the array should be in the correct order', function() {
+		it('the array should be in the correct order', () => {
 			expect(arrayToSort[0]).toBe(first);
 			expect(arrayToSort[1]).toBe(second);
 			expect(arrayToSort[2]).toBe(third);
 		});
 	});
 
-	describe('to sort an array that contains something other than strings', function() {
-		it('an error should be thrown', function() {
-			expect(function() {
-				var arrayToSort = [second, first, third, 7];
+	describe('to sort an array that contains something other than strings', () => {
+		it('an error should be thrown', () => {
+			expect(() => {
+				let arrayToSort = [second, first, third, 7];
 
 				arrayToSort.sort(comparators.compareStrings);
 			}).toThrow();
+		});
+	});
+});
+
+describe('When using the "compareBoolean" comparator', () => {
+	'use strict';
+
+	let a = true;
+	let b = false;
+	let c = true;
+
+	describe('to rank boolean values', () => {
+		it('comparing "true" with "false" should return a positive value', () => {
+			expect(comparators.compareBooleans(true, false) > 0).toEqual(true);
+		});
+
+		it('comparing "false" with "true" should return a negative value', () => {
+			expect(comparators.compareBooleans(false, true) < 0).toEqual(true);
+		});
+
+		it('comparing "true" with "true" should return a zero value', () => {
+			expect(comparators.compareBooleans(true, true)).toEqual(0);
+		});
+	});
+
+	describe('to sort an array of booleans', () => {
+		let arrayToSort;
+
+		beforeEach(() => {
+			arrayToSort = [a, b, c];
+
+			arrayToSort.sort(comparators.compareBooleans);
+		});
+
+
+		it('the array should be in the correct order', () => {
+			expect(arrayToSort[0]).toEqual(b);
+			expect(arrayToSort[1]).toEqual(a);
+			expect(arrayToSort[2]).toEqual(c);
 		});
 	});
 });

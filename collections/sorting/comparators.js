@@ -56,6 +56,27 @@ module.exports = (() => {
 		},
 
 		/**
+		 * Compares two boolean values (in ascending order -- false first, true second).
+		 *
+		 * @static
+		 * @param {Boolean} a
+		 * @param {Boolean} b
+		 * @returns {Number}
+		 */
+		compareBooleans: (a, b) => {
+			assert.argumentIsRequired(a, 'a', Boolean);
+			assert.argumentIsRequired(b, 'b', Boolean);
+
+			if (a === b) {
+				return 0;
+			} else if (a) {
+				return 1;
+			} else {
+				return -1;
+			}
+		},
+
+		/**
 		 * Compares two objects, always returning zero.
 		 *
 		 * @static
