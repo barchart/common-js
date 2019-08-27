@@ -1466,6 +1466,27 @@ module.exports = function () {
 		},
 
 		/**
+   * Compares two boolean values (in ascending order -- false first, true second).
+   *
+   * @static
+   * @param {Boolean} a
+   * @param {Boolean} b
+   * @returns {Number}
+   */
+		compareBooleans: function compareBooleans(a, b) {
+			assert.argumentIsRequired(a, 'a', Boolean);
+			assert.argumentIsRequired(b, 'b', Boolean);
+
+			if (a === b) {
+				return 0;
+			} else if (a) {
+				return 1;
+			} else {
+				return -1;
+			}
+		},
+
+		/**
    * Compares two objects, always returning zero.
    *
    * @static
@@ -18704,8 +18725,22 @@ describe('When using the "compareDates" comparator', function () {
 	var second = new Date(2015, 12, 31);
 	var third = new Date(2016, 1, 31);
 
+	describe('to rank Date instances', function () {
+		it('comparing 2019-08-27 with 2019-07-31 should return a positive value', function () {
+			expect(comparators.compareDates(new Date(2019, 7, 27), new Date(2019, 6, 31)) > 0).toEqual(true);
+		});
+
+		it('comparing 2019-08-27 with 2019-07-31 should return a negative value', function () {
+			expect(comparators.compareDates(new Date(2019, 6, 31), new Date(2019, 7, 27)) < 0).toEqual(true);
+		});
+
+		it('comparing 2019-08-27 with 2019-08-27 should return a zero value', function () {
+			expect(comparators.compareDates(new Date(2019, 7, 27), new Date(2019, 7, 27))).toEqual(0);
+		});
+	});
+
 	describe('to sort an array of Date instances', function () {
-		var arrayToSort;
+		var arrayToSort = void 0;
 
 		beforeEach(function () {
 			arrayToSort = [second, first, third];
@@ -18738,8 +18773,22 @@ describe('When using the "compareNumbers" comparator', function () {
 	var second = Math.E;
 	var third = Math.PI;
 
+	describe('to rank numbers', function () {
+		it('comparing 22 with 11 should return a positive value', function () {
+			expect(comparators.compareNumbers(22, 11) > 0).toEqual(true);
+		});
+
+		it('comparing 11 with 22 should return a negative value', function () {
+			expect(comparators.compareNumbers(11, 22) < 0).toEqual(true);
+		});
+
+		it('comparing 11 with 11 should return a zero value', function () {
+			expect(comparators.compareNumbers(11, 11)).toEqual(0);
+		});
+	});
+
 	describe('to sort an array of numbers', function () {
-		var arrayToSort;
+		var arrayToSort = void 0;
 
 		beforeEach(function () {
 			arrayToSort = [second, first, third];
@@ -18772,8 +18821,22 @@ describe('When using the "compareStrings" comparator', function () {
 	var second = 'Bye now';
 	var third = 'Hi there';
 
+	describe('to rank strings', function () {
+		it('comparing "abd" with "abc" should return a positive value', function () {
+			expect(comparators.compareStrings('abd', 'abc') > 0).toEqual(true);
+		});
+
+		it('comparing "abc" with "abd" should return a negative value', function () {
+			expect(comparators.compareStrings('abc', 'abd') < 0).toEqual(true);
+		});
+
+		it('comparing "abc" with "abc" should return a zero value', function () {
+			expect(comparators.compareStrings('abc', 'abc')).toEqual(0);
+		});
+	});
+
 	describe('to sort an array of strings', function () {
-		var arrayToSort;
+		var arrayToSort = void 0;
 
 		beforeEach(function () {
 			arrayToSort = [third, first, second];
@@ -18795,6 +18858,44 @@ describe('When using the "compareStrings" comparator', function () {
 
 				arrayToSort.sort(comparators.compareStrings);
 			}).toThrow();
+		});
+	});
+});
+
+describe('When using the "compareBoolean" comparator', function () {
+	'use strict';
+
+	var a = true;
+	var b = false;
+	var c = true;
+
+	describe('to rank boolean values', function () {
+		it('comparing "true" with "false" should return a positive value', function () {
+			expect(comparators.compareBooleans(true, false) > 0).toEqual(true);
+		});
+
+		it('comparing "false" with "true" should return a negative value', function () {
+			expect(comparators.compareBooleans(false, true) < 0).toEqual(true);
+		});
+
+		it('comparing "true" with "true" should return a zero value', function () {
+			expect(comparators.compareBooleans(true, true)).toEqual(0);
+		});
+	});
+
+	describe('to sort an array of booleans', function () {
+		var arrayToSort = void 0;
+
+		beforeEach(function () {
+			arrayToSort = [a, b, c];
+
+			arrayToSort.sort(comparators.compareBooleans);
+		});
+
+		it('the array should be in the correct order', function () {
+			expect(arrayToSort[0]).toEqual(b);
+			expect(arrayToSort[1]).toEqual(a);
+			expect(arrayToSort[2]).toEqual(c);
 		});
 	});
 });
