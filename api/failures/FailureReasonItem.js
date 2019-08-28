@@ -25,6 +25,7 @@ module.exports = (() => {
 		/**
 		 * The {@link FailureType} of the item.
 		 *
+		 * @public
 		 * @returns {FailureType}
 		 */
 		get type() {
