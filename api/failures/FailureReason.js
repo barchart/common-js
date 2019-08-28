@@ -110,6 +110,8 @@ module.exports = (() => {
 		 * Returns an HTTP status code that would be suitable for use with the
 		 * failure reason.
 		 *
+		 * @public
+		 * @static
 		 * @param {FailureReason} reason
 		 * @returns {Number}
 		 */
@@ -131,7 +133,9 @@ module.exports = (() => {
 
 		/**
 		 * Validates that a candidate conforms to a schema
-		 * 
+		 *
+		 * @public
+		 * @static
 		 * @param {Schema} schema
 		 * @param {Object} candidate
 		 */
