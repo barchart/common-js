@@ -90,6 +90,17 @@ module.exports = (() => {
 			return this._head.search(item => item.type === type, false, false) !== null;
 		}
 
+		/**
+		 * Indicates if the tree of {@link FailureReasonItem} instances contains
+		 * at least one item that is considered to be severe.
+		 *
+		 * @public
+		 * @returns {Boolean}
+		 */
+		getIsSevere() {
+			return this._head.search(item => item.type.severe, false, false) !== null;
+		}
+
 		toJSON() {
 			return this.format();
 		}

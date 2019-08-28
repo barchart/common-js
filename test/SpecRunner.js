@@ -116,6 +116,22 @@ module.exports = function () {
 					return item.type === type;
 				}, false, false) !== null;
 			}
+
+			/**
+    * Indicates if the tree of {@link FailureReasonItem} instances contains
+    * at least one item that is considered to be severe.
+    *
+    * @public
+    * @returns {Boolean}
+    */
+
+		}, {
+			key: 'getIsSevere',
+			value: function getIsSevere() {
+				return this._head.search(function (item) {
+					return item.type.severe;
+				}, false, false) !== null;
+			}
 		}, {
 			key: 'toJSON',
 			value: function toJSON() {
@@ -146,6 +162,8 @@ module.exports = function () {
     * Returns an HTTP status code that would be suitable for use with the
     * failure reason.
     *
+    * @public
+    * @static
     * @param {FailureReason} reason
     * @returns {Number}
     */
@@ -170,7 +188,9 @@ module.exports = function () {
 
 			/**
     * Validates that a candidate conforms to a schema
-    * 
+    *
+    * @public
+    * @static
     * @param {Schema} schema
     * @param {Object} candidate
     */
@@ -249,6 +269,7 @@ module.exports = function () {
 		/**
    * The {@link FailureType} of the item.
    *
+   * @public
    * @returns {FailureType}
    */
 
@@ -331,7 +352,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var assert = require('./../../lang/assert'),
-    Enum = require('./../../lang/Enum');
+    Enum = require('./../../lang/Enum'),
+    is = require('./../../lang/is');
 
 module.exports = function () {
 	'use strict';
@@ -343,19 +365,27 @@ module.exports = function () {
   * @extends {Enum}
   * @param {String} code - The enumeration code (and description)
   * @param {String} template - The template string for formatting human-readable messages.
+  * @param {Boolean=} severe - Indicates if the failure is severe (default is true).
   */
 
 	var FailureType = function (_Enum) {
 		_inherits(FailureType, _Enum);
 
-		function FailureType(code, template) {
+		function FailureType(code, template, severe) {
 			_classCallCheck(this, FailureType);
 
 			var _this = _possibleConstructorReturn(this, (FailureType.__proto__ || Object.getPrototypeOf(FailureType)).call(this, code, code));
 
 			assert.argumentIsRequired(template, 'template', String);
+			assert.argumentIsOptional(severe, 'severe'.Boolean);
 
 			_this._template = template;
+
+			if (is.boolean(severe)) {
+				_this._severe = severe;
+			} else {
+				_this._severe = true;
+			}
 			return _this;
 		}
 
@@ -376,6 +406,19 @@ module.exports = function () {
 			key: 'template',
 			get: function get() {
 				return this._template;
+			}
+
+			/**
+    * Indicates if the failure is serious.
+    *
+    * @public
+    * @return {Boolean}
+    */
+
+		}, {
+			key: 'severe',
+			get: function get() {
+				return this._severe;
 			}
 
 			/**
@@ -524,7 +567,7 @@ module.exports = function () {
 	return FailureType;
 }();
 
-},{"./../../lang/Enum":24,"./../../lang/assert":30}],4:[function(require,module,exports){
+},{"./../../lang/Enum":24,"./../../lang/assert":30,"./../../lang/is":35}],4:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -18040,11 +18083,15 @@ describe('When a FailureReason is created', function () {
 	'use strict';
 
 	var reason;
-	var itemOne;
-	var itemTwo;
 
 	beforeEach(function () {
 		reason = FailureReason.forRequest({ endpoint: { description: 'do stuff' } }).addItem(FailureType.REQUEST_CONSTRUCTION_FAILURE, {}, true).addItem(FailureType.REQUEST_PARAMETER_MISSING, { name: 'First' }).addItem(FailureType.REQUEST_PARAMETER_MISSING, { name: 'Second' });
+	});
+
+	describe('and the FailureReason is checked for severity', function () {
+		it('should be considered severe', function () {
+			expect(reason.getIsSevere()).toEqual(true);
+		});
 	});
 
 	describe('and the FailureReason is converted to a human-readable form', function () {

@@ -5,14 +5,18 @@ describe('When a FailureReason is created', function() {
 	'use strict';
 
 	var reason;
-	var itemOne;
-	var itemTwo;
 
 	beforeEach(function() {
 		reason = FailureReason.forRequest({ endpoint: { description: 'do stuff' }})
 			.addItem(FailureType.REQUEST_CONSTRUCTION_FAILURE, { }, true)
 			.addItem(FailureType.REQUEST_PARAMETER_MISSING, { name: 'First' })
 			.addItem(FailureType.REQUEST_PARAMETER_MISSING, { name: 'Second' });
+	});
+
+	describe('and the FailureReason is checked for severity', function() {
+		it('should be considered severe', function() {
+			expect(reason.getIsSevere()).toEqual(true);
+		});
 	});
 
 	describe('and the FailureReason is converted to a human-readable form', function() {
