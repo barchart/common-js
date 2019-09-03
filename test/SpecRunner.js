@@ -377,7 +377,7 @@ module.exports = function () {
 			var _this = _possibleConstructorReturn(this, (FailureType.__proto__ || Object.getPrototypeOf(FailureType)).call(this, code, code));
 
 			assert.argumentIsRequired(template, 'template', String);
-			assert.argumentIsOptional(severe, 'severe'.Boolean);
+			assert.argumentIsOptional(severe, 'severe', Boolean);
 
 			_this._template = template;
 
