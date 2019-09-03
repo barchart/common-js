@@ -19,7 +19,7 @@ module.exports = (() => {
 			super(code, code);
 
 			assert.argumentIsRequired(template, 'template', String);
-			assert.argumentIsOptional(severe, 'severe'. Boolean);
+			assert.argumentIsOptional(severe, 'severe', Boolean);
 
 			this._template = template;
 
