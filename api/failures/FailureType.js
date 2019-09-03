@@ -10,7 +10,7 @@ module.exports = (() => {
 	 *
 	 * @public
 	 * @extends {Enum}
-	 * @param {String} code - The enumeration code (and description)
+	 * @param {String} code - The enumeration code (and description).
 	 * @param {String} template - The template string for formatting human-readable messages.
 	 * @param {Boolean=} severe - Indicates if the failure is severe (default is true).
 	 */
