@@ -53,6 +53,7 @@ module.exports = (() => {
 		/**
 		 * One or more data points is missing.
 		 *
+		 * @public
 		 * @static
 		 * @returns {FailureType}
 		 */
@@ -63,6 +64,7 @@ module.exports = (() => {
 		/**
 		 * A data point is missing.
 		 *
+		 * @public
 		 * @static
 		 * @returns {FailureType}
 		 */
@@ -73,6 +75,7 @@ module.exports = (() => {
 		/**
 		 * A data point is malformed.
 		 *
+		 * @public
 		 * @static
 		 * @returns {FailureType}
 		 */
@@ -83,6 +86,7 @@ module.exports = (() => {
 		/**
 		 * User identity could not be determined.
 		 *
+		 * @public
 		 * @static
 		 * @returns {FailureType}
 		 */
@@ -93,6 +97,7 @@ module.exports = (() => {
 		/**
 		 * User authorization failed.
 		 *
+		 * @public
 		 * @static
 		 * @returns {FailureType}
 		 */
@@ -103,6 +108,7 @@ module.exports = (() => {
 		/**
 		 * The request data cannot be parsed or interpreted.
 		 *
+		 * @public
 		 * @static
 		 * @returns {FailureType}
 		 */
@@ -113,6 +119,7 @@ module.exports = (() => {
 		/**
 		 * The request failed for unspecified reasons.
 		 *
+		 * @public
 		 * @static
 		 * @returns {FailureType}
 		 */
@@ -123,6 +130,7 @@ module.exports = (() => {
 		/**
 		 * The request failed for unspecified reasons.
 		 *
+		 * @public
 		 * @static
 		 * @returns {FailureType}
 		 */
@@ -134,6 +142,8 @@ module.exports = (() => {
 		 * Returns an HTTP status code that would be suitable for use with the
 		 * failure type.
 		 *
+		 * @public
+		 * @static
 		 * @param {FailureType} type
 		 * @returns {Number}
 		 */
