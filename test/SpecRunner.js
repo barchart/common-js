@@ -3544,7 +3544,7 @@ module.exports = function () {
 				return this._month;
 			}
 
-			/**day
+			/**
     * The day of the month.
     *
     * @public
