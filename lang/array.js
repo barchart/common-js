@@ -286,7 +286,9 @@ module.exports = (() => {
 			const returnRef = [ ];
 
 			a.forEach((candidate) => {
-				const exclude = b.some(comparison => keySelector(candidate) === keySelector(comparison));
+				const candidateKey = keySelector(candidate);
+
+				const exclude = b.some(comparison => candidateKey === keySelector(comparison));
 
 				if (!exclude) {
 					returnRef.push(candidate);
@@ -352,7 +354,9 @@ module.exports = (() => {
 			const returnRef = a.slice();
 
 			b.forEach((candidate) => {
-				const exclude = returnRef.some(comparison => keySelector(candidate) === keySelector(comparison));
+				const candidateKey = keySelector(candidate);
+
+				const exclude = returnRef.some(comparison => candidateKey === keySelector(comparison));
 
 				if (!exclude) {
 					returnRef.push(candidate);
@@ -390,7 +394,9 @@ module.exports = (() => {
 			const returnRef = [ ];
 
 			a.forEach((candidate) => {
-				const include = b.some(comparison => keySelector(candidate) === (comparison));
+				const candidateKey = keySelector(candidate);
+
+				const include = b.some(comparison => candidateKey === keySelector(comparison));
 
 				if (include) {
 					returnRef.push(candidate);
