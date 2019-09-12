@@ -5667,8 +5667,10 @@ module.exports = function () {
 			var returnRef = [];
 
 			a.forEach(function (candidate) {
+				var candidateKey = keySelector(candidate);
+
 				var exclude = b.some(function (comparison) {
-					return keySelector(candidate) === keySelector(comparison);
+					return candidateKey === keySelector(comparison);
 				});
 
 				if (!exclude) {
@@ -5743,8 +5745,10 @@ module.exports = function () {
 			var returnRef = a.slice();
 
 			b.forEach(function (candidate) {
+				var candidateKey = keySelector(candidate);
+
 				var exclude = returnRef.some(function (comparison) {
-					return keySelector(candidate) === keySelector(comparison);
+					return candidateKey === keySelector(comparison);
 				});
 
 				if (!exclude) {
@@ -5787,8 +5791,10 @@ module.exports = function () {
 			var returnRef = [];
 
 			a.forEach(function (candidate) {
+				var candidateKey = keySelector(candidate);
+
 				var include = b.some(function (comparison) {
-					return keySelector(candidate) === comparison;
+					return candidateKey === keySelector(comparison);
 				});
 
 				if (include) {
@@ -22538,6 +22544,70 @@ describe('when calculating the "difference" between two arrays', function () {
 	});
 });
 
+describe('when calculating the "difference" between two arrays using key selectors', function () {
+	describe('and the arrays are empty', function () {
+		var difference;
+
+		beforeEach(function () {
+			difference = array.differenceBy([], [], function (x) {
+				return x.key;
+			});
+		});
+
+		it('should be an array', function () {
+			expect(difference instanceof Array).toEqual(true);
+		});
+
+		it('should be empty', function () {
+			expect(difference.length).toEqual(0);
+		});
+	});
+
+	describe('and first array is [{key:1}, {key:2}] and the second array is [{key:2}, {key:3}]', function () {
+		var difference;
+
+		beforeEach(function () {
+			difference = array.differenceBy([{ key: 1 }, { key: 2 }], [{ key: 2 }, { key: 3 }], function (x) {
+				return x.key;
+			});
+		});
+
+		it('should be an array', function () {
+			expect(difference instanceof Array).toEqual(true);
+		});
+
+		it('should contain one element', function () {
+			expect(difference.length).toEqual(1);
+		});
+
+		it('the first element key should be 1', function () {
+			expect(difference[0].key).toEqual(1);
+		});
+	});
+
+	describe('and first array is [{key:2}, {key:3}] and the second array is [{key:1}, {key:2}] ', function () {
+		var difference;
+
+		beforeEach(function () {
+			difference = array.differenceBy([{ key: 2 }, { key: 3 }], [{ key: 1 }, { key: 2 }], function (x) {
+				return x.key;
+			});
+		});
+
+		it('should be an array', function () {
+			expect(difference instanceof Array).toEqual(true);
+		});
+
+		it('should contain one element', function () {
+			expect(difference.length).toEqual(1);
+		});
+
+		it('the first element key should be 3', function () {
+			expect(difference[0].key).toEqual(3);
+		});
+	});
+});
+
 describe('when calculating the "union" of two arrays', function () {
 	describe('and the arrays are empty', function () {
 		var union;
@@ -22587,28 +22657,104 @@ describe('when calculating the "union" of two arrays', function () {
 		var same;
 		var unique;
 
-		var difference;
+		var union;
 
 		beforeEach(function () {
 			same = {};
 
-			difference = array.union([same, unique = {}], [same]);
+			union = array.union([same, unique = {}], [same]);
 		});
 
 		it('should be an array', function () {
-			expect(difference instanceof Array).toEqual(true);
+			expect(union instanceof Array).toEqual(true);
 		});
 
 		it('should contain two elements', function () {
-			expect(difference.length).toEqual(2);
+			expect(union.length).toEqual(2);
 		});
 
 		it('the first element the should be "same" object', function () {
-			expect(difference[0]).toBe(same);
+			expect(union[0]).toBe(same);
 		});
 
 		it('the second element the should be "unique" object', function () {
-			expect(difference[1]).toBe(unique);
+			expect(union[1]).toBe(unique);
+		});
+	});
+});
+
+describe('when calculating the "union" of two arrays using key selectors', function () {
+	describe('and the arrays are empty', function () {
+		var union;
+
+		beforeEach(function () {
+			union = array.unionBy([], [], function (x) {
+				return x.key;
+			});
+		});
+
+		it('should be an array', function () {
+			expect(union instanceof Array).toEqual(true);
+		});
+
+		it('should be empty', function () {
+			expect(union.length).toEqual(0);
+		});
+	});
+
+	describe('and first array is [{key:1}, {key:2}] and the second array is [{key:2}, {key:3}]', function () {
+		var union;
+
+		beforeEach(function () {
+			union = array.unionBy([{ key: 1 }, { key: 2 }], [{ key: 2 }, { key: 3 }], function (x) {
+				return x.key;
+			});
+		});
+
+		it('should be an array', function () {
+			expect(union instanceof Array).toEqual(true);
+		});
+
+		it('should contain three elements', function () {
+			expect(union.length).toEqual(3);
+		});
+
+		it('the first element key should be 1', function () {
+			expect(union[0].key).toEqual(1);
+		});
+
+		it('the second element key should be 2', function () {
+			expect(union[1].key).toEqual(2);
+		});
+
+		it('the third element key should be 3', function () {
+			expect(union[2].key).toEqual(3);
+		});
+	});
+
+	describe('and first array has a unique object and both arrays share an object', function () {
+		var union;
+
+		beforeEach(function () {
+			union = array.unionBy([{ key: 1 }, { key: 2 }], [{ key: 2 }], function (x) {
+				return x.key;
+			});
+		});
+
+		it('should be an array', function () {
+			expect(union instanceof Array).toEqual(true);
+		});
+
+		it('should contain two elements', function () {
+			expect(union.length).toEqual(2);
+		});
+
+		it('the first element key the should be "same" object key', function () {
+			expect(union[0].key).toEqual(1);
+		});
+
+		it('the second element key the should be "unique" object key', function () {
+			expect(union[1].key).toEqual(2);
 		});
 	});
 });
@@ -22676,6 +22822,73 @@ describe('when calculating the "intersection" of two arrays', function () {
 	});
 });
 
+describe('when calculating the "intersection" of two arrays using key selectors', function () {
+	describe('and the arrays are empty', function () {
+		var intersection;
+
+		beforeEach(function () {
+			intersection = array.intersectionBy([], [], function (x) {
+				return x.key;
+			});
+		});
+
+		it('should be an array', function () {
+			expect(intersection instanceof Array).toEqual(true);
+		});
+
+		it('should be empty', function () {
+			expect(intersection.length).toEqual(0);
+		});
+	});
+
+	describe('and first array is [{key:1}, {key:2}] and the second array is [{key:2}, {key:3}]', function () {
+		var intersection;
+
+		beforeEach(function () {
+			intersection = array.intersectionBy([{ key: 1 }, { key: 2 }], [{ key: 2 }, { key: 3 }], function (x) {
+				return x.key;
+			});
+		});
+
+		it('should be an array', function () {
+			expect(intersection instanceof Array).toEqual(true);
+		});
+
+		it('should contain one element', function () {
+			expect(intersection.length).toEqual(1);
+		});
+
+		it('the first element should have key 2', function () {
+			expect(intersection[0].key).toEqual(2);
+		});
+	});
+
+	describe('and first array has a unique object and both arrays share an object', function () {
+		var same;
+		var unique;
+
+		var intersection;
+
+		beforeEach(function () {
+			intersection = array.intersectionBy([{ key: 1 }, { key: 2 }], [{ key: 2 }], function (x) {
+				return x.key;
+			});
+		});
+
+		it('should be an array', function () {
+			expect(intersection instanceof Array).toEqual(true);
+		});
+
+		it('should contain one elements', function () {
+			expect(intersection.length).toEqual(1);
+		});
+
+		it('the first element key should the "same" object key', function () {
+			expect(intersection[0].key).toEqual(2);
+		});
+	});
+});
+
 describe('when calculating the "symmetric difference" of two arrays', function () {
 	describe('and the arrays are empty', function () {
 		var difference;
@@ -22739,6 +22952,74 @@ describe('when calculating the "symmetric difference" of two arrays', function (
 
 		it('the first element the "unique" object', function () {
 			expect(difference[0]).toBe(unique);
+		});
+	});
+});
+
+describe('when calculating the "symmetric difference" of two arrays using key selectors', function () {
+	describe('and the arrays are empty', function () {
+		var difference;
+
+		beforeEach(function () {
+			difference = array.differenceSymmetricBy([], [], function (x) {
+				return x.key;
+			});
+		});
+
+		it('should be an array', function () {
+			expect(difference instanceof Array).toEqual(true);
+		});
+
+		it('should be empty', function () {
+			expect(difference.length).toEqual(0);
+		});
+	});
+
+	describe('and first array is [{key:1}, {key:2}] and the second array is [{key:2}, {key:3}]', function () {
+		var difference;
+
+		beforeEach(function () {
+			difference = array.differenceSymmetricBy([{ key: 1 }, { key: 2 }], [{ key: 2 }, { key: 3 }], function (x) {
+				return x.key;
+			});
+		});
+
+		it('should be an array', function () {
+			expect(difference instanceof Array).toEqual(true);
+		});
+
+		it('should contain two elements', function () {
+			expect(difference.length).toEqual(2);
+		});
+
+		it('the first element should have key 1', function () {
+			expect(difference[0].key).toEqual(1);
+		});
+
+		it('the second element should be 3', function () {
+			expect(difference[1].key).toEqual(3);
+		});
+	});
+
+	describe('and first array has a unique object and both arrays share an object', function () {
+		var difference;
+
+		beforeEach(function () {
+			difference = array.differenceSymmetricBy([{ key: 1 }, { key: 2 }], [{ key: 2 }], function (x) {
+				return x.key;
+			});
+		});
+
+		it('should be an array', function () {
+			expect(difference instanceof Array).toEqual(true);
+		});
+
+		it('should contain one elements', function () {
+			expect(difference.length).toEqual(1);
+		});
+
+		it('the first element the "unique" object', function () {
+			expect(difference[0].key).toEqual(1);
 		});
 	});
 });
