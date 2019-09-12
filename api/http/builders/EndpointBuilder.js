@@ -1,6 +1,7 @@
 const assert = require('./../../../lang/assert');
 
-const ParametersBuilder = require('./ParametersBuilder');
+const CredentialsBuilder = require('./CredentialsBuilder'),
+	ParametersBuilder = require('./ParametersBuilder');
 
 const Endpoint = require('./../definitions/Endpoint'),
 	Parameters = require('./../definitions/Parameters'),
@@ -51,7 +52,7 @@ module.exports = (() => {
 		withVerb(verb) {
 			assert.argumentIsRequired(verb, 'verb', VerbType, 'VerbType');
 
-			this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
+			this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.credentials, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
 
 			return this;
 		}
@@ -66,7 +67,7 @@ module.exports = (() => {
 		withProtocol(protocol) {
 			assert.argumentIsRequired(protocol, 'protocol', ProtocolType, 'ProtocolType');
 
-			this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
+			this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.credentials, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
 
 			return this;
 		}
@@ -81,7 +82,7 @@ module.exports = (() => {
 		withHost(host) {
 			assert.argumentIsRequired(host, 'host', String);
 
-			this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
+			this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.credentials, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
 
 			return this;
 		}
@@ -96,7 +97,7 @@ module.exports = (() => {
 		withPort(port) {
 			assert.argumentIsRequired(port, 'port', Number);
 
-			this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
+			this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.credentials, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
 
 			return this;
 		}
@@ -117,7 +118,7 @@ module.exports = (() => {
 
 			const headers = builder.parameters;
 
-			this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, headers, this.endpoint.body, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
+			this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, headers, this.endpoint.body, this.endpoint.credentials, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
 
 			return this;
 		}
@@ -138,7 +139,7 @@ module.exports = (() => {
 
 			const path = builder.parameters;
 
-			this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
+			this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.credentials, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
 
 			return this;
 		}
@@ -159,7 +160,7 @@ module.exports = (() => {
 
 			const query = builder.parameters;
 
-			this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, query, this.endpoint.headers, this.endpoint.body, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
+			this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, query, this.endpoint.headers, this.endpoint.body, this.endpoint.credentials, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
 
 			return this;
 		}
@@ -199,6 +200,30 @@ module.exports = (() => {
 				bodyBuilder.withDelegateParameter((description || 'request payload'), 'body', x => x);
 			});
 		}
+		
+		withBasicAuthentication(username, password) {
+			assert.argumentIsRequired(username, 'username', String);
+			assert.argumentIsRequired(password, 'password', String);
+			
+			this._endpoint = this.withBasicAuthenticationBuilder((credentialsBuilder) => {
+				credentialsBuilder.withUsername(username);
+				credentialsBuilder.withPassword(password);
+			});
+		}
+		
+		withBasicAuthenticationBuilder(callback) {
+			assert.argumentIsRequired(callback, 'callback', Function);
+			
+			const builder = new CredentialsBuilder();
+			
+			callback(builder);
+
+			const credentials = builder.credentials;
+
+			this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, credentials, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
+
+			return this;
+		}
 
 		/**
 		 * Adds a {@link RequestInterceptor}.
@@ -219,7 +244,7 @@ module.exports = (() => {
 				updatedRequestInterceptor = requestInterceptor;
 			}
 
-			this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, updatedRequestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
+			this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.credentials, updatedRequestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
 
 			return this;
 		}
@@ -243,7 +268,7 @@ module.exports = (() => {
 				updatedResponseInterceptor = responseInterceptor;
 			}
 
-			this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.requestInterceptor, updatedResponseInterceptor, this.endpoint.errorInterceptor);
+			this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.credentials, this.endpoint.requestInterceptor, updatedResponseInterceptor, this.endpoint.errorInterceptor);
 
 			return this;
 		}
@@ -267,7 +292,7 @@ module.exports = (() => {
 				updatedErrorInterceptor = errorInterceptor;
 			}
 
-			this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, updatedErrorInterceptor);
+			this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.credentials, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, updatedErrorInterceptor);
 
 			return this;
 		}
@@ -291,10 +316,10 @@ module.exports = (() => {
 	}
 
 	/**
-	 * A function that, when passed the request's payload, returns a parameter's value.
+	 * A function that returns a {@link ParametersBuilder}.
 	 *
 	 * @callback EndpointBuilder~parametersBuilderCallback
-	 * @param {ParametersBuilder} parameter
+	 * @param {ParametersBuilder} parameterBuilder
 	 */
 	
 	return EndpointBuilder;

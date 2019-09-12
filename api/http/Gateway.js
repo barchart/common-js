@@ -166,6 +166,22 @@ module.exports = (() => {
 									return options;
 								});
 							}).then((options) => {
+								if (endpoint.credentials) {
+									return Promise.map([
+										Promise.resolve(endpoint.credentials.usernameExtractor(payload)),
+										Promise.resolve(endpoint.credentials.passwordExtractor(payload))
+									]).then((credentials) => {
+										options.auth = { };
+
+										options.auth.username = credentials[0];
+										options.auth.password = credentials[1];
+
+										return options;
+									});
+								} else {
+									return options;
+								}
+							}).then((options) => {
 								if (endpoint.requestInterceptor) {
 									return endpoint.requestInterceptor.process(options, endpoint);
 								} else {

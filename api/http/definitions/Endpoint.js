@@ -26,12 +26,13 @@ module.exports = (() => {
 	 * @param {Parameters=} query
 	 * @param {Parameters=} headers
 	 * @param {Parameters=} body
-	 * @param {RequestInterceptor} requestInterceptor
-	 * @param {ResponseInterceptor} responseInterceptor
-	 * @param {ErrorInterceptor} errorInterceptor
+	 * @param {Credentials=} credentials
+	 * @param {RequestInterceptor=} requestInterceptor
+	 * @param {ResponseInterceptor=} responseInterceptor
+	 * @param {ErrorInterceptor=} errorInterceptor
 	 */
 	class Endpoint {
-		constructor(name, description, verb, protocol, host, port, path, query, headers, body, requestInterceptor, responseInterceptor, errorInterceptor) {
+		constructor(name, description, verb, protocol, host, port, path, query, headers, body, credentials, requestInterceptor, responseInterceptor, errorInterceptor) {
 			this._name = name || null;
 			this._description = description || null;
 			this._verb = verb || VerbType.GET;
@@ -42,6 +43,7 @@ module.exports = (() => {
 			this._query = query || new Parameters();
 			this._headers = headers || new Parameters();
 			this._body = body || new Parameters();
+			this._credentials = credentials || null;
 			this._requestInterceptor = requestInterceptor || RequestInterceptor.EMPTY;
 			this._responseInterceptor = responseInterceptor || ResponseInterceptor.EMPTY;
 			this._errorInterceptor = errorInterceptor || ErrorInterceptor.EMPTY;
@@ -148,6 +150,16 @@ module.exports = (() => {
 		}
 
 		/**
+		 * Credentials for the request.
+		 *
+		 * public
+		 * @return {Credentials}
+		 */
+		get credentials() {
+			return this._credentials;
+		}
+
+		/**
 		 * The request interceptor of the endpoint.
 		 *
 		 * @public
@@ -218,6 +230,10 @@ module.exports = (() => {
 			}
 
 			this.body.validate();
+
+			if (this.credentials) {
+				this.credentials.validate();
+			}
 
 			if (this.requestInterceptor && !(this.requestInterceptor instanceof RequestInterceptor)) {
 				throw new Error('Endpoint request interceptor must be an instance of RequestInterceptor.');
