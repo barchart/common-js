@@ -11,7 +11,7 @@ module.exports = (() => {
 	 * @public
 	 * @param {String=} description
 	 * @param {String=} key
-	 * @param {Parameter~parameterValueCallback} value
+	 * @param {Parameter~parameterValueCallback} extractor
 	 * @param {Boolean=} optional
 	 */
 	class Parameter {
