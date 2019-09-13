@@ -181,7 +181,7 @@ module.exports = (() => {
 
 			const body = builder.parameters;
 
-			this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, body, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
+			this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, body, this.endpoint.credentials, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
 
 			return this;
 		}
@@ -200,22 +200,22 @@ module.exports = (() => {
 				bodyBuilder.withDelegateParameter((description || 'request payload'), 'body', x => x);
 			});
 		}
-		
+
 		withBasicAuthentication(username, password) {
 			assert.argumentIsRequired(username, 'username', String);
-			assert.argumentIsRequired(password, 'password', String);
-			
+			assert.argumentIsRequired(password, 'passwordg', String);
+
 			this._endpoint = this.withBasicAuthenticationBuilder((credentialsBuilder) => {
 				credentialsBuilder.withUsername(username);
 				credentialsBuilder.withPassword(password);
 			});
 		}
-		
+
 		withBasicAuthenticationBuilder(callback) {
 			assert.argumentIsRequired(callback, 'callback', Function);
-			
+
 			const builder = new CredentialsBuilder();
-			
+
 			callback(builder);
 
 			const credentials = builder.credentials;
@@ -321,6 +321,6 @@ module.exports = (() => {
 	 * @callback EndpointBuilder~parametersBuilderCallback
 	 * @param {ParametersBuilder} parameterBuilder
 	 */
-	
+
 	return EndpointBuilder;
 })();
