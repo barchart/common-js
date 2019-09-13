@@ -60,7 +60,7 @@ module.exports = (() => {
 						const headerValues = groups[1];
 						const queryValues = groups[2];
 						const bodyValues = groups[3];
-						
+
 						const parameters = array.flatten([ pathParameters, headerParameters, queryParameters, bodyParameters ]);
 						const values = array.flatten([ pathValues, headerValues, queryValues, bodyValues ]);
 
@@ -167,7 +167,7 @@ module.exports = (() => {
 								});
 							}).then((options) => {
 								if (endpoint.credentials) {
-									return Promise.map([
+									return Promise.all([
 										Promise.resolve(endpoint.credentials.usernameExtractor(payload)),
 										Promise.resolve(endpoint.credentials.passwordExtractor(payload))
 									]).then((credentials) => {

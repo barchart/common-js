@@ -27,7 +27,7 @@ module.exports = (() => {
 
 		/**
 		 * Sets a literal username.
-		 * 
+		 *
 		 * @public
 		 * @param {String} username
 		 * @returns {CredentialsBuilder}
@@ -47,7 +47,7 @@ module.exports = (() => {
 		 */
 		withDelegateUsername(delegate) {
 			this._credentials = new Credentials(delegate, this._credentials.passwordExtractor);
-			
+
 			return this;
 		}
 
@@ -61,7 +61,7 @@ module.exports = (() => {
 		withLiteralPassword(password) {
 			assert.argumentIsOptional(password, 'password', String);
 
-			return this.withPasswordExtractor((ignored) => password);
+			return this.withDelegatePassword((ignored) => password);
 		}
 
 		/**

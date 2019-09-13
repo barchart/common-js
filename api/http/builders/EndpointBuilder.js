@@ -203,11 +203,11 @@ module.exports = (() => {
 
 		withBasicAuthentication(username, password) {
 			assert.argumentIsRequired(username, 'username', String);
-			assert.argumentIsRequired(password, 'passwordg', String);
+			assert.argumentIsRequired(password, 'password', String);
 
-			this._endpoint = this.withBasicAuthenticationBuilder((credentialsBuilder) => {
-				credentialsBuilder.withUsername(username);
-				credentialsBuilder.withPassword(password);
+			return this.withBasicAuthenticationBuilder((credentialsBuilder) => {
+				credentialsBuilder.withLiteralUsername(username);
+				credentialsBuilder.withLiteralPassword(password);
 			});
 		}
 
