@@ -269,6 +269,10 @@ describe('When a person schema is created (first and last names, with optional m
 			it('an object with with invalid first and last names should be invalid', function() {
 				expect(schema.validate({ first: 1, last: { } })).toEqual(false);
 			});
+
+			it('an object with with invalid middle should be invalid', function() {
+				expect(schema.validate({ first: 'bryan', middle: null, last: 'ingle' })).toEqual(false);
+			});
 		});
 
 		describe('and various are checked for invalid fields', function() {
