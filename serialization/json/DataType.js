@@ -250,18 +250,6 @@ module.exports = (() => {
 	const dataTypeTimestamp = new DataType('Timestamp', null, x => Timestamp.parse(x), x => x instanceof Timestamp, getBuilder(buildTimestamp));
 	const dataTypeAdHoc = new DataType('AdHoc', null, x => AdHoc.parse(x), x => x instanceof AdHoc, getBuilder(buildAdHoc));
 
-	const dataTypes = [
-		dataTypeString,
-		dataTypeNumber,
-		dataTypeBoolean,
-		dataTypeObject,
-		dataTypeArray,
-		dataTypeDecimal,
-		dataTypeDay,
-		dataTypeTimestamp,
-		dataTypeAdHoc
-	];
-
 	function getBuilder(builder) {
 		return (data) => {
 			try {
