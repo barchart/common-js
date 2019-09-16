@@ -64,6 +64,68 @@ describe('When a person schema is created (first and last names)', function() {
 				});
 			});
 		});
+
+		describe('and the object is validated', function() {
+			it('the object should be valid', function() {
+				expect(schema.validate(object)).toEqual(true);
+			});
+
+			it('no invalid fields should be reported by the schema', function() {
+				expect(schema.getInvalidFields(object).length).toEqual(0);
+			});
+		});
+
+		describe('and various invalid objects are validated', function() {
+			it('a null object should be invalid', function() {
+				expect(schema.validate(null)).toEqual(false);
+			});
+
+			it('a undefined object should be invalid', function() {
+				expect(schema.validate()).toEqual(false);
+			});
+
+			it('an empty object should be invalid', function() {
+				expect(schema.validate({ })).toEqual(false);
+			});
+
+			it('an object with only a first name should be invalid', function() {
+				expect(schema.validate({ first: 'bryan' })).toEqual(false);
+			});
+
+			it('an object with only a last name should be invalid', function() {
+				expect(schema.validate({ last: 'ingle' })).toEqual(false);
+			});
+
+			it('an object with with invalid first and last names should be invalid', function() {
+				expect(schema.validate({ first: 1, last: { } })).toEqual(false);
+			});
+		});
+
+		describe('and various are checked for invalid fields', function() {
+			it('a null object should have two invalid fields', function() {
+				expect(schema.getInvalidFields(null).length).toEqual(2);
+			});
+
+			it('a undefined object should have two invalid fields', function() {
+				expect(schema.getInvalidFields().length).toEqual(2);
+			});
+
+			it('an empty object should have two invalid fields', function() {
+				expect(schema.getInvalidFields({ }).length).toEqual(2);
+			});
+
+			it('an object with only a first name should have one invalid fields', function() {
+				expect(schema.getInvalidFields({ first: 'bryan' }).length).toEqual(1);
+			});
+
+			it('an object with only a last name should have one invalid fields', function() {
+				expect(schema.getInvalidFields({ last: 'ingle' }).length).toEqual(1);
+			});
+
+			it('an object with with invalid first and last names should have two invalid fields', function() {
+				expect(schema.getInvalidFields({ first: 1, last: { } }).length).toEqual(2);
+			});
+		});
 	});
 
 	describe('and a schema-compliant array is created', function() {
@@ -172,6 +234,68 @@ describe('When a person schema is created (first and last names, with optional m
 				});
 			});
 		});
+
+		describe('and the object is validated', function() {
+			it('the object should be valid', function() {
+				expect(schema.validate(object)).toEqual(true);
+			});
+
+			it('no invalid fields should be reported by the schema', function() {
+				expect(schema.getInvalidFields(object).length).toEqual(0);
+			});
+		});
+
+		describe('and various invalid objects are validated', function() {
+			it('a null object should be invalid', function() {
+				expect(schema.validate(null)).toEqual(false);
+			});
+
+			it('a undefined object should be invalid', function() {
+				expect(schema.validate()).toEqual(false);
+			});
+
+			it('an empty object should be invalid', function() {
+				expect(schema.validate({ })).toEqual(false);
+			});
+
+			it('an object with only a first name should be invalid', function() {
+				expect(schema.validate({ first: 'bryan' })).toEqual(false);
+			});
+
+			it('an object with only a last name should be invalid', function() {
+				expect(schema.validate({ last: 'ingle' })).toEqual(false);
+			});
+
+			it('an object with with invalid first and last names should be invalid', function() {
+				expect(schema.validate({ first: 1, last: { } })).toEqual(false);
+			});
+		});
+
+		describe('and various are checked for invalid fields', function() {
+			it('a null object should have two invalid fields', function() {
+				expect(schema.getInvalidFields(null).length).toEqual(2);
+			});
+
+			it('a undefined object should have two invalid fields', function() {
+				expect(schema.getInvalidFields().length).toEqual(2);
+			});
+
+			it('an empty object should have two invalid fields', function() {
+				expect(schema.getInvalidFields({ }).length).toEqual(2);
+			});
+
+			it('an object with only a first name should have one invalid fields', function() {
+				expect(schema.getInvalidFields({ first: 'bryan' }).length).toEqual(1);
+			});
+
+			it('an object with only a last name should have one invalid fields', function() {
+				expect(schema.getInvalidFields({ last: 'ingle' }).length).toEqual(1);
+			});
+
+			it('an object with with invalid first and last names should have two invalid fields', function() {
+				expect(schema.getInvalidFields({ first: 1, last: { } }).length).toEqual(2);
+			});
+		});
 	});
 
 	describe('and a schema-compliant object is created (without middle name)', function() {
@@ -209,6 +333,16 @@ describe('When a person schema is created (first and last names, with optional m
 				it('should have a "last" property with the expected value', function() {
 					expect(deserialized.last).toEqual('ingle');
 				});
+			});
+		});
+
+		describe('and the object is validated', function() {
+			it('the object should be valid', function() {
+				expect(schema.validate(object)).toEqual(true);
+			});
+
+			it('no invalid fields should be reported by the schema', function() {
+				expect(schema.getInvalidFields(object).length).toEqual(0);
 			});
 		});
 	});

@@ -102,11 +102,38 @@ module.exports = (() => {
 		 *
 		 * @public
 		 * @param {*} candidate
+		 * @returns {Boolean}
 		 */
 		validate(candidate) {
-			let returnVal = is.object(candidate);
+			return !getCandidateIsInvalid(candidate) && this.getInvalidFields(candidate).length === 0;
+		}
 
-			return false;
+		/**
+		 * Returns an array of {@link Field} objects from the schema for which the
+		 * candidate object does not comply with.
+		 *
+		 * @public
+		 * @param {*} candidate
+		 * @returns {Field[]}
+		 */
+		getInvalidFields(candidate) {
+			if (getCandidateIsInvalid(candidate)) {
+				return this.fields.filter(f => !f.optional);
+			}
+
+			return this.fields.reduce((problems, field) => {
+				let check = !field.optional || attributes.has(candidate, field.name);
+
+				if (check) {
+					const valid = field.dataType.validator.call(this, attributes.read(candidate, field.name));
+
+					if (!valid) {
+						problems.push(field);
+					}
+				}
+
+				return problems;
+			}, [ ]);
 		}
 
 		/**
@@ -286,6 +313,10 @@ module.exports = (() => {
 		if (attributes.has(data, field.name)) {
 			attributes.write(target, field.name, field.dataType.convert(attributes.read(data, field.name)));
 		}
+	}
+
+	function getCandidateIsInvalid(candidate) {
+		return is.undefined(candidate) || is.null(candidate) || !is.object(candidate);
 	}
 
 	return Schema;
