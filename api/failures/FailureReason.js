@@ -143,34 +143,37 @@ module.exports = (() => {
 		}
 
 		/**
-		 * Validates that a candidate conforms to a schema
+		 * Validates that a candidate conforms to a schema, returning a rejected
+		 * promise (with a serialized FailureReason) if a problem exists.
 		 *
 		 * @public
 		 * @static
 		 * @param {Schema} schema
 		 * @param {Object} candidate
+		 * @param {String=} description
+		 * @returns {Promise}
 		 */
-		static validateSchema(schema, candidate) {
+		static validateSchema(schema, candidate, description) {
 			return Promise.resolve()
 				.then(() => {
+					const fields = schema.getInvalidFields(candidate);
+
 					let failure;
 
-					schema.schema.fields.map((field) => {
-						if (field.optional) {
-							return;
-						}
+					if (fields.length !== 0) {
+						failure = FailureReason.forRequest({endpoint: { description: (description || `serialize data into ${schema.name}`) }})
+							.addItem(FailureType.REQUEST_INPUT_MALFORMED, { }, true);
 
-						if (!attributes.has(candidate, field.name) || !field.dataType.validator.call(this, attributes.read(candidate, field.name))) {
-							if (!failure) {
-								failure = FailureReason.forRequest({endpoint: {description: `serialize data into ${schema}`}})
-									.addItem(FailureType.REQUEST_INPUT_MALFORMED, { }, true);
-							}
+						failure = fields.reduce((accumulator, field) => {
+							accumulator.addItem(FailureType.REQUEST_PARAMETER_MALFORMED, { name: field.name });
 
-							failure.addItem(FailureType.REQUEST_PARAMETER_MALFORMED, { name: field.name });
-						}
-					});
+							return accumulator;
+						}, failure);
+					} else {
+						failure = null;
+					}
 
-					if (failure) {
+					if (failure !== null) {
 						return Promise.reject(failure.format());
 					} else {
 						return Promise.resolve(null);

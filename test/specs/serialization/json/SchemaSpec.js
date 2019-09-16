@@ -1,14 +1,14 @@
-var AdHoc = require('./../../../../lang/AdHoc');
-var Currency = require('./../../../../lang/Currency');
-var Day = require('./../../../../lang/Day');
-var Decimal = require('./../../../../lang/Decimal');
-var Enum = require('./../../../../lang/Enum');
-var Money = require('./../../../../lang/Money');
+var AdHoc = require('./../../../../lang/AdHoc'),
+	Currency = require('./../../../../lang/Currency'),
+	Day = require('./../../../../lang/Day'),
+	Decimal = require('./../../../../lang/Decimal'),
+	Enum = require('./../../../../lang/Enum'),
+	Money = require('./../../../../lang/Money');
 
-var Component = require('./../../../../serialization/json/Component');
-var Field = require('./../../../../serialization/json/Field');
-var DataType = require('./../../../../serialization/json/DataType');
-var Schema = require('./../../../../serialization/json/Schema');
+var DataType = require('./../../../../serialization/json/DataType'),
+	Component = require('./../../../../serialization/json/Component'),
+	Field = require('./../../../../serialization/json/Field'),
+	Schema = require('./../../../../serialization/json/Schema');
 
 class Letter extends Enum {
 	constructor(name) {
