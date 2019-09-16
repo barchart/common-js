@@ -187,37 +187,38 @@ module.exports = function () {
 			}
 
 			/**
-    * Validates that a candidate conforms to a schema
+    * Validates that a candidate conforms to a schema, returning a rejected
+    * promise (with a serialized FailureReason) if a problem exists.
     *
     * @public
     * @static
     * @param {Schema} schema
     * @param {Object} candidate
+    * @param {String=} description
+    * @returns {Promise}
     */
 
 		}, {
 			key: 'validateSchema',
-			value: function validateSchema(schema, candidate) {
-				var _this2 = this;
-
+			value: function validateSchema(schema, candidate, description) {
 				return Promise.resolve().then(function () {
+					var fields = schema.getInvalidFields(candidate);
+
 					var failure = void 0;
 
-					schema.schema.fields.map(function (field) {
-						if (field.optional) {
-							return;
-						}
+					if (fields.length !== 0) {
+						failure = FailureReason.forRequest({ endpoint: { description: description || 'serialize data into ' + schema.name } }).addItem(FailureType.REQUEST_INPUT_MALFORMED, {}, true);
 
-						if (!attributes.has(candidate, field.name) || !field.dataType.validator.call(_this2, attributes.read(candidate, field.name))) {
-							if (!failure) {
-								failure = FailureReason.forRequest({ endpoint: { description: 'serialize data into ' + schema } }).addItem(FailureType.REQUEST_INPUT_MALFORMED, {}, true);
-							}
+						failure = fields.reduce(function (accumulator, field) {
+							accumulator.addItem(FailureType.REQUEST_PARAMETER_MALFORMED, { name: field.name });
 
-							failure.addItem(FailureType.REQUEST_PARAMETER_MALFORMED, { name: field.name });
-						}
-					});
+							return accumulator;
+						}, failure);
+					} else {
+						failure = null;
+					}
 
-					if (failure) {
+					if (failure !== null) {
 						return Promise.reject(failure.format());
 					} else {
 						return Promise.resolve(null);
@@ -16708,11 +16709,45 @@ module.exports = function () {
     *
     * @public
     * @param {*} candidate
+    * @returns {Boolean}
     */
 			value: function validate(candidate) {
-				var returnVal = is.object(candidate);
+				return !getCandidateIsInvalid(candidate) && this.getInvalidFields(candidate).length === 0;
+			}
 
-				return false;
+			/**
+    * Returns an array of {@link Field} objects from the schema for which the
+    * candidate object does not comply with.
+    *
+    * @public
+    * @param {*} candidate
+    * @returns {Field[]}
+    */
+
+		}, {
+			key: 'getInvalidFields',
+			value: function getInvalidFields(candidate) {
+				var _this = this;
+
+				if (getCandidateIsInvalid(candidate)) {
+					return this.fields.filter(function (f) {
+						return !f.optional;
+					});
+				}
+
+				return this.fields.reduce(function (problems, field) {
+					var check = !field.optional || attributes.has(candidate, field.name);
+
+					if (check) {
+						var valid = field.dataType.validator.call(_this, attributes.read(candidate, field.name));
+
+						if (!valid) {
+							problems.push(field);
+						}
+					}
+
+					return problems;
+				}, []);
 			}
 
 			/**
@@ -16772,10 +16807,10 @@ module.exports = function () {
 		}, {
 			key: 'getReviverFactory',
 			value: function getReviverFactory() {
-				var _this = this;
+				var _this2 = this;
 
 				return function () {
-					return _this.getReviver();
+					return _this2.getReviver();
 				};
 			}
 		}, {
@@ -16839,11 +16874,11 @@ module.exports = function () {
 		function SchemaError(key, name, message) {
 			_classCallCheck(this, SchemaError);
 
-			var _this2 = _possibleConstructorReturn(this, (SchemaError.__proto__ || Object.getPrototypeOf(SchemaError)).call(this, message));
+			var _this3 = _possibleConstructorReturn(this, (SchemaError.__proto__ || Object.getPrototypeOf(SchemaError)).call(this, message));
 
-			_this2.key = key;
-			_this2.name = name;
-			return _this2;
+			_this3.key = key;
+			_this3.name = name;
+			return _this3;
 		}
 
 		_createClass(SchemaError, [{
@@ -16979,6 +17014,10 @@ module.exports = function () {
 		if (attributes.has(data, field.name)) {
 			attributes.write(target, field.name, field.dataType.convert(attributes.read(data, field.name)));
 		}
+	}
+
+	function getCandidateIsInvalid(candidate) {
+		return is.undefined(candidate) || is.null(candidate) || !is.object(candidate);
 	}
 
 	return Schema;
@@ -18160,6 +18199,10 @@ describe('When a FailureType is created with a template string that references d
 var FailureReason = require('./../../../../api/failures/FailureReason'),
     FailureType = require('./../../../../api/failures/FailureType');
 
+var DataType = require('./../../../../serialization/json/DataType'),
+    Field = require('./../../../../serialization/json/Field'),
+    Schema = require('./../../../../serialization/json/Schema');
+
 describe('When a FailureReason is created', function () {
 	'use strict';
 
@@ -18216,7 +18259,81 @@ describe('When a FailureReason is created', function () {
 	});
 });
 
-},{"./../../../../api/failures/FailureReason":1,"./../../../../api/failures/FailureType":3}],77:[function(require,module,exports){
+describe('When a schema is validated', function () {
+	var schema;
+
+	beforeEach(function () {
+		schema = new Schema('person', [new Field('first', DataType.STRING), new Field('last', DataType.STRING)]);
+	});
+
+	describe('and a valid schema is processed', function () {
+		var result;
+
+		beforeEach(function (done) {
+			FailureReason.validateSchema(schema, { first: 'bryan', last: 'ingle' }).then(function (r) {
+				result = r;
+
+				done();
+			});
+		});
+
+		it('should return null (not a FailureReason)', function () {
+			expect(result).toEqual(null);
+		});
+	});
+
+	describe('and an invalid schema is processed (with one invalid property)', function () {
+		var successResult = null;
+		var failureResult = null;
+
+		beforeEach(function (done) {
+			FailureReason.validateSchema(schema, { first: 'bryan' }).then(function (r) {
+				successResult = r;
+
+				done();
+			}).catch(function (e) {
+				failureResult = e;
+
+				done();
+			});
+		});
+
+		it('should fail with a formatted failure reason', function () {
+			expect(failureResult).not.toEqual(null);
+		});
+
+		it('should fail with a formatted failure reason, having one child', function () {
+			expect(failureResult[0].children.length).toEqual(1);
+		});
+	});
+
+	describe('and an invalid schema is processed (with two invalid properties)', function () {
+		var successResult = null;
+		var failureResult = null;
+
+		beforeEach(function (done) {
+			FailureReason.validateSchema(schema, {}).then(function (r) {
+				successResult = r;
+
+				done();
+			}).catch(function (e) {
+				failureResult = e;
+
+				done();
+			});
+		});
+
+		it('should fail with a formatted failure reason', function () {
+			expect(failureResult).not.toEqual(null);
+		});
+
+		it('should fail with a formatted failure reason, having two children', function () {
+			expect(failureResult[0].children.length).toEqual(2);
+		});
+	});
+});
+
+},{"./../../../../api/failures/FailureReason":1,"./../../../../api/failures/FailureType":3,"./../../../../serialization/json/DataType":56,"./../../../../serialization/json/Field":57,"./../../../../serialization/json/Schema":58}],77:[function(require,module,exports){
 'use strict';
 
 var LinkedList = require('./../../../collections/LinkedList');
@@ -27182,17 +27299,17 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var AdHoc = require('./../../../../lang/AdHoc');
-var Currency = require('./../../../../lang/Currency');
-var Day = require('./../../../../lang/Day');
-var Decimal = require('./../../../../lang/Decimal');
-var Enum = require('./../../../../lang/Enum');
-var Money = require('./../../../../lang/Money');
+var AdHoc = require('./../../../../lang/AdHoc'),
+    Currency = require('./../../../../lang/Currency'),
+    Day = require('./../../../../lang/Day'),
+    Decimal = require('./../../../../lang/Decimal'),
+    Enum = require('./../../../../lang/Enum'),
+    Money = require('./../../../../lang/Money');
 
-var Component = require('./../../../../serialization/json/Component');
-var Field = require('./../../../../serialization/json/Field');
-var DataType = require('./../../../../serialization/json/DataType');
-var Schema = require('./../../../../serialization/json/Schema');
+var DataType = require('./../../../../serialization/json/DataType'),
+    Component = require('./../../../../serialization/json/Component'),
+    Field = require('./../../../../serialization/json/Field'),
+    Schema = require('./../../../../serialization/json/Schema');
 
 var Letter = function (_Enum) {
 	_inherits(Letter, _Enum);
@@ -27249,6 +27366,68 @@ describe('When a person schema is created (first and last names)', function () {
 				it('should have a "last" property with the expected value', function () {
 					expect(deserialized.last).toEqual('ingle');
 				});
+			});
+		});
+
+		describe('and the object is validated', function () {
+			it('the object should be valid', function () {
+				expect(schema.validate(object)).toEqual(true);
+			});
+
+			it('no invalid fields should be reported by the schema', function () {
+				expect(schema.getInvalidFields(object).length).toEqual(0);
+			});
+		});
+
+		describe('and various invalid objects are validated', function () {
+			it('a null object should be invalid', function () {
+				expect(schema.validate(null)).toEqual(false);
+			});
+
+			it('a undefined object should be invalid', function () {
+				expect(schema.validate()).toEqual(false);
+			});
+
+			it('an empty object should be invalid', function () {
+				expect(schema.validate({})).toEqual(false);
+			});
+
+			it('an object with only a first name should be invalid', function () {
+				expect(schema.validate({ first: 'bryan' })).toEqual(false);
+			});
+
+			it('an object with only a last name should be invalid', function () {
+				expect(schema.validate({ last: 'ingle' })).toEqual(false);
+			});
+
+			it('an object with with invalid first and last names should be invalid', function () {
+				expect(schema.validate({ first: 1, last: {} })).toEqual(false);
+			});
+		});
+
+		describe('and various are checked for invalid fields', function () {
+			it('a null object should have two invalid fields', function () {
+				expect(schema.getInvalidFields(null).length).toEqual(2);
+			});
+
+			it('a undefined object should have two invalid fields', function () {
+				expect(schema.getInvalidFields().length).toEqual(2);
+			});
+
+			it('an empty object should have two invalid fields', function () {
+				expect(schema.getInvalidFields({}).length).toEqual(2);
+			});
+
+			it('an object with only a first name should have one invalid fields', function () {
+				expect(schema.getInvalidFields({ first: 'bryan' }).length).toEqual(1);
+			});
+
+			it('an object with only a last name should have one invalid fields', function () {
+				expect(schema.getInvalidFields({ last: 'ingle' }).length).toEqual(1);
+			});
+
+			it('an object with with invalid first and last names should have two invalid fields', function () {
+				expect(schema.getInvalidFields({ first: 1, last: {} }).length).toEqual(2);
 			});
 		});
 	});
@@ -27355,6 +27534,72 @@ describe('When a person schema is created (first and last names, with optional m
 				});
 			});
 		});
+
+		describe('and the object is validated', function () {
+			it('the object should be valid', function () {
+				expect(schema.validate(object)).toEqual(true);
+			});
+
+			it('no invalid fields should be reported by the schema', function () {
+				expect(schema.getInvalidFields(object).length).toEqual(0);
+			});
+		});
+
+		describe('and various invalid objects are validated', function () {
+			it('a null object should be invalid', function () {
+				expect(schema.validate(null)).toEqual(false);
+			});
+
+			it('a undefined object should be invalid', function () {
+				expect(schema.validate()).toEqual(false);
+			});
+
+			it('an empty object should be invalid', function () {
+				expect(schema.validate({})).toEqual(false);
+			});
+
+			it('an object with only a first name should be invalid', function () {
+				expect(schema.validate({ first: 'bryan' })).toEqual(false);
+			});
+
+			it('an object with only a last name should be invalid', function () {
+				expect(schema.validate({ last: 'ingle' })).toEqual(false);
+			});
+
+			it('an object with with invalid first and last names should be invalid', function () {
+				expect(schema.validate({ first: 1, last: {} })).toEqual(false);
+			});
+
+			it('an object with with invalid middle should be invalid', function () {
+				expect(schema.validate({ first: 'bryan', middle: null, last: 'ingle' })).toEqual(false);
+			});
+		});
+
+		describe('and various are checked for invalid fields', function () {
+			it('a null object should have two invalid fields', function () {
+				expect(schema.getInvalidFields(null).length).toEqual(2);
+			});
+
+			it('a undefined object should have two invalid fields', function () {
+				expect(schema.getInvalidFields().length).toEqual(2);
+			});
+
+			it('an empty object should have two invalid fields', function () {
+				expect(schema.getInvalidFields({}).length).toEqual(2);
+			});
+
+			it('an object with only a first name should have one invalid fields', function () {
+				expect(schema.getInvalidFields({ first: 'bryan' }).length).toEqual(1);
+			});
+
+			it('an object with only a last name should have one invalid fields', function () {
+				expect(schema.getInvalidFields({ last: 'ingle' }).length).toEqual(1);
+			});
+
+			it('an object with with invalid first and last names should have two invalid fields', function () {
+				expect(schema.getInvalidFields({ first: 1, last: {} }).length).toEqual(2);
+			});
+		});
 	});
 
 	describe('and a schema-compliant object is created (without middle name)', function () {
@@ -27392,6 +27637,16 @@ describe('When a person schema is created (first and last names, with optional m
 				it('should have a "last" property with the expected value', function () {
 					expect(deserialized.last).toEqual('ingle');
 				});
+			});
+		});
+
+		describe('and the object is validated', function () {
+			it('the object should be valid', function () {
+				expect(schema.validate(object)).toEqual(true);
+			});
+
+			it('no invalid fields should be reported by the schema', function () {
+				expect(schema.getInvalidFields(object).length).toEqual(0);
 			});
 		});
 	});
