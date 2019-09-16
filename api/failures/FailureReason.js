@@ -1,5 +1,4 @@
 const assert = require('./../../lang/assert'),
-	attributes = require('./../../lang/attributes'),
 	is = require('./../../lang/is');
 
 const FailureReasonItem = require('./FailureReasonItem'),
