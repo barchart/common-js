@@ -149,6 +149,28 @@ describe('when partitioning an array of three items', function() {
 	});
 });
 
+describe('when partitioning empty array', function() {
+	'use strict';
+
+	var original;
+
+	beforeEach(function() {
+		original = [ ];
+	});
+
+	describe('using a partition size of 10', function() {
+		var partitions;
+
+		beforeEach(function() {
+			partitions = array.partition(original, 10);
+		});
+
+		it('an empty array should be returned', function() {
+			expect(partitions.length).toEqual(0);
+		});
+	});
+});
+
 describe('when flattening an array', function() {
 	'use strict';
 
