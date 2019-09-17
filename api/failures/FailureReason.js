@@ -147,7 +147,7 @@ module.exports = (() => {
 		 *
 		 * @public
 		 * @static
-		 * @param {Schema} schema
+		 * @param {Schema|Enum} schema
 		 * @param {Object} candidate
 		 * @param {String=} description
 		 * @returns {Promise}
@@ -155,7 +155,17 @@ module.exports = (() => {
 		static validateSchema(schema, candidate, description) {
 			return Promise.resolve()
 				.then(() => {
-					const fields = schema.getInvalidFields(candidate);
+					let schemaToUse;
+
+					if (schema instanceof Schema) {
+						schemaToUse = schema;
+					} else if (schema.schema && schema.schema instanceof Schema) {
+						schemaToUse = schema.schema;
+					} else {
+						schemaToUse = null;
+					}
+
+					const fields = schemaToUse.getInvalidFields(candidate);
 
 					let failure;
 
