@@ -6,7 +6,6 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var assert = require('./../../lang/assert'),
-    attributes = require('./../../lang/attributes'),
     is = require('./../../lang/is');
 
 var FailureReasonItem = require('./FailureReasonItem'),
@@ -192,7 +191,7 @@ module.exports = function () {
     *
     * @public
     * @static
-    * @param {Schema} schema
+    * @param {Schema|Enum} schema
     * @param {Object} candidate
     * @param {String=} description
     * @returns {Promise}
@@ -202,7 +201,17 @@ module.exports = function () {
 			key: 'validateSchema',
 			value: function validateSchema(schema, candidate, description) {
 				return Promise.resolve().then(function () {
-					var fields = schema.getInvalidFields(candidate);
+					var schemaToUse = void 0;
+
+					if (schema instanceof Schema) {
+						schemaToUse = schema;
+					} else if (schema.schema && schema.schema instanceof Schema) {
+						schemaToUse = schema.schema;
+					} else {
+						schemaToUse = null;
+					}
+
+					var fields = schemaToUse.getInvalidFields(candidate);
 
 					var failure = void 0;
 
@@ -233,7 +242,7 @@ module.exports = function () {
 	return FailureReason;
 }();
 
-},{"./../../collections/Tree":7,"./../../lang/assert":30,"./../../lang/attributes":31,"./../../lang/is":36,"./../../serialization/json/Schema":58,"./FailureReasonItem":2,"./FailureType":3}],2:[function(require,module,exports){
+},{"./../../collections/Tree":7,"./../../lang/assert":30,"./../../lang/is":36,"./../../serialization/json/Schema":58,"./FailureReasonItem":2,"./FailureType":3}],2:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -16479,8 +16488,6 @@ module.exports = function () {
 	}, function (x) {
 		return x instanceof AdHoc;
 	}, getBuilder(buildAdHoc));
-
-	var dataTypes = [dataTypeString, dataTypeNumber, dataTypeBoolean, dataTypeObject, dataTypeArray, dataTypeDecimal, dataTypeDay, dataTypeTimestamp, dataTypeAdHoc];
 
 	function getBuilder(builder) {
 		return function (data) {
