@@ -123,6 +123,6 @@ gulp.task('lint', () => {
         .pipe(jshint.reporter('default'));
 });
 
-gulp.task('test', [ 'execute-tests' ]);
+gulp.task('test', gulp.series('execute-tests'));
 
-gulp.task('default', [ 'lint' ]);
+gulp.task('default', gulp.series('lint'));
