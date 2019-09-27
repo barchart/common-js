@@ -18,7 +18,7 @@ function getVersionFromPackage() {
 }
 
 gulp.task('ensure-clean-working-directory', () => {
-	gitStatus(function(err, status) {
+	return gitStatus(function(err, status) {
 		if (err, !status.clean) {
 			throw new Error('Unable to proceed, your working directory is not clean.');
 		}
