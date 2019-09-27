@@ -8,7 +8,7 @@
     "url": "http://www.barchart.com"
   },
   "scripts": {
-    "test": "echo \"Error: Please use gulp to run tests\" && exit 1"
+    "test": "gulp test"
   },
   "repository": {
     "type": "git",
