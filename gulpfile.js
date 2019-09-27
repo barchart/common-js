@@ -1,7 +1,8 @@
 const gulp = require('gulp');
 
-const babelify = require('babelify'),
-	browserify = require('browserify'),
+const fs = require('fs');
+
+const browserify = require('browserify'),
 	buffer = require('vinyl-buffer'),
 	bump = require('gulp-bump'),
 	exec = require('child_process').exec,
@@ -10,12 +11,8 @@ const babelify = require('babelify'),
 	glob = require('glob'),
 	jasmine = require('gulp-jasmine'),
 	jshint = require('gulp-jshint'),
-	rename = require('gulp-rename'),
 	runSequence = require('run-sequence'),
-	source = require('vinyl-source-stream'),
-	util = require('gulp-util');
-
-const fs = require('fs');
+	source = require('vinyl-source-stream');
 
 function getVersionFromPackage() {
     return JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
@@ -31,7 +28,7 @@ gulp.task('ensure-clean-working-directory', () => {
 
 gulp.task('bump-version', () => {
     return gulp.src([ './package.json' ])
-        .pipe(bump({ type: 'patch' }).on('error', util.log))
+        .pipe(bump({ type: 'patch' }))
         .pipe(gulp.dest('./'));
 });
 
