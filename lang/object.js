@@ -12,10 +12,10 @@ module.exports = (() => {
 	 */
 	const object = {
 		/**
-		 * <p>Performs "deep" equality check on two objects.</p>
+		 * Performs "deep" equality check on two objects.
 		 *
-		 * <p>Array items are compared, object properties are compared, and
-		 * finally "primitive" values are checked using strict equality rules.</p>
+		 * Array items are compared, object properties are compared, and
+		 * "primitive" values are checked using strict equality rules.
 		 *
 		 * @static
 		 * @param {Object} a
@@ -136,6 +136,28 @@ module.exports = (() => {
 			}
 
 			return keys;
+		},
+
+		/**
+		 * Given an object, returns a Boolean value, indicating if the
+		 * object has any "own" properties.
+		 *
+		 * @static
+		 * @param {Object} target - The object to interrogate.
+		 * @returns {Boolean}
+		 */
+		empty(target) {
+			let empty = true;
+
+			for (let k in target) {
+				if (target.hasOwnProperty(k)) {
+					empty = false;
+
+					break;
+				}
+			}
+
+			return empty;
 		}
 	};
 
