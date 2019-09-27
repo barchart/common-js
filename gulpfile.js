@@ -17,11 +17,13 @@ function getVersionFromPackage() {
     return JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
 }
 
-gulp.task('ensure-clean-working-directory', () => {
-	return gitStatus(function(err, status) {
+gulp.task('ensure-clean-working-directory', (cb) => {
+	gitStatus(function(err, status) {
 		if (err, !status.clean) {
 			throw new Error('Unable to proceed, your working directory is not clean.');
 		}
+
+		cb();
 	});
 });
 
