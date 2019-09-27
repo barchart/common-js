@@ -6802,10 +6802,10 @@ module.exports = function () {
 
 	var object = {
 		/**
-   * <p>Performs "deep" equality check on two objects.</p>
+   * Performs "deep" equality check on two objects.
    *
-   * <p>Array items are compared, object properties are compared, and
-   * finally "primitive" values are checked using strict equality rules.</p>
+   * Array items are compared, object properties are compared, and
+   * "primitive" values are checked using strict equality rules.
    *
    * @static
    * @param {Object} a
@@ -6931,6 +6931,29 @@ module.exports = function () {
 			}
 
 			return keys;
+		},
+
+
+		/**
+   * Given an object, returns a Boolean value, indicating if the
+   * object has any "own" properties.
+   *
+   * @static
+   * @param {Object} target - The object to interrogate.
+   * @returns {Boolean}
+   */
+		empty: function empty(target) {
+			var empty = true;
+
+			for (var k in target) {
+				if (target.hasOwnProperty(k)) {
+					empty = false;
+
+					break;
+				}
+			}
+
+			return empty;
 		}
 	};
 
@@ -22345,6 +22368,28 @@ describe('when partitioning an array of three items', function () {
 
 		it('the first item of the second partition should be the third item', function () {
 			expect(partitions[1][0]).toBe(original[2]);
+		});
+	});
+});
+
+describe('when partitioning empty array', function () {
+	'use strict';
+
+	var original;
+
+	beforeEach(function () {
+		original = [];
+	});
+
+	describe('using a partition size of 10', function () {
+		var partitions;
+
+		beforeEach(function () {
+			partitions = array.partition(original, 10);
+		});
+
+		it('an empty array should be returned', function () {
+			expect(partitions.length).toEqual(0);
 		});
 	});
 });
