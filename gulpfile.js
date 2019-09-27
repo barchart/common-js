@@ -18,7 +18,7 @@ function getVersionFromPackage() {
 }
 
 gulp.task('ensure-clean-working-directory', (cb) => {
-	gitStatus(function(err, status) {
+	gitStatus((err, status) => {
 		if (err, !status.clean) {
 			throw new Error('Unable to proceed, your working directory is not clean.');
 		}
@@ -33,7 +33,7 @@ gulp.task('bump-version', () => {
         .pipe(gulp.dest('./'));
 });
 
-gulp.task('document', function (cb) {
+gulp.task('document', (cb) => {
 	exec('jsdoc . -c jsdoc.json -r -d docs', (error, stdout, stderr) => {
 		console.log(stdout);
 		console.log(stderr);
@@ -55,7 +55,7 @@ gulp.task('push-changes', (cb) => {
 gulp.task('create-tag', (cb) => {
     const version = getVersionFromPackage();
 
-    git.tag(version, 'Release ' + version, function (error) {
+    git.tag(version, 'Release ' + version, (error) => {
         if (error) {
             return cb(error);
         }
