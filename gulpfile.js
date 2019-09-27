@@ -11,7 +11,6 @@ const browserify = require('browserify'),
 	glob = require('glob'),
 	jasmine = require('gulp-jasmine'),
 	jshint = require('gulp-jshint'),
-	runSequence = require('run-sequence'),
 	source = require('vinyl-source-stream');
 
 function getVersionFromPackage() {
@@ -81,41 +80,21 @@ gulp.task('execute-node-tests', () => {
         .pipe(jasmine());
 });
 
-gulp.task('execute-tests', (cb) => {
-    runSequence(
-        'build-test-bundle',
-        'execute-browser-tests',
-        'execute-node-tests',
+gulp.task('execute-tests', gulp.series(
+	'build-test-bundle',
+	'execute-browser-tests',
+	'execute-node-tests')
+);
 
-        function (error) {
-            if (error) {
-                console.log(error.message);
-            }
-
-            cb(error);
-        });
-});
-
-gulp.task('release', (cb) => {
-    runSequence(
-        'ensure-clean-working-directory',
-        'execute-tests',
-		'document',
-        'bump-version',
-        'commit-changes',
-        'push-changes',
-        'create-tag',
-
-        function (error) {
-            if (error) {
-                console.log(error.message);
-            } else {
-                console.log('Release complete');
-            }
-
-            cb(error);
-        });
-});
+gulp.task('release', gulp.series(
+	'ensure-clean-working-directory',
+	'execute-tests',
+	'document',
+	'bump-version',
+	'commit-changes',
+	'push-changes',
+	'create-tag'
+));
 
 gulp.task('lint', () => {
     return gulp.src([ './**/*.js', './test/specs/**/*.js', '!./node_modules/**', '!./docs/**', '!./test/SpecRunner.js' ])
