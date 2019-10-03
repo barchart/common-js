@@ -13,7 +13,7 @@ module.exports = (() => {
 	return {
 		/**
 		 * Gets a list of names in the tz database (see https://en.wikipedia.org/wiki/Tz_database
-		 * and https://en.wikipedia.org/wiki/List_of_tz_database_time_zones.
+		 * and https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
 		 *
 		 * @static
 		 * @returns {Array<String>}
