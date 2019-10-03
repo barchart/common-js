@@ -22,7 +22,7 @@
   "dependencies": {
     "axios": "0.19.0",
     "big.js": "5.0.3",
-    "moment-timezone": "0.5.11",
+    "moment-timezone": "0.5.26",
     "xhr": "2.3.2"
   },
   "devDependencies": {

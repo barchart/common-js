@@ -1,11 +1,11 @@
-const moment = require('moment-timezone/builds/moment-timezone-with-data-2010-2020'),
+const moment = require('moment-timezone/builds/moment-timezone-with-data-2012-2022'),
 	assert = require('./assert');
 
 module.exports = (() => {
 	'use strict';
 
 	/**
-	 * Utilities for working with arrays.
+	 * Utilities for working with timezones.
 	 *
 	 * @public
 	 * @module lang/timezone
