@@ -29,7 +29,7 @@ module.exports = (() => {
 		 *
 		 * @public
 		 * @param {Number=} timestamp
-		 * @returns {*}
+		 * @returns {Number}
 		 */
 		getUtcOffset(timestamp) {
 			let timestampToUse;
