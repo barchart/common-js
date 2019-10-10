@@ -42,10 +42,10 @@ module.exports = (() => {
 
 			const offset = moment.tz.zone(this.code).utcOffset(timestampToUse);
 
-			if (offset > 0) {
-				return offset * -1;
+			if (offset == 0) {
+				return 0;
 			} else {
-				return offset;
+				return offset * -1;
 			}
 		}
 
