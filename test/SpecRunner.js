@@ -4295,10 +4295,10 @@ module.exports = (() => {
 
       const offset = moment.tz.zone(this.code).utcOffset(timestampToUse);
 
-      if (offset > 0) {
-        return offset * -1;
+      if (offset == 0) {
+        return 0;
       } else {
-        return offset;
+        return offset * -1;
       }
     }
     /**
@@ -6164,7 +6164,7 @@ module.exports = (() => {
     },
 
     /**
-     * Attempts to guess the current timezone.
+     * Attempts to guess the lock timezone.
      *
      * @returns {String|null}
      */
@@ -19532,6 +19532,9 @@ describe('When calculating timezone offset on 2019-10-02 UTC', function () {
   it('The AMERICA_NEW_YORK offset should be -240', function () {
     expect(Timezones.AMERICA_NEW_YORK.getUtcOffset(timestamp)).toEqual(-240);
   });
+  it('The Europe/Minsk offset should be 180', function () {
+    expect(Timezones.parse('Europe/Minsk').getUtcOffset(timestamp)).toEqual(180);
+  });
 });
 describe('When calculating timezone offset on 2019-11-04 UTC', function () {
   let timestamp;
@@ -19541,11 +19544,14 @@ describe('When calculating timezone offset on 2019-11-04 UTC', function () {
   it('The UTC offset should be 0', function () {
     expect(Timezones.UTC.getUtcOffset(timestamp)).toEqual(0);
   });
-  it('The AMERICA_CHICAGO offset should be -300', function () {
+  it('The AMERICA_CHICAGO offset should be -360', function () {
     expect(Timezones.AMERICA_CHICAGO.getUtcOffset(timestamp)).toEqual(-360);
   });
-  it('The AMERICA_NEW_YORK offset should be -240', function () {
+  it('The AMERICA_NEW_YORK offset should be -300', function () {
     expect(Timezones.AMERICA_NEW_YORK.getUtcOffset(timestamp)).toEqual(-300);
+  });
+  it('The Europe/Minsk offset should be 180', function () {
+    expect(Timezones.parse('Europe/Minsk').getUtcOffset(timestamp)).toEqual(180);
   });
 });
 
