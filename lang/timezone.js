@@ -38,7 +38,7 @@ module.exports = (() => {
 		},
 
 		/**
-		 * Attempts to guess the current timezone.
+		 * Attempts to guess the lock timezone.
 		 *
 		 * @returns {String|null}
 		 */
