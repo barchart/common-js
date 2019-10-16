@@ -37,7 +37,7 @@ module.exports = (() => {
 			if (is.number(timestamp)) {
 				timestampToUse = timestamp;
 			} else {
-				timestampToUse = (new Date).getTime();
+				timestampToUse = (new Date()).getTime();
 			}
 
 			const offset = moment.tz.zone(this.code).utcOffset(timestampToUse);
