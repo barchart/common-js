@@ -944,29 +944,29 @@ module.exports = (() => {
      *
      * @public
      * @param {Tree~nodePredicate} predicate - A predicate that tests each child node. The predicate takes two arguments -- the node's value, and the node itself.
-     * @param {boolean=} childrenFirst - True, if the tree should be searched depth first.
+     * @param {boolean=} parentFirst - If true, the true will be searched from parent-to-child (breadth first). Otherwise, child-to-parent (depth first).
      * @param {boolean=} includeCurrentNode - True, if the current node should be checked against the predicate.
      * @returns {Tree|null}
      */
 
 
-    search(predicate, childrenFirst, includeCurrentNode) {
+    search(predicate, parentFirst, includeCurrentNode) {
       let returnRef = null;
 
-      if (returnRef === null && childrenFirst && includeCurrentNode && predicate(this.getValue(), this)) {
+      if (returnRef === null && parentFirst && includeCurrentNode && predicate(this.getValue(), this)) {
         returnRef = this;
       }
 
       for (let i = 0; i < this._children.length; i++) {
         const child = this._children[i];
-        returnRef = child.search(predicate, childrenFirst, true);
+        returnRef = child.search(predicate, parentFirst, true);
 
         if (returnRef !== null) {
           break;
         }
       }
 
-      if (returnRef === null && !childrenFirst && includeCurrentNode && predicate(this.getValue(), this)) {
+      if (returnRef === null && !parentFirst && includeCurrentNode && predicate(this.getValue(), this)) {
         returnRef = this;
       }
 
@@ -977,18 +977,18 @@ module.exports = (() => {
      *
      * @public
      * @param {Tree~nodeAction} walkAction - A action to apply to each node. The action takes two arguments -- the node's value, and the node itself.
-     * @param {boolean=} childrenFirst - True if the tree should be walked depth first.
+     * @param {boolean=} parentFirst - If true, the true will be searched from parent-to-child (breadth first). Otherwise, child-to-parent (depth first).
      * @param {boolean=} includeCurrentNode - True if the current node should be applied to the action.
      */
 
 
-    walk(walkAction, childrenFirst, includeCurrentNode) {
+    walk(walkAction, parentFirst, includeCurrentNode) {
       const predicate = (value, node) => {
         walkAction(value, node);
         return false;
       };
 
-      this.search(predicate, childrenFirst, includeCurrentNode);
+      this.search(predicate, parentFirst, includeCurrentNode);
     }
     /**
      * Climbs the parents of the current node -- current node up to the root node, running an action on each node.
