@@ -26,7 +26,7 @@ describe('When an TimeMap is constructed (with a 10 millisecond time to live)', 
 		});
 
 		describe('and 15 milliseconds elapses', () => {
-			beforeEach(function(done) {
+			beforeEach((done) => {
 				setTimeout(() => {
 					done();
 				}, 15);

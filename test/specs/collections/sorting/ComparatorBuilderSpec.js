@@ -13,11 +13,11 @@ describe('When a ComparatorBuilder is composed with two comparators', () => {
     let third = { x: 1, y: 1, toString: () => { return '[third]'; } };
 
     beforeEach(() => {
-        comparatorOne = jasmine.createSpy('comparatorOne').and.callFake(function(a, b) {
+        comparatorOne = jasmine.createSpy('comparatorOne').and.callFake((a, b) => {
             return a.x - b.x;
         });
 
-        comparatorTwo = jasmine.createSpy('comparatorTwo').and.callFake(function(a, b) {
+        comparatorTwo = jasmine.createSpy('comparatorTwo').and.callFake((a, b) => {
             return a.y - b.y;
         });
 

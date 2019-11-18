@@ -38,7 +38,7 @@ describe('When a WindowCounter is constructed', () => {
 		describe('and the counter is incremented after the current window expires', () => {
 			let b;
 
-			beforeEach(function(done) {
+			beforeEach((done) => {
 				setTimeout(() => {
 					counter.increment(b = 3);
 

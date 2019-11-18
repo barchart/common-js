@@ -14,8 +14,8 @@ describe('When a timeout is set for a promise', () => {
 			timeoutPromise = promise.timeout(originalPromise, 10);
 		});
 
-		it('it will resolve', function (done) {
-			timeoutPromise.then(function (r) {
+		it('it will resolve', (done) => {
+			timeoutPromise.then((r) => {
 				expect(r).toBe(result);
 
 				done();
@@ -34,8 +34,8 @@ describe('When a timeout is set for a promise', () => {
 			timeoutPromise = promise.timeout(originalPromise, 10);
 		});
 
-		it('it reject normally', function (done) {
-			timeoutPromise.catch(function (r) {
+		it('it reject normally', (done) => {
+			timeoutPromise.catch((r) => {
 				expect(r).toBe(result);
 
 				done();
@@ -50,7 +50,7 @@ describe('When a timeout is set for a promise', () => {
 		let result;
 
 		beforeEach(() => {
-			originalPromise = new Promise(function (resolveCallback, rejectCallback) {
+			originalPromise = new Promise((resolveCallback, rejectCallback) => {
 				setTimeout(() => {
 					resolveCallback(result = 'quick');
 				}, 5);
@@ -59,8 +59,8 @@ describe('When a timeout is set for a promise', () => {
 			timeoutPromise = promise.timeout(originalPromise, 10);
 		});
 
-		it('it will resolve', function (done) {
-			timeoutPromise.then(function (r) {
+		it('it will resolve', (done) => {
+			timeoutPromise.then((r) => {
 				expect(r).toBe(result);
 
 				done();
@@ -75,7 +75,7 @@ describe('When a timeout is set for a promise', () => {
 		let result;
 
 		beforeEach(() => {
-			originalPromise = new Promise(function (resolveCallback, rejectCallback) {
+			originalPromise = new Promise((resolveCallback, rejectCallback) => {
 				setTimeout(() => {
 					rejectCallback(result = 'quick');
 				}, 5);
@@ -84,8 +84,8 @@ describe('When a timeout is set for a promise', () => {
 			timeoutPromise = promise.timeout(originalPromise, 10);
 		});
 
-		it('it reject normally', function (done) {
-			timeoutPromise.catch(function (r) {
+		it('it reject normally', (done) => {
+			timeoutPromise.catch((r) => {
 				expect(r).toBe(result);
 
 				done();
@@ -100,7 +100,7 @@ describe('When a timeout is set for a promise', () => {
 		let result;
 
 		beforeEach(() => {
-			originalPromise = new Promise(function (resolveCallback, rejectCallback) {
+			originalPromise = new Promise((resolveCallback, rejectCallback) => {
 				setTimeout(() => {
 					resolveCallback(result = 'slow');
 				}, 20);
@@ -109,7 +109,7 @@ describe('When a timeout is set for a promise', () => {
 			timeoutPromise = promise.timeout(originalPromise, 10);
 		});
 
-		it('will reject due to timeout', function (done) {
+		it('will reject due to timeout', (done) => {
 			timeoutPromise.catch(() => {
 				expect(true).toBe(true);
 
@@ -125,7 +125,7 @@ describe('When a timeout is set for a promise', () => {
 		let result;
 
 		beforeEach(() => {
-			originalPromise = new Promise(function (resolveCallback, rejectCallback) {
+			originalPromise = new Promise((resolveCallback, rejectCallback) => {
 				setTimeout(() => {
 					rejectCallback(result = 'slow');
 				}, 20);
@@ -134,8 +134,8 @@ describe('When a timeout is set for a promise', () => {
 			timeoutPromise = promise.timeout(originalPromise, 10);
 		});
 
-		it('it reject normally', function (done) {
-			timeoutPromise.catch(function (r) {
+		it('it reject normally', (done) => {
+			timeoutPromise.catch((r) => {
 				expect(r).not.toBe(result);
 
 				done();
@@ -148,14 +148,14 @@ describe('When a timeout is set for a promise', () => {
 		let timeoutPromise;
 
 		beforeEach(() => {
-			originalPromise = new Promise(function (resolveCallback, rejectCallback) {
+			originalPromise = new Promise((resolveCallback, rejectCallback) => {
 				return;
 			});
 
 			timeoutPromise = promise.timeout(originalPromise, 10);
 		});
 
-		it('will reject due to timeout', function (done) {
+		it('will reject due to timeout', (done) => {
 			timeoutPromise.catch(() => {
 				expect(true).toBe(true);
 
@@ -184,16 +184,16 @@ describe('When using the "promise.map" function', () => {
 					mapPromise = promise.map(mapItems, mapSpy = jasmine.createSpy('mapSpy'), 0);
 				});
 
-				it('the result should be an empty array', function(done) {
-					mapPromise.then(function(results) {
+				it('the result should be an empty array', (done) => {
+					mapPromise.then((results) => {
 						expect(results.length).toEqual(0);
 
 						done();
 					});
 				});
 
-				it('the mapping function should not have been called', function(done) {
-					mapPromise.then(function(results) {
+				it('the mapping function should not have been called', (done) => {
+					mapPromise.then((results) => {
 						expect(mapSpy).not.toHaveBeenCalled();
 
 						done();
@@ -206,16 +206,16 @@ describe('When using the "promise.map" function', () => {
 					mapPromise = promise.map(mapItems, mapSpy = jasmine.createSpy('mapSpy'), 6);
 				});
 
-				it('the result should be an empty array', function(done) {
-					mapPromise.then(function(results) {
+				it('the result should be an empty array', (done) => {
+					mapPromise.then((results) => {
 						expect(results.length).toEqual(0);
 
 						done();
 					});
 				});
 
-				it('the mapping function should not have been called', function(done) {
-					mapPromise.then(function(results) {
+				it('the mapping function should not have been called', (done) => {
+					mapPromise.then((results) => {
 						expect(mapSpy).not.toHaveBeenCalled();
 
 						done();
@@ -243,40 +243,40 @@ describe('When using the "promise.map" function', () => {
 					mapPromise = promise.map(mapItems, mapSpy = getMapSpy(), 0);
 				});
 
-				it('the maximum concurrency level should be three', function(done) {
-					mapPromise.then(function(results) {
+				it('the maximum concurrency level should be three', (done) => {
+					mapPromise.then((results) => {
 						expect(getMaximumConcurrency(results)).toEqual(3);
 
 						done();
 					});
 				});
 
-				it('the actual concurrency for the first item should be three', function(done) {
-					mapPromise.then(function(results) {
+				it('the actual concurrency for the first item should be three', (done) => {
+					mapPromise.then((results) => {
 						expect(getConcurrency(results, 0)).toEqual(3);
 
 						done();
 					});
 				});
 
-				it('the result for the first item should be first', function(done) {
-					mapPromise.then(function(results) {
+				it('the result for the first item should be first', (done) => {
+					mapPromise.then((results) => {
 						expect(results[0].item).toBe(first);
 
 						done();
 					});
 				});
 
-				it('the result for the second item should be second', function(done) {
-					mapPromise.then(function(results) {
+				it('the result for the second item should be second', (done) => {
+					mapPromise.then((results) => {
 						expect(results[1].item).toBe(second);
 
 						done();
 					});
 				});
 
-				it('the result for the third item should be third', function(done) {
-					mapPromise.then(function(results) {
+				it('the result for the third item should be third', (done) => {
+					mapPromise.then((results) => {
 						expect(results[2].item).toBe(third);
 
 						done();
@@ -289,40 +289,40 @@ describe('When using the "promise.map" function', () => {
 					mapPromise = promise.map(mapItems, mapSpy = getMapSpy(), 1);
 				});
 
-				it('the maximum concurrency level should be one', function(done) {
-					mapPromise.then(function(results) {
+				it('the maximum concurrency level should be one', (done) => {
+					mapPromise.then((results) => {
 						expect(getMaximumConcurrency(results)).toEqual(1);
 
 						done();
 					});
 				});
 
-				it('the actual concurrency for the first item should be one', function(done) {
-					mapPromise.then(function(results) {
+				it('the actual concurrency for the first item should be one', (done) => {
+					mapPromise.then((results) => {
 						expect(getConcurrency(results, 0)).toEqual(1);
 
 						done();
 					});
 				});
 
-				it('the result for the first item should be first', function(done) {
-					mapPromise.then(function(results) {
+				it('the result for the first item should be first', (done) => {
+					mapPromise.then((results) => {
 						expect(results[0].item).toBe(first);
 
 						done();
 					});
 				});
 
-				it('the result for the second item should be second', function(done) {
-					mapPromise.then(function(results) {
+				it('the result for the second item should be second', (done) => {
+					mapPromise.then((results) => {
 						expect(results[1].item).toBe(second);
 
 						done();
 					});
 				});
 
-				it('the result for the third item should be third', function(done) {
-					mapPromise.then(function(results) {
+				it('the result for the third item should be third', (done) => {
+					mapPromise.then((results) => {
 						expect(results[2].item).toBe(third);
 
 						done();
@@ -335,40 +335,40 @@ describe('When using the "promise.map" function', () => {
 					mapPromise = promise.map(mapItems, mapSpy = getMapSpy(), 2);
 				});
 
-				it('the maximum concurrency level should be two', function(done) {
-					mapPromise.then(function(results) {
+				it('the maximum concurrency level should be two', (done) => {
+					mapPromise.then((results) => {
 						expect(getMaximumConcurrency(results)).toEqual(2);
 
 						done();
 					});
 				});
 
-				it('the actual concurrency for the first item should be two', function(done) {
-					mapPromise.then(function(results) {
+				it('the actual concurrency for the first item should be two', (done) => {
+					mapPromise.then((results) => {
 						expect(getConcurrency(results, 0)).toEqual(2);
 
 						done();
 					});
 				});
 
-				it('the result for the first item should be first', function(done) {
-					mapPromise.then(function(results) {
+				it('the result for the first item should be first', (done) => {
+					mapPromise.then((results) => {
 						expect(results[0].item).toBe(first);
 
 						done();
 					});
 				});
 
-				it('the result for the second item should be second', function(done) {
-					mapPromise.then(function(results) {
+				it('the result for the second item should be second', (done) => {
+					mapPromise.then((results) => {
 						expect(results[1].item).toBe(second);
 
 						done();
 					});
 				});
 
-				it('the result for the third item should be third', function(done) {
-					mapPromise.then(function(results) {
+				it('the result for the third item should be third', (done) => {
+					mapPromise.then((results) => {
 						expect(results[2].item).toBe(third);
 
 						done();
@@ -381,40 +381,40 @@ describe('When using the "promise.map" function', () => {
 					mapPromise = promise.map(mapItems, mapSpy = getMapSpy(), 3);
 				});
 
-				it('the maximum concurrency level should be three', function(done) {
-					mapPromise.then(function(results) {
+				it('the maximum concurrency level should be three', (done) => {
+					mapPromise.then((results) => {
 						expect(getMaximumConcurrency(results)).toEqual(3);
 
 						done();
 					});
 				});
 
-				it('the actual concurrency for the first item should be three', function(done) {
-					mapPromise.then(function(results) {
+				it('the actual concurrency for the first item should be three', (done) => {
+					mapPromise.then((results) => {
 						expect(getConcurrency(results, 0)).toEqual(3);
 
 						done();
 					});
 				});
 
-				it('the result for the first item should be first', function(done) {
-					mapPromise.then(function(results) {
+				it('the result for the first item should be first', (done) => {
+					mapPromise.then((results) => {
 						expect(results[0].item).toBe(first);
 
 						done();
 					});
 				});
 
-				it('the result for the second item should be second', function(done) {
-					mapPromise.then(function(results) {
+				it('the result for the second item should be second', (done) => {
+					mapPromise.then((results) => {
 						expect(results[1].item).toBe(second);
 
 						done();
 					});
 				});
 
-				it('the result for the third item should be third', function(done) {
-					mapPromise.then(function(results) {
+				it('the result for the third item should be third', (done) => {
+					mapPromise.then((results) => {
 						expect(results[2].item).toBe(third);
 
 						done();
@@ -427,40 +427,40 @@ describe('When using the "promise.map" function', () => {
 					mapPromise = promise.map(mapItems, mapSpy = getMapSpy(), 4);
 				});
 
-				it('the maximum concurrency level should be three', function(done) {
-					mapPromise.then(function(results) {
+				it('the maximum concurrency level should be three', (done) => {
+					mapPromise.then((results) => {
 						expect(getMaximumConcurrency(results)).toEqual(3);
 
 						done();
 					});
 				});
 
-				it('the actual concurrency for the first item should be three', function(done) {
-					mapPromise.then(function(results) {
+				it('the actual concurrency for the first item should be three', (done) => {
+					mapPromise.then((results) => {
 						expect(getConcurrency(results, 0)).toEqual(3);
 
 						done();
 					});
 				});
 
-				it('the result for the first item should be first', function(done) {
-					mapPromise.then(function(results) {
+				it('the result for the first item should be first', (done) => {
+					mapPromise.then((results) => {
 						expect(results[0].item).toBe(first);
 
 						done();
 					});
 				});
 
-				it('the result for the second item should be second', function(done) {
-					mapPromise.then(function(results) {
+				it('the result for the second item should be second', (done) => {
+					mapPromise.then((results) => {
 						expect(results[1].item).toBe(second);
 
 						done();
 					});
 				});
 
-				it('the result for the third item should be third', function(done) {
-					mapPromise.then(function(results) {
+				it('the result for the third item should be third', (done) => {
+					mapPromise.then((results) => {
 						expect(results[2].item).toBe(third);
 
 						done();
@@ -486,7 +486,7 @@ describe('When using the "promise.map" function', () => {
 
 			describe('and the first item takes a long time to process', () => {
 				beforeEach(() => {
-					mapPromise = promise.map(mapItems, mapSpy = jasmine.createSpy('mapSpy').and.callFake(function(item) {
+					mapPromise = promise.map(mapItems, mapSpy = jasmine.createSpy('mapSpy').and.callFake((item) => {
 						let delay;
 
 						if (item === first) {
@@ -497,7 +497,7 @@ describe('When using the "promise.map" function', () => {
 
 						let startDate = new Date();
 
-						return new Promise(function(resolveCallback, rejectCallback) {
+						return new Promise((resolveCallback, rejectCallback) => {
 							setTimeout(() => {
 								let endDate = new Date();
 
@@ -511,32 +511,32 @@ describe('When using the "promise.map" function', () => {
 					}), 2);
 				});
 
-				it('the result for the first item should be first', function(done) {
-					mapPromise.then(function(results) {
+				it('the result for the first item should be first', (done) => {
+					mapPromise.then((results) => {
 						expect(results[0].item).toBe(first);
 
 						done();
 					});
 				});
 
-				it('the result for the second item should be second', function(done) {
-					mapPromise.then(function(results) {
+				it('the result for the second item should be second', (done) => {
+					mapPromise.then((results) => {
 						expect(results[1].item).toBe(second);
 
 						done();
 					});
 				});
 
-				it('the result for the third item should be third', function(done) {
-					mapPromise.then(function(results) {
+				it('the result for the third item should be third', (done) => {
+					mapPromise.then((results) => {
 						expect(results[2].item).toBe(third);
 
 						done();
 					});
 				});
 
-				it('the result for the fourth item should be fourth', function(done) {
-					mapPromise.then(function(results) {
+				it('the result for the fourth item should be fourth', (done) => {
+					mapPromise.then((results) => {
 						expect(results[3].item).toBe(fourth);
 
 						done();
@@ -546,10 +546,10 @@ describe('When using the "promise.map" function', () => {
 		});
 
 		let getMapSpy = () => {
-			return jasmine.createSpy('mapSpy').and.callFake(function(item) {
+			return jasmine.createSpy('mapSpy').and.callFake((item) => {
 				let startDate = new Date();
 
-				return new Promise(function(resolveCallback, rejectCallback) {
+				return new Promise((resolveCallback, rejectCallback) => {
 					setTimeout(() => {
 						let endDate = new Date();
 
@@ -575,24 +575,24 @@ describe('When using the "promise.map" function', () => {
 				mapPromise = promise.map(mapItems = [ ], mapSpy = jasmine.createSpy('mapSpy'));
 			});
 
-			it('the result will be an array', function(done) {
-				mapPromise.then(function(results) {
+			it('the result will be an array', (done) => {
+				mapPromise.then((results) => {
 					expect(results instanceof Array).toEqual(true);
 
 					done();
 				});
 			});
 
-			it('the resulting array will be the same size as the input array', function(done) {
-				mapPromise.then(function(results) {
+			it('the resulting array will be the same size as the input array', (done) => {
+				mapPromise.then((results) => {
 					expect(results.length).toEqual(mapItems.length);
 
 					done();
 				});
 			});
 
-			it('the mapper function will be not have been called', function(done) {
-				mapPromise.then(function(results) {
+			it('the mapper function will be not have been called', (done) => {
+				mapPromise.then((results) => {
 					expect(mapSpy.calls.count()).toEqual(0);
 
 					done();
@@ -610,40 +610,40 @@ describe('When using the "promise.map" function', () => {
 				mapPromise = promise.map(mapItems = [ 'x', 'y' ], mapSpy = jasmine.createSpy('mapSpy'));
 			});
 
-			it('the result will be an array', function(done) {
-				mapPromise.then(function(results) {
+			it('the result will be an array', (done) => {
+				mapPromise.then((results) => {
 					expect(results instanceof Array).toEqual(true);
 
 					done();
 				});
 			});
 
-			it('the resulting array have two items', function(done) {
-				mapPromise.then(function(results) {
+			it('the resulting array have two items', (done) => {
+				mapPromise.then((results) => {
 					expect(results.length).toEqual(2);
 
 					done();
 				});
 			});
 
-			it('the mapper function to have been called twice', function(done) {
-				mapPromise.then(function(results) {
+			it('the mapper function to have been called twice', (done) => {
+				mapPromise.then((results) => {
 					expect(mapSpy.calls.count()).toEqual(2);
 
 					done();
 				});
 			});
 
-			it('the mapper function will have been called once with the first item', function(done) {
-				mapPromise.then(function(results) {
+			it('the mapper function will have been called once with the first item', (done) => {
+				mapPromise.then((results) => {
 					expect(mapSpy).toHaveBeenCalledWith(mapItems[0]);
 
 					done();
 				});
 			});
 
-			it('the mapper function will have been called once with the second item', function(done) {
-				mapPromise.then(function(results) {
+			it('the mapper function will have been called once with the second item', (done) => {
+				mapPromise.then((results) => {
 					expect(mapSpy).toHaveBeenCalledWith(mapItems[1]);
 
 					done();
@@ -652,7 +652,7 @@ describe('When using the "promise.map" function', () => {
 		});
 	});
 
-	let getConcurrency = function(results, index) {
+	let getConcurrency = (results, index) => {
 		let current = results[index];
 
 		let concurrency = 0;
@@ -668,7 +668,7 @@ describe('When using the "promise.map" function', () => {
 		return concurrency;
 	};
 
-	let getMaximumConcurrency = function(results) {
+	let getMaximumConcurrency = (results) => {
 		let maximum = 0;
 
 		for (let i = 0; i < results.length; i++) {
@@ -690,8 +690,8 @@ describe('When processing a "pipeline" of promises', () => {
 			p = promise.pipeline([], input = { });
 		});
 
-		it('should return the original input', function(done) {
-			p.then(function(result) {
+		it('should return the original input', (done) => {
+			p.then((result) => {
 				expect(result).toBe(input);
 
 				done();
@@ -707,7 +707,7 @@ describe('When processing a "pipeline" of promises', () => {
 		let p;
 
 		beforeEach(() => {
-			let delayedSquare = function(x) {
+			let delayedSquare = (x) => {
 				return new Promise((resolveCallback) => {
 					setTimeout(() => {
 						resolveCallback(x * x);
@@ -720,16 +720,16 @@ describe('When processing a "pipeline" of promises', () => {
 			p = promise.pipeline([ spyOne ], input = 2);
 		});
 
-		it('the first executor should be called with the input', function(done) {
-			p.then(function(result) {
+		it('the first executor should be called with the input', (done) => {
+			p.then((result) => {
 				expect(spyOne).toHaveBeenCalledWith(2);
 
 				done();
 			});
 		});
 
-		it('the promise should return the correct result', function(done) {
-			p.then(function(result) {
+		it('the promise should return the correct result', (done) => {
+			p.then((result) => {
 				expect(result).toEqual(4);
 
 				done();
@@ -746,7 +746,7 @@ describe('When processing a "pipeline" of promises', () => {
 		let p;
 
 		beforeEach(() => {
-			let delayedSquare = function(x) {
+			let delayedSquare = (x) => {
 				return new Promise((resolveCallback) => {
 					setTimeout(() => {
 						resolveCallback(x * x);
@@ -760,24 +760,24 @@ describe('When processing a "pipeline" of promises', () => {
 			p = promise.pipeline([ spyOne, spyTwo ], input = 2);
 		});
 
-		it('the first executor should be called with the input', function(done) {
-			p.then(function(result) {
+		it('the first executor should be called with the input', (done) => {
+			p.then((result) => {
 				expect(spyOne).toHaveBeenCalledWith(2);
 
 				done();
 			});
 		});
 
-		it('the second executor should be called with the result of the first executor', function(done) {
-			p.then(function(result) {
+		it('the second executor should be called with the result of the first executor', (done) => {
+			p.then((result) => {
 				expect(spyTwo).toHaveBeenCalledWith(4);
 
 				done();
 			});
 		});
 
-		it('the promise should return the correct result', function(done) {
-			p.then(function(result) {
+		it('the promise should return the correct result', (done) => {
+			p.then((result) => {
 				expect(result).toEqual(16);
 
 				done();
@@ -793,7 +793,7 @@ describe('When processing a "pipeline" of promises', () => {
 		let p;
 
 		beforeEach(() => {
-			let synchronousSquare = function(x) {
+			let synchronousSquare = (x) => {
 				return x * x;
 			};
 
@@ -802,16 +802,16 @@ describe('When processing a "pipeline" of promises', () => {
 			p = promise.pipeline([ spyOne ], input = 2);
 		});
 
-		it('the first executor should be called with the input', function(done) {
-			p.then(function(result) {
+		it('the first executor should be called with the input', (done) => {
+			p.then((result) => {
 				expect(spyOne).toHaveBeenCalledWith(2);
 
 				done();
 			});
 		});
 
-		it('the promise should return the correct result', function(done) {
-			p.then(function(result) {
+		it('the promise should return the correct result', (done) => {
+			p.then((result) => {
 				expect(result).toEqual(4);
 
 				done();
@@ -828,7 +828,7 @@ describe('When processing a "pipeline" of promises', () => {
 		let p;
 
 		beforeEach(() => {
-			let synchronousSquare = function(x) {
+			let synchronousSquare = (x) => {
 				return x * x;
 			};
 
@@ -838,24 +838,24 @@ describe('When processing a "pipeline" of promises', () => {
 			p = promise.pipeline([ spyOne, spyTwo ], input = 2);
 		});
 
-		it('the first executor should be called with the input', function(done) {
-			p.then(function(result) {
+		it('the first executor should be called with the input', (done) => {
+			p.then((result) => {
 				expect(spyOne).toHaveBeenCalledWith(2);
 
 				done();
 			});
 		});
 
-		it('the second executor should be called with the result of the first executor', function(done) {
-			p.then(function(result) {
+		it('the second executor should be called with the result of the first executor', (done) => {
+			p.then((result) => {
 				expect(spyTwo).toHaveBeenCalledWith(4);
 
 				done();
 			});
 		});
 
-		it('the promise should return the correct result', function(done) {
-			p.then(function(result) {
+		it('the promise should return the correct result', (done) => {
+			p.then((result) => {
 				expect(result).toEqual(16);
 
 				done();
@@ -872,11 +872,11 @@ describe('When processing a "pipeline" of promises', () => {
 		let p;
 
 		beforeEach(() => {
-			let synchronousException = function(x) {
+			let synchronousException = (x) => {
 				throw new Exception('oops');
 			};
 			
-			let synchronousSquare = function(x) {
+			let synchronousSquare = (x) => {
 				return x * x;
 			};
 
@@ -886,24 +886,24 @@ describe('When processing a "pipeline" of promises', () => {
 			p = promise.pipeline([ spyOne, spyTwo ], input = 2);
 		});
 
-		it('the promise should reject', function(done) {
-			p.catch(function(error) {
+		it('the promise should reject', (done) => {
+			p.catch((error) => {
 				expect(error instanceof Error).toEqual(true);
 
 				done();
 			});
 		});
 
-		it('the first executor should be called with the input', function(done) {
-			p.catch(function(error) {
+		it('the first executor should be called with the input', (done) => {
+			p.catch((error) => {
 				expect(spyOne).toHaveBeenCalledWith(2);
 
 				done();
 			});
 		});
 
-		it('the second executor not have should be called with the result of the first executor', function(done) {
-			p.catch(function(error) {
+		it('the second executor not have should be called with the result of the first executor', (done) => {
+			p.catch((error) => {
 				expect(spyTwo).not.toHaveBeenCalled();
 
 				done();
@@ -919,13 +919,13 @@ describe('When "promise.build" is used to create a promise', () => {
 		let p;
 
 		beforeEach(() => {
-			p = promise.build(function(r, x) {
+			p = promise.build((r, x) => {
 				r('ok');
 			});
 		});
 
-		it('the promise should be fulfilled', function(done) {
-			p.then(function(result) {
+		it('the promise should be fulfilled', (done) => {
+			p.then((result) => {
 				expect(result).toEqual('ok');
 
 				done();
@@ -937,13 +937,13 @@ describe('When "promise.build" is used to create a promise', () => {
 		let p;
 
 		beforeEach(() => {
-			p = promise.build(function(r, x) {
+			p = promise.build((r, x) => {
 				x('not ok');
 			});
 		});
 
-		it('the promise should be fulfilled', function(done) {
-			p.catch(function(result) {
+		it('the promise should be fulfilled', (done) => {
+			p.catch((result) => {
 				expect(result).toEqual('not ok');
 
 				done();
@@ -956,15 +956,15 @@ describe('When "promise.build" is used to create a promise', () => {
 		let e;
 
 		beforeEach(() => {
-			p = promise.build(function(r, x) {
+			p = promise.build((r, x) => {
 				e = new Error('oops');
 
 				throw e;
 			});
 		});
 
-		it('the promise should be rejected', function(done) {
-			p.catch(function(error) {
+		it('the promise should be rejected', (done) => {
+			p.catch((error) => {
 				expect(error).toBe(e);
 
 				done();

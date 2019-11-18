@@ -34,10 +34,10 @@ describe('When a RateLimiter is constructed (1 execution per 25 milliseconds)', 
 			}
 		});
 
-		it('the tasks should serialized', function(done) {
+		it('the tasks should serialized', (done) => {
 			let promise = null;
 
-			let getValidatedPromise = function(promise, index) {
+			let getValidatedPromise = (promise, index) => {
 				return promise.then(() => {
 					for (let i = 0; i < spies.length; i++) {
 						let count;
@@ -71,10 +71,10 @@ describe('When a RateLimiter is constructed (1 execution per 25 milliseconds)', 
 				});
 		});
 
-		it('the tasks not finish before the earliest possible moment', function(done) {
+		it('the tasks not finish before the earliest possible moment', (done) => {
 			let promise = null;
 
-			let getValidatedPromise = function(promise, index) {
+			let getValidatedPromise = (promise, index) => {
 				return promise.then(() => {
 					let end = new Date();
 					let duration = end.getTime() - start.getTime();
@@ -130,11 +130,11 @@ describe('When a RateLimiter is constructed (1 execution per 25 milliseconds)', 
 			}
 		});
 
-		it('each task should be executed', function(done) {
+		it('each task should be executed', (done) => {
 			let promise = null;
 
-			let getValidatedPromise = function(promise, index) {
-				return promise.catch(function(error) {
+			let getValidatedPromise = (promise, index) => {
+				return promise.catch((error) => {
 					let end = new Date();
 					let duration = end.getTime() - start.getTime();
 
@@ -199,10 +199,10 @@ describe('When a RateLimiter is constructed (2 execution per 25 milliseconds)', 
 			}
 		});
 
-		it('the tasks not finish before the earliest possible moment', function(done) {
+		it('the tasks not finish before the earliest possible moment', (done) => {
 			let promise = null;
 
-			let getValidatedPromise = function(promise, index) {
+			let getValidatedPromise = (promise, index) => {
 				return promise.then(() => {
 					let end = new Date();
 					let duration = end.getTime() - start.getTime();

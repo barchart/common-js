@@ -256,7 +256,7 @@ describe('When running a deep comparison', () => {
 						],
 						home: {
 							name: 'Graceland',
-							equals: function(other) {
+							equals: (other) => {
 								return other.name === 'Graceland';
 							}
 						}
@@ -273,7 +273,7 @@ describe('When running a deep comparison', () => {
 						],
 						home: {
 							name: 'Graceland',
-							equals: function(other) {
+							equals: (other) => {
 								return other.name === 'Graceland';
 							}
 						}

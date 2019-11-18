@@ -25,7 +25,7 @@ describe('When a Not is constructed', () => {
 		beforeEach(() => {
 			specification = new Not(
 				new DelegateSpecification(
-					spy = jasmine.createSpy('fn').and.callFake(function(data) {
+					spy = jasmine.createSpy('fn').and.callFake((data) => {
 						return false;
 					})
 				)
@@ -53,7 +53,7 @@ describe('When a Not is constructed', () => {
 		beforeEach(() => {
 			specification = new Not(
 				new DelegateSpecification(
-					spy = jasmine.createSpy('fn').and.callFake(function(data) {
+					spy = jasmine.createSpy('fn').and.callFake((data) => {
 						return true;
 					})
 				)
@@ -96,7 +96,7 @@ describe('When a Specification (that always fails) is constructed', () => {
 
 		beforeEach(() => {
 			specification = new DelegateSpecification(
-				spy = jasmine.createSpy('fn').and.callFake(function (data) {
+				spy = jasmine.createSpy('fn').and.callFake((data) => {
 					return false;
 				})
 			);
@@ -140,7 +140,7 @@ describe('When a Specification (that always succeeds) is constructed', () => {
 
 		beforeEach(() => {
 			specification = new DelegateSpecification(
-				spy = jasmine.createSpy('fn').and.callFake(function (data) {
+				spy = jasmine.createSpy('fn').and.callFake((data) => {
 					return true;
 				})
 			);

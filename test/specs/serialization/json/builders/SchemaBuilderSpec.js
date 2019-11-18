@@ -92,10 +92,10 @@ describe('When using the schema builder to create a "Person" schema', () => {
 			let reviver;
 
 			beforeEach(() => {
-				schemaBuilder = schemaBuilder.withComponentBuilder('custom', function(cb) {
+				schemaBuilder = schemaBuilder.withComponentBuilder('custom', (cb) => {
 					cb.withField('b', DataType.STRING)
 						.withField('a', DataType.NUMBER)
-						.withReviver(reviver = function(x) { return 'hola amigo'; });
+						.withReviver(reviver = (x) => { return 'hola amigo'; });
 				});
 			});
 

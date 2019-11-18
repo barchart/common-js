@@ -12,7 +12,7 @@ describe('When using memoize.simple', () => {
 		beforeEach(() => {
 			counter = 0;
 
-			spy = jasmine.createSpy('spy').and.callFake(function(x) {
+			spy = jasmine.createSpy('spy').and.callFake((x) => {
 				counter = counter + 1;
 
 				return counter;
@@ -97,7 +97,7 @@ describe('When using memoize.cache', () => {
 		beforeEach(() => {
 			counter = 0;
 
-			spy = jasmine.createSpy('spy').and.callFake(function(x) {
+			spy = jasmine.createSpy('spy').and.callFake((x) => {
 				counter = counter + 1;
 
 				return counter;
@@ -145,7 +145,7 @@ describe('When using memoize.cache', () => {
 			describe("and the memoized function is called after the cache expires", () => {
 				let resultThree;
 
-				beforeEach(function (done) {
+				beforeEach((done) => {
 					setTimeout(() => {
 						resultThree = memo();
 

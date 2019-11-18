@@ -22,7 +22,7 @@ describe('When a MappedCommandHandler is created with two mapped commands', () =
 		resultOne = 'a';
 		resultTwo = 'b';
 
-		commandHandler = new MappedCommandHandler(function(data) {
+		commandHandler = new MappedCommandHandler((data) => {
 			return data.commandType || null;
 		});
 

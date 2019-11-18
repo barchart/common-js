@@ -95,7 +95,7 @@ describe('When an DisposableStack is constructed', () => {
 		let resolveAction;
 
 		beforeEach(() => {
-			promise = new Promise(function(resolveCallback) {
+			promise = new Promise((resolveCallback) => {
 				resolveAction = resolveCallback;
 			});
 
@@ -106,7 +106,7 @@ describe('When an DisposableStack is constructed', () => {
 			let spyOne;
 			let disposableOne;
 
-			beforeEach(function(done) {
+			beforeEach((done) => {
 				resolveAction(disposableOne = Disposable.fromAction(spyOne = jasmine.createSpy('spyOne')));
 
 				promise.then(() => {
@@ -134,10 +134,10 @@ describe('When an DisposableStack is constructed', () => {
 
 		beforeEach(() => {
 			promise = Promise.all([
-				new Promise(function(resolveCallback) {
+				new Promise((resolveCallback) => {
 					resolveActionOne = resolveCallback;
 				}),
-				new Promise(function(resolveCallback) {
+				new Promise((resolveCallback) => {
 					resolveActionTwo = resolveCallback;
 				})
 			]);
@@ -154,7 +154,7 @@ describe('When an DisposableStack is constructed', () => {
 
 			let disposeOrder;
 
-			beforeEach(function(done) {
+			beforeEach((done) => {
 				disposeOrder = [ ];
 
 				resolveActionTwo(disposableTwo = Disposable.fromAction(spyTwo = jasmine.createSpy('spyTwo').and.callFake(() => { disposeOrder.push(disposableTwo); })));

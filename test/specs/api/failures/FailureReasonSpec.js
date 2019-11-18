@@ -77,7 +77,7 @@ describe('When a schema is validated', () => {
 	describe('and a valid schema is processed', () => {
 		let result;
 
-		beforeEach(function(done) {
+		beforeEach((done) => {
 			FailureReason.validateSchema(schema, { first: 'bryan', last: 'ingle'})
 				.then((r) => {
 					result = r;
@@ -95,7 +95,7 @@ describe('When a schema is validated', () => {
 		let successResult = null;
 		let failureResult = null;
 
-		beforeEach(function(done) {
+		beforeEach((done) => {
 			FailureReason.validateSchema(schema, { first: 'bryan' })
 				.then((r) => {
 					successResult = r;
@@ -121,7 +121,7 @@ describe('When a schema is validated', () => {
 		let successResult = null;
 		let failureResult = null;
 
-		beforeEach(function(done) {
+		beforeEach((done) => {
 			FailureReason.validateSchema(schema, { })
 				.then((r) => {
 					successResult = r;

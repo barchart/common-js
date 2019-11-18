@@ -42,7 +42,7 @@ describe('when reducing an array of objects to unique values', () => {
 		let six;
 
 		beforeEach(() => {
-			unique = array.uniqueBy([ one = { x: 1 }, two = { x: 2 }, three = { x: 3 }, four = { x: 1 }, five = { x: 2 }, six = { x: 3 } ], function(obj) { return obj.x; });
+			unique = array.uniqueBy([ one = { x: 1 }, two = { x: 2 }, three = { x: 3 }, four = { x: 1 }, five = { x: 2 }, six = { x: 3 } ], (obj) => { return obj.x; });
 		});
 
 		it('should only contain 3 unique elements', () => {
@@ -243,7 +243,7 @@ describe('when grouping an array', () => {
 		let groups;
 
 		beforeEach(() => {
-			groups = array.groupBy([ { value: 1 }, { value: 1 }, { value: 1 }, { value: 1 }, { value: 2 }, { value: 1 } ], function(item) { return item.value; });
+			groups = array.groupBy([ { value: 1 }, { value: 1 }, { value: 1 }, { value: 1 }, { value: 2 }, { value: 1 } ], (item) => { return item.value; });
 		});
 
 		it('should only contain 2 keys', () => {
@@ -288,7 +288,7 @@ describe('when grouping an array', () => {
 			let three;
 
 			beforeEach(() => {
-				groups = array.indexBy([ one = { value: 1 }, two = { value: 2 }, three ={ value: 3 } ], function(item) { return item.value; });
+				groups = array.indexBy([ one = { value: 1 }, two = { value: 2 }, three ={ value: 3 } ], (item) => { return item.value; });
 			});
 
 			it('should contain 3 keys', () => {
@@ -328,7 +328,7 @@ describe('when batching an array', () => {
 		let one, two, three, four, five;
 
 		beforeEach(() => {
-			batches = array.batchBy([ one = { value: 'a' }, two = { value: 'b' }, three ={ value: 'b' }, four ={ value: 'c' }, five ={ value: 'c' } ], function(item) { return item.value; });
+			batches = array.batchBy([ one = { value: 'a' }, two = { value: 'b' }, three ={ value: 'b' }, four ={ value: 'c' }, five ={ value: 'c' } ], (item) => { return item.value; });
 		});
 
 		it('should contain 3 batches', () => {
@@ -353,7 +353,7 @@ describe('when batching an array', () => {
 		let one, two, three, four, five;
 
 		beforeEach(() => {
-			batches = array.batchBy([ one = { value: 'a' }, two = { value: 'b' }, three ={ value: 'c' }, four ={ value: 'a' }, five ={ value: 'a' } ], function(item) { return item.value; });
+			batches = array.batchBy([ one = { value: 'a' }, two = { value: 'b' }, three ={ value: 'c' }, four ={ value: 'a' }, five ={ value: 'a' } ], (item) => { return item.value; });
 		});
 
 		it('should contain 4 batches', () => {
@@ -980,7 +980,7 @@ describe('when removing an item from an array using a predicate', () => {
 	beforeEach(() => {
 		a = [ { }, item = { }, { } ];
 
-		let predicate = function(i) {
+		let predicate = (i) => {
 			return i === item;
 		};
 

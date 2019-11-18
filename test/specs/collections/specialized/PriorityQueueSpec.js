@@ -5,7 +5,7 @@ describe('When a Queue is constructed, using a "ladies first" comparator', () =>
 
 	let queue;
 
-	let comparator = function(a, b) {
+	let comparator = (a, b) => {
 		let aLady = a.lady ? -1 : 0;
 		let bLady = b.lady ? -1 : 0;
 
@@ -181,7 +181,7 @@ describe('When a Queue is constructed, using a simple (ascending) numeric compar
 
 	let queue;
 
-	let comparator = function(a, b) {
+	let comparator = (a, b) => {
 		return a - b;
 	};
 

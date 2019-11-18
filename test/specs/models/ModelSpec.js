@@ -62,7 +62,7 @@ describe('When an Model is constructed with "firstName" and "lastName" propertie
 			let data;
 
 			beforeEach(() => {
-				model.executeTransaction(function(m) {
+				model.executeTransaction((m) => {
 					m.firstName = 'Bryan';
 					m.lastName = 'Ingle';
 				});

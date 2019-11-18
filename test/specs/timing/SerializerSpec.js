@@ -25,7 +25,7 @@ describe('When a Serializer is used to schedule four tasks', () => {
 	});
 
 	describe('and the tasks complete', () => {
-		beforeEach(function(done) {
+		beforeEach((done) => {
 			Promise.all(promises)
 				.then(() => {
 					done();
@@ -67,7 +67,7 @@ describe('When a Serializer is used to schedule a task that throws', () => {
 	let promise;
 	let reject;
 
-	beforeEach(function(done) {
+	beforeEach((done) => {
 		serializer = new Serializer();
 
 		reject = false;
@@ -91,7 +91,7 @@ describe('When a Serializer is used to schedule a task that rejects', () => {
 	let promise;
 	let reject;
 
-	beforeEach(function(done) {
+	beforeEach((done) => {
 		serializer = new Serializer();
 
 		reject = false;
@@ -112,7 +112,7 @@ describe('When a Serializer is used to schedule a task that rejects', () => {
 
 function getSpy(results, fail) {
 	return jasmine.createSpy('spy').and.callFake(() => {
-		return new Promise(function(resolveCallback, rejectCallback) {
+		return new Promise((resolveCallback, rejectCallback) => {
 			let start = new Date();
 
 			setTimeout(() => {
