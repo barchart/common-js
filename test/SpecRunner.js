@@ -4274,17 +4274,16 @@ module.exports = (() => {
       super(code, code);
     }
     /**
-     * The timezone's offset from UTC, in minutes, at the moment of
-     * the timestamp argument. If no timestamp if provided, the offset
-     * from the current time is returned.
+     * Calculates and returns the timezone's offset from UTC.
      *
      * @public
-     * @param {Number=} timestamp
+     * @param {Number=} timestamp - The moment at which the offset is calculated, otherwise now.
+     * @param {Boolean=} milliseconds - If true, the offset is returned in milliseconds; otherwise minutes.
      * @returns {Number}
      */
 
 
-    getUtcOffset(timestamp) {
+    getUtcOffset(timestamp, milliseconds) {
       let timestampToUse;
 
       if (is.number(timestamp)) {
@@ -4293,7 +4292,15 @@ module.exports = (() => {
         timestampToUse = new Date().getTime();
       }
 
-      const offset = moment.tz.zone(this.code).utcOffset(timestampToUse);
+      let multiplier;
+
+      if (is.boolean(milliseconds) && milliseconds) {
+        multiplier = 60 * 1000;
+      } else {
+        multiplier = 1;
+      }
+
+      const offset = moment.tz.zone(this.code).utcOffset(timestampToUse) * multiplier;
 
       if (offset !== 0) {
         return offset * -1;
@@ -16259,32 +16266,32 @@ module.exports = (() => {
 })();
 
 },{"./../../lang/assert":30,"./../Specification":72}],75:[function(require,module,exports){
-var Enum = require('./../../../../lang/Enum'),
-    FailureReasonItem = require('./../../../../api/failures/FailureReasonItem'),
-    FailureType = require('./../../../../api/failures/FailureType');
+const Enum = require('./../../../../lang/Enum'),
+      FailureReasonItem = require('./../../../../api/failures/FailureReasonItem'),
+      FailureType = require('./../../../../api/failures/FailureType');
 
-describe('When a FailureType is created with a template string that references root level data', function () {
+describe('When a FailureType is created with a template string that references root level data', () => {
   'use strict';
 
-  var code;
-  var template;
-  var type;
-  beforeEach(function () {
+  let code;
+  let template;
+  let type;
+  beforeEach(() => {
     code = 'TEST_ROOT';
     template = 'This is a test of the {root.system} system.';
     type = Enum.fromCode(FailureType, code) || new FailureType(code, template);
   });
-  describe('and a FailureReasonItem is created using this FailureType', function () {
-    var item;
-    var root;
-    beforeEach(function () {
+  describe('and a FailureReasonItem is created using this FailureType', () => {
+    let item;
+    let root;
+    beforeEach(() => {
       root = {
         system: 'Emergency Broadcast'
       };
       item = new FailureReasonItem(type, {});
     });
-    describe('and the item is formatted', function () {
-      var formatted;
+    describe('and the item is formatted', () => {
+      let formatted;
       beforeEach(function () {
         formatted = item.format(root);
       });
@@ -16294,22 +16301,22 @@ describe('When a FailureType is created with a template string that references r
     });
   });
 });
-describe('When a FailureType is created with a template string that references with data points', function () {
+describe('When a FailureType is created with a template string that references with data points', () => {
   'use strict';
 
-  var code;
-  var template;
-  var type;
-  beforeEach(function () {
+  let code;
+  let template;
+  let type;
+  beforeEach(() => {
     code = 'TEST_MULTIPLE';
     template = 'I believe that "{argument.thesis}" is a {argument.conclusion} statement.';
     type = Enum.fromCode(FailureType, code) || new FailureType(code, template);
   });
-  describe('and a FailureReasonItem is created using this FailureType', function () {
-    var item;
-    var root;
-    var data;
-    beforeEach(function () {
+  describe('and a FailureReasonItem is created using this FailureType', () => {
+    let item;
+    let root;
+    let data;
+    beforeEach(() => {
       root = {};
       data = {
         argument: {
@@ -16319,8 +16326,8 @@ describe('When a FailureType is created with a template string that references w
       };
       item = new FailureReasonItem(type, data);
     });
-    describe('and the item is formatted', function () {
-      var formatted;
+    describe('and the item is formatted', () => {
+      let formatted;
       beforeEach(function () {
         formatted = item.format(root);
       });
@@ -16330,30 +16337,30 @@ describe('When a FailureType is created with a template string that references w
     });
   });
 });
-describe('When a FailureType is created with a template string that references data points with casing changes', function () {
+describe('When a FailureType is created with a template string that references data points with casing changes', () => {
   'use strict';
 
-  var code;
-  var template;
-  var type;
-  beforeEach(function () {
+  let code;
+  let template;
+  let type;
+  beforeEach(() => {
     code = 'TEST_CASING';
     template = 'The first letter is lowercase: {l|name}. The first letter is uppercase: {u|name}. All letters are lowercase: {L|name}. All letters are uppercase: {U|name}.';
     type = Enum.fromCode(FailureType, code) || new FailureType(code, template);
   });
-  describe('and a FailureReasonItem is created using this FailureType', function () {
-    var item;
-    var root;
-    var data;
-    beforeEach(function () {
+  describe('and a FailureReasonItem is created using this FailureType', () => {
+    let item;
+    let root;
+    let data;
+    beforeEach(() => {
       root = {};
       data = {
         name: 'Abraham Lincoln'
       };
       item = new FailureReasonItem(type, data);
     });
-    describe('and the item is formatted', function () {
-      var formatted;
+    describe('and the item is formatted', () => {
+      let formatted;
       beforeEach(function () {
         formatted = item.format(root);
       });
@@ -16365,18 +16372,18 @@ describe('When a FailureType is created with a template string that references d
 });
 
 },{"./../../../../api/failures/FailureReasonItem":2,"./../../../../api/failures/FailureType":3,"./../../../../lang/Enum":24}],76:[function(require,module,exports){
-var FailureReason = require('./../../../../api/failures/FailureReason'),
-    FailureType = require('./../../../../api/failures/FailureType');
+const FailureReason = require('./../../../../api/failures/FailureReason'),
+      FailureType = require('./../../../../api/failures/FailureType');
 
-var DataType = require('./../../../../serialization/json/DataType'),
-    Field = require('./../../../../serialization/json/Field'),
-    Schema = require('./../../../../serialization/json/Schema');
+const DataType = require('./../../../../serialization/json/DataType'),
+      Field = require('./../../../../serialization/json/Field'),
+      Schema = require('./../../../../serialization/json/Schema');
 
-describe('When a FailureReason is created', function () {
+describe('When a FailureReason is created', () => {
   'use strict';
 
-  var reason;
-  beforeEach(function () {
+  let reason;
+  beforeEach(() => {
     reason = FailureReason.forRequest({
       endpoint: {
         description: 'do stuff'
@@ -16387,49 +16394,49 @@ describe('When a FailureReason is created', function () {
       name: 'Second'
     });
   });
-  describe('and the FailureReason is checked for severity', function () {
-    it('should be considered severe', function () {
+  describe('and the FailureReason is checked for severity', () => {
+    it('should be considered severe', () => {
       expect(reason.getIsSevere()).toEqual(true);
     });
   });
-  describe('and the FailureReason is converted to a human-readable form', function () {
-    var human;
-    beforeEach(function () {
+  describe('and the FailureReason is converted to a human-readable form', () => {
+    let human;
+    beforeEach(() => {
       human = reason.format();
     });
-    it('should have one primary reason', function () {
+    it('should have one primary reason', () => {
       expect(human.length).toEqual(1);
     });
-    it('should have two secondary reasons', function () {
+    it('should have two secondary reasons', () => {
       expect(human[0].children.length).toEqual(2);
     });
-    it('should have the correct primary code', function () {
+    it('should have the correct primary code', () => {
       expect(human[0].value.code).toEqual(FailureType.REQUEST_CONSTRUCTION_FAILURE.code);
     });
-    it('should have the correct primary message', function () {
+    it('should have the correct primary message', () => {
       expect(human[0].value.message).toEqual('An attempt to do stuff failed because some required information is missing.');
     });
-    it('should have the correct secondary message (1)', function () {
+    it('should have the correct secondary message (1)', () => {
       expect(human[0].children[0].value.message).toEqual('The "first" field is required.');
     });
-    it('should have the correct secondary code (1)', function () {
+    it('should have the correct secondary code (1)', () => {
       expect(human[0].children[0].value.code).toEqual(FailureType.REQUEST_PARAMETER_MISSING.code);
     });
-    it('should have the correct secondary message (2)', function () {
+    it('should have the correct secondary message (2)', () => {
       expect(human[0].children[1].value.message).toEqual('The "second" field is required.');
     });
-    it('should have the correct secondary code (2)', function () {
+    it('should have the correct secondary code (2)', () => {
       expect(human[0].children[1].value.code).toEqual(FailureType.REQUEST_PARAMETER_MISSING.code);
     });
   });
 });
-describe('When a schema is validated', function () {
-  var schema;
-  beforeEach(function () {
+describe('When a schema is validated', () => {
+  let schema;
+  beforeEach(() => {
     schema = new Schema('person', [new Field('first', DataType.STRING), new Field('last', DataType.STRING)]);
   });
-  describe('and a valid schema is processed', function () {
-    var result;
+  describe('and a valid schema is processed', () => {
+    let result;
     beforeEach(function (done) {
       FailureReason.validateSchema(schema, {
         first: 'bryan',
@@ -16439,13 +16446,13 @@ describe('When a schema is validated', function () {
         done();
       });
     });
-    it('should return null (not a FailureReason)', function () {
+    it('should return null (not a FailureReason)', () => {
       expect(result).toEqual(null);
     });
   });
-  describe('and an invalid schema is processed (with one invalid property)', function () {
-    var successResult = null;
-    var failureResult = null;
+  describe('and an invalid schema is processed (with one invalid property)', () => {
+    let successResult = null;
+    let failureResult = null;
     beforeEach(function (done) {
       FailureReason.validateSchema(schema, {
         first: 'bryan'
@@ -16457,16 +16464,16 @@ describe('When a schema is validated', function () {
         done();
       });
     });
-    it('should fail with a formatted failure reason', function () {
+    it('should fail with a formatted failure reason', () => {
       expect(failureResult).not.toEqual(null);
     });
-    it('should fail with a formatted failure reason, having one child', function () {
+    it('should fail with a formatted failure reason, having one child', () => {
       expect(failureResult[0].children.length).toEqual(1);
     });
   });
-  describe('and an invalid schema is processed (with two invalid properties)', function () {
-    var successResult = null;
-    var failureResult = null;
+  describe('and an invalid schema is processed (with two invalid properties)', () => {
+    let successResult = null;
+    let failureResult = null;
     beforeEach(function (done) {
       FailureReason.validateSchema(schema, {}).then(r => {
         successResult = r;
@@ -16476,198 +16483,198 @@ describe('When a schema is validated', function () {
         done();
       });
     });
-    it('should fail with a formatted failure reason', function () {
+    it('should fail with a formatted failure reason', () => {
       expect(failureResult).not.toEqual(null);
     });
-    it('should fail with a formatted failure reason, having two children', function () {
+    it('should fail with a formatted failure reason, having two children', () => {
       expect(failureResult[0].children.length).toEqual(2);
     });
   });
 });
 
 },{"./../../../../api/failures/FailureReason":1,"./../../../../api/failures/FailureType":3,"./../../../../serialization/json/DataType":56,"./../../../../serialization/json/Field":57,"./../../../../serialization/json/Schema":58}],77:[function(require,module,exports){
-var LinkedList = require('./../../../collections/LinkedList');
+const LinkedList = require('./../../../collections/LinkedList');
 
-describe('When "doe" is used to start a linked list', function () {
+describe('When "doe" is used to start a linked list', () => {
   'use strict';
 
-  var doe;
-  beforeEach(function () {
+  let doe;
+  beforeEach(() => {
     doe = new LinkedList('doe');
   });
-  describe('and "me" is added to "doe"', function () {
-    var me;
-    beforeEach(function () {
+  describe('and "me" is added to "doe"', () => {
+    let me;
+    beforeEach(() => {
       me = doe.insert('me');
     });
-    describe('and "ray" is inserted between "doe" and "me"', function () {
-      var ray;
-      beforeEach(function () {
+    describe('and "ray" is inserted between "doe" and "me"', () => {
+      let ray;
+      beforeEach(() => {
         ray = doe.insert('ray');
       });
-      it('the "ray" node should not be the the tail', function () {
+      it('the "ray" node should not be the the tail', () => {
         expect(me.getIsTail()).toEqual(true);
       });
-      it('the "ray" node should have a value of "ray"', function () {
+      it('the "ray" node should have a value of "ray"', () => {
         expect(me.getValue()).toEqual('me');
       });
-      it('the "me" node should still be the the tail', function () {
+      it('the "me" node should still be the the tail', () => {
         expect(me.getIsTail()).toEqual(true);
       });
-      it('the "doe" node should reference the "ray" node', function () {
+      it('the "doe" node should reference the "ray" node', () => {
         expect(doe.getNext()).toBe(ray);
       });
-      it('the "ray" node should reference the "me" node', function () {
+      it('the "ray" node should reference the "me" node', () => {
         expect(ray.getNext()).toBe(me);
       });
     });
-    it('the "me" node should be the the tail', function () {
+    it('the "me" node should be the the tail', () => {
       expect(me.getIsTail()).toEqual(true);
     });
-    it('the "me" node should have a value of "me"', function () {
+    it('the "me" node should have a value of "me"', () => {
       expect(me.getValue()).toEqual('me');
     });
-    it('the "doe" node should not be the tail', function () {
+    it('the "doe" node should not be the tail', () => {
       expect(doe.getIsTail()).toEqual(false);
     });
-    it('the "doe" node should still have the correct value', function () {
+    it('the "doe" node should still have the correct value', () => {
       expect(doe.getValue()).toEqual('doe');
     });
-    it('the "doe" node should reference the "me" node', function () {
+    it('the "doe" node should reference the "me" node', () => {
       expect(doe.getNext()).toBe(me);
     });
   });
-  it('should be the the tail', function () {
+  it('should be the the tail', () => {
     expect(doe.getIsTail()).toEqual(true);
   });
-  it('should have a value of "doe"', function () {
+  it('should have a value of "doe"', () => {
     expect(doe.getValue()).toEqual('doe');
   });
 });
 
 },{"./../../../collections/LinkedList":4}],78:[function(require,module,exports){
-var Queue = require('./../../../collections/Queue');
+const Queue = require('./../../../collections/Queue');
 
-describe('When a Queue is constructed', function () {
+describe('When a Queue is constructed', () => {
   'use strict';
 
-  var queue;
-  beforeEach(function () {
+  let queue;
+  beforeEach(() => {
     queue = new Queue();
   });
-  it('should be empty', function () {
+  it('should be empty', () => {
     expect(queue.empty()).toEqual(true);
   });
-  it('should throw if "peek" is called', function () {
-    expect(function () {
+  it('should throw if "peek" is called', () => {
+    expect(() => {
       queue.peek();
     }).toThrow(new Error('Queue is empty'));
   });
-  it('should throw if "dequeue" is called', function () {
-    expect(function () {
+  it('should throw if "dequeue" is called', () => {
+    expect(() => {
       queue.peek();
     }).toThrow(new Error('Queue is empty'));
   });
-  describe('and an object is enqueued', function () {
-    var first = 1;
-    beforeEach(function () {
+  describe('and an object is enqueued', () => {
+    let first = 1;
+    beforeEach(() => {
       queue.enqueue(first);
     });
-    it('should not be empty', function () {
+    it('should not be empty', () => {
       expect(queue.empty()).toEqual(false);
     });
-    describe('and we peek at the top of the queue', function () {
-      var peek;
-      beforeEach(function () {
+    describe('and we peek at the top of the queue', () => {
+      let peek;
+      beforeEach(() => {
         peek = queue.peek();
       });
-      it('the peek result should be the item enqueued', function () {
+      it('the peek result should be the item enqueued', () => {
         expect(peek).toBe(first);
       });
-      it('should not be empty', function () {
+      it('should not be empty', () => {
         expect(queue.empty()).toEqual(false);
       });
     });
-    describe('and an object is dequeued', function () {
-      var dequeue;
-      beforeEach(function () {
+    describe('and an object is dequeued', () => {
+      let dequeue;
+      beforeEach(() => {
         dequeue = queue.dequeue();
       });
-      it('the dequeue result should be the item enqueued', function () {
+      it('the dequeue result should be the item enqueued', () => {
         expect(dequeue).toBe(first);
       });
-      it('should be empty', function () {
+      it('should be empty', () => {
         expect(queue.empty()).toEqual(true);
       });
     });
-    describe('and a second object is enqueued', function () {
-      var second = {
+    describe('and a second object is enqueued', () => {
+      let second = {
         name: "second"
       };
-      beforeEach(function () {
+      beforeEach(() => {
         queue.enqueue(second);
       });
-      it('should not be empty', function () {
+      it('should not be empty', () => {
         expect(queue.empty()).toEqual(false);
       });
-      describe('and we peek at the top of the queue', function () {
-        var peek;
-        beforeEach(function () {
+      describe('and we peek at the top of the queue', () => {
+        let peek;
+        beforeEach(() => {
           peek = queue.peek();
         });
-        it('the peek result should be the first item enqueued', function () {
+        it('the peek result should be the first item enqueued', () => {
           expect(peek).toBe(first);
         });
-        it('should not be empty', function () {
+        it('should not be empty', () => {
           expect(queue.empty()).toEqual(false);
         });
       });
-      describe('and an object is dequeued', function () {
-        var dequeue;
-        beforeEach(function () {
+      describe('and an object is dequeued', () => {
+        let dequeue;
+        beforeEach(() => {
           dequeue = queue.dequeue();
         });
-        it('the dequeue result should be the first item enqueued', function () {
+        it('the dequeue result should be the first item enqueued', () => {
           expect(dequeue).toBe(first);
         });
-        it('should not be empty', function () {
+        it('should not be empty', () => {
           expect(queue.empty()).toEqual(false);
         });
       });
-      describe('and the queue is exported to an array', function () {
-        var a;
-        beforeEach(function () {
+      describe('and the queue is exported to an array', () => {
+        let a;
+        beforeEach(() => {
           a = queue.toArray();
         });
-        it('should return an array with two items', function () {
+        it('should return an array with two items', () => {
           expect(a.length).toEqual(2);
         });
-        it('the first item should be the first item enqueued', function () {
+        it('the first item should be the first item enqueued', () => {
           expect(a[0]).toBe(first);
         });
-        it('the second item should be the second item enqueued', function () {
+        it('the second item should be the second item enqueued', () => {
           expect(a[1]).toBe(second);
         });
-        it('should not be empty', function () {
+        it('should not be empty', () => {
           expect(queue.empty()).toEqual(false);
         });
       });
-      describe('and the queue is scanned', function () {
-        var spy;
-        beforeEach(function () {
+      describe('and the queue is scanned', () => {
+        let spy;
+        beforeEach(() => {
           spy = jasmine.createSpy();
           queue.scan(spy);
         });
-        it('should call the delegate one time for each item in the queue', function () {
+        it('should call the delegate one time for each item in the queue', () => {
           expect(spy.calls.count()).toEqual(2);
         });
-        it('should pass the first item to be pushed to the delegate first', function () {
+        it('should pass the first item to be pushed to the delegate first', () => {
           expect(spy.calls.argsFor(0)[0]).toBe(first);
         });
-        it('should pass the second item to be pushed to the delegate second', function () {
+        it('should pass the second item to be pushed to the delegate second', () => {
           expect(spy.calls.argsFor(1)[0]).toBe(second);
         });
-        it('should not be empty', function () {
+        it('should not be empty', () => {
           expect(queue.empty()).toEqual(false);
         });
       });
@@ -16676,125 +16683,125 @@ describe('When a Queue is constructed', function () {
 });
 
 },{"./../../../collections/Queue":5}],79:[function(require,module,exports){
-var Stack = require('./../../../collections/Stack');
+const Stack = require('./../../../collections/Stack');
 
-describe('When a Stack is constructed', function () {
+describe('When a Stack is constructed', () => {
   'use strict';
 
-  var stack;
-  beforeEach(function () {
+  let stack;
+  beforeEach(() => {
     stack = new Stack();
   });
-  it('should be empty', function () {
+  it('should be empty', () => {
     expect(stack.empty()).toEqual(true);
   });
-  it('should throw if "peek" is called', function () {
-    expect(function () {
+  it('should throw if "peek" is called', () => {
+    expect(() => {
       stack.peek();
     }).toThrow(new Error('Stack is empty'));
   });
-  it('should throw if "pop" is called', function () {
-    expect(function () {
+  it('should throw if "pop" is called', () => {
+    expect(() => {
       stack.peek();
     }).toThrow(new Error('Stack is empty'));
   });
-  describe('and an object is pushed onto the stack', function () {
-    var first = 1;
-    beforeEach(function () {
+  describe('and an object is pushed onto the stack', () => {
+    let first = 1;
+    beforeEach(() => {
       stack.push(first);
     });
-    it('should not be empty', function () {
+    it('should not be empty', () => {
       expect(stack.empty()).toEqual(false);
     });
-    describe('and we peek at the top of the stack', function () {
-      var peek;
-      beforeEach(function () {
+    describe('and we peek at the top of the stack', () => {
+      let peek;
+      beforeEach(() => {
         peek = stack.peek();
       });
-      it('the peek result should be the item pushed onto the stack', function () {
+      it('the peek result should be the item pushed onto the stack', () => {
         expect(peek).toBe(first);
       });
-      it('should not be empty', function () {
+      it('should not be empty', () => {
         expect(stack.empty()).toEqual(false);
       });
     });
-    describe('and an object is popped from the stack', function () {
-      var pop;
-      beforeEach(function () {
+    describe('and an object is popped from the stack', () => {
+      let pop;
+      beforeEach(() => {
         pop = stack.pop();
       });
-      it('the pop result should be the item pushed onto the stack', function () {
+      it('the pop result should be the item pushed onto the stack', () => {
         expect(pop).toBe(first);
       });
-      it('should be empty', function () {
+      it('should be empty', () => {
         expect(stack.empty()).toEqual(true);
       });
     });
-    describe('and a second object is pushed onto the stack', function () {
-      var second = {
+    describe('and a second object is pushed onto the stack', () => {
+      let second = {
         name: "second"
       };
-      beforeEach(function () {
+      beforeEach(() => {
         stack.push(second);
       });
-      it('should not be empty', function () {
+      it('should not be empty', () => {
         expect(stack.empty()).toEqual(false);
       });
-      describe('and we peek at the top of the stack', function () {
-        var peek;
-        beforeEach(function () {
+      describe('and we peek at the top of the stack', () => {
+        let peek;
+        beforeEach(() => {
           peek = stack.peek();
         });
-        it('the peek result should be the second item pushed onto the stack', function () {
+        it('the peek result should be the second item pushed onto the stack', () => {
           expect(peek).toBe(second);
         });
-        it('should not be empty', function () {
+        it('should not be empty', () => {
           expect(stack.empty()).toEqual(false);
         });
       });
-      describe('and an object is popped from the stack', function () {
-        var pop;
-        beforeEach(function () {
+      describe('and an object is popped from the stack', () => {
+        let pop;
+        beforeEach(() => {
           pop = stack.pop();
         });
-        it('the pop result should be the second item pushed onto the stack', function () {
+        it('the pop result should be the second item pushed onto the stack', () => {
           expect(pop).toBe(second);
         });
-        it('should not be empty', function () {
+        it('should not be empty', () => {
           expect(stack.empty()).toEqual(false);
         });
       });
-      describe('and the queue is exported to an array', function () {
-        var a;
-        beforeEach(function () {
+      describe('and the queue is exported to an array', () => {
+        let a;
+        beforeEach(() => {
           a = stack.toArray();
         });
-        it('should return an array with two items', function () {
+        it('should return an array with two items', () => {
           expect(a.length).toEqual(2);
         });
-        it('the first item should be the second item pushed', function () {
+        it('the first item should be the second item pushed', () => {
           expect(a[0]).toBe(second);
         });
-        it('the second item should be the first item pushed', function () {
+        it('the second item should be the first item pushed', () => {
           expect(a[1]).toBe(first);
         });
-        it('should not be empty', function () {
+        it('should not be empty', () => {
           expect(stack.empty()).toEqual(false);
         });
       });
-      describe('and the stack is scanned', function () {
-        var spy;
-        beforeEach(function () {
+      describe('and the stack is scanned', () => {
+        let spy;
+        beforeEach(() => {
           spy = jasmine.createSpy();
           stack.scan(spy);
         });
-        it('should call the delegate one time for each item in the queue', function () {
+        it('should call the delegate one time for each item in the queue', () => {
           expect(spy.calls.count()).toEqual(2);
         });
-        it('should pass the second item to be pushed to the delegate first', function () {
+        it('should pass the second item to be pushed to the delegate first', () => {
           expect(spy.calls.argsFor(0)[0]).toBe(second);
         });
-        it('should pass the first item to be pushed to the delegate second', function () {
+        it('should pass the first item to be pushed to the delegate second', () => {
           expect(spy.calls.argsFor(1)[0]).toBe(first);
         });
       });
@@ -16803,92 +16810,92 @@ describe('When a Stack is constructed', function () {
 });
 
 },{"./../../../collections/Stack":6}],80:[function(require,module,exports){
-var Tree = require('./../../../collections/Tree');
+const Tree = require('./../../../collections/Tree');
 
-describe('When a Tree is constructed', function () {
+describe('When a Tree is constructed', () => {
   'use strict';
 
-  var root;
-  var one;
-  beforeEach(function () {
+  let root;
+  let one;
+  beforeEach(() => {
     root = new Tree(one = {});
   });
-  it('should be the root node', function () {
+  it('should be the root node', () => {
     expect(root.getIsRoot()).toEqual(true);
   });
-  it('should be a leaf node', function () {
+  it('should be a leaf node', () => {
     expect(root.getIsLeaf()).toEqual(true);
   });
-  it('should have to correct node value', function () {
+  it('should have to correct node value', () => {
     expect(root.getValue()).toBe(one);
   });
-  describe('and the root node is retrieved from root node', function () {
-    it('should be itself', function () {
+  describe('and the root node is retrieved from root node', () => {
+    it('should be itself', () => {
       expect(root.getRoot()).toBe(root);
     });
   });
-  describe('and a child is added', function () {
-    var child;
-    var two;
-    beforeEach(function () {
+  describe('and a child is added', () => {
+    let child;
+    let two;
+    beforeEach(() => {
       child = root.addChild(two = {});
     });
-    it('should be a leaf node', function () {
+    it('should be a leaf node', () => {
       expect(child.getIsLeaf()).toEqual(true);
     });
-    it('should have to correct node value', function () {
+    it('should have to correct node value', () => {
       expect(child.getValue()).toBe(two);
     });
-    it('should should be the child of the root node', function () {
+    it('should should be the child of the root node', () => {
       expect(child.getParent()).toBe(root);
     });
-    it('should not have a parent which is considered a leaf node', function () {
+    it('should not have a parent which is considered a leaf node', () => {
       expect(root.getIsLeaf()).toEqual(false);
     });
-    it('should be in the parents collection of children', function () {
+    it('should be in the parents collection of children', () => {
       expect(root.getChildren().find(c => c === child)).toBe(child);
     });
-    describe('and a second child is added', function () {
-      var secondChild;
-      var three;
-      beforeEach(function () {
+    describe('and a second child is added', () => {
+      let secondChild;
+      let three;
+      beforeEach(() => {
         secondChild = root.addChild(three = {});
       });
-      describe('and the second child is severed', function () {
-        beforeEach(function () {
+      describe('and the second child is severed', () => {
+        beforeEach(() => {
           secondChild.sever();
         });
-        it('the severed tree should no longer have a parent', function () {
+        it('the severed tree should no longer have a parent', () => {
           expect(secondChild.getIsRoot()).toEqual(true);
         });
-        it('the original tree should only contain one child', function () {
+        it('the original tree should only contain one child', () => {
           expect(root.getChildren().length).toEqual(1);
         });
-        it('the original tree should not be the severed node', function () {
+        it('the original tree should not be the severed node', () => {
           expect(root.getChildren()[0]).not.toBe(secondChild);
         });
       });
-      describe('and the tree is converted to a JavaScript object', function () {
-        var object;
-        beforeEach(function () {
+      describe('and the tree is converted to a JavaScript object', () => {
+        let object;
+        beforeEach(() => {
           object = root.toJSObj();
         });
-        it('should have the correct root value', function () {
+        it('should have the correct root value', () => {
           expect(object.value).toBe(one);
         });
-        it('should have two children', function () {
+        it('should have two children', () => {
           expect(object.children.length).toEqual(2);
         });
-        it('should have the correct value for the first child', function () {
+        it('should have the correct value for the first child', () => {
           expect(object.children[0].value).toBe(two);
         });
-        it('should have the correct value for the second child', function () {
+        it('should have the correct value for the second child', () => {
           expect(object.children[1].value).toBe(three);
         });
       });
     });
-    describe('and the root node is retrieved from the child', function () {
-      it('should be the root node', function () {
+    describe('and the root node is retrieved from the child', () => {
+      it('should be the root node', () => {
         expect(child.getRoot()).toBe(root);
       });
     });
@@ -16896,36 +16903,36 @@ describe('When a Tree is constructed', function () {
 });
 
 },{"./../../../collections/Tree":7}],81:[function(require,module,exports){
-var ComparatorBuilder = require('./../../../../collections/sorting/ComparatorBuilder');
+const ComparatorBuilder = require('./../../../../collections/sorting/ComparatorBuilder');
 
-describe('When a ComparatorBuilder is composed with two comparators', function () {
+describe('When a ComparatorBuilder is composed with two comparators', () => {
   'use strict';
 
-  var comparatorBuilder;
-  var comparatorOne;
-  var comparatorTwo;
-  var first = {
+  let comparatorBuilder;
+  let comparatorOne;
+  let comparatorTwo;
+  let first = {
     x: 0,
     y: 0,
-    toString: function () {
+    toString: () => {
       return '[first]';
     }
   };
-  var second = {
+  let second = {
     x: 1,
     y: 0,
-    toString: function () {
+    toString: () => {
       return '[second]';
     }
   };
-  var third = {
+  let third = {
     x: 1,
     y: 1,
-    toString: function () {
+    toString: () => {
       return '[third]';
     }
   };
-  beforeEach(function () {
+  beforeEach(() => {
     comparatorOne = jasmine.createSpy('comparatorOne').and.callFake(function (a, b) {
       return a.x - b.x;
     });
@@ -16934,41 +16941,41 @@ describe('When a ComparatorBuilder is composed with two comparators', function (
     });
     comparatorBuilder = ComparatorBuilder.startWith(comparatorOne).thenBy(comparatorTwo);
   });
-  describe('and the ComparatorBuilder sorts an array (which requires both comparators)', function () {
-    var arrayToSort;
-    beforeEach(function () {
+  describe('and the ComparatorBuilder sorts an array (which requires both comparators)', () => {
+    let arrayToSort;
+    beforeEach(() => {
       arrayToSort = [third, first, second];
       arrayToSort.sort(comparatorBuilder.toComparator());
     });
-    it('the first comparator should be invoked', function () {
+    it('the first comparator should be invoked', () => {
       expect(comparatorOne).toHaveBeenCalled();
     });
-    it('the second comparator should be invoked', function () {
+    it('the second comparator should be invoked', () => {
       expect(comparatorTwo).toHaveBeenCalled();
     });
-    it('the sorted array should be in the correct order', function () {
+    it('the sorted array should be in the correct order', () => {
       expect(arrayToSort[0]).toBe(first);
       expect(arrayToSort[1]).toBe(second);
       expect(arrayToSort[2]).toBe(third);
     });
   });
-  describe('and the ComparatorBuilder is inverted', function () {
-    beforeEach(function () {
+  describe('and the ComparatorBuilder is inverted', () => {
+    beforeEach(() => {
       comparatorBuilder = comparatorBuilder.invert();
     });
-    describe('and the ComparatorBuilder sorts an array (which requires both comparators)', function () {
-      var arrayToSort;
-      beforeEach(function () {
+    describe('and the ComparatorBuilder sorts an array (which requires both comparators)', () => {
+      let arrayToSort;
+      beforeEach(() => {
         arrayToSort = [third, first, second];
         arrayToSort.sort(comparatorBuilder.toComparator());
       });
-      it('the first comparator should be invoked', function () {
+      it('the first comparator should be invoked', () => {
         expect(comparatorOne).toHaveBeenCalled();
       });
-      it('the second comparator should be invoked', function () {
+      it('the second comparator should be invoked', () => {
         expect(comparatorTwo).toHaveBeenCalled();
       });
-      it('the sorted array should be in the correct order', function () {
+      it('the sorted array should be in the correct order', () => {
         expect(arrayToSort[0]).toBe(third);
         expect(arrayToSort[1]).toBe(second);
         expect(arrayToSort[2]).toBe(first);
@@ -16978,7 +16985,7 @@ describe('When a ComparatorBuilder is composed with two comparators', function (
 });
 
 },{"./../../../../collections/sorting/ComparatorBuilder":8}],82:[function(require,module,exports){
-let comparators = require('./../../../../collections/sorting/comparators');
+const comparators = require('./../../../../collections/sorting/comparators');
 
 describe('When using the "compareDates" comparator', () => {
   'use strict';
@@ -17126,133 +17133,133 @@ describe('When using the "compareBoolean" comparator', () => {
 });
 
 },{"./../../../../collections/sorting/comparators":9}],83:[function(require,module,exports){
-var CompoundMap = require('./../../../../collections/specialized/CompoundMap');
+const CompoundMap = require('./../../../../collections/specialized/CompoundMap');
 
-describe('When an CompoundMap is constructed', function () {
+describe('When an CompoundMap is constructed', () => {
   'use strict';
 
-  describe('with a depth of one', function () {
-    var map;
-    beforeEach(function () {
+  describe('with a depth of one', () => {
+    let map;
+    beforeEach(() => {
       map = new CompoundMap(1);
     });
-    describe('and an item with one key is put into the map', function () {
-      var value;
-      var key;
-      beforeEach(function () {
+    describe('and an item with one key is put into the map', () => {
+      let value;
+      let key;
+      beforeEach(() => {
         map.put(value = 'bryan', key = 'b');
       });
-      it('should have the item', function () {
+      it('should have the item', () => {
         expect(map.has(key)).toEqual(true);
       });
-      it('should return the value when asked', function () {
+      it('should return the value when asked', () => {
         expect(map.get(key)).toEqual(value);
       });
     });
-    describe('and an item with one key is put into the map', function () {
-      it('should throw an error', function () {
-        expect(function () {
+    describe('and an item with one key is put into the map', () => {
+      it('should throw an error', () => {
+        expect(() => {
           map.put('bryan', 'b', 'r');
         }).toThrow();
       });
     });
   });
-  describe('with a depth of two', function () {
-    var map;
-    beforeEach(function () {
+  describe('with a depth of two', () => {
+    let map;
+    beforeEach(() => {
       map = new CompoundMap(2);
     });
-    describe('and an item with two keys is put into the map', function () {
-      var value;
-      var keyOne;
-      var keyTwo;
-      beforeEach(function () {
+    describe('and an item with two keys is put into the map', () => {
+      let value;
+      let keyOne;
+      let keyTwo;
+      beforeEach(() => {
         map.put(value = 'bryan', keyOne = 'b', keyTwo = 'r');
       });
-      it('should have the group', function () {
+      it('should have the group', () => {
         expect(map.has(keyOne)).toEqual(true);
       });
-      it('should have the item', function () {
+      it('should have the item', () => {
         expect(map.has(keyOne, keyTwo)).toEqual(true);
       });
-      it('should return the value when asked', function () {
+      it('should return the value when asked', () => {
         expect(map.get(keyOne, keyTwo)).toEqual(value);
       });
-      describe('and another item, with the same keys, is put into the map', function () {
-        var replaced;
-        beforeEach(function () {
+      describe('and another item, with the same keys, is put into the map', () => {
+        let replaced;
+        beforeEach(() => {
           map.put(replaced = 'brock', keyOne, keyTwo);
         });
-        it('should have the item', function () {
+        it('should have the item', () => {
           expect(map.has(keyOne, keyTwo)).toEqual(true);
         });
-        it('should return the value when asked', function () {
+        it('should return the value when asked', () => {
           expect(map.get(keyOne, keyTwo)).toEqual(replaced);
         });
       });
-      describe('and another item, with the same first key, is put into the map', function () {
-        var valueB;
-        var keyOneB;
-        var keyTwoB;
-        beforeEach(function () {
+      describe('and another item, with the same first key, is put into the map', () => {
+        let valueB;
+        let keyOneB;
+        let keyTwoB;
+        beforeEach(() => {
           map.put(valueB = 'bob', keyOneB = keyOne, keyTwoB = 'o');
         });
-        it('should have the item', function () {
+        it('should have the item', () => {
           expect(map.has(keyOneB, keyTwoB)).toEqual(true);
         });
-        it('should return the value when asked', function () {
+        it('should return the value when asked', () => {
           expect(map.get(keyOneB, keyTwoB)).toEqual(valueB);
         });
-        it('should still have the original item', function () {
+        it('should still have the original item', () => {
           expect(map.has(keyOne, keyTwo)).toEqual(true);
         });
-        it('should still return the original value when asked', function () {
+        it('should still return the original value when asked', () => {
           expect(map.get(keyOne, keyTwo)).toEqual(value);
         });
-        describe('and that item is deleted', function () {
-          var result;
-          beforeEach(function () {
+        describe('and that item is deleted', () => {
+          let result;
+          beforeEach(() => {
             result = map.remove(keyOneB, keyTwoB);
           });
-          it('should be a successful operation', function () {
+          it('should be a successful operation', () => {
             expect(result).toEqual(true);
           });
-          it('should not have the item', function () {
+          it('should not have the item', () => {
             expect(map.has(keyOneB, keyTwoB)).toEqual(false);
           });
-          it('should still have the original item', function () {
+          it('should still have the original item', () => {
             expect(map.has(keyOne, keyTwo)).toEqual(true);
           });
         });
-        describe('and the entire group is deleted', function () {
-          var result;
-          beforeEach(function () {
+        describe('and the entire group is deleted', () => {
+          let result;
+          beforeEach(() => {
             result = map.remove(keyOneB);
           });
-          it('should be a successful operation', function () {
+          it('should be a successful operation', () => {
             expect(result).toEqual(true);
           });
-          it('should not have the item', function () {
+          it('should not have the item', () => {
             expect(map.has(keyOneB, keyTwoB)).toEqual(false);
           });
-          it('should not have the original item', function () {
+          it('should not have the original item', () => {
             expect(map.has(keyOne, keyTwo)).toEqual(false);
           });
         });
-        describe('and an attempt to delete a non-existent key is made', function () {
-          var result;
-          beforeEach(function () {
+        describe('and an attempt to delete a non-existent key is made', () => {
+          let result;
+          beforeEach(() => {
             result = map.remove(keyOneB, 'xxx');
           });
-          it('should be a failed operation', function () {
+          it('should be a failed operation', () => {
             expect(result).toEqual(false);
           });
         });
       });
     });
-    describe('and an item with one key is put into the map', function () {
-      it('should throw an error', function () {
-        expect(function () {
+    describe('and an item with one key is put into the map', () => {
+      it('should throw an error', () => {
+        expect(() => {
           map.put('bryan', 'b');
         }).toThrow();
       });
@@ -17261,115 +17268,114 @@ describe('When an CompoundMap is constructed', function () {
 });
 
 },{"./../../../../collections/specialized/CompoundMap":10}],84:[function(require,module,exports){
-var Disposable = require('./../../../../lang/Disposable');
+const Disposable = require('./../../../../lang/Disposable'),
+      DisposableStack = require('./../../../../collections/specialized/DisposableStack');
 
-var DisposableStack = require('./../../../../collections/specialized/DisposableStack');
-
-describe('When an DisposableStack is constructed', function () {
+describe('When an DisposableStack is constructed', () => {
   'use strict';
 
-  var disposeStack;
-  beforeEach(function () {
+  let disposeStack;
+  beforeEach(() => {
     disposeStack = new DisposableStack();
   });
-  it('should be disposable', function () {
+  it('should be disposable', () => {
     expect(disposeStack instanceof Disposable).toEqual(true);
   });
-  describe('and a Disposable item is added to the stack', function () {
-    var disposableOne;
-    var spyOne;
-    var disposeOrder;
-    beforeEach(function () {
-      disposeStack.push(disposableOne = Disposable.fromAction(spyOne = jasmine.createSpy('spyOne').and.callFake(function () {
+  describe('and a Disposable item is added to the stack', () => {
+    let disposableOne;
+    let spyOne;
+    let disposeOrder;
+    beforeEach(() => {
+      disposeStack.push(disposableOne = Disposable.fromAction(spyOne = jasmine.createSpy('spyOne').and.callFake(() => {
         disposeOrder.push(disposableOne);
       })));
     });
-    describe('and the stack is disposed', function () {
-      beforeEach(function () {
+    describe('and the stack is disposed', () => {
+      beforeEach(() => {
         disposeOrder = [];
         disposeStack.dispose();
       });
-      it('the item should be disposed', function () {
+      it('the item should be disposed', () => {
         expect(disposableOne.getIsDisposed()).toEqual(true);
       });
-      it('the dispose logic should have been triggered', function () {
+      it('the dispose logic should have been triggered', () => {
         expect(spyOne).toHaveBeenCalled();
       });
-      describe('and another item is added to the stack', function () {
-        it('should throw an error', function () {
-          expect(function () {
-            disposeStack.push(Disposable.fromAction(function () {}));
+      describe('and another item is added to the stack', () => {
+        it('should throw an error', () => {
+          expect(() => {
+            disposeStack.push(Disposable.fromAction(() => {}));
           }).toThrow();
         });
       });
     });
-    describe('and the another item is added to the stack', function () {
-      var disposableTwo;
-      var spyTwo;
-      beforeEach(function () {
-        disposeStack.push(disposableTwo = Disposable.fromAction(spyTwo = jasmine.createSpy('spyTwo').and.callFake(function () {
+    describe('and the another item is added to the stack', () => {
+      let disposableTwo;
+      let spyTwo;
+      beforeEach(() => {
+        disposeStack.push(disposableTwo = Disposable.fromAction(spyTwo = jasmine.createSpy('spyTwo').and.callFake(() => {
           disposeOrder.push(disposableTwo);
         })));
       });
-      describe('and the stack is disposed', function () {
-        beforeEach(function () {
+      describe('and the stack is disposed', () => {
+        beforeEach(() => {
           disposeOrder = [];
           disposeStack.dispose();
         });
-        it('the first item should be disposed', function () {
+        it('the first item should be disposed', () => {
           expect(disposableOne.getIsDisposed()).toEqual(true);
         });
-        it('the dispose logic for the first item have been triggered', function () {
+        it('the dispose logic for the first item have been triggered', () => {
           expect(spyOne).toHaveBeenCalled();
         });
-        it('the second item should be disposed', function () {
+        it('the second item should be disposed', () => {
           expect(disposableTwo.getIsDisposed()).toEqual(true);
         });
-        it('the dispose logic for the second item have been triggered', function () {
+        it('the dispose logic for the second item have been triggered', () => {
           expect(spyTwo).toHaveBeenCalled();
         });
-        it('the second item should be disposed first (per "stack" rules)', function () {
+        it('the second item should be disposed first (per "stack" rules)', () => {
           expect(disposeOrder[0]).toBe(disposableTwo);
         });
-        it('the first item should be disposed next (per "stack" rules)', function () {
+        it('the first item should be disposed next (per "stack" rules)', () => {
           expect(disposeOrder[1]).toBe(disposableOne);
         });
       });
     });
   });
-  describe('and the "pushPromise" function is used to add a DisposableItem to the stack', function () {
-    var promise;
-    var resolveAction;
-    beforeEach(function () {
+  describe('and the "pushPromise" function is used to add a DisposableItem to the stack', () => {
+    let promise;
+    let resolveAction;
+    beforeEach(() => {
       promise = new Promise(function (resolveCallback) {
         resolveAction = resolveCallback;
       });
       DisposableStack.pushPromise(disposeStack, promise);
     });
-    describe('and the promise resolves', function () {
-      var spyOne;
-      var disposableOne;
+    describe('and the promise resolves', () => {
+      let spyOne;
+      let disposableOne;
       beforeEach(function (done) {
         resolveAction(disposableOne = Disposable.fromAction(spyOne = jasmine.createSpy('spyOne')));
         promise.then(() => {
           done();
         });
       });
-      describe('and the stack is disposed', function () {
-        beforeEach(function () {
+      describe('and the stack is disposed', () => {
+        beforeEach(() => {
           disposeStack.dispose();
         });
-        it('the dispose logic should have been triggered', function () {
+        it('the dispose logic should have been triggered', () => {
           expect(spyOne).toHaveBeenCalled();
         });
       });
     });
   });
-  describe('and the "pushPromise" function is used to add two DisposableItems to the stack', function () {
-    var promise;
-    var resolveActionOne;
-    var resolveActionTwo;
-    beforeEach(function () {
+  describe('and the "pushPromise" function is used to add two DisposableItems to the stack', () => {
+    let promise;
+    let resolveActionOne;
+    let resolveActionTwo;
+    beforeEach(() => {
       promise = Promise.all([new Promise(function (resolveCallback) {
         resolveActionOne = resolveCallback;
       }), new Promise(function (resolveCallback) {
@@ -17377,19 +17383,19 @@ describe('When an DisposableStack is constructed', function () {
       })]);
       DisposableStack.pushPromise(disposeStack, promise);
     });
-    describe('and the promise resolves', function () {
-      var spyOne;
-      var disposableOne;
-      var spyTwo;
-      var disposableTwo;
-      var disposeOrder;
+    describe('and the promise resolves', () => {
+      let spyOne;
+      let disposableOne;
+      let spyTwo;
+      let disposableTwo;
+      let disposeOrder;
       beforeEach(function (done) {
         disposeOrder = [];
-        resolveActionTwo(disposableTwo = Disposable.fromAction(spyTwo = jasmine.createSpy('spyTwo').and.callFake(function () {
+        resolveActionTwo(disposableTwo = Disposable.fromAction(spyTwo = jasmine.createSpy('spyTwo').and.callFake(() => {
           disposeOrder.push(disposableTwo);
         })));
-        setTimeout(function () {
-          resolveActionOne(disposableOne = Disposable.fromAction(spyOne = jasmine.createSpy('spyOne').and.callFake(function () {
+        setTimeout(() => {
+          resolveActionOne(disposableOne = Disposable.fromAction(spyOne = jasmine.createSpy('spyOne').and.callFake(() => {
             disposeOrder.push(disposableOne);
           })));
         }, 5);
@@ -17397,26 +17403,26 @@ describe('When an DisposableStack is constructed', function () {
           done();
         });
       });
-      describe('and the stack is disposed', function () {
-        beforeEach(function () {
+      describe('and the stack is disposed', () => {
+        beforeEach(() => {
           disposeStack.dispose();
         });
-        it('the first item should be disposed', function () {
+        it('the first item should be disposed', () => {
           expect(disposableOne.getIsDisposed()).toEqual(true);
         });
-        it('the dispose logic for the first item have been triggered', function () {
+        it('the dispose logic for the first item have been triggered', () => {
           expect(spyOne).toHaveBeenCalled();
         });
-        it('the second item should be disposed', function () {
+        it('the second item should be disposed', () => {
           expect(disposableTwo.getIsDisposed()).toEqual(true);
         });
-        it('the dispose logic for the second item have been triggered', function () {
+        it('the dispose logic for the second item have been triggered', () => {
           expect(spyTwo).toHaveBeenCalled();
         });
-        it('the second item should be disposed first (per "stack" rules)', function () {
+        it('the second item should be disposed first (per "stack" rules)', () => {
           expect(disposeOrder[0]).toBe(disposableTwo);
         });
-        it('the first item should be disposed next (per "stack" rules)', function () {
+        it('the first item should be disposed next (per "stack" rules)', () => {
           expect(disposeOrder[1]).toBe(disposableOne);
         });
       });
@@ -17425,171 +17431,171 @@ describe('When an DisposableStack is constructed', function () {
 });
 
 },{"./../../../../collections/specialized/DisposableStack":11,"./../../../../lang/Disposable":23}],85:[function(require,module,exports){
-var EvictingList = require('./../../../../collections/specialized/EvictingList');
+const EvictingList = require('./../../../../collections/specialized/EvictingList');
 
-describe('When an EvictingList is constructed (with no capacity)', function () {
+describe('When an EvictingList is constructed (with no capacity)', () => {
   'use strict';
 
-  var list;
-  beforeEach(function () {
+  let list;
+  beforeEach(() => {
     list = new EvictingList();
   });
-  it('should be empty', function () {
+  it('should be empty', () => {
     expect(list.empty()).toEqual(true);
   });
-  it('should have a capacity of 10', function () {
+  it('should have a capacity of 10', () => {
     expect(list.getCapacity()).toEqual(10);
   });
-  describe('when dumped to an array', function () {
-    var array;
-    beforeEach(function () {
+  describe('when dumped to an array', () => {
+    let array;
+    beforeEach(() => {
       array = list.toArray();
     });
-    it('should be empty', function () {
+    it('should be empty', () => {
       expect(array.length).toEqual(0);
     });
   });
 });
-describe('When an EvictingList is constructed (with a capacity of 1)', function () {
+describe('When an EvictingList is constructed (with a capacity of 1)', () => {
   'use strict';
 
-  var list;
-  beforeEach(function () {
+  let list;
+  beforeEach(() => {
     list = new EvictingList(1);
   });
-  it('should be empty', function () {
+  it('should be empty', () => {
     expect(list.empty()).toEqual(true);
   });
-  it('should have a capacity of 1', function () {
+  it('should have a capacity of 1', () => {
     expect(list.getCapacity()).toEqual(1);
   });
-  describe('when dumped to an array', function () {
-    var array;
-    beforeEach(function () {
+  describe('when dumped to an array', () => {
+    let array;
+    beforeEach(() => {
       array = list.toArray();
     });
-    it('should be empty', function () {
+    it('should be empty', () => {
       expect(array.length).toEqual(0);
     });
   });
-  describe('when the an item is added to the list', function () {
-    var a;
-    beforeEach(function () {
+  describe('when the an item is added to the list', () => {
+    let a;
+    beforeEach(() => {
       list.add(a = {});
     });
-    it('peek should return the item', function () {
+    it('peek should return the item', () => {
       expect(list.peek()).toBe(a);
     });
-    it('should not be empty', function () {
+    it('should not be empty', () => {
       expect(list.empty()).toEqual(false);
     });
-    describe('when dumped to an array', function () {
-      var array;
-      beforeEach(function () {
+    describe('when dumped to an array', () => {
+      let array;
+      beforeEach(() => {
         array = list.toArray();
       });
-      it('should contain one item', function () {
+      it('should contain one item', () => {
         expect(array.length).toEqual(1);
       });
-      it('the first item should be the item added', function () {
+      it('the first item should be the item added', () => {
         expect(array[0]).toEqual(a);
       });
     });
-    describe('when a second item is added to the list', function () {
-      var b;
-      beforeEach(function () {
+    describe('when a second item is added to the list', () => {
+      let b;
+      beforeEach(() => {
         list.add(b = {});
       });
-      it('should not be empty', function () {
+      it('should not be empty', () => {
         expect(list.empty()).toEqual(false);
       });
-      it('peek should return the second item', function () {
+      it('peek should return the second item', () => {
         expect(list.peek()).toBe(b);
       });
-      describe('when dumped to an array', function () {
-        var array;
-        beforeEach(function () {
+      describe('when dumped to an array', () => {
+        let array;
+        beforeEach(() => {
           array = list.toArray();
         });
-        it('should contain one item', function () {
+        it('should contain one item', () => {
           expect(array.length).toEqual(1);
         });
-        it('the first item in the array should be the most recent item', function () {
+        it('the first item in the array should be the most recent item', () => {
           expect(array[0]).toBe(b);
         });
       });
     });
   });
 });
-describe('When an EvictingList is constructed (with a capacity of 3)', function () {
+describe('When an EvictingList is constructed (with a capacity of 3)', () => {
   'use strict';
 
-  var list;
-  beforeEach(function () {
+  let list;
+  beforeEach(() => {
     list = new EvictingList(3);
   });
-  it('should be empty', function () {
+  it('should be empty', () => {
     expect(list.empty()).toEqual(true);
   });
-  it('should have a capacity of 3', function () {
+  it('should have a capacity of 3', () => {
     expect(list.getCapacity()).toEqual(3);
   });
-  describe('and five items are added to the list', function () {
-    var a;
-    var b;
-    var c;
-    var d;
-    var e;
-    beforeEach(function () {
+  describe('and five items are added to the list', () => {
+    let a;
+    let b;
+    let c;
+    let d;
+    let e;
+    beforeEach(() => {
       list.add(a = {});
       list.add(b = {});
       list.add(c = {});
       list.add(d = {});
       list.add(e = {});
     });
-    it('should not be empty', function () {
+    it('should not be empty', () => {
       expect(list.empty()).toEqual(false);
     });
-    describe('when dumped to an array', function () {
-      var array;
-      beforeEach(function () {
+    describe('when dumped to an array', () => {
+      let array;
+      beforeEach(() => {
         array = list.toArray();
       });
-      it('should contain three items', function () {
+      it('should contain three items', () => {
         expect(array.length).toEqual(3);
       });
-      it('the first item should be the most recent item added', function () {
+      it('the first item should be the most recent item added', () => {
         expect(array[0]).toBe(e);
       });
-      it('the second item should be the second most recent item added', function () {
+      it('the second item should be the second most recent item added', () => {
         expect(array[1]).toBe(d);
       });
-      it('the third item should be the third most recent item addedd', function () {
+      it('the third item should be the third most recent item addedd', () => {
         expect(array[2]).toBe(c);
       });
     });
-    describe('and 100 more items are added to the list', function () {
-      var items = [];
-      beforeEach(function () {
-        for (var i = 0; i < 100; i++) {
+    describe('and 100 more items are added to the list', () => {
+      let items = [];
+      beforeEach(() => {
+        for (let i = 0; i < 100; i++) {
           list.add(items[i] = {});
         }
       });
-      describe('when dumped to an array', function () {
-        var array;
-        beforeEach(function () {
+      describe('when dumped to an array', () => {
+        let array;
+        beforeEach(() => {
           array = list.toArray();
         });
-        it('should contain three items', function () {
+        it('should contain three items', () => {
           expect(array.length).toEqual(3);
         });
-        it('the first item should be the most recent item added', function () {
+        it('the first item should be the most recent item added', () => {
           expect(array[0]).toBe(items[99]);
         });
-        it('the second item should be the second most recent item added', function () {
+        it('the second item should be the second most recent item added', () => {
           expect(array[1]).toBe(items[98]);
         });
-        it('the third item should be the third most recent item addedd', function () {
+        it('the third item should be the third most recent item addedd', () => {
           expect(array[2]).toBe(items[97]);
         });
       });
@@ -17598,142 +17604,142 @@ describe('When an EvictingList is constructed (with a capacity of 3)', function 
 });
 
 },{"./../../../../collections/specialized/EvictingList":12}],86:[function(require,module,exports){
-var EvictingMap = require('./../../../../collections/specialized/EvictingMap');
+const EvictingMap = require('./../../../../collections/specialized/EvictingMap');
 
-describe('When an EvictingMap is constructed (with no capacity)', function () {
+describe('When an EvictingMap is constructed (with no capacity)', () => {
   'use strict';
 
-  var map;
-  beforeEach(function () {
+  let map;
+  beforeEach(() => {
     map = new EvictingMap();
   });
-  it('should be empty', function () {
+  it('should be empty', () => {
     expect(map.empty()).toEqual(true);
   });
-  it('should have a capacity of 10', function () {
+  it('should have a capacity of 10', () => {
     expect(map.getCapacity()).toEqual(10);
   });
 });
-describe('When an EvictingMap is constructed (with a capacity of 1)', function () {
+describe('When an EvictingMap is constructed (with a capacity of 1)', () => {
   'use strict';
 
-  var map;
-  beforeEach(function () {
+  let map;
+  beforeEach(() => {
     map = new EvictingMap(1);
   });
-  it('should be empty', function () {
+  it('should be empty', () => {
     expect(map.empty()).toEqual(true);
   });
-  it('should have a capacity of 1', function () {
+  it('should have a capacity of 1', () => {
     expect(map.getCapacity()).toEqual(1);
   });
-  describe('when an item is added to the map', function () {
-    var a;
-    beforeEach(function () {
+  describe('when an item is added to the map', () => {
+    let a;
+    beforeEach(() => {
       a = {
         key: 'a'
       };
       map.put(a.key, a);
     });
-    it('get should return the item', function () {
+    it('get should return the item', () => {
       expect(map.get(a.key)).toBe(a);
     });
-    it('should not be empty', function () {
+    it('should not be empty', () => {
       expect(map.empty()).toEqual(false);
     });
-    it('should have one item', function () {
+    it('should have one item', () => {
       expect(map.getSize()).toEqual(1);
     });
-    describe('when a second item is added to the map', function () {
-      var b;
-      beforeEach(function () {
+    describe('when a second item is added to the map', () => {
+      let b;
+      beforeEach(() => {
         b = {
           key: 'b'
         };
         map.put(b.key, b);
       });
-      it('get should return the second item', function () {
+      it('get should return the second item', () => {
         expect(map.get(b.key)).toBe(b);
       });
-      it('get should not return the first item', function () {
+      it('get should not return the first item', () => {
         expect(map.get(a.key)).toEqual(null);
       });
-      it('should not be empty', function () {
+      it('should not be empty', () => {
         expect(map.empty()).toEqual(false);
       });
-      it('should have one item', function () {
+      it('should have one item', () => {
         expect(map.getSize()).toEqual(1);
       });
-      describe('when a third item is added to the map', function () {
-        var c;
-        beforeEach(function () {
+      describe('when a third item is added to the map', () => {
+        let c;
+        beforeEach(() => {
           c = {
             key: 'c'
           };
           map.put(c.key, c);
         });
-        it('get should return the third item', function () {
+        it('get should return the third item', () => {
           expect(map.get(c.key)).toBe(c);
         });
-        it('get should not return the first item', function () {
+        it('get should not return the first item', () => {
           expect(map.get(a.key)).toEqual(null);
         });
-        it('get should not return the second item', function () {
+        it('get should not return the second item', () => {
           expect(map.get(b.key)).toEqual(null);
         });
-        it('should not be empty', function () {
+        it('should not be empty', () => {
           expect(map.empty()).toEqual(false);
         });
-        it('should have one item', function () {
+        it('should have one item', () => {
           expect(map.getSize()).toEqual(1);
         });
       });
     });
-    describe('when the first item is removed from the map', function () {
-      beforeEach(function () {
+    describe('when the first item is removed from the map', () => {
+      beforeEach(() => {
         map.remove('a');
       });
-      it('should be empty', function () {
+      it('should be empty', () => {
         expect(map.empty()).toEqual(true);
       });
-      it('should have zero items', function () {
+      it('should have zero items', () => {
         expect(map.getSize()).toEqual(0);
       });
-      describe('when the item is added to the map again', function () {
-        beforeEach(function () {
+      describe('when the item is added to the map again', () => {
+        beforeEach(() => {
           map.put(a.key, a);
         });
-        it('get should return the item', function () {
+        it('get should return the item', () => {
           expect(map.get(a.key)).toBe(a);
         });
-        it('should not be empty', function () {
+        it('should not be empty', () => {
           expect(map.empty()).toEqual(false);
         });
-        it('should have one item', function () {
+        it('should have one item', () => {
           expect(map.getSize()).toEqual(1);
         });
       });
     });
   });
 });
-describe('When an EvictingMap is constructed (with a capacity of 3)', function () {
+describe('When an EvictingMap is constructed (with a capacity of 3)', () => {
   'use strict';
 
-  var map;
-  beforeEach(function () {
+  let map;
+  beforeEach(() => {
     map = new EvictingMap(3);
   });
-  it('should be empty', function () {
+  it('should be empty', () => {
     expect(map.empty()).toEqual(true);
   });
-  it('should have a capacity of 3', function () {
+  it('should have a capacity of 3', () => {
     expect(map.getCapacity()).toEqual(3);
   });
-  describe('when three items are added to the map', function () {
-    var a;
-    var b;
-    var c;
-    beforeEach(function () {
+  describe('when three items are added to the map', () => {
+    let a;
+    let b;
+    let c;
+    beforeEach(() => {
       a = {
         key: 'a'
       };
@@ -17747,78 +17753,78 @@ describe('When an EvictingMap is constructed (with a capacity of 3)', function (
       map.put(b.key, b);
       map.put(c.key, c);
     });
-    it('get "a" should return the first item', function () {
+    it('get "a" should return the first item', () => {
       expect(map.get(a.key)).toBe(a);
     });
-    it('get "b" should return the second item', function () {
+    it('get "b" should return the second item', () => {
       expect(map.get(b.key)).toBe(b);
     });
-    it('get "c" should return the third item', function () {
+    it('get "c" should return the third item', () => {
       expect(map.get(c.key)).toBe(c);
     });
-    it('should not be empty', function () {
+    it('should not be empty', () => {
       expect(map.empty()).toEqual(false);
     });
-    it('should have three items', function () {
+    it('should have three items', () => {
       expect(map.getSize()).toEqual(3);
     });
-    describe('when a fourth item is added to the map', function () {
-      var d;
-      beforeEach(function () {
+    describe('when a fourth item is added to the map', () => {
+      let d;
+      beforeEach(() => {
         d = {
           key: 'd'
         };
         map.put(d.key, d);
       });
-      it('get "a" should not return the first item', function () {
+      it('get "a" should not return the first item', () => {
         expect(map.get(a.key)).toEqual(null);
       });
-      it('get "b" should return the second item', function () {
+      it('get "b" should return the second item', () => {
         expect(map.get(b.key)).toBe(b);
       });
-      it('get "c" should return the third item', function () {
+      it('get "c" should return the third item', () => {
         expect(map.get(c.key)).toBe(c);
       });
-      it('get "d" should return the fourth item', function () {
+      it('get "d" should return the fourth item', () => {
         expect(map.get(d.key)).toBe(d);
       });
-      it('should not be empty', function () {
+      it('should not be empty', () => {
         expect(map.empty()).toEqual(false);
       });
-      it('should have three items', function () {
+      it('should have three items', () => {
         expect(map.getSize()).toEqual(3);
       });
-      describe('after getting item "b" from map', function () {
-        beforeEach(function () {
+      describe('after getting item "b" from map', () => {
+        beforeEach(() => {
           map.get(b.key);
         });
-        describe('when a fifth item is added to the list', function () {
-          var e;
-          beforeEach(function () {
+        describe('when a fifth item is added to the list', () => {
+          let e;
+          beforeEach(() => {
             e = {
               key: 'e'
             };
             map.put(e.key, e);
           });
-          it('get "a" should not return the first item', function () {
+          it('get "a" should not return the first item', () => {
             expect(map.get(a.key)).toEqual(null);
           });
-          it('get "b" should return the second item', function () {
+          it('get "b" should return the second item', () => {
             expect(map.get(b.key)).toBe(b);
           });
-          it('get "c" should not return the third item', function () {
+          it('get "c" should not return the third item', () => {
             expect(map.get(c.key)).toEqual(null);
           });
-          it('get "d" should return the fourth item', function () {
+          it('get "d" should return the fourth item', () => {
             expect(map.get(d.key)).toBe(d);
           });
-          it('get "e" should return the fifth item', function () {
+          it('get "e" should return the fifth item', () => {
             expect(map.get(e.key)).toBe(e);
           });
-          it('should not be empty', function () {
+          it('should not be empty', () => {
             expect(map.empty()).toEqual(false);
           });
-          it('should have three items', function () {
+          it('should have three items', () => {
             expect(map.getSize()).toEqual(3);
           });
         });
@@ -17826,19 +17832,19 @@ describe('When an EvictingMap is constructed (with a capacity of 3)', function (
     });
   });
 });
-describe('When an EvictingMap is constructed', function () {
+describe('When an EvictingMap is constructed', () => {
   'use strict';
 
-  var map;
-  beforeEach(function () {
+  let map;
+  beforeEach(() => {
     map = new EvictingMap(3);
   });
-  describe('and used in a write-read-write pattern', function () {
-    var a;
-    var b;
-    var c;
-    var x;
-    var y;
+  describe('and used in a write-read-write pattern', () => {
+    let a;
+    let b;
+    let c;
+    let x;
+    let y;
     beforeEach(function () {
       a = {
         key: 'a'
@@ -17867,42 +17873,42 @@ describe('When an EvictingMap is constructed', function () {
       map.put(x.key, x);
       map.put(y.key, y);
     });
-    it('get "a" should not return the first item', function () {
+    it('get "a" should not return the first item', () => {
       expect(map.get(a.key)).toEqual(null);
     });
-    it('get "b" should not return the second item', function () {
+    it('get "b" should not return the second item', () => {
       expect(map.get(b.key)).toEqual(null);
     });
-    it('get "c" should return the third item', function () {
+    it('get "c" should return the third item', () => {
       expect(map.get(c.key)).toBe(c);
     });
-    it('get "x" should return the fourth item', function () {
+    it('get "x" should return the fourth item', () => {
       expect(map.get(x.key)).toBe(x);
     });
-    it('get "y" should return the fourth item', function () {
+    it('get "y" should return the fourth item', () => {
       expect(map.get(y.key)).toBe(y);
     });
-    it('should not be empty', function () {
+    it('should not be empty', () => {
       expect(map.empty()).toEqual(false);
     });
-    it('should have three items', function () {
+    it('should have three items', () => {
       expect(map.getSize()).toEqual(3);
     });
   });
 });
 
 },{"./../../../../collections/specialized/EvictingMap":13}],87:[function(require,module,exports){
-var PriorityQueue = require('./../../../../collections/specialized/PriorityQueue');
+const PriorityQueue = require('./../../../../collections/specialized/PriorityQueue');
 
-describe('When a Queue is constructed, using a "ladies first" comparator', function () {
+describe('When a Queue is constructed, using a "ladies first" comparator', () => {
   'use strict';
 
-  var queue;
+  let queue;
 
-  var comparator = function (a, b) {
-    var aLady = a.lady ? -1 : 0;
-    var bLady = b.lady ? -1 : 0;
-    var result = aLady - bLady;
+  let comparator = function (a, b) {
+    let aLady = a.lady ? -1 : 0;
+    let bLady = b.lady ? -1 : 0;
+    let result = aLady - bLady;
 
     if (result === 0) {
       result = a.name.localeCompare(b.name);
@@ -17911,25 +17917,25 @@ describe('When a Queue is constructed, using a "ladies first" comparator', funct
     return result;
   };
 
-  beforeEach(function () {
+  beforeEach(() => {
     queue = new PriorityQueue(comparator);
   });
-  it('should be empty', function () {
+  it('should be empty', () => {
     expect(queue.empty()).toEqual(true);
   });
-  it('should throw if "peek" is called', function () {
-    expect(function () {
+  it('should throw if "peek" is called', () => {
+    expect(() => {
       queue.peek();
     }).toThrow(new Error('Queue is empty'));
   });
-  it('should throw if "dequeue" is called', function () {
-    expect(function () {
+  it('should throw if "dequeue" is called', () => {
+    expect(() => {
       queue.peek();
     }).toThrow(new Error('Queue is empty'));
   });
-  describe('and an three objects are enqueued: Kim, Bryan, and Erica', function () {
-    var kim, bryan, erica;
-    beforeEach(function () {
+  describe('and an three objects are enqueued: Kim, Bryan, and Erica', () => {
+    let kim, bryan, erica;
+    beforeEach(() => {
       queue.enqueue(kim = {
         name: 'kim',
         lady: true
@@ -17943,195 +17949,195 @@ describe('When a Queue is constructed, using a "ladies first" comparator', funct
         lady: true
       });
     });
-    it('should not be empty', function () {
+    it('should not be empty', () => {
       expect(queue.empty()).toEqual(false);
     });
-    describe('and we peek at the top of the queue', function () {
-      var peek;
-      beforeEach(function () {
+    describe('and we peek at the top of the queue', () => {
+      let peek;
+      beforeEach(() => {
         peek = queue.peek();
       });
-      it('the peek result should be erica', function () {
+      it('the peek result should be erica', () => {
         expect(peek).toBe(erica);
       });
-      it('should not be empty', function () {
+      it('should not be empty', () => {
         expect(queue.empty()).toEqual(false);
       });
     });
-    describe('and an object is dequeued', function () {
-      var dequeue;
-      beforeEach(function () {
+    describe('and an object is dequeued', () => {
+      let dequeue;
+      beforeEach(() => {
         dequeue = queue.dequeue();
       });
-      it('the dequeue result should be erica', function () {
+      it('the dequeue result should be erica', () => {
         expect(dequeue).toBe(erica);
       });
-      it('should not be empty', function () {
+      it('should not be empty', () => {
         expect(queue.empty()).toEqual(false);
       });
-      describe('and an second object is dequeued', function () {
-        var dequeue;
-        beforeEach(function () {
+      describe('and an second object is dequeued', () => {
+        let dequeue;
+        beforeEach(() => {
           dequeue = queue.dequeue();
         });
-        it('the dequeue result should be kim', function () {
+        it('the dequeue result should be kim', () => {
           expect(dequeue).toBe(kim);
         });
-        it('should not be empty', function () {
+        it('should not be empty', () => {
           expect(queue.empty()).toEqual(false);
         });
-        describe('and a third object is dequeued', function () {
-          var dequeue;
-          beforeEach(function () {
+        describe('and a third object is dequeued', () => {
+          let dequeue;
+          beforeEach(() => {
             dequeue = queue.dequeue();
           });
-          it('the dequeue result should be bryan', function () {
+          it('the dequeue result should be bryan', () => {
             expect(dequeue).toBe(bryan);
           });
-          it('should be empty', function () {
+          it('should be empty', () => {
             expect(queue.empty()).toEqual(true);
           });
         });
       });
     });
-    describe('and the queue is exported to an array', function () {
-      var a;
-      beforeEach(function () {
+    describe('and the queue is exported to an array', () => {
+      let a;
+      beforeEach(() => {
         a = queue.toArray();
       });
-      it('should return an array with three items', function () {
+      it('should return an array with three items', () => {
         expect(a.length).toEqual(3);
       });
-      it('the first item should be erica', function () {
+      it('the first item should be erica', () => {
         expect(a[0]).toBe(erica);
       });
-      it('the second item should be kim', function () {
+      it('the second item should be kim', () => {
         expect(a[1]).toBe(kim);
       });
-      it('the third item should be bryan', function () {
+      it('the third item should be bryan', () => {
         expect(a[2]).toBe(bryan);
       });
-      it('should not be empty', function () {
+      it('should not be empty', () => {
         expect(queue.empty()).toEqual(false);
       });
     });
-    describe('and the queue is scanned', function () {
-      var spy;
-      beforeEach(function () {
+    describe('and the queue is scanned', () => {
+      let spy;
+      beforeEach(() => {
         spy = jasmine.createSpy();
         queue.scan(spy);
       });
-      it('should call the delegate one time for each item in the queue', function () {
+      it('should call the delegate one time for each item in the queue', () => {
         expect(spy.calls.count()).toEqual(3);
       });
-      it('should pass erica to the delegate first', function () {
+      it('should pass erica to the delegate first', () => {
         expect(spy.calls.argsFor(0)[0]).toBe(erica);
       });
-      it('should pass kim to the delegate second', function () {
+      it('should pass kim to the delegate second', () => {
         expect(spy.calls.argsFor(1)[0]).toBe(kim);
       });
-      it('should pass bryan to the delegate thrid', function () {
+      it('should pass bryan to the delegate thrid', () => {
         expect(spy.calls.argsFor(2)[0]).toBe(bryan);
       });
-      it('should not be empty', function () {
+      it('should not be empty', () => {
         expect(queue.empty()).toEqual(false);
       });
     });
   });
 });
-describe('When a Queue is constructed, using a simple (ascending) numeric comparator', function () {
+describe('When a Queue is constructed, using a simple (ascending) numeric comparator', () => {
   'use strict';
 
-  var queue;
+  let queue;
 
-  var comparator = function (a, b) {
+  let comparator = function (a, b) {
     return a - b;
   };
 
-  beforeEach(function () {
+  beforeEach(() => {
     queue = new PriorityQueue(comparator);
   });
-  describe('and the following values are enqueued: 3, 2, and 1', function () {
+  describe('and the following values are enqueued: 3, 2, and 1', () => {
     beforeEach(function () {
       queue.enqueue(3);
       queue.enqueue(2);
       queue.enqueue(1);
     });
-    describe('and all items are dequeued', function () {
-      var a, b, c;
-      beforeEach(function () {
+    describe('and all items are dequeued', () => {
+      let a, b, c;
+      beforeEach(() => {
         a = queue.dequeue();
         b = queue.dequeue();
         c = queue.dequeue();
       });
-      it('the dequeued items should be ordered property', function () {
+      it('the dequeued items should be ordered property', () => {
         expect(a).toEqual(1);
         expect(b).toEqual(2);
         expect(c).toEqual(3);
       });
     });
   });
-  describe('and the following values are enqueued: 1, 2, and 3', function () {
+  describe('and the following values are enqueued: 1, 2, and 3', () => {
     beforeEach(function () {
       queue.enqueue(1);
       queue.enqueue(2);
       queue.enqueue(3);
     });
-    describe('and all items are dequeued', function () {
-      var a, b, c;
-      beforeEach(function () {
+    describe('and all items are dequeued', () => {
+      let a, b, c;
+      beforeEach(() => {
         a = queue.dequeue();
         b = queue.dequeue();
         c = queue.dequeue();
       });
-      it('the dequeued items should be ordered property', function () {
+      it('the dequeued items should be ordered property', () => {
         expect(a).toEqual(1);
         expect(b).toEqual(2);
         expect(c).toEqual(3);
       });
     });
   });
-  describe('and the following values are enqueued: 2, 3, and 1', function () {
+  describe('and the following values are enqueued: 2, 3, and 1', () => {
     beforeEach(function () {
       queue.enqueue(2);
       queue.enqueue(3);
       queue.enqueue(1);
     });
-    describe('and all items are dequeued', function () {
-      var a, b, c;
-      beforeEach(function () {
+    describe('and all items are dequeued', () => {
+      let a, b, c;
+      beforeEach(() => {
         a = queue.dequeue();
         b = queue.dequeue();
         c = queue.dequeue();
       });
-      it('the dequeued items should be ordered property', function () {
+      it('the dequeued items should be ordered property', () => {
         expect(a).toEqual(1);
         expect(b).toEqual(2);
         expect(c).toEqual(3);
       });
     });
   });
-  describe('and the following values are enqueued: 3, 1, 2', function () {
+  describe('and the following values are enqueued: 3, 1, 2', () => {
     beforeEach(function () {
       queue.enqueue(3);
       queue.enqueue(1);
       queue.enqueue(2);
     });
-    describe('and all items are dequeued', function () {
-      var a, b, c;
-      beforeEach(function () {
+    describe('and all items are dequeued', () => {
+      let a, b, c;
+      beforeEach(() => {
         a = queue.dequeue();
         b = queue.dequeue();
         c = queue.dequeue();
       });
-      it('the dequeued items should be ordered property', function () {
+      it('the dequeued items should be ordered property', () => {
         expect(a).toEqual(1);
         expect(b).toEqual(2);
         expect(c).toEqual(3);
       });
     });
   });
-  describe('and the following values are enqueued: 3, 1, 2', function () {
+  describe('and the following values are enqueued: 3, 1, 2', () => {
     beforeEach(function () {
       queue.enqueue(8);
       queue.enqueue(7);
@@ -18143,9 +18149,9 @@ describe('When a Queue is constructed, using a simple (ascending) numeric compar
       queue.enqueue(6);
       queue.enqueue(5);
     });
-    describe('and all items are dequeued', function () {
-      var a, b, c, d, e, f, g, h, i;
-      beforeEach(function () {
+    describe('and all items are dequeued', () => {
+      let a, b, c, d, e, f, g, h, i;
+      beforeEach(() => {
         a = queue.dequeue();
         b = queue.dequeue();
         c = queue.dequeue();
@@ -18156,7 +18162,7 @@ describe('When a Queue is constructed, using a simple (ascending) numeric compar
         h = queue.dequeue();
         i = queue.dequeue();
       });
-      it('the dequeued items should be ordered property', function () {
+      it('the dequeued items should be ordered property', () => {
         expect(a).toEqual(1);
         expect(b).toEqual(2);
         expect(c).toEqual(3);
@@ -18172,37 +18178,37 @@ describe('When a Queue is constructed, using a simple (ascending) numeric compar
 });
 
 },{"./../../../../collections/specialized/PriorityQueue":14}],88:[function(require,module,exports){
-var TimeMap = require('./../../../../collections/specialized/TimeMap');
+const TimeMap = require('./../../../../collections/specialized/TimeMap');
 
-describe('When an TimeMap is constructed (with a 10 millisecond time to live)', function () {
+describe('When an TimeMap is constructed (with a 10 millisecond time to live)', () => {
   'use strict';
 
-  var map;
-  beforeEach(function () {
+  let map;
+  beforeEach(() => {
     map = new TimeMap(10);
   });
-  describe('and an item is added to the map', function () {
-    var key;
-    var item;
-    beforeEach(function () {
+  describe('and an item is added to the map', () => {
+    let key;
+    let item;
+    beforeEach(() => {
       map.set(key = 'a', item = {});
     });
-    it('should contain the key', function () {
+    it('should contain the key', () => {
       expect(map.has(key)).toEqual(true);
     });
-    it('should return the original value', function () {
+    it('should return the original value', () => {
       expect(map.get(key)).toBe(item);
     });
-    describe('and 15 milliseconds elapses', function () {
+    describe('and 15 milliseconds elapses', () => {
       beforeEach(function (done) {
-        setTimeout(function () {
+        setTimeout(() => {
           done();
         }, 15);
       });
-      it('should not contain the key', function () {
+      it('should not contain the key', () => {
         expect(map.has(key)).toEqual(false);
       });
-      it('should not return the original value', function () {
+      it('should not return the original value', () => {
         expect(map.get(key)).toEqual(null);
       });
     });
@@ -18210,51 +18216,51 @@ describe('When an TimeMap is constructed (with a 10 millisecond time to live)', 
 });
 
 },{"./../../../../collections/specialized/TimeMap":15}],89:[function(require,module,exports){
-var CommandHandler = require('./../../../commands/CommandHandler');
+const CommandHandler = require('./../../../commands/CommandHandler');
 
-describe('When a CommandHandler is created from a function', function () {
+describe('When a CommandHandler is created from a function', () => {
   'use strict';
 
-  var commandHandler;
-  var spy;
-  var result;
-  beforeEach(function () {
+  let commandHandler;
+  let spy;
+  let result;
+  beforeEach(() => {
     commandHandler = CommandHandler.fromFunction(spy = jasmine.createSpy('spy').and.returnValue(result = 123));
   });
-  it('returns a CommandHandler instance', function () {
+  it('returns a CommandHandler instance', () => {
     expect(commandHandler instanceof CommandHandler).toEqual(true);
   });
-  describe('and the command is executed', function () {
-    var commandData;
-    var commandResult;
-    beforeEach(function () {
+  describe('and the command is executed', () => {
+    let commandData;
+    let commandResult;
+    beforeEach(() => {
       commandResult = commandHandler.process(commandData = {});
     });
-    it('should invoke the wrapped function', function () {
+    it('should invoke the wrapped function', () => {
       expect(spy).toHaveBeenCalledWith(commandData);
     });
-    it('should return the wrapped function\'s result', function () {
+    it('should return the wrapped function\'s result', () => {
       expect(commandResult).toEqual(result);
     });
   });
-  describe('and the command processor is converted to a function', function () {
-    var commandFunction;
-    beforeEach(function () {
+  describe('and the command processor is converted to a function', () => {
+    let commandFunction;
+    beforeEach(() => {
       commandFunction = CommandHandler.toFunction(commandHandler);
     });
-    it('returns a function', function () {
+    it('returns a function', () => {
       expect(typeof commandFunction).toEqual('function');
     });
-    describe('and the converted function is invoked', function () {
-      var commandData;
-      var commandResult;
-      beforeEach(function () {
+    describe('and the converted function is invoked', () => {
+      let commandData;
+      let commandResult;
+      beforeEach(() => {
         commandResult = commandFunction(commandData = {});
       });
-      it('should invoke the wrapped function', function () {
+      it('should invoke the wrapped function', () => {
         expect(spy).toHaveBeenCalledWith(commandData);
       });
-      it('should return the wrapped function\'s result', function () {
+      it('should return the wrapped function\'s result', () => {
         expect(commandResult).toEqual(result);
       });
     });
@@ -18262,71 +18268,69 @@ describe('When a CommandHandler is created from a function', function () {
 });
 
 },{"./../../../commands/CommandHandler":16}],90:[function(require,module,exports){
-var CommandHandler = require('./../../../commands/CommandHandler');
+const CommandHandler = require('./../../../commands/CommandHandler'),
+      CompositeCommandHandler = require('./../../../commands/CompositeCommandHandler');
 
-var CompositeCommandHandler = require('./../../../commands/CompositeCommandHandler');
-
-describe('When a CompositeCommandHandler is created', function () {
+describe('When a CompositeCommandHandler is created', () => {
   'use strict';
 
-  var commandHandler;
-  var spyOne;
-  var spyTwo;
-  var resultOne;
-  var resultTwo;
-  beforeEach(function () {
+  let commandHandler;
+  let spyOne;
+  let spyTwo;
+  let resultOne;
+  let resultTwo;
+  beforeEach(() => {
     resultOne = true;
     resultTwo = true;
-    commandHandler = new CompositeCommandHandler(CommandHandler.fromFunction(spyOne = jasmine.createSpy('spyOne').and.callFake(function () {
+    commandHandler = new CompositeCommandHandler(CommandHandler.fromFunction(spyOne = jasmine.createSpy('spyOne').and.callFake(() => {
       return resultOne;
-    })), CommandHandler.fromFunction(spyTwo = jasmine.createSpy('spyTwo').and.callFake(function () {
+    })), CommandHandler.fromFunction(spyTwo = jasmine.createSpy('spyTwo').and.callFake(() => {
       return resultTwo;
     })));
   });
-  describe('and the command is executed', function () {
-    var commandData;
-    var commandResult;
-    beforeEach(function () {
+  describe('and the command is executed', () => {
+    let commandData;
+    let commandResult;
+    beforeEach(() => {
       commandResult = commandHandler.process(commandData = {});
     });
-    it('should invoke the wrapped functions', function () {
+    it('should invoke the wrapped functions', () => {
       expect(spyOne).toHaveBeenCalledWith(commandData);
       expect(spyTwo).toHaveBeenCalledWith(commandData);
     });
   });
-  describe('and the command is executed, but the first command fails', function () {
-    var commandData;
-    var commandResult;
-    beforeEach(function () {
+  describe('and the command is executed, but the first command fails', () => {
+    let commandData;
+    let commandResult;
+    beforeEach(() => {
       resultOne = false;
       resultTwo = false;
       commandResult = commandHandler.process(commandData = {});
     });
-    it('should invoke the first command', function () {
+    it('should invoke the first command', () => {
       expect(spyOne).toHaveBeenCalledWith(commandData);
     });
-    it('should not invoke the first command', function () {
+    it('should not invoke the first command', () => {
       expect(spyTwo).not.toHaveBeenCalledWith(commandData);
     });
   });
 });
 
 },{"./../../../commands/CommandHandler":16,"./../../../commands/CompositeCommandHandler":17}],91:[function(require,module,exports){
-var CommandHandler = require('./../../../commands/CommandHandler');
+const CommandHandler = require('./../../../commands/CommandHandler'),
+      MappedCommandHandler = require('./../../../commands/MappedCommandHandler');
 
-var MappedCommandHandler = require('./../../../commands/MappedCommandHandler');
-
-describe('When a MappedCommandHandler is created with two mapped commands', function () {
+describe('When a MappedCommandHandler is created with two mapped commands', () => {
   'use strict';
 
-  var commandHandler;
-  var spyOne;
-  var spyTwo;
-  var selectorOne;
-  var selectorTwo;
-  var resultOne;
-  var resultTwo;
-  beforeEach(function () {
+  let commandHandler;
+  let spyOne;
+  let spyTwo;
+  let selectorOne;
+  let selectorTwo;
+  let resultOne;
+  let resultTwo;
+  beforeEach(() => {
     selectorOne = 'one';
     selectorTwo = 'two';
     resultOne = 'a';
@@ -18334,85 +18338,85 @@ describe('When a MappedCommandHandler is created with two mapped commands', func
     commandHandler = new MappedCommandHandler(function (data) {
       return data.commandType || null;
     });
-    commandHandler.addCommandHandler(selectorOne, CommandHandler.fromFunction(spyOne = jasmine.createSpy('spyOne').and.callFake(function () {
+    commandHandler.addCommandHandler(selectorOne, CommandHandler.fromFunction(spyOne = jasmine.createSpy('spyOne').and.callFake(() => {
       return resultOne;
     })));
-    commandHandler.addCommandHandler(selectorTwo, CommandHandler.fromFunction(spyTwo = jasmine.createSpy('spyTwo').and.callFake(function () {
+    commandHandler.addCommandHandler(selectorTwo, CommandHandler.fromFunction(spyTwo = jasmine.createSpy('spyTwo').and.callFake(() => {
       return resultTwo;
     })));
   });
-  describe('and the command is process with data for the first handler', function () {
-    var commandData;
-    var commandResult;
-    beforeEach(function () {
+  describe('and the command is process with data for the first handler', () => {
+    let commandData;
+    let commandResult;
+    beforeEach(() => {
       commandResult = commandHandler.process(commandData = {
         commandType: selectorOne
       });
     });
-    it('should invoke wrapped function for the first handler', function () {
+    it('should invoke wrapped function for the first handler', () => {
       expect(spyOne).toHaveBeenCalledWith(commandData);
     });
-    it('should return the result from the first handler', function () {
+    it('should return the result from the first handler', () => {
       expect(commandResult).toEqual(resultOne);
     });
-    it('should not invoke wrapped function for the secoond handler', function () {
+    it('should not invoke wrapped function for the secoond handler', () => {
       expect(spyTwo).not.toHaveBeenCalledWith(commandData);
     });
   });
-  describe('and the command is process with data for the second handler', function () {
-    var commandData;
-    var commandResult;
-    beforeEach(function () {
+  describe('and the command is process with data for the second handler', () => {
+    let commandData;
+    let commandResult;
+    beforeEach(() => {
       commandResult = commandHandler.process(commandData = {
         commandType: selectorTwo
       });
     });
-    it('should invoke wrapped function for the second handler', function () {
+    it('should invoke wrapped function for the second handler', () => {
       expect(spyTwo).toHaveBeenCalledWith(commandData);
     });
-    it('should return the result from the second handler', function () {
+    it('should return the result from the second handler', () => {
       expect(commandResult).toEqual(resultTwo);
     });
-    it('should not invoke wrapped function for the first handler', function () {
+    it('should not invoke wrapped function for the first handler', () => {
       expect(spyOne).not.toHaveBeenCalledWith(commandData);
     });
   });
 });
 
 },{"./../../../commands/CommandHandler":16,"./../../../commands/MappedCommandHandler":18}],92:[function(require,module,exports){
-var AdHoc = require('./../../../lang/AdHoc');
+const AdHoc = require('./../../../lang/AdHoc');
 
-describe('When wrapping an object in an ad hoc serialization container', function () {
+describe('When wrapping an object in an ad hoc serialization container', () => {
   'use strict';
 
-  var data;
-  var adHoc;
-  beforeEach(function () {
+  let data;
+  let adHoc;
+  beforeEach(() => {
     adHoc = new AdHoc(data = {
       a: 1,
       b: 'two'
     });
   });
-  it('should contain the wrapped object', function () {
+  it('should contain the wrapped object', () => {
     expect(adHoc.data).toBe(data);
   });
-  describe('and container is serialized', function () {
-    var serialized;
-    beforeEach(function () {
+  describe('and container is serialized', () => {
+    let serialized;
+    beforeEach(() => {
       serialized = adHoc.toJSON();
     });
-    it('should be an escaped string', function () {
+    it('should be an escaped string', () => {
       expect(serialized).toEqual('{\"a\":1,\"b\":\"two\"}');
     });
-    describe('and container is deserialized', function () {
-      var deserialized;
-      beforeEach(function () {
+    describe('and container is deserialized', () => {
+      let deserialized;
+      beforeEach(() => {
         deserialized = AdHoc.parse(serialized);
       });
-      it('should be an ad hoc container', function () {
+      it('should be an ad hoc container', () => {
         expect(deserialized instanceof AdHoc).toEqual(true);
       });
-      it('should contain a clone of the original data', function () {
+      it('should contain a clone of the original data', () => {
         expect(deserialized.data.a).toEqual(data.a);
         expect(deserialized.data.b).toEqual(data.b);
       });
@@ -18421,151 +18425,151 @@ describe('When wrapping an object in an ad hoc serialization container', functio
 });
 
 },{"./../../../lang/AdHoc":19}],93:[function(require,module,exports){
-var Day = require('./../../../lang/Day');
+const Day = require('./../../../lang/Day');
 
-describe('When "2017-08-31 is parsed as a Day', function () {
+describe('When "2017-08-31 is parsed as a Day', () => {
   'use strict';
 
-  var day;
-  beforeEach(function () {
+  let day;
+  beforeEach(() => {
     day = Day.parse('2017-08-31');
   });
-  it('the year should be 2017', function () {
+  it('the year should be 2017', () => {
     expect(day.year).toEqual(2017);
   });
-  it('the month should be 8', function () {
+  it('the month should be 8', () => {
     expect(day.month).toEqual(8);
   });
-  it('the day should be 31', function () {
+  it('the day should be 31', () => {
     expect(day.day).toEqual(31);
   });
-  describe('and the Day instance is formatted', function () {
-    it('should output "2017-08-31"', function () {
+  describe('and the Day instance is formatted', () => {
+    it('should output "2017-08-31"', () => {
       expect(day.format()).toEqual('2017-08-31');
     });
   });
 });
-describe('When converting a Date (2017-11-16 at 17:40:01.002 local) to a Day', function () {
+describe('When converting a Date (2017-11-16 at 17:40:01.002 local) to a Day', () => {
   'use strict';
 
-  var date;
-  var day;
-  beforeEach(function () {
+  let date;
+  let day;
+  beforeEach(() => {
     day = Day.fromDate(date = new Date(2017, 10, 16, 17, 40, 1, 2));
   });
-  it('the year should be 2017', function () {
+  it('the year should be 2017', () => {
     expect(day.year).toEqual(2017);
   });
-  it('the month should be 11', function () {
+  it('the month should be 11', () => {
     expect(day.month).toEqual(11);
   });
-  it('the day should be 16', function () {
+  it('the day should be 16', () => {
     expect(day.day).toEqual(16);
   });
 });
-describe('When converting a Date (2017-11-16 at 23:40:01.002 local) to a UTC Day', function () {
+describe('When converting a Date (2017-11-16 at 23:40:01.002 local) to a UTC Day', () => {
   'use strict';
 
-  var date;
-  var day;
-  beforeEach(function () {
+  let date;
+  let day;
+  beforeEach(() => {
     day = Day.fromDateUtc(date = new Date(2017, 10, 16, 23, 40, 1, 2));
   });
-  it('the year should be correct', function () {
+  it('the year should be correct', () => {
     expect(day.year).toEqual(date.getUTCFullYear());
   });
-  it('the month should be correct', function () {
+  it('the month should be correct', () => {
     expect(day.month).toEqual(date.getUTCMonth() + 1);
   });
-  it('the day should be correct', function () {
+  it('the day should be correct', () => {
     expect(day.day).toEqual(date.getUTCDate());
   });
 });
-describe('When an invalid string is parsed as a Day', function () {
+describe('When an invalid string is parsed as a Day', () => {
   function expectError(value) {
-    expect(function () {
+    expect(() => {
       Day.parse(value);
     }).toThrow();
   }
 
-  it('an error should be thrown parsing a null value', function () {
+  it('an error should be thrown parsing a null value', () => {
     expectError(null);
   });
-  it('an error should be thrown parsing a undefined value', function () {
+  it('an error should be thrown parsing a undefined value', () => {
     expectError(null);
   });
-  it('an error should be thrown parsing a Date instance', function () {
+  it('an error should be thrown parsing a Date instance', () => {
     expectError(new Date());
   });
-  it('an error should be thrown parsing an object', function () {
+  it('an error should be thrown parsing an object', () => {
     expectError({});
   });
-  it('an error should be thrown parsing an number', function () {
+  it('an error should be thrown parsing an number', () => {
     expectError(new Date().getTime());
   });
-  it('an should be thrown when using 13 months', function () {
+  it('an should be thrown when using 13 months', () => {
     expectError('2017-13-01');
   });
-  it('an should be thrown when using 32 days in January', function () {
+  it('an should be thrown when using 32 days in January', () => {
     expectError('2017-01-32');
   });
-  it('an should be thrown when using 30 days in February', function () {
+  it('an should be thrown when using 30 days in February', () => {
     expectError('2017-02-30');
   });
-  it('an should be thrown when using 32 days in March', function () {
+  it('an should be thrown when using 32 days in March', () => {
     expectError('2017-03-32');
   });
-  it('an should be thrown when using 31 days in April', function () {
+  it('an should be thrown when using 31 days in April', () => {
     expectError('2017-04-31');
   });
-  it('an should be thrown when using 32 days in May', function () {
+  it('an should be thrown when using 32 days in May', () => {
     expectError('2017-05-32');
   });
-  it('an should be thrown when using 31 days in June', function () {
+  it('an should be thrown when using 31 days in June', () => {
     expectError('2017-06-31');
   });
-  it('an should be thrown when using 32 days in July', function () {
+  it('an should be thrown when using 32 days in July', () => {
     expectError('2017-07-32');
   });
-  it('an should be thrown when using 32 days in August', function () {
+  it('an should be thrown when using 32 days in August', () => {
     expectError('2017-08-32');
   });
-  it('an should be thrown when using 31 days in September', function () {
+  it('an should be thrown when using 31 days in September', () => {
     expectError('2017-02-31');
   });
-  it('an should be thrown when using 32 days in October', function () {
+  it('an should be thrown when using 32 days in October', () => {
     expectError('2017-10-32');
   });
-  it('an should be thrown when using 31 days in November', function () {
+  it('an should be thrown when using 31 days in November', () => {
     expectError('2017-11-31');
   });
-  it('an should be thrown when using 32 days in December', function () {
+  it('an should be thrown when using 32 days in December', () => {
     expectError('2017-12-32');
   });
 });
-describe('When checking to see if a Day is valid', function () {
+describe('When checking to see if a Day is valid', () => {
   'use strict';
 
-  it('should consider Jan 1, 2017 to be valid', function () {
+  it('should consider Jan 1, 2017 to be valid', () => {
     expect(Day.validate(2017, 1, 1)).toEqual(true);
   });
-  it('should consider Dec 31, 2017 to be valid', function () {
+  it('should consider Dec 31, 2017 to be valid', () => {
     expect(Day.validate(2017, 12, 31)).toEqual(true);
   });
-  it('should not consider Feb 29, 2017 to be valid', function () {
+  it('should not consider Feb 29, 2017 to be valid', () => {
     expect(Day.validate(2017, 2, 29)).toEqual(false);
   });
-  it('should not consider Feb 29, 2018 to be valid', function () {
+  it('should not consider Feb 29, 2018 to be valid', () => {
     expect(Day.validate(2018, 2, 29)).toEqual(false);
   });
-  it('should not consider Feb 29, 2019 to be valid', function () {
+  it('should not consider Feb 29, 2019 to be valid', () => {
     expect(Day.validate(2019, 2, 29)).toEqual(false);
   });
-  it('should consider Feb 29, 2020 to be valid', function () {
+  it('should consider Feb 29, 2020 to be valid', () => {
     expect(Day.validate(2020, 2, 29)).toEqual(true);
   });
 });
-describe('When adding days to a Day', function () {
+describe('When adding days to a Day', () => {
   'use strict';
 
   it('should return January 2, 2017 when adding 1 day to January 1, 2017', function () {
@@ -18646,7 +18650,7 @@ describe('When adding days to a Day', function () {
     expect(then.day).toEqual(1);
   });
 });
-describe('When adding months to a Day', function () {
+describe('When adding months to a Day', () => {
   'use strict';
 
   it('should return January 2, 2017 when adding 13 months to December 2, 2015', function () {
@@ -18678,7 +18682,7 @@ describe('When adding months to a Day', function () {
     expect(then.day).toEqual(28);
   });
 });
-describe('When adding years to a Day', function () {
+describe('When adding years to a Day', () => {
   'use strict';
 
   it('should return January 2, 2017 when adding 3 years to January 2, 2014', function () {
@@ -18731,516 +18735,516 @@ describe('When adding years to a Day', function () {
     expect(then.day).toEqual(28);
   });
 });
-describe('When "1900-01-01 is parsed as a Day', function () {
+describe('When "1900-01-01 is parsed as a Day', () => {
   'use strict';
 
-  var day;
-  beforeEach(function () {
+  let day;
+  beforeEach(() => {
     day = Day.parse('1900-01-01');
   });
-  it('the year should be 1900', function () {
+  it('the year should be 1900', () => {
     expect(day.year).toEqual(1900);
   });
-  it('the month should be 1', function () {
+  it('the month should be 1', () => {
     expect(day.month).toEqual(1);
   });
-  it('the day should be 1', function () {
+  it('the day should be 1', () => {
     expect(day.day).toEqual(1);
   });
-  describe('and 41635 days are added', function () {
-    var future;
-    beforeEach(function () {
+  describe('and 41635 days are added', () => {
+    let future;
+    beforeEach(() => {
       future = day.addDays(41635);
     });
-    it('the year should be 2013', function () {
+    it('the year should be 2013', () => {
       expect(future.year).toEqual(2013);
     });
-    it('the month should be 12', function () {
+    it('the month should be 12', () => {
       expect(future.month).toEqual(12);
     });
-    it('the day should be 29', function () {
+    it('the day should be 29', () => {
       expect(future.day).toEqual(29);
     });
   });
 });
-describe('When comparing days', function () {
-  it('The day "2017-07-18" should be before "2017-07-19"', function () {
+describe('When comparing days', () => {
+  it('The day "2017-07-18" should be before "2017-07-19"', () => {
     expect(Day.parse('2017-07-18').getIsBefore(Day.parse('2017-07-19'))).toEqual(true);
   });
-  it('The day "2017-07-18" should be before "2017-08-18"', function () {
+  it('The day "2017-07-18" should be before "2017-08-18"', () => {
     expect(Day.parse('2017-07-18').getIsBefore(Day.parse('2017-08-18'))).toEqual(true);
   });
-  it('The day "2017-07-18" should be before "2018-07-18"', function () {
+  it('The day "2017-07-18" should be before "2018-07-18"', () => {
     expect(Day.parse('2017-07-18').getIsBefore(Day.parse('2018-07-18'))).toEqual(true);
   });
-  it('The day "2017-07-18" should not be after "2017-07-19"', function () {
+  it('The day "2017-07-18" should not be after "2017-07-19"', () => {
     expect(Day.parse('2017-07-18').getIsAfter(Day.parse('2017-07-19'))).toEqual(false);
   });
-  it('The day "2017-07-18" should not be after "2017-08-18"', function () {
+  it('The day "2017-07-18" should not be after "2017-08-18"', () => {
     expect(Day.parse('2017-07-18').getIsAfter(Day.parse('2017-08-18'))).toEqual(false);
   });
-  it('The day "2017-07-18" should bit be afte "2018-07-18"', function () {
+  it('The day "2017-07-18" should bit be afte "2018-07-18"', () => {
     expect(Day.parse('2017-07-18').getIsAfter(Day.parse('2018-07-18'))).toEqual(false);
   });
-  it('The day "2017-07-18" should not be before "2017-07-17"', function () {
+  it('The day "2017-07-18" should not be before "2017-07-17"', () => {
     expect(Day.parse('2017-07-18').getIsBefore(Day.parse('2017-07-17'))).toEqual(false);
   });
-  it('The day "2017-07-18" should not be before "2017-06-18"', function () {
+  it('The day "2017-07-18" should not be before "2017-06-18"', () => {
     expect(Day.parse('2017-07-18').getIsBefore(Day.parse('2017-06-18'))).toEqual(false);
   });
-  it('The day "2017-07-18" should not be before "2016-07-18"', function () {
+  it('The day "2017-07-18" should not be before "2016-07-18"', () => {
     expect(Day.parse('2017-07-18').getIsBefore(Day.parse('2016-07-18'))).toEqual(false);
   });
-  it('The day "2017-07-18" should be after "2017-07-17"', function () {
+  it('The day "2017-07-18" should be after "2017-07-17"', () => {
     expect(Day.parse('2017-07-18').getIsAfter(Day.parse('2017-07-17'))).toEqual(true);
   });
-  it('The day "2017-07-18" should be after "2017-06-18"', function () {
+  it('The day "2017-07-18" should be after "2017-06-18"', () => {
     expect(Day.parse('2017-07-18').getIsAfter(Day.parse('2017-06-18'))).toEqual(true);
   });
-  it('The day "2017-07-18" should be after "2016-07-18"', function () {
+  it('The day "2017-07-18" should be after "2016-07-18"', () => {
     expect(Day.parse('2017-07-18').getIsAfter(Day.parse('2016-07-18'))).toEqual(true);
   });
 });
-describe('When checking a days containment in a range of days', function () {
-  var day;
-  beforeEach(function () {
+describe('When checking a days containment in a range of days', () => {
+  let day;
+  beforeEach(() => {
     day = new Day(2018, 3, 11);
   });
-  it('should return true when the date is between the range boundaries', function () {
+  it('should return true when the date is between the range boundaries', () => {
     expect(day.getIsContained(new Day(2018, 3, 10), new Day(2018, 3, 12))).toEqual(true);
   });
-  it('should return true when the date is on the beginning boundary of the range', function () {
+  it('should return true when the date is on the beginning boundary of the range', () => {
     expect(day.getIsContained(new Day(2018, 3, 11), new Day(2018, 3, 12))).toEqual(true);
   });
-  it('should return true when the date is on the end boundary of the range', function () {
+  it('should return true when the date is on the end boundary of the range', () => {
     expect(day.getIsContained(new Day(2018, 3, 10), new Day(2018, 3, 11))).toEqual(true);
   });
-  it('should return true when no end boundary is specified, but the date is after the beginning boundary', function () {
+  it('should return true when no end boundary is specified, but the date is after the beginning boundary', () => {
     expect(day.getIsContained(new Day(2018, 3, 10))).toEqual(true);
   });
-  it('should return true when no beginning boundary is specified, but the date is before the end boundary', function () {
+  it('should return true when no beginning boundary is specified, but the date is before the end boundary', () => {
     expect(day.getIsContained(null, new Day(2018, 3, 12))).toEqual(true);
   });
-  it('should return true when no end boundary is specified, but the date is on the beginning boundary', function () {
+  it('should return true when no end boundary is specified, but the date is on the beginning boundary', () => {
     expect(day.getIsContained(new Day(2018, 3, 11))).toEqual(true);
   });
-  it('should return true when no beginning boundary is specified, but the date is on the end boundary', function () {
+  it('should return true when no beginning boundary is specified, but the date is on the end boundary', () => {
     expect(day.getIsContained(null, new Day(2018, 3, 11))).toEqual(true);
   });
-  it('should return false when the date is after range boundaries', function () {
+  it('should return false when the date is after range boundaries', () => {
     expect(day.getIsContained(new Day(2018, 3, 8), new Day(2018, 3, 10))).toEqual(false);
   });
-  it('should return false when the date is after before boundaries', function () {
+  it('should return false when the date is after before boundaries', () => {
     expect(day.getIsContained(new Day(2018, 3, 12), new Day(2018, 3, 14))).toEqual(false);
   });
-  it('should return false when no end boundary is specified, but the date is before the beginning boundary', function () {
+  it('should return false when no end boundary is specified, but the date is before the beginning boundary', () => {
     expect(day.getIsContained(new Day(2018, 3, 12))).toEqual(false);
   });
-  it('should return false when no beginning boundary is specified, but the date is after the end boundary', function () {
+  it('should return false when no beginning boundary is specified, but the date is after the end boundary', () => {
     expect(day.getIsContained(null, new Day(2018, 3, 10))).toEqual(false);
   });
-  it('should return false when the range is invalid', function () {
+  it('should return false when the range is invalid', () => {
     expect(day.getIsContained(new Day(2018, 3, 12), new Day(2018, 3, 10))).toEqual(false);
   });
 });
-describe('When cloning a day', function () {
-  var source;
-  var clone;
-  beforeEach(function () {
+describe('When cloning a day', () => {
+  let source;
+  let clone;
+  beforeEach(() => {
     source = new Day(2018, 3, 11);
     clone = Day.clone(source);
   });
-  it('the cloned instance should not be the same as the source instance', function () {
+  it('the cloned instance should not be the same as the source instance', () => {
     expect(clone).not.toBe(source);
   });
-  it('the cloned year should be equal to the source year', function () {
+  it('the cloned year should be equal to the source year', () => {
     expect(clone.year).toEqual(source.year);
   });
-  it('the cloned month should be equal to the source month', function () {
+  it('the cloned month should be equal to the source month', () => {
     expect(clone.year).toEqual(source.year);
   });
-  it('the cloned day should be equal to the source day', function () {
+  it('the cloned day should be equal to the source day', () => {
     expect(clone.year).toEqual(source.year);
   });
-  it('the cloned instance should equal the source instance', function () {
+  it('the cloned instance should equal the source instance', () => {
     expect(source.getIsEqual(clone)).toEqual(true);
   });
 });
-describe('When getting start of the month', function () {
-  it('for 2018-02-28 should be 2018-02-01', function () {
+describe('When getting start of the month', () => {
+  it('for 2018-02-28 should be 2018-02-01', () => {
     expect(new Day(2018, 2, 28).getStartOfMonth().getIsEqual(new Day(2018, 2, 1))).toEqual(true);
   });
-  it('for 2018-03-30 should be 2018-03-01', function () {
+  it('for 2018-03-30 should be 2018-03-01', () => {
     expect(new Day(2018, 3, 30).getStartOfMonth().getIsEqual(new Day(2018, 3, 1))).toEqual(true);
   });
-  it('should not return the same object', function () {
+  it('should not return the same object', () => {
     const d = new Day(2018, 2, 1);
     expect(d.getStartOfMonth()).not.toBe(d);
   });
 });
-describe('When getting end of the month', function () {
-  it('for 2018-02-28 should be 2018-02-28', function () {
+describe('When getting end of the month', () => {
+  it('for 2018-02-28 should be 2018-02-28', () => {
     expect(new Day(2018, 2, 28).getEndOfMonth().getIsEqual(new Day(2018, 2, 28))).toEqual(true);
   });
-  it('for 2018-03-30 should be 2018-03-31', function () {
+  it('for 2018-03-30 should be 2018-03-31', () => {
     expect(new Day(2018, 3, 30).getEndOfMonth().getIsEqual(new Day(2018, 3, 31))).toEqual(true);
   });
-  it('should not return the same object', function () {
+  it('should not return the same object', () => {
     const d = new Day(2018, 2, 28);
     expect(d.getEndOfMonth()).not.toBe(d);
   });
 });
 
 },{"./../../../lang/Day":21}],94:[function(require,module,exports){
-var Decimal = require('./../../../lang/Decimal');
+const Decimal = require('./../../../lang/Decimal');
 
-describe('When adding values that cause floating point problems (e.g. 1.1 + 2.2 != 3.3)', function () {
+describe('When adding values that cause floating point problems (e.g. 1.1 + 2.2 != 3.3)', () => {
   'use strict';
 
-  var a;
-  var b;
-  var c;
-  beforeEach(function () {
+  let a;
+  let b;
+  let c;
+  beforeEach(() => {
     a = new Decimal(1.1);
     b = new Decimal(2.2);
     c = a.add(b);
   });
-  describe('and exported to a floating point value', function () {
-    var f;
-    beforeEach(function () {
+  describe('and exported to a floating point value', () => {
+    let f;
+    beforeEach(() => {
       f = c.toFloat();
     });
-    it('should sum to 3.3 (not 3.3000000000000003)', function () {
+    it('should sum to 3.3 (not 3.3000000000000003)', () => {
       expect(f).toEqual(3.3);
     });
   });
 });
-describe('When working with values that loss of precision occurs with floating point math (e.g. 100 trillion plus one third)', function () {
+describe('When working with values that loss of precision occurs with floating point math (e.g. 100 trillion plus one third)', () => {
   'use strict';
 
-  var a;
-  var b;
-  var c;
-  beforeEach(function () {
+  let a;
+  let b;
+  let c;
+  beforeEach(() => {
     a = new Decimal(100000000000000);
     b = new Decimal(1 / 8);
     c = a.add(b);
   });
-  describe('and exported to a fixed string', function () {
-    var f;
-    beforeEach(function () {
+  describe('and exported to a fixed string', () => {
+    let f;
+    beforeEach(() => {
       f = c.toFixed();
     });
-    it('should maintain precision', function () {
+    it('should maintain precision', () => {
       expect(f).toEqual("100000000000000.125");
     });
   });
 });
-describe('When accessing the "Zero" singleton', function () {
+describe('When accessing the "Zero" singleton', () => {
   'use strict';
 
-  var zero;
-  beforeEach(function () {
+  let zero;
+  beforeEach(() => {
     zero = Decimal.ZERO;
   });
-  it('should not be positive', function () {
+  it('should not be positive', () => {
     expect(zero.getIsPositive()).toEqual(false);
   });
-  it('should not be negative', function () {
+  it('should not be negative', () => {
     expect(zero.getIsNegative()).toEqual(false);
   });
-  it('should be zero', function () {
+  it('should be zero', () => {
     expect(zero.getIsZero()).toEqual(true);
   });
-  it('should approximate zero', function () {
+  it('should approximate zero', () => {
     expect(zero.getIsZero(true)).toEqual(true);
   });
-  it('the floating point export should equal zero', function () {
+  it('the floating point export should equal zero', () => {
     expect(zero.toFloat()).toEqual(0);
   });
-  it('the fixed export should equal "0"', function () {
+  it('the fixed export should equal "0"', () => {
     expect(zero.toFixed()).toEqual('0');
   });
 });
-describe('When instantiating a Decimal', function () {
+describe('When instantiating a Decimal', () => {
   'use strict';
 
-  describe('from an object', function () {
-    it('should throw', function () {
-      expect(function () {
-        var d = new Decimal({});
+  describe('from an object', () => {
+    it('should throw', () => {
+      expect(() => {
+        let d = new Decimal({});
       }).toThrow();
     });
   });
-  describe('from a null value', function () {
-    it('should throw', function () {
-      expect(function () {
-        var d = new Decimal(null);
+  describe('from a null value', () => {
+    it('should throw', () => {
+      expect(() => {
+        let d = new Decimal(null);
       }).toThrow();
     });
   });
-  describe('from an undefined value', function () {
-    it('should throw', function () {
-      expect(function () {
-        var d = new Decimal(undefined);
+  describe('from an undefined value', () => {
+    it('should throw', () => {
+      expect(() => {
+        let d = new Decimal(undefined);
       }).toThrow();
     });
   });
-  describe('from the number forty two', function () {
-    var d;
-    beforeEach(function () {
+  describe('from the number forty two', () => {
+    let d;
+    beforeEach(() => {
       d = new Decimal(42);
     });
-    it('should not be positive', function () {
+    it('should not be positive', () => {
       expect(d.getIsPositive()).toEqual(true);
     });
-    it('should not be negative', function () {
+    it('should not be negative', () => {
       expect(d.getIsNegative()).toEqual(false);
     });
-    it('should be zero', function () {
+    it('should be zero', () => {
       expect(d.getIsZero()).toEqual(false);
     });
-    it('should approximate zero', function () {
+    it('should approximate zero', () => {
       expect(d.getIsZero(true)).toEqual(false);
     });
-    it('the floating point export should equal the meaning of life', function () {
+    it('the floating point export should equal the meaning of life', () => {
       expect(d.toFloat()).toEqual(42);
     });
-    it('the fixed export should equal "42"', function () {
+    it('the fixed export should equal "42"', () => {
       expect(d.toFixed()).toEqual('42');
     });
-    describe('and adding the number one', function () {
-      var e;
-      beforeEach(function () {
+    describe('and adding the number one', () => {
+      let e;
+      beforeEach(() => {
         e = d.add(1);
       });
-      it('should return a Decimal instance', function () {
+      it('should return a Decimal instance', () => {
         expect(e instanceof Decimal).toEqual(true);
       });
-      it('should be a different instance', function () {
+      it('should be a different instance', () => {
         expect(e).not.toBe(d);
       });
-      it('should equal forty three', function () {
+      it('should equal forty three', () => {
         expect(e.toFloat()).toEqual(43);
       });
-      it('should not mutate the original instance', function () {
+      it('should not mutate the original instance', () => {
         expect(d.toFloat()).toEqual(42);
       });
     });
-    describe('and adding a Decimal having a value of one', function () {
-      var e;
-      var x;
-      beforeEach(function () {
+    describe('and adding a Decimal having a value of one', () => {
+      let e;
+      let x;
+      beforeEach(() => {
         e = d.add(x = new Decimal(1));
       });
-      it('should return a Decimal instance', function () {
+      it('should return a Decimal instance', () => {
         expect(e instanceof Decimal).toEqual(true);
       });
-      it('should be a different instance', function () {
+      it('should be a different instance', () => {
         expect(e).not.toBe(d);
       });
-      it('should equal forty three', function () {
+      it('should equal forty three', () => {
         expect(e.toFloat()).toEqual(43);
       });
-      it('should not mutate the original instance', function () {
+      it('should not mutate the original instance', () => {
         expect(d.toFloat()).toEqual(42);
       });
-      it('should not mutate the operand', function () {
+      it('should not mutate the operand', () => {
         expect(x.toFloat()).toEqual(1);
       });
     });
-    describe('and dividing by zero', function () {
-      it('should throw', function () {
-        expect(function () {
-          var e = d.divideBy(0);
+    describe('and dividing by zero', () => {
+      it('should throw', () => {
+        expect(() => {
+          let e = d.divideBy(0);
         }).toThrow();
       });
     });
   });
-  describe('from the string "1"', function () {
-    var d;
-    beforeEach(function () {
+  describe('from the string "1"', () => {
+    let d;
+    beforeEach(() => {
       d = new Decimal("1");
     });
-    it('should be positive', function () {
+    it('should be positive', () => {
       expect(d.getIsPositive()).toEqual(true);
     });
-    it('should not be negative', function () {
+    it('should not be negative', () => {
       expect(d.getIsNegative()).toEqual(false);
     });
-    it('should be zero', function () {
+    it('should be zero', () => {
       expect(d.getIsZero()).toEqual(false);
     });
-    it('the fixed export should equal "1"', function () {
+    it('the fixed export should equal "1"', () => {
       expect(d.toFixed()).toEqual('1');
     });
   });
 });
-describe('When checking for integers', function () {
+describe('When checking for integers', () => {
   'use strict';
 
-  it('should indicate a zero value is an integer', function () {
+  it('should indicate a zero value is an integer', () => {
     expect(new Decimal('0').getIsInteger()).toEqual(true);
   });
-  it('should indicate a value of one is an integer', function () {
+  it('should indicate a value of one is an integer', () => {
     expect(new Decimal('1').getIsInteger()).toEqual(true);
   });
-  it('should indicate a value of negative one is an integer', function () {
+  it('should indicate a value of negative one is an integer', () => {
     expect(new Decimal('-1').getIsInteger()).toEqual(true);
   });
-  it('should indicate a value of one and a half is not an integer', function () {
+  it('should indicate a value of one and a half is not an integer', () => {
     expect(new Decimal('1.5').getIsInteger()).toEqual(false);
   });
-  it('should indicate a value of slightly less than one is an not integer', function () {
+  it('should indicate a value of slightly less than one is an not integer', () => {
     const numerator = new Decimal('999999999');
     const denominator = new Decimal('1000000000');
     expect(numerator.divide(denominator).getIsInteger()).toEqual(false);
   });
-  it('should indicate a value of slightly greater than one is an not integer', function () {
+  it('should indicate a value of slightly greater than one is an not integer', () => {
     const numerator = new Decimal('1000000000');
     const denominator = new Decimal('999999999');
     expect(numerator.divide(denominator).getIsInteger()).toEqual(false);
   });
 });
-describe('When counting the number of decimal places', function () {
+describe('When counting the number of decimal places', () => {
   'use strict';
 
-  it('should indicate a value of zero has no decimal places', function () {
+  it('should indicate a value of zero has no decimal places', () => {
     expect(new Decimal('0').getDecimalPlaces()).toEqual(0);
   });
-  it('should indicate a value of one has no decimal places', function () {
+  it('should indicate a value of one has no decimal places', () => {
     expect(new Decimal('1').getDecimalPlaces()).toEqual(0);
   });
-  it('should indicate a value of negative one has no decimal places', function () {
+  it('should indicate a value of negative one has no decimal places', () => {
     expect(new Decimal('-1').getDecimalPlaces()).toEqual(0);
   });
-  it('should indicate a value of twenty three has no decimal places', function () {
+  it('should indicate a value of twenty three has no decimal places', () => {
     expect(new Decimal('23').getDecimalPlaces()).toEqual(0);
   });
-  it('should indicate a value of twenty three has no decimal places', function () {
+  it('should indicate a value of twenty three has no decimal places', () => {
     expect(new Decimal('-23').getDecimalPlaces()).toEqual(0);
   });
-  it('should indicate a value of one tenth has one decimal places', function () {
+  it('should indicate a value of one tenth has one decimal places', () => {
     expect(new Decimal('0.1').getDecimalPlaces()).toEqual(1);
   });
-  it('should indicate a value of negative one tenth has one decimal places', function () {
+  it('should indicate a value of negative one tenth has one decimal places', () => {
     expect(new Decimal('-0.1').getDecimalPlaces()).toEqual(1);
   });
-  it('should indicate a value of one eighth has one decimal places', function () {
+  it('should indicate a value of one eighth has one decimal places', () => {
     expect(new Decimal('0.125').getDecimalPlaces()).toEqual(3);
   });
-  it('should indicate a value of negative one eighth has one decimal places', function () {
+  it('should indicate a value of negative one eighth has one decimal places', () => {
     expect(new Decimal('-0.125').getDecimalPlaces()).toEqual(3);
   });
-  it('should indicate a value of one hundredth has one decimal places', function () {
+  it('should indicate a value of one hundredth has one decimal places', () => {
     expect(new Decimal('0.01').getDecimalPlaces()).toEqual(2);
   });
-  it('should indicate a value of negative one hundredth has one decimal places', function () {
+  it('should indicate a value of negative one hundredth has one decimal places', () => {
     expect(new Decimal('-0.01').getDecimalPlaces()).toEqual(2);
   });
-  it('should indicate a value of "123.123456789012345678901234 has 24 decimal places', function () {
+  it('should indicate a value of "123.123456789012345678901234 has 24 decimal places', () => {
     expect(new Decimal('123.123456789012345678901234').getDecimalPlaces()).toEqual(24);
   });
-  it('should indicate a value of "-123.123456789012345678901234 has 24 decimal places', function () {
+  it('should indicate a value of "-123.123456789012345678901234 has 24 decimal places', () => {
     expect(new Decimal('-123.123456789012345678901234').getDecimalPlaces()).toEqual(24);
   });
 });
-describe('When checking for values that approximate zero', function () {
+describe('When checking for values that approximate zero', () => {
   'use strict';
 
-  it('A value of "0.01" should approximate zero, when rounding to one decimal places', function () {
+  it('A value of "0.01" should approximate zero, when rounding to one decimal places', () => {
     expect(new Decimal('0.01').getIsZero(true, 1)).toEqual(true);
   });
-  it('A value of "0.09" should not approximate zero, when rounding to one decimal places', function () {
+  it('A value of "0.09" should not approximate zero, when rounding to one decimal places', () => {
     expect(new Decimal('0.09').getIsZero(true, 1)).toEqual(false);
   });
-  it('A value of "0.01" should not approximate zero, when rounding is not specified', function () {
+  it('A value of "0.01" should not approximate zero, when rounding is not specified', () => {
     expect(new Decimal('0.01').getIsZero(true)).toEqual(false);
   });
-  it('A value of "0.09" should not approximate zero, when rounding is not specified', function () {
+  it('A value of "0.09" should not approximate zero, when rounding is not specified', () => {
     expect(new Decimal('0.09').getIsZero(true)).toEqual(false);
   });
 });
-describe('When raising to a power', function () {
+describe('When raising to a power', () => {
   'use strict';
 
-  it('The value of 2 raised to 8 should be 256', function () {
+  it('The value of 2 raised to 8 should be 256', () => {
     expect(new Decimal(2).raise(8).getIsEqual(256)).toEqual(true);
   });
-  it('The value of 2 raised to -1 should be 0.5', function () {
+  it('The value of 2 raised to -1 should be 0.5', () => {
     expect(new Decimal(2).raise(-1).getIsEqual(0.5)).toEqual(true);
   });
-  it('The value of 2 raised to 0 should be 1', function () {
+  it('The value of 2 raised to 0 should be 1', () => {
     expect(new Decimal(2).raise(0).getIsEqual(1)).toEqual(true);
   });
 });
-describe('When checking for values that approximate each other', function () {
+describe('When checking for values that approximate each other', () => {
   'use strict';
 
-  it('A value of "1" should approximate a value of "1" (when using ten significant digits)', function () {
+  it('A value of "1" should approximate a value of "1" (when using ten significant digits)', () => {
     expect(new Decimal('1').getIsApproximate(new Decimal('1'), 10)).toEqual(true);
   });
-  it('A value of "10" should approximate a value of "10" (when using zero significant digits)', function () {
+  it('A value of "10" should approximate a value of "10" (when using zero significant digits)', () => {
     expect(new Decimal('10').getIsApproximate(new Decimal('10'), 0)).toEqual(true);
   });
-  it('A value of "10" should not approximate a value of "10.0001" (when using zero significant digits)', function () {
+  it('A value of "10" should not approximate a value of "10.0001" (when using zero significant digits)', () => {
     expect(new Decimal('10').getIsApproximate(new Decimal('10.0001'), 0)).toEqual(false);
   });
-  it('A value of "10.0001" should not approximate a value of "10" (when using zero significant digits)', function () {
+  it('A value of "10.0001" should not approximate a value of "10" (when using zero significant digits)', () => {
     expect(new Decimal('10.0001').getIsApproximate(new Decimal('10'), 0)).toEqual(false);
   });
-  it('A value of "0.01" should approximate a value of "0.019" (when using two significant digits)', function () {
+  it('A value of "0.01" should approximate a value of "0.019" (when using two significant digits)', () => {
     expect(new Decimal('0.01').getIsApproximate(new Decimal('0.019'), 2)).toEqual(true);
   });
-  it('A value of "0.019" should approximate a value of "0.01" (when using two significant digits)', function () {
+  it('A value of "0.019" should approximate a value of "0.01" (when using two significant digits)', () => {
     expect(new Decimal('0.019').getIsApproximate(new Decimal('0.01'), 2)).toEqual(true);
   });
-  it('A value of "-0.01" should approximate a value of "-0.019" (when using two significant digits)', function () {
+  it('A value of "-0.01" should approximate a value of "-0.019" (when using two significant digits)', () => {
     expect(new Decimal('-0.01').getIsApproximate(new Decimal('-0.019'), 2)).toEqual(true);
   });
-  it('A value of "-0.019" should approximate a value of "-0.01" (when using two significant digits)', function () {
+  it('A value of "-0.019" should approximate a value of "-0.01" (when using two significant digits)', () => {
     expect(new Decimal('-0.019').getIsApproximate(new Decimal('-0.01'), 2)).toEqual(true);
   });
-  it('A value of "0.01" should approximate a value of "0.009" (when using two significant digits)', function () {
+  it('A value of "0.01" should approximate a value of "0.009" (when using two significant digits)', () => {
     expect(new Decimal('0.01').getIsApproximate(new Decimal('0.009'), 2)).toEqual(true);
   });
-  it('A value of "0.009" should approximate a value of "0.01" (when using two significant digits)', function () {
+  it('A value of "0.009" should approximate a value of "0.01" (when using two significant digits)', () => {
     expect(new Decimal('0.009').getIsApproximate(new Decimal('0.01'), 2)).toEqual(true);
   });
-  it('A value of "0.01" should not approximate a value of "0.02" (when using two significant digits)', function () {
+  it('A value of "0.01" should not approximate a value of "0.02" (when using two significant digits)', () => {
     expect(new Decimal('0.01').getIsApproximate(new Decimal('0.02'), 2)).toEqual(false);
   });
-  it('A value of "0.02" should not approximate a value of "0.01" (when using two significant digits)', function () {
+  it('A value of "0.02" should not approximate a value of "0.01" (when using two significant digits)', () => {
     expect(new Decimal('0.02').getIsApproximate(new Decimal('0.01'), 2)).toEqual(false);
   });
-  it('A value of "0.01" should not approximate a value of "-0.01" (when using two significant digits)', function () {
+  it('A value of "0.01" should not approximate a value of "-0.01" (when using two significant digits)', () => {
     expect(new Decimal('0.01').getIsApproximate(new Decimal('-0.01'), 2)).toEqual(false);
   });
-  it('A value of "-0.01" should not approximate a value of "0.01" (when using two significant digits)', function () {
+  it('A value of "-0.01" should not approximate a value of "0.01" (when using two significant digits)', () => {
     expect(new Decimal('-0.01').getIsApproximate(new Decimal('0.01'), 2)).toEqual(false);
   });
 });
-describe('When cloning a decimal', function () {
+describe('When cloning a decimal', () => {
   'use strict';
 
-  var source;
-  var clone;
-  beforeEach(function () {
+  let source;
+  let clone;
+  beforeEach(() => {
     source = new Decimal(Math.PI);
     clone = Decimal.clone(source);
   });
-  it('the cloned instance should not be the same as the source instance', function () {
+  it('the cloned instance should not be the same as the source instance', () => {
     expect(clone).not.toBe(source);
   });
-  it('the cloned instance should equal the source instance', function () {
+  it('the cloned instance should equal the source instance', () => {
     expect(source.getIsEqual(clone)).toEqual(true);
   });
 });
 
 },{"./../../../lang/Decimal":22}],95:[function(require,module,exports){
-var Disposable = require('./../../../lang/Disposable');
+const Disposable = require('./../../../lang/Disposable');
 
-describe('When a Disposable is extended', function () {
+describe('When a Disposable is extended', () => {
   'use strict';
 
   class TestDisposable extends Disposable {
@@ -19259,74 +19263,74 @@ describe('When a Disposable is extended', function () {
 
   }
 
-  var testDisposable;
-  beforeEach(function () {
+  let testDisposable;
+  beforeEach(() => {
     testDisposable = new TestDisposable();
   });
-  it('should not indicate that it has been disposed', function () {
+  it('should not indicate that it has been disposed', () => {
     expect(testDisposable.getIsDisposed()).toEqual(false);
   });
-  it('should not have triggered the dispose action', function () {
+  it('should not have triggered the dispose action', () => {
     expect(testDisposable.getDisposeSpy()).not.toHaveBeenCalled();
   });
-  describe("and the instance is disposed", function () {
-    beforeEach(function () {
+  describe("and the instance is disposed", () => {
+    beforeEach(() => {
       testDisposable.dispose();
     });
-    it('should not indicate that it has been disposed', function () {
+    it('should not indicate that it has been disposed', () => {
       expect(testDisposable.getIsDisposed()).toEqual(true);
     });
-    it('should have triggered the dispose action', function () {
+    it('should have triggered the dispose action', () => {
       expect(testDisposable.getDisposeSpy().calls.count()).toEqual(1);
     });
-    describe("and the instance is disposed again", function () {
-      beforeEach(function () {
+    describe("and the instance is disposed again", () => {
+      beforeEach(() => {
         testDisposable.dispose();
       });
-      it('should not indicate that it has been disposed', function () {
+      it('should not indicate that it has been disposed', () => {
         expect(testDisposable.getIsDisposed()).toEqual(true);
       });
-      it('should not dispose action again', function () {
+      it('should not dispose action again', () => {
         expect(testDisposable.getDisposeSpy().calls.count()).toEqual(1);
       });
     });
   });
 });
-describe('When a Disposable.fromAction creates a Disposable', function () {
+describe('When a Disposable.fromAction creates a Disposable', () => {
   'use strict';
 
-  var testDisposable;
-  var testDisposableSpy;
-  beforeEach(function () {
+  let testDisposable;
+  let testDisposableSpy;
+  beforeEach(() => {
     testDisposable = Disposable.fromAction(testDisposableSpy = jasmine.createSpy('testDisposableSpy'));
   });
-  it('should be an instance of Disposable', function () {
+  it('should be an instance of Disposable', () => {
     expect(testDisposable instanceof Disposable).toEqual(true);
   });
-  it('should not indicate that it has been disposed', function () {
+  it('should not indicate that it has been disposed', () => {
     expect(testDisposable.getIsDisposed()).toEqual(false);
   });
-  it('should not have triggered the dispose action', function () {
+  it('should not have triggered the dispose action', () => {
     expect(testDisposableSpy).not.toHaveBeenCalled();
   });
-  describe("and the instance is disposed", function () {
-    beforeEach(function () {
+  describe("and the instance is disposed", () => {
+    beforeEach(() => {
       testDisposable.dispose();
     });
-    it('should not indicate that it has been disposed', function () {
+    it('should not indicate that it has been disposed', () => {
       expect(testDisposable.getIsDisposed()).toEqual(true);
     });
-    it('should have triggered the dispose action', function () {
+    it('should have triggered the dispose action', () => {
       expect(testDisposableSpy.calls.count()).toEqual(1);
     });
-    describe("and the instance is disposed again", function () {
-      beforeEach(function () {
+    describe("and the instance is disposed again", () => {
+      beforeEach(() => {
         testDisposable.dispose();
       });
-      it('should not indicate that it has been disposed', function () {
+      it('should not indicate that it has been disposed', () => {
         expect(testDisposable.getIsDisposed()).toEqual(true);
       });
-      it('should not dispose action again', function () {
+      it('should not dispose action again', () => {
         expect(testDisposableSpy.calls.count()).toEqual(1);
       });
     });
@@ -19334,9 +19338,9 @@ describe('When a Disposable.fromAction creates a Disposable', function () {
 });
 
 },{"./../../../lang/Disposable":23}],96:[function(require,module,exports){
-var Enum = require('./../../../lang/Enum');
+const Enum = require('./../../../lang/Enum');
 
-describe('When Enum is extended (as types EnumA and EnumB) and type items are added to each (X and Y)', function () {
+describe('When Enum is extended (as types EnumA and EnumB) and type items are added to each (X and Y)', () => {
   'use strict';
 
   class EnumA extends Enum {
@@ -19353,245 +19357,275 @@ describe('When Enum is extended (as types EnumA and EnumB) and type items are ad
 
   }
 
-  var ax = new EnumA('x', 'A-X');
-  var ay = new EnumA('y', 'A-Y');
-  var bx = new EnumB('x', 'B-X');
-  var by = new EnumB('y', 'B-Y');
-  it('should be able to find X in EnumA using the code', function () {
+  let ax = new EnumA('x', 'A-X');
+  let ay = new EnumA('y', 'A-Y');
+  let bx = new EnumB('x', 'B-X');
+  let by = new EnumB('y', 'B-Y');
+  it('should be able to find X in EnumA using the code', () => {
     expect(Enum.fromCode(EnumA, 'x')).toBe(ax);
   });
-  it('should be able to find Y in EnumA using the code', function () {
+  it('should be able to find Y in EnumA using the code', () => {
     expect(Enum.fromCode(EnumA, 'y')).toBe(ay);
   });
-  it('should be able to find X in EnumB using the code', function () {
+  it('should be able to find X in EnumB using the code', () => {
     expect(Enum.fromCode(EnumB, 'x')).toBe(bx);
   });
-  it('should be able to find Y in EnumB using the code', function () {
+  it('should be able to find Y in EnumB using the code', () => {
     expect(Enum.fromCode(EnumB, 'y')).toBe(by);
   });
-  describe('and a duplicate item (A-x) is added', function () {
-    var axx = new EnumA('x', 'A-XX');
-    it('should be still find the original instance in EnumA for X', function () {
+  describe('and a duplicate item (A-x) is added', () => {
+    let axx = new EnumA('x', 'A-XX');
+    it('should be still find the original instance in EnumA for X', () => {
       expect(Enum.fromCode(EnumA, 'x')).toBe(ax);
     });
-    it('should should equal the original instance (for X)', function () {
+    it('should should equal the original instance (for X)', () => {
       expect(Enum.fromCode(EnumA, 'x').equals(axx)).toBe(true);
     });
   });
 });
 
 },{"./../../../lang/Enum":24}],97:[function(require,module,exports){
-var Currency = require('./../../../lang/Currency');
+const Currency = require('./../../../lang/Currency'),
+      Decimal = require('./../../../lang/Decimal'),
+      Rate = require('./../../../lang/Rate');
 
-var Decimal = require('./../../../lang/Decimal');
-
-var Rate = require('./../../../lang/Rate');
-
-describe('When parsing an "^EURUSD" rate of 1.2', function () {
+describe('When parsing an "^EURUSD" rate of 1.2', () => {
   'use strict';
 
-  var rate;
-  beforeEach(function () {
+  let rate;
+  beforeEach(() => {
     rate = Rate.fromPair(1.2, '^EURUSD');
   });
-  it('the quote currency should be USD', function () {
+  it('the quote currency should be USD', () => {
     expect(rate.quote.code).toEqual('USD');
   });
-  it('the base currency should be EUR', function () {
+  it('the base currency should be EUR', () => {
     expect(rate.base.code).toEqual('EUR');
   });
-  it('the numerator currency should be USD', function () {
+  it('the numerator currency should be USD', () => {
     expect(rate.numerator.code).toEqual('USD');
   });
-  it('the denominator currency should be EUR', function () {
+  it('the denominator currency should be EUR', () => {
     expect(rate.denominator.code).toEqual('EUR');
   });
-  it('the value should be 1.2', function () {
+  it('the value should be 1.2', () => {
     expect(rate.decimal.getIsEqual(1.2)).toEqual(true);
   });
-  describe('When converting 10 USD to EUR', function () {
-    it('should be 8.33 EUR', function () {
+  describe('When converting 10 USD to EUR', () => {
+    it('should be 8.33 EUR', () => {
       expect(Rate.convert(new Decimal(10), Currency.USD, Currency.EUR, rate).round(2).getIsEqual(8.33)).toEqual(true);
     });
   });
-  describe('When converting 10 EUR to USD', function () {
-    it('should be 12 USD', function () {
+  describe('When converting 10 EUR to USD', () => {
+    it('should be 12 USD', () => {
       expect(Rate.convert(new Decimal(10), Currency.EUR, Currency.USD, rate).round(2).getIsEqual(12)).toEqual(true);
     });
   });
 });
-describe('When parsing an "^USDEUR" rate of 0.8333', function () {
+describe('When parsing an "^USDEUR" rate of 0.8333', () => {
   'use strict';
 
-  var rate;
-  beforeEach(function () {
+  let rate;
+  beforeEach(() => {
     rate = Rate.fromPair(0.8333, '^USDEUR');
   });
-  it('the quote currency should be EUR', function () {
+  it('the quote currency should be EUR', () => {
     expect(rate.quote.code).toEqual('EUR');
   });
-  it('the base currency should be USD', function () {
+  it('the base currency should be USD', () => {
     expect(rate.base.code).toEqual('USD');
   });
-  it('the numerator currency should be EUR', function () {
+  it('the numerator currency should be EUR', () => {
     expect(rate.numerator.code).toEqual('EUR');
   });
-  it('the denominator currency should be USD', function () {
+  it('the denominator currency should be USD', () => {
     expect(rate.denominator.code).toEqual('USD');
   });
-  it('the value should be 0.8333', function () {
+  it('the value should be 0.8333', () => {
     expect(rate.decimal.getIsEqual(0.8333)).toEqual(true);
   });
-  describe('When converting 10 USD to EUR', function () {
-    it('should be 8.33 EUR', function () {
+  describe('When converting 10 USD to EUR', () => {
+    it('should be 8.33 EUR', () => {
       expect(Rate.convert(new Decimal(10), Currency.USD, Currency.EUR, rate).round(2).getIsEqual(8.33)).toEqual(true);
     });
   });
-  describe('When converting 10 EUR to USD', function () {
-    it('should be 12 USD', function () {
+  describe('When converting 10 EUR to USD', () => {
+    it('should be 12 USD', () => {
       expect(Rate.convert(new Decimal(10), Currency.EUR, Currency.USD, rate).round(2).getIsEqual(12)).toEqual(true);
     });
   });
 });
 
 },{"./../../../lang/Currency":20,"./../../../lang/Decimal":22,"./../../../lang/Rate":26}],98:[function(require,module,exports){
-var Timestamp = require('./../../../lang/Timestamp');
+const Timestamp = require('./../../../lang/Timestamp');
 
-describe('When Timestamp is created from a timestamp (1502372574350)', function () {
+describe('When Timestamp is created from a timestamp (1502372574350)', () => {
   'use strict';
 
-  var instance;
-  beforeEach(function () {
+  let instance;
+  beforeEach(() => {
     instance = new Timestamp(1502372574350);
   });
-  it('should not have instantiated the underlying moment', function () {
+  it('should not have instantiated the underlying moment', () => {
     expect(instance._moment).toEqual(null);
   });
-  it('should know the timestamp', function () {
+  it('should know the timestamp', () => {
     expect(instance.timestamp).toEqual(1502372574350);
   });
-  describe('and the "moment" property is accessed', function () {
-    var m;
-    beforeEach(function () {
+  describe('and the "moment" property is accessed', () => {
+    let m;
+    beforeEach(() => {
       m = instance.moment;
     });
-    it('should not have instantiated the underlying moment', function () {
+    it('should not have instantiated the underlying moment', () => {
       expect(instance._moment).not.toEqual(null);
     });
-    it('should return a moment', function () {
+    it('should return a moment', () => {
       expect(m.isValid()).toEqual(true);
     });
-    describe('and the "moment" property is accessed (again)', function () {
-      var n;
-      beforeEach(function () {
+    describe('and the "moment" property is accessed (again)', () => {
+      let n;
+      beforeEach(() => {
         n = instance.moment;
       });
-      it('should return the same moment', function () {
+      it('should return the same moment', () => {
         expect(m).toBe(n);
       });
     });
   });
 });
-describe('When Timestamp is created for the current moment', function () {
+describe('When Timestamp is created for the current moment', () => {
   'use strict';
 
-  var instance;
-  beforeEach(function () {
+  let instance;
+  beforeEach(() => {
     instance = Timestamp.now();
   });
-  it('should not be close to the current time', function () {
+  it('should not be close to the current time', () => {
     const milliseconds = new Date().getTime();
     expect(milliseconds - instance.timestamp < 500).toEqual(true);
   });
 });
 
 },{"./../../../lang/Timestamp":27}],99:[function(require,module,exports){
-var Timezones = require('./../../../lang/Timezones');
+let Timezones = require('./../../../lang/Timezones');
 
-describe('When accessing static items', function () {
+describe('When accessing static items', () => {
   'use strict';
 
-  it('The timezone for Chicago should return the expected item', function () {
+  it('The timezone for Chicago should return the expected item', () => {
     expect(Timezones.AMERICA_CHICAGO.code).toEqual('America/Chicago');
   });
-  it('The timezone for New York should return the expected item', function () {
+  it('The timezone for New York should return the expected item', () => {
     expect(Timezones.AMERICA_NEW_YORK.code).toEqual('America/New_York');
   });
 });
-describe('When calculating timezone offset on 2019-10-02 UTC', function () {
+describe('When calculating timezone offset on 2019-10-02 UTC', () => {
   let timestamp;
   beforeEach(() => {
     timestamp = new Date(2019, 9, 2, 0, 0, 0).getTime();
   });
-  it('The UTC offset should be 0', function () {
-    expect(Timezones.UTC.getUtcOffset(timestamp)).toEqual(0);
+  describe('in minutes', () => {
+    it('The UTC offset should be 0', () => {
+      expect(Timezones.UTC.getUtcOffset(timestamp)).toEqual(0);
+    });
+    it('The AMERICA_CHICAGO offset should be -300', () => {
+      expect(Timezones.AMERICA_CHICAGO.getUtcOffset(timestamp)).toEqual(-300);
+    });
+    it('The AMERICA_NEW_YORK offset should be -240', () => {
+      expect(Timezones.AMERICA_NEW_YORK.getUtcOffset(timestamp)).toEqual(-240);
+    });
+    it('The Europe/Minsk offset should be 180', () => {
+      expect(Timezones.parse('Europe/Minsk').getUtcOffset(timestamp)).toEqual(180);
+    });
   });
-  it('The AMERICA_CHICAGO offset should be -300', function () {
-    expect(Timezones.AMERICA_CHICAGO.getUtcOffset(timestamp)).toEqual(-300);
-  });
-  it('The AMERICA_NEW_YORK offset should be -240', function () {
-    expect(Timezones.AMERICA_NEW_YORK.getUtcOffset(timestamp)).toEqual(-240);
-  });
-  it('The Europe/Minsk offset should be 180', function () {
-    expect(Timezones.parse('Europe/Minsk').getUtcOffset(timestamp)).toEqual(180);
+  describe('in milliseconds', () => {
+    it('The UTC offset should be 0', () => {
+      expect(Timezones.UTC.getUtcOffset(timestamp)).toEqual(0);
+    });
+    it('The AMERICA_CHICAGO offset should be -300', () => {
+      expect(Timezones.AMERICA_CHICAGO.getUtcOffset(timestamp, true)).toEqual(-18000000);
+    });
+    it('The AMERICA_NEW_YORK offset should be -240', () => {
+      expect(Timezones.AMERICA_NEW_YORK.getUtcOffset(timestamp, true)).toEqual(-14400000);
+    });
+    it('The Europe/Minsk offset should be 180', () => {
+      expect(Timezones.parse('Europe/Minsk').getUtcOffset(timestamp, true)).toEqual(10800000);
+    });
   });
 });
-describe('When calculating timezone offset on 2019-11-04 UTC', function () {
+describe('When calculating timezone offset on 2019-11-04 UTC', () => {
   let timestamp;
   beforeEach(() => {
     timestamp = new Date(2019, 10, 4, 0, 0, 0).getTime();
   });
-  it('The UTC offset should be 0', function () {
-    expect(Timezones.UTC.getUtcOffset(timestamp)).toEqual(0);
+  describe('in minutes', () => {
+    it('The UTC offset should be 0', () => {
+      expect(Timezones.UTC.getUtcOffset(timestamp)).toEqual(0);
+    });
+    it('The AMERICA_CHICAGO offset should be -360', () => {
+      expect(Timezones.AMERICA_CHICAGO.getUtcOffset(timestamp)).toEqual(-360);
+    });
+    it('The AMERICA_NEW_YORK offset should be -300', () => {
+      expect(Timezones.AMERICA_NEW_YORK.getUtcOffset(timestamp)).toEqual(-300);
+    });
+    it('The Europe/Minsk offset should be 180', () => {
+      expect(Timezones.parse('Europe/Minsk').getUtcOffset(timestamp)).toEqual(180);
+    });
   });
-  it('The AMERICA_CHICAGO offset should be -360', function () {
-    expect(Timezones.AMERICA_CHICAGO.getUtcOffset(timestamp)).toEqual(-360);
-  });
-  it('The AMERICA_NEW_YORK offset should be -300', function () {
-    expect(Timezones.AMERICA_NEW_YORK.getUtcOffset(timestamp)).toEqual(-300);
-  });
-  it('The Europe/Minsk offset should be 180', function () {
-    expect(Timezones.parse('Europe/Minsk').getUtcOffset(timestamp)).toEqual(180);
+  describe('in milliseconds', () => {
+    it('The UTC offset should be 0', () => {
+      expect(Timezones.UTC.getUtcOffset(timestamp, true)).toEqual(0);
+    });
+    it('The AMERICA_CHICAGO offset should be -360', () => {
+      expect(Timezones.AMERICA_CHICAGO.getUtcOffset(timestamp, true)).toEqual(-21600000);
+    });
+    it('The AMERICA_NEW_YORK offset should be -300', () => {
+      expect(Timezones.AMERICA_NEW_YORK.getUtcOffset(timestamp, true)).toEqual(-18000000);
+    });
+    it('The Europe/Minsk offset should be 180', () => {
+      expect(Timezones.parse('Europe/Minsk').getUtcOffset(timestamp, true)).toEqual(10800000);
+    });
   });
 });
 
 },{"./../../../lang/Timezones":28}],100:[function(require,module,exports){
-var array = require('./../../../lang/array');
+const array = require('./../../../lang/array');
 
-describe('when reducing an array to unique values', function () {
+describe('when reducing an array to unique values', () => {
   'use strict';
 
-  describe('and using the first four rows of pascals triangle', function () {
-    var unique;
-    beforeEach(function () {
+  describe('and using the first four rows of pascals triangle', () => {
+    let unique;
+    beforeEach(() => {
       unique = array.unique([1, 1, 1, 1, 2, 1, 1, 3, 3, 1]);
     });
-    it('should only contain 3 unique elements', function () {
+    it('should only contain 3 unique elements', () => {
       expect(unique.length).toEqual(3);
     });
-    it('should contain 1', function () {
+    it('should contain 1', () => {
       expect(unique.indexOf(1)).toEqual(0);
     });
-    it('should contain 2', function () {
+    it('should contain 2', () => {
       expect(unique.indexOf(2)).toEqual(1);
     });
-    it('should contain 3', function () {
+    it('should contain 3', () => {
       expect(unique.indexOf(3)).toEqual(2);
     });
   });
 });
-describe('when reducing an array of objects to unique values', function () {
+describe('when reducing an array of objects to unique values', () => {
   'use strict';
 
-  describe('and using the first four rows of pascals triangle', function () {
-    var unique;
-    var one;
-    var two;
-    var three;
-    var four;
-    var five;
-    var six;
-    beforeEach(function () {
+  describe('and using the first four rows of pascals triangle', () => {
+    let unique;
+    let one;
+    let two;
+    let three;
+    let four;
+    let five;
+    let six;
+    beforeEach(() => {
       unique = array.uniqueBy([one = {
         x: 1
       }, two = {
@@ -19608,158 +19642,158 @@ describe('when reducing an array of objects to unique values', function () {
         return obj.x;
       });
     });
-    it('should only contain 3 unique elements', function () {
+    it('should only contain 3 unique elements', () => {
       expect(unique.length).toEqual(3);
     });
-    it('should contain the first item whose value is one', function () {
+    it('should contain the first item whose value is one', () => {
       expect(unique[0]).toBe(one);
     });
-    it('should contain the first item whose value is two', function () {
+    it('should contain the first item whose value is two', () => {
       expect(unique[1]).toBe(two);
     });
-    it('should contain the first item whose value is three', function () {
+    it('should contain the first item whose value is three', () => {
       expect(unique[2]).toBe(three);
     });
   });
 });
-describe('when partitioning an array of three items', function () {
+describe('when partitioning an array of three items', () => {
   'use strict';
 
-  var original;
-  beforeEach(function () {
+  let original;
+  beforeEach(() => {
     original = [1, 2, 3];
   });
-  describe('using a partition size of 10', function () {
-    var partitions;
-    beforeEach(function () {
+  describe('using a partition size of 10', () => {
+    let partitions;
+    beforeEach(() => {
       partitions = array.partition(original, 10);
     });
-    it('should return an array', function () {
+    it('should return an array', () => {
       expect(partitions instanceof Array).toEqual(true);
     });
-    it('should return a copy of the original array', function () {
+    it('should return a copy of the original array', () => {
       expect(partitions).not.toBe(original);
     });
-    it('should contain one partition', function () {
+    it('should contain one partition', () => {
       expect(partitions.length).toEqual(1);
     });
-    it('the first partition should contain three items', function () {
+    it('the first partition should contain three items', () => {
       expect(partitions[0].length).toEqual(3);
     });
-    it('the first partition item should be the first item', function () {
+    it('the first partition item should be the first item', () => {
       expect(partitions[0][0]).toBe(original[0]);
     });
-    it('the second partition item should be the first item', function () {
+    it('the second partition item should be the first item', () => {
       expect(partitions[0][1]).toBe(original[1]);
     });
-    it('the third partition item should be the first item', function () {
+    it('the third partition item should be the first item', () => {
       expect(partitions[0][2]).toBe(original[2]);
     });
   });
-  describe('using a partition size of two', function () {
-    var partitions;
-    beforeEach(function () {
+  describe('using a partition size of two', () => {
+    let partitions;
+    beforeEach(() => {
       partitions = array.partition(original, 2);
     });
-    it('should return an array', function () {
+    it('should return an array', () => {
       expect(partitions instanceof Array).toEqual(true);
     });
-    it('should return a copy of the original array', function () {
+    it('should return a copy of the original array', () => {
       expect(partitions).not.toBe(original);
     });
-    it('should contain two partition', function () {
+    it('should contain two partition', () => {
       expect(partitions.length).toEqual(2);
     });
-    it('the first partition should contain two items', function () {
+    it('the first partition should contain two items', () => {
       expect(partitions[0].length).toEqual(2);
     });
-    it('the second partition should contain one item', function () {
+    it('the second partition should contain one item', () => {
       expect(partitions[1].length).toEqual(1);
     });
-    it('the first item of the first partition should be the first item', function () {
+    it('the first item of the first partition should be the first item', () => {
       expect(partitions[0][0]).toBe(original[0]);
     });
-    it('the second item of the first partition should be the second item', function () {
+    it('the second item of the first partition should be the second item', () => {
       expect(partitions[0][1]).toBe(original[1]);
     });
-    it('the first item of the second partition should be the third item', function () {
+    it('the first item of the second partition should be the third item', () => {
       expect(partitions[1][0]).toBe(original[2]);
     });
   });
 });
-describe('when partitioning empty array', function () {
+describe('when partitioning empty array', () => {
   'use strict';
 
-  var original;
-  beforeEach(function () {
+  let original;
+  beforeEach(() => {
     original = [];
   });
-  describe('using a partition size of 10', function () {
-    var partitions;
-    beforeEach(function () {
+  describe('using a partition size of 10', () => {
+    let partitions;
+    beforeEach(() => {
       partitions = array.partition(original, 10);
     });
-    it('an empty array should be returned', function () {
+    it('an empty array should be returned', () => {
       expect(partitions.length).toEqual(0);
     });
   });
 });
-describe('when flattening an array', function () {
+describe('when flattening an array', () => {
   'use strict';
 
-  var arrayOne;
-  var arrayTwo;
-  var itemA;
-  var itemB;
-  var itemC;
-  var itemD;
-  beforeEach(function () {
+  let arrayOne;
+  let arrayTwo;
+  let itemA;
+  let itemB;
+  let itemC;
+  let itemD;
+  beforeEach(() => {
     arrayOne = [itemA = 'a', itemB = 'b', itemC = ['c']];
     arrayTwo = [itemD = 'd'];
   });
-  describe('without using recursion', function () {
-    var result;
-    beforeEach(function () {
+  describe('without using recursion', () => {
+    let result;
+    beforeEach(() => {
       result = array.flatten([arrayOne, arrayTwo], false);
     });
-    it('the first item should be "a"', function () {
+    it('the first item should be "a"', () => {
       expect(result[0]).toBe(itemA);
     });
-    it('the second item should be "b"', function () {
+    it('the second item should be "b"', () => {
       expect(result[1]).toBe(itemB);
     });
-    it('the third item should be "c"', function () {
+    it('the third item should be "c"', () => {
       expect(result[2]).toBe(itemC);
     });
-    it('the forth item should be "d"', function () {
+    it('the forth item should be "d"', () => {
       expect(result[3]).toBe(itemD);
     });
   });
-  describe('and using recursion', function () {
-    var result;
-    beforeEach(function () {
+  describe('and using recursion', () => {
+    let result;
+    beforeEach(() => {
       result = array.flatten([arrayOne, arrayTwo], true);
     });
-    it('the first item should be "a"', function () {
+    it('the first item should be "a"', () => {
       expect(result[0]).toBe(itemA);
     });
-    it('the second item should be "b"', function () {
+    it('the second item should be "b"', () => {
       expect(result[1]).toBe(itemB);
     });
-    it('the third item should be "c"', function () {
+    it('the third item should be "c"', () => {
       expect(result[2]).toBe('c');
     });
-    it('the forth item should be "d"', function () {
+    it('the forth item should be "d"', () => {
       expect(result[3]).toBe(itemD);
     });
   });
 });
-describe('when grouping an array', function () {
+describe('when grouping an array', () => {
   'use strict';
 
-  describe('and using objects containing the first three rows of pascals triangle', function () {
-    var groups;
-    beforeEach(function () {
+  describe('and using objects containing the first three rows of pascals triangle', () => {
+    let groups;
+    beforeEach(() => {
       groups = array.groupBy([{
         value: 1
       }, {
@@ -19776,40 +19810,40 @@ describe('when grouping an array', function () {
         return item.value;
       });
     });
-    it('should only contain 2 keys', function () {
+    it('should only contain 2 keys', () => {
       expect(Object.keys(groups).length).toEqual(2);
     });
-    it('should have a key for number one', function () {
+    it('should have a key for number one', () => {
       expect(groups.hasOwnProperty(1)).toEqual(true);
     });
-    it('should have five items grouped for the number one', function () {
+    it('should have five items grouped for the number one', () => {
       expect(groups[1].length).toEqual(5);
     });
-    it('should an object with a value of one for each item grouped for the number one', function () {
-      var group = groups[1];
+    it('should an object with a value of one for each item grouped for the number one', () => {
+      let group = groups[1];
 
-      for (var i = 0; i < group.length; i++) {
+      for (let i = 0; i < group.length; i++) {
         expect(group[i].value).toEqual(1);
       }
     });
-    it('should have one item grouped for the number two', function () {
+    it('should have one item grouped for the number two', () => {
       expect(groups[2].length).toEqual(1);
     });
-    it('should an object with a value of two for each item grouped for the number two', function () {
-      var group = groups[2];
+    it('should an object with a value of two for each item grouped for the number two', () => {
+      let group = groups[2];
 
-      for (var i = 0; i < group.length; i++) {
+      for (let i = 0; i < group.length; i++) {
         expect(group[i].value).toEqual(2);
       }
     });
   });
-  describe('when indexing an array', function () {
-    describe('and using objects containing the first three prime numbers', function () {
-      var groups;
-      var one;
-      var two;
-      var three;
-      beforeEach(function () {
+  describe('when indexing an array', () => {
+    describe('and using objects containing the first three prime numbers', () => {
+      let groups;
+      let one;
+      let two;
+      let three;
+      beforeEach(() => {
         groups = array.indexBy([one = {
           value: 1
         }, two = {
@@ -19820,35 +19854,35 @@ describe('when grouping an array', function () {
           return item.value;
         });
       });
-      it('should contain 3 keys', function () {
+      it('should contain 3 keys', () => {
         expect(Object.keys(groups).length).toEqual(3);
       });
-      it('should have a key for number one', function () {
+      it('should have a key for number one', () => {
         expect(groups.hasOwnProperty(1)).toEqual(true);
       });
-      it('should have a key for number two', function () {
+      it('should have a key for number two', () => {
         expect(groups.hasOwnProperty(2)).toEqual(true);
       });
-      it('should have a key for number three', function () {
+      it('should have a key for number three', () => {
         expect(groups.hasOwnProperty(3)).toEqual(true);
       });
-      it('should have the first object at key one', function () {
+      it('should have the first object at key one', () => {
         expect(groups[1]).toBe(one);
       });
-      it('should have the first object at key one', function () {
+      it('should have the first object at key one', () => {
         expect(groups[2]).toBe(two);
       });
-      it('should have the first object at key one', function () {
+      it('should have the first object at key one', () => {
         expect(groups[3]).toBe(three);
       });
     });
   });
 });
-describe('when batching an array', function () {
-  describe('when keys are sorted', function () {
-    var batches;
-    var one, two, three, four, five;
-    beforeEach(function () {
+describe('when batching an array', () => {
+  describe('when keys are sorted', () => {
+    let batches;
+    let one, two, three, four, five;
+    beforeEach(() => {
       batches = array.batchBy([one = {
         value: 'a'
       }, two = {
@@ -19863,23 +19897,23 @@ describe('when batching an array', function () {
         return item.value;
       });
     });
-    it('should contain 3 batches', function () {
+    it('should contain 3 batches', () => {
       expect(batches.length).toEqual(3);
     });
-    it('should have 1 item in first batch', function () {
+    it('should have 1 item in first batch', () => {
       expect(batches[0].length).toEqual(1);
     });
-    it('should have 2 items in second batch', function () {
+    it('should have 2 items in second batch', () => {
       expect(batches[1].length).toEqual(2);
     });
-    it('should have 2 items in third batch', function () {
+    it('should have 2 items in third batch', () => {
       expect(batches[2].length).toEqual(2);
     });
   });
-  describe('when keys are not sorted', function () {
-    var batches;
-    var one, two, three, four, five;
-    beforeEach(function () {
+  describe('when keys are not sorted', () => {
+    let batches;
+    let one, two, three, four, five;
+    beforeEach(() => {
       batches = array.batchBy([one = {
         value: 'a'
       }, two = {
@@ -19894,115 +19928,115 @@ describe('when batching an array', function () {
         return item.value;
       });
     });
-    it('should contain 4 batches', function () {
+    it('should contain 4 batches', () => {
       expect(batches.length).toEqual(4);
     });
-    it('should have 1 item in first batch', function () {
+    it('should have 1 item in first batch', () => {
       expect(batches[0].length).toEqual(1);
     });
-    it('should have 1 item in second batch', function () {
+    it('should have 1 item in second batch', () => {
       expect(batches[1].length).toEqual(1);
     });
-    it('should have 1 item in third batch', function () {
+    it('should have 1 item in third batch', () => {
       expect(batches[2].length).toEqual(1);
     });
-    it('should have 2 items in fourth batch', function () {
+    it('should have 2 items in fourth batch', () => {
       expect(batches[3].length).toEqual(2);
     });
   });
 });
-describe('when calculating the "difference" between two arrays', function () {
-  describe('and the arrays are empty', function () {
-    var difference;
+describe('when calculating the "difference" between two arrays', () => {
+  describe('and the arrays are empty', () => {
+    let difference;
     beforeEach(() => {
       difference = array.difference([], []);
     });
-    it('should be an array', function () {
+    it('should be an array', () => {
       expect(difference instanceof Array).toEqual(true);
     });
-    it('should be empty', function () {
+    it('should be empty', () => {
       expect(difference.length).toEqual(0);
     });
   });
-  describe('and first array is [1,2] and the second array is [2,3]', function () {
-    var difference;
+  describe('and first array is [1,2] and the second array is [2,3]', () => {
+    let difference;
     beforeEach(() => {
       difference = array.difference([1, 2], [2, 3]);
     });
-    it('should be an array', function () {
+    it('should be an array', () => {
       expect(difference instanceof Array).toEqual(true);
     });
-    it('should contain one element', function () {
+    it('should contain one element', () => {
       expect(difference.length).toEqual(1);
     });
-    it('the first element should be 1', function () {
+    it('the first element should be 1', () => {
       expect(difference[0]).toEqual(1);
     });
   });
-  describe('and first array is [2,3] and the second array is [1,2]', function () {
-    var difference;
+  describe('and first array is [2,3] and the second array is [1,2]', () => {
+    let difference;
     beforeEach(() => {
       difference = array.difference([2, 3], [1, 2]);
     });
-    it('should be an array', function () {
+    it('should be an array', () => {
       expect(difference instanceof Array).toEqual(true);
     });
-    it('should contain one element', function () {
+    it('should contain one element', () => {
       expect(difference.length).toEqual(1);
     });
-    it('the first element should be 3', function () {
+    it('the first element should be 3', () => {
       expect(difference[0]).toEqual(3);
     });
   });
-  describe('and first array has a unique object and both arrays share an object', function () {
-    var same;
-    var unique;
-    var difference;
+  describe('and first array has a unique object and both arrays share an object', () => {
+    let same;
+    let unique;
+    let difference;
     beforeEach(() => {
       same = {};
       difference = array.difference([same, unique = {}], [same]);
     });
-    it('should be an array', function () {
+    it('should be an array', () => {
       expect(difference instanceof Array).toEqual(true);
     });
-    it('should contain one element', function () {
+    it('should contain one element', () => {
       expect(difference.length).toEqual(1);
     });
-    it('the first element should be the unique object', function () {
+    it('the first element should be the unique object', () => {
       expect(difference[0]).toBe(unique);
     });
   });
-  describe('and second array has a unique object and both arrays share an object', function () {
-    var same;
-    var unique;
-    var difference;
+  describe('and second array has a unique object and both arrays share an object', () => {
+    let same;
+    let unique;
+    let difference;
     beforeEach(() => {
       same = {};
       difference = array.difference([same], [same, unique = {}]);
     });
-    it('should be an array', function () {
+    it('should be an array', () => {
       expect(difference instanceof Array).toEqual(true);
     });
-    it('should contain zero elements', function () {
+    it('should contain zero elements', () => {
       expect(difference.length).toEqual(0);
     });
   });
 });
-describe('when calculating the "difference" between two arrays using key selectors', function () {
-  describe('and the arrays are empty', function () {
-    var difference;
+describe('when calculating the "difference" between two arrays using key selectors', () => {
+  describe('and the arrays are empty', () => {
+    let difference;
     beforeEach(() => {
       difference = array.differenceBy([], [], x => x.key);
     });
-    it('should be an array', function () {
+    it('should be an array', () => {
       expect(difference instanceof Array).toEqual(true);
     });
-    it('should be empty', function () {
+    it('should be empty', () => {
       expect(difference.length).toEqual(0);
     });
   });
-  describe('and first array is [{key:1}, {key:2}] and the second array is [{key:2}, {key:3}]', function () {
-    var difference;
+  describe('and first array is [{key:1}, {key:2}] and the second array is [{key:2}, {key:3}]', () => {
+    let difference;
     beforeEach(() => {
       difference = array.differenceBy([{
         key: 1
@@ -20014,18 +20048,18 @@ describe('when calculating the "difference" between two arrays using key selecto
         key: 3
       }], x => x.key);
     });
-    it('should be an array', function () {
+    it('should be an array', () => {
       expect(difference instanceof Array).toEqual(true);
     });
-    it('should contain one element', function () {
+    it('should contain one element', () => {
       expect(difference.length).toEqual(1);
     });
-    it('the first element key should be 1', function () {
+    it('the first element key should be 1', () => {
       expect(difference[0].key).toEqual(1);
     });
   });
-  describe('and first array is [{key:2}, {key:3}] and the second array is [{key:1}, {key:2}] ', function () {
-    var difference;
+  describe('and first array is [{key:2}, {key:3}] and the second array is [{key:1}, {key:2}] ', () => {
+    let difference;
     beforeEach(() => {
       difference = array.differenceBy([{
         key: 2
@@ -20037,88 +20071,88 @@ describe('when calculating the "difference" between two arrays using key selecto
         key: 2
       }], x => x.key);
     });
-    it('should be an array', function () {
+    it('should be an array', () => {
       expect(difference instanceof Array).toEqual(true);
     });
-    it('should contain one element', function () {
+    it('should contain one element', () => {
       expect(difference.length).toEqual(1);
     });
-    it('the first element key should be 3', function () {
+    it('the first element key should be 3', () => {
       expect(difference[0].key).toEqual(3);
     });
   });
 });
-describe('when calculating the "union" of two arrays', function () {
-  describe('and the arrays are empty', function () {
-    var union;
+describe('when calculating the "union" of two arrays', () => {
+  describe('and the arrays are empty', () => {
+    let union;
     beforeEach(() => {
       union = array.union([], []);
     });
-    it('should be an array', function () {
+    it('should be an array', () => {
       expect(union instanceof Array).toEqual(true);
     });
-    it('should be empty', function () {
+    it('should be empty', () => {
       expect(union.length).toEqual(0);
     });
   });
-  describe('and first array is [1,2] and the second array is [2,3]', function () {
-    var union;
+  describe('and first array is [1,2] and the second array is [2,3]', () => {
+    let union;
     beforeEach(() => {
       union = array.union([1, 2], [2, 3]);
     });
-    it('should be an array', function () {
+    it('should be an array', () => {
       expect(union instanceof Array).toEqual(true);
     });
-    it('should contain three elements', function () {
+    it('should contain three elements', () => {
       expect(union.length).toEqual(3);
     });
-    it('the first element should be 1', function () {
+    it('the first element should be 1', () => {
       expect(union[0]).toEqual(1);
     });
-    it('the second element should be 2', function () {
+    it('the second element should be 2', () => {
       expect(union[1]).toEqual(2);
     });
-    it('the third element should be 3', function () {
+    it('the third element should be 3', () => {
       expect(union[2]).toEqual(3);
     });
   });
-  describe('and first array has a unique object and both arrays share an object', function () {
-    var same;
-    var unique;
-    var union;
+  describe('and first array has a unique object and both arrays share an object', () => {
+    let same;
+    let unique;
+    let union;
     beforeEach(() => {
       same = {};
       union = array.union([same, unique = {}], [same]);
     });
-    it('should be an array', function () {
+    it('should be an array', () => {
       expect(union instanceof Array).toEqual(true);
     });
-    it('should contain two elements', function () {
+    it('should contain two elements', () => {
       expect(union.length).toEqual(2);
     });
-    it('the first element the should be "same" object', function () {
+    it('the first element the should be "same" object', () => {
       expect(union[0]).toBe(same);
     });
-    it('the second element the should be "unique" object', function () {
+    it('the second element the should be "unique" object', () => {
       expect(union[1]).toBe(unique);
     });
   });
 });
-describe('when calculating the "union" of two arrays using key selectors', function () {
-  describe('and the arrays are empty', function () {
-    var union;
+describe('when calculating the "union" of two arrays using key selectors', () => {
+  describe('and the arrays are empty', () => {
+    let union;
     beforeEach(() => {
       union = array.unionBy([], [], x => x.key);
     });
-    it('should be an array', function () {
+    it('should be an array', () => {
       expect(union instanceof Array).toEqual(true);
     });
-    it('should be empty', function () {
+    it('should be empty', () => {
       expect(union.length).toEqual(0);
     });
   });
-  describe('and first array is [{key:1}, {key:2}] and the second array is [{key:2}, {key:3}]', function () {
-    var union;
+  describe('and first array is [{key:1}, {key:2}] and the second array is [{key:2}, {key:3}]', () => {
+    let union;
     beforeEach(() => {
       union = array.unionBy([{
         key: 1
@@ -20130,24 +20164,24 @@ describe('when calculating the "union" of two arrays using key selectors', funct
         key: 3
       }], x => x.key);
     });
-    it('should be an array', function () {
+    it('should be an array', () => {
       expect(union instanceof Array).toEqual(true);
     });
-    it('should contain three elements', function () {
+    it('should contain three elements', () => {
       expect(union.length).toEqual(3);
     });
-    it('the first element key should be 1', function () {
+    it('the first element key should be 1', () => {
       expect(union[0].key).toEqual(1);
     });
-    it('the second element key should be 2', function () {
+    it('the second element key should be 2', () => {
       expect(union[1].key).toEqual(2);
     });
-    it('the third element key should be 3', function () {
+    it('the third element key should be 3', () => {
       expect(union[2].key).toEqual(3);
     });
   });
-  describe('and first array has a unique object and both arrays share an object', function () {
-    var union;
+  describe('and first array has a unique object and both arrays share an object', () => {
+    let union;
     beforeEach(() => {
       union = array.unionBy([{
         key: 1
@@ -20157,82 +20191,82 @@ describe('when calculating the "union" of two arrays using key selectors', funct
         key: 2
       }], x => x.key);
     });
-    it('should be an array', function () {
+    it('should be an array', () => {
       expect(union instanceof Array).toEqual(true);
     });
-    it('should contain two elements', function () {
+    it('should contain two elements', () => {
       expect(union.length).toEqual(2);
     });
-    it('the first element key the should be "same" object key', function () {
+    it('the first element key the should be "same" object key', () => {
       expect(union[0].key).toEqual(1);
     });
-    it('the second element key the should be "unique" object key', function () {
+    it('the second element key the should be "unique" object key', () => {
       expect(union[1].key).toEqual(2);
     });
   });
 });
-describe('when calculating the "intersection" of two arrays', function () {
-  describe('and the arrays are empty', function () {
-    var intersection;
+describe('when calculating the "intersection" of two arrays', () => {
+  describe('and the arrays are empty', () => {
+    let intersection;
     beforeEach(() => {
       intersection = array.intersection([], []);
     });
-    it('should be an array', function () {
+    it('should be an array', () => {
       expect(intersection instanceof Array).toEqual(true);
     });
-    it('should be empty', function () {
+    it('should be empty', () => {
       expect(intersection.length).toEqual(0);
     });
   });
-  describe('and first array is [1,2] and the second array is [2,3]', function () {
-    var intersection;
+  describe('and first array is [1,2] and the second array is [2,3]', () => {
+    let intersection;
     beforeEach(() => {
       intersection = array.intersection([1, 2], [2, 3]);
     });
-    it('should be an array', function () {
+    it('should be an array', () => {
       expect(intersection instanceof Array).toEqual(true);
     });
-    it('should contain one element', function () {
+    it('should contain one element', () => {
       expect(intersection.length).toEqual(1);
     });
-    it('the first element should be 2', function () {
+    it('the first element should be 2', () => {
       expect(intersection[0]).toEqual(2);
     });
   });
-  describe('and first array has a unique object and both arrays share an object', function () {
-    var same;
-    var unique;
-    var intersection;
+  describe('and first array has a unique object and both arrays share an object', () => {
+    let same;
+    let unique;
+    let intersection;
     beforeEach(() => {
       same = {};
       intersection = array.intersection([same, unique = {}], [same]);
     });
-    it('should be an array', function () {
+    it('should be an array', () => {
       expect(intersection instanceof Array).toEqual(true);
     });
-    it('should contain one elements', function () {
+    it('should contain one elements', () => {
       expect(intersection.length).toEqual(1);
     });
-    it('the first element the "same" object', function () {
+    it('the first element the "same" object', () => {
       expect(intersection[0]).toBe(same);
     });
   });
 });
-describe('when calculating the "intersection" of two arrays using key selectors', function () {
-  describe('and the arrays are empty', function () {
-    var intersection;
+describe('when calculating the "intersection" of two arrays using key selectors', () => {
+  describe('and the arrays are empty', () => {
+    let intersection;
     beforeEach(() => {
       intersection = array.intersectionBy([], [], x => x.key);
     });
-    it('should be an array', function () {
+    it('should be an array', () => {
       expect(intersection instanceof Array).toEqual(true);
     });
-    it('should be empty', function () {
+    it('should be empty', () => {
       expect(intersection.length).toEqual(0);
     });
   });
-  describe('and first array is [{key:1}, {key:2}] and the second array is [{key:2}, {key:3}]', function () {
-    var intersection;
+  describe('and first array is [{key:1}, {key:2}] and the second array is [{key:2}, {key:3}]', () => {
+    let intersection;
     beforeEach(() => {
       intersection = array.intersectionBy([{
         key: 1
@@ -20244,20 +20278,20 @@ describe('when calculating the "intersection" of two arrays using key selectors'
         key: 3
       }], x => x.key);
     });
-    it('should be an array', function () {
+    it('should be an array', () => {
       expect(intersection instanceof Array).toEqual(true);
     });
-    it('should contain one element', function () {
+    it('should contain one element', () => {
       expect(intersection.length).toEqual(1);
     });
-    it('the first element should have key 2', function () {
+    it('the first element should have key 2', () => {
       expect(intersection[0].key).toEqual(2);
     });
   });
-  describe('and first array has a unique object and both arrays share an object', function () {
-    var same;
-    var unique;
-    var intersection;
+  describe('and first array has a unique object and both arrays share an object', () => {
+    let same;
+    let unique;
+    let intersection;
     beforeEach(() => {
       intersection = array.intersectionBy([{
         key: 1
@@ -20267,82 +20301,82 @@ describe('when calculating the "intersection" of two arrays using key selectors'
         key: 2
       }], x => x.key);
     });
-    it('should be an array', function () {
+    it('should be an array', () => {
       expect(intersection instanceof Array).toEqual(true);
     });
-    it('should contain one elements', function () {
+    it('should contain one elements', () => {
       expect(intersection.length).toEqual(1);
     });
-    it('the first element key should the "same" object key', function () {
+    it('the first element key should the "same" object key', () => {
       expect(intersection[0].key).toEqual(2);
     });
   });
 });
-describe('when calculating the "symmetric difference" of two arrays', function () {
-  describe('and the arrays are empty', function () {
-    var difference;
+describe('when calculating the "symmetric difference" of two arrays', () => {
+  describe('and the arrays are empty', () => {
+    let difference;
     beforeEach(() => {
       difference = array.differenceSymmetric([], []);
     });
-    it('should be an array', function () {
+    it('should be an array', () => {
       expect(difference instanceof Array).toEqual(true);
     });
-    it('should be empty', function () {
+    it('should be empty', () => {
       expect(difference.length).toEqual(0);
     });
   });
-  describe('and first array is [1,2] and the second array is [2,3]', function () {
-    var difference;
+  describe('and first array is [1,2] and the second array is [2,3]', () => {
+    let difference;
     beforeEach(() => {
       difference = array.differenceSymmetric([1, 2], [2, 3]);
     });
-    it('should be an array', function () {
+    it('should be an array', () => {
       expect(difference instanceof Array).toEqual(true);
     });
-    it('should contain two elements', function () {
+    it('should contain two elements', () => {
       expect(difference.length).toEqual(2);
     });
-    it('the first element should be 1', function () {
+    it('the first element should be 1', () => {
       expect(difference[0]).toEqual(1);
     });
-    it('the second element should be 3', function () {
+    it('the second element should be 3', () => {
       expect(difference[1]).toEqual(3);
     });
   });
-  describe('and first array has a unique object and both arrays share an object', function () {
-    var same;
-    var unique;
-    var difference;
+  describe('and first array has a unique object and both arrays share an object', () => {
+    let same;
+    let unique;
+    let difference;
     beforeEach(() => {
       same = {};
       difference = array.differenceSymmetric([same, unique = {}], [same]);
     });
-    it('should be an array', function () {
+    it('should be an array', () => {
       expect(difference instanceof Array).toEqual(true);
     });
-    it('should contain one elements', function () {
+    it('should contain one elements', () => {
       expect(difference.length).toEqual(1);
     });
-    it('the first element the "unique" object', function () {
+    it('the first element the "unique" object', () => {
       expect(difference[0]).toBe(unique);
     });
   });
 });
-describe('when calculating the "symmetric difference" of two arrays using key selectors', function () {
-  describe('and the arrays are empty', function () {
-    var difference;
+describe('when calculating the "symmetric difference" of two arrays using key selectors', () => {
+  describe('and the arrays are empty', () => {
+    let difference;
     beforeEach(() => {
       difference = array.differenceSymmetricBy([], [], x => x.key);
     });
-    it('should be an array', function () {
+    it('should be an array', () => {
       expect(difference instanceof Array).toEqual(true);
     });
-    it('should be empty', function () {
+    it('should be empty', () => {
       expect(difference.length).toEqual(0);
     });
   });
-  describe('and first array is [{key:1}, {key:2}] and the second array is [{key:2}, {key:3}]', function () {
-    var difference;
+  describe('and first array is [{key:1}, {key:2}] and the second array is [{key:2}, {key:3}]', () => {
+    let difference;
     beforeEach(() => {
       difference = array.differenceSymmetricBy([{
         key: 1
@@ -20354,21 +20388,21 @@ describe('when calculating the "symmetric difference" of two arrays using key se
         key: 3
       }], x => x.key);
     });
-    it('should be an array', function () {
+    it('should be an array', () => {
       expect(difference instanceof Array).toEqual(true);
     });
-    it('should contain two elements', function () {
+    it('should contain two elements', () => {
       expect(difference.length).toEqual(2);
     });
-    it('the first element should have key 1', function () {
+    it('the first element should have key 1', () => {
       expect(difference[0].key).toEqual(1);
     });
-    it('the second element should be 3', function () {
+    it('the second element should be 3', () => {
       expect(difference[1].key).toEqual(3);
     });
   });
-  describe('and first array has a unique object and both arrays share an object', function () {
-    var difference;
+  describe('and first array has a unique object and both arrays share an object', () => {
+    let difference;
     beforeEach(() => {
       difference = array.differenceSymmetricBy([{
         key: 1
@@ -20378,112 +20412,112 @@ describe('when calculating the "symmetric difference" of two arrays using key se
         key: 2
       }], x => x.key);
     });
-    it('should be an array', function () {
+    it('should be an array', () => {
       expect(difference instanceof Array).toEqual(true);
     });
-    it('should contain one elements', function () {
+    it('should contain one elements', () => {
       expect(difference.length).toEqual(1);
     });
-    it('the first element the "unique" object', function () {
+    it('the first element the "unique" object', () => {
       expect(difference[0].key).toEqual(1);
     });
   });
 });
-describe('when taking the first item of an array', function () {
-  it('an undefined value should be returned from an empty array', function () {
-    var value = array.first([]);
+describe('when taking the first item of an array', () => {
+  it('an undefined value should be returned from an empty array', () => {
+    let value = array.first([]);
     expect(value).toEqual(undefined);
   });
-  it('the first value should be returned from a non-empty array', function () {
-    var a = {};
-    var b = {};
-    var value = array.first([a, b]);
+  it('the first value should be returned from a non-empty array', () => {
+    let a = {};
+    let b = {};
+    let value = array.first([a, b]);
     expect(value).toBe(a);
   });
 });
-describe('when taking the last item of an array', function () {
-  it('an undefined value should be returned from an empty array', function () {
-    var value = array.last([]);
+describe('when taking the last item of an array', () => {
+  it('an undefined value should be returned from an empty array', () => {
+    let value = array.last([]);
     expect(value).toEqual(undefined);
   });
-  it('the last value should be returned from a non-empty array', function () {
-    var a = {};
-    var b = {};
-    var value = array.last([a, b]);
+  it('the last value should be returned from a non-empty array', () => {
+    let a = {};
+    let b = {};
+    let value = array.last([a, b]);
     expect(value).toBe(b);
   });
 });
-describe('when removing an item from an array using a predicate', function () {
-  var a;
-  var item;
-  beforeEach(function () {
+describe('when removing an item from an array using a predicate', () => {
+  let a;
+  let item;
+  beforeEach(() => {
     a = [{}, item = {}, {}];
 
-    var predicate = function (i) {
+    let predicate = function (i) {
       return i === item;
     };
 
     array.remove(a, predicate);
   });
-  it('should have two items', function () {
+  it('should have two items', () => {
     expect(a.length).toEqual(2);
   });
-  it('the first item should not be the removed item', function () {
+  it('the first item should not be the removed item', () => {
     expect(a[0]).not.toBe(item);
   });
-  it('the second item should not be the removed item', function () {
+  it('the second item should not be the removed item', () => {
     expect(a[1]).not.toBe(item);
   });
 });
 
 },{"./../../../lang/array":29}],101:[function(require,module,exports){
-var attributes = require('./../../../lang/attributes');
+const attributes = require('./../../../lang/attributes');
 
-describe('When "attributes.has" is used to check a top-level property', function () {
+describe('When "attributes.has" is used to check a top-level property', () => {
   'use strict';
 
-  var target;
-  beforeEach(function () {
+  let target;
+  beforeEach(() => {
     target = {
       test: 123
     };
   });
-  describe("and the property exists", function () {
-    it("should return true", function () {
+  describe("and the property exists", () => {
+    it("should return true", () => {
       expect(attributes.has(target, "test")).toEqual(true);
     });
   });
-  describe("and the property does not exist", function () {
-    it("should return true", function () {
+  describe("and the property does not exist", () => {
+    it("should return true", () => {
       expect(attributes.has(target, "name")).toEqual(false);
     });
   });
 });
-describe('When "attributes.has" is used to check a top-level property (with an array)', function () {
+describe('When "attributes.has" is used to check a top-level property (with an array)', () => {
   'use strict';
 
-  var target;
-  beforeEach(function () {
+  let target;
+  beforeEach(() => {
     target = {
       test: 123
     };
   });
-  describe("and the property exists", function () {
-    it("should return true", function () {
+  describe("and the property exists", () => {
+    it("should return true", () => {
       expect(attributes.has(target, ["test"])).toEqual(true);
     });
   });
-  describe("and the property does not exist", function () {
-    it("should return true", function () {
+  describe("and the property does not exist", () => {
+    it("should return true", () => {
       expect(attributes.has(target, ["name"])).toEqual(false);
     });
   });
 });
-describe('When "attributes.has" is used to check a second-level property', function () {
+describe('When "attributes.has" is used to check a second-level property', () => {
   'use strict';
 
-  var target;
-  beforeEach(function () {
+  let target;
+  beforeEach(() => {
     target = {
       nested: {
         test: 123
@@ -20492,1289 +20526,1289 @@ describe('When "attributes.has" is used to check a second-level property', funct
       b: null
     };
   });
-  describe("and the property exists", function () {
-    it("should return true", function () {
+  describe("and the property exists", () => {
+    it("should return true", () => {
       expect(attributes.has(target, "nested.test")).toEqual(true);
     });
   });
-  describe("and the property does not exist", function () {
-    it("should return true", function () {
+  describe("and the property does not exist", () => {
+    it("should return true", () => {
       expect(attributes.has(target, "nested.name")).toEqual(false);
     });
   });
-  describe("and the top-level property does not exist", function () {
-    it("should return true", function () {
+  describe("and the top-level property does not exist", () => {
+    it("should return true", () => {
       expect(attributes.has(target, "wrong.name")).toEqual(false);
     });
   });
-  describe("and the top-level property exists, but is undefined", function () {
-    it("should return true", function () {
+  describe("and the top-level property exists, but is undefined", () => {
+    it("should return true", () => {
       expect(attributes.has(target, "a.name")).toEqual(false);
     });
   });
-  describe("and the top-level property exists, but is null", function () {
-    it("should return true", function () {
+  describe("and the top-level property exists, but is null", () => {
+    it("should return true", () => {
       expect(attributes.has(target, "b.name")).toEqual(false);
     });
   });
 });
-describe('When "attributes.has" is used to check a second-level property (with an array)', function () {
+describe('When "attributes.has" is used to check a second-level property (with an array)', () => {
   'use strict';
 
-  var target;
-  beforeEach(function () {
+  let target;
+  beforeEach(() => {
     target = {
       nested: {
         test: 123
       }
     };
   });
-  describe("and the property exists", function () {
-    it("should return true", function () {
+  describe("and the property exists", () => {
+    it("should return true", () => {
       expect(attributes.has(target, ["nested", "test"])).toEqual(true);
     });
   });
-  describe("and the property does not exist", function () {
-    it("should return true", function () {
+  describe("and the property does not exist", () => {
+    it("should return true", () => {
       expect(attributes.has(target, ["nested", "name"])).toEqual(false);
     });
   });
-  describe("and the top-level property does not exist", function () {
-    it("should return true", function () {
+  describe("and the top-level property does not exist", () => {
+    it("should return true", () => {
       expect(attributes.has(target, ["wrong", "name"])).toEqual(false);
     });
   });
 });
-describe('When "attributes.has" is called with an empty string', function () {
+describe('When "attributes.has" is called with an empty string', () => {
   'use strict';
 
-  var target;
-  beforeEach(function () {
+  let target;
+  beforeEach(() => {
     target = {
       test: 123
     };
   });
-  it("should return false", function () {
+  it("should return false", () => {
     expect(attributes.has(target, "")).toEqual(false);
   });
 });
-describe('When "attributes.has" is called with a zero-length array', function () {
+describe('When "attributes.has" is called with a zero-length array', () => {
   'use strict';
 
-  var target;
-  beforeEach(function () {
+  let target;
+  beforeEach(() => {
     target = {
       test: 123
     };
   });
-  it("should return false", function () {
+  it("should return false", () => {
     expect(attributes.has(target, [])).toEqual(false);
   });
 });
-describe('When "attributes.read" is used to get a top-level property', function () {
+describe('When "attributes.read" is used to get a top-level property', () => {
   'use strict';
 
-  var target;
-  beforeEach(function () {
+  let target;
+  beforeEach(() => {
     target = {
       nested: {
         test: 123
       }
     };
   });
-  describe("and the property exists", function () {
-    it("should return the property value", function () {
+  describe("and the property exists", () => {
+    it("should return the property value", () => {
       expect(attributes.read(target, "nested.test")).toEqual(123);
     });
   });
-  describe("and the property does not exist", function () {
-    it("should be undefined", function () {
+  describe("and the property does not exist", () => {
+    it("should be undefined", () => {
       expect(attributes.read(target, "nested.name")).toBe(undefined);
     });
   });
 });
-describe('When "attributes.read" is used to get a top-level property (with an array)', function () {
+describe('When "attributes.read" is used to get a top-level property (with an array)', () => {
   'use strict';
 
-  var target;
-  beforeEach(function () {
+  let target;
+  beforeEach(() => {
     target = {
       nested: {
         test: 123
       }
     };
   });
-  describe("and the property exists", function () {
-    it("should return the property value", function () {
+  describe("and the property exists", () => {
+    it("should return the property value", () => {
       expect(attributes.read(target, ["nested", "test"])).toEqual(123);
     });
   });
-  describe("and the property does not exist", function () {
-    it("should be undefined", function () {
+  describe("and the property does not exist", () => {
+    it("should be undefined", () => {
       expect(attributes.read(target, ["nested", "name"])).toBe(undefined);
     });
   });
 });
-describe('When "attributes.read" is used to get a second-level property', function () {
+describe('When "attributes.read" is used to get a second-level property', () => {
   'use strict';
 
-  var target;
-  beforeEach(function () {
+  let target;
+  beforeEach(() => {
     target = {
       nested: {
         test: 123
       }
     };
   });
-  describe("and the property exists", function () {
-    it("should return the property value", function () {
+  describe("and the property exists", () => {
+    it("should return the property value", () => {
       expect(attributes.read(target, "nested.test")).toEqual(123);
     });
   });
-  describe("and the property does not exist", function () {
-    it("should be undefined", function () {
+  describe("and the property does not exist", () => {
+    it("should be undefined", () => {
       expect(attributes.read(target, "nested.name")).toBe(undefined);
     });
   });
-  describe("and the top-level property does not exist", function () {
-    it("should be undefined", function () {
+  describe("and the top-level property does not exist", () => {
+    it("should be undefined", () => {
       expect(attributes.read(target, "wrong.name")).toBe(undefined);
     });
   });
 });
-describe('When "attributes.read" is used to get a second-level property (with an array)', function () {
+describe('When "attributes.read" is used to get a second-level property (with an array)', () => {
   'use strict';
 
-  var target;
-  beforeEach(function () {
+  let target;
+  beforeEach(() => {
     target = {
       nested: {
         test: 123
       }
     };
   });
-  describe("and the property exists", function () {
-    it("should return the property value", function () {
+  describe("and the property exists", () => {
+    it("should return the property value", () => {
       expect(attributes.read(target, ["nested", "test"])).toEqual(123);
     });
   });
-  describe("and the property does not exist", function () {
-    it("should be undefined", function () {
+  describe("and the property does not exist", () => {
+    it("should be undefined", () => {
       expect(attributes.read(target, ["nested", "name"])).toBe(undefined);
     });
   });
-  describe("and the top-level property does not exist", function () {
-    it("should be undefined", function () {
+  describe("and the top-level property does not exist", () => {
+    it("should be undefined", () => {
       expect(attributes.read(target, ["wrong", "name"])).toBe(undefined);
     });
   });
 });
-describe('When "attributes.read" is called with an empty string', function () {
+describe('When "attributes.read" is called with an empty string', () => {
   'use strict';
 
-  var target;
-  beforeEach(function () {
+  let target;
+  beforeEach(() => {
     target = {
       test: 123
     };
   });
-  it("should return an undefined value", function () {
+  it("should return an undefined value", () => {
     expect(attributes.read(target, "")).toBe(undefined);
   });
 });
-describe('When "attributes.read" is called with a zero-length array', function () {
+describe('When "attributes.read" is called with a zero-length array', () => {
   'use strict';
 
-  var target;
-  beforeEach(function () {
+  let target;
+  beforeEach(() => {
     target = {
       test: 123
     };
   });
-  it("should return an undefined value", function () {
+  it("should return an undefined value", () => {
     expect(attributes.read(target, [])).toBe(undefined);
   });
 });
-describe('When "attributes.write" is used to set a top-level property', function () {
+describe('When "attributes.write" is used to set a top-level property', () => {
   'use strict';
 
-  var target;
-  beforeEach(function () {
+  let target;
+  beforeEach(() => {
     target = {
       test: 123
     };
   });
-  describe("and the property exists", function () {
-    beforeEach(function () {
+  describe("and the property exists", () => {
+    beforeEach(() => {
       attributes.write(target, "test", "four-five-six");
     });
-    it("the property value should be overwritten", function () {
+    it("the property value should be overwritten", () => {
       expect(target.test).toEqual("four-five-six");
     });
   });
-  describe("and the property does not exist", function () {
-    beforeEach(function () {
+  describe("and the property does not exist", () => {
+    beforeEach(() => {
       attributes.write(target, "name", "Alice");
     });
-    it("the property value should be created and set", function () {
+    it("the property value should be created and set", () => {
       expect(target.name).toEqual("Alice");
     });
   });
 });
-describe('When "attributes.write" is used to set a top-level property (with an array)', function () {
+describe('When "attributes.write" is used to set a top-level property (with an array)', () => {
   'use strict';
 
-  var target;
-  beforeEach(function () {
+  let target;
+  beforeEach(() => {
     target = {
       test: 123
     };
   });
-  describe("and the property exists", function () {
-    beforeEach(function () {
+  describe("and the property exists", () => {
+    beforeEach(() => {
       attributes.write(target, ["test"], "four-five-six");
     });
-    it("the property value should be overwritten", function () {
+    it("the property value should be overwritten", () => {
       expect(target.test).toEqual("four-five-six");
     });
   });
-  describe("and the property does not exist", function () {
-    beforeEach(function () {
+  describe("and the property does not exist", () => {
+    beforeEach(() => {
       attributes.write(target, ["name"], "Alice");
     });
-    it("the property value should be created and set", function () {
+    it("the property value should be created and set", () => {
       expect(target.name).toEqual("Alice");
     });
   });
 });
-describe('When "attributes.write" is used to set a second-level property', function () {
+describe('When "attributes.write" is used to set a second-level property', () => {
   'use strict';
 
-  var target;
-  beforeEach(function () {
+  let target;
+  beforeEach(() => {
     target = {
       nested: {
         test: 123
       }
     };
   });
-  describe("and the property exists", function () {
-    beforeEach(function () {
+  describe("and the property exists", () => {
+    beforeEach(() => {
       attributes.write(target, "nested.test", "four-five-six");
     });
-    it("the property value should be overwritten", function () {
+    it("the property value should be overwritten", () => {
       expect(target.nested.test).toEqual("four-five-six");
     });
   });
-  describe("and the second-level property does not exist", function () {
-    beforeEach(function () {
+  describe("and the second-level property does not exist", () => {
+    beforeEach(() => {
       attributes.write(target, "nested.name", "Alice");
     });
-    it("the property value should be created and set", function () {
+    it("the property value should be created and set", () => {
       expect(target.nested.name).toEqual("Alice");
     });
   });
-  describe("and the top-level property does not exist", function () {
-    beforeEach(function () {
+  describe("and the top-level property does not exist", () => {
+    beforeEach(() => {
       attributes.write(target, "x.y", "z");
     });
-    it("the top-level and second properties value should be created and set", function () {
+    it("the top-level and second properties value should be created and set", () => {
       expect(target.x.y).toEqual("z");
     });
   });
 });
-describe('When "attributes.write" is used to set a second-level property (using an array)', function () {
+describe('When "attributes.write" is used to set a second-level property (using an array)', () => {
   'use strict';
 
-  var target;
-  beforeEach(function () {
+  let target;
+  beforeEach(() => {
     target = {
       nested: {
         test: 123
       }
     };
   });
-  describe("and the property exists", function () {
-    beforeEach(function () {
+  describe("and the property exists", () => {
+    beforeEach(() => {
       attributes.write(target, ["nested", "test"], "four-five-six");
     });
-    it("the property value should be overwritten", function () {
+    it("the property value should be overwritten", () => {
       expect(target.nested.test).toEqual("four-five-six");
     });
   });
-  describe("and the second-level property does not exist", function () {
-    beforeEach(function () {
+  describe("and the second-level property does not exist", () => {
+    beforeEach(() => {
       attributes.write(target, ["nested", "name"], "Alice");
     });
-    it("the property value should be created and set", function () {
+    it("the property value should be created and set", () => {
       expect(target.nested.name).toEqual("Alice");
     });
   });
-  describe("and the top-level property does not exist", function () {
-    beforeEach(function () {
+  describe("and the top-level property does not exist", () => {
+    beforeEach(() => {
       attributes.write(target, ["x", "y"], "z");
     });
-    it("the top-level and second properties value should be created and set", function () {
+    it("the top-level and second properties value should be created and set", () => {
       expect(target.x.y).toEqual("z");
     });
   });
 });
-describe('When "attributes.erase" is used to remove a top-level property', function () {
+describe('When "attributes.erase" is used to remove a top-level property', () => {
   'use strict';
 
-  var target;
-  beforeEach(function () {
+  let target;
+  beforeEach(() => {
     target = {
       test: 123
     };
   });
-  describe("and the property exists", function () {
-    beforeEach(function () {
+  describe("and the property exists", () => {
+    beforeEach(() => {
       attributes.erase(target, "test");
     });
-    it("the property value not exist", function () {
+    it("the property value not exist", () => {
       expect(target.hasOwnProperty("test")).toEqual(false);
     });
   });
-  describe("and the property does not exist", function () {
-    beforeEach(function () {
+  describe("and the property does not exist", () => {
+    beforeEach(() => {
       attributes.erase(target, "name");
     });
-    it("the target should be unaffected", function () {
+    it("the target should be unaffected", () => {
       expect(target.hasOwnProperty("test")).toEqual(true);
     });
   });
 });
-describe('When "attributes.erase" is used to remove a top-level property (using an array)', function () {
+describe('When "attributes.erase" is used to remove a top-level property (using an array)', () => {
   'use strict';
 
-  var target;
-  beforeEach(function () {
+  let target;
+  beforeEach(() => {
     target = {
       test: 123
     };
   });
-  describe("and the property exists", function () {
-    beforeEach(function () {
+  describe("and the property exists", () => {
+    beforeEach(() => {
       attributes.erase(target, ["test"]);
     });
-    it("the property value not exist", function () {
+    it("the property value not exist", () => {
       expect(target.hasOwnProperty("test")).toEqual(false);
     });
   });
-  describe("and the property does not exist", function () {
-    beforeEach(function () {
+  describe("and the property does not exist", () => {
+    beforeEach(() => {
       attributes.erase(target, ["name"]);
     });
-    it("the target should be unaffected", function () {
+    it("the target should be unaffected", () => {
       expect(target.hasOwnProperty("test")).toEqual(true);
     });
   });
 });
-describe('When "attributes.erase" is used to remove a second-level property', function () {
+describe('When "attributes.erase" is used to remove a second-level property', () => {
   'use strict';
 
-  var target;
-  beforeEach(function () {
+  let target;
+  beforeEach(() => {
     target = {
       nested: {
         test: 123
       }
     };
   });
-  describe("and the property exists", function () {
-    beforeEach(function () {
+  describe("and the property exists", () => {
+    beforeEach(() => {
       attributes.erase(target, "nested.test");
     });
-    it("the property value not exist", function () {
+    it("the property value not exist", () => {
       expect(target.hasOwnProperty("nested")).toEqual(true);
       expect(target.nested.hasOwnProperty("test")).toEqual(false);
     });
   });
-  describe("and the second-level property does not exist", function () {
-    beforeEach(function () {
+  describe("and the second-level property does not exist", () => {
+    beforeEach(() => {
       attributes.erase(target, "nested.name");
     });
-    it("the target should be unaffected", function () {
+    it("the target should be unaffected", () => {
       expect(target.hasOwnProperty("nested")).toEqual(true);
       expect(target.nested.hasOwnProperty("test")).toEqual(true);
     });
   });
-  describe("and the top-level property does not exist", function () {
-    beforeEach(function () {
+  describe("and the top-level property does not exist", () => {
+    beforeEach(() => {
       attributes.erase(target, "x.y");
     });
-    it("the target should be unaffected", function () {
+    it("the target should be unaffected", () => {
       expect(target.hasOwnProperty("nested")).toEqual(true);
       expect(target.nested.hasOwnProperty("test")).toEqual(true);
     });
   });
 });
-describe('When "attributes.erase" is used to remove a second-level property (using an array)', function () {
+describe('When "attributes.erase" is used to remove a second-level property (using an array)', () => {
   'use strict';
 
-  var target;
-  beforeEach(function () {
+  let target;
+  beforeEach(() => {
     target = {
       nested: {
         test: 123
       }
     };
   });
-  describe("and the property exists", function () {
-    beforeEach(function () {
+  describe("and the property exists", () => {
+    beforeEach(() => {
       attributes.erase(target, ["nested", "test"]);
     });
-    it("the property value not exist", function () {
+    it("the property value not exist", () => {
       expect(target.hasOwnProperty("nested")).toEqual(true);
       expect(target.nested.hasOwnProperty("test")).toEqual(false);
     });
   });
-  describe("and the second-level property does not exist", function () {
-    beforeEach(function () {
+  describe("and the second-level property does not exist", () => {
+    beforeEach(() => {
       attributes.erase(target, ["nested", "name"]);
     });
-    it("the target should be unaffected", function () {
+    it("the target should be unaffected", () => {
       expect(target.hasOwnProperty("nested")).toEqual(true);
       expect(target.nested.hasOwnProperty("test")).toEqual(true);
     });
   });
-  describe("and the top-level property does not exist", function () {
-    beforeEach(function () {
+  describe("and the top-level property does not exist", () => {
+    beforeEach(() => {
       attributes.erase(target, ["x", "y"]);
     });
-    it("the target should be unaffected", function () {
+    it("the target should be unaffected", () => {
       expect(target.hasOwnProperty("nested")).toEqual(true);
       expect(target.nested.hasOwnProperty("test")).toEqual(true);
     });
   });
 });
-describe('When "attributes.read" is used with a null separator', function () {
+describe('When "attributes.read" is used with a null separator', () => {
   'use strict';
 
-  var target;
-  beforeEach(function () {
+  let target;
+  beforeEach(() => {
     target = {
       'some.key': 1
     };
   });
-  describe("and the property exists", function () {
-    it("should return the property value", function () {
+  describe("and the property exists", () => {
+    it("should return the property value", () => {
       expect(attributes.read(target, 'some.key', null)).toEqual(1);
     });
   });
-  describe("and the property does not exist", function () {
-    it("should be undefined", function () {
+  describe("and the property does not exist", () => {
+    it("should be undefined", () => {
       expect(attributes.read(target, 'another.key', null)).toEqual(undefined);
     });
   });
 });
-describe('When "attributes.read" is used with a non-default separator', function () {
+describe('When "attributes.read" is used with a non-default separator', () => {
   'use strict';
 
-  var target;
-  beforeEach(function () {
+  let target;
+  beforeEach(() => {
     target = {
       nested: {
         test: 1
       }
     };
   });
-  describe("and the property exists", function () {
-    it("should return the property value", function () {
+  describe("and the property exists", () => {
+    it("should return the property value", () => {
       expect(attributes.read(target, 'nested|test', '|')).toEqual(1);
     });
   });
-  describe("and the property does not exist", function () {
-    it("should be undefined", function () {
+  describe("and the property does not exist", () => {
+    it("should be undefined", () => {
       expect(attributes.read(target, 'another|key', '|')).toEqual(undefined);
     });
   });
 });
 
 },{"./../../../lang/attributes":31}],102:[function(require,module,exports){
-var connection = require('./../../../lang/connection');
+const connection = require('./../../../lang/connection');
 
-describe('When "getIsSecure is invoked', function () {
+describe('When "getIsSecure is invoked', () => {
   'use strict';
 
-  it('should return true, if passed true', function () {
+  it('should return true, if passed true', () => {
     expect(connection.getIsSecure(true)).toEqual(true);
   });
-  it('should return false, if passed false', function () {
+  it('should return false, if passed false', () => {
     expect(connection.getIsSecure(false)).toEqual(false);
   });
-  it('should return false, if passed undefined', function () {
+  it('should return false, if passed undefined', () => {
     expect(connection.getIsSecure(undefined)).toEqual(false);
   });
-  it('should return false, if passed null', function () {
+  it('should return false, if passed null', () => {
     expect(connection.getIsSecure(undefined)).toEqual(false);
   });
 });
 
 },{"./../../../lang/connection":32}],103:[function(require,module,exports){
-var utilities = require('./../../../lang/date');
+const utilities = require('./../../../lang/date');
 
-describe('When extracting the "short" day of week', function () {
+describe('When extracting the "short" day of week', () => {
   'use strict';
 
   const july = 7 - 1;
-  it("07/27/2016 should resove to 'Wed'", function () {
+  it("07/27/2016 should resove to 'Wed'", () => {
     expect(utilities.getShortDay(new Date(2016, july, 27))).toEqual('Wed');
   });
 });
-describe('When determining the ordinal for a date', function () {
+describe('When determining the ordinal for a date', () => {
   'use strict';
 
   const july = 7 - 1;
-  it('should return "st" for the first of the month', function () {
+  it('should return "st" for the first of the month', () => {
     expect(utilities.getDateOrdinal(new Date(2017, july, 1))).toEqual('st');
   });
-  it('should return "nd" for the second of the month', function () {
+  it('should return "nd" for the second of the month', () => {
     expect(utilities.getDateOrdinal(new Date(2017, july, 2))).toEqual('nd');
   });
-  it('should return "rd" for the third of the month', function () {
+  it('should return "rd" for the third of the month', () => {
     expect(utilities.getDateOrdinal(new Date(2017, july, 3))).toEqual('rd');
   });
-  it('should return "th" for the fourth of the month', function () {
+  it('should return "th" for the fourth of the month', () => {
     expect(utilities.getDateOrdinal(new Date(2017, july, 4))).toEqual('th');
   });
-  it('should return "th" for the fifth of the month', function () {
+  it('should return "th" for the fifth of the month', () => {
     expect(utilities.getDateOrdinal(new Date(2017, july, 5))).toEqual('th');
   });
-  it('should return "th" for the sixth of the month', function () {
+  it('should return "th" for the sixth of the month', () => {
     expect(utilities.getDateOrdinal(new Date(2017, july, 6))).toEqual('th');
   });
-  it('should return "th" for the seventh of the month', function () {
+  it('should return "th" for the seventh of the month', () => {
     expect(utilities.getDateOrdinal(new Date(2017, july, 7))).toEqual('th');
   });
-  it('should return "th" for the eighth of the month', function () {
+  it('should return "th" for the eighth of the month', () => {
     expect(utilities.getDateOrdinal(new Date(2017, july, 8))).toEqual('th');
   });
-  it('should return "th" for the ninth of the month', function () {
+  it('should return "th" for the ninth of the month', () => {
     expect(utilities.getDateOrdinal(new Date(2017, july, 9))).toEqual('th');
   });
-  it('should return "th" for the tenth of the month', function () {
+  it('should return "th" for the tenth of the month', () => {
     expect(utilities.getDateOrdinal(new Date(2017, july, 10))).toEqual('th');
   });
-  it('should return "th" for the eleventh of the month', function () {
+  it('should return "th" for the eleventh of the month', () => {
     expect(utilities.getDateOrdinal(new Date(2017, july, 11))).toEqual('th');
   });
-  it('should return "th" for the twelfth of the month', function () {
+  it('should return "th" for the twelfth of the month', () => {
     expect(utilities.getDateOrdinal(new Date(2017, july, 12))).toEqual('th');
   });
-  it('should return "th" for the thirteenth of the month', function () {
+  it('should return "th" for the thirteenth of the month', () => {
     expect(utilities.getDateOrdinal(new Date(2017, july, 13))).toEqual('th');
   });
-  it('should return "th" for the fourteenth of the month', function () {
+  it('should return "th" for the fourteenth of the month', () => {
     expect(utilities.getDateOrdinal(new Date(2017, july, 14))).toEqual('th');
   });
-  it('should return "th" for the fifteenth of the month', function () {
+  it('should return "th" for the fifteenth of the month', () => {
     expect(utilities.getDateOrdinal(new Date(2017, july, 15))).toEqual('th');
   });
-  it('should return "th" for the sixteenth of the month', function () {
+  it('should return "th" for the sixteenth of the month', () => {
     expect(utilities.getDateOrdinal(new Date(2017, july, 16))).toEqual('th');
   });
-  it('should return "th" for the seventeenth of the month', function () {
+  it('should return "th" for the seventeenth of the month', () => {
     expect(utilities.getDateOrdinal(new Date(2017, july, 17))).toEqual('th');
   });
-  it('should return "th" for the eighteenth of the month', function () {
+  it('should return "th" for the eighteenth of the month', () => {
     expect(utilities.getDateOrdinal(new Date(2017, july, 18))).toEqual('th');
   });
-  it('should return "th" for the nineteenth of the month', function () {
+  it('should return "th" for the nineteenth of the month', () => {
     expect(utilities.getDateOrdinal(new Date(2017, july, 19))).toEqual('th');
   });
-  it('should return "th" for the twentieth of the month', function () {
+  it('should return "th" for the twentieth of the month', () => {
     expect(utilities.getDateOrdinal(new Date(2017, july, 20))).toEqual('th');
   });
-  it('should return "th" for the twenty first of the month', function () {
+  it('should return "th" for the twenty first of the month', () => {
     expect(utilities.getDateOrdinal(new Date(2017, july, 21))).toEqual('st');
   });
-  it('should return "th" for the twenty second of the month', function () {
+  it('should return "th" for the twenty second of the month', () => {
     expect(utilities.getDateOrdinal(new Date(2017, july, 22))).toEqual('nd');
   });
-  it('should return "th" for the twenty third of the month', function () {
+  it('should return "th" for the twenty third of the month', () => {
     expect(utilities.getDateOrdinal(new Date(2017, july, 23))).toEqual('rd');
   });
-  it('should return "th" for the twenty fourth of the month', function () {
+  it('should return "th" for the twenty fourth of the month', () => {
     expect(utilities.getDateOrdinal(new Date(2017, july, 24))).toEqual('th');
   });
-  it('should return "th" for the twenty fifth of the month', function () {
+  it('should return "th" for the twenty fifth of the month', () => {
     expect(utilities.getDateOrdinal(new Date(2017, july, 25))).toEqual('th');
   });
-  it('should return "th" for the twenty sixth of the month', function () {
+  it('should return "th" for the twenty sixth of the month', () => {
     expect(utilities.getDateOrdinal(new Date(2017, july, 26))).toEqual('th');
   });
-  it('should return "th" for the twenty seventh of the month', function () {
+  it('should return "th" for the twenty seventh of the month', () => {
     expect(utilities.getDateOrdinal(new Date(2017, july, 27))).toEqual('th');
   });
-  it('should return "th" for the twenty eighth of the month', function () {
+  it('should return "th" for the twenty eighth of the month', () => {
     expect(utilities.getDateOrdinal(new Date(2017, july, 28))).toEqual('th');
   });
-  it('should return "th" for the twenty ninth of the month', function () {
+  it('should return "th" for the twenty ninth of the month', () => {
     expect(utilities.getDateOrdinal(new Date(2017, july, 29))).toEqual('th');
   });
-  it('should return "th" for the thirtieth of the month', function () {
+  it('should return "th" for the thirtieth of the month', () => {
     expect(utilities.getDateOrdinal(new Date(2017, july, 30))).toEqual('th');
   });
-  it('should return "th" for the thirty first of the month', function () {
+  it('should return "th" for the thirty first of the month', () => {
     expect(utilities.getDateOrdinal(new Date(2017, july, 31))).toEqual('st');
   });
 });
 
 },{"./../../../lang/date":33}],104:[function(require,module,exports){
-var formatter = require('./../../../lang/formatter');
+const formatter = require('./../../../lang/formatter');
 
-describe('When formatting numbers', function () {
+describe('When formatting numbers', () => {
   'use strict';
 
-  it('formatting 123 with six digits (no separator, no parenthesis)', function () {
+  it('formatting 123 with six digits (no separator, no parenthesis)', () => {
     expect(formatter.numberToString(123, 6)).toEqual('123.000000');
   });
 });
 
 },{"./../../../lang/formatter":34}],105:[function(require,module,exports){
-var functions = require('./../../../lang/functions');
+const functions = require('./../../../lang/functions');
 
-describe('when using the tautology function', function () {
+describe('when using the tautology function', () => {
   'use strict';
 
-  var tautology;
-  beforeEach(function () {
+  let tautology;
+  beforeEach(() => {
     tautology = functions.getTautology();
   });
-  it('if null is passed, null should be returned', function () {
+  it('if null is passed, null should be returned', () => {
     expect(tautology(null)).toEqual(null);
   });
-  it('if undefined is passed, undefined should be returned', function () {
+  it('if undefined is passed, undefined should be returned', () => {
     expect(tautology(undefined)).toEqual(undefined);
   });
-  it('if Math.PI is passed, Math.PI should be returned', function () {
+  it('if Math.PI is passed, Math.PI should be returned', () => {
     expect(tautology(Math.PI)).toEqual(Math.PI);
   });
-  it('if an object is passed, the object should be returned', function () {
-    var x;
+  it('if an object is passed, the object should be returned', () => {
+    let x;
     expect(tautology(x = {})).toBe(x);
   });
 });
 
 },{"./../../../lang/functions":35}],106:[function(require,module,exports){
-var is = require('./../../../lang/is');
+const is = require('./../../../lang/is');
 
-describe('When checking the number 3', function () {
+describe('When checking the number 3', () => {
   'use strict';
 
-  var candidate;
-  beforeEach(function () {
+  let candidate;
+  beforeEach(() => {
     candidate = 3;
   });
-  it("it should be a number", function () {
+  it("it should be a number", () => {
     expect(is.number(candidate)).toEqual(true);
   });
-  it("it should not be nan", function () {
+  it("it should not be nan", () => {
     expect(is.nan(candidate)).toEqual(false);
   });
-  it("it should be an integer", function () {
+  it("it should be an integer", () => {
     expect(is.integer(candidate)).toEqual(true);
   });
-  it("it should be an large integer", function () {
+  it("it should be an large integer", () => {
     expect(is.large(candidate)).toEqual(true);
   });
-  it("it should be positive", function () {
+  it("it should be positive", () => {
     expect(is.positive(candidate)).toEqual(true);
   });
-  it("it should not be negative", function () {
+  it("it should not be negative", () => {
     expect(is.negative(candidate)).toEqual(false);
   });
-  it("it should not be a string", function () {
+  it("it should not be a string", () => {
     expect(is.string(candidate)).toEqual(false);
   });
-  it("it should not be a Date", function () {
+  it("it should not be a Date", () => {
     expect(is.date(candidate)).toEqual(false);
   });
-  it("it should not be a function", function () {
+  it("it should not be a function", () => {
     expect(is.fn(candidate)).toEqual(false);
   });
-  it("it should not be an array", function () {
+  it("it should not be an array", () => {
     expect(is.array(candidate)).toEqual(false);
   });
-  it("it should not be a boolean", function () {
+  it("it should not be a boolean", () => {
     expect(is.boolean(candidate)).toEqual(false);
   });
-  it("it should not be an object", function () {
+  it("it should not be an object", () => {
     expect(is.object(candidate)).toEqual(false);
   });
-  it("it should not be null", function () {
+  it("it should not be null", () => {
     expect(is.null(candidate)).toEqual(false);
   });
-  it("it should not be undefined", function () {
+  it("it should not be undefined", () => {
     expect(is.undefined(candidate)).toEqual(false);
   });
 });
-describe('When checking the Math.PI', function () {
+describe('When checking the Math.PI', () => {
   'use strict';
 
-  var candidate;
-  beforeEach(function () {
+  let candidate;
+  beforeEach(() => {
     candidate = Math.PI;
   });
-  it("it should be a number", function () {
+  it("it should be a number", () => {
     expect(is.number(candidate)).toEqual(true);
   });
-  it("it should not be nan", function () {
+  it("it should not be nan", () => {
     expect(is.nan(candidate)).toEqual(false);
   });
-  it("it should not be an integer", function () {
+  it("it should not be an integer", () => {
     expect(is.integer(candidate)).toEqual(false);
   });
-  it("it should not be an large integer", function () {
+  it("it should not be an large integer", () => {
     expect(is.large(candidate)).toEqual(false);
   });
-  it("it should be positive", function () {
+  it("it should be positive", () => {
     expect(is.positive(candidate)).toEqual(true);
   });
-  it("it should not be negative", function () {
+  it("it should not be negative", () => {
     expect(is.negative(candidate)).toEqual(false);
   });
-  it("it should not be a string", function () {
+  it("it should not be a string", () => {
     expect(is.string(candidate)).toEqual(false);
   });
-  it("it should not be a Date", function () {
+  it("it should not be a Date", () => {
     expect(is.date(candidate)).toEqual(false);
   });
-  it("it should not be a function", function () {
+  it("it should not be a function", () => {
     expect(is.fn(candidate)).toEqual(false);
   });
-  it("it should not be an array", function () {
+  it("it should not be an array", () => {
     expect(is.array(candidate)).toEqual(false);
   });
-  it("it should not be a boolean", function () {
+  it("it should not be a boolean", () => {
     expect(is.boolean(candidate)).toEqual(false);
   });
-  it("it should not be an object", function () {
+  it("it should not be an object", () => {
     expect(is.object(candidate)).toEqual(false);
   });
-  it("it should not be null", function () {
+  it("it should not be null", () => {
     expect(is.null(candidate)).toEqual(false);
   });
-  it("it should not be undefined", function () {
+  it("it should not be undefined", () => {
     expect(is.undefined(candidate)).toEqual(false);
   });
 });
-describe('When checking the Number.NaN', function () {
+describe('When checking the Number.NaN', () => {
   'use strict';
 
-  var candidate;
-  beforeEach(function () {
+  let candidate;
+  beforeEach(() => {
     candidate = Number.NaN;
   });
-  it("it should not be a number", function () {
+  it("it should not be a number", () => {
     expect(is.number(candidate)).toEqual(false);
   });
-  it("it should be nan", function () {
+  it("it should be nan", () => {
     expect(is.nan(candidate)).toEqual(true);
   });
-  it("it should not be an integer", function () {
+  it("it should not be an integer", () => {
     expect(is.integer(candidate)).toEqual(false);
   });
-  it("it should not be an large integer", function () {
+  it("it should not be an large integer", () => {
     expect(is.large(candidate)).toEqual(false);
   });
-  it("it should not be positive", function () {
+  it("it should not be positive", () => {
     expect(is.positive(candidate)).toEqual(false);
   });
-  it("it should not be negative", function () {
+  it("it should not be negative", () => {
     expect(is.negative(candidate)).toEqual(false);
   });
-  it("it should not be a string", function () {
+  it("it should not be a string", () => {
     expect(is.string(candidate)).toEqual(false);
   });
-  it("it should not be a Date", function () {
+  it("it should not be a Date", () => {
     expect(is.date(candidate)).toEqual(false);
   });
-  it("it should not be a function", function () {
+  it("it should not be a function", () => {
     expect(is.fn(candidate)).toEqual(false);
   });
-  it("it should not be an array", function () {
+  it("it should not be an array", () => {
     expect(is.array(candidate)).toEqual(false);
   });
-  it("it should not be a boolean", function () {
+  it("it should not be a boolean", () => {
     expect(is.boolean(candidate)).toEqual(false);
   });
-  it("it should not be an object", function () {
+  it("it should not be an object", () => {
     expect(is.object(candidate)).toEqual(false);
   });
-  it("it should not be null", function () {
+  it("it should not be null", () => {
     expect(is.null(candidate)).toEqual(false);
   });
-  it("it should not be undefined", function () {
+  it("it should not be undefined", () => {
     expect(is.undefined(candidate)).toEqual(false);
   });
 });
-describe('When checking the string "3"', function () {
+describe('When checking the string "3"', () => {
   'use strict';
 
-  var candidate;
-  beforeEach(function () {
+  let candidate;
+  beforeEach(() => {
     candidate = "3";
   });
-  it("it should not be a number", function () {
+  it("it should not be a number", () => {
     expect(is.number(candidate)).toEqual(false);
   });
-  it("it should not be nan", function () {
+  it("it should not be nan", () => {
     expect(is.nan(candidate)).toEqual(false);
   });
-  it("it should not be an integer", function () {
+  it("it should not be an integer", () => {
     expect(is.integer(candidate)).toEqual(false);
   });
-  it("it should not be an large integer", function () {
+  it("it should not be an large integer", () => {
     expect(is.large(candidate)).toEqual(false);
   });
-  it("it should not be positive", function () {
+  it("it should not be positive", () => {
     expect(is.positive(candidate)).toEqual(false);
   });
-  it("it should not be negative", function () {
+  it("it should not be negative", () => {
     expect(is.negative(candidate)).toEqual(false);
   });
-  it("it should be a string", function () {
+  it("it should be a string", () => {
     expect(is.string(candidate)).toEqual(true);
   });
-  it("it should not be a Date", function () {
+  it("it should not be a Date", () => {
     expect(is.date(candidate)).toEqual(false);
   });
-  it("it should not be a function", function () {
+  it("it should not be a function", () => {
     expect(is.fn(candidate)).toEqual(false);
   });
-  it("it should not be an array", function () {
+  it("it should not be an array", () => {
     expect(is.array(candidate)).toEqual(false);
   });
-  it("it should not be a boolean", function () {
+  it("it should not be a boolean", () => {
     expect(is.boolean(candidate)).toEqual(false);
   });
-  it("it should not be an object", function () {
+  it("it should not be an object", () => {
     expect(is.object(candidate)).toEqual(false);
   });
-  it("it should not be null", function () {
+  it("it should not be null", () => {
     expect(is.null(candidate)).toEqual(false);
   });
-  it("it should not be undefined", function () {
+  it("it should not be undefined", () => {
     expect(is.undefined(candidate)).toEqual(false);
   });
 });
-describe('When checking the date 08/29/2016', function () {
+describe('When checking the date 08/29/2016', () => {
   'use strict';
 
-  var candidate;
-  beforeEach(function () {
+  let candidate;
+  beforeEach(() => {
     candidate = new Date(2016, 7, 29);
   });
-  it("it should not be a number", function () {
+  it("it should not be a number", () => {
     expect(is.number(candidate)).toEqual(false);
   });
-  it("it should not be nan", function () {
+  it("it should not be nan", () => {
     expect(is.nan(candidate)).toEqual(false);
   });
-  it("it should not be an integer", function () {
+  it("it should not be an integer", () => {
     expect(is.integer(candidate)).toEqual(false);
   });
-  it("it should not be an large integer", function () {
+  it("it should not be an large integer", () => {
     expect(is.large(candidate)).toEqual(false);
   });
-  it("it should not be positive", function () {
+  it("it should not be positive", () => {
     expect(is.positive(candidate)).toEqual(false);
   });
-  it("it should not be negative", function () {
+  it("it should not be negative", () => {
     expect(is.negative(candidate)).toEqual(false);
   });
-  it("it should not be a string", function () {
+  it("it should not be a string", () => {
     expect(is.string(candidate)).toEqual(false);
   });
-  it("it should be a Date", function () {
+  it("it should be a Date", () => {
     expect(is.date(candidate)).toEqual(true);
   });
-  it("it should be an object", function () {
+  it("it should be an object", () => {
     expect(is.object(candidate)).toEqual(true);
   });
-  it("it should not be a function", function () {
+  it("it should not be a function", () => {
     expect(is.fn(candidate)).toEqual(false);
   });
-  it("it should not be an array", function () {
+  it("it should not be an array", () => {
     expect(is.array(candidate)).toEqual(false);
   });
-  it("it should not be a boolean", function () {
+  it("it should not be a boolean", () => {
     expect(is.boolean(candidate)).toEqual(false);
   });
-  it("it should not be null", function () {
+  it("it should not be null", () => {
     expect(is.null(candidate)).toEqual(false);
   });
-  it("it should not be undefined", function () {
+  it("it should not be undefined", () => {
     expect(is.undefined(candidate)).toEqual(false);
   });
 });
-describe('When checking the "expect" function', function () {
+describe('When checking the "expect" function', () => {
   'use strict';
 
-  var candidate;
-  beforeEach(function () {
+  let candidate;
+  beforeEach(() => {
     candidate = expect;
   });
-  it("it should not be a number", function () {
+  it("it should not be a number", () => {
     expect(is.number(candidate)).toEqual(false);
   });
-  it("it should not be nan", function () {
+  it("it should not be nan", () => {
     expect(is.nan(candidate)).toEqual(false);
   });
-  it("it should not be an integer", function () {
+  it("it should not be an integer", () => {
     expect(is.integer(candidate)).toEqual(false);
   });
-  it("it should not be an large integer", function () {
+  it("it should not be an large integer", () => {
     expect(is.large(candidate)).toEqual(false);
   });
-  it("it should not be positive", function () {
+  it("it should not be positive", () => {
     expect(is.positive(candidate)).toEqual(false);
   });
-  it("it should not be negative", function () {
+  it("it should not be negative", () => {
     expect(is.negative(candidate)).toEqual(false);
   });
-  it("it should not be a string", function () {
+  it("it should not be a string", () => {
     expect(is.string(candidate)).toEqual(false);
   });
-  it("it should not be a Date", function () {
+  it("it should not be a Date", () => {
     expect(is.date(candidate)).toEqual(false);
   });
-  it("it should be a function", function () {
+  it("it should be a function", () => {
     expect(is.fn(candidate)).toEqual(true);
   });
-  it("it should not be an array", function () {
+  it("it should not be an array", () => {
     expect(is.array(candidate)).toEqual(false);
   });
-  it("it should not be a boolean", function () {
+  it("it should not be a boolean", () => {
     expect(is.boolean(candidate)).toEqual(false);
   });
-  it("it should not be an object", function () {
+  it("it should not be an object", () => {
     expect(is.object(candidate)).toEqual(false);
   });
-  it("it should not be null", function () {
+  it("it should not be null", () => {
     expect(is.null(candidate)).toEqual(false);
   });
-  it("it should not be undefined", function () {
+  it("it should not be undefined", () => {
     expect(is.undefined(candidate)).toEqual(false);
   });
 });
-describe('When checking an empty object', function () {
+describe('When checking an empty object', () => {
   'use strict';
 
-  var candidate;
-  beforeEach(function () {
+  let candidate;
+  beforeEach(() => {
     candidate = {};
   });
-  it("it should not be a number", function () {
+  it("it should not be a number", () => {
     expect(is.number(candidate)).toEqual(false);
   });
-  it("it should not be nan", function () {
+  it("it should not be nan", () => {
     expect(is.nan(candidate)).toEqual(false);
   });
-  it("it should not be an integer", function () {
+  it("it should not be an integer", () => {
     expect(is.integer(candidate)).toEqual(false);
   });
-  it("it should not be an large integer", function () {
+  it("it should not be an large integer", () => {
     expect(is.large(candidate)).toEqual(false);
   });
-  it("it should not be positive", function () {
+  it("it should not be positive", () => {
     expect(is.positive(candidate)).toEqual(false);
   });
-  it("it should not be negative", function () {
+  it("it should not be negative", () => {
     expect(is.negative(candidate)).toEqual(false);
   });
-  it("it should not be a string", function () {
+  it("it should not be a string", () => {
     expect(is.string(candidate)).toEqual(false);
   });
-  it("it should not be a Date", function () {
+  it("it should not be a Date", () => {
     expect(is.date(candidate)).toEqual(false);
   });
-  it("it should not be a function", function () {
+  it("it should not be a function", () => {
     expect(is.fn(candidate)).toEqual(false);
   });
-  it("it should not be an array", function () {
+  it("it should not be an array", () => {
     expect(is.array(candidate)).toEqual(false);
   });
-  it("it should not be a boolean", function () {
+  it("it should not be a boolean", () => {
     expect(is.boolean(candidate)).toEqual(false);
   });
-  it("it should be an object", function () {
+  it("it should be an object", () => {
     expect(is.object(candidate)).toEqual(true);
   });
-  it("it should not be null", function () {
+  it("it should not be null", () => {
     expect(is.null(candidate)).toEqual(false);
   });
-  it("it should not be undefined", function () {
+  it("it should not be undefined", () => {
     expect(is.undefined(candidate)).toEqual(false);
   });
 });
-describe('When checking a null value', function () {
+describe('When checking a null value', () => {
   'use strict';
 
-  var candidate;
-  beforeEach(function () {
+  let candidate;
+  beforeEach(() => {
     candidate = null;
   });
-  it("it should not be a number", function () {
+  it("it should not be a number", () => {
     expect(is.number(candidate)).toEqual(false);
   });
-  it("it should not be nan", function () {
+  it("it should not be nan", () => {
     expect(is.nan(candidate)).toEqual(false);
   });
-  it("it should not be an integer", function () {
+  it("it should not be an integer", () => {
     expect(is.integer(candidate)).toEqual(false);
   });
-  it("it should not be an large integer", function () {
+  it("it should not be an large integer", () => {
     expect(is.large(candidate)).toEqual(false);
   });
-  it("it should not be positive", function () {
+  it("it should not be positive", () => {
     expect(is.positive(candidate)).toEqual(false);
   });
-  it("it should not be negative", function () {
+  it("it should not be negative", () => {
     expect(is.negative(candidate)).toEqual(false);
   });
-  it("it should not be a string", function () {
+  it("it should not be a string", () => {
     expect(is.string(candidate)).toEqual(false);
   });
-  it("it should not be a Date", function () {
+  it("it should not be a Date", () => {
     expect(is.date(candidate)).toEqual(false);
   });
-  it("it should not be a function", function () {
+  it("it should not be a function", () => {
     expect(is.fn(candidate)).toEqual(false);
   });
-  it("it should not be an array", function () {
+  it("it should not be an array", () => {
     expect(is.array(candidate)).toEqual(false);
   });
-  it("it should not be a boolean", function () {
+  it("it should not be a boolean", () => {
     expect(is.boolean(candidate)).toEqual(false);
   });
-  it("it should not be an object", function () {
+  it("it should not be an object", () => {
     expect(is.object(candidate)).toEqual(false);
   });
-  it("it should be null", function () {
+  it("it should be null", () => {
     expect(is.null(candidate)).toEqual(true);
   });
-  it("it should not be undefined", function () {
+  it("it should not be undefined", () => {
     expect(is.undefined(candidate)).toEqual(false);
   });
 });
-describe('When checking an undefined value', function () {
+describe('When checking an undefined value', () => {
   'use strict';
 
-  var candidate;
-  beforeEach(function () {
+  let candidate;
+  beforeEach(() => {
     candidate = undefined;
   });
-  it("it should not be a number", function () {
+  it("it should not be a number", () => {
     expect(is.number(candidate)).toEqual(false);
   });
-  it("it should not be nan", function () {
+  it("it should not be nan", () => {
     expect(is.nan(candidate)).toEqual(false);
   });
-  it("it should not be an integer", function () {
+  it("it should not be an integer", () => {
     expect(is.integer(candidate)).toEqual(false);
   });
-  it("it should not be an large integer", function () {
+  it("it should not be an large integer", () => {
     expect(is.large(candidate)).toEqual(false);
   });
-  it("it should not be positive", function () {
+  it("it should not be positive", () => {
     expect(is.positive(candidate)).toEqual(false);
   });
-  it("it should not be negative", function () {
+  it("it should not be negative", () => {
     expect(is.negative(candidate)).toEqual(false);
   });
-  it("it should not be a string", function () {
+  it("it should not be a string", () => {
     expect(is.string(candidate)).toEqual(false);
   });
-  it("it should not be a Date", function () {
+  it("it should not be a Date", () => {
     expect(is.date(candidate)).toEqual(false);
   });
-  it("it should not be a function", function () {
+  it("it should not be a function", () => {
     expect(is.fn(candidate)).toEqual(false);
   });
-  it("it should not be an array", function () {
+  it("it should not be an array", () => {
     expect(is.array(candidate)).toEqual(false);
   });
-  it("it should not be a boolean", function () {
+  it("it should not be a boolean", () => {
     expect(is.boolean(candidate)).toEqual(false);
   });
-  it("it should not be an object", function () {
+  it("it should not be an object", () => {
     expect(is.object(candidate)).toEqual(false);
   });
-  it("it should not be null", function () {
+  it("it should not be null", () => {
     expect(is.null(candidate)).toEqual(false);
   });
-  it("it should be undefined", function () {
+  it("it should be undefined", () => {
     expect(is.undefined(candidate)).toEqual(true);
   });
 });
-describe('When checking a large integer (exceeding 32-bits)', function () {
+describe('When checking a large integer (exceeding 32-bits)', () => {
   'use strict';
 
-  var candidate;
-  beforeEach(function () {
+  let candidate;
+  beforeEach(() => {
     candidate = 1502373984424;
   });
-  it("it should be a number", function () {
+  it("it should be a number", () => {
     expect(is.number(candidate)).toEqual(true);
   });
-  it("it should not be nan", function () {
+  it("it should not be nan", () => {
     expect(is.nan(candidate)).toEqual(false);
   });
-  it("it should be an integer", function () {
+  it("it should be an integer", () => {
     expect(is.integer(candidate)).toEqual(false);
   });
-  it("it should be an large integer", function () {
+  it("it should be an large integer", () => {
     expect(is.large(candidate)).toEqual(true);
   });
-  it("it should be positive", function () {
+  it("it should be positive", () => {
     expect(is.positive(candidate)).toEqual(true);
   });
-  it("it should not be negative", function () {
+  it("it should not be negative", () => {
     expect(is.negative(candidate)).toEqual(false);
   });
-  it("it should not be a string", function () {
+  it("it should not be a string", () => {
     expect(is.string(candidate)).toEqual(false);
   });
-  it("it should not be a Date", function () {
+  it("it should not be a Date", () => {
     expect(is.date(candidate)).toEqual(false);
   });
-  it("it should not be a function", function () {
+  it("it should not be a function", () => {
     expect(is.fn(candidate)).toEqual(false);
   });
-  it("it should not be an array", function () {
+  it("it should not be an array", () => {
     expect(is.array(candidate)).toEqual(false);
   });
-  it("it should not be a boolean", function () {
+  it("it should not be a boolean", () => {
     expect(is.boolean(candidate)).toEqual(false);
   });
-  it("it should not be an object", function () {
+  it("it should not be an object", () => {
     expect(is.object(candidate)).toEqual(false);
   });
-  it("it should not be null", function () {
+  it("it should not be null", () => {
     expect(is.null(candidate)).toEqual(false);
   });
-  it("it should not be undefined", function () {
+  it("it should not be undefined", () => {
     expect(is.undefined(candidate)).toEqual(false);
   });
 });
 
 },{"./../../../lang/is":36}],107:[function(require,module,exports){
-var mask = require('./../../../lang/mask');
+const mask = require('./../../../lang/mask');
 
-describe('When testing the suitibility of an bit-based enumeration item', function () {
-  it('zero should be valid', function () {
+describe('When testing the suitibility of an bit-based enumeration item', () => {
+  it('zero should be valid', () => {
     expect(mask.checkItem(0)).toEqual(true);
   });
-  it('one should be valid', function () {
+  it('one should be valid', () => {
     expect(mask.checkItem(1)).toEqual(true);
   });
-  it('two should be valid', function () {
+  it('two should be valid', () => {
     expect(mask.checkItem(2)).toEqual(true);
   });
-  it('three should not be valid', function () {
+  it('three should not be valid', () => {
     expect(mask.checkItem(3)).toEqual(false);
   });
-  it('four should be valid', function () {
+  it('four should be valid', () => {
     expect(mask.checkItem(4)).toEqual(true);
   });
-  it('five should not be valid', function () {
+  it('five should not be valid', () => {
     expect(mask.checkItem(5)).toEqual(false);
   });
-  it('4095 should not be valid', function () {
+  it('4095 should not be valid', () => {
     expect(mask.checkItem(4095)).toEqual(false);
   });
-  it('4096 should be valid', function () {
+  it('4096 should be valid', () => {
     expect(mask.checkItem(4096)).toEqual(true);
   });
-  it('4097 should not be valid', function () {
+  it('4097 should not be valid', () => {
     expect(mask.checkItem(4097)).toEqual(false);
   });
 });
-describe('When working with an empty flags collection', function () {
+describe('When working with an empty flags collection', () => {
   'use strict';
 
-  var FLAG_ONE = 1;
-  var FLAG_TWO = 16;
-  var FLAG_THREE = 512;
-  var flags;
-  beforeEach(function () {
+  let FLAG_ONE = 1;
+  let FLAG_TWO = 16;
+  let FLAG_THREE = 512;
+  let flags;
+  beforeEach(() => {
     flags = mask.getEmpty();
   });
-  it('should not contain flag one', function () {
+  it('should not contain flag one', () => {
     expect(mask.has(flags, FLAG_ONE)).toEqual(false);
   });
-  it('should not contain flag two', function () {
+  it('should not contain flag two', () => {
     expect(mask.has(flags, FLAG_TWO)).toEqual(false);
   });
-  it('should not contain flag three', function () {
+  it('should not contain flag three', () => {
     expect(mask.has(flags, FLAG_THREE)).toEqual(false);
   });
-  describe('and adding the first flag', function () {
-    var updated;
-    beforeEach(function () {
+  describe('and adding the first flag', () => {
+    let updated;
+    beforeEach(() => {
       updated = mask.add(flags, FLAG_ONE);
     });
-    it('should contain flag one', function () {
+    it('should contain flag one', () => {
       expect(mask.has(updated, FLAG_ONE)).toEqual(true);
     });
-    it('should not contain flag two', function () {
+    it('should not contain flag two', () => {
       expect(mask.has(updated, FLAG_TWO)).toEqual(false);
     });
-    it('should not contain flag three', function () {
+    it('should not contain flag three', () => {
       expect(mask.has(updated, FLAG_THREE)).toEqual(false);
     });
-    describe('and adding the third flag', function () {
-      var again;
-      beforeEach(function () {
+    describe('and adding the third flag', () => {
+      let again;
+      beforeEach(() => {
         again = mask.add(updated, FLAG_THREE);
       });
-      it('should contain flag one', function () {
+      it('should contain flag one', () => {
         expect(mask.has(again, FLAG_ONE)).toEqual(true);
       });
-      it('should not contain flag two', function () {
+      it('should not contain flag two', () => {
         expect(mask.has(again, FLAG_TWO)).toEqual(false);
       });
-      it('should contain flag three', function () {
+      it('should contain flag three', () => {
         expect(mask.has(again, FLAG_THREE)).toEqual(true);
       });
     });
-    describe('and removing the first flag', function () {
-      var again;
-      beforeEach(function () {
+    describe('and removing the first flag', () => {
+      let again;
+      beforeEach(() => {
         again = mask.remove(updated, FLAG_ONE);
       });
-      it('should be empty', function () {
+      it('should be empty', () => {
         expect(again).toEqual(mask.getEmpty());
       });
-      it('should not contain flag one', function () {
+      it('should not contain flag one', () => {
         expect(mask.has(again, FLAG_ONE)).toEqual(false);
       });
-      it('should not contain flag two', function () {
+      it('should not contain flag two', () => {
         expect(mask.has(again, FLAG_TWO)).toEqual(false);
       });
-      it('should not contain flag three', function () {
+      it('should not contain flag three', () => {
         expect(mask.has(again, FLAG_THREE)).toEqual(false);
       });
     });
-    describe('and adding the first flag again', function () {
-      var again;
-      beforeEach(function () {
+    describe('and adding the first flag again', () => {
+      let again;
+      beforeEach(() => {
         again = mask.add(updated, FLAG_ONE);
       });
-      it('should be unchanged', function () {
+      it('should be unchanged', () => {
         expect(again).toEqual(updated);
       });
-      it('should contain flag one', function () {
+      it('should contain flag one', () => {
         expect(mask.has(again, FLAG_ONE)).toEqual(true);
       });
-      it('should not contain flag two', function () {
+      it('should not contain flag two', () => {
         expect(mask.has(again, FLAG_TWO)).toEqual(false);
       });
-      it('should not contain flag three', function () {
+      it('should not contain flag three', () => {
         expect(mask.has(again, FLAG_THREE)).toEqual(false);
       });
     });
@@ -21782,69 +21816,69 @@ describe('When working with an empty flags collection', function () {
 });
 
 },{"./../../../lang/mask":37}],108:[function(require,module,exports){
-var math = require('./../../../lang/math');
+const math = require('./../../../lang/math');
 
-describe('When using math.approximate', function () {
+describe('When using math.approximate', () => {
   'use strict';
 
-  describe("and comparing identical integers", function () {
-    it("should return true", function () {
+  describe("and comparing identical integers", () => {
+    it("should return true", () => {
       expect(math.approximate(12, 12)).toEqual(true);
     });
   });
-  describe("and comparing identical decimals literals", function () {
-    it("should return true", function () {
+  describe("and comparing identical decimals literals", () => {
+    it("should return true", () => {
       expect(math.approximate(0.3, 0.3)).toEqual(true);
     });
   });
-  describe("and comparing identical derived decimals derived with addition", function () {
-    it("should return true", function () {
+  describe("and comparing identical derived decimals derived with addition", () => {
+    it("should return true", () => {
       expect(math.approximate(0.1 + 0.2, 0.3)).toEqual(true);
     });
   });
-  describe("and comparing identical derived decimals derived with division and multiplication", function () {
-    it("should return true", function () {
+  describe("and comparing identical derived decimals derived with division and multiplication", () => {
+    it("should return true", () => {
       expect(math.approximate(100.33 / 3 * 3, 100.33)).toEqual(true);
     });
   });
-  describe("and comparing an integer with undefined", function () {
-    it("should return false", function () {
+  describe("and comparing an integer with undefined", () => {
+    it("should return false", () => {
       expect(math.approximate(123, undefined)).toEqual(false);
     });
   });
-  describe("and comparing a decimal with undefined", function () {
-    it("should return false", function () {
+  describe("and comparing a decimal with undefined", () => {
+    it("should return false", () => {
       expect(math.approximate(123.45, undefined)).toEqual(false);
     });
   });
-  describe("and comparing an integer with null", function () {
-    it("should return false", function () {
+  describe("and comparing an integer with null", () => {
+    it("should return false", () => {
       expect(math.approximate(123, null)).toEqual(false);
     });
   });
-  describe("and comparing a decimal with null", function () {
-    it("should return false", function () {
+  describe("and comparing a decimal with null", () => {
+    it("should return false", () => {
       expect(math.approximate(123.45, null)).toEqual(false);
     });
   });
-  describe("and comparing strings", function () {
-    it("should return false", function () {
+  describe("and comparing strings", () => {
+    it("should return false", () => {
       expect(math.approximate('hi', 'there')).toEqual(false);
     });
   });
 });
 
 },{"./../../../lang/math":38}],109:[function(require,module,exports){
-var memoize = require('./../../../lang/memoize');
+const memoize = require('./../../../lang/memoize');
 
-describe('When using memoize.simple', function () {
+describe('When using memoize.simple', () => {
   'use strict';
 
-  describe("on a function that takes a tenth of second to complete", function () {
-    var spy;
-    var memo;
-    var counter;
-    beforeEach(function () {
+  describe("on a function that takes a tenth of second to complete", () => {
+    let spy;
+    let memo;
+    let counter;
+    beforeEach(() => {
       counter = 0;
       spy = jasmine.createSpy('spy').and.callFake(function (x) {
         counter = counter + 1;
@@ -21852,39 +21886,39 @@ describe('When using memoize.simple', function () {
       });
       memo = memoize.simple(spy);
     });
-    it('the memoized function should not have been called', function () {
+    it('the memoized function should not have been called', () => {
       expect(spy).not.toHaveBeenCalled();
     });
-    describe("and the memoized function is called", function () {
-      var paramOne;
-      var resultOne;
-      beforeEach(function () {
+    describe("and the memoized function is called", () => {
+      let paramOne;
+      let resultOne;
+      beforeEach(() => {
         resultOne = memo(paramOne = 'a');
       });
-      it('the memoized function to have been called', function () {
+      it('the memoized function to have been called', () => {
         expect(spy.calls.count()).toEqual(1);
       });
-      it('the memoized function to have been called with the correct parameters', function () {
+      it('the memoized function to have been called with the correct parameters', () => {
         expect(spy).toHaveBeenCalledWith(paramOne);
       });
-      it('the result should be a number', function () {
+      it('the result should be a number', () => {
         expect(typeof resultOne).toEqual('number');
       });
-      describe("and the memoized function is with the same value again", function () {
-        var resultTwo;
-        beforeEach(function () {
+      describe("and the memoized function is with the same value again", () => {
+        let resultTwo;
+        beforeEach(() => {
           resultTwo = memo(paramOne);
         });
-        it('the memoized function not to have been called again', function () {
+        it('the memoized function not to have been called again', () => {
           expect(spy.calls.count()).toEqual(1);
         });
-        it('the memoized function should have returned the cached value', function () {
+        it('the memoized function should have returned the cached value', () => {
           expect(resultTwo).toEqual(resultOne);
         });
       });
-      describe("and the memoized function is called with another value", function () {
-        var paramTwo;
-        var resultTwo;
+      describe("and the memoized function is called with another value", () => {
+        let paramTwo;
+        let resultTwo;
         beforeEach(function () {
           resultTwo = memo(paramTwo = 'b');
         });
@@ -21901,14 +21935,14 @@ describe('When using memoize.simple', function () {
     });
   });
 });
-describe('When using memoize.cache', function () {
+describe('When using memoize.cache', () => {
   'use strict';
 
-  describe("with a 10 millisecond cache duration", function () {
-    var spy;
-    var memo;
-    var counter;
-    beforeEach(function () {
+  describe("with a 10 millisecond cache duration", () => {
+    let spy;
+    let memo;
+    let counter;
+    beforeEach(() => {
       counter = 0;
       spy = jasmine.createSpy('spy').and.callFake(function (x) {
         counter = counter + 1;
@@ -21916,35 +21950,35 @@ describe('When using memoize.cache', function () {
       });
       memo = memoize.cache(spy, 10);
     });
-    it('the memoized function should not have been called', function () {
+    it('the memoized function should not have been called', () => {
       expect(spy).not.toHaveBeenCalled();
     });
-    describe("and the memoized function is called", function () {
-      var paramOne;
-      var resultOne;
-      beforeEach(function () {
+    describe("and the memoized function is called", () => {
+      let paramOne;
+      let resultOne;
+      beforeEach(() => {
         resultOne = memo();
       });
-      it('the memoized function to have been called', function () {
+      it('the memoized function to have been called', () => {
         expect(spy.calls.count()).toEqual(1);
       });
-      it('the result should be one', function () {
+      it('the result should be one', () => {
         expect(resultOne).toEqual(1);
       });
-      describe("and the memoized function is with the same value again", function () {
-        var resultTwo;
-        beforeEach(function () {
+      describe("and the memoized function is with the same value again", () => {
+        let resultTwo;
+        beforeEach(() => {
           resultTwo = memo(paramOne);
         });
-        it('the memoized function not to have been called again', function () {
+        it('the memoized function not to have been called again', () => {
           expect(spy.calls.count()).toEqual(1);
         });
-        it('the memoized function should have returned the cached value', function () {
+        it('the memoized function should have returned the cached value', () => {
           expect(resultTwo).toEqual(1);
         });
       });
-      describe("and the memoized function is called after the cache expires", function () {
-        var resultThree;
+      describe("and the memoized function is called after the cache expires", () => {
+        let resultThree;
         beforeEach(function (done) {
           setTimeout(() => {
             resultThree = memo();
@@ -21963,77 +21997,77 @@ describe('When using memoize.cache', function () {
 });
 
 },{"./../../../lang/memoize":39}],110:[function(require,module,exports){
-var object = require('./../../../lang/object');
+const object = require('./../../../lang/object');
 
-describe('When cloning an object', function () {
+describe('When cloning an object', () => {
   'use strict';
 
-  var target;
-  var clone;
-  describe('that is empty', function () {
-    beforeEach(function () {
+  let target;
+  let clone;
+  describe('that is empty', () => {
+    beforeEach(() => {
       clone = object.clone(target = {});
     });
-    it('the clone should be an object', function () {
+    it('the clone should be an object', () => {
       expect(typeof clone).toEqual('object');
     });
-    it('the clone should not reference the source object', function () {
+    it('the clone should not reference the source object', () => {
       expect(clone).not.toBe(target);
     });
   });
-  describe('that has a string-based property', function () {
-    beforeEach(function () {
+  describe('that has a string-based property', () => {
+    beforeEach(() => {
       clone = object.clone(target = {
         property: 'hi'
       });
     });
-    it('the property value should equal the source property value', function () {
+    it('the property value should equal the source property value', () => {
       expect(clone.property).toEqual(target.property);
     });
   });
-  describe('that has a number-based property', function () {
-    beforeEach(function () {
+  describe('that has a number-based property', () => {
+    beforeEach(() => {
       clone = object.clone(target = {
         property: 23
       });
     });
-    it('the property value should equal the source property value', function () {
+    it('the property value should equal the source property value', () => {
       expect(clone.property).toEqual(target.property);
     });
   });
-  describe('that has an object-based property', function () {
-    beforeEach(function () {
+  describe('that has an object-based property', () => {
+    beforeEach(() => {
       clone = object.clone(target = {
         property: {}
       });
     });
-    it('the clone should be an object', function () {
+    it('the clone should be an object', () => {
       expect(typeof clone.property).toEqual('object');
     });
-    it('the property value should not be a reference to the property value on the source object', function () {
+    it('the property value should not be a reference to the property value on the source object', () => {
       expect(clone.property).not.toBe(target.property);
     });
   });
-  describe('that has an array-based property', function () {
-    beforeEach(function () {
+  describe('that has an array-based property', () => {
+    beforeEach(() => {
       clone = object.clone(target = {
         property: []
       });
     });
-    it('the clone should be an object', function () {
+    it('the clone should be an object', () => {
       expect(typeof clone.property).toEqual('object');
     });
-    it('the property value should not be a reference to the property value on the source object', function () {
+    it('the property value should not be a reference to the property value on the source object', () => {
       expect(clone.property).not.toBe(target.property);
     });
   });
 });
-describe('When merging objects', function () {
-  var a;
-  var b;
-  var merged;
-  describe('that are flat', function () {
-    beforeEach(function () {
+describe('When merging objects', () => {
+  let a;
+  let b;
+  let merged;
+  describe('that are flat', () => {
+    beforeEach(() => {
       merged = object.merge(a = {
         a: 1,
         b: 0
@@ -22042,24 +22076,24 @@ describe('When merging objects', function () {
         z: 26
       });
     });
-    it('should not provide a reference to the first source', function () {
+    it('should not provide a reference to the first source', () => {
       expect(merged).not.toBe(a);
     });
-    it('should not provide a reference to the second source', function () {
+    it('should not provide a reference to the second source', () => {
       expect(merged).not.toBe(b);
     });
-    it('should take exclusive properties from the first source', function () {
+    it('should take exclusive properties from the first source', () => {
       expect(merged.a).toEqual(a.a);
     });
-    it('should take exclusive properties from the second source', function () {
+    it('should take exclusive properties from the second source', () => {
       expect(merged.z).toEqual(b.z);
     });
-    it('should take shared properties from the second source', function () {
+    it('should take shared properties from the second source', () => {
       expect(merged.b).toEqual(b.b);
     });
   });
-  describe('that have nesting', function () {
-    beforeEach(function () {
+  describe('that have nesting', () => {
+    beforeEach(() => {
       merged = object.merge(a = {
         a: {
           a: 1,
@@ -22072,69 +22106,69 @@ describe('When merging objects', function () {
         }
       });
     });
-    it('should not provide a reference to the (nested) first source', function () {
+    it('should not provide a reference to the (nested) first source', () => {
       expect(merged.a).not.toBe(a.a);
     });
-    it('should not provide a reference to the (nested) second source', function () {
+    it('should not provide a reference to the (nested) second source', () => {
       expect(merged.a).not.toBe(b.a);
     });
-    it('should take exclusive properties from the (nested) first source', function () {
+    it('should take exclusive properties from the (nested) first source', () => {
       expect(merged.a.a).toEqual(a.a.a);
     });
-    it('should take exclusive properties from the (nested) second source', function () {
+    it('should take exclusive properties from the (nested) second source', () => {
       expect(merged.a.z).toEqual(b.a.z);
     });
-    it('should take shared properties from the (nested) second source', function () {
+    it('should take shared properties from the (nested) second source', () => {
       expect(merged.a.b).toEqual(b.a.b);
     });
   });
 });
-describe('When when extracting keys', function () {
-  describe('from an object that has "a" and "b" properties', function () {
-    var keys;
-    beforeEach(function () {
+describe('When when extracting keys', () => {
+  describe('from an object that has "a" and "b" properties', () => {
+    let keys;
+    beforeEach(() => {
       keys = object.keys({
         a: 1,
         b: 1
       });
     });
-    it('should have with two items', function () {
+    it('should have with two items', () => {
       expect(keys.length).toEqual(2);
     });
-    it('should contain an "a" value', function () {
+    it('should contain an "a" value', () => {
       expect(keys[0] === 'a' || keys[1] === 'a').toEqual(true);
     });
-    it('should contain a "b" value', function () {
+    it('should contain a "b" value', () => {
       expect(keys[0] === 'b' || keys[1] === 'b').toEqual(true);
     });
-    it('should not contain a "toString" value', function () {
+    it('should not contain a "toString" value', () => {
       expect(keys[0] === 'toString' || keys[1] === 'toString').toEqual(false);
     });
   });
 });
-describe('When running a deep comparison', function () {
-  describe('against two matching strings', function () {
-    it('the result should be true', function () {
+describe('When running a deep comparison', () => {
+  describe('against two matching strings', () => {
+    it('the result should be true', () => {
       expect(object.equals('abc', 'abc')).toEqual(true);
     });
   });
-  describe('against two different strings', function () {
-    it('the result should be true', function () {
+  describe('against two different strings', () => {
+    it('the result should be true', () => {
       expect(object.equals('abc', 'xyz')).toEqual(false);
     });
   });
-  describe('against an array containing the same strings', function () {
-    it('the result should be false', function () {
+  describe('against an array containing the same strings', () => {
+    it('the result should be false', () => {
       expect(object.equals(['a', 'b'], ['a', 'b'])).toEqual(true);
     });
   });
-  describe('against an array of different sizes', function () {
-    it('the result should be false', function () {
+  describe('against an array of different sizes', () => {
+    it('the result should be false', () => {
       expect(object.equals(['a', 'b'], ['a', 'b', 'c'])).toEqual(false);
     });
   });
-  describe('against objects where one object has an extra property', function () {
-    it('the result should be false', function () {
+  describe('against objects where one object has an extra property', () => {
+    it('the result should be false', () => {
       expect(object.equals({
         first: 'bryan'
       }, {
@@ -22143,9 +22177,9 @@ describe('When running a deep comparison', function () {
       })).toEqual(false);
     });
   });
-  describe('against a complex object, with the same properties and values', function () {
-    it('the result should be true', function () {
-      var a = {
+  describe('against a complex object, with the same properties and values', () => {
+    it('the result should be true', () => {
+      let a = {
         hi: {
           my: {
             name: ['Elvis', 'Presley'],
@@ -22153,7 +22187,7 @@ describe('When running a deep comparison', function () {
           }
         }
       };
-      var b = {
+      let b = {
         hi: {
           my: {
             name: ['Elvis', 'Presley'],
@@ -22164,9 +22198,9 @@ describe('When running a deep comparison', function () {
       expect(object.equals(a, b)).toEqual(true);
     });
   });
-  describe('against a complex object, with the different properties and values', function () {
-    it('the result should be false', function () {
-      var a = {
+  describe('against a complex object, with the different properties and values', () => {
+    it('the result should be false', () => {
+      let a = {
         hi: {
           my: {
             name: ['Elvis', 'Presley'],
@@ -22174,7 +22208,7 @@ describe('When running a deep comparison', function () {
           }
         }
       };
-      var b = {
+      let b = {
         hi: {
           my: {
             name: ['Johnny', 'Cash'],
@@ -22185,9 +22219,9 @@ describe('When running a deep comparison', function () {
       expect(object.equals(a, b)).toEqual(false);
     });
   });
-  describe('against a complex object, where both objects have equals methods (somewhere in the object model tree)', function () {
-    it('the result should be true', function () {
-      var a = {
+  describe('against a complex object, where both objects have equals methods (somewhere in the object model tree)', () => {
+    it('the result should be true', () => {
+      let a = {
         hi: {
           my: {
             name: ['Elvis', 'Presley'],
@@ -22200,7 +22234,7 @@ describe('When running a deep comparison', function () {
           }
         }
       };
-      var b = {
+      let b = {
         hi: {
           my: {
             name: ['Elvis', 'Presley'],
@@ -22216,18 +22250,18 @@ describe('When running a deep comparison', function () {
       expect(object.equals(a, b)).toEqual(true);
     });
   });
-  describe('against two empty arrays', function () {
-    it('the result should be true', function () {
+  describe('against two empty arrays', () => {
+    it('the result should be true', () => {
       expect(object.equals([], [])).toEqual(true);
     });
   });
 });
-describe('When cloning a simple object (using a custom value extractor)', function () {
+describe('When cloning a simple object (using a custom value extractor)', () => {
   let source;
   let clone;
   let canExtract;
   let extractor;
-  beforeEach(function () {
+  beforeEach(() => {
     source = 42;
 
     canExtract = value => true;
@@ -22236,16 +22270,16 @@ describe('When cloning a simple object (using a custom value extractor)', functi
 
     clone = object.clone(source, canExtract, extractor);
   });
-  it('the cloned object should be 43', function () {
+  it('the cloned object should be 43', () => {
     expect(clone).toBe(43);
   });
 });
-describe('When cloning a complex object (using a custom value extractor)', function () {
+describe('When cloning a complex object (using a custom value extractor)', () => {
   let source;
   let clone;
   let canExtract;
   let extractor;
-  beforeEach(function () {
+  beforeEach(() => {
     source = {
       examples: {
         one: 1,
@@ -22264,21 +22298,21 @@ describe('When cloning a complex object (using a custom value extractor)', funct
 
     clone = object.clone(source, canExtract, extractor);
   });
-  it('the cloned object should not be the source object', function () {
+  it('the cloned object should not be the source object', () => {
     expect(clone).not.toBe(source);
   });
-  it("the clone object's child objects should not be the same", function () {
+  it("the clone object's child objects should not be the same", () => {
     expect(clone.examples).not.toBe(source.examples);
     expect(clone.game).not.toBe(source.game);
   });
-  it("the clone object's child arrays should not be the same", function () {
+  it("the clone object's child arrays should not be the same", () => {
     expect(clone.numbers).not.toBe(source.numbers);
   });
-  it('the numbers divisible by three should be replaced with "fizz" (for object properties)', function () {
+  it('the numbers divisible by three should be replaced with "fizz" (for object properties)', () => {
     expect(clone.examples.three).toEqual('fizz');
     expect(clone.numbers[3]).toEqual('fizz');
   });
-  it('the numbers not divisible should be the same value (for object properties)', function () {
+  it('the numbers not divisible should be the same value (for object properties)', () => {
     expect(clone.examples.one).toEqual(1);
     expect(clone.examples.two).toEqual(2);
     expect(clone.numbers[0]).toEqual(0);
@@ -22289,15 +22323,15 @@ describe('When cloning a complex object (using a custom value extractor)', funct
 });
 
 },{"./../../../lang/object":40}],111:[function(require,module,exports){
-var promise = require('./../../../lang/promise');
+const promise = require('./../../../lang/promise');
 
-describe('When a timeout is set for a promise', function () {
+describe('When a timeout is set for a promise', () => {
   'use strict';
 
-  describe('on a promise that has already been resolved', function () {
-    var originalPromise;
-    var timeoutPromise;
-    var result;
+  describe('on a promise that has already been resolved', () => {
+    let originalPromise;
+    let timeoutPromise;
+    let result;
     beforeEach(function () {
       originalPromise = Promise.resolve(result = 'instant');
       timeoutPromise = promise.timeout(originalPromise, 10);
@@ -22309,10 +22343,10 @@ describe('When a timeout is set for a promise', function () {
       });
     });
   });
-  describe('on a promise that has already been rejected', function () {
-    var originalPromise;
-    var timeoutPromise;
-    var result;
+  describe('on a promise that has already been rejected', () => {
+    let originalPromise;
+    let timeoutPromise;
+    let result;
     beforeEach(function () {
       originalPromise = Promise.reject(result = 'instant');
       timeoutPromise = promise.timeout(originalPromise, 10);
@@ -22324,13 +22358,13 @@ describe('When a timeout is set for a promise', function () {
       });
     });
   });
-  describe('on a promise that resolves quickly', function () {
-    var originalPromise;
-    var timeoutPromise;
-    var result;
+  describe('on a promise that resolves quickly', () => {
+    let originalPromise;
+    let timeoutPromise;
+    let result;
     beforeEach(function () {
       originalPromise = new Promise(function (resolveCallback, rejectCallback) {
-        setTimeout(function () {
+        setTimeout(() => {
           resolveCallback(result = 'quick');
         }, 5);
       });
@@ -22343,13 +22377,13 @@ describe('When a timeout is set for a promise', function () {
       });
     });
   });
-  describe('on a promise that rejects quickly', function () {
-    var originalPromise;
-    var timeoutPromise;
-    var result;
+  describe('on a promise that rejects quickly', () => {
+    let originalPromise;
+    let timeoutPromise;
+    let result;
     beforeEach(function () {
       originalPromise = new Promise(function (resolveCallback, rejectCallback) {
-        setTimeout(function () {
+        setTimeout(() => {
           rejectCallback(result = 'quick');
         }, 5);
       });
@@ -22362,13 +22396,13 @@ describe('When a timeout is set for a promise', function () {
       });
     });
   });
-  describe('on a promise that resolves slowly', function () {
-    var originalPromise;
-    var timeoutPromise;
-    var result;
+  describe('on a promise that resolves slowly', () => {
+    let originalPromise;
+    let timeoutPromise;
+    let result;
     beforeEach(function () {
       originalPromise = new Promise(function (resolveCallback, rejectCallback) {
-        setTimeout(function () {
+        setTimeout(() => {
           resolveCallback(result = 'slow');
         }, 20);
       });
@@ -22381,13 +22415,13 @@ describe('When a timeout is set for a promise', function () {
       });
     });
   });
-  describe('on a promise that rejects slowly', function () {
-    var originalPromise;
-    var timeoutPromise;
-    var result;
+  describe('on a promise that rejects slowly', () => {
+    let originalPromise;
+    let timeoutPromise;
+    let result;
     beforeEach(function () {
       originalPromise = new Promise(function (resolveCallback, rejectCallback) {
-        setTimeout(function () {
+        setTimeout(() => {
           rejectCallback(result = 'slow');
         }, 20);
       });
@@ -22400,9 +22434,9 @@ describe('When a timeout is set for a promise', function () {
       });
     });
   });
-  describe('on a promise that will never resolve', function () {
-    var originalPromise;
-    var timeoutPromise;
+  describe('on a promise that will never resolve', () => {
+    let originalPromise;
+    let timeoutPromise;
     beforeEach(function () {
       originalPromise = new Promise(function (resolveCallback, rejectCallback) {
         return;
@@ -22417,19 +22451,19 @@ describe('When a timeout is set for a promise', function () {
     });
   });
 });
-describe('When using the "promise.map" function', function () {
+describe('When using the "promise.map" function', () => {
   'use strict';
 
-  describe('with an asynchronous, promise-based mapper', function () {
-    describe('and the array has zero items', function () {
-      var mapPromise;
-      var mapItems;
-      var mapSpy;
-      beforeEach(function () {
+  describe('with an asynchronous, promise-based mapper', () => {
+    describe('and the array has zero items', () => {
+      let mapPromise;
+      let mapItems;
+      let mapSpy;
+      beforeEach(() => {
         mapItems = [];
       });
-      describe('and the concurrency level is zero', function () {
-        beforeEach(function () {
+      describe('and the concurrency level is zero', () => {
+        beforeEach(() => {
           mapPromise = promise.map(mapItems, mapSpy = jasmine.createSpy('mapSpy'), 0);
         });
         it('the result should be an empty array', function (done) {
@@ -22445,8 +22479,8 @@ describe('When using the "promise.map" function', function () {
           });
         });
       });
-      describe('and the concurrency level is six', function () {
-        beforeEach(function () {
+      describe('and the concurrency level is six', () => {
+        beforeEach(() => {
           mapPromise = promise.map(mapItems, mapSpy = jasmine.createSpy('mapSpy'), 6);
         });
         it('the result should be an empty array', function (done) {
@@ -22463,18 +22497,18 @@ describe('When using the "promise.map" function', function () {
         });
       });
     });
-    describe('and the array has three items', function () {
-      var mapPromise;
-      var mapItems;
-      var mapSpy;
-      var first;
-      var second;
-      var third;
-      beforeEach(function () {
+    describe('and the array has three items', () => {
+      let mapPromise;
+      let mapItems;
+      let mapSpy;
+      let first;
+      let second;
+      let third;
+      beforeEach(() => {
         mapItems = [first = {}, second = {}, third = {}];
       });
-      describe('and the concurrency level is zero', function () {
-        beforeEach(function () {
+      describe('and the concurrency level is zero', () => {
+        beforeEach(() => {
           mapPromise = promise.map(mapItems, mapSpy = getMapSpy(), 0);
         });
         it('the maximum concurrency level should be three', function (done) {
@@ -22508,8 +22542,8 @@ describe('When using the "promise.map" function', function () {
           });
         });
       });
-      describe('and the concurrency level is one', function () {
-        beforeEach(function () {
+      describe('and the concurrency level is one', () => {
+        beforeEach(() => {
           mapPromise = promise.map(mapItems, mapSpy = getMapSpy(), 1);
         });
         it('the maximum concurrency level should be one', function (done) {
@@ -22543,8 +22577,8 @@ describe('When using the "promise.map" function', function () {
           });
         });
       });
-      describe('and the concurrency level is two', function () {
-        beforeEach(function () {
+      describe('and the concurrency level is two', () => {
+        beforeEach(() => {
           mapPromise = promise.map(mapItems, mapSpy = getMapSpy(), 2);
         });
         it('the maximum concurrency level should be two', function (done) {
@@ -22578,8 +22612,8 @@ describe('When using the "promise.map" function', function () {
           });
         });
       });
-      describe('and the concurrency level is three', function () {
-        beforeEach(function () {
+      describe('and the concurrency level is three', () => {
+        beforeEach(() => {
           mapPromise = promise.map(mapItems, mapSpy = getMapSpy(), 3);
         });
         it('the maximum concurrency level should be three', function (done) {
@@ -22613,8 +22647,8 @@ describe('When using the "promise.map" function', function () {
           });
         });
       });
-      describe('and the concurrency level is four', function () {
-        beforeEach(function () {
+      describe('and the concurrency level is four', () => {
+        beforeEach(() => {
           mapPromise = promise.map(mapItems, mapSpy = getMapSpy(), 4);
         });
         it('the maximum concurrency level should be three', function (done) {
@@ -22649,21 +22683,21 @@ describe('When using the "promise.map" function', function () {
         });
       });
     });
-    describe('and the array has four items (with a concurrency level of two)', function () {
-      var mapPromise;
-      var mapItems;
-      var mapSpy;
-      var first;
-      var second;
-      var third;
-      var fourth;
-      beforeEach(function () {
+    describe('and the array has four items (with a concurrency level of two)', () => {
+      let mapPromise;
+      let mapItems;
+      let mapSpy;
+      let first;
+      let second;
+      let third;
+      let fourth;
+      beforeEach(() => {
         mapItems = [first = {}, second = {}, third = {}, fourth = {}];
       });
-      describe('and the first item takes a long time to process', function () {
-        beforeEach(function () {
+      describe('and the first item takes a long time to process', () => {
+        beforeEach(() => {
           mapPromise = promise.map(mapItems, mapSpy = jasmine.createSpy('mapSpy').and.callFake(function (item) {
-            var delay;
+            let delay;
 
             if (item === first) {
               delay = 30;
@@ -22671,10 +22705,10 @@ describe('When using the "promise.map" function', function () {
               delay = 5;
             }
 
-            var startDate = new Date();
+            let startDate = new Date();
             return new Promise(function (resolveCallback, rejectCallback) {
-              setTimeout(function () {
-                var endDate = new Date();
+              setTimeout(() => {
+                let endDate = new Date();
                 resolveCallback({
                   item: item,
                   start: startDate.getTime(),
@@ -22711,12 +22745,12 @@ describe('When using the "promise.map" function', function () {
       });
     });
 
-    var getMapSpy = function () {
+    let getMapSpy = () => {
       return jasmine.createSpy('mapSpy').and.callFake(function (item) {
-        var startDate = new Date();
+        let startDate = new Date();
         return new Promise(function (resolveCallback, rejectCallback) {
-          setTimeout(function () {
-            var endDate = new Date();
+          setTimeout(() => {
+            let endDate = new Date();
             resolveCallback({
               item: item,
               start: startDate.getTime(),
@@ -22727,12 +22761,12 @@ describe('When using the "promise.map" function', function () {
       });
     };
   });
-  describe('with an synchronous mapper', function () {
-    describe('and the array has no items (with an infinite concurrency level)', function () {
-      var mapPromise;
-      var mapItems;
-      var mapSpy;
-      beforeEach(function () {
+  describe('with an synchronous mapper', () => {
+    describe('and the array has no items (with an infinite concurrency level)', () => {
+      let mapPromise;
+      let mapItems;
+      let mapSpy;
+      beforeEach(() => {
         mapPromise = promise.map(mapItems = [], mapSpy = jasmine.createSpy('mapSpy'));
       });
       it('the result will be an array', function (done) {
@@ -22754,11 +22788,11 @@ describe('When using the "promise.map" function', function () {
         });
       });
     });
-    describe('and the array has two items (with an infinite concurrency level)', function () {
-      var mapPromise;
-      var mapItems;
-      var mapSpy;
-      beforeEach(function () {
+    describe('and the array has two items (with an infinite concurrency level)', () => {
+      let mapPromise;
+      let mapItems;
+      let mapSpy;
+      beforeEach(() => {
         mapPromise = promise.map(mapItems = ['x', 'y'], mapSpy = jasmine.createSpy('mapSpy'));
       });
       it('the result will be an array', function (done) {
@@ -22794,12 +22828,12 @@ describe('When using the "promise.map" function', function () {
     });
   });
 
-  var getConcurrency = function (results, index) {
-    var current = results[index];
-    var concurrency = 0;
+  let getConcurrency = function (results, index) {
+    let current = results[index];
+    let concurrency = 0;
 
-    for (var i = 0; i < results.length; i++) {
-      var other = results[i];
+    for (let i = 0; i < results.length; i++) {
+      let other = results[i];
 
       if (!(other.end <= current.start || other.start >= current.end)) {
         concurrency = concurrency + 1;
@@ -22809,23 +22843,23 @@ describe('When using the "promise.map" function', function () {
     return concurrency;
   };
 
-  var getMaximumConcurrency = function (results) {
-    var maximum = 0;
+  let getMaximumConcurrency = function (results) {
+    let maximum = 0;
 
-    for (var i = 0; i < results.length; i++) {
+    for (let i = 0; i < results.length; i++) {
       maximum = Math.max(getConcurrency(results, i), maximum);
     }
 
     return maximum;
   };
 });
-describe('When processing a "pipeline" of promises', function () {
+describe('When processing a "pipeline" of promises', () => {
   'use strict';
 
-  describe('and no executors are specified', function () {
-    var input;
-    var p;
-    beforeEach(function () {
+  describe('and no executors are specified', () => {
+    let input;
+    let p;
+    beforeEach(() => {
       p = promise.pipeline([], input = {});
     });
     it('should return the original input', function (done) {
@@ -22835,14 +22869,14 @@ describe('When processing a "pipeline" of promises', function () {
       });
     });
   });
-  describe('and one asynchronous executor is specified', function () {
-    var input;
-    var spyOne;
-    var p;
-    beforeEach(function () {
-      var delayedSquare = function (x) {
+  describe('and one asynchronous executor is specified', () => {
+    let input;
+    let spyOne;
+    let p;
+    beforeEach(() => {
+      let delayedSquare = function (x) {
         return new Promise(resolveCallback => {
-          setTimeout(function () {
+          setTimeout(() => {
             resolveCallback(x * x);
           }, 10);
         });
@@ -22864,15 +22898,15 @@ describe('When processing a "pipeline" of promises', function () {
       });
     });
   });
-  describe('and two asynchronous executors are specified', function () {
-    var input;
-    var spyOne;
-    var spyTwo;
-    var p;
-    beforeEach(function () {
-      var delayedSquare = function (x) {
+  describe('and two asynchronous executors are specified', () => {
+    let input;
+    let spyOne;
+    let spyTwo;
+    let p;
+    beforeEach(() => {
+      let delayedSquare = function (x) {
         return new Promise(resolveCallback => {
-          setTimeout(function () {
+          setTimeout(() => {
             resolveCallback(x * x);
           }, 10);
         });
@@ -22901,12 +22935,12 @@ describe('When processing a "pipeline" of promises', function () {
       });
     });
   });
-  describe('and one synchronous executor is specified', function () {
-    var input;
-    var spyOne;
-    var p;
-    beforeEach(function () {
-      var synchronousSquare = function (x) {
+  describe('and one synchronous executor is specified', () => {
+    let input;
+    let spyOne;
+    let p;
+    beforeEach(() => {
+      let synchronousSquare = function (x) {
         return x * x;
       };
 
@@ -22926,13 +22960,13 @@ describe('When processing a "pipeline" of promises', function () {
       });
     });
   });
-  describe('and two synchronous executors are specified', function () {
-    var input;
-    var spyOne;
-    var spyTwo;
-    var p;
-    beforeEach(function () {
-      var synchronousSquare = function (x) {
+  describe('and two synchronous executors are specified', () => {
+    let input;
+    let spyOne;
+    let spyTwo;
+    let p;
+    beforeEach(() => {
+      let synchronousSquare = function (x) {
         return x * x;
       };
 
@@ -22959,17 +22993,17 @@ describe('When processing a "pipeline" of promises', function () {
       });
     });
   });
-  describe('and an executor throws an exception', function () {
-    var input;
-    var spyOne;
-    var spyTwo;
-    var p;
-    beforeEach(function () {
-      var synchronousException = function (x) {
+  describe('and an executor throws an exception', () => {
+    let input;
+    let spyOne;
+    let spyTwo;
+    let p;
+    beforeEach(() => {
+      let synchronousException = function (x) {
         throw new Exception('oops');
       };
 
-      var synchronousSquare = function (x) {
+      let synchronousSquare = function (x) {
         return x * x;
       };
 
@@ -22997,12 +23031,12 @@ describe('When processing a "pipeline" of promises', function () {
     });
   });
 });
-describe('When "promise.build" is used to create a promise', function () {
+describe('When "promise.build" is used to create a promise', () => {
   'use strict';
 
-  describe('and the executor resolves', function () {
-    var p;
-    beforeEach(function () {
+  describe('and the executor resolves', () => {
+    let p;
+    beforeEach(() => {
       p = promise.build(function (r, x) {
         r('ok');
       });
@@ -23014,9 +23048,9 @@ describe('When "promise.build" is used to create a promise', function () {
       });
     });
   });
-  describe('and the executor rejects', function () {
-    var p;
-    beforeEach(function () {
+  describe('and the executor rejects', () => {
+    let p;
+    beforeEach(() => {
       p = promise.build(function (r, x) {
         x('not ok');
       });
@@ -23028,10 +23062,10 @@ describe('When "promise.build" is used to create a promise', function () {
       });
     });
   });
-  describe('and the executor throws an error', function () {
-    var p;
-    var e;
-    beforeEach(function () {
+  describe('and the executor throws an error', () => {
+    let p;
+    let e;
+    beforeEach(() => {
       p = promise.build(function (r, x) {
         e = new Error('oops');
         throw e;
@@ -23047,35 +23081,35 @@ describe('When "promise.build" is used to create a promise', function () {
 });
 
 },{"./../../../lang/promise":41}],112:[function(require,module,exports){
-var random = require('./../../../lang/random');
+const random = require('./../../../lang/random');
 
-describe('When generating a random number, restricting the range to one integer', function () {
+describe('When generating a random number, restricting the range to one integer', () => {
   'use strict';
 
-  var result;
-  var value;
-  beforeEach(function () {
+  let result;
+  let value;
+  beforeEach(() => {
     result = random.range(value = 42, value);
   });
-  it('should be the value', function () {
+  it('should be the value', () => {
     expect(result).toEqual(value);
   });
 });
-describe('When generating a random number with a range of multiple values', function () {
+describe('When generating a random number with a range of multiple values', () => {
   'use strict';
 
-  var result;
-  var minimum;
-  var maximum;
-  beforeEach(function () {
+  let result;
+  let minimum;
+  let maximum;
+  beforeEach(() => {
     minimum = -2;
     maximum = 1;
   });
-  it('should generate a value within the range', function () {
-    var range = maximum - minimum;
+  it('should generate a value within the range', () => {
+    let range = maximum - minimum;
 
-    for (var i = 0; i < range * 10; i++) {
-      var result = random.range(minimum, maximum);
+    for (let i = 0; i < range * 10; i++) {
+      let result = random.range(minimum, maximum);
       expect(result < minimum).toEqual(false);
       expect(result > maximum).toEqual(false);
     }
@@ -23083,269 +23117,269 @@ describe('When generating a random number with a range of multiple values', func
 });
 
 },{"./../../../lang/random":42}],113:[function(require,module,exports){
-var string = require('./../../../lang/string');
+const string = require('./../../../lang/string');
 
-describe('When converting a string to "start" casing', function () {
+describe('When converting a string to "start" casing', () => {
   'use strict';
 
-  var result;
-  beforeEach(function () {
+  let result;
+  beforeEach(() => {
     result = string.startCase('The quick brown Fox');
   });
-  it('should convert the first character (after each space) to a capital letter', function () {
+  it('should convert the first character (after each space) to a capital letter', () => {
     expect(result).toEqual('The Quick Brown Fox');
   });
 });
-describe('When truncating a string', function () {
+describe('When truncating a string', () => {
   'use strict';
 
-  var base;
-  beforeEach(function () {
+  let base;
+  beforeEach(() => {
     base = '1234567890';
   });
-  describe('to more characters than the base string', function () {
-    var result;
-    beforeEach(function () {
+  describe('to more characters than the base string', () => {
+    let result;
+    beforeEach(() => {
       result = string.truncate(base, base.length + 1);
     });
-    it('should return the base string', function () {
+    it('should return the base string', () => {
       expect(result).toEqual(base);
     });
   });
-  describe('to the same number of characters than the base string', function () {
-    var result;
-    beforeEach(function () {
+  describe('to the same number of characters than the base string', () => {
+    let result;
+    beforeEach(() => {
       result = string.truncate(base, base.length);
     });
-    it('should return the base string', function () {
+    it('should return the base string', () => {
       expect(result).toEqual(base);
     });
   });
-  describe('to fewer characters than the base string', function () {
-    var result;
-    var length;
-    beforeEach(function () {
+  describe('to fewer characters than the base string', () => {
+    let result;
+    let length;
+    beforeEach(() => {
       result = string.truncate(base, length = 2);
     });
-    it('the result should be the correct number of characters', function () {
+    it('the result should be the correct number of characters', () => {
       expect(result.length).toEqual(length + 4);
     });
-    it('the first characters should be from the base string', function () {
-      for (var i = 0; i < length; i++) {
+    it('the first characters should be from the base string', () => {
+      for (let i = 0; i < length; i++) {
         expect(result.substring(i, i + 1)).toEqual(base.substring(i, i + 1));
       }
     });
-    it('the final characters should be the base string', function () {
+    it('the final characters should be the base string', () => {
       expect(result.substring(result.length - 4, result.length)).toEqual(' ...');
     });
   });
 });
-describe('When left padding a string', function () {
+describe('When left padding a string', () => {
   'use strict';
 
-  var base;
-  beforeEach(function () {
+  let base;
+  beforeEach(() => {
     base = 'base';
   });
-  describe('with fewer characters than the base string', function () {
-    var result;
-    beforeEach(function () {
+  describe('with fewer characters than the base string', () => {
+    let result;
+    beforeEach(() => {
       result = string.padLeft(base, base.length, 'x');
     });
-    it('should return the base string', function () {
+    it('should return the base string', () => {
       expect(result).toEqual(base);
     });
   });
-  describe('with one more character than the base string', function () {
-    var result;
-    var repeat;
-    beforeEach(function () {
+  describe('with one more character than the base string', () => {
+    let result;
+    let repeat;
+    beforeEach(() => {
       result = string.padLeft(base, base.length + 1, repeat = 'x');
     });
-    it('the result should be the correct number of characters', function () {
+    it('the result should be the correct number of characters', () => {
       expect(result.length).toEqual(base.length + 1);
     });
-    it('the first character should be the repeating character', function () {
+    it('the first character should be the repeating character', () => {
       expect(result.substring(0, 1)).toEqual(repeat);
     });
-    it('the final characters should be the base string', function () {
+    it('the final characters should be the base string', () => {
       expect(result.substring(1, result.length)).toEqual(base);
     });
   });
-  describe('with many more character than the base string', function () {
-    var result;
-    var repeat;
-    var count;
-    beforeEach(function () {
+  describe('with many more character than the base string', () => {
+    let result;
+    let repeat;
+    let count;
+    beforeEach(() => {
       result = string.padLeft(base, count = 10, repeat = 'x');
     });
-    it('the result should be the correct number of characters', function () {
+    it('the result should be the correct number of characters', () => {
       expect(result.length).toEqual(count);
     });
-    it('the first characters should be the repeating character', function () {
-      var prefix = count - base.length;
+    it('the first characters should be the repeating character', () => {
+      let prefix = count - base.length;
 
-      for (var i = 0; i < prefix; i++) {
+      for (let i = 0; i < prefix; i++) {
         expect(result.substring(i, i + 1)).toEqual(repeat);
       }
     });
-    it('the final characters should be the base string', function () {
+    it('the final characters should be the base string', () => {
       expect(result.substring(count - base.length, result.length)).toEqual(base);
     });
   });
 });
-describe('When a formattable string ("&startDate={0}&endDate={1}"', function () {
+describe('When a formattable string ("&startDate={0}&endDate={1}"', () => {
   'use strict';
 
-  var stringToFormat;
-  beforeEach(function () {
+  let stringToFormat;
+  beforeEach(() => {
     stringToFormat = '&startDate={0}&endDate={1}';
   });
-  it('formatted with ("2017-08-31" and  "2017-09-30")', function () {
+  it('formatted with ("2017-08-31" and  "2017-09-30")', () => {
     expect(string.format(stringToFormat, '2017-08-31', '2017-09-30')).toEqual('&startDate=2017-08-31&endDate=2017-09-30');
   });
-  it('formatted with ("0" and  "0")', function () {
+  it('formatted with ("0" and  "0")', () => {
     expect(string.format(stringToFormat, 0, 0)).toEqual('&startDate=0&endDate=0');
   });
-  it('formatted with ("hello")', function () {
+  it('formatted with ("hello")', () => {
     expect(string.format(stringToFormat, 'hello')).toEqual('&startDate=hello&endDate={1}');
   });
-  it('formatted with ("xin" and "bryan" and "dave")', function () {
+  it('formatted with ("xin" and "bryan" and "dave")', () => {
     expect(string.format(stringToFormat, 'xin', 'bryan', 'dave')).toEqual('&startDate=xin&endDate=bryan');
   });
-  it('formatted with nothing', function () {
+  it('formatted with nothing', () => {
     expect(string.format(stringToFormat)).toEqual('&startDate={0}&endDate={1}');
   });
 });
 
 },{"./../../../lang/string":43}],114:[function(require,module,exports){
-var EventMap = require('./../../../messaging/EventMap');
+const EventMap = require('./../../../messaging/EventMap');
 
-describe('When an EventMap is constructed', function () {
+describe('When an EventMap is constructed', () => {
   'use strict';
 
-  var eventMap;
-  beforeEach(function () {
+  let eventMap;
+  beforeEach(() => {
     eventMap = new EventMap();
   });
-  describe('and a handler is registered', function () {
-    var eventName;
-    var eventHandler;
-    beforeEach(function () {
+  describe('and a handler is registered', () => {
+    let eventName;
+    let eventHandler;
+    beforeEach(() => {
       eventMap.register(eventName = 'hi', eventHandler = jasmine.createSpy('eventHandler'));
     });
-    it('should report the event as not empty', function () {
+    it('should report the event as not empty', () => {
       expect(eventMap.getIsEmpty(eventName)).toBe(false);
     });
-    describe('and the event fires', function () {
-      var eventData;
-      beforeEach(function () {
+    describe('and the event fires', () => {
+      let eventData;
+      beforeEach(() => {
         eventMap.fire(eventName, eventData = {});
       });
-      it('should notify the handler', function () {
+      it('should notify the handler', () => {
         expect(eventHandler).toHaveBeenCalledWith(eventData, eventMap);
       });
     });
-    describe('and the an unrelated event fires', function () {
-      var eventData;
-      beforeEach(function () {
+    describe('and the an unrelated event fires', () => {
+      let eventData;
+      beforeEach(() => {
         eventMap.fire('blah', eventData = {});
       });
-      it('should not notify the handler', function () {
+      it('should not notify the handler', () => {
         expect(eventHandler).not.toHaveBeenCalled();
       });
     });
-    describe('and the handler is unregistered', function () {
-      beforeEach(function () {
+    describe('and the handler is unregistered', () => {
+      beforeEach(() => {
         eventMap.unregister(eventName, eventHandler);
       });
-      it('should report the event as empty', function () {
+      it('should report the event as empty', () => {
         expect(eventMap.getIsEmpty(eventName)).toBe(true);
       });
     });
-    describe('and the handler is unregistered (using the wrong event name)', function () {
-      beforeEach(function () {
+    describe('and the handler is unregistered (using the wrong event name)', () => {
+      beforeEach(() => {
         eventMap.unregister('blah', eventHandler);
       });
-      it('should not report the event as empty', function () {
+      it('should not report the event as empty', () => {
         expect(eventMap.getIsEmpty(eventName)).toBe(false);
       });
     });
-    describe('and the handler is unregistered (using the wrong handler)', function () {
-      beforeEach(function () {
-        eventMap.unregister(eventName, function () {});
+    describe('and the handler is unregistered (using the wrong handler)', () => {
+      beforeEach(() => {
+        eventMap.unregister(eventName, () => {});
       });
-      it('should not report the event as empty', function () {
+      it('should not report the event as empty', () => {
         expect(eventMap.getIsEmpty(eventName)).toBe(false);
       });
     });
-    describe('and another handler is registered', function () {
-      var eventHandlerTwo;
-      beforeEach(function () {
+    describe('and another handler is registered', () => {
+      let eventHandlerTwo;
+      beforeEach(() => {
         eventMap.register(eventName, eventHandlerTwo = jasmine.createSpy('eventHandlerTwo'));
       });
-      it('should report the event as not empty', function () {
+      it('should report the event as not empty', () => {
         expect(eventMap.getIsEmpty(eventName)).toBe(false);
       });
-      describe('and the event fires', function () {
-        var eventData;
-        beforeEach(function () {
+      describe('and the event fires', () => {
+        let eventData;
+        beforeEach(() => {
           eventMap.fire(eventName, eventData = {});
         });
-        it('should notify the first handler', function () {
+        it('should notify the first handler', () => {
           expect(eventHandler).toHaveBeenCalledWith(eventData, eventMap);
         });
-        it('should notify the second handler', function () {
+        it('should notify the second handler', () => {
           expect(eventHandlerTwo).toHaveBeenCalledWith(eventData, eventMap);
         });
       });
-      describe('and the an unrelated event fires', function () {
-        var eventData;
-        beforeEach(function () {
+      describe('and the an unrelated event fires', () => {
+        let eventData;
+        beforeEach(() => {
           eventMap.fire('blah', eventData = {});
         });
-        it('should not notify the first handler', function () {
+        it('should not notify the first handler', () => {
           expect(eventHandler).not.toHaveBeenCalled();
         });
-        it('should not notify the second handler', function () {
+        it('should not notify the second handler', () => {
           expect(eventHandlerTwo).not.toHaveBeenCalled();
         });
       });
-      describe('and the handler is unregistered', function () {
-        beforeEach(function () {
+      describe('and the handler is unregistered', () => {
+        beforeEach(() => {
           eventMap.unregister(eventName, eventHandler);
         });
-        it('should report the event as empty', function () {
+        it('should report the event as empty', () => {
           expect(eventMap.getIsEmpty(eventName)).toBe(false);
         });
-        describe('and the event fires', function () {
-          var eventData;
-          beforeEach(function () {
+        describe('and the event fires', () => {
+          let eventData;
+          beforeEach(() => {
             eventMap.fire(eventName, eventData = {});
           });
-          it('should not notify the first handler', function () {
+          it('should not notify the first handler', () => {
             expect(eventHandler).not.toHaveBeenCalledWith(eventData, eventMap);
           });
-          it('should notify the second handler', function () {
+          it('should notify the second handler', () => {
             expect(eventHandlerTwo).toHaveBeenCalledWith(eventData, eventMap);
           });
         });
-        describe('and the second handler is unregistered', function () {
-          beforeEach(function () {
+        describe('and the second handler is unregistered', () => {
+          beforeEach(() => {
             eventMap.unregister(eventName, eventHandlerTwo);
           });
-          it('should report the event as empty', function () {
+          it('should report the event as empty', () => {
             expect(eventMap.getIsEmpty(eventName)).toBe(true);
           });
-          describe('and the event fires', function () {
-            var eventData;
-            beforeEach(function () {
+          describe('and the event fires', () => {
+            let eventData;
+            beforeEach(() => {
               eventMap.fire(eventName, eventData = {});
             });
-            it('should not notify the first handler', function () {
+            it('should not notify the first handler', () => {
               expect(eventHandler).not.toHaveBeenCalledWith(eventData, eventMap);
             });
-            it('should not notify the second handler', function () {
+            it('should not notify the second handler', () => {
               expect(eventHandlerTwo).not.toHaveBeenCalledWith(eventData, eventMap);
             });
           });
@@ -23356,141 +23390,140 @@ describe('When an EventMap is constructed', function () {
 });
 
 },{"./../../../messaging/EventMap":46}],115:[function(require,module,exports){
-var Disposable = require('./../../../lang/Disposable');
+const Disposable = require('./../../../lang/Disposable'),
+      Event = require('./../../../messaging/Event');
 
-var Event = require('./../../../messaging/Event');
-
-describe('When an Event is constructed', function () {
+describe('When an Event is constructed', () => {
   'use strict';
 
-  var event;
-  var context;
-  beforeEach(function () {
+  let event;
+  let context;
+  beforeEach(() => {
     event = new Event(context = {});
   });
-  describe('and an event handler is registered', function () {
-    var spyOne;
-    var bindingOne;
-    beforeEach(function () {
+  describe('and an event handler is registered', () => {
+    let spyOne;
+    let bindingOne;
+    beforeEach(() => {
       bindingOne = event.register(spyOne = jasmine.createSpy('spyOne'));
     });
-    it('should return a Disposable instance', function () {
+    it('should return a Disposable instance', () => {
       expect(bindingOne instanceof Disposable).toEqual(true);
     });
-    describe('and the event fires', function () {
-      var data;
-      beforeEach(function () {
+    describe('and the event fires', () => {
+      let data;
+      beforeEach(() => {
         event.fire(data = {});
       });
-      it('should notify the observer', function () {
+      it('should notify the observer', () => {
         expect(spyOne).toHaveBeenCalledWith(context, data);
       });
     });
-    describe('and another event handler is registered', function () {
-      var spyTwo;
-      var bindingTwo;
-      beforeEach(function () {
+    describe('and another event handler is registered', () => {
+      let spyTwo;
+      let bindingTwo;
+      beforeEach(() => {
         bindingTwo = event.register(spyTwo = jasmine.createSpy('spyTwo'));
       });
-      it('should return a Disposable instance', function () {
+      it('should return a Disposable instance', () => {
         expect(bindingTwo instanceof Disposable).toEqual(true);
       });
-      describe('and the event fires', function () {
-        var data;
-        beforeEach(function () {
+      describe('and the event fires', () => {
+        let data;
+        beforeEach(() => {
           event.fire(data = {});
         });
-        it('should notify both observers', function () {
+        it('should notify both observers', () => {
           expect(spyOne).toHaveBeenCalledWith(context, data);
           expect(spyTwo).toHaveBeenCalledWith(context, data);
         });
       });
-      describe('and the first observer is disposed ', function () {
-        var data;
-        beforeEach(function () {
+      describe('and the first observer is disposed ', () => {
+        let data;
+        beforeEach(() => {
           bindingOne.dispose();
         });
-        describe('and the event fires', function () {
-          var data;
-          beforeEach(function () {
+        describe('and the event fires', () => {
+          let data;
+          beforeEach(() => {
             event.fire(data = {});
           });
-          it('should not notify the first observer', function () {
+          it('should not notify the first observer', () => {
             expect(spyOne).not.toHaveBeenCalledWith(context, data);
           });
-          it('should notify the second observer', function () {
+          it('should notify the second observer', () => {
             expect(spyTwo).toHaveBeenCalledWith(context, data);
           });
         });
       });
     });
   });
-  describe('and multiple observers are added which dispose themselves', function () {
-    var spyOne;
-    var spyTwo;
-    var bindingOne;
-    var bindingTwo;
-    beforeEach(function () {
-      bindingOne = event.register(spyOne = jasmine.createSpy('spyOne').and.callFake(function () {
+  describe('and multiple observers are added which dispose themselves', () => {
+    let spyOne;
+    let spyTwo;
+    let bindingOne;
+    let bindingTwo;
+    beforeEach(() => {
+      bindingOne = event.register(spyOne = jasmine.createSpy('spyOne').and.callFake(() => {
         bindingOne.dispose();
       }));
-      bindingTwo = event.register(spyTwo = jasmine.createSpy('spyTwo').and.callFake(function () {
+      bindingTwo = event.register(spyTwo = jasmine.createSpy('spyTwo').and.callFake(() => {
         bindingTwo.dispose();
       }));
     });
-    describe('and the event fires', function () {
-      var data;
-      beforeEach(function () {
+    describe('and the event fires', () => {
+      let data;
+      beforeEach(() => {
         event.fire(data = {});
       });
-      it('should notify both observer', function () {
+      it('should notify both observer', () => {
         expect(spyOne).toHaveBeenCalledWith(context, data);
         expect(spyTwo).toHaveBeenCalledWith(context, data);
       });
-      describe('and the event fires again', function () {
-        var data;
-        beforeEach(function () {
+      describe('and the event fires again', () => {
+        let data;
+        beforeEach(() => {
           spyOne.calls.reset();
           spyTwo.calls.reset();
           event.fire(data = {});
         });
-        it('should not notify either observer', function () {
+        it('should not notify either observer', () => {
           expect(spyOne).not.toHaveBeenCalledWith(context, data);
           expect(spyTwo).not.toHaveBeenCalledWith(context, data);
         });
       });
     });
   });
-  describe('and two observers are added which dispose each other', function () {
-    var spyOne;
-    var spyTwo;
-    var bindingOne;
-    var bindingTwo;
-    beforeEach(function () {
-      bindingOne = event.register(spyOne = jasmine.createSpy('spyOne').and.callFake(function () {
+  describe('and two observers are added which dispose each other', () => {
+    let spyOne;
+    let spyTwo;
+    let bindingOne;
+    let bindingTwo;
+    beforeEach(() => {
+      bindingOne = event.register(spyOne = jasmine.createSpy('spyOne').and.callFake(() => {
         bindingTwo.dispose();
       }));
-      bindingTwo = event.register(spyTwo = jasmine.createSpy('spyTwo').and.callFake(function () {
+      bindingTwo = event.register(spyTwo = jasmine.createSpy('spyTwo').and.callFake(() => {
         bindingOne.dispose();
       }));
     });
-    describe('and the event fires', function () {
-      var data;
-      beforeEach(function () {
+    describe('and the event fires', () => {
+      let data;
+      beforeEach(() => {
         event.fire(data = {});
       });
-      it('should notify both observer', function () {
+      it('should notify both observer', () => {
         expect(spyOne).toHaveBeenCalledWith(context, data);
         expect(spyTwo).toHaveBeenCalledWith(context, data);
       });
-      describe('and the event fires again', function () {
-        var data;
-        beforeEach(function () {
+      describe('and the event fires again', () => {
+        let data;
+        beforeEach(() => {
           spyOne.calls.reset();
           spyTwo.calls.reset();
           event.fire(data = {});
         });
-        it('should not notify either observer', function () {
+        it('should not notify either observer', () => {
           expect(spyOne).not.toHaveBeenCalledWith(context, data);
           expect(spyTwo).not.toHaveBeenCalledWith(context, data);
         });
@@ -23500,100 +23533,99 @@ describe('When an Event is constructed', function () {
 });
 
 },{"./../../../lang/Disposable":23,"./../../../messaging/Event":45}],116:[function(require,module,exports){
-var Disposable = require('./../../../lang/Disposable');
+const Disposable = require('./../../../lang/Disposable'),
+      Model = require('./../../../models/Model');
 
-var Model = require('./../../../models/Model');
-
-describe('When an Model is constructed with "firstName" and "lastName" properties', function () {
+describe('When an Model is constructed with "firstName" and "lastName" properties', () => {
   'use strict';
 
-  var model;
-  beforeEach(function () {
+  let model;
+  beforeEach(() => {
     model = new Model(['firstName', 'lastName']);
   });
-  describe('and a transaction observer is registered', function () {
-    var spy;
-    var binding;
-    beforeEach(function () {
+  describe('and a transaction observer is registered', () => {
+    let spy;
+    let binding;
+    beforeEach(() => {
       binding = model.onTransactionCommitted(spy = jasmine.createSpy('spy'));
     });
-    it('should return a Disposable instance', function () {
+    it('should return a Disposable instance', () => {
       expect(binding instanceof Disposable).toEqual(true);
     });
-    it('should return null values for each property', function () {
+    it('should return null values for each property', () => {
       expect(model.firstName).toBe(null);
       expect(model.lastName).toBe(null);
     });
-    describe('and both properties are updated', function () {
-      var data;
-      beforeEach(function () {
+    describe('and both properties are updated', () => {
+      let data;
+      beforeEach(() => {
         model.firstName = 'Bryan';
         model.lastName = 'Ingle';
       });
-      it('two transactions should occur', function () {
+      it('two transactions should occur', () => {
         expect(spy.calls.count()).toEqual(2);
       });
-      it('the first transaction should have updated the "first name" property', function () {
-        var argsOne = spy.calls.argsFor(0);
+      it('the first transaction should have updated the "first name" property', () => {
+        let argsOne = spy.calls.argsFor(0);
         expect(argsOne[0].firstName).toEqual('Bryan');
         expect(argsOne[0].sequence).toEqual(0);
         expect(argsOne[1]).toBe(model);
       });
-      it('the second transaction should have updated the "last name" property', function () {
-        var argsOne = spy.calls.argsFor(1);
+      it('the second transaction should have updated the "last name" property', () => {
+        let argsOne = spy.calls.argsFor(1);
         expect(argsOne[0].lastName).toEqual('Ingle');
         expect(argsOne[0].sequence).toEqual(1);
         expect(argsOne[1]).toBe(model);
       });
     });
-    describe('and both properties are updated with an explicit transaction', function () {
-      var data;
-      beforeEach(function () {
+    describe('and both properties are updated with an explicit transaction', () => {
+      let data;
+      beforeEach(() => {
         model.executeTransaction(function (m) {
           m.firstName = 'Bryan';
           m.lastName = 'Ingle';
         });
       });
-      it('one transaction should occur', function () {
+      it('one transaction should occur', () => {
         expect(spy.calls.count()).toEqual(1);
       });
-      it('the first transaction should have updated the "first name" property', function () {
-        var argsOne = spy.calls.argsFor(0);
+      it('the first transaction should have updated the "first name" property', () => {
+        let argsOne = spy.calls.argsFor(0);
         expect(argsOne[0].firstName).toEqual('Bryan');
         expect(argsOne[0].lastName).toEqual('Ingle');
         expect(argsOne[0].sequence).toEqual(0);
         expect(argsOne[1]).toBe(model);
       });
     });
-    describe('and both properties are to undefined values', function () {
-      var data;
-      beforeEach(function () {
+    describe('and both properties are to undefined values', () => {
+      let data;
+      beforeEach(() => {
         model.firstName = undefined;
         model.lastName = undefined;
       });
-      it('no transactions should occur', function () {
+      it('no transactions should occur', () => {
         expect(spy.calls.count()).toEqual(0);
       });
-      it('the properties should return null values', function () {
+      it('the properties should return null values', () => {
         expect(model.firstName).toBe(null);
         expect(model.lastName).toBe(null);
       });
-      describe('and both are updated to non-null values', function () {
-        beforeEach(function () {
+      describe('and both are updated to non-null values', () => {
+        beforeEach(() => {
           model.firstName = 0;
           model.lastName = '';
         });
-        it('two transactions should occur', function () {
+        it('two transactions should occur', () => {
           expect(spy.calls.count()).toEqual(2);
         });
-        it('the first transaction should have updated the "first name" property to zero', function () {
-          var argsOne = spy.calls.argsFor(0);
+        it('the first transaction should have updated the "first name" property to zero', () => {
+          let argsOne = spy.calls.argsFor(0);
           expect(argsOne[0].firstName).toBe(0);
           expect(argsOne[0].sequence).toEqual(0);
           expect(argsOne[1]).toBe(model);
         });
-        it('the second transaction should have updated the "last name" property to a zero-length string', function () {
-          var argsOne = spy.calls.argsFor(1);
+        it('the second transaction should have updated the "last name" property to a zero-length string', () => {
+          let argsOne = spy.calls.argsFor(1);
           expect(argsOne[0].lastName).toBe('');
           expect(argsOne[0].sequence).toEqual(1);
           expect(argsOne[1]).toBe(model);
@@ -23604,13 +23636,13 @@ describe('When an Model is constructed with "firstName" and "lastName" propertie
 });
 
 },{"./../../../lang/Disposable":23,"./../../../models/Model":47}],117:[function(require,module,exports){
-var RestParser = require('./../../../../network/rest/RestParser');
+const RestParser = require('./../../../../network/rest/RestParser');
 
-describe('Using a customized JSON REST parser is created', function () {
+describe('Using a customized JSON REST parser is created', () => {
   'use strict';
 
-  var parser;
-  var spy;
+  let parser;
+  let spy;
   beforeEach(function () {
     function parserFactory() {
       return spy = jasmine.createSpy('spy').and.callFake(function (k, v) {
@@ -23621,8 +23653,8 @@ describe('Using a customized JSON REST parser is created', function () {
     parser = RestParser.getJsonParser(parserFactory);
   });
   describe('and JSON string is parsed (that represents a simple object)', function () {
-    var serialzied;
-    var deserialzied;
+    let serialzied;
+    let deserialzied;
     beforeEach(function () {
       deserialzied = parser.parse(serialzied = '{"fizz":"three","bang":5}');
     });
@@ -23637,11 +23669,11 @@ describe('Using a customized JSON REST parser is created', function () {
     });
   });
 });
-describe('Using another customized JSON REST parser is created', function () {
+describe('Using another customized JSON REST parser is created', () => {
   'use strict';
 
-  var parser;
-  var spy;
+  let parser;
+  let spy;
   beforeEach(function () {
     function parserFactory() {
       return spy = jasmine.createSpy('spy').and.callFake(function (k, v) {
@@ -23652,15 +23684,15 @@ describe('Using another customized JSON REST parser is created', function () {
     parser = RestParser.getJsonParser(parserFactory);
   });
   describe('and JSON string is parsed (that represents an array of simple objects)', function () {
-    var serialzied;
-    var deserialzied;
-    beforeEach(function () {
+    let serialzied;
+    let deserialzied;
+    beforeEach(() => {
       deserialzied = parser.parse(serialzied = '[{"fizz":"three","bang":5},{"fizz":"four","bang":6}]');
     });
-    it('the "reviver" function should have been called', function () {
+    it('the "reviver" function should have been called', () => {
       expect(spy).toHaveBeenCalled();
     });
-    it('the resulting object should be an array', function () {
+    it('the resulting object should be an array', () => {
       expect(Array.isArray(deserialzied)).toEqual(true);
     });
     it('the first object should have a "fizz" property with value of 3 (an override)', function () {
@@ -23679,17 +23711,17 @@ describe('Using another customized JSON REST parser is created', function () {
 });
 
 },{"./../../../../network/rest/RestParser":48}],118:[function(require,module,exports){
-var AdHoc = require('./../../../../lang/AdHoc'),
-    Currency = require('./../../../../lang/Currency'),
-    Day = require('./../../../../lang/Day'),
-    Decimal = require('./../../../../lang/Decimal'),
-    Enum = require('./../../../../lang/Enum'),
-    Money = require('./../../../../lang/Money');
+const AdHoc = require('./../../../../lang/AdHoc'),
+      Currency = require('./../../../../lang/Currency'),
+      Day = require('./../../../../lang/Day'),
+      Decimal = require('./../../../../lang/Decimal'),
+      Enum = require('./../../../../lang/Enum'),
+      Money = require('./../../../../lang/Money');
 
-var DataType = require('./../../../../serialization/json/DataType'),
-    Component = require('./../../../../serialization/json/Component'),
-    Field = require('./../../../../serialization/json/Field'),
-    Schema = require('./../../../../serialization/json/Schema');
+const DataType = require('./../../../../serialization/json/DataType'),
+      Component = require('./../../../../serialization/json/Component'),
+      Field = require('./../../../../serialization/json/Field'),
+      Schema = require('./../../../../serialization/json/Schema');
 
 class Letter extends Enum {
   constructor(name) {
@@ -23698,97 +23730,96 @@ class Letter extends Enum {
 
 }
 
-var LETTER_A = new Letter('A');
-var LETTER_B = new Letter('B');
-describe('When a person schema is created (first and last names)', function () {
+const LETTER_A = new Letter('A');
+describe('When a person schema is created (first and last names)', () => {
   'use strict';
 
-  var schema;
-  beforeEach(function () {
+  let schema;
+  beforeEach(() => {
     schema = new Schema('person', [new Field('first', DataType.STRING), new Field('last', DataType.STRING)]);
   });
-  describe('and a schema-compliant object is created', function () {
-    var object;
-    beforeEach(function () {
+  describe('and a schema-compliant object is created', () => {
+    let object;
+    beforeEach(() => {
       object = {
         first: 'bryan',
         last: 'ingle'
       };
     });
-    describe('and the object is "stringified" as JSON', function () {
-      var serialized;
-      beforeEach(function () {
+    describe('and the object is "stringified" as JSON', () => {
+      let serialized;
+      beforeEach(() => {
         serialized = JSON.stringify(object);
       });
-      describe('and the object is rehydrated using the schema reviver', function () {
-        var deserialized;
-        beforeEach(function () {
+      describe('and the object is rehydrated using the schema reviver', () => {
+        let deserialized;
+        beforeEach(() => {
           deserialized = JSON.parse(serialized, schema.getReviver());
         });
-        it('should have a "first" property with the expected value', function () {
+        it('should have a "first" property with the expected value', () => {
           expect(deserialized.first).toEqual('bryan');
         });
-        it('should have a "last" property with the expected value', function () {
+        it('should have a "last" property with the expected value', () => {
           expect(deserialized.last).toEqual('ingle');
         });
       });
     });
-    describe('and the object is validated', function () {
-      it('the object should be valid', function () {
+    describe('and the object is validated', () => {
+      it('the object should be valid', () => {
         expect(schema.validate(object)).toEqual(true);
       });
-      it('no invalid fields should be reported by the schema', function () {
+      it('no invalid fields should be reported by the schema', () => {
         expect(schema.getInvalidFields(object).length).toEqual(0);
       });
     });
-    describe('and various invalid objects are validated', function () {
-      it('a null object should be invalid', function () {
+    describe('and various invalid objects are validated', () => {
+      it('a null object should be invalid', () => {
         expect(schema.validate(null)).toEqual(false);
       });
-      it('a undefined object should be invalid', function () {
+      it('a undefined object should be invalid', () => {
         expect(schema.validate()).toEqual(false);
       });
-      it('an empty object should be invalid', function () {
+      it('an empty object should be invalid', () => {
         expect(schema.validate({})).toEqual(false);
       });
-      it('an object with only a first name should be invalid', function () {
+      it('an object with only a first name should be invalid', () => {
         expect(schema.validate({
           first: 'bryan'
         })).toEqual(false);
       });
-      it('an object with only a last name should be invalid', function () {
+      it('an object with only a last name should be invalid', () => {
         expect(schema.validate({
           last: 'ingle'
         })).toEqual(false);
       });
-      it('an object with with invalid first and last names should be invalid', function () {
+      it('an object with with invalid first and last names should be invalid', () => {
         expect(schema.validate({
           first: 1,
           last: {}
         })).toEqual(false);
       });
     });
-    describe('and various are checked for invalid fields', function () {
-      it('a null object should have two invalid fields', function () {
+    describe('and various are checked for invalid fields', () => {
+      it('a null object should have two invalid fields', () => {
         expect(schema.getInvalidFields(null).length).toEqual(2);
       });
-      it('a undefined object should have two invalid fields', function () {
+      it('a undefined object should have two invalid fields', () => {
         expect(schema.getInvalidFields().length).toEqual(2);
       });
-      it('an empty object should have two invalid fields', function () {
+      it('an empty object should have two invalid fields', () => {
         expect(schema.getInvalidFields({}).length).toEqual(2);
       });
-      it('an object with only a first name should have one invalid fields', function () {
+      it('an object with only a first name should have one invalid fields', () => {
         expect(schema.getInvalidFields({
           first: 'bryan'
         }).length).toEqual(1);
       });
-      it('an object with only a last name should have one invalid fields', function () {
+      it('an object with only a last name should have one invalid fields', () => {
         expect(schema.getInvalidFields({
           last: 'ingle'
         }).length).toEqual(1);
       });
-      it('an object with with invalid first and last names should have two invalid fields', function () {
+      it('an object with with invalid first and last names should have two invalid fields', () => {
         expect(schema.getInvalidFields({
           first: 1,
           last: {}
@@ -23796,9 +23827,9 @@ describe('When a person schema is created (first and last names)', function () {
       });
     });
   });
-  describe('and a schema-compliant array is created', function () {
-    var object;
-    beforeEach(function () {
+  describe('and a schema-compliant array is created', () => {
+    let object;
+    beforeEach(() => {
       object = [{
         first: 'bryan',
         last: 'ingle'
@@ -23807,111 +23838,111 @@ describe('When a person schema is created (first and last names)', function () {
         last: 'yanes'
       }];
     });
-    describe('and the object is "stringified" as JSON', function () {
-      var serialized;
-      beforeEach(function () {
+    describe('and the object is "stringified" as JSON', () => {
+      let serialized;
+      beforeEach(() => {
         serialized = JSON.stringify(object);
       });
-      describe('and the object is rehydrated using the schema reviver', function () {
-        var deserialized;
-        beforeEach(function () {
+      describe('and the object is rehydrated using the schema reviver', () => {
+        let deserialized;
+        beforeEach(() => {
           try {
             deserialized = JSON.parse(serialized, schema.getReviver());
           } catch (e) {
             console.log(e);
           }
         });
-        it('should be an array with two items', function () {
+        it('should be an array with two items', () => {
           expect(deserialized.length).toEqual(2);
         });
-        it('the first item should have a "first" property with the expected value', function () {
+        it('the first item should have a "first" property with the expected value', () => {
           expect(deserialized[0].first).toEqual('bryan');
         });
-        it('the first item should have a "last" property with the expected value', function () {
+        it('the first item should have a "last" property with the expected value', () => {
           expect(deserialized[0].last).toEqual('ingle');
         });
-        it('the second item should have a "first" property with the expected value', function () {
+        it('the second item should have a "first" property with the expected value', () => {
           expect(deserialized[1].first).toEqual('borja');
         });
-        it('the second item should have a "last" property with the expected value', function () {
+        it('the second item should have a "last" property with the expected value', () => {
           expect(deserialized[1].last).toEqual('yanes');
         });
       });
     });
   });
 });
-describe('When a person schema is created (first and last names, with optional middle name)', function () {
+describe('When a person schema is created (first and last names, with optional middle name)', () => {
   'use strict';
 
-  var schema;
-  beforeEach(function () {
+  let schema;
+  beforeEach(() => {
     schema = new Schema('person', [new Field('first', DataType.STRING), new Field('middle', DataType.STRING, true), new Field('last', DataType.STRING)]);
   });
-  describe('and a schema-compliant object is created (with middle name)', function () {
-    var object;
-    beforeEach(function () {
+  describe('and a schema-compliant object is created (with middle name)', () => {
+    let object;
+    beforeEach(() => {
       object = {
         first: 'bryan',
         middle: 'ray',
         last: 'ingle'
       };
     });
-    describe('and the object is "stringified" as JSON', function () {
-      var serialized;
-      beforeEach(function () {
+    describe('and the object is "stringified" as JSON', () => {
+      let serialized;
+      beforeEach(() => {
         serialized = JSON.stringify(object);
       });
-      describe('and the object is rehydrated using the schema reviver', function () {
-        var deserialized;
-        beforeEach(function () {
+      describe('and the object is rehydrated using the schema reviver', () => {
+        let deserialized;
+        beforeEach(() => {
           deserialized = JSON.parse(serialized, schema.getReviver());
         });
-        it('should have a "first" property with the expected value', function () {
+        it('should have a "first" property with the expected value', () => {
           expect(deserialized.first).toEqual('bryan');
         });
-        it('should have a "middle" property with the expected value', function () {
+        it('should have a "middle" property with the expected value', () => {
           expect(deserialized.middle).toEqual('ray');
         });
-        it('should have a "last" property with the expected value', function () {
+        it('should have a "last" property with the expected value', () => {
           expect(deserialized.last).toEqual('ingle');
         });
       });
     });
-    describe('and the object is validated', function () {
-      it('the object should be valid', function () {
+    describe('and the object is validated', () => {
+      it('the object should be valid', () => {
         expect(schema.validate(object)).toEqual(true);
       });
-      it('no invalid fields should be reported by the schema', function () {
+      it('no invalid fields should be reported by the schema', () => {
         expect(schema.getInvalidFields(object).length).toEqual(0);
       });
     });
-    describe('and various invalid objects are validated', function () {
-      it('a null object should be invalid', function () {
+    describe('and various invalid objects are validated', () => {
+      it('a null object should be invalid', () => {
         expect(schema.validate(null)).toEqual(false);
       });
-      it('a undefined object should be invalid', function () {
+      it('a undefined object should be invalid', () => {
         expect(schema.validate()).toEqual(false);
       });
-      it('an empty object should be invalid', function () {
+      it('an empty object should be invalid', () => {
         expect(schema.validate({})).toEqual(false);
       });
-      it('an object with only a first name should be invalid', function () {
+      it('an object with only a first name should be invalid', () => {
         expect(schema.validate({
           first: 'bryan'
         })).toEqual(false);
       });
-      it('an object with only a last name should be invalid', function () {
+      it('an object with only a last name should be invalid', () => {
         expect(schema.validate({
           last: 'ingle'
         })).toEqual(false);
       });
-      it('an object with with invalid first and last names should be invalid', function () {
+      it('an object with with invalid first and last names should be invalid', () => {
         expect(schema.validate({
           first: 1,
           last: {}
         })).toEqual(false);
       });
-      it('an object with with invalid middle should be invalid', function () {
+      it('an object with with invalid middle should be invalid', () => {
         expect(schema.validate({
           first: 'bryan',
           middle: null,
@@ -23919,27 +23950,27 @@ describe('When a person schema is created (first and last names, with optional m
         })).toEqual(false);
       });
     });
-    describe('and various are checked for invalid fields', function () {
-      it('a null object should have two invalid fields', function () {
+    describe('and various are checked for invalid fields', () => {
+      it('a null object should have two invalid fields', () => {
         expect(schema.getInvalidFields(null).length).toEqual(2);
       });
-      it('a undefined object should have two invalid fields', function () {
+      it('a undefined object should have two invalid fields', () => {
         expect(schema.getInvalidFields().length).toEqual(2);
       });
-      it('an empty object should have two invalid fields', function () {
+      it('an empty object should have two invalid fields', () => {
         expect(schema.getInvalidFields({}).length).toEqual(2);
       });
-      it('an object with only a first name should have one invalid fields', function () {
+      it('an object with only a first name should have one invalid fields', () => {
         expect(schema.getInvalidFields({
           first: 'bryan'
         }).length).toEqual(1);
       });
-      it('an object with only a last name should have one invalid fields', function () {
+      it('an object with only a last name should have one invalid fields', () => {
         expect(schema.getInvalidFields({
           last: 'ingle'
         }).length).toEqual(1);
       });
-      it('an object with with invalid first and last names should have two invalid fields', function () {
+      it('an object with with invalid first and last names should have two invalid fields', () => {
         expect(schema.getInvalidFields({
           first: 1,
           last: {}
@@ -23947,55 +23978,55 @@ describe('When a person schema is created (first and last names, with optional m
       });
     });
   });
-  describe('and a schema-compliant object is created (without middle name)', function () {
-    var object;
-    beforeEach(function () {
+  describe('and a schema-compliant object is created (without middle name)', () => {
+    let object;
+    beforeEach(() => {
       object = {
         first: 'bryan',
         last: 'ingle'
       };
     });
-    describe('and the object is "stringified" as JSON', function () {
-      var serialized;
-      beforeEach(function () {
+    describe('and the object is "stringified" as JSON', () => {
+      let serialized;
+      beforeEach(() => {
         serialized = JSON.stringify(object);
       });
-      describe('and the object is rehydrated using the schema reviver', function () {
-        var deserialized;
-        beforeEach(function () {
+      describe('and the object is rehydrated using the schema reviver', () => {
+        let deserialized;
+        beforeEach(() => {
           deserialized = JSON.parse(serialized, schema.getReviver());
         });
-        it('should have a "first" property with the expected value', function () {
+        it('should have a "first" property with the expected value', () => {
           expect(deserialized.first).toEqual('bryan');
         });
-        it('should not have a "middle" property', function () {
+        it('should not have a "middle" property', () => {
           expect(deserialized.hasOwnProperty('middle')).toEqual(false);
         });
-        it('should have a "last" property with the expected value', function () {
+        it('should have a "last" property with the expected value', () => {
           expect(deserialized.last).toEqual('ingle');
         });
       });
     });
-    describe('and the object is validated', function () {
-      it('the object should be valid', function () {
+    describe('and the object is validated', () => {
+      it('the object should be valid', () => {
         expect(schema.validate(object)).toEqual(true);
       });
-      it('no invalid fields should be reported by the schema', function () {
+      it('no invalid fields should be reported by the schema', () => {
         expect(schema.getInvalidFields(object).length).toEqual(0);
       });
     });
   });
 });
-describe('When a person schema is created (grouped first and last names with a birthday)', function () {
+describe('When a person schema is created (grouped first and last names with a birthday)', () => {
   'use strict';
 
-  var schema;
-  beforeEach(function () {
+  let schema;
+  beforeEach(() => {
     schema = new Schema('person', [new Field('name.first', DataType.STRING), new Field('name.last', DataType.STRING), new Field('birthday', DataType.DAY)]);
   });
-  describe('and a schema-compliant object is created', function () {
-    var object;
-    beforeEach(function () {
+  describe('and a schema-compliant object is created', () => {
+    let object;
+    beforeEach(() => {
       object = {
         name: {
           first: 'bryan',
@@ -24004,27 +24035,27 @@ describe('When a person schema is created (grouped first and last names with a b
         birthday: new Day(1974, 10, 20)
       };
     });
-    describe('and the object is "stringified" as JSON', function () {
-      var serialized;
-      beforeEach(function () {
+    describe('and the object is "stringified" as JSON', () => {
+      let serialized;
+      beforeEach(() => {
         serialized = JSON.stringify(object);
       });
-      describe('and the object is rehydrated using the schema reviver', function () {
-        var deserialized;
-        beforeEach(function () {
+      describe('and the object is rehydrated using the schema reviver', () => {
+        let deserialized;
+        beforeEach(() => {
           try {
             deserialized = JSON.parse(serialized, schema.getReviver());
           } catch (e) {
             console.log(e);
           }
         });
-        it('should have a "name.first" property with the expected value', function () {
+        it('should have a "name.first" property with the expected value', () => {
           expect(deserialized.name.first).toEqual('bryan');
         });
-        it('should have a "name.last" property with the expected value', function () {
+        it('should have a "name.last" property with the expected value', () => {
           expect(deserialized.name.last).toEqual('ingle');
         });
-        it('should have a "birthday" property with the expected value', function () {
+        it('should have a "birthday" property with the expected value', () => {
           expect(deserialized.birthday.year).toEqual(1974);
           expect(deserialized.birthday.month).toEqual(10);
           expect(deserialized.birthday.day).toEqual(20);
@@ -24033,16 +24064,16 @@ describe('When a person schema is created (grouped first and last names with a b
     });
   });
 });
-describe('When an account schema is created (using the AdHoc field)', function () {
+describe('When an account schema is created (using the AdHoc field)', () => {
   'use strict';
 
-  var schema;
-  beforeEach(function () {
+  let schema;
+  beforeEach(() => {
     schema = new Schema('account', [new Field('number', DataType.NUMBER), new Field('junk', DataType.AD_HOC)]);
   });
-  describe('and a schema-compliant object is created', function () {
-    var object;
-    beforeEach(function () {
+  describe('and a schema-compliant object is created', () => {
+    let object;
+    beforeEach(() => {
       object = {
         number: 123456789,
         junk: new AdHoc({
@@ -24052,24 +24083,24 @@ describe('When an account schema is created (using the AdHoc field)', function (
         })
       };
     });
-    describe('and the object is "stringified" as JSON', function () {
-      var serialized;
-      beforeEach(function () {
+    describe('and the object is "stringified" as JSON', () => {
+      let serialized;
+      beforeEach(() => {
         serialized = JSON.stringify(object);
       });
-      describe('and the object is rehydrated using the schema reviver', function () {
-        var deserialized;
-        beforeEach(function () {
+      describe('and the object is rehydrated using the schema reviver', () => {
+        let deserialized;
+        beforeEach(() => {
           try {
             deserialized = JSON.parse(serialized, schema.getReviver());
           } catch (e) {
             console.log(e);
           }
         });
-        it('should have a "number" property with the expected value', function () {
+        it('should have a "number" property with the expected value', () => {
           expect(deserialized.number).toEqual(123456789);
         });
-        it('should have a "junk" property with the expected value', function () {
+        it('should have a "junk" property with the expected value', () => {
           expect(deserialized.junk.data.address).toEqual('209 W. Jackson');
           expect(deserialized.junk.data.city).toEqual('Chicago');
           expect(deserialized.junk.data.zip).toEqual('60603');
@@ -24078,39 +24109,39 @@ describe('When an account schema is created (using the AdHoc field)', function (
     });
   });
 });
-describe('When an account schema is created (using the Money component)', function () {
+describe('When an account schema is created (using the Money component)', () => {
   'use strict';
 
-  var schema;
-  beforeEach(function () {
+  let schema;
+  beforeEach(() => {
     schema = new Schema('account', [new Field('number', DataType.NUMBER)], [Component.forMoney('balance')]);
   });
-  describe('and a schema-compliant object is created', function () {
-    var object;
-    beforeEach(function () {
+  describe('and a schema-compliant object is created', () => {
+    let object;
+    beforeEach(() => {
       object = {
         number: 123456789,
         balance: new Money(314.15, Currency.USD)
       };
     });
-    describe('and the object is "stringified" as JSON', function () {
-      var serialized;
-      beforeEach(function () {
+    describe('and the object is "stringified" as JSON', () => {
+      let serialized;
+      beforeEach(() => {
         serialized = JSON.stringify(object);
       });
-      describe('and the object is rehydrated using the schema reviver', function () {
-        var deserialized;
-        beforeEach(function () {
+      describe('and the object is rehydrated using the schema reviver', () => {
+        let deserialized;
+        beforeEach(() => {
           try {
             deserialized = JSON.parse(serialized, schema.getReviver());
           } catch (e) {
             console.log(e);
           }
         });
-        it('should have a "number" property with the expected value', function () {
+        it('should have a "number" property with the expected value', () => {
           expect(deserialized.number).toEqual(123456789);
         });
-        it('should have a "balance" property with the expected value', function () {
+        it('should have a "balance" property with the expected value', () => {
           expect(deserialized.balance.currency).toEqual(Currency.USD);
           expect(deserialized.balance.decimal.getIsEqual(314.15)).toEqual(true);
         });
@@ -24118,16 +24149,16 @@ describe('When an account schema is created (using the Money component)', functi
     });
   });
 });
-describe('When an account schema is created (using the Money component with nesting)', function () {
+describe('When an account schema is created (using the Money component with nesting)', () => {
   'use strict';
 
-  var schema;
-  beforeEach(function () {
+  let schema;
+  beforeEach(() => {
     schema = new Schema('account', [new Field('number', DataType.NUMBER)], [Component.forMoney('balances.yesterday'), Component.forMoney('balances.today')]);
   });
-  describe('and a schema-compliant object is created', function () {
-    var object;
-    beforeEach(function () {
+  describe('and a schema-compliant object is created', () => {
+    let object;
+    beforeEach(() => {
       object = {
         number: 987654321,
         balances: {
@@ -24136,37 +24167,37 @@ describe('When an account schema is created (using the Money component with nest
         }
       };
     });
-    describe('and the object is "stringified" as JSON', function () {
-      var serialized;
-      beforeEach(function () {
+    describe('and the object is "stringified" as JSON', () => {
+      let serialized;
+      beforeEach(() => {
         serialized = JSON.stringify(object);
       });
-      describe('and the object is rehydrated using the schema reviver', function () {
-        var deserialized;
-        beforeEach(function () {
+      describe('and the object is rehydrated using the schema reviver', () => {
+        let deserialized;
+        beforeEach(() => {
           try {
             deserialized = JSON.parse(serialized, schema.getReviver());
           } catch (e) {
             console.log(e);
           }
         });
-        it('should have a "number" property with the expected value', function () {
+        it('should have a "number" property with the expected value', () => {
           expect(deserialized.number).toEqual(987654321);
         });
-        it('should have a "balances.yesterday" property with the expected value', function () {
+        it('should have a "balances.yesterday" property with the expected value', () => {
           expect(deserialized.balances.yesterday.currency).toEqual(Currency.USD);
           expect(deserialized.balances.yesterday.decimal.getIsEqual(314.15)).toEqual(true);
         });
-        it('should have a "balances.today" property with the expected value', function () {
+        it('should have a "balances.today" property with the expected value', () => {
           expect(deserialized.balances.today.currency).toEqual(Currency.USD);
           expect(deserialized.balances.today.decimal.getIsEqual(271.83)).toEqual(true);
         });
       });
     });
   });
-  describe('and a schema-compliant array is created', function () {
-    var object;
-    beforeEach(function () {
+  describe('and a schema-compliant array is created', () => {
+    let object;
+    beforeEach(() => {
       object = [{
         number: 987654321,
         balances: {
@@ -24181,42 +24212,42 @@ describe('When an account schema is created (using the Money component with nest
         }
       }];
     });
-    describe('and the object is "stringified" as JSON', function () {
-      var serialized;
-      beforeEach(function () {
+    describe('and the object is "stringified" as JSON', () => {
+      let serialized;
+      beforeEach(() => {
         serialized = JSON.stringify(object);
       });
-      describe('and the object is rehydrated using the schema reviver', function () {
-        var deserialized;
-        beforeEach(function () {
+      describe('and the object is rehydrated using the schema reviver', () => {
+        let deserialized;
+        beforeEach(() => {
           try {
             deserialized = JSON.parse(serialized, schema.getReviver());
           } catch (e) {
             console.log(e);
           }
         });
-        it('should be an array with two items', function () {
+        it('should be an array with two items', () => {
           expect(deserialized.length).toEqual(2);
         });
-        it('the first item should have a "number" property with the expected value', function () {
+        it('the first item should have a "number" property with the expected value', () => {
           expect(deserialized[0].number).toEqual(987654321);
         });
-        it('the first item should have a "balances.yesterday" property with the expected value', function () {
+        it('the first item should have a "balances.yesterday" property with the expected value', () => {
           expect(deserialized[0].balances.yesterday.currency).toEqual(Currency.USD);
           expect(deserialized[0].balances.yesterday.decimal.getIsEqual(314.15)).toEqual(true);
         });
-        it('the first item should have a "balances.today" property with the expected value', function () {
+        it('the first item should have a "balances.today" property with the expected value', () => {
           expect(deserialized[0].balances.today.currency).toEqual(Currency.USD);
           expect(deserialized[0].balances.today.decimal.getIsEqual(271.83)).toEqual(true);
         });
-        it('the second item should have a "number" property with the expected value', function () {
+        it('the second item should have a "number" property with the expected value', () => {
           expect(deserialized[1].number).toEqual(123456789);
         });
-        it('the second item should have a "balances.yesterday" property with the expected value', function () {
+        it('the second item should have a "balances.yesterday" property with the expected value', () => {
           expect(deserialized[1].balances.yesterday.currency).toEqual(Currency.USD);
           expect(deserialized[1].balances.yesterday.decimal.getIsEqual(141.42)).toEqual(true);
         });
-        it('the second item should have a "balances.today" property with the expected value', function () {
+        it('the second item should have a "balances.today" property with the expected value', () => {
           expect(deserialized[1].balances.today.currency).toEqual(Currency.USD);
           expect(deserialized[1].balances.today.decimal.getIsEqual(173.20)).toEqual(true);
         });
@@ -24224,16 +24255,16 @@ describe('When an account schema is created (using the Money component with nest
     });
   });
 });
-describe('When a schema is created (having a nested group of optional fields)', function () {
+describe('When a schema is created (having a nested group of optional fields)', () => {
   'use strict';
 
-  var schema;
-  beforeEach(function () {
+  let schema;
+  beforeEach(() => {
     schema = new Schema('thing', [new Field('required.a', DataType.NUMBER), new Field('optional.b', DataType.NUMBER, true), new Field('optional.c', DataType.NUMBER, true), new Field('name', DataType.STRING)]);
   });
-  describe('and a schema-compliant object is created (using one optional field)', function () {
-    var object;
-    beforeEach(function () {
+  describe('and a schema-compliant object is created (using one optional field)', () => {
+    let object;
+    beforeEach(() => {
       object = {
         required: {
           a: 1
@@ -24244,40 +24275,40 @@ describe('When a schema is created (having a nested group of optional fields)', 
         name: 'swamp'
       };
     });
-    describe('and the object is "stringified" as JSON', function () {
-      var serialized;
-      beforeEach(function () {
+    describe('and the object is "stringified" as JSON', () => {
+      let serialized;
+      beforeEach(() => {
         serialized = JSON.stringify(object);
       });
-      describe('and the object is rehydrated using the schema reviver', function () {
-        var deserialized;
-        beforeEach(function () {
+      describe('and the object is rehydrated using the schema reviver', () => {
+        let deserialized;
+        beforeEach(() => {
           deserialized = JSON.parse(serialized, schema.getReviver());
         });
-        it('should have a "required" property', function () {
+        it('should have a "required" property', () => {
           expect(deserialized.hasOwnProperty('required')).toEqual(true);
         });
-        it('should have a "required.a" property, with the expected value', function () {
+        it('should have a "required.a" property, with the expected value', () => {
           expect(deserialized.required.a).toEqual(1);
         });
-        it('should have an "optional" property', function () {
+        it('should have an "optional" property', () => {
           expect(deserialized.hasOwnProperty('optional')).toEqual(true);
         });
-        it('should have a "optional.b" property, with the expected value', function () {
+        it('should have a "optional.b" property, with the expected value', () => {
           expect(deserialized.optional.b).toEqual(2);
         });
-        it('should not have a "optional.c" property', function () {
+        it('should not have a "optional.c" property', () => {
           expect(deserialized.optional.hasOwnProperty('c')).toEqual(false);
         });
-        it('should have a "name" property, with the expected value', function () {
+        it('should have a "name" property, with the expected value', () => {
           expect(deserialized.name).toEqual('swamp');
         });
       });
     });
   });
-  describe('and a schema-compliant object is created (using no optional fields)', function () {
-    var object;
-    beforeEach(function () {
+  describe('and a schema-compliant object is created (using no optional fields)', () => {
+    let object;
+    beforeEach(() => {
       object = {
         required: {
           a: 1
@@ -24285,43 +24316,43 @@ describe('When a schema is created (having a nested group of optional fields)', 
         name: 'swamp'
       };
     });
-    describe('and the object is "stringified" as JSON', function () {
-      var serialized;
-      beforeEach(function () {
+    describe('and the object is "stringified" as JSON', () => {
+      let serialized;
+      beforeEach(() => {
         serialized = JSON.stringify(object);
       });
-      describe('and the object is rehydrated using the schema reviver', function () {
-        var deserialized;
-        beforeEach(function () {
+      describe('and the object is rehydrated using the schema reviver', () => {
+        let deserialized;
+        beforeEach(() => {
           deserialized = JSON.parse(serialized, schema.getReviver());
         });
-        it('should have a "required" property', function () {
+        it('should have a "required" property', () => {
           expect(deserialized.hasOwnProperty('required')).toEqual(true);
         });
-        it('should have a "required.a" property, with the expected value', function () {
+        it('should have a "required.a" property, with the expected value', () => {
           expect(deserialized.required.a).toEqual(1);
         });
-        it('should not have an "optional" property', function () {
+        it('should not have an "optional" property', () => {
           expect(deserialized.hasOwnProperty('optional')).toEqual(false);
         });
-        it('should have a "name" property, with the expected value', function () {
+        it('should have a "name" property, with the expected value', () => {
           expect(deserialized.name).toEqual('swamp');
         });
       });
     });
   });
 });
-describe('When a complex schema is created (using custom data types)', function () {
+describe('When a complex schema is created (using custom data types)', () => {
   'use strict';
 
-  var schema;
-  beforeEach(function () {
+  let schema;
+  beforeEach(() => {
     schema = new Schema('complex', [new Field('number', DataType.NUMBER), new Field('string', DataType.STRING), new Field('letter', DataType.forEnum(Letter, 'Letter')), new Field('day', DataType.DAY), new Field('decimal', DataType.DECIMAL), new Field('miscellany', DataType.AD_HOC)]);
   });
-  describe('and data is basic data is formatted', function () {
-    var original;
-    var conversion;
-    beforeEach(function () {
+  describe('and data is basic data is formatted', () => {
+    let original;
+    let conversion;
+    beforeEach(() => {
       conversion = schema.format(original = {
         number: 1,
         string: 'two',
@@ -24333,99 +24364,99 @@ describe('When a complex schema is created (using custom data types)', function 
         }
       });
     });
-    it('the conversion to be a new object', function () {
+    it('the conversion to be a new object', () => {
       expect(conversion).not.toBe(original);
     });
-    it('the conversion should have copied the number value', function () {
+    it('the conversion should have copied the number value', () => {
       expect(conversion.number).toEqual(original.number);
     });
-    it('the conversion should have copied the string value', function () {
+    it('the conversion should have copied the string value', () => {
       expect(conversion.string).toEqual(original.string);
     });
-    it('the conversion should have converted the letter value into an enumeration', function () {
+    it('the conversion should have converted the letter value into an enumeration', () => {
       expect(conversion.letter).toBe(LETTER_A);
     });
-    it('the conversion should have converted the day value into an Day instance', function () {
+    it('the conversion should have converted the day value into an Day instance', () => {
       expect(conversion.day instanceof Day).toEqual(true);
       expect(conversion.day.format()).toEqual(original.day);
     });
-    it('the conversion should have converted the decimal value into an Decimal instance', function () {
+    it('the conversion should have converted the decimal value into an Decimal instance', () => {
       expect(conversion.decimal instanceof Decimal).toEqual(true);
       expect(conversion.decimal.getIsEqual(original.decimal)).toEqual(true);
     });
-    it('the conversion should have converted the miscellany value into an AdHoc instance', function () {
+    it('the conversion should have converted the miscellany value into an AdHoc instance', () => {
       expect(conversion.miscellany instanceof AdHoc).toEqual(true);
       expect(conversion.miscellany.data.stuff).toEqual(original.miscellany.stuff);
     });
-    describe('and the converted object is serialized', function () {
-      var serialized;
-      beforeEach(function () {
+    describe('and the converted object is serialized', () => {
+      let serialized;
+      beforeEach(() => {
         serialized = JSON.stringify(conversion);
       });
-      describe('and the object is rehydrated using the schema reviver', function () {
-        var deserialized;
-        beforeEach(function () {
+      describe('and the object is rehydrated using the schema reviver', () => {
+        let deserialized;
+        beforeEach(() => {
           deserialized = JSON.parse(serialized, schema.getReviver());
         });
-        it('the number field should be match the conversion', function () {
+        it('the number field should be match the conversion', () => {
           expect(deserialized.number).toEqual(conversion.number);
         });
-        it('the string field should be match the conversion', function () {
+        it('the string field should be match the conversion', () => {
           expect(deserialized.string).toEqual(conversion.string);
         });
-        it('the letter field should be match the conversion', function () {
+        it('the letter field should be match the conversion', () => {
           expect(deserialized.letter).toBe(conversion.letter);
         });
-        it('the day field should be match the conversion', function () {
+        it('the day field should be match the conversion', () => {
           expect(deserialized.day.format()).toEqual(conversion.day.format());
         });
-        it('the decimal field should be match the conversion', function () {
+        it('the decimal field should be match the conversion', () => {
           expect(deserialized.decimal.getIsEqual(conversion.decimal)).toEqual(true);
         });
-        it('the miscellany field should be match the conversion', function () {
+        it('the miscellany field should be match the conversion', () => {
           expect(deserialized.miscellany.data.stuff).toEqual(conversion.miscellany.data.stuff);
         });
       });
     });
   });
 });
-describe('When a schema is created with only two days', function () {
+describe('When a schema is created with only two days', () => {
   'use strict';
 
-  var schema;
-  beforeEach(function () {
+  let schema;
+  beforeEach(() => {
     schema = new Schema('days', [new Field('first', DataType.DAY), new Field('last', DataType.DAY)]);
   });
-  describe('and a schema-compliant object is created', function () {
-    var object;
-    beforeEach(function () {
+  describe('and a schema-compliant object is created', () => {
+    let object;
+    beforeEach(() => {
       object = {
         first: Day.getToday(),
         last: Day.getToday()
       };
     });
-    describe('and the object is "stringified" as JSON', function () {
-      var serialized;
-      beforeEach(function () {
+    describe('and the object is "stringified" as JSON', () => {
+      let serialized;
+      beforeEach(() => {
         serialized = JSON.stringify(object);
       });
-      describe('and the object is rehydrated using the schema reviver', function () {
-        var deserialized;
-        beforeEach(function () {
+      describe('and the object is rehydrated using the schema reviver', () => {
+        let deserialized;
+        beforeEach(() => {
           deserialized = JSON.parse(serialized, schema.getReviver());
         });
-        it('should have a "first" property with the expected value', function () {
+        it('should have a "first" property with the expected value', () => {
           expect(deserialized.first.getIsEqual(object.first)).toEqual(true);
         });
-        it('should have a "last" property with the expected value', function () {
+        it('should have a "last" property with the expected value', () => {
           expect(deserialized.last.getIsEqual(object.last)).toEqual(true);
         });
       });
     });
   });
-  describe('and a schema-compliant array is created', function () {
-    var object;
-    beforeEach(function () {
+  describe('and a schema-compliant array is created', () => {
+    let object;
+    beforeEach(() => {
       object = [{
         first: Day.getToday(),
         last: Day.getToday()
@@ -24434,21 +24465,21 @@ describe('When a schema is created with only two days', function () {
         last: Day.getToday()
       }];
     });
-    describe('and the object is "stringified" as JSON', function () {
-      var serialized;
-      beforeEach(function () {
+    describe('and the object is "stringified" as JSON', () => {
+      let serialized;
+      beforeEach(() => {
         serialized = JSON.stringify(object);
       });
-      describe('and the object is rehydrated using the schema reviver', function () {
-        var deserialized;
-        beforeEach(function () {
+      describe('and the object is rehydrated using the schema reviver', () => {
+        let deserialized;
+        beforeEach(() => {
           try {
             deserialized = JSON.parse(serialized, schema.getReviver());
           } catch (e) {
             console.log(e);
           }
         });
-        it('should be an array with two items', function () {
+        it('should be an array with two items', () => {
           expect(deserialized.length).toEqual(2);
         });
       });
@@ -24457,123 +24488,121 @@ describe('When a schema is created with only two days', function () {
 });
 
 },{"./../../../../lang/AdHoc":19,"./../../../../lang/Currency":20,"./../../../../lang/Day":21,"./../../../../lang/Decimal":22,"./../../../../lang/Enum":24,"./../../../../lang/Money":25,"./../../../../serialization/json/Component":55,"./../../../../serialization/json/DataType":56,"./../../../../serialization/json/Field":57,"./../../../../serialization/json/Schema":58}],119:[function(require,module,exports){
-var Component = require('./../../../../../serialization/json/Component');
+const Component = require('./../../../../../serialization/json/Component'),
+      DataType = require('./../../../../../serialization/json/DataType'),
+      SchemaBuilder = require('./../../../../../serialization/json/builders/SchemaBuilder');
 
-var DataType = require('./../../../../../serialization/json/DataType');
-
-var SchemaBuilder = require('./../../../../../serialization/json/builders/SchemaBuilder');
-
-describe('When using the schema builder to create a "Person" schema', function () {
+describe('When using the schema builder to create a "Person" schema', () => {
   'use strict';
 
-  var schemaBuilder;
-  beforeEach(function () {
+  let schemaBuilder;
+  beforeEach(() => {
     schemaBuilder = SchemaBuilder.withName('person');
   });
-  describe('that has a string-typed "name" field and a number-typed "age" field', function () {
-    beforeEach(function () {
+  describe('that has a string-typed "name" field and a number-typed "age" field', () => {
+    beforeEach(() => {
       schemaBuilder = schemaBuilder.withField('name', DataType.STRING).withField('age', DataType.NUMBER);
     });
-    describe('and the schema is pulled', function () {
-      var schema;
-      beforeEach(function () {
+    describe('and the schema is pulled', () => {
+      let schema;
+      beforeEach(() => {
         schema = schemaBuilder.schema;
       });
-      it('the name should be "person"', function () {
+      it('the name should be "person"', () => {
         expect(schema.name).toEqual('person');
       });
-      it('there should be two fields', function () {
+      it('there should be two fields', () => {
         expect(schema.fields.length).toEqual(2);
       });
-      it('the first field should be string-typed and called "name"', function () {
+      it('the first field should be string-typed and called "name"', () => {
         expect(schema.fields[0].name).toEqual('name');
         expect(schema.fields[0].dataType).toEqual(DataType.STRING);
       });
-      it('the second field should be number-typed and called "age"', function () {
+      it('the second field should be number-typed and called "age"', () => {
         expect(schema.fields[1].name).toEqual('age');
         expect(schema.fields[1].dataType).toEqual(DataType.NUMBER);
       });
-      it('there should be no components', function () {
+      it('there should be no components', () => {
         expect(schema.components.length).toEqual(0);
       });
     });
-    describe('and a "wallet" component is added to the schema', function () {
-      beforeEach(function () {
+    describe('and a "wallet" component is added to the schema', () => {
+      beforeEach(() => {
         schemaBuilder = schemaBuilder.withComponent(Component.forMoney('wallet'));
       });
-      describe('and the schema is pulled', function () {
-        var schema;
-        beforeEach(function () {
+      describe('and the schema is pulled', () => {
+        let schema;
+        beforeEach(() => {
           schema = schemaBuilder.schema;
         });
-        it('the name should be "person"', function () {
+        it('the name should be "person"', () => {
           expect(schema.name).toEqual('person');
         });
-        it('there should be two fields', function () {
+        it('there should be two fields', () => {
           expect(schema.fields.length).toEqual(2);
         });
-        it('the first field should be string-typed and called "name"', function () {
+        it('the first field should be string-typed and called "name"', () => {
           expect(schema.fields[0].name).toEqual('name');
           expect(schema.fields[0].dataType).toEqual(DataType.STRING);
         });
-        it('the second field should be number-typed and called "age"', function () {
+        it('the second field should be number-typed and called "age"', () => {
           expect(schema.fields[1].name).toEqual('age');
           expect(schema.fields[1].dataType).toEqual(DataType.NUMBER);
         });
-        it('there should be one component', function () {
+        it('there should be one component', () => {
           expect(schema.components.length).toEqual(1);
         });
-        it('the component should be named "wallet"', function () {
+        it('the component should be named "wallet"', () => {
           expect(schema.components[0].name).toEqual('wallet');
         });
       });
     });
-    describe('and a "custom" component is added to the schema (using a component builder)', function () {
-      var reviver;
-      beforeEach(function () {
+    describe('and a "custom" component is added to the schema (using a component builder)', () => {
+      let reviver;
+      beforeEach(() => {
         schemaBuilder = schemaBuilder.withComponentBuilder('custom', function (cb) {
           cb.withField('b', DataType.STRING).withField('a', DataType.NUMBER).withReviver(reviver = function (x) {
             return 'hola amigo';
           });
         });
       });
-      describe('and the schema is pulled', function () {
-        var schema;
-        beforeEach(function () {
+      describe('and the schema is pulled', () => {
+        let schema;
+        beforeEach(() => {
           schema = schemaBuilder.schema;
         });
-        it('the name should be "person"', function () {
+        it('the name should be "person"', () => {
           expect(schema.name).toEqual('person');
         });
-        it('there should be two fields', function () {
+        it('there should be two fields', () => {
           expect(schema.fields.length).toEqual(2);
         });
-        it('the first field should be string-typed and called "name"', function () {
+        it('the first field should be string-typed and called "name"', () => {
           expect(schema.fields[0].name).toEqual('name');
           expect(schema.fields[0].dataType).toEqual(DataType.STRING);
         });
-        it('the second field should be number-typed and called "age"', function () {
+        it('the second field should be number-typed and called "age"', () => {
           expect(schema.fields[1].name).toEqual('age');
           expect(schema.fields[1].dataType).toEqual(DataType.NUMBER);
         });
-        it('there should be one component', function () {
+        it('there should be one component', () => {
           expect(schema.components.length).toEqual(1);
         });
-        it('the component should be named "custom"', function () {
+        it('the component should be named "custom"', () => {
           expect(schema.components[0].name).toEqual('custom');
         });
-        it('there component should have two fields', function () {
+        it('there component should have two fields', () => {
           expect(schema.components[0].fields.length).toEqual(2);
         });
-        it('the component\'s first field should be string-typed and called "b"', function () {
+        it('the component\'s first field should be string-typed and called "b"', () => {
           expect(schema.components[0].fields[0].name).toEqual('b');
           expect(schema.components[0].fields[0].dataType).toEqual(DataType.STRING);
         });
-        it('the component\'s second field should be number-typed and called "a"', function () {
+        it('the component\'s second field should be number-typed and called "a"', () => {
           expect(schema.components[0].fields[1].name).toEqual('a');
           expect(schema.components[0].fields[1].dataType).toEqual(DataType.NUMBER);
         });
-        it('there component reviver function should be correct', function () {
+        it('there component reviver function should be correct', () => {
           expect(schema.components[0].reviver).toBe(reviver);
         });
       });
@@ -24582,11 +24611,10 @@ describe('When using the schema builder to create a "Person" schema', function (
 });
 
 },{"./../../../../../serialization/json/Component":55,"./../../../../../serialization/json/DataType":56,"./../../../../../serialization/json/builders/SchemaBuilder":60}],120:[function(require,module,exports){
-var Specification = require('./../../../specifications/Specification');
+const Specification = require('./../../../specifications/Specification'),
+      And = require('./../../../specifications/And');
 
-var And = require('./../../../specifications/And');
-
-describe('When an And is constructed', function () {
+describe('When an And is constructed', () => {
   'use strict';
 
   class SpecPass extends Specification {
@@ -24613,43 +24641,43 @@ describe('When an And is constructed', function () {
 
   }
 
-  describe('with two specifications that will pass', function () {
-    var specification;
-    var specPassOne;
-    var specPassTwo;
-    var data;
-    var result;
-    beforeEach(function () {
+  describe('with two specifications that will pass', () => {
+    let specification;
+    let specPassOne;
+    let specPassTwo;
+    let data;
+    let result;
+    beforeEach(() => {
       specification = new And(specPassOne = new SpecPass(), specPassTwo = new SpecPass());
       result = specification.evaluate(data = {});
     });
-    it('should call the first specification', function () {
+    it('should call the first specification', () => {
       expect(specPassOne._spy).toHaveBeenCalledWith(data);
     });
-    it('should call the second specification', function () {
+    it('should call the second specification', () => {
       expect(specPassTwo._spy).toHaveBeenCalledWith(data);
     });
-    it('should evaluate to true', function () {
+    it('should evaluate to true', () => {
       expect(result).toEqual(true);
     });
   });
-  describe('where the first specifications will fail', function () {
-    var specification;
-    var specPassOne;
-    var specPassTwo;
-    var data;
-    var result;
-    beforeEach(function () {
+  describe('where the first specifications will fail', () => {
+    let specification;
+    let specPassOne;
+    let specPassTwo;
+    let data;
+    let result;
+    beforeEach(() => {
       specification = new And(specPassOne = new SpecFail(), specPassTwo = new SpecPass());
       result = specification.evaluate(data = {});
     });
-    it('should call the first specification', function () {
+    it('should call the first specification', () => {
       expect(specPassOne._spy).toHaveBeenCalledWith(data);
     });
-    it('should not call the second specification', function () {
+    it('should not call the second specification', () => {
       expect(specPassTwo._spy).not.toHaveBeenCalledWith(data);
     });
-    it('should evaluate to false', function () {
+    it('should evaluate to false', () => {
       expect(result).toEqual(false);
     });
   });
@@ -24686,92 +24714,92 @@ describe('When a GreaterThan is constructed (with a range of 17 to 42)', () => {
 });
 
 },{"./../../../specifications/Between":62}],122:[function(require,module,exports){
-var Contained = require('./../../../specifications/Contained');
+const Contained = require('./../../../specifications/Contained');
 
-describe('When a Contained is constructed', function () {
+describe('When a Contained is constructed', () => {
   'use strict';
 
-  var specification;
-  var specificationValue;
-  beforeEach(function () {
+  let specification;
+  let specificationValue;
+  beforeEach(() => {
     specification = new Contained(specificationValue = ['xyz', 123]);
   });
-  describe('and a string, contained in the array, is evaluated', function () {
-    var result;
-    beforeEach(function () {
+  describe('and a string, contained in the array, is evaluated', () => {
+    let result;
+    beforeEach(() => {
       result = specification.evaluate('xyz');
     });
-    it('should pass', function () {
+    it('should pass', () => {
       expect(result).toEqual(true);
     });
   });
-  describe('and a string, not contained in the array, is evaluated', function () {
-    var result;
-    beforeEach(function () {
+  describe('and a string, not contained in the array, is evaluated', () => {
+    let result;
+    beforeEach(() => {
       result = specification.evaluate('abc');
     });
-    it('should not pass', function () {
+    it('should not pass', () => {
       expect(result).toEqual(false);
     });
   });
-  describe('and a number, contained in the array, is evaluated', function () {
-    var result;
-    beforeEach(function () {
+  describe('and a number, contained in the array, is evaluated', () => {
+    let result;
+    beforeEach(() => {
       result = specification.evaluate(123);
     });
-    it('should pass', function () {
+    it('should pass', () => {
       expect(result).toEqual(true);
     });
   });
-  describe('and a number, not contained in the array, is evaluated', function () {
-    var result;
-    beforeEach(function () {
+  describe('and a number, not contained in the array, is evaluated', () => {
+    let result;
+    beforeEach(() => {
       result = specification.evaluate(1);
     });
-    it('should not pass', function () {
+    it('should not pass', () => {
       expect(result).toEqual(false);
     });
   });
 });
 
 },{"./../../../specifications/Contained":63}],123:[function(require,module,exports){
-var Contains = require('./../../../specifications/Contains');
+const Contains = require('./../../../specifications/Contains');
 
-describe('When a Contains is constructed', function () {
+describe('When a Contains is constructed', () => {
   'use strict';
 
-  var specification;
-  var specificationValue;
-  beforeEach(function () {
+  let specification;
+  let specificationValue;
+  beforeEach(() => {
     specification = new Contains(specificationValue = 'xyz');
   });
-  describe('and an array, containing the desired value, is evaluated', function () {
-    var result;
-    beforeEach(function () {
+  describe('and an array, containing the desired value, is evaluated', () => {
+    let result;
+    beforeEach(() => {
       result = specification.evaluate(['abc', 'def', specificationValue, 1, 2, 3]);
     });
-    it('should pass', function () {
+    it('should pass', () => {
       expect(result).toEqual(true);
     });
   });
-  describe('and an array, missing the desired value, is evaluated', function () {
-    var result;
-    beforeEach(function () {
+  describe('and an array, missing the desired value, is evaluated', () => {
+    let result;
+    beforeEach(() => {
       result = specification.evaluate(['abc', 'def', 1, 2, 3]);
     });
-    it('should fail', function () {
+    it('should fail', () => {
       expect(result).toEqual(false);
     });
   });
-  describe('and an object is evaluated', function () {
-    var result;
-    beforeEach(function () {
+  describe('and an object is evaluated', () => {
+    let result;
+    beforeEach(() => {
       result = specification.evaluate({
         abc: 'xyz',
         xyz: 'abc'
       });
     });
-    it('should fail', function () {
+    it('should fail', () => {
       expect(result).toEqual(false);
     });
   });
@@ -24809,108 +24837,107 @@ describe('When a Equals is constructed', () => {
 });
 
 },{"./../../../specifications/Equals":65}],125:[function(require,module,exports){
-var Fail = require('./../../../specifications/Fail');
+const Fail = require('./../../../specifications/Fail');
 
-describe('When a Fail is constructed', function () {
+describe('When a Fail is constructed', () => {
   'use strict';
 
-  var specification;
-  var specificationValue;
-  beforeEach(function () {
+  let specification;
+  let specificationValue;
+  beforeEach(() => {
     specification = new Fail(specificationValue = 'ignored');
   });
-  describe('and a string is evaluated', function () {
-    var result;
-    beforeEach(function () {
+  describe('and a string is evaluated', () => {
+    let result;
+    beforeEach(() => {
       result = specification.evaluate('abc');
     });
-    it('should not pass', function () {
+    it('should not pass', () => {
       expect(result).toEqual(false);
     });
   });
-  describe('and a null value is evaluated', function () {
-    var result;
-    beforeEach(function () {
+  describe('and a null value is evaluated', () => {
+    let result;
+    beforeEach(() => {
       result = specification.evaluate(null);
     });
-    it('should not pass', function () {
+    it('should not pass', () => {
       expect(result).toEqual(false);
     });
   });
-  describe('and an undefined value is evaluated', function () {
-    var result;
-    beforeEach(function () {
+  describe('and an undefined value is evaluated', () => {
+    let result;
+    beforeEach(() => {
       result = specification.evaluate(undefined);
     });
-    it('should not pass', function () {
+    it('should not pass', () => {
       expect(result).toEqual(false);
     });
   });
 });
 
 },{"./../../../specifications/Fail":66}],126:[function(require,module,exports){
-var Nan = require('./../../../specifications/Nan');
+const Nan = require('./../../../specifications/Nan');
 
-describe('When a Nan is constructed', function () {
+describe('When a Nan is constructed', () => {
   'use strict';
 
-  var specification;
-  beforeEach(function () {
+  let specification;
+  beforeEach(() => {
     specification = new Nan();
   });
-  describe('and a string is evaluated', function () {
-    var result;
-    beforeEach(function () {
+  describe('and a string is evaluated', () => {
+    let result;
+    beforeEach(() => {
       result = specification.evaluate('abc');
     });
-    it('should not pass', function () {
+    it('should not pass', () => {
       expect(result).toEqual(false);
     });
   });
-  describe('and a null value is evaluated', function () {
-    var result;
-    beforeEach(function () {
+  describe('and a null value is evaluated', () => {
+    let result;
+    beforeEach(() => {
       result = specification.evaluate(null);
     });
-    it('should not pass', function () {
+    it('should not pass', () => {
       expect(result).toEqual(false);
     });
   });
-  describe('and an undefined value is evaluated', function () {
-    var result;
-    beforeEach(function () {
+  describe('and an undefined value is evaluated', () => {
+    let result;
+    beforeEach(() => {
       result = specification.evaluate(undefined);
     });
-    it('should not pass', function () {
+    it('should not pass', () => {
       expect(result).toEqual(false);
     });
   });
-  describe('and an integer value is evaluated', function () {
-    var result;
-    beforeEach(function () {
+  describe('and an integer value is evaluated', () => {
+    let result;
+    beforeEach(() => {
       result = specification.evaluate(1);
     });
-    it('should not pass', function () {
+    it('should not pass', () => {
       expect(result).toEqual(false);
     });
   });
-  describe('and a NaN value is evaluated', function () {
-    var result;
-    beforeEach(function () {
+  describe('and a NaN value is evaluated', () => {
+    let result;
+    beforeEach(() => {
       result = specification.evaluate(parseFloat(null));
     });
-    it('should pass', function () {
+    it('should pass', () => {
       expect(result).toEqual(true);
     });
   });
 });
 
 },{"./../../../specifications/Nan":67}],127:[function(require,module,exports){
-var Not = require('./../../../specifications/Not');
+const Not = require('./../../../specifications/Not'),
+      Specification = require('./../../../specifications/Specification');
 
-var Specification = require('./../../../specifications/Specification');
-
-describe('When a Not is constructed', function () {
+describe('When a Not is constructed', () => {
   'use strict';
 
   class DelegateSpecification extends Specification {
@@ -24925,42 +24952,42 @@ describe('When a Not is constructed', function () {
 
   }
 
-  describe('with a specification that always fails', function () {
-    var specification;
-    var spy;
-    var result;
-    beforeEach(function () {
+  describe('with a specification that always fails', () => {
+    let specification;
+    let spy;
+    let result;
+    beforeEach(() => {
       specification = new Not(new DelegateSpecification(spy = jasmine.createSpy('fn').and.callFake(function (data) {
         return false;
       })));
       result = specification.evaluate('abc');
     });
-    it('should call the wrapped specification', function () {
+    it('should call the wrapped specification', () => {
       expect(spy).toHaveBeenCalled();
     });
-    it('should pass', function () {
+    it('should pass', () => {
       expect(result).toEqual(true);
     });
   });
-  describe('with a specification that always passes', function () {
-    var specification;
-    var spy;
-    var result;
-    beforeEach(function () {
+  describe('with a specification that always passes', () => {
+    let specification;
+    let spy;
+    let result;
+    beforeEach(() => {
       specification = new Not(new DelegateSpecification(spy = jasmine.createSpy('fn').and.callFake(function (data) {
         return true;
       })));
       result = specification.evaluate('abc');
     });
-    it('should call the wrapped specification', function () {
+    it('should call the wrapped specification', () => {
       expect(spy).toHaveBeenCalled();
     });
-    it('should pass', function () {
+    it('should pass', () => {
       expect(result).toEqual(false);
     });
   });
 });
-describe('When a Specification (that always fails) is constructed', function () {
+describe('When a Specification (that always fails) is constructed', () => {
   'use strict';
 
   class DelegateSpecification extends Specification {
@@ -24976,9 +25003,9 @@ describe('When a Specification (that always fails) is constructed', function () 
   }
 
   describe('and inverted', function () {
-    var specification;
-    var spy;
-    var result;
+    let specification;
+    let spy;
+    let result;
     beforeEach(function () {
       specification = new DelegateSpecification(spy = jasmine.createSpy('fn').and.callFake(function (data) {
         return false;
@@ -24994,7 +25021,7 @@ describe('When a Specification (that always fails) is constructed', function () 
     });
   });
 });
-describe('When a Specification (that always succeeds) is constructed', function () {
+describe('When a Specification (that always succeeds) is constructed', () => {
   'use strict';
 
   class DelegateSpecification extends Specification {
@@ -25010,9 +25037,9 @@ describe('When a Specification (that always succeeds) is constructed', function 
   }
 
   describe('and inverted', function () {
-    var specification;
-    var spy;
-    var result;
+    let specification;
+    let spy;
+    let result;
     beforeEach(function () {
       specification = new DelegateSpecification(spy = jasmine.createSpy('fn').and.callFake(function (data) {
         return true;
@@ -25030,59 +25057,58 @@ describe('When a Specification (that always succeeds) is constructed', function 
 });
 
 },{"./../../../specifications/Not":68,"./../../../specifications/Specification":72}],128:[function(require,module,exports){
-var Numeric = require('./../../../specifications/Numeric');
+const Numeric = require('./../../../specifications/Numeric');
 
-describe('When a Numeric is constructed', function () {
+describe('When a Numeric is constructed', () => {
   'use strict';
 
-  var specification;
-  beforeEach(function () {
+  let specification;
+  beforeEach(() => {
     specification = new Numeric();
   });
-  describe('and a string is evaluated', function () {
-    var result;
-    beforeEach(function () {
+  describe('and a string is evaluated', () => {
+    let result;
+    beforeEach(() => {
       result = specification.evaluate('abc');
     });
-    it('should not pass', function () {
+    it('should not pass', () => {
       expect(result).toEqual(false);
     });
   });
-  describe('and a null value is evaluated', function () {
-    var result;
-    beforeEach(function () {
+  describe('and a null value is evaluated', () => {
+    let result;
+    beforeEach(() => {
       result = specification.evaluate(null);
     });
-    it('should not pass', function () {
+    it('should not pass', () => {
       expect(result).toEqual(false);
     });
   });
-  describe('and an undefined value is evaluated', function () {
-    var result;
-    beforeEach(function () {
+  describe('and an undefined value is evaluated', () => {
+    let result;
+    beforeEach(() => {
       result = specification.evaluate(undefined);
     });
-    it('should not pass', function () {
+    it('should not pass', () => {
       expect(result).toEqual(false);
     });
   });
-  describe('and a number value is evaluated', function () {
-    var result;
-    beforeEach(function () {
+  describe('and a number value is evaluated', () => {
+    let result;
+    beforeEach(() => {
       result = specification.evaluate(0);
     });
-    it('should pass', function () {
+    it('should pass', () => {
       expect(result).toEqual(true);
     });
   });
 });
 
 },{"./../../../specifications/Numeric":69}],129:[function(require,module,exports){
-var Specification = require('./../../../specifications/Specification');
+const Specification = require('./../../../specifications/Specification'),
+      Or = require('./../../../specifications/Or');
 
-var Or = require('./../../../specifications/Or');
-
-describe('When an Or is constructed', function () {
+describe('When an Or is constructed', () => {
   'use strict';
 
   class SpecPass extends Specification {
@@ -25109,83 +25135,83 @@ describe('When an Or is constructed', function () {
 
   }
 
-  describe('with two specifications that will pass', function () {
-    var specification;
-    var specPassOne;
-    var specPassTwo;
-    var data;
-    var result;
-    beforeEach(function () {
+  describe('with two specifications that will pass', () => {
+    let specification;
+    let specPassOne;
+    let specPassTwo;
+    let data;
+    let result;
+    beforeEach(() => {
       specification = new Or(specPassOne = new SpecPass(), specPassTwo = new SpecPass());
       result = specification.evaluate(data = {});
     });
-    it('should call the first specification', function () {
+    it('should call the first specification', () => {
       expect(specPassOne._spy).toHaveBeenCalledWith(data);
     });
-    it('should not call the second specification', function () {
+    it('should not call the second specification', () => {
       expect(specPassTwo._spy).not.toHaveBeenCalledWith(data);
     });
-    it('should evaluate to false', function () {
+    it('should evaluate to false', () => {
       expect(result).toEqual(true);
     });
   });
-  describe('with two specifications that will fail', function () {
-    var specification;
-    var specPassOne;
-    var specPassTwo;
-    var data;
-    var result;
-    beforeEach(function () {
+  describe('with two specifications that will fail', () => {
+    let specification;
+    let specPassOne;
+    let specPassTwo;
+    let data;
+    let result;
+    beforeEach(() => {
       specification = new Or(specPassOne = new SpecFail(), specPassTwo = new SpecFail());
       result = specification.evaluate(data = {});
     });
-    it('should call the first specification', function () {
+    it('should call the first specification', () => {
       expect(specPassOne._spy).toHaveBeenCalledWith(data);
     });
-    it('should call the second specification', function () {
+    it('should call the second specification', () => {
       expect(specPassTwo._spy).toHaveBeenCalledWith(data);
     });
-    it('should evaluate to false', function () {
+    it('should evaluate to false', () => {
       expect(result).toEqual(false);
     });
   });
 });
 
 },{"./../../../specifications/Or":70,"./../../../specifications/Specification":72}],130:[function(require,module,exports){
-var Pass = require('./../../../specifications/Pass');
+const Pass = require('./../../../specifications/Pass');
 
-describe('When a Pass is constructed', function () {
+describe('When a Pass is constructed', () => {
   'use strict';
 
-  var specification;
-  var specificationValue;
-  beforeEach(function () {
+  let specification;
+  let specificationValue;
+  beforeEach(() => {
     specification = new Pass(specificationValue = 'ignored');
   });
-  describe('and a string is evaluated', function () {
-    var result;
-    beforeEach(function () {
+  describe('and a string is evaluated', () => {
+    let result;
+    beforeEach(() => {
       result = specification.evaluate('abc');
     });
-    it('should pass', function () {
+    it('should pass', () => {
       expect(result).toEqual(true);
     });
   });
-  describe('and a null value is evaluated', function () {
-    var result;
-    beforeEach(function () {
+  describe('and a null value is evaluated', () => {
+    let result;
+    beforeEach(() => {
       result = specification.evaluate(null);
     });
-    it('should pass', function () {
+    it('should pass', () => {
       expect(result).toEqual(true);
     });
   });
-  describe('and an undefined value is evaluated', function () {
-    var result;
-    beforeEach(function () {
+  describe('and an undefined value is evaluated', () => {
+    let result;
+    beforeEach(() => {
       result = specification.evaluate(undefined);
     });
-    it('should pass', function () {
+    it('should pass', () => {
       expect(result).toEqual(true);
     });
   });
@@ -25234,40 +25260,40 @@ describe('When a LessThan is constructed', () => {
 });
 
 },{"./../../../../specifications/compound/LessThan":74}],133:[function(require,module,exports){
-var RateLimiter = require('./../../../timing/RateLimiter');
+const RateLimiter = require('./../../../timing/RateLimiter');
 
-describe('When a RateLimiter is constructed (1 execution per 25 milliseconds)', function () {
+describe('When a RateLimiter is constructed (1 execution per 25 milliseconds)', () => {
   'use strict';
 
-  var limiter;
-  var windowMaximumCount;
-  var windowDurationMilliseconds;
-  var concurrency;
-  beforeEach(function () {
+  let limiter;
+  let windowMaximumCount;
+  let windowDurationMilliseconds;
+  let concurrency;
+  beforeEach(() => {
     limiter = new RateLimiter(windowMaximumCount = 1, windowDurationMilliseconds = 25, concurrency = null);
   });
-  describe('and tasks are scheduled', function () {
-    var spies;
-    var promises;
-    var start;
-    beforeEach(function () {
+  describe('and tasks are scheduled', () => {
+    let spies;
+    let promises;
+    let start;
+    beforeEach(() => {
       start = new Date();
       spies = [];
       promises = [];
 
-      for (var i = 0; i < 10; i++) {
-        var spy = jasmine.createSpy('spy');
+      for (let i = 0; i < 10; i++) {
+        let spy = jasmine.createSpy('spy');
         spies.push(spy);
         promises.push(limiter.enqueue(spy));
       }
     });
     it('the tasks should serialized', function (done) {
-      var promise = null;
+      let promise = null;
 
-      var getValidatedPromise = function (promise, index) {
-        return promise.then(function () {
-          for (var i = 0; i < spies.length; i++) {
-            var count;
+      let getValidatedPromise = function (promise, index) {
+        return promise.then(() => {
+          for (let i = 0; i < spies.length; i++) {
+            let count;
 
             if (i > index) {
               count = 0;
@@ -25280,64 +25306,64 @@ describe('When a RateLimiter is constructed (1 execution per 25 milliseconds)', 
         });
       };
 
-      for (var i = 0; i < promises.length; i++) {
-        var p = getValidatedPromise(promises[i], i);
+      for (let i = 0; i < promises.length; i++) {
+        let p = getValidatedPromise(promises[i], i);
 
         if (promise === null) {
           promise = p;
         } else {
-          promise = promise.then(function () {
+          promise = promise.then(() => {
             return p;
           });
         }
       }
 
-      promise.then(function () {
+      promise.then(() => {
         done();
       });
     });
     it('the tasks not finish before the earliest possible moment', function (done) {
-      var promise = null;
+      let promise = null;
 
-      var getValidatedPromise = function (promise, index) {
-        return promise.then(function () {
-          var end = new Date();
-          var duration = end.getTime() - start.getTime();
-          var shortestPossibleDuration = Math.floor(index / windowMaximumCount) * windowDurationMilliseconds;
+      let getValidatedPromise = function (promise, index) {
+        return promise.then(() => {
+          let end = new Date();
+          let duration = end.getTime() - start.getTime();
+          let shortestPossibleDuration = Math.floor(index / windowMaximumCount) * windowDurationMilliseconds;
           expect(duration + 1).not.toBeLessThan(shortestPossibleDuration);
         });
       };
 
-      for (var i = 0; i < promises.length; i++) {
-        var p = getValidatedPromise(promises[i], i);
+      for (let i = 0; i < promises.length; i++) {
+        let p = getValidatedPromise(promises[i], i);
 
         if (promise === null) {
           promise = p;
         } else {
-          promise = promise.then(function () {
+          promise = promise.then(() => {
             return p;
           });
         }
       }
 
-      promise.then(function () {
+      promise.then(() => {
         done();
       });
     });
   });
-  describe('and failing tasks are scheduled', function () {
-    var spies;
-    var promises;
-    var error;
-    var start;
-    beforeEach(function () {
+  describe('and failing tasks are scheduled', () => {
+    let spies;
+    let promises;
+    let error;
+    let start;
+    beforeEach(() => {
       start = new Date();
       spies = [];
       promises = [];
       error = new Error('oops');
 
-      for (var i = 0; i < 2; i++) {
-        var spy = jasmine.createSpy('spy').and.callFake(function () {
+      for (let i = 0; i < 2; i++) {
+        let spy = jasmine.createSpy('spy').and.callFake(() => {
           throw error;
         });
         spies.push(spy);
@@ -25345,86 +25371,86 @@ describe('When a RateLimiter is constructed (1 execution per 25 milliseconds)', 
       }
     });
     it('each task should be executed', function (done) {
-      var promise = null;
+      let promise = null;
 
-      var getValidatedPromise = function (promise, index) {
+      let getValidatedPromise = function (promise, index) {
         return promise.catch(function (error) {
-          var end = new Date();
-          var duration = end.getTime() - start.getTime();
-          var shortestPossibleDuration = Math.floor(index / windowMaximumCount) * windowDurationMilliseconds;
+          let end = new Date();
+          let duration = end.getTime() - start.getTime();
+          let shortestPossibleDuration = Math.floor(index / windowMaximumCount) * windowDurationMilliseconds;
           expect(duration + 1).not.toBeLessThan(shortestPossibleDuration);
           expect(error).toBe(error);
         });
       };
 
-      for (var i = 0; i < promises.length; i++) {
-        var p = getValidatedPromise(promises[i], i);
+      for (let i = 0; i < promises.length; i++) {
+        let p = getValidatedPromise(promises[i], i);
 
         if (promise === null) {
           promise = p;
         } else {
-          promise = promise.then(function () {
+          promise = promise.then(() => {
             return p;
           });
         }
       }
 
-      promise.then(function () {
+      promise.then(() => {
         done();
       });
     });
   });
 });
-describe('When a RateLimiter is constructed (2 execution per 25 milliseconds)', function () {
+describe('When a RateLimiter is constructed (2 execution per 25 milliseconds)', () => {
   'use strict';
 
-  var limiter;
-  var windowMaximumCount;
-  var windowDurationMilliseconds;
-  var concurrency;
-  beforeEach(function () {
+  let limiter;
+  let windowMaximumCount;
+  let windowDurationMilliseconds;
+  let concurrency;
+  beforeEach(() => {
     limiter = new RateLimiter(windowMaximumCount = 2, windowDurationMilliseconds = 25, concurrency = null);
   });
-  describe('and tasks are scheduled', function () {
-    var spies;
-    var promises;
-    var start;
-    beforeEach(function () {
+  describe('and tasks are scheduled', () => {
+    let spies;
+    let promises;
+    let start;
+    beforeEach(() => {
       start = new Date();
       spies = [];
       promises = [];
 
-      for (var i = 0; i < 10; i++) {
-        var spy = jasmine.createSpy('spy');
+      for (let i = 0; i < 10; i++) {
+        let spy = jasmine.createSpy('spy');
         spies.push(spy);
         promises.push(limiter.enqueue(spy));
       }
     });
     it('the tasks not finish before the earliest possible moment', function (done) {
-      var promise = null;
+      let promise = null;
 
-      var getValidatedPromise = function (promise, index) {
-        return promise.then(function () {
-          var end = new Date();
-          var duration = end.getTime() - start.getTime();
-          var shortestPossibleDuration = Math.floor(index / windowMaximumCount) * windowDurationMilliseconds;
+      let getValidatedPromise = function (promise, index) {
+        return promise.then(() => {
+          let end = new Date();
+          let duration = end.getTime() - start.getTime();
+          let shortestPossibleDuration = Math.floor(index / windowMaximumCount) * windowDurationMilliseconds;
           expect(duration + 1).not.toBeLessThan(shortestPossibleDuration);
         });
       };
 
-      for (var i = 0; i < promises.length; i++) {
-        var p = getValidatedPromise(promises[i], i);
+      for (let i = 0; i < promises.length; i++) {
+        let p = getValidatedPromise(promises[i], i);
 
         if (promise === null) {
           promise = p;
         } else {
-          promise = promise.then(function () {
+          promise = promise.then(() => {
             return p;
           });
         }
       }
 
-      promise.then(function () {
+      promise.then(() => {
         done();
       });
     });
@@ -25432,40 +25458,40 @@ describe('When a RateLimiter is constructed (2 execution per 25 milliseconds)', 
 });
 
 },{"./../../../timing/RateLimiter":137}],134:[function(require,module,exports){
-var Scheduler = require('./../../../timing/Scheduler');
+const Scheduler = require('./../../../timing/Scheduler');
 
-describe('When a Scheduler is constructed', function () {
+describe('When a Scheduler is constructed', () => {
   'use strict';
 
-  var scheduler;
-  beforeEach(function () {
+  let scheduler;
+  beforeEach(() => {
     scheduler = new Scheduler();
   });
-  describe('and task is scheduled', function () {
-    var spy;
-    var milliseconds;
-    var promise;
-    beforeEach(function () {
+  describe('and task is scheduled', () => {
+    let spy;
+    let milliseconds;
+    let promise;
+    beforeEach(() => {
       promise = scheduler.schedule(spy = jasmine.createSpy('spy'), milliseconds = 10, 'A scheduled task');
     });
-    it('should not execute the task synchronously', function () {
+    it('should not execute the task synchronously', () => {
       expect(spy).not.toHaveBeenCalled();
     });
     it('should execute the task asynchronously', function (done) {
-      promise.then(function () {
+      promise.then(() => {
         expect(spy.calls.count()).toEqual(1);
-      }).then(function () {
+      }).then(() => {
         done();
       });
     });
   });
-  describe('and is disposed', function () {
-    beforeEach(function () {
+  describe('and is disposed', () => {
+    beforeEach(() => {
       scheduler.dispose();
     });
-    describe('and a task is scheduled', function () {
-      var spy;
-      var success;
+    describe('and a task is scheduled', () => {
+      let spy;
+      let success;
       beforeEach(function (done) {
         scheduler.schedule(spy = jasmine.createSpy('spy'), 10, 'A scheduled task').then(() => {
           success = true;
@@ -25475,27 +25501,27 @@ describe('When a Scheduler is constructed', function () {
           done();
         });
       });
-      it('should reject the promise', function () {
+      it('should reject the promise', () => {
         expect(success).toEqual(false);
       });
-      it('should not invoke the underlying task', function () {
+      it('should not invoke the underlying task', () => {
         expect(spy).not.toHaveBeenCalled();
       });
     });
   });
 });
-describe('When a backoff is used', function () {
+describe('When a backoff is used', () => {
   'use strict';
 
-  var scheduler;
-  beforeEach(function () {
+  let scheduler;
+  beforeEach(() => {
     scheduler = new Scheduler();
   });
-  describe('that succeeds immediately', function () {
-    var spyAction;
-    var spyFailure;
-    var actualResult;
-    var successfulResult;
+  describe('that succeeds immediately', () => {
+    let spyAction;
+    let spyFailure;
+    let actualResult;
+    let successfulResult;
     beforeEach(function (done) {
       spyAction = jasmine.createSpy('spyAction').and.callFake(function () {
         return successfulResult = 'ok computer';
@@ -25506,22 +25532,22 @@ describe('When a backoff is used', function () {
         done();
       });
     });
-    it('should call the "backoff" action one time', function () {
+    it('should call the "backoff" action one time', () => {
       expect(spyAction.calls.count()).toEqual(1);
     });
-    it('the promise result should match the expected result', function () {
+    it('the promise result should match the expected result', () => {
       expect(actualResult).toEqual(successfulResult);
     });
-    it('should never call the "failure" action', function () {
+    it('should never call the "failure" action', () => {
       expect(spyFailure.calls.count()).toEqual(0);
     });
   });
-  describe('that fails once before succeeding (by throwing error)', function () {
-    var spyAction;
-    var spyFailure;
-    var actualResult;
-    var successfulResult;
-    var x;
+  describe('that fails once before succeeding (by throwing error)', () => {
+    let spyAction;
+    let spyFailure;
+    let actualResult;
+    let successfulResult;
+    let x;
     beforeEach(function (done) {
       x = 0;
       spyAction = jasmine.createSpy('spyAction').and.callFake(function () {
@@ -25537,22 +25563,22 @@ describe('When a backoff is used', function () {
         done();
       });
     });
-    it('should call the "backoff" action two times', function () {
+    it('should call the "backoff" action two times', () => {
       expect(spyAction.calls.count()).toEqual(2);
     });
-    it('the promise result should match the expected result', function () {
+    it('the promise result should match the expected result', () => {
       expect(actualResult).toEqual(successfulResult);
     });
-    it('the "failure" action should be called once', function () {
+    it('the "failure" action should be called once', () => {
       expect(spyFailure.calls.count()).toEqual(1);
     });
   });
-  describe('that fails twice before succeeding (by returning a specific "failure" value)', function () {
-    var spyAction;
-    var spyFailure;
-    var actualResult;
-    var successfulResult;
-    var x;
+  describe('that fails twice before succeeding (by returning a specific "failure" value)', () => {
+    let spyAction;
+    let spyFailure;
+    let actualResult;
+    let successfulResult;
+    let x;
     beforeEach(function (done) {
       x = 0;
       spyAction = jasmine.createSpy('spyAction').and.callFake(function () {
@@ -25568,20 +25594,20 @@ describe('When a backoff is used', function () {
         done();
       });
     });
-    it('should call the "backoff" action three times', function () {
+    it('should call the "backoff" action three times', () => {
       expect(spyAction.calls.count()).toEqual(3);
     });
-    it('the promise result should match the expected result', function () {
+    it('the promise result should match the expected result', () => {
       expect(actualResult).toEqual(successfulResult);
     });
-    it('the "failure" action should be called twice', function () {
+    it('the "failure" action should be called twice', () => {
       expect(spyFailure.calls.count()).toEqual(2);
     });
   });
-  describe('final failure is declared after three attempts', function () {
-    var spyAction;
-    var spyFailure;
-    var actualResult;
+  describe('final failure is declared after three attempts', () => {
+    let spyAction;
+    let spyFailure;
+    let actualResult;
     beforeEach(function (done) {
       spyAction = jasmine.createSpy('spyAction').and.callFake(function () {
         throw new Error('not gonna happen');
@@ -25592,20 +25618,20 @@ describe('When a backoff is used', function () {
         done();
       });
     });
-    it('should call the "backoff" action three times', function () {
+    it('should call the "backoff" action three times', () => {
       expect(spyAction.calls.count()).toEqual(3);
     });
-    it('the "failure" action should be called three times', function () {
+    it('the "failure" action should be called three times', () => {
       expect(spyFailure.calls.count()).toEqual(3);
     });
-    it('the promise should be rejected (with an Error instance)', function () {
+    it('the promise should be rejected (with an Error instance)', () => {
       expect(actualResult instanceof Error).toEqual(true);
     });
   });
-  describe('final failure is declared after three attempts (using the "failureValue" argument)', function () {
-    var spyAction;
-    var spyFailure;
-    var actualResult;
+  describe('final failure is declared after three attempts (using the "failureValue" argument)', () => {
+    let spyAction;
+    let spyFailure;
+    let actualResult;
     beforeEach(function (done) {
       spyAction = jasmine.createSpy('spyAction').and.callFake(function () {
         return 'boom';
@@ -25616,112 +25642,112 @@ describe('When a backoff is used', function () {
         done();
       });
     });
-    it('should call the "backoff" action three times', function () {
+    it('should call the "backoff" action three times', () => {
       expect(spyAction.calls.count()).toEqual(3);
     });
-    it('the "failure" action should be called three times', function () {
+    it('the "failure" action should be called three times', () => {
       expect(spyFailure.calls.count()).toEqual(3);
     });
-    it('the promise should be rejected', function () {
+    it('the promise should be rejected', () => {
       expect(actualResult).toEqual('Maximum failures reached for detonate');
     });
   });
 });
 
 },{"./../../../timing/Scheduler":138}],135:[function(require,module,exports){
-var Serializer = require('./../../../timing/Serializer');
+const Serializer = require('./../../../timing/Serializer');
 
-describe('When a Serializer is used to schedule four tasks', function () {
+describe('When a Serializer is used to schedule four tasks', () => {
   'use strict';
 
-  var serializer;
-  var spies;
-  var promises;
-  var results;
-  beforeEach(function () {
+  let serializer;
+  let spies;
+  let promises;
+  let results;
+  beforeEach(() => {
     serializer = new Serializer();
     spies = [];
     promises = [];
     results = [];
 
-    for (var i = 0; i < 4; i++) {
-      var spy = getSpy(results, false);
+    for (let i = 0; i < 4; i++) {
+      let spy = getSpy(results, false);
       spies.push(spy);
       promises.push(serializer.enqueue(spy));
     }
   });
-  describe('and the tasks complete', function () {
+  describe('and the tasks complete', () => {
     beforeEach(function (done) {
       Promise.all(promises).then(() => {
         done();
       });
     });
-    it('the first task should have been executed', function () {
+    it('the first task should have been executed', () => {
       expect(spies[0]).toHaveBeenCalled();
     });
-    it('the second task should have been executed', function () {
+    it('the second task should have been executed', () => {
       expect(spies[1]).toHaveBeenCalled();
     });
-    it('the third task should have been executed', function () {
+    it('the third task should have been executed', () => {
       expect(spies[2]).toHaveBeenCalled();
     });
-    it('the fourth task should have been executed', function () {
+    it('the fourth task should have been executed', () => {
       expect(spies[3]).toHaveBeenCalled();
     });
-    it('the first task should complete before the second task starts', function () {
+    it('the first task should complete before the second task starts', () => {
       expect(results[0].end <= results[1].start).toEqual(true);
     });
-    it('the second task should complete before the third task starts', function () {
+    it('the second task should complete before the third task starts', () => {
       expect(results[1].end <= results[2].start).toEqual(true);
     });
-    it('the third task should complete before the fourth task starts', function () {
+    it('the third task should complete before the fourth task starts', () => {
       expect(results[2].end <= results[3].start).toEqual(true);
     });
   });
 });
-describe('When a Serializer is used to schedule a task that throws', function () {
-  var serializer;
-  var promise;
-  var reject;
+describe('When a Serializer is used to schedule a task that throws', () => {
+  let serializer;
+  let promise;
+  let reject;
   beforeEach(function (done) {
     serializer = new Serializer();
     reject = false;
-    promise = serializer.enqueue(function () {
+    promise = serializer.enqueue(() => {
       throw new Error('Boom');
     }).catch(e => {
       reject = true;
       done();
     });
   });
-  it('should reject the promise', function () {
+  it('should reject the promise', () => {
     expect(reject).toEqual(true);
   });
 });
-describe('When a Serializer is used to schedule a task that rejects', function () {
-  var serializer;
-  var promise;
-  var reject;
+describe('When a Serializer is used to schedule a task that rejects', () => {
+  let serializer;
+  let promise;
+  let reject;
   beforeEach(function (done) {
     serializer = new Serializer();
     reject = false;
-    promise = serializer.enqueue(function () {
+    promise = serializer.enqueue(() => {
       return Promise.reject('Boom Boom');
     }).catch(e => {
       reject = true;
       done();
     });
   });
-  it('should reject the promise', function () {
+  it('should reject the promise', () => {
     expect(reject).toEqual(true);
   });
 });
 
 function getSpy(results, fail) {
-  return jasmine.createSpy('spy').and.callFake(function () {
+  return jasmine.createSpy('spy').and.callFake(() => {
     return new Promise(function (resolveCallback, rejectCallback) {
-      var start = new Date();
-      setTimeout(function () {
-        var end = new Date();
+      let start = new Date();
+      setTimeout(() => {
+        let end = new Date();
         results.push({
           start: start.getTime(),
           end: end.getTime()
@@ -25738,49 +25764,49 @@ function getSpy(results, fail) {
 }
 
 },{"./../../../timing/Serializer":139}],136:[function(require,module,exports){
-var WindowCounter = require('./../../../timing/WindowCounter');
+const WindowCounter = require('./../../../timing/WindowCounter');
 
-describe('When a WindowCounter is constructed', function () {
+describe('When a WindowCounter is constructed', () => {
   'use strict';
 
-  var duration;
-  var windows;
-  var counter;
-  beforeEach(function () {
+  let duration;
+  let windows;
+  let counter;
+  beforeEach(() => {
     counter = new WindowCounter(duration = 15, windows = 100);
   });
-  describe('and the counter is immediately incremented', function () {
-    var a;
-    beforeEach(function () {
+  describe('and the counter is immediately incremented', () => {
+    let a;
+    beforeEach(() => {
       counter.increment(a = 42);
     });
-    it('the current count should be the amount added', function () {
+    it('the current count should be the amount added', () => {
       expect(counter.getCurrent()).toEqual(a);
     });
-    describe('and the counter is immediately incremented, again', function () {
-      var b;
-      beforeEach(function () {
+    describe('and the counter is immediately incremented, again', () => {
+      let b;
+      beforeEach(() => {
         counter.increment(b = 99);
       });
-      it('the current count should be the sum of the amounts added', function () {
+      it('the current count should be the sum of the amounts added', () => {
         expect(counter.getCurrent()).toEqual(a + b);
       });
     });
-    describe('and the counter is incremented after the current window expires', function () {
-      var b;
+    describe('and the counter is incremented after the current window expires', () => {
+      let b;
       beforeEach(function (done) {
-        setTimeout(function () {
+        setTimeout(() => {
           counter.increment(b = 3);
           done();
         }, duration + duration / 2);
       });
-      it('the previous count should be the sum of the previous window', function () {
+      it('the previous count should be the sum of the previous window', () => {
         expect(counter.getPrevious()).toEqual(a);
       });
-      it('the current count should be the amount added', function () {
+      it('the current count should be the amount added', () => {
         expect(counter.getCurrent()).toEqual(b);
       });
-      it('the average count should be the sum of the previous window', function () {
+      it('the average count should be the sum of the previous window', () => {
         expect(counter.getAverage()).toEqual(a);
       });
     });
