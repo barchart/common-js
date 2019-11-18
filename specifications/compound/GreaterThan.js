@@ -1,5 +1,3 @@
-const assert = require('./../../lang/assert');
-
 const Specification = require('./../Specification');
 
 module.exports = (() => {

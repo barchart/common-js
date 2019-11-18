@@ -1,7 +1,6 @@
 const is = require('./../../../lang/is');
 
-const Parameter = require('./Parameter'),
-	Parameters = require('./Parameters'),
+const Parameters = require('./Parameters'),
 	ProtocolType = require('./ProtocolType'),
 	VerbType = require('./VerbType');
 

@@ -1,5 +1,4 @@
-const assert = require('./assert'),
-	is = require('./is');
+const assert = require('./assert');
 
 module.exports = (() => {
 	'use strict';

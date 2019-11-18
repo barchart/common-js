@@ -1,5 +1,4 @@
-const assert = require('./../../../lang/assert'),
-	is = require('./../../../lang/is');
+const is = require('./../../../lang/is');
 
 const Parameter = require('./Parameter');
 

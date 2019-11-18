@@ -1,7 +1,5 @@
 const assert = require('./../../lang/assert');
 
-const RestParser = require('./RestParser');
-
 const Schema = require('./../../serialization/json/Schema');
 
 module.exports = (() => {
