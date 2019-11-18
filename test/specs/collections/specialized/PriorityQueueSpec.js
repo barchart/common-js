@@ -190,7 +190,7 @@ describe('When a Queue is constructed, using a simple (ascending) numeric compar
 	});
 
 	describe('and the following values are enqueued: 3, 2, and 1', () => {
-		beforeEach(function () {
+		beforeEach(() => {
 			queue.enqueue(3);
 			queue.enqueue(2);
 			queue.enqueue(1);
@@ -214,7 +214,7 @@ describe('When a Queue is constructed, using a simple (ascending) numeric compar
 	});
 
 	describe('and the following values are enqueued: 1, 2, and 3', () => {
-		beforeEach(function () {
+		beforeEach(() => {
 			queue.enqueue(1);
 			queue.enqueue(2);
 			queue.enqueue(3);
@@ -238,7 +238,7 @@ describe('When a Queue is constructed, using a simple (ascending) numeric compar
 	});
 
 	describe('and the following values are enqueued: 2, 3, and 1', () => {
-		beforeEach(function () {
+		beforeEach(() => {
 			queue.enqueue(2);
 			queue.enqueue(3);
 			queue.enqueue(1);
@@ -262,7 +262,7 @@ describe('When a Queue is constructed, using a simple (ascending) numeric compar
 	});
 
 	describe('and the following values are enqueued: 3, 1, 2', () => {
-		beforeEach(function () {
+		beforeEach(() => {
 			queue.enqueue(3);
 			queue.enqueue(1);
 			queue.enqueue(2);
@@ -286,7 +286,7 @@ describe('When a Queue is constructed, using a simple (ascending) numeric compar
 	});
 
 	describe('and the following values are enqueued: 3, 1, 2', () => {
-		beforeEach(function () {
+		beforeEach(() => {
 			queue.enqueue(8);
 			queue.enqueue(7);
 			queue.enqueue(9);

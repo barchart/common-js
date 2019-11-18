@@ -81,7 +81,7 @@ describe('When a backoff is used', () => {
 		let successfulResult;
 
 		beforeEach(function(done) {
-			spyAction = jasmine.createSpy('spyAction').and.callFake(function () {
+			spyAction = jasmine.createSpy('spyAction').and.callFake(() => {
 				return successfulResult = 'ok computer';
 			});
 
@@ -120,7 +120,7 @@ describe('When a backoff is used', () => {
 		beforeEach(function(done) {
 			x = 0;
 
-			spyAction = jasmine.createSpy('spyAction').and.callFake(function () {
+			spyAction = jasmine.createSpy('spyAction').and.callFake(() => {
 				if (++x > 1) {
 					return successfulResult = 'ok computer';
 				} else {
@@ -163,7 +163,7 @@ describe('When a backoff is used', () => {
 		beforeEach(function(done) {
 			x = 0;
 
-			spyAction = jasmine.createSpy('spyAction').and.callFake(function () {
+			spyAction = jasmine.createSpy('spyAction').and.callFake(() => {
 				if (++x > 2) {
 					return successfulResult = [ 'ok computer' ];
 				} else {
@@ -201,7 +201,7 @@ describe('When a backoff is used', () => {
 		let actualResult;
 
 		beforeEach(function(done) {
-			spyAction = jasmine.createSpy('spyAction').and.callFake(function () {
+			spyAction = jasmine.createSpy('spyAction').and.callFake(() => {
 				throw new Error('not gonna happen');
 			});
 
@@ -235,7 +235,7 @@ describe('When a backoff is used', () => {
 		let actualResult;
 
 		beforeEach(function(done) {
-			spyAction = jasmine.createSpy('spyAction').and.callFake(function () {
+			spyAction = jasmine.createSpy('spyAction').and.callFake(() => {
 				return 'boom';
 			});
 

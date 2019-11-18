@@ -295,7 +295,7 @@ describe('When an EvictingMap is constructed', () => {
 		let x;
 		let y;
 
-		beforeEach(function () {
+		beforeEach(() => {
 			a = {key: 'a'};
 			b = {key: 'b'};
 			c = {key: 'c'};

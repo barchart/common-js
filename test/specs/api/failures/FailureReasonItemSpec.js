@@ -31,11 +31,11 @@ describe('When a FailureType is created with a template string that references r
 		describe('and the item is formatted', () => {
 			let formatted;
 
-			beforeEach(function () {
+			beforeEach(() => {
 				formatted = item.format(root);
 			});
 
-			it('should match the expected output', function () {
+			it('should match the expected output', () => {
 				expect(formatted).toEqual('This is a test of the Emergency Broadcast system.');
 			});
 		});
@@ -79,11 +79,11 @@ describe('When a FailureType is created with a template string that references w
 		describe('and the item is formatted', () => {
 			let formatted;
 
-			beforeEach(function () {
+			beforeEach(() => {
 				formatted = item.format(root);
 			});
 
-			it('should match the expected output', function () {
+			it('should match the expected output', () => {
 				expect(formatted).toEqual('I believe that "all cats are animals" is a true statement.');
 			});
 		});
@@ -124,11 +124,11 @@ describe('When a FailureType is created with a template string that references d
 		describe('and the item is formatted', () => {
 			let formatted;
 
-			beforeEach(function () {
+			beforeEach(() => {
 				formatted = item.format(root);
 			});
 
-			it('should match the expected output', function () {
+			it('should match the expected output', () => {
 				expect(formatted).toEqual('The first letter is lowercase: abraham Lincoln. The first letter is uppercase: Abraham Lincoln. All letters are lowercase: abraham lincoln. All letters are uppercase: ABRAHAM LINCOLN.');
 			});
 		});

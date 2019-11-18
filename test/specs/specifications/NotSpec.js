@@ -88,13 +88,13 @@ describe('When a Specification (that always fails) is constructed', () => {
 		}
 	}
 
-	describe('and inverted', function () {
+	describe('and inverted', () => {
 		let specification;
 		let spy;
 
 		let result;
 
-		beforeEach(function () {
+		beforeEach(() => {
 			specification = new DelegateSpecification(
 				spy = jasmine.createSpy('fn').and.callFake(function (data) {
 					return false;
@@ -107,11 +107,11 @@ describe('When a Specification (that always fails) is constructed', () => {
 		});
 
 
-		it('should call the original specification', function () {
+		it('should call the original specification', () => {
 			expect(spy).toHaveBeenCalled();
 		});
 
-		it('should pass', function () {
+		it('should pass', () => {
 			expect(result).toEqual(true);
 		});
 	});
@@ -132,13 +132,13 @@ describe('When a Specification (that always succeeds) is constructed', () => {
 		}
 	}
 
-	describe('and inverted', function () {
+	describe('and inverted', () => {
 		let specification;
 		let spy;
 
 		let result;
 
-		beforeEach(function () {
+		beforeEach(() => {
 			specification = new DelegateSpecification(
 				spy = jasmine.createSpy('fn').and.callFake(function (data) {
 					return true;
@@ -151,11 +151,11 @@ describe('When a Specification (that always succeeds) is constructed', () => {
 		});
 
 
-		it('should call the original specification', function () {
+		it('should call the original specification', () => {
 			expect(spy).toHaveBeenCalled();
 		});
 
-		it('should pass', function () {
+		it('should pass', () => {
 			expect(result).toEqual(false);
 		});
 	});

@@ -65,19 +65,19 @@ describe('When using memoize.simple', () => {
 				let paramTwo;
 				let resultTwo;
 
-				beforeEach(function () {
+				beforeEach(() => {
 					resultTwo = memo(paramTwo = 'b');
 				});
 
-				it('the memoized function to have been called', function () {
+				it('the memoized function to have been called', () => {
 					expect(spy.calls.count()).toEqual(2);
 				});
 
-				it('the memoized function to have been called with the correct parameters', function () {
+				it('the memoized function to have been called with the correct parameters', () => {
 					expect(spy).toHaveBeenCalledWith(paramTwo);
 				});
 
-				it('the result should be a number', function () {
+				it('the result should be a number', () => {
 					expect(typeof resultTwo).toEqual('number');
 				});
 			});
@@ -153,11 +153,11 @@ describe('When using memoize.cache', () => {
 					}, 15);
 				});
 
-				it('the memoized function to have been called again', function () {
+				it('the memoized function to have been called again', () => {
 					expect(spy.calls.count()).toEqual(2);
 				});
 
-				it('the result should be two', function () {
+				it('the result should be two', () => {
 					expect(resultThree).toEqual(2);
 				});
 			});

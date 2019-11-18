@@ -9,7 +9,7 @@ describe('When a timeout is set for a promise', () => {
 
 		let result;
 
-		beforeEach(function () {
+		beforeEach(() => {
 			originalPromise = Promise.resolve(result = 'instant');
 			timeoutPromise = promise.timeout(originalPromise, 10);
 		});
@@ -29,7 +29,7 @@ describe('When a timeout is set for a promise', () => {
 
 		let result;
 
-		beforeEach(function () {
+		beforeEach(() => {
 			originalPromise = Promise.reject(result = 'instant');
 			timeoutPromise = promise.timeout(originalPromise, 10);
 		});
@@ -49,7 +49,7 @@ describe('When a timeout is set for a promise', () => {
 
 		let result;
 
-		beforeEach(function () {
+		beforeEach(() => {
 			originalPromise = new Promise(function (resolveCallback, rejectCallback) {
 				setTimeout(() => {
 					resolveCallback(result = 'quick');
@@ -74,7 +74,7 @@ describe('When a timeout is set for a promise', () => {
 
 		let result;
 
-		beforeEach(function () {
+		beforeEach(() => {
 			originalPromise = new Promise(function (resolveCallback, rejectCallback) {
 				setTimeout(() => {
 					rejectCallback(result = 'quick');
@@ -99,7 +99,7 @@ describe('When a timeout is set for a promise', () => {
 
 		let result;
 
-		beforeEach(function () {
+		beforeEach(() => {
 			originalPromise = new Promise(function (resolveCallback, rejectCallback) {
 				setTimeout(() => {
 					resolveCallback(result = 'slow');
@@ -110,7 +110,7 @@ describe('When a timeout is set for a promise', () => {
 		});
 
 		it('will reject due to timeout', function (done) {
-			timeoutPromise.catch(function () {
+			timeoutPromise.catch(() => {
 				expect(true).toBe(true);
 
 				done();
@@ -124,7 +124,7 @@ describe('When a timeout is set for a promise', () => {
 
 		let result;
 
-		beforeEach(function () {
+		beforeEach(() => {
 			originalPromise = new Promise(function (resolveCallback, rejectCallback) {
 				setTimeout(() => {
 					rejectCallback(result = 'slow');
@@ -147,7 +147,7 @@ describe('When a timeout is set for a promise', () => {
 		let originalPromise;
 		let timeoutPromise;
 
-		beforeEach(function () {
+		beforeEach(() => {
 			originalPromise = new Promise(function (resolveCallback, rejectCallback) {
 				return;
 			});
@@ -156,7 +156,7 @@ describe('When a timeout is set for a promise', () => {
 		});
 
 		it('will reject due to timeout', function (done) {
-			timeoutPromise.catch(function () {
+			timeoutPromise.catch(() => {
 				expect(true).toBe(true);
 
 				done();

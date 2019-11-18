@@ -183,7 +183,7 @@ describe('When checking to see if a Day is valid', () => {
 describe('When adding days to a Day', () => {
 	'use strict';
 
-	it('should return January 2, 2017 when adding 1 day to January 1, 2017', function () {
+	it('should return January 2, 2017 when adding 1 day to January 1, 2017', () => {
 		const now = new Day(2017, 1, 1);
 		const then = now.addDays(1);
 
@@ -192,7 +192,7 @@ describe('When adding days to a Day', () => {
 		expect(then.day).toEqual(2);
 	});
 
-	it('should return March 1, 2017 when adding 1 day to Feb 28, 2017', function () {
+	it('should return March 1, 2017 when adding 1 day to Feb 28, 2017', () => {
 		const now = new Day(2017, 2, 28);
 		const then = now.addDays(1);
 
@@ -201,7 +201,7 @@ describe('When adding days to a Day', () => {
 		expect(then.day).toEqual(1);
 	});
 
-	it('should return Feb 29, 2020 when adding 1 day Feb 28, 2020', function () {
+	it('should return Feb 29, 2020 when adding 1 day Feb 28, 2020', () => {
 		const now = new Day(2020, 2, 28);
 		const then = now.addDays(1);
 
@@ -210,7 +210,7 @@ describe('When adding days to a Day', () => {
 		expect(then.day).toEqual(29);
 	});
 
-	it('should return Aug 18, 2018 when adding 400 days to Jul 14, 2017', function () {
+	it('should return Aug 18, 2018 when adding 400 days to Jul 14, 2017', () => {
 		const now = new Day(2017, 7, 14);
 		const then = now.addDays(400);
 
@@ -219,7 +219,7 @@ describe('When adding days to a Day', () => {
 		expect(then.day).toEqual(18);
 	});
 
-	it('should return Aug 18, 2017 when subtracting 1 day from Aug 19, 2017 (using inverse)', function () {
+	it('should return Aug 18, 2017 when subtracting 1 day from Aug 19, 2017 (using inverse)', () => {
 		const now = new Day(2017, 8, 19);
 		const then = now.subtractDays(1);
 
@@ -228,7 +228,7 @@ describe('When adding days to a Day', () => {
 		expect(then.day).toEqual(18);
 	});
 
-	it('should return Aug 18, 2017 when adding 1 "inverse" day to Aug 19, 2017', function () {
+	it('should return Aug 18, 2017 when adding 1 "inverse" day to Aug 19, 2017', () => {
 		const now = new Day(2017, 8, 19);
 		const then = now.addDays(1, true);
 
@@ -237,7 +237,7 @@ describe('When adding days to a Day', () => {
 		expect(then.day).toEqual(18);
 	});
 
-	it('should return Aug 18, 2017 when adding -1 day to Aug 19, 2017', function () {
+	it('should return Aug 18, 2017 when adding -1 day to Aug 19, 2017', () => {
 		const now = new Day(2017, 8, 19);
 		const then = now.addDays(-1);
 
@@ -246,7 +246,7 @@ describe('When adding days to a Day', () => {
 		expect(then.day).toEqual(18);
 	});
 
-	it('should return Jul 30, 2017 when subtracting 2 days from Aug 1, 2017', function () {
+	it('should return Jul 30, 2017 when subtracting 2 days from Aug 1, 2017', () => {
 		const now = new Day(2017, 8, 1);
 		const then = now.addDays(2, true);
 
@@ -255,7 +255,7 @@ describe('When adding days to a Day', () => {
 		expect(then.day).toEqual(30);
 	});
 
-	it('should return Dec 31, 2017 when subtracting 2 days from Jan 10, 2018', function () {
+	it('should return Dec 31, 2017 when subtracting 2 days from Jan 10, 2018', () => {
 		const now = new Day(2018, 1, 10);
 		const then = now.addDays(10, true);
 
@@ -264,7 +264,7 @@ describe('When adding days to a Day', () => {
 		expect(then.day).toEqual(31);
 	});
 
-	it('should return Feb 29, 2020 when subtracting 1 day from Mar 1, 2020', function () {
+	it('should return Feb 29, 2020 when subtracting 1 day from Mar 1, 2020', () => {
 		const now = new Day(2020, 3, 1);
 		const then = now.addDays(1, true);
 
@@ -273,7 +273,7 @@ describe('When adding days to a Day', () => {
 		expect(then.day).toEqual(29);
 	});
 
-	it('should return Mar 1, 2020 when adding 0 days from Mar 1, 2020', function () {
+	it('should return Mar 1, 2020 when adding 0 days from Mar 1, 2020', () => {
 		const now = new Day(2020, 3, 1);
 		const then = now.addDays(0);
 
@@ -286,7 +286,7 @@ describe('When adding days to a Day', () => {
 describe('When adding months to a Day', () => {
 	'use strict';
 
-	it('should return January 2, 2017 when adding 13 months to December 2, 2015', function () {
+	it('should return January 2, 2017 when adding 13 months to December 2, 2015', () => {
 		const now = new Day(2015, 12, 2);
 		const then = now.addMonths(13);
 
@@ -295,7 +295,7 @@ describe('When adding months to a Day', () => {
 		expect(then.day).toEqual(2);
 	});
 
-	it('should return December 2, 2015 when subtracting 13 months from January 2, 2017', function () {
+	it('should return December 2, 2015 when subtracting 13 months from January 2, 2017', () => {
 		const now = new Day(2017, 1, 2);
 		const then = now.subtractMonths(13);
 
@@ -304,7 +304,7 @@ describe('When adding months to a Day', () => {
 		expect(then.day).toEqual(2);
 	});
 
-	it('should return February 28, 2018 when adding a month to January 30, 2018', function () {
+	it('should return February 28, 2018 when adding a month to January 30, 2018', () => {
 		const now = new Day(2018, 1, 30);
 		const then = now.addMonths(1);
 
@@ -313,7 +313,7 @@ describe('When adding months to a Day', () => {
 		expect(then.day).toEqual(28);
 	});
 
-	it('should return February 28, 2018 when subtracting a month to March 29, 2018', function () {
+	it('should return February 28, 2018 when subtracting a month to March 29, 2018', () => {
 		const now = new Day(2018, 3, 29);
 		const then = now.subtractMonths(1);
 
@@ -326,7 +326,7 @@ describe('When adding months to a Day', () => {
 describe('When adding years to a Day', () => {
 	'use strict';
 
-	it('should return January 2, 2017 when adding 3 years to January 2, 2014', function () {
+	it('should return January 2, 2017 when adding 3 years to January 2, 2014', () => {
 		const now = new Day(2014, 1, 2);
 		const then = now.addYears(3);
 
@@ -335,7 +335,7 @@ describe('When adding years to a Day', () => {
 		expect(then.day).toEqual(2);
 	});
 
-	it('should return January 2, 2014 when subtracting 3 years to January 2, 2017', function () {
+	it('should return January 2, 2014 when subtracting 3 years to January 2, 2017', () => {
 		const now = new Day(2017, 1, 2);
 		const then = now.subtractYears(3);
 
@@ -344,7 +344,7 @@ describe('When adding years to a Day', () => {
 		expect(then.day).toEqual(2);
 	});
 
-	it('should return February 29, 2020 when adding 4 years to February 29, 2016', function () {
+	it('should return February 29, 2020 when adding 4 years to February 29, 2016', () => {
 		const now = new Day(2016, 2, 29);
 		const then = now.addYears(4);
 
@@ -353,7 +353,7 @@ describe('When adding years to a Day', () => {
 		expect(then.day).toEqual(29);
 	});
 
-	it('should return February 29, 2016 when subtracting 4 years to February 29, 2020', function () {
+	it('should return February 29, 2016 when subtracting 4 years to February 29, 2020', () => {
 		const now = new Day(2020, 2, 29);
 		const then = now.subtractYears(4);
 
@@ -362,7 +362,7 @@ describe('When adding years to a Day', () => {
 		expect(then.day).toEqual(29);
 	});
 
-	it('should return February 28, 2019 when adding 3 years to February 29, 2016', function () {
+	it('should return February 28, 2019 when adding 3 years to February 29, 2016', () => {
 		const now = new Day(2016, 2, 29);
 		const then = now.addYears(3);
 
@@ -371,7 +371,7 @@ describe('When adding years to a Day', () => {
 		expect(then.day).toEqual(28);
 	});
 
-	it('should return February 28, 2016 when subtracting 3 years to February 28, 2019', function () {
+	it('should return February 28, 2016 when subtracting 3 years to February 28, 2019', () => {
 		const now = new Day(2019, 2, 28);
 		const then = now.subtractYears(3);
 
@@ -380,7 +380,7 @@ describe('When adding years to a Day', () => {
 		expect(then.day).toEqual(28);
 	});
 
-	it('should return February 28, 2019 when subtracting 1 years to February 29, 2020', function () {
+	it('should return February 28, 2019 when subtracting 1 years to February 29, 2020', () => {
 		const now = new Day(2020, 2, 29);
 		const then = now.subtractYears(1);
 
