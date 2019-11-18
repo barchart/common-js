@@ -1,61 +1,101 @@
 var Timezones = require('./../../../lang/Timezones');
 
-describe('When accessing static items', function() {
+describe('When accessing static items', () =>  {
 	'use strict';
 
-	it('The timezone for Chicago should return the expected item', function() {
+	it('The timezone for Chicago should return the expected item', () =>  {
 		expect(Timezones.AMERICA_CHICAGO.code).toEqual('America/Chicago');
 	});
 
-	it('The timezone for New York should return the expected item', function() {
+	it('The timezone for New York should return the expected item', () =>  {
 		expect(Timezones.AMERICA_NEW_YORK.code).toEqual('America/New_York');
 	});
 });
 
-describe('When calculating timezone offset on 2019-10-02 UTC', function() {
+describe('When calculating timezone offset on 2019-10-02 UTC', () =>  {
 	let timestamp;
 
 	beforeEach(() => {
 		timestamp = (new Date(2019, 9, 2, 0, 0, 0)).getTime();
 	});
+	
+	describe('in minutes', () => {
+		it('The UTC offset should be 0', () =>  {
+			expect(Timezones.UTC.getUtcOffset(timestamp)).toEqual(0);
+		});
 
-	it('The UTC offset should be 0', function() {
-		expect(Timezones.UTC.getUtcOffset(timestamp)).toEqual(0);
+		it('The AMERICA_CHICAGO offset should be -300', () =>  {
+			expect(Timezones.AMERICA_CHICAGO.getUtcOffset(timestamp)).toEqual(-300);
+		});
+
+		it('The AMERICA_NEW_YORK offset should be -240', () =>  {
+			expect(Timezones.AMERICA_NEW_YORK.getUtcOffset(timestamp)).toEqual(-240);
+		});
+
+		it('The Europe/Minsk offset should be 180', () =>  {
+			expect(Timezones.parse('Europe/Minsk').getUtcOffset(timestamp)).toEqual(180);
+		});
 	});
 
-	it('The AMERICA_CHICAGO offset should be -300', function() {
-		expect(Timezones.AMERICA_CHICAGO.getUtcOffset(timestamp)).toEqual(-300);
-	});
+	describe('in milliseconds', () => {
+		it('The UTC offset should be 0', () =>  {
+			expect(Timezones.UTC.getUtcOffset(timestamp)).toEqual(0);
+		});
 
-	it('The AMERICA_NEW_YORK offset should be -240', function() {
-		expect(Timezones.AMERICA_NEW_YORK.getUtcOffset(timestamp)).toEqual(-240);
-	});
+		it('The AMERICA_CHICAGO offset should be -300', () =>  {
+			expect(Timezones.AMERICA_CHICAGO.getUtcOffset(timestamp, true)).toEqual(-18000000);
+		});
 
-	it('The Europe/Minsk offset should be 180', function() {
-		expect(Timezones.parse('Europe/Minsk').getUtcOffset(timestamp)).toEqual(180);
+		it('The AMERICA_NEW_YORK offset should be -240', () =>  {
+			expect(Timezones.AMERICA_NEW_YORK.getUtcOffset(timestamp, true)).toEqual(-14400000);
+		});
+
+		it('The Europe/Minsk offset should be 180', () =>  {
+			expect(Timezones.parse('Europe/Minsk').getUtcOffset(timestamp, true)).toEqual(10800000);
+		});
 	});
 });
 
-describe('When calculating timezone offset on 2019-11-04 UTC', function() {
+describe('When calculating timezone offset on 2019-11-04 UTC', () =>  {
 	let timestamp;
 
 	beforeEach(() => {
 		timestamp = (new Date(2019, 10, 4, 0, 0, 0)).getTime();
 	});
 
-	it('The UTC offset should be 0', function() {
-		expect(Timezones.UTC.getUtcOffset(timestamp)).toEqual(0);
+	describe('in minutes', () => {
+		it('The UTC offset should be 0', () =>  {
+			expect(Timezones.UTC.getUtcOffset(timestamp)).toEqual(0);
+		});
+
+		it('The AMERICA_CHICAGO offset should be -360', () =>  {
+			expect(Timezones.AMERICA_CHICAGO.getUtcOffset(timestamp)).toEqual(-360);
+		});
+
+		it('The AMERICA_NEW_YORK offset should be -300', () =>  {
+			expect(Timezones.AMERICA_NEW_YORK.getUtcOffset(timestamp)).toEqual(-300);
+		});
+
+		it('The Europe/Minsk offset should be 180', () =>  {
+			expect(Timezones.parse('Europe/Minsk').getUtcOffset(timestamp)).toEqual(180);
+		});
 	});
 
-	it('The AMERICA_CHICAGO offset should be -360', function() {
-		expect(Timezones.AMERICA_CHICAGO.getUtcOffset(timestamp)).toEqual(-360);
-	});
+	describe('in milliseconds', () => {
+		it('The UTC offset should be 0', () =>  {
+			expect(Timezones.UTC.getUtcOffset(timestamp, true)).toEqual(0);
+		});
 
-	it('The AMERICA_NEW_YORK offset should be -300', function() {
-		expect(Timezones.AMERICA_NEW_YORK.getUtcOffset(timestamp)).toEqual(-300);
-	});
+		it('The AMERICA_CHICAGO offset should be -360', () =>  {
+			expect(Timezones.AMERICA_CHICAGO.getUtcOffset(timestamp, true)).toEqual(-21600000);
+		});
 
-	it('The Europe/Minsk offset should be 180', function() {
-		expect(Timezones.parse('Europe/Minsk').getUtcOffset(timestamp)).toEqual(180);
+		it('The AMERICA_NEW_YORK offset should be -300', () =>  {
+			expect(Timezones.AMERICA_NEW_YORK.getUtcOffset(timestamp, true)).toEqual(-18000000);
+		});
+
+		it('The Europe/Minsk offset should be 180', () =>  {
+			expect(Timezones.parse('Europe/Minsk').getUtcOffset(timestamp, true)).toEqual(10800000);
+		});
 	});
 });

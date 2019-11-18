@@ -23,15 +23,14 @@ module.exports = (() => {
 		}
 
 		/**
-		 * The timezone's offset from UTC, in minutes, at the moment of
-		 * the timestamp argument. If no timestamp if provided, the offset
-		 * from the current time is returned.
+		 * Calculates and returns the timezone's offset from UTC.
 		 *
 		 * @public
-		 * @param {Number=} timestamp
+		 * @param {Number=} timestamp - The moment at which the offset is calculated, otherwise now.
+		 * @param {Boolean=} milliseconds - If true, the offset is returned in milliseconds; otherwise minutes.
 		 * @returns {Number}
 		 */
-		getUtcOffset(timestamp) {
+		getUtcOffset(timestamp, milliseconds) {
 			let timestampToUse;
 
 			if (is.number(timestamp)) {
@@ -40,7 +39,15 @@ module.exports = (() => {
 				timestampToUse = (new Date()).getTime();
 			}
 
-			const offset = moment.tz.zone(this.code).utcOffset(timestampToUse);
+			let multiplier;
+
+			if (is.boolean(milliseconds) && milliseconds) {
+				multiplier = 60 * 1000;
+			} else {
+				multiplier = 1;
+			}
+
+			const offset = moment.tz.zone(this.code).utcOffset(timestampToUse) * multiplier;
 
 			if (offset !== 0) {
 				return offset * -1;
