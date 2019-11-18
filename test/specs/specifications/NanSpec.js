@@ -1,70 +1,70 @@
-var Nan = require('./../../../specifications/Nan');
+const Nan = require('./../../../specifications/Nan');
 
-describe('When a Nan is constructed', function() {
+describe('When a Nan is constructed', () => {
 	'use strict';
 
-	var specification;
+	let specification;
 
-	beforeEach(function() {
+	beforeEach(() => {
 		specification = new Nan();
 	});
 
-	describe('and a string is evaluated', function() {
-		var result;
+	describe('and a string is evaluated', () => {
+		let result;
 
-		beforeEach(function() {
+		beforeEach(() => {
 			result = specification.evaluate('abc');
 		});
 
-		it('should not pass', function() {
+		it('should not pass', () => {
 			expect(result).toEqual(false);
 		});
 	});
 
-	describe('and a null value is evaluated', function() {
-		var result;
+	describe('and a null value is evaluated', () => {
+		let result;
 
-		beforeEach(function() {
+		beforeEach(() => {
 			result = specification.evaluate(null);
 		});
 
-		it('should not pass', function() {
+		it('should not pass', () => {
 			expect(result).toEqual(false);
 		});
 	});
 
-	describe('and an undefined value is evaluated', function() {
-		var result;
+	describe('and an undefined value is evaluated', () => {
+		let result;
 
-		beforeEach(function() {
+		beforeEach(() => {
 			result = specification.evaluate(undefined);
 		});
 
-		it('should not pass', function() {
+		it('should not pass', () => {
 			expect(result).toEqual(false);
 		});
 	});
 
-	describe('and an integer value is evaluated', function() {
-		var result;
+	describe('and an integer value is evaluated', () => {
+		let result;
 
-		beforeEach(function() {
+		beforeEach(() => {
 			result = specification.evaluate(1);
 		});
 
-		it('should not pass', function() {
+		it('should not pass', () => {
 			expect(result).toEqual(false);
 		});
 	});
 
-	describe('and a NaN value is evaluated', function() {
-		var result;
+	describe('and a NaN value is evaluated', () => {
+		let result;
 
-		beforeEach(function() {
+		beforeEach(() => {
 			result = specification.evaluate(parseFloat(null));
 		});
 
-		it('should pass', function() {
+		it('should pass', () => {
 			expect(result).toEqual(true);
 		});
 	});

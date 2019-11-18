@@ -1,100 +1,100 @@
-var Disposable = require('./../../../../lang/Disposable');
-var DisposableStack = require('./../../../../collections/specialized/DisposableStack');
+const Disposable = require('./../../../../lang/Disposable'),
+	DisposableStack = require('./../../../../collections/specialized/DisposableStack');
 
-describe('When an DisposableStack is constructed', function() {
+describe('When an DisposableStack is constructed', () => {
 	'use strict';
 
-	var disposeStack;
+	let disposeStack;
 
-	beforeEach(function() {
+	beforeEach(() => {
 		disposeStack = new DisposableStack();
 	});
 
-	it('should be disposable', function() {
+	it('should be disposable', () => {
 		expect(disposeStack instanceof Disposable).toEqual(true);
 	});
 
-	describe('and a Disposable item is added to the stack', function() {
-		var disposableOne;
-		var spyOne;
+	describe('and a Disposable item is added to the stack', () => {
+		let disposableOne;
+		let spyOne;
 
-		var disposeOrder;
+		let disposeOrder;
 
-		beforeEach(function() {
-			disposeStack.push(disposableOne = Disposable.fromAction(spyOne = jasmine.createSpy('spyOne').and.callFake(function() { disposeOrder.push(disposableOne); })));
+		beforeEach(() => {
+			disposeStack.push(disposableOne = Disposable.fromAction(spyOne = jasmine.createSpy('spyOne').and.callFake(() => { disposeOrder.push(disposableOne); })));
 		});
 
-		describe('and the stack is disposed', function() {
-			beforeEach(function() {
+		describe('and the stack is disposed', () => {
+			beforeEach(() => {
 				disposeOrder = [ ];
 
 				disposeStack.dispose();
 			});
 
-			it('the item should be disposed', function() {
+			it('the item should be disposed', () => {
 				expect(disposableOne.getIsDisposed()).toEqual(true);
 			});
 
-			it('the dispose logic should have been triggered', function() {
+			it('the dispose logic should have been triggered', () => {
 				expect(spyOne).toHaveBeenCalled();
 			});
 
-			describe('and another item is added to the stack', function() {
-				it('should throw an error', function() {
-					expect(function() {
-						disposeStack.push(Disposable.fromAction(function() { }));
+			describe('and another item is added to the stack', () => {
+				it('should throw an error', () => {
+					expect(() => {
+						disposeStack.push(Disposable.fromAction(() => { }));
 					}).toThrow();
 				});
 			});
 		});
 
-		describe('and the another item is added to the stack', function() {
-			var disposableTwo;
-			var spyTwo;
+		describe('and the another item is added to the stack', () => {
+			let disposableTwo;
+			let spyTwo;
 
-			beforeEach(function() {
-				disposeStack.push(disposableTwo = Disposable.fromAction(spyTwo = jasmine.createSpy('spyTwo').and.callFake(function() { disposeOrder.push(disposableTwo); })));
+			beforeEach(() => {
+				disposeStack.push(disposableTwo = Disposable.fromAction(spyTwo = jasmine.createSpy('spyTwo').and.callFake(() => { disposeOrder.push(disposableTwo); })));
 			});
 
-			describe('and the stack is disposed', function() {
-				beforeEach(function() {
+			describe('and the stack is disposed', () => {
+				beforeEach(() => {
 					disposeOrder = [ ];
 
 					disposeStack.dispose();
 				});
 
-				it('the first item should be disposed', function() {
+				it('the first item should be disposed', () => {
 					expect(disposableOne.getIsDisposed()).toEqual(true);
 				});
 
-				it('the dispose logic for the first item have been triggered', function() {
+				it('the dispose logic for the first item have been triggered', () => {
 					expect(spyOne).toHaveBeenCalled();
 				});
 
-				it('the second item should be disposed', function() {
+				it('the second item should be disposed', () => {
 					expect(disposableTwo.getIsDisposed()).toEqual(true);
 				});
 
-				it('the dispose logic for the second item have been triggered', function() {
+				it('the dispose logic for the second item have been triggered', () => {
 					expect(spyTwo).toHaveBeenCalled();
 				});
 
-				it('the second item should be disposed first (per "stack" rules)', function() {
+				it('the second item should be disposed first (per "stack" rules)', () => {
 					expect(disposeOrder[0]).toBe(disposableTwo);
 				});
 
-				it('the first item should be disposed next (per "stack" rules)', function() {
+				it('the first item should be disposed next (per "stack" rules)', () => {
 					expect(disposeOrder[1]).toBe(disposableOne);
 				});
 			});
 		});
 	});
 
-	describe('and the "pushPromise" function is used to add a DisposableItem to the stack', function() {
-		var promise;
-		var resolveAction;
+	describe('and the "pushPromise" function is used to add a DisposableItem to the stack', () => {
+		let promise;
+		let resolveAction;
 
-		beforeEach(function() {
+		beforeEach(() => {
 			promise = new Promise(function(resolveCallback) {
 				resolveAction = resolveCallback;
 			});
@@ -102,9 +102,9 @@ describe('When an DisposableStack is constructed', function() {
 			DisposableStack.pushPromise(disposeStack, promise);
 		});
 
-		describe('and the promise resolves', function() {
-			var spyOne;
-			var disposableOne;
+		describe('and the promise resolves', () => {
+			let spyOne;
+			let disposableOne;
 
 			beforeEach(function(done) {
 				resolveAction(disposableOne = Disposable.fromAction(spyOne = jasmine.createSpy('spyOne')));
@@ -114,25 +114,25 @@ describe('When an DisposableStack is constructed', function() {
 				});
 			});
 
-			describe('and the stack is disposed', function() {
-				beforeEach(function() {
+			describe('and the stack is disposed', () => {
+				beforeEach(() => {
 					disposeStack.dispose();
 				});
 
-				it('the dispose logic should have been triggered', function() {
+				it('the dispose logic should have been triggered', () => {
 					expect(spyOne).toHaveBeenCalled();
 				});
 			});
 		});
 	});
 
-	describe('and the "pushPromise" function is used to add two DisposableItems to the stack', function() {
-		var promise;
+	describe('and the "pushPromise" function is used to add two DisposableItems to the stack', () => {
+		let promise;
 
-		var resolveActionOne;
-		var resolveActionTwo;
+		let resolveActionOne;
+		let resolveActionTwo;
 
-		beforeEach(function() {
+		beforeEach(() => {
 			promise = Promise.all([
 				new Promise(function(resolveCallback) {
 					resolveActionOne = resolveCallback;
@@ -145,23 +145,23 @@ describe('When an DisposableStack is constructed', function() {
 			DisposableStack.pushPromise(disposeStack, promise);
 		});
 
-		describe('and the promise resolves', function() {
-			var spyOne;
-			var disposableOne;
+		describe('and the promise resolves', () => {
+			let spyOne;
+			let disposableOne;
 
-			var spyTwo;
-			var disposableTwo;
+			let spyTwo;
+			let disposableTwo;
 
-			var disposeOrder;
+			let disposeOrder;
 
 			beforeEach(function(done) {
 				disposeOrder = [ ];
 
-				resolveActionTwo(disposableTwo = Disposable.fromAction(spyTwo = jasmine.createSpy('spyTwo').and.callFake(function() { disposeOrder.push(disposableTwo); })));
+				resolveActionTwo(disposableTwo = Disposable.fromAction(spyTwo = jasmine.createSpy('spyTwo').and.callFake(() => { disposeOrder.push(disposableTwo); })));
 
 				setTimeout(
-					function() {
-						resolveActionOne(disposableOne = Disposable.fromAction(spyOne = jasmine.createSpy('spyOne').and.callFake(function() { disposeOrder.push(disposableOne); })));
+					() => {
+						resolveActionOne(disposableOne = Disposable.fromAction(spyOne = jasmine.createSpy('spyOne').and.callFake(() => { disposeOrder.push(disposableOne); })));
 					}, 5
 				);
 
@@ -170,32 +170,32 @@ describe('When an DisposableStack is constructed', function() {
 				});
 			});
 
-			describe('and the stack is disposed', function() {
-				beforeEach(function() {
+			describe('and the stack is disposed', () => {
+				beforeEach(() => {
 					disposeStack.dispose();
 				});
 
-				it('the first item should be disposed', function() {
+				it('the first item should be disposed', () => {
 					expect(disposableOne.getIsDisposed()).toEqual(true);
 				});
 
-				it('the dispose logic for the first item have been triggered', function() {
+				it('the dispose logic for the first item have been triggered', () => {
 					expect(spyOne).toHaveBeenCalled();
 				});
 
-				it('the second item should be disposed', function() {
+				it('the second item should be disposed', () => {
 					expect(disposableTwo.getIsDisposed()).toEqual(true);
 				});
 
-				it('the dispose logic for the second item have been triggered', function() {
+				it('the dispose logic for the second item have been triggered', () => {
 					expect(spyTwo).toHaveBeenCalled();
 				});
 
-				it('the second item should be disposed first (per "stack" rules)', function() {
+				it('the second item should be disposed first (per "stack" rules)', () => {
 					expect(disposeOrder[0]).toBe(disposableTwo);
 				});
 
-				it('the first item should be disposed next (per "stack" rules)', function() {
+				it('the first item should be disposed next (per "stack" rules)', () => {
 					expect(disposeOrder[1]).toBe(disposableOne);
 				});
 			});

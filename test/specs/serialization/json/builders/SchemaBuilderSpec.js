@@ -1,97 +1,97 @@
-var Component = require('./../../../../../serialization/json/Component');
-var DataType = require('./../../../../../serialization/json/DataType');
-var SchemaBuilder = require('./../../../../../serialization/json/builders/SchemaBuilder');
+const Component = require('./../../../../../serialization/json/Component'),
+	DataType = require('./../../../../../serialization/json/DataType'),
+	SchemaBuilder = require('./../../../../../serialization/json/builders/SchemaBuilder');
 
-describe('When using the schema builder to create a "Person" schema', function() {
+describe('When using the schema builder to create a "Person" schema', () => {
 	'use strict';
 
-	var schemaBuilder;
+	let schemaBuilder;
 
-	beforeEach(function() {
+	beforeEach(() => {
 		schemaBuilder = SchemaBuilder.withName('person');
 	});
 
-	describe('that has a string-typed "name" field and a number-typed "age" field', function() {
-		beforeEach(function() {
+	describe('that has a string-typed "name" field and a number-typed "age" field', () => {
+		beforeEach(() => {
 			schemaBuilder = schemaBuilder.withField('name', DataType.STRING)
 				.withField('age', DataType.NUMBER);
 		});
 
-		describe('and the schema is pulled', function() {
-			var schema;
+		describe('and the schema is pulled', () => {
+			let schema;
 
-			beforeEach(function() {
+			beforeEach(() => {
 				schema = schemaBuilder.schema;
 			});
 
-			it('the name should be "person"', function() {
+			it('the name should be "person"', () => {
 				expect(schema.name).toEqual('person');
 			});
 
-			it('there should be two fields', function() {
+			it('there should be two fields', () => {
 				expect(schema.fields.length).toEqual(2);
 			});
 
-			it('the first field should be string-typed and called "name"', function() {
+			it('the first field should be string-typed and called "name"', () => {
 				expect(schema.fields[0].name).toEqual('name');
 				expect(schema.fields[0].dataType).toEqual(DataType.STRING);
 			});
 
-			it('the second field should be number-typed and called "age"', function() {
+			it('the second field should be number-typed and called "age"', () => {
 				expect(schema.fields[1].name).toEqual('age');
 				expect(schema.fields[1].dataType).toEqual(DataType.NUMBER);
 			});
 
-			it('there should be no components', function() {
+			it('there should be no components', () => {
 				expect(schema.components.length).toEqual(0);
 			});
 		});
 
-		describe('and a "wallet" component is added to the schema', function() {
-			beforeEach(function() {
+		describe('and a "wallet" component is added to the schema', () => {
+			beforeEach(() => {
 				schemaBuilder = schemaBuilder.withComponent(Component.forMoney('wallet'));
 			});
 
-			describe('and the schema is pulled', function() {
-				var schema;
+			describe('and the schema is pulled', () => {
+				let schema;
 
-				beforeEach(function() {
+				beforeEach(() => {
 					schema = schemaBuilder.schema;
 				});
 
-				it('the name should be "person"', function() {
+				it('the name should be "person"', () => {
 					expect(schema.name).toEqual('person');
 				});
 
-				it('there should be two fields', function() {
+				it('there should be two fields', () => {
 					expect(schema.fields.length).toEqual(2);
 				});
 
-				it('the first field should be string-typed and called "name"', function() {
+				it('the first field should be string-typed and called "name"', () => {
 					expect(schema.fields[0].name).toEqual('name');
 					expect(schema.fields[0].dataType).toEqual(DataType.STRING);
 				});
 
-				it('the second field should be number-typed and called "age"', function() {
+				it('the second field should be number-typed and called "age"', () => {
 					expect(schema.fields[1].name).toEqual('age');
 					expect(schema.fields[1].dataType).toEqual(DataType.NUMBER);
 				});
 
-				it('there should be one component', function() {
+				it('there should be one component', () => {
 					expect(schema.components.length).toEqual(1);
 				});
 
-				it('the component should be named "wallet"', function() {
+				it('the component should be named "wallet"', () => {
 					expect(schema.components[0].name).toEqual('wallet');
 				});
 			});
 		});
 
 
-		describe('and a "custom" component is added to the schema (using a component builder)', function() {
-			var reviver;
+		describe('and a "custom" component is added to the schema (using a component builder)', () => {
+			let reviver;
 
-			beforeEach(function() {
+			beforeEach(() => {
 				schemaBuilder = schemaBuilder.withComponentBuilder('custom', function(cb) {
 					cb.withField('b', DataType.STRING)
 						.withField('a', DataType.NUMBER)
@@ -99,54 +99,54 @@ describe('When using the schema builder to create a "Person" schema', function()
 				});
 			});
 
-			describe('and the schema is pulled', function() {
-				var schema;
+			describe('and the schema is pulled', () => {
+				let schema;
 
-				beforeEach(function() {
+				beforeEach(() => {
 					schema = schemaBuilder.schema;
 				});
 
-				it('the name should be "person"', function() {
+				it('the name should be "person"', () => {
 					expect(schema.name).toEqual('person');
 				});
 
-				it('there should be two fields', function() {
+				it('there should be two fields', () => {
 					expect(schema.fields.length).toEqual(2);
 				});
 
-				it('the first field should be string-typed and called "name"', function() {
+				it('the first field should be string-typed and called "name"', () => {
 					expect(schema.fields[0].name).toEqual('name');
 					expect(schema.fields[0].dataType).toEqual(DataType.STRING);
 				});
 
-				it('the second field should be number-typed and called "age"', function() {
+				it('the second field should be number-typed and called "age"', () => {
 					expect(schema.fields[1].name).toEqual('age');
 					expect(schema.fields[1].dataType).toEqual(DataType.NUMBER);
 				});
 
-				it('there should be one component', function() {
+				it('there should be one component', () => {
 					expect(schema.components.length).toEqual(1);
 				});
 
-				it('the component should be named "custom"', function() {
+				it('the component should be named "custom"', () => {
 					expect(schema.components[0].name).toEqual('custom');
 				});
 
-				it('there component should have two fields', function() {
+				it('there component should have two fields', () => {
 					expect(schema.components[0].fields.length).toEqual(2);
 				});
 
-				it('the component\'s first field should be string-typed and called "b"', function() {
+				it('the component\'s first field should be string-typed and called "b"', () => {
 					expect(schema.components[0].fields[0].name).toEqual('b');
 					expect(schema.components[0].fields[0].dataType).toEqual(DataType.STRING);
 				});
 
-				it('the component\'s second field should be number-typed and called "a"', function() {
+				it('the component\'s second field should be number-typed and called "a"', () => {
 					expect(schema.components[0].fields[1].name).toEqual('a');
 					expect(schema.components[0].fields[1].dataType).toEqual(DataType.NUMBER);
 				});
 
-				it('there component reviver function should be correct', function() {
+				it('there component reviver function should be correct', () => {
 					expect(schema.components[0].reviver).toBe(reviver);
 				});
 			});

@@ -1,26 +1,26 @@
-var Enum = require('./../../../../lang/Enum'),
+const Enum = require('./../../../../lang/Enum'),
 	FailureReasonItem = require('./../../../../api/failures/FailureReasonItem'),
 	FailureType = require('./../../../../api/failures/FailureType');
 
-describe('When a FailureType is created with a template string that references root level data', function() {
+describe('When a FailureType is created with a template string that references root level data', () => {
 	'use strict';
 
-	var code;
-	var template;
-	var type;
+	let code;
+	let template;
+	let type;
 
-	beforeEach(function() {
+	beforeEach(() => {
 		code = 'TEST_ROOT';
 		template = 'This is a test of the {root.system} system.';
 
 		type = Enum.fromCode(FailureType, code) || new FailureType(code, template);
 	});
 
-	describe('and a FailureReasonItem is created using this FailureType', function() {
-		var item;
-		var root;
+	describe('and a FailureReasonItem is created using this FailureType', () => {
+		let item;
+		let root;
 
-		beforeEach(function() {
+		beforeEach(() => {
 			root = {
 				system: 'Emergency Broadcast'
 			};
@@ -28,8 +28,8 @@ describe('When a FailureType is created with a template string that references r
 			item = new FailureReasonItem(type, {});
 		});
 
-		describe('and the item is formatted', function() {
-			var formatted;
+		describe('and the item is formatted', () => {
+			let formatted;
 
 			beforeEach(function () {
 				formatted = item.format(root);
@@ -42,26 +42,26 @@ describe('When a FailureType is created with a template string that references r
 	});
 });
 
-describe('When a FailureType is created with a template string that references with data points', function() {
+describe('When a FailureType is created with a template string that references with data points', () => {
 	'use strict';
 
-	var code;
-	var template;
-	var type;
+	let code;
+	let template;
+	let type;
 
-	beforeEach(function() {
+	beforeEach(() => {
 		code = 'TEST_MULTIPLE';
 		template = 'I believe that "{argument.thesis}" is a {argument.conclusion} statement.';
 
 		type = Enum.fromCode(FailureType, code) || new FailureType(code, template);
 	});
 
-	describe('and a FailureReasonItem is created using this FailureType', function() {
-		var item;
-		var root;
-		var data;
+	describe('and a FailureReasonItem is created using this FailureType', () => {
+		let item;
+		let root;
+		let data;
 
-		beforeEach(function() {
+		beforeEach(() => {
 			root = {
 
 			};
@@ -76,8 +76,8 @@ describe('When a FailureType is created with a template string that references w
 			item = new FailureReasonItem(type, data);
 		});
 
-		describe('and the item is formatted', function() {
-			var formatted;
+		describe('and the item is formatted', () => {
+			let formatted;
 
 			beforeEach(function () {
 				formatted = item.format(root);
@@ -90,26 +90,26 @@ describe('When a FailureType is created with a template string that references w
 	});
 });
 
-describe('When a FailureType is created with a template string that references data points with casing changes', function() {
+describe('When a FailureType is created with a template string that references data points with casing changes', () => {
 	'use strict';
 
-	var code;
-	var template;
-	var type;
+	let code;
+	let template;
+	let type;
 
-	beforeEach(function() {
+	beforeEach(() => {
 		code = 'TEST_CASING';
 		template = 'The first letter is lowercase: {l|name}. The first letter is uppercase: {u|name}. All letters are lowercase: {L|name}. All letters are uppercase: {U|name}.';
 
 		type = Enum.fromCode(FailureType, code) || new FailureType(code, template);
 	});
 
-	describe('and a FailureReasonItem is created using this FailureType', function() {
-		var item;
-		var root;
-		var data;
+	describe('and a FailureReasonItem is created using this FailureType', () => {
+		let item;
+		let root;
+		let data;
 
-		beforeEach(function() {
+		beforeEach(() => {
 			root = {
 
 			};
@@ -121,8 +121,8 @@ describe('When a FailureType is created with a template string that references d
 			item = new FailureReasonItem(type, data);
 		});
 
-		describe('and the item is formatted', function() {
-			var formatted;
+		describe('and the item is formatted', () => {
+			let formatted;
 
 			beforeEach(function () {
 				formatted = item.format(root);

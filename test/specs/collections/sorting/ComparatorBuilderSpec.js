@@ -1,18 +1,18 @@
-var ComparatorBuilder = require('./../../../../collections/sorting/ComparatorBuilder');
+const ComparatorBuilder = require('./../../../../collections/sorting/ComparatorBuilder');
 
-describe('When a ComparatorBuilder is composed with two comparators', function() {
+describe('When a ComparatorBuilder is composed with two comparators', () => {
     'use strict';
 
-    var comparatorBuilder;
+    let comparatorBuilder;
 
-    var comparatorOne;
-    var comparatorTwo;
+    let comparatorOne;
+    let comparatorTwo;
 
-    var first = { x: 0, y: 0, toString: function() { return '[first]'; } };
-    var second = { x: 1, y: 0, toString: function() { return '[second]'; } };
-    var third = { x: 1, y: 1, toString: function() { return '[third]'; } };
+    let first = { x: 0, y: 0, toString: () => { return '[first]'; } };
+    let second = { x: 1, y: 0, toString: () => { return '[second]'; } };
+    let third = { x: 1, y: 1, toString: () => { return '[third]'; } };
 
-    beforeEach(function() {
+    beforeEach(() => {
         comparatorOne = jasmine.createSpy('comparatorOne').and.callFake(function(a, b) {
             return a.x - b.x;
         });
@@ -25,53 +25,53 @@ describe('When a ComparatorBuilder is composed with two comparators', function()
             .thenBy(comparatorTwo);
     });
 
-    describe('and the ComparatorBuilder sorts an array (which requires both comparators)', function() {
-        var arrayToSort;
+    describe('and the ComparatorBuilder sorts an array (which requires both comparators)', () => {
+        let arrayToSort;
 
-        beforeEach(function() {
+        beforeEach(() => {
             arrayToSort = [ third, first, second ];
 
             arrayToSort.sort(comparatorBuilder.toComparator());
         });
 
-        it('the first comparator should be invoked', function() {
+        it('the first comparator should be invoked', () => {
             expect(comparatorOne).toHaveBeenCalled();
         });
 
-        it('the second comparator should be invoked', function() {
+        it('the second comparator should be invoked', () => {
             expect(comparatorTwo).toHaveBeenCalled();
         });
 
-        it('the sorted array should be in the correct order', function() {
+        it('the sorted array should be in the correct order', () => {
             expect(arrayToSort[0]).toBe(first);
             expect(arrayToSort[1]).toBe(second);
             expect(arrayToSort[2]).toBe(third);
         });
     });
 
-    describe('and the ComparatorBuilder is inverted', function() {
-        beforeEach(function() {
+    describe('and the ComparatorBuilder is inverted', () => {
+        beforeEach(() => {
             comparatorBuilder = comparatorBuilder.invert();
         });
 
-        describe('and the ComparatorBuilder sorts an array (which requires both comparators)', function() {
-            var arrayToSort;
+        describe('and the ComparatorBuilder sorts an array (which requires both comparators)', () => {
+            let arrayToSort;
 
-            beforeEach(function() {
+            beforeEach(() => {
                 arrayToSort = [ third, first, second ];
 
                 arrayToSort.sort(comparatorBuilder.toComparator());
             });
 
-            it('the first comparator should be invoked', function() {
+            it('the first comparator should be invoked', () => {
                 expect(comparatorOne).toHaveBeenCalled();
             });
 
-            it('the second comparator should be invoked', function() {
+            it('the second comparator should be invoked', () => {
                 expect(comparatorTwo).toHaveBeenCalled();
             });
 
-            it('the sorted array should be in the correct order', function() {
+            it('the sorted array should be in the correct order', () => {
                 expect(arrayToSort[0]).toBe(third);
                 expect(arrayToSort[1]).toBe(second);
                 expect(arrayToSort[2]).toBe(first);

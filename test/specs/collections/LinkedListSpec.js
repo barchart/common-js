@@ -1,75 +1,75 @@
-var LinkedList = require('./../../../collections/LinkedList');
+const LinkedList = require('./../../../collections/LinkedList');
 
-describe('When "doe" is used to start a linked list', function() {
+describe('When "doe" is used to start a linked list', () => {
 	'use strict';
 
-	var doe;
+	let doe;
 
-	beforeEach(function() {
+	beforeEach(() => {
 		doe = new LinkedList('doe');
 	});
 
-	describe('and "me" is added to "doe"', function() {
-		var me;
+	describe('and "me" is added to "doe"', () => {
+		let me;
 
-		beforeEach(function() {
+		beforeEach(() => {
 			me = doe.insert('me');
 		});
 
-		describe('and "ray" is inserted between "doe" and "me"', function() {
-			var ray;
+		describe('and "ray" is inserted between "doe" and "me"', () => {
+			let ray;
 
-			beforeEach(function() {
+			beforeEach(() => {
 				ray = doe.insert('ray');
 			});
 
-			it('the "ray" node should not be the the tail', function() {
+			it('the "ray" node should not be the the tail', () => {
 				expect(me.getIsTail()).toEqual(true);
 			});
 
-			it('the "ray" node should have a value of "ray"', function() {
+			it('the "ray" node should have a value of "ray"', () => {
 				expect(me.getValue()).toEqual('me');
 			});
 
-			it('the "me" node should still be the the tail', function() {
+			it('the "me" node should still be the the tail', () => {
 				expect(me.getIsTail()).toEqual(true);
 			});
 
-			it('the "doe" node should reference the "ray" node', function() {
+			it('the "doe" node should reference the "ray" node', () => {
 				expect(doe.getNext()).toBe(ray);
 			});
 
-			it('the "ray" node should reference the "me" node', function() {
+			it('the "ray" node should reference the "me" node', () => {
 				expect(ray.getNext()).toBe(me);
 			});
 		});
 
-		it('the "me" node should be the the tail', function() {
+		it('the "me" node should be the the tail', () => {
 			expect(me.getIsTail()).toEqual(true);
 		});
 
-		it('the "me" node should have a value of "me"', function() {
+		it('the "me" node should have a value of "me"', () => {
 			expect(me.getValue()).toEqual('me');
 		});
 
-		it('the "doe" node should not be the tail', function() {
+		it('the "doe" node should not be the tail', () => {
 			expect(doe.getIsTail()).toEqual(false);
 		});
 
-		it('the "doe" node should still have the correct value', function() {
+		it('the "doe" node should still have the correct value', () => {
 			expect(doe.getValue()).toEqual('doe');
 		});
 
-		it('the "doe" node should reference the "me" node', function() {
+		it('the "doe" node should reference the "me" node', () => {
 			expect(doe.getNext()).toBe(me);
 		});
 	});
 
-	it('should be the the tail', function() {
+	it('should be the the tail', () => {
 		expect(doe.getIsTail()).toEqual(true);
 	});
 
-	it('should have a value of "doe"', function() {
+	it('should have a value of "doe"', () => {
 		expect(doe.getValue()).toEqual('doe');
 	});
 });

@@ -1,7 +1,7 @@
-var Not = require('./../../../specifications/Not');
-var Specification = require('./../../../specifications/Specification');
+const Not = require('./../../../specifications/Not'),
+	Specification = require('./../../../specifications/Specification');
 
-describe('When a Not is constructed', function() {
+describe('When a Not is constructed', () => {
 	'use strict';
 
 	class DelegateSpecification extends Specification {
@@ -16,13 +16,13 @@ describe('When a Not is constructed', function() {
 		}
 	}
 
-	describe('with a specification that always fails', function() {
-		var specification;
-		var spy;
+	describe('with a specification that always fails', () => {
+		let specification;
+		let spy;
 
-		var result;
+		let result;
 
-		beforeEach(function() {
+		beforeEach(() => {
 			specification = new Not(
 				new DelegateSpecification(
 					spy = jasmine.createSpy('fn').and.callFake(function(data) {
@@ -35,22 +35,22 @@ describe('When a Not is constructed', function() {
 		});
 
 
-		it('should call the wrapped specification', function() {
+		it('should call the wrapped specification', () => {
 			expect(spy).toHaveBeenCalled();
 		});
 
-		it('should pass', function() {
+		it('should pass', () => {
 			expect(result).toEqual(true);
 		});
 	});
 
-	describe('with a specification that always passes', function() {
-		var specification;
-		var spy;
+	describe('with a specification that always passes', () => {
+		let specification;
+		let spy;
 
-		var result;
+		let result;
 
-		beforeEach(function() {
+		beforeEach(() => {
 			specification = new Not(
 				new DelegateSpecification(
 					spy = jasmine.createSpy('fn').and.callFake(function(data) {
@@ -63,17 +63,17 @@ describe('When a Not is constructed', function() {
 		});
 
 
-		it('should call the wrapped specification', function() {
+		it('should call the wrapped specification', () => {
 			expect(spy).toHaveBeenCalled();
 		});
 
-		it('should pass', function() {
+		it('should pass', () => {
 			expect(result).toEqual(false);
 		});
 	});
 });
 
-describe('When a Specification (that always fails) is constructed', function() {
+describe('When a Specification (that always fails) is constructed', () => {
 	'use strict';
 
 	class DelegateSpecification extends Specification {
@@ -89,10 +89,10 @@ describe('When a Specification (that always fails) is constructed', function() {
 	}
 
 	describe('and inverted', function () {
-		var specification;
-		var spy;
+		let specification;
+		let spy;
 
-		var result;
+		let result;
 
 		beforeEach(function () {
 			specification = new DelegateSpecification(
@@ -117,7 +117,7 @@ describe('When a Specification (that always fails) is constructed', function() {
 	});
 });
 
-describe('When a Specification (that always succeeds) is constructed', function() {
+describe('When a Specification (that always succeeds) is constructed', () => {
 	'use strict';
 
 	class DelegateSpecification extends Specification {
@@ -133,10 +133,10 @@ describe('When a Specification (that always succeeds) is constructed', function(
 	}
 
 	describe('and inverted', function () {
-		var specification;
-		var spy;
+		let specification;
+		let spy;
 
-		var result;
+		let result;
 
 		beforeEach(function () {
 			specification = new DelegateSpecification(

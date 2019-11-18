@@ -1,144 +1,144 @@
-var EvictingMap = require('./../../../../collections/specialized/EvictingMap');
+const EvictingMap = require('./../../../../collections/specialized/EvictingMap');
 
-describe('When an EvictingMap is constructed (with no capacity)', function() {
+describe('When an EvictingMap is constructed (with no capacity)', () => {
 	'use strict';
 
-	var map;
+	let map;
 
-	beforeEach(function() {
+	beforeEach(() => {
 		map = new EvictingMap();
 	});
 
-	it('should be empty', function() {
+	it('should be empty', () => {
 		expect(map.empty()).toEqual(true);
 	});
 
-	it('should have a capacity of 10', function() {
+	it('should have a capacity of 10', () => {
 		expect(map.getCapacity()).toEqual(10);
 	});
 });
 
-describe('When an EvictingMap is constructed (with a capacity of 1)', function() {
+describe('When an EvictingMap is constructed (with a capacity of 1)', () => {
 	'use strict';
 
-	var map;
+	let map;
 
-	beforeEach(function() {
+	beforeEach(() => {
 		map = new EvictingMap(1);
 	});
 
-	it('should be empty', function() {
+	it('should be empty', () => {
 		expect(map.empty()).toEqual(true);
 	});
 
-	it('should have a capacity of 1', function() {
+	it('should have a capacity of 1', () => {
 		expect(map.getCapacity()).toEqual(1);
 	});
 
-	describe('when an item is added to the map', function() {
-		var a;
+	describe('when an item is added to the map', () => {
+		let a;
 
-		beforeEach(function() {
+		beforeEach(() => {
 			a = { key: 'a' };
 
 			map.put(a.key, a);
 		});
 
-		it('get should return the item', function() {
+		it('get should return the item', () => {
 			expect(map.get(a.key)).toBe(a);
 		});
 
-		it('should not be empty',function() {
+		it('should not be empty',() => {
 			expect(map.empty()).toEqual(false);
 		});
 
-		it('should have one item',function() {
+		it('should have one item',() => {
 			expect(map.getSize()).toEqual(1);
 		});
 
-		describe('when a second item is added to the map', function() {
-			var b;
+		describe('when a second item is added to the map', () => {
+			let b;
 
-			beforeEach(function() {
+			beforeEach(() => {
 				b = { key: 'b' };
 
 				map.put(b.key, b);
 			});
 
-			it('get should return the second item', function() {
+			it('get should return the second item', () => {
 				expect(map.get(b.key)).toBe(b);
 			});
 
-			it('get should not return the first item', function() {
+			it('get should not return the first item', () => {
 				expect(map.get(a.key)).toEqual(null);
 			});
 
-			it('should not be empty',function() {
+			it('should not be empty',() => {
 				expect(map.empty()).toEqual(false);
 			});
 
-			it('should have one item',function() {
+			it('should have one item',() => {
 				expect(map.getSize()).toEqual(1);
 			});
 
-			describe('when a third item is added to the map', function() {
-				var c;
+			describe('when a third item is added to the map', () => {
+				let c;
 
-				beforeEach(function() {
+				beforeEach(() => {
 					c = { key: 'c' };
 
 					map.put(c.key, c);
 				});
 
-				it('get should return the third item', function() {
+				it('get should return the third item', () => {
 					expect(map.get(c.key)).toBe(c);
 				});
 
-				it('get should not return the first item', function() {
+				it('get should not return the first item', () => {
 					expect(map.get(a.key)).toEqual(null);
 				});
 
-				it('get should not return the second item', function() {
+				it('get should not return the second item', () => {
 					expect(map.get(b.key)).toEqual(null);
 				});
 
-				it('should not be empty',function() {
+				it('should not be empty',() => {
 					expect(map.empty()).toEqual(false);
 				});
 
-				it('should have one item',function() {
+				it('should have one item',() => {
 					expect(map.getSize()).toEqual(1);
 				});
 			});
 		});
 
-		describe('when the first item is removed from the map', function() {
-			beforeEach(function() {
+		describe('when the first item is removed from the map', () => {
+			beforeEach(() => {
 				map.remove('a');
 			});
 
-			it('should be empty',function() {
+			it('should be empty',() => {
 				expect(map.empty()).toEqual(true);
 			});
 
-			it('should have zero items',function() {
+			it('should have zero items',() => {
 				expect(map.getSize()).toEqual(0);
 			});
 
-			describe('when the item is added to the map again', function() {
-				beforeEach(function() {
+			describe('when the item is added to the map again', () => {
+				beforeEach(() => {
 					map.put(a.key, a);
 				});
 
-				it('get should return the item', function() {
+				it('get should return the item', () => {
 					expect(map.get(a.key)).toBe(a);
 				});
 
-				it('should not be empty',function() {
+				it('should not be empty',() => {
 					expect(map.empty()).toEqual(false);
 				});
 
-				it('should have one item',function() {
+				it('should have one item',() => {
 					expect(map.getSize()).toEqual(1);
 				});
 			});
@@ -146,29 +146,29 @@ describe('When an EvictingMap is constructed (with a capacity of 1)', function()
 	});
 });
 
-describe('When an EvictingMap is constructed (with a capacity of 3)', function() {
+describe('When an EvictingMap is constructed (with a capacity of 3)', () => {
 	'use strict';
 
-	var map;
+	let map;
 
-	beforeEach(function() {
+	beforeEach(() => {
 		map = new EvictingMap(3);
 	});
 
-	it('should be empty', function() {
+	it('should be empty', () => {
 		expect(map.empty()).toEqual(true);
 	});
 
-	it('should have a capacity of 3', function() {
+	it('should have a capacity of 3', () => {
 		expect(map.getCapacity()).toEqual(3);
 	});
 
-	describe('when three items are added to the map', function() {
-		var a;
-		var b;
-		var c;
+	describe('when three items are added to the map', () => {
+		let a;
+		let b;
+		let c;
 
-		beforeEach(function() {
+		beforeEach(() => {
 			a = { key: 'a' };
 			b = { key: 'b' };
 			c = { key: 'c' };
@@ -178,98 +178,98 @@ describe('When an EvictingMap is constructed (with a capacity of 3)', function()
 			map.put(c.key, c);
 		});
 
-		it('get "a" should return the first item', function() {
+		it('get "a" should return the first item', () => {
 			expect(map.get(a.key)).toBe(a);
 		});
 
-		it('get "b" should return the second item', function() {
+		it('get "b" should return the second item', () => {
 			expect(map.get(b.key)).toBe(b);
 		});
 
-		it('get "c" should return the third item', function() {
+		it('get "c" should return the third item', () => {
 			expect(map.get(c.key)).toBe(c);
 		});
 
-		it('should not be empty',function() {
+		it('should not be empty',() => {
 			expect(map.empty()).toEqual(false);
 		});
 
-		it('should have three items',function() {
+		it('should have three items',() => {
 			expect(map.getSize()).toEqual(3);
 		});
 
-		describe('when a fourth item is added to the map', function() {
-			var d;
+		describe('when a fourth item is added to the map', () => {
+			let d;
 
-			beforeEach(function() {
+			beforeEach(() => {
 				d = { key: 'd' };
 
 				map.put(d.key, d);
 			});
 
-			it('get "a" should not return the first item', function() {
+			it('get "a" should not return the first item', () => {
 				expect(map.get(a.key)).toEqual(null);
 			});
 
-			it('get "b" should return the second item', function() {
+			it('get "b" should return the second item', () => {
 				expect(map.get(b.key)).toBe(b);
 			});
 
-			it('get "c" should return the third item', function() {
+			it('get "c" should return the third item', () => {
 				expect(map.get(c.key)).toBe(c);
 			});
 
-			it('get "d" should return the fourth item', function() {
+			it('get "d" should return the fourth item', () => {
 				expect(map.get(d.key)).toBe(d);
 			});
 
-			it('should not be empty',function() {
+			it('should not be empty',() => {
 				expect(map.empty()).toEqual(false);
 			});
 
-			it('should have three items',function() {
+			it('should have three items',() => {
 				expect(map.getSize()).toEqual(3);
 			});
 
-			describe('after getting item "b" from map', function() {
-				beforeEach(function() {
+			describe('after getting item "b" from map', () => {
+				beforeEach(() => {
 					map.get(b.key);
 				});
 
-				describe('when a fifth item is added to the list', function() {
-					var e;
+				describe('when a fifth item is added to the list', () => {
+					let e;
 
-					beforeEach(function() {
+					beforeEach(() => {
 						e = { key: 'e' };
 
 						map.put(e.key, e);
 					});
 
-					it('get "a" should not return the first item', function() {
+					it('get "a" should not return the first item', () => {
 						expect(map.get(a.key)).toEqual(null);
 					});
 
-					it('get "b" should return the second item', function() {
+					it('get "b" should return the second item', () => {
 						expect(map.get(b.key)).toBe(b);
 					});
 
-					it('get "c" should not return the third item', function() {
+					it('get "c" should not return the third item', () => {
 						expect(map.get(c.key)).toEqual(null);
 					});
 
-					it('get "d" should return the fourth item', function() {
+					it('get "d" should return the fourth item', () => {
 						expect(map.get(d.key)).toBe(d);
 					});
 
-					it('get "e" should return the fifth item', function() {
+					it('get "e" should return the fifth item', () => {
 						expect(map.get(e.key)).toBe(e);
 					});
 
-					it('should not be empty',function() {
+					it('should not be empty',() => {
 						expect(map.empty()).toEqual(false);
 					});
 
-					it('should have three items',function() {
+					it('should have three items',() => {
 						expect(map.getSize()).toEqual(3);
 					});
 				});
@@ -279,21 +279,21 @@ describe('When an EvictingMap is constructed (with a capacity of 3)', function()
 });
 
 
-describe('When an EvictingMap is constructed', function() {
+describe('When an EvictingMap is constructed', () => {
 	'use strict';
 
-	var map;
+	let map;
 
-	beforeEach(function() {
+	beforeEach(() => {
 		map = new EvictingMap(3);
 	});
 
-	describe('and used in a write-read-write pattern', function() {
-		var a;
-		var b;
-		var c;
-		var x;
-		var y;
+	describe('and used in a write-read-write pattern', () => {
+		let a;
+		let b;
+		let c;
+		let x;
+		let y;
 
 		beforeEach(function () {
 			a = {key: 'a'};
@@ -318,31 +318,31 @@ describe('When an EvictingMap is constructed', function() {
 			map.put(y.key, y);
 		});
 
-		it('get "a" should not return the first item', function() {
+		it('get "a" should not return the first item', () => {
 			expect(map.get(a.key)).toEqual(null);
 		});
 
-		it('get "b" should not return the second item', function() {
+		it('get "b" should not return the second item', () => {
 			expect(map.get(b.key)).toEqual(null);
 		});
 
-		it('get "c" should return the third item', function() {
+		it('get "c" should return the third item', () => {
 			expect(map.get(c.key)).toBe(c);
 		});
 
-		it('get "x" should return the fourth item', function() {
+		it('get "x" should return the fourth item', () => {
 			expect(map.get(x.key)).toBe(x);
 		});
 
-		it('get "y" should return the fourth item', function() {
+		it('get "y" should return the fourth item', () => {
 			expect(map.get(y.key)).toBe(y);
 		});
 
-		it('should not be empty',function() {
+		it('should not be empty',() => {
 			expect(map.empty()).toEqual(false);
 		});
 
-		it('should have three items',function() {
+		it('should have three items',() => {
 			expect(map.getSize()).toEqual(3);
 		});
 	});

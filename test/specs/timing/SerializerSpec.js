@@ -1,30 +1,30 @@
-var Serializer = require('./../../../timing/Serializer');
+const Serializer = require('./../../../timing/Serializer');
 
-describe('When a Serializer is used to schedule four tasks', function() {
+describe('When a Serializer is used to schedule four tasks', () => {
 	'use strict';
 
-	var serializer;
+	let serializer;
 
-	var spies;
-	var promises;
-	var results;
+	let spies;
+	let promises;
+	let results;
 
-	beforeEach(function() {
+	beforeEach(() => {
 		serializer = new Serializer();
 
 		spies = [ ];
 		promises = [ ];
 		results = [ ];
 
-		for (var i = 0; i < 4; i++) {
-			var spy = getSpy(results, false);
+		for (let i = 0; i < 4; i++) {
+			let spy = getSpy(results, false);
 
 			spies.push(spy);
 			promises.push(serializer.enqueue(spy));
 		}
 	});
 
-	describe('and the tasks complete', function() {
+	describe('and the tasks complete', () => {
 		beforeEach(function(done) {
 			Promise.all(promises)
 				.then(() => {
@@ -32,47 +32,47 @@ describe('When a Serializer is used to schedule four tasks', function() {
 				});
 		});
 
-		it('the first task should have been executed', function() {
+		it('the first task should have been executed', () => {
 			expect(spies[0]).toHaveBeenCalled();
 		});
 
-		it('the second task should have been executed', function() {
+		it('the second task should have been executed', () => {
 			expect(spies[1]).toHaveBeenCalled();
 		});
 
-		it('the third task should have been executed', function() {
+		it('the third task should have been executed', () => {
 			expect(spies[2]).toHaveBeenCalled();
 		});
 
-		it('the fourth task should have been executed', function() {
+		it('the fourth task should have been executed', () => {
 			expect(spies[3]).toHaveBeenCalled();
 		});
 
-		it('the first task should complete before the second task starts', function() {
+		it('the first task should complete before the second task starts', () => {
 			expect(results[0].end <= results[1].start).toEqual(true);
 		});
 
-		it('the second task should complete before the third task starts', function() {
+		it('the second task should complete before the third task starts', () => {
 			expect(results[1].end <= results[2].start).toEqual(true);
 		});
 
-		it('the third task should complete before the fourth task starts', function() {
+		it('the third task should complete before the fourth task starts', () => {
 			expect(results[2].end <= results[3].start).toEqual(true);
 		});
 	});
 });
 
-describe('When a Serializer is used to schedule a task that throws', function() {
-	var serializer;
-	var promise;
-	var reject;
+describe('When a Serializer is used to schedule a task that throws', () => {
+	let serializer;
+	let promise;
+	let reject;
 
 	beforeEach(function(done) {
 		serializer = new Serializer();
 
 		reject = false;
 
-		promise = serializer.enqueue(function() {
+		promise = serializer.enqueue(() => {
 			throw new Error('Boom');
 		}).catch((e) => {
 			reject = true;
@@ -81,22 +81,22 @@ describe('When a Serializer is used to schedule a task that throws', function() 
 		});
 	});
 
-	it('should reject the promise', function() {
+	it('should reject the promise', () => {
 		expect(reject).toEqual(true);
 	});
 });
 
-describe('When a Serializer is used to schedule a task that rejects', function() {
-	var serializer;
-	var promise;
-	var reject;
+describe('When a Serializer is used to schedule a task that rejects', () => {
+	let serializer;
+	let promise;
+	let reject;
 
 	beforeEach(function(done) {
 		serializer = new Serializer();
 
 		reject = false;
 
-		promise = serializer.enqueue(function() {
+		promise = serializer.enqueue(() => {
 			return Promise.reject('Boom Boom');
 		}).catch((e) => {
 			reject = true;
@@ -105,18 +105,18 @@ describe('When a Serializer is used to schedule a task that rejects', function()
 		});
 	});
 
-	it('should reject the promise', function() {
+	it('should reject the promise', () => {
 		expect(reject).toEqual(true);
 	});
 });
 
 function getSpy(results, fail) {
-	return jasmine.createSpy('spy').and.callFake(function() {
+	return jasmine.createSpy('spy').and.callFake(() => {
 		return new Promise(function(resolveCallback, rejectCallback) {
-			var start = new Date();
+			let start = new Date();
 
-			setTimeout(function() {
-				var end = new Date();
+			setTimeout(() => {
+				let end = new Date();
 
 				results.push({
 					start: start.getTime(),

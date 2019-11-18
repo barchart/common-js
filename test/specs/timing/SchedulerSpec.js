@@ -1,46 +1,46 @@
-var Scheduler = require('./../../../timing/Scheduler');
+const Scheduler = require('./../../../timing/Scheduler');
 
-describe('When a Scheduler is constructed', function() {
+describe('When a Scheduler is constructed', () => {
 	'use strict';
 
-	var scheduler;
+	let scheduler;
 
-	beforeEach(function() {
+	beforeEach(() => {
 		scheduler = new Scheduler();
 	});
 
-	describe('and task is scheduled', function() {
-		var spy;
-		var milliseconds;
-		var promise;
+	describe('and task is scheduled', () => {
+		let spy;
+		let milliseconds;
+		let promise;
 
-		beforeEach(function() {
+		beforeEach(() => {
 			promise = scheduler.schedule(spy = jasmine.createSpy('spy'), milliseconds = 10, 'A scheduled task');
 		});
 
-		it('should not execute the task synchronously', function() {
+		it('should not execute the task synchronously', () => {
 			expect(spy).not.toHaveBeenCalled();
 		});
 
 		it('should execute the task asynchronously', function(done) {
 			promise
-				.then(function() {
+				.then(() => {
 					expect(spy.calls.count()).toEqual(1);
 				})
-				.then(function() {
+				.then(() => {
 					done();
 				});
 		});
 	});
 
-	describe('and is disposed', function() {
-		beforeEach(function() {
+	describe('and is disposed', () => {
+		beforeEach(() => {
 			scheduler.dispose();
 		});
 
-		describe('and a task is scheduled', function() {
-			var spy;
-			var success;
+		describe('and a task is scheduled', () => {
+			let spy;
+			let success;
 
 			beforeEach(function(done) {
 				scheduler.schedule(spy = jasmine.createSpy('spy'), 10, 'A scheduled task')
@@ -53,32 +53,32 @@ describe('When a Scheduler is constructed', function() {
 					});
 			});
 
-			it('should reject the promise', function() {
+			it('should reject the promise', () => {
 				expect(success).toEqual(false);
 			});
 
-			it('should not invoke the underlying task', function() {
+			it('should not invoke the underlying task', () => {
 				expect(spy).not.toHaveBeenCalled();
 			});
 		});
 	});
 });
 
-describe('When a backoff is used', function() {
+describe('When a backoff is used', () => {
 	'use strict';
 
-	var scheduler;
+	let scheduler;
 
-	beforeEach(function() {
+	beforeEach(() => {
 		scheduler = new Scheduler();
 	});
 
-	describe('that succeeds immediately', function() {
-		var spyAction;
-		var spyFailure;
+	describe('that succeeds immediately', () => {
+		let spyAction;
+		let spyFailure;
 
-		var actualResult;
-		var successfulResult;
+		let actualResult;
+		let successfulResult;
 
 		beforeEach(function(done) {
 			spyAction = jasmine.createSpy('spyAction').and.callFake(function () {
@@ -95,27 +95,27 @@ describe('When a backoff is used', function() {
 				});
 		});
 
-		it('should call the "backoff" action one time', function() {
+		it('should call the "backoff" action one time', () => {
 			expect(spyAction.calls.count()).toEqual(1);
 		});
 
-		it('the promise result should match the expected result', function() {
+		it('the promise result should match the expected result', () => {
 			expect(actualResult).toEqual(successfulResult);
 		});
 
-		it('should never call the "failure" action', function() {
+		it('should never call the "failure" action', () => {
 			expect(spyFailure.calls.count()).toEqual(0);
 		});
 	});
 
-	describe('that fails once before succeeding (by throwing error)', function() {
-		var spyAction;
-		var spyFailure;
+	describe('that fails once before succeeding (by throwing error)', () => {
+		let spyAction;
+		let spyFailure;
 
-		var actualResult;
-		var successfulResult;
+		let actualResult;
+		let successfulResult;
 
-		var x;
+		let x;
 
 		beforeEach(function(done) {
 			x = 0;
@@ -138,27 +138,27 @@ describe('When a backoff is used', function() {
 				});
 		});
 
-		it('should call the "backoff" action two times', function() {
+		it('should call the "backoff" action two times', () => {
 			expect(spyAction.calls.count()).toEqual(2);
 		});
 
-		it('the promise result should match the expected result', function() {
+		it('the promise result should match the expected result', () => {
 			expect(actualResult).toEqual(successfulResult);
 		});
 
-		it('the "failure" action should be called once', function() {
+		it('the "failure" action should be called once', () => {
 			expect(spyFailure.calls.count()).toEqual(1);
 		});
 	});
 
-	describe('that fails twice before succeeding (by returning a specific "failure" value)', function() {
-		var spyAction;
-		var spyFailure;
+	describe('that fails twice before succeeding (by returning a specific "failure" value)', () => {
+		let spyAction;
+		let spyFailure;
 
-		var actualResult;
-		var successfulResult;
+		let actualResult;
+		let successfulResult;
 
-		var x;
+		let x;
 
 		beforeEach(function(done) {
 			x = 0;
@@ -181,24 +181,24 @@ describe('When a backoff is used', function() {
 				});
 		});
 
-		it('should call the "backoff" action three times', function() {
+		it('should call the "backoff" action three times', () => {
 			expect(spyAction.calls.count()).toEqual(3);
 		});
 
-		it('the promise result should match the expected result', function() {
+		it('the promise result should match the expected result', () => {
 			expect(actualResult).toEqual(successfulResult);
 		});
 
-		it('the "failure" action should be called twice', function() {
+		it('the "failure" action should be called twice', () => {
 			expect(spyFailure.calls.count()).toEqual(2);
 		});
 	});
 
-	describe('final failure is declared after three attempts', function() {
-		var spyAction;
-		var spyFailure;
+	describe('final failure is declared after three attempts', () => {
+		let spyAction;
+		let spyFailure;
 
-		var actualResult;
+		let actualResult;
 
 		beforeEach(function(done) {
 			spyAction = jasmine.createSpy('spyAction').and.callFake(function () {
@@ -215,24 +215,24 @@ describe('When a backoff is used', function() {
 				});
 		});
 
-		it('should call the "backoff" action three times', function() {
+		it('should call the "backoff" action three times', () => {
 			expect(spyAction.calls.count()).toEqual(3);
 		});
 
-		it('the "failure" action should be called three times', function() {
+		it('the "failure" action should be called three times', () => {
 			expect(spyFailure.calls.count()).toEqual(3);
 		});
 
-		it('the promise should be rejected (with an Error instance)', function() {
+		it('the promise should be rejected (with an Error instance)', () => {
 			expect(actualResult instanceof Error).toEqual(true);
 		});
 	});
 
-	describe('final failure is declared after three attempts (using the "failureValue" argument)', function() {
-		var spyAction;
-		var spyFailure;
+	describe('final failure is declared after three attempts (using the "failureValue" argument)', () => {
+		let spyAction;
+		let spyFailure;
 
-		var actualResult;
+		let actualResult;
 
 		beforeEach(function(done) {
 			spyAction = jasmine.createSpy('spyAction').and.callFake(function () {
@@ -249,15 +249,15 @@ describe('When a backoff is used', function() {
 				});
 		});
 
-		it('should call the "backoff" action three times', function() {
+		it('should call the "backoff" action three times', () => {
 			expect(spyAction.calls.count()).toEqual(3);
 		});
 
-		it('the "failure" action should be called three times', function() {
+		it('the "failure" action should be called three times', () => {
 			expect(spyFailure.calls.count()).toEqual(3);
 		});
 
-		it('the promise should be rejected', function() {
+		it('the promise should be rejected', () => {
 			expect(actualResult).toEqual('Maximum failures reached for detonate');
 		});
 	});

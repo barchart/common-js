@@ -1,32 +1,32 @@
-var RateLimiter = require('./../../../timing/RateLimiter');
+const RateLimiter = require('./../../../timing/RateLimiter');
 
-describe('When a RateLimiter is constructed (1 execution per 25 milliseconds)', function() {
+describe('When a RateLimiter is constructed (1 execution per 25 milliseconds)', () => {
 	'use strict';
 
-	var limiter;
+	let limiter;
 
-	var windowMaximumCount;
-	var windowDurationMilliseconds;
-	var concurrency;
+	let windowMaximumCount;
+	let windowDurationMilliseconds;
+	let concurrency;
 
-	beforeEach(function() {
+	beforeEach(() => {
 		limiter = new RateLimiter(windowMaximumCount = 1, windowDurationMilliseconds = 25, concurrency = null);
 	});
 
-	describe('and tasks are scheduled', function() {
-		var spies;
-		var promises;
+	describe('and tasks are scheduled', () => {
+		let spies;
+		let promises;
 
-		var start;
+		let start;
 
-		beforeEach(function() {
+		beforeEach(() => {
 			start = new Date();
 
 			spies = [ ];
 			promises = [ ];
 
-			for (var i = 0; i < 10; i++) {
-				 var spy = jasmine.createSpy('spy');
+			for (let i = 0; i < 10; i++) {
+				 let spy = jasmine.createSpy('spy');
 
 				spies.push(spy);
 
@@ -35,12 +35,12 @@ describe('When a RateLimiter is constructed (1 execution per 25 milliseconds)', 
 		});
 
 		it('the tasks should serialized', function(done) {
-			var promise = null;
+			let promise = null;
 
-			var getValidatedPromise = function(promise, index) {
-				return promise.then(function() {
-					for (var i = 0; i < spies.length; i++) {
-						var count;
+			let getValidatedPromise = function(promise, index) {
+				return promise.then(() => {
+					for (let i = 0; i < spies.length; i++) {
+						let count;
 
 						if (i > index) {
 							count = 0;
@@ -53,65 +53,65 @@ describe('When a RateLimiter is constructed (1 execution per 25 milliseconds)', 
 				});
 			};
 
-			for (var i = 0; i < promises.length; i++) {
-				var p = getValidatedPromise(promises[i], i);
+			for (let i = 0; i < promises.length; i++) {
+				let p = getValidatedPromise(promises[i], i);
 
 				if (promise === null) {
 					promise = p;
 				} else {
-					promise = promise.then(function() {
+					promise = promise.then(() => {
 						return p;
 					});
 				}
 			}
 
 			promise
-				.then(function() {
+				.then(() => {
 					done();
 				});
 		});
 
 		it('the tasks not finish before the earliest possible moment', function(done) {
-			var promise = null;
+			let promise = null;
 
-			var getValidatedPromise = function(promise, index) {
-				return promise.then(function() {
-					var end = new Date();
-					var duration = end.getTime() - start.getTime();
+			let getValidatedPromise = function(promise, index) {
+				return promise.then(() => {
+					let end = new Date();
+					let duration = end.getTime() - start.getTime();
 
-					var shortestPossibleDuration = Math.floor(index / windowMaximumCount) * windowDurationMilliseconds;
+					let shortestPossibleDuration = Math.floor(index / windowMaximumCount) * windowDurationMilliseconds;
 
 					expect(duration + 1).not.toBeLessThan(shortestPossibleDuration);
 				});
 			};
 
-			for (var i = 0; i < promises.length; i++) {
-				var p = getValidatedPromise(promises[i], i);
+			for (let i = 0; i < promises.length; i++) {
+				let p = getValidatedPromise(promises[i], i);
 
 				if (promise === null) {
 					promise = p;
 				} else {
-					promise = promise.then(function() {
+					promise = promise.then(() => {
 						return p;
 					});
 				}
 			}
 
 			promise
-				.then(function() {
+				.then(() => {
 					done();
 				});
 		});
 	});
 
-	describe('and failing tasks are scheduled', function() {
-		var spies;
-		var promises;
-		var error;
+	describe('and failing tasks are scheduled', () => {
+		let spies;
+		let promises;
+		let error;
 
-		var start;
+		let start;
 
-		beforeEach(function() {
+		beforeEach(() => {
 			start = new Date();
 
 			spies = [ ];
@@ -119,8 +119,8 @@ describe('When a RateLimiter is constructed (1 execution per 25 milliseconds)', 
 
 			error = new Error('oops');
 
-			for (var i = 0; i < 2; i++) {
-				var spy = jasmine.createSpy('spy').and.callFake(function() {
+			for (let i = 0; i < 2; i++) {
+				let spy = jasmine.createSpy('spy').and.callFake(() => {
 					throw error;
 				});
 
@@ -131,67 +131,67 @@ describe('When a RateLimiter is constructed (1 execution per 25 milliseconds)', 
 		});
 
 		it('each task should be executed', function(done) {
-			var promise = null;
+			let promise = null;
 
-			var getValidatedPromise = function(promise, index) {
+			let getValidatedPromise = function(promise, index) {
 				return promise.catch(function(error) {
-					var end = new Date();
-					var duration = end.getTime() - start.getTime();
+					let end = new Date();
+					let duration = end.getTime() - start.getTime();
 
-					var shortestPossibleDuration = Math.floor(index / windowMaximumCount) * windowDurationMilliseconds;
+					let shortestPossibleDuration = Math.floor(index / windowMaximumCount) * windowDurationMilliseconds;
 
 					expect(duration + 1).not.toBeLessThan(shortestPossibleDuration);
 					expect(error).toBe(error);
 				});
 			};
 
-			for (var i = 0; i < promises.length; i++) {
-				var p = getValidatedPromise(promises[i], i);
+			for (let i = 0; i < promises.length; i++) {
+				let p = getValidatedPromise(promises[i], i);
 
 				if (promise === null) {
 					promise = p;
 				} else {
-					promise = promise.then(function() {
+					promise = promise.then(() => {
 						return p;
 					});
 				}
 			}
 
 			promise
-				.then(function() {
+				.then(() => {
 					done();
 				});
 		});
 	});
 });
 
-describe('When a RateLimiter is constructed (2 execution per 25 milliseconds)', function() {
+describe('When a RateLimiter is constructed (2 execution per 25 milliseconds)', () => {
 	'use strict';
 
-	var limiter;
+	let limiter;
 
-	var windowMaximumCount;
-	var windowDurationMilliseconds;
-	var concurrency;
+	let windowMaximumCount;
+	let windowDurationMilliseconds;
+	let concurrency;
 
-	beforeEach(function() {
+	beforeEach(() => {
 		limiter = new RateLimiter(windowMaximumCount = 2, windowDurationMilliseconds = 25, concurrency = null);
 	});
 
-	describe('and tasks are scheduled', function() {
-		var spies;
-		var promises;
+	describe('and tasks are scheduled', () => {
+		let spies;
+		let promises;
 
-		var start;
+		let start;
 
-		beforeEach(function() {
+		beforeEach(() => {
 			start = new Date();
 
 			spies = [ ];
 			promises = [ ];
 
-			for (var i = 0; i < 10; i++) {
-				var spy = jasmine.createSpy('spy');
+			for (let i = 0; i < 10; i++) {
+				let spy = jasmine.createSpy('spy');
 
 				spies.push(spy);
 
@@ -200,33 +200,33 @@ describe('When a RateLimiter is constructed (2 execution per 25 milliseconds)', 
 		});
 
 		it('the tasks not finish before the earliest possible moment', function(done) {
-			var promise = null;
+			let promise = null;
 
-			var getValidatedPromise = function(promise, index) {
-				return promise.then(function() {
-					var end = new Date();
-					var duration = end.getTime() - start.getTime();
+			let getValidatedPromise = function(promise, index) {
+				return promise.then(() => {
+					let end = new Date();
+					let duration = end.getTime() - start.getTime();
 
-					var shortestPossibleDuration = Math.floor(index / windowMaximumCount) * windowDurationMilliseconds;
+					let shortestPossibleDuration = Math.floor(index / windowMaximumCount) * windowDurationMilliseconds;
 
 					expect(duration + 1).not.toBeLessThan(shortestPossibleDuration);
 				});
 			};
 
-			for (var i = 0; i < promises.length; i++) {
-				var p = getValidatedPromise(promises[i], i);
+			for (let i = 0; i < promises.length; i++) {
+				let p = getValidatedPromise(promises[i], i);
 
 				if (promise === null) {
 					promise = p;
 				} else {
-					promise = promise.then(function() {
+					promise = promise.then(() => {
 						return p;
 					});
 				}
 			}
 
 			promise
-				.then(function() {
+				.then(() => {
 					done();
 				});
 		});

@@ -1,122 +1,122 @@
-var EvictingList = require('./../../../../collections/specialized/EvictingList');
+const EvictingList = require('./../../../../collections/specialized/EvictingList');
 
-describe('When an EvictingList is constructed (with no capacity)', function() {
+describe('When an EvictingList is constructed (with no capacity)', () => {
 	'use strict';
 
-	var list;
+	let list;
 
-	beforeEach(function() {
+	beforeEach(() => {
 		list = new EvictingList();
 	});
 
-	it('should be empty', function() {
+	it('should be empty', () => {
 		expect(list.empty()).toEqual(true);
 	});
 
-	it('should have a capacity of 10', function() {
+	it('should have a capacity of 10', () => {
 		expect(list.getCapacity()).toEqual(10);
 	});
 
-	describe('when dumped to an array', function() {
-		var array;
+	describe('when dumped to an array', () => {
+		let array;
 
-		beforeEach(function() {
+		beforeEach(() => {
 			array = list.toArray();
 		});
 
-		it('should be empty',function() {
+		it('should be empty',() => {
 			expect(array.length).toEqual(0);
 		});
 	});
 });
 
-describe('When an EvictingList is constructed (with a capacity of 1)', function() {
+describe('When an EvictingList is constructed (with a capacity of 1)', () => {
 	'use strict';
 
-	var list;
+	let list;
 
-	beforeEach(function() {
+	beforeEach(() => {
 		list = new EvictingList(1);
 	});
 
-	it('should be empty', function() {
+	it('should be empty', () => {
 		expect(list.empty()).toEqual(true);
 	});
 
-	it('should have a capacity of 1', function() {
+	it('should have a capacity of 1', () => {
 		expect(list.getCapacity()).toEqual(1);
 	});
 
-	describe('when dumped to an array', function() {
-		var array;
+	describe('when dumped to an array', () => {
+		let array;
 
-		beforeEach(function() {
+		beforeEach(() => {
 			array = list.toArray();
 		});
 
-		it('should be empty',function() {
+		it('should be empty',() => {
 			expect(array.length).toEqual(0);
 		});
 	});
 
-	describe('when the an item is added to the list', function() {
-		var a;
+	describe('when the an item is added to the list', () => {
+		let a;
 
-		beforeEach(function() {
+		beforeEach(() => {
 			list.add(a = { });
 		});
 
-		it('peek should return the item', function() {
+		it('peek should return the item', () => {
 			expect(list.peek()).toBe(a);
 		});
 
-		it('should not be empty',function() {
+		it('should not be empty',() => {
 			expect(list.empty()).toEqual(false);
 		});
 
-		describe('when dumped to an array', function() {
-			var array;
+		describe('when dumped to an array', () => {
+			let array;
 
-			beforeEach(function() {
+			beforeEach(() => {
 				array = list.toArray();
 			});
 
-			it('should contain one item',function() {
+			it('should contain one item',() => {
 				expect(array.length).toEqual(1);
 			});
 
-			it('the first item should be the item added',function() {
+			it('the first item should be the item added',() => {
 				expect(array[0]).toEqual(a);
 			});
 		});
 
-		describe('when a second item is added to the list', function() {
-			var b;
+		describe('when a second item is added to the list', () => {
+			let b;
 
-			beforeEach(function() {
+			beforeEach(() => {
 				list.add(b = { });
 			});
 
-			it('should not be empty',function() {
+			it('should not be empty',() => {
 				expect(list.empty()).toEqual(false);
 			});
 
-			it('peek should return the second item', function() {
+			it('peek should return the second item', () => {
 				expect(list.peek()).toBe(b);
 			});
 
-			describe('when dumped to an array', function() {
-				var array;
+			describe('when dumped to an array', () => {
+				let array;
 
-				beforeEach(function() {
+				beforeEach(() => {
 					array = list.toArray();
 				});
 
-				it('should contain one item',function() {
+				it('should contain one item',() => {
 					expect(array.length).toEqual(1);
 				});
 
-				it('the first item in the array should be the most recent item',function() {
+				it('the first item in the array should be the most recent item',() => {
 					expect(array[0]).toBe(b);
 				});
 			});
@@ -124,31 +124,31 @@ describe('When an EvictingList is constructed (with a capacity of 1)', function(
 	});
 });
 
-describe('When an EvictingList is constructed (with a capacity of 3)', function() {
+describe('When an EvictingList is constructed (with a capacity of 3)', () => {
 	'use strict';
 
-	var list;
+	let list;
 
-	beforeEach(function() {
+	beforeEach(() => {
 		list = new EvictingList(3);
 	});
 
-	it('should be empty', function() {
+	it('should be empty', () => {
 		expect(list.empty()).toEqual(true);
 	});
 
-	it('should have a capacity of 3', function() {
+	it('should have a capacity of 3', () => {
 		expect(list.getCapacity()).toEqual(3);
 	});
 
-	describe('and five items are added to the list', function() {
-		var a;
-		var b;
-		var c;
-		var d;
-		var e;
+	describe('and five items are added to the list', () => {
+		let a;
+		let b;
+		let c;
+		let d;
+		let e;
 
-		beforeEach(function() {
+		beforeEach(() => {
 			list.add(a = { });
 			list.add(b = { });
 			list.add(c = { });
@@ -156,63 +156,63 @@ describe('When an EvictingList is constructed (with a capacity of 3)', function(
 			list.add(e = { });
 		});
 
-		it('should not be empty',function() {
+		it('should not be empty',() => {
 			expect(list.empty()).toEqual(false);
 		});
 
-		describe('when dumped to an array', function() {
-			var array;
+		describe('when dumped to an array', () => {
+			let array;
 
-			beforeEach(function() {
+			beforeEach(() => {
 				array = list.toArray();
 			});
 
-			it('should contain three items',function() {
+			it('should contain three items',() => {
 				expect(array.length).toEqual(3);
 			});
 
-			it('the first item should be the most recent item added',function() {
+			it('the first item should be the most recent item added',() => {
 				expect(array[0]).toBe(e);
 			});
 
-			it('the second item should be the second most recent item added',function() {
+			it('the second item should be the second most recent item added',() => {
 				expect(array[1]).toBe(d);
 			});
 
-			it('the third item should be the third most recent item addedd',function() {
+			it('the third item should be the third most recent item addedd',() => {
 				expect(array[2]).toBe(c);
 			});
 		});
 
-		describe('and 100 more items are added to the list', function() {
-			var items = [ ];
+		describe('and 100 more items are added to the list', () => {
+			let items = [ ];
 
-			beforeEach(function() {
-				for (var i = 0; i < 100; i++) {
+			beforeEach(() => {
+				for (let i = 0; i < 100; i++) {
 					list.add(items[i] = { });
 				}
 			});
 
-			describe('when dumped to an array', function() {
-				var array;
+			describe('when dumped to an array', () => {
+				let array;
 
-				beforeEach(function() {
+				beforeEach(() => {
 					array = list.toArray();
 				});
 
-				it('should contain three items',function() {
+				it('should contain three items',() => {
 					expect(array.length).toEqual(3);
 				});
 
-				it('the first item should be the most recent item added',function() {
+				it('the first item should be the most recent item added',() => {
 					expect(array[0]).toBe(items[99]);
 				});
 
-				it('the second item should be the second most recent item added',function() {
+				it('the second item should be the second most recent item added',() => {
 					expect(array[1]).toBe(items[98]);
 				});
 
-				it('the third item should be the third most recent item addedd',function() {
+				it('the third item should be the third most recent item addedd',() => {
 					expect(array[2]).toBe(items[97]);
 				});
 			});

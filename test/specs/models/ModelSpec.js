@@ -1,46 +1,46 @@
-var Disposable = require('./../../../lang/Disposable');
-var Model = require('./../../../models/Model');
+const Disposable = require('./../../../lang/Disposable'),
+	Model = require('./../../../models/Model');
 
-describe('When an Model is constructed with "firstName" and "lastName" properties', function() {
+describe('When an Model is constructed with "firstName" and "lastName" properties', () => {
 	'use strict';
 
-	var model;
+	let model;
 
-	beforeEach(function() {
+	beforeEach(() => {
 		model = new Model(['firstName', 'lastName']);
 	});
 
-	describe('and a transaction observer is registered', function() {
-		var spy;
-		var binding;
+	describe('and a transaction observer is registered', () => {
+		let spy;
+		let binding;
 
-		beforeEach(function() {
+		beforeEach(() => {
 			binding = model.onTransactionCommitted(spy = jasmine.createSpy('spy'));
 		});
 
-		it('should return a Disposable instance', function() {
+		it('should return a Disposable instance', () => {
 			expect(binding instanceof Disposable).toEqual(true);
 		});
 
-		it('should return null values for each property', function() {
+		it('should return null values for each property', () => {
 			expect(model.firstName).toBe(null);
 			expect(model.lastName).toBe(null);
 		});
 
-		describe('and both properties are updated', function() {
-			var data;
+		describe('and both properties are updated', () => {
+			let data;
 
-			beforeEach(function() {
+			beforeEach(() => {
 				model.firstName = 'Bryan';
 				model.lastName = 'Ingle';
 			});
 
-			it('two transactions should occur', function() {
+			it('two transactions should occur', () => {
 				expect(spy.calls.count()).toEqual(2);
 			});
 
-			it('the first transaction should have updated the "first name" property', function() {
-				var argsOne = spy.calls.argsFor(0);
+			it('the first transaction should have updated the "first name" property', () => {
+				let argsOne = spy.calls.argsFor(0);
 
 				expect(argsOne[0].firstName).toEqual('Bryan');
 				expect(argsOne[0].sequence).toEqual(0);
@@ -48,8 +48,8 @@ describe('When an Model is constructed with "firstName" and "lastName" propertie
 				expect(argsOne[1]).toBe(model);
 			});
 
-			it('the second transaction should have updated the "last name" property', function() {
-				var argsOne = spy.calls.argsFor(1);
+			it('the second transaction should have updated the "last name" property', () => {
+				let argsOne = spy.calls.argsFor(1);
 
 				expect(argsOne[0].lastName).toEqual('Ingle');
 				expect(argsOne[0].sequence).toEqual(1);
@@ -58,22 +58,22 @@ describe('When an Model is constructed with "firstName" and "lastName" propertie
 			});
 		});
 
-		describe('and both properties are updated with an explicit transaction', function() {
-			var data;
+		describe('and both properties are updated with an explicit transaction', () => {
+			let data;
 
-			beforeEach(function() {
+			beforeEach(() => {
 				model.executeTransaction(function(m) {
 					m.firstName = 'Bryan';
 					m.lastName = 'Ingle';
 				});
 			});
 
-			it('one transaction should occur', function() {
+			it('one transaction should occur', () => {
 				expect(spy.calls.count()).toEqual(1);
 			});
 
-			it('the first transaction should have updated the "first name" property', function() {
-				var argsOne = spy.calls.argsFor(0);
+			it('the first transaction should have updated the "first name" property', () => {
+				let argsOne = spy.calls.argsFor(0);
 
 				expect(argsOne[0].firstName).toEqual('Bryan');
 				expect(argsOne[0].lastName).toEqual('Ingle');
@@ -83,35 +83,35 @@ describe('When an Model is constructed with "firstName" and "lastName" propertie
 			});
 		});
 
-		describe('and both properties are to undefined values', function() {
-			var data;
+		describe('and both properties are to undefined values', () => {
+			let data;
 
-			beforeEach(function() {
+			beforeEach(() => {
 				model.firstName = undefined;
 				model.lastName = undefined;
 			});
 
-			it('no transactions should occur', function() {
+			it('no transactions should occur', () => {
 				expect(spy.calls.count()).toEqual(0);
 			});
 
-			it('the properties should return null values', function() {
+			it('the properties should return null values', () => {
 				expect(model.firstName).toBe(null);
 				expect(model.lastName).toBe(null);
 			});
 
-			describe('and both are updated to non-null values', function() {
-				beforeEach(function() {
+			describe('and both are updated to non-null values', () => {
+				beforeEach(() => {
 					model.firstName = 0;
 					model.lastName = '';
 				});
 
-				it('two transactions should occur', function() {
+				it('two transactions should occur', () => {
 					expect(spy.calls.count()).toEqual(2);
 				});
 
-				it('the first transaction should have updated the "first name" property to zero', function() {
-					var argsOne = spy.calls.argsFor(0);
+				it('the first transaction should have updated the "first name" property to zero', () => {
+					let argsOne = spy.calls.argsFor(0);
 
 					expect(argsOne[0].firstName).toBe(0);
 					expect(argsOne[0].sequence).toEqual(0);
@@ -119,8 +119,8 @@ describe('When an Model is constructed with "firstName" and "lastName" propertie
 					expect(argsOne[1]).toBe(model);
 				});
 
-				it('the second transaction should have updated the "last name" property to a zero-length string', function() {
-					var argsOne = spy.calls.argsFor(1);
+				it('the second transaction should have updated the "last name" property to a zero-length string', () => {
+					let argsOne = spy.calls.argsFor(1);
 
 					expect(argsOne[0].lastName).toBe('');
 					expect(argsOne[0].sequence).toEqual(1);

@@ -1,84 +1,84 @@
-var Disposable = require('./../../../lang/Disposable');
-var Event = require('./../../../messaging/Event');
+const Disposable = require('./../../../lang/Disposable'),
+	Event = require('./../../../messaging/Event');
 
-describe('When an Event is constructed', function() {
+describe('When an Event is constructed', () => {
 	'use strict';
 
-	var event;
-	var context;
+	let event;
+	let context;
 
-	beforeEach(function() {
+	beforeEach(() => {
 		event = new Event(context = {});
 	});
 
-	describe('and an event handler is registered', function() {
-		var spyOne;
-		var bindingOne;
+	describe('and an event handler is registered', () => {
+		let spyOne;
+		let bindingOne;
 
-		beforeEach(function() {
+		beforeEach(() => {
 			bindingOne = event.register(spyOne = jasmine.createSpy('spyOne'));
 		});
 
-		it('should return a Disposable instance', function() {
+		it('should return a Disposable instance', () => {
 			expect(bindingOne instanceof Disposable).toEqual(true);
 		});
 
-		describe('and the event fires', function() {
-			var data;
+		describe('and the event fires', () => {
+			let data;
 
-			beforeEach(function() {
+			beforeEach(() => {
 				event.fire(data = {});
 			});
 
-			it('should notify the observer', function() {
+			it('should notify the observer', () => {
 				expect(spyOne).toHaveBeenCalledWith(context, data);
 			});
 		});
 
-		describe('and another event handler is registered', function() {
-			var spyTwo;
-			var bindingTwo;
+		describe('and another event handler is registered', () => {
+			let spyTwo;
+			let bindingTwo;
 
-			beforeEach(function() {
+			beforeEach(() => {
 				bindingTwo = event.register(spyTwo = jasmine.createSpy('spyTwo'));
 			});
 
-			it('should return a Disposable instance', function() {
+			it('should return a Disposable instance', () => {
 				expect(bindingTwo instanceof Disposable).toEqual(true);
 			});
 
-			describe('and the event fires', function() {
-				var data;
+			describe('and the event fires', () => {
+				let data;
 
-				beforeEach(function() {
+				beforeEach(() => {
 					event.fire(data = {});
 				});
 
-				it('should notify both observers', function() {
+				it('should notify both observers', () => {
 					expect(spyOne).toHaveBeenCalledWith(context, data);
 					expect(spyTwo).toHaveBeenCalledWith(context, data);
 				});
 			});
 
-			describe('and the first observer is disposed ', function() {
-				var data;
+			describe('and the first observer is disposed ', () => {
+				let data;
 
-				beforeEach(function() {
+				beforeEach(() => {
 					bindingOne.dispose();
 				});
 
-				describe('and the event fires', function() {
-					var data;
+				describe('and the event fires', () => {
+					let data;
 
-					beforeEach(function() {
+					beforeEach(() => {
 						event.fire(data = {});
 					});
 
-					it('should not notify the first observer', function() {
+					it('should not notify the first observer', () => {
 						expect(spyOne).not.toHaveBeenCalledWith(context, data);
 					});
 
-					it('should notify the second observer', function() {
+					it('should notify the second observer', () => {
 						expect(spyTwo).toHaveBeenCalledWith(context, data);
 					});
 				});
@@ -86,45 +86,45 @@ describe('When an Event is constructed', function() {
 		});
 	});
 
-	describe('and multiple observers are added which dispose themselves', function() {
-		var spyOne;
-		var spyTwo;
+	describe('and multiple observers are added which dispose themselves', () => {
+		let spyOne;
+		let spyTwo;
 
-		var bindingOne;
-		var bindingTwo;
+		let bindingOne;
+		let bindingTwo;
 
-		beforeEach(function() {
-			bindingOne = event.register(spyOne = jasmine.createSpy('spyOne').and.callFake(function() {
+		beforeEach(() => {
+			bindingOne = event.register(spyOne = jasmine.createSpy('spyOne').and.callFake(() => {
 				bindingOne.dispose();
 			}));
-			bindingTwo = event.register(spyTwo = jasmine.createSpy('spyTwo').and.callFake(function() {
+			bindingTwo = event.register(spyTwo = jasmine.createSpy('spyTwo').and.callFake(() => {
 				bindingTwo.dispose();
 			}));
 		});
 
-		describe('and the event fires', function() {
-			var data;
+		describe('and the event fires', () => {
+			let data;
 
-			beforeEach(function() {
+			beforeEach(() => {
 				event.fire(data = {});
 			});
 
-			it('should notify both observer', function() {
+			it('should notify both observer', () => {
 				expect(spyOne).toHaveBeenCalledWith(context, data);
 				expect(spyTwo).toHaveBeenCalledWith(context, data);
 			});
 
-			describe('and the event fires again', function() {
-				var data;
+			describe('and the event fires again', () => {
+				let data;
 
-				beforeEach(function() {
+				beforeEach(() => {
 					spyOne.calls.reset();
 					spyTwo.calls.reset();
 
 					event.fire(data = {});
 				});
 
-				it('should not notify either observer', function() {
+				it('should not notify either observer', () => {
 					expect(spyOne).not.toHaveBeenCalledWith(context, data);
 					expect(spyTwo).not.toHaveBeenCalledWith(context, data);
 				});
@@ -132,45 +132,45 @@ describe('When an Event is constructed', function() {
 		});
 	});
 
-	describe('and two observers are added which dispose each other', function() {
-		var spyOne;
-		var spyTwo;
+	describe('and two observers are added which dispose each other', () => {
+		let spyOne;
+		let spyTwo;
 
-		var bindingOne;
-		var bindingTwo;
+		let bindingOne;
+		let bindingTwo;
 
-		beforeEach(function() {
-			bindingOne = event.register(spyOne = jasmine.createSpy('spyOne').and.callFake(function() {
+		beforeEach(() => {
+			bindingOne = event.register(spyOne = jasmine.createSpy('spyOne').and.callFake(() => {
 				bindingTwo.dispose();
 			}));
-			bindingTwo = event.register(spyTwo = jasmine.createSpy('spyTwo').and.callFake(function() {
+			bindingTwo = event.register(spyTwo = jasmine.createSpy('spyTwo').and.callFake(() => {
 				bindingOne.dispose();
 			}));
 		});
 
-		describe('and the event fires', function() {
-			var data;
+		describe('and the event fires', () => {
+			let data;
 
-			beforeEach(function() {
+			beforeEach(() => {
 				event.fire(data = {});
 			});
 
-			it('should notify both observer', function() {
+			it('should notify both observer', () => {
 				expect(spyOne).toHaveBeenCalledWith(context, data);
 				expect(spyTwo).toHaveBeenCalledWith(context, data);
 			});
 
-			describe('and the event fires again', function() {
-				var data;
+			describe('and the event fires again', () => {
+				let data;
 
-				beforeEach(function() {
+				beforeEach(() => {
 					spyOne.calls.reset();
 					spyTwo.calls.reset();
 
 					event.fire(data = {});
 				});
 
-				it('should not notify either observer', function() {
+				it('should not notify either observer', () => {
 					expect(spyOne).not.toHaveBeenCalledWith(context, data);
 					expect(spyTwo).not.toHaveBeenCalledWith(context, data);
 				});

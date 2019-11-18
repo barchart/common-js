@@ -1,21 +1,21 @@
-var CommandHandler = require('./../../../commands/CommandHandler');
-var MappedCommandHandler = require('./../../../commands/MappedCommandHandler');
+const CommandHandler = require('./../../../commands/CommandHandler'),
+	MappedCommandHandler = require('./../../../commands/MappedCommandHandler');
 
-describe('When a MappedCommandHandler is created with two mapped commands', function() {
+describe('When a MappedCommandHandler is created with two mapped commands', () => {
 	'use strict';
 
-	var commandHandler;
+	let commandHandler;
 
-	var spyOne;
-	var spyTwo;
+	let spyOne;
+	let spyTwo;
 
-	var selectorOne;
-	var selectorTwo;
+	let selectorOne;
+	let selectorTwo;
 
-	var resultOne;
-	var resultTwo;
+	let resultOne;
+	let resultTwo;
 
-	beforeEach(function() {
+	beforeEach(() => {
 		selectorOne = 'one';
 		selectorTwo = 'two';
 
@@ -26,52 +26,52 @@ describe('When a MappedCommandHandler is created with two mapped commands', func
 			return data.commandType || null;
 		});
 
-		commandHandler.addCommandHandler(selectorOne, CommandHandler.fromFunction(spyOne = jasmine.createSpy('spyOne').and.callFake(function() {
+		commandHandler.addCommandHandler(selectorOne, CommandHandler.fromFunction(spyOne = jasmine.createSpy('spyOne').and.callFake(() => {
 			return resultOne;
 		})));
-		commandHandler.addCommandHandler(selectorTwo, CommandHandler.fromFunction(spyTwo = jasmine.createSpy('spyTwo').and.callFake(function() {
+		commandHandler.addCommandHandler(selectorTwo, CommandHandler.fromFunction(spyTwo = jasmine.createSpy('spyTwo').and.callFake(() => {
 			return resultTwo;
 		})));
 	});
 
-	describe('and the command is process with data for the first handler', function() {
-		var commandData;
-		var commandResult;
+	describe('and the command is process with data for the first handler', () => {
+		let commandData;
+		let commandResult;
 
-		beforeEach(function() {
+		beforeEach(() => {
 			commandResult = commandHandler.process(commandData = {commandType: selectorOne});
 		});
 
-		it('should invoke wrapped function for the first handler', function() {
+		it('should invoke wrapped function for the first handler', () => {
 			expect(spyOne).toHaveBeenCalledWith(commandData);
 		});
 
-		it('should return the result from the first handler', function() {
+		it('should return the result from the first handler', () => {
 			expect(commandResult).toEqual(resultOne);
 		});
 
-		it('should not invoke wrapped function for the secoond handler', function() {
+		it('should not invoke wrapped function for the secoond handler', () => {
 			expect(spyTwo).not.toHaveBeenCalledWith(commandData);
 		});
 	});
 
-	describe('and the command is process with data for the second handler', function() {
-		var commandData;
-		var commandResult;
+	describe('and the command is process with data for the second handler', () => {
+		let commandData;
+		let commandResult;
 
-		beforeEach(function() {
+		beforeEach(() => {
 			commandResult = commandHandler.process(commandData = {commandType: selectorTwo});
 		});
 
-		it('should invoke wrapped function for the second handler', function() {
+		it('should invoke wrapped function for the second handler', () => {
 			expect(spyTwo).toHaveBeenCalledWith(commandData);
 		});
 
-		it('should return the result from the second handler', function() {
+		it('should return the result from the second handler', () => {
 			expect(commandResult).toEqual(resultTwo);
 		});
 
-		it('should not invoke wrapped function for the first handler', function() {
+		it('should not invoke wrapped function for the first handler', () => {
 			expect(spyOne).not.toHaveBeenCalledWith(commandData);
 		});
 	});

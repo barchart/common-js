@@ -1,37 +1,37 @@
-var random = require('./../../../lang/random');
+const random = require('./../../../lang/random');
 
-describe('When generating a random number, restricting the range to one integer', function() {
+describe('When generating a random number, restricting the range to one integer', () => {
 	'use strict';
 
-	var result;
-	var value;
+	let result;
+	let value;
 
-	beforeEach(function() {
+	beforeEach(() => {
 		result = random.range(value = 42, value);
 	});
 
-	it('should be the value', function() {
+	it('should be the value', () => {
 		expect(result).toEqual(value);
 	});
 });
 
-describe('When generating a random number with a range of multiple values', function() {
+describe('When generating a random number with a range of multiple values', () => {
 	'use strict';
 
-	var result;
-	var minimum;
-	var maximum;
+	let result;
+	let minimum;
+	let maximum;
 
-	beforeEach(function() {
+	beforeEach(() => {
 		minimum = -2;
 		maximum = 1;
 	});
 
-	it('should generate a value within the range', function() {
-		var range = maximum - minimum;
+	it('should generate a value within the range', () => {
+		let range = maximum - minimum;
 
-		for (var i = 0; i < range * 10; i++) {
-			var result = random.range(minimum, maximum);
+		for (let i = 0; i < range * 10; i++) {
+			let result = random.range(minimum, maximum);
 
 			expect(result < minimum).toEqual(false);
 			expect(result > maximum).toEqual(false);

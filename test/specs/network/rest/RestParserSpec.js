@@ -1,10 +1,10 @@
-var RestParser = require('./../../../../network/rest/RestParser');
+const RestParser = require('./../../../../network/rest/RestParser');
 
-describe('Using a customized JSON REST parser is created', function() {
+describe('Using a customized JSON REST parser is created', () => {
 	'use strict';
 
-	var parser;
-	var spy;
+	let parser;
+	let spy;
 
 	beforeEach(function () {
 		function parserFactory() {
@@ -17,8 +17,8 @@ describe('Using a customized JSON REST parser is created', function() {
 	});
 
 	describe('and JSON string is parsed (that represents a simple object)', function () {
-		var serialzied;
-		var deserialzied;
+		let serialzied;
+		let deserialzied;
 
 		beforeEach(function () {
 			deserialzied = parser.parse(serialzied = '{"fizz":"three","bang":5}');
@@ -38,11 +38,11 @@ describe('Using a customized JSON REST parser is created', function() {
 	});
 });
 
-describe('Using another customized JSON REST parser is created', function() {
+describe('Using another customized JSON REST parser is created', () => {
 	'use strict';
 
-	var parser;
-	var spy;
+	let parser;
+	let spy;
 
 	beforeEach(function () {
 		function parserFactory() {
@@ -55,18 +55,18 @@ describe('Using another customized JSON REST parser is created', function() {
 	});
 
 	describe('and JSON string is parsed (that represents an array of simple objects)', function () {
-		var serialzied;
-		var deserialzied;
+		let serialzied;
+		let deserialzied;
 
-		beforeEach(function() {
+		beforeEach(() => {
 			deserialzied = parser.parse(serialzied = '[{"fizz":"three","bang":5},{"fizz":"four","bang":6}]');
 		});
 
-		it('the "reviver" function should have been called', function() {
+		it('the "reviver" function should have been called', () => {
 			expect(spy).toHaveBeenCalled();
 		});
 
-		it('the resulting object should be an array', function() {
+		it('the resulting object should be an array', () => {
 			expect(Array.isArray(deserialzied)).toEqual(true);
 		});
 

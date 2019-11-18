@@ -1,15 +1,15 @@
-var memoize = require('./../../../lang/memoize');
+const memoize = require('./../../../lang/memoize');
 
-describe('When using memoize.simple', function() {
+describe('When using memoize.simple', () => {
 	'use strict';
 
-	describe("on a function that takes a tenth of second to complete", function() {
-		var spy;
-		var memo;
+	describe("on a function that takes a tenth of second to complete", () => {
+		let spy;
+		let memo;
 
-		var counter;
+		let counter;
 
-		beforeEach(function() {
+		beforeEach(() => {
 			counter = 0;
 
 			spy = jasmine.createSpy('spy').and.callFake(function(x) {
@@ -21,49 +21,49 @@ describe('When using memoize.simple', function() {
 			memo = memoize.simple(spy);
 		});
 
-		it('the memoized function should not have been called', function() {
+		it('the memoized function should not have been called', () => {
 			expect(spy).not.toHaveBeenCalled();
 		});
 
-		describe("and the memoized function is called", function() {
-			var paramOne;
-			var resultOne;
+		describe("and the memoized function is called", () => {
+			let paramOne;
+			let resultOne;
 
-			beforeEach(function() {
+			beforeEach(() => {
 				resultOne = memo(paramOne = 'a');
 			});
 
-			it('the memoized function to have been called', function() {
+			it('the memoized function to have been called', () => {
 				expect(spy.calls.count()).toEqual(1);
 			});
 
-			it('the memoized function to have been called with the correct parameters', function() {
+			it('the memoized function to have been called with the correct parameters', () => {
 				expect(spy).toHaveBeenCalledWith(paramOne);
 			});
 
-			it('the result should be a number', function() {
+			it('the result should be a number', () => {
 				expect(typeof resultOne).toEqual('number');
 			});
 
-			describe("and the memoized function is with the same value again", function() {
-				var resultTwo;
+			describe("and the memoized function is with the same value again", () => {
+				let resultTwo;
 
-				beforeEach(function() {
+				beforeEach(() => {
 					resultTwo = memo(paramOne);
 				});
 
-				it('the memoized function not to have been called again', function() {
+				it('the memoized function not to have been called again', () => {
 					expect(spy.calls.count()).toEqual(1);
 				});
 
-				it('the memoized function should have returned the cached value', function() {
+				it('the memoized function should have returned the cached value', () => {
 					expect(resultTwo).toEqual(resultOne);
 				});
 			});
 
-			describe("and the memoized function is called with another value", function() {
-				var paramTwo;
-				var resultTwo;
+			describe("and the memoized function is called with another value", () => {
+				let paramTwo;
+				let resultTwo;
 
 				beforeEach(function () {
 					resultTwo = memo(paramTwo = 'b');
@@ -85,16 +85,16 @@ describe('When using memoize.simple', function() {
 	});
 });
 
-describe('When using memoize.cache', function() {
+describe('When using memoize.cache', () => {
 	'use strict';
 
-	describe("with a 10 millisecond cache duration", function() {
-		var spy;
-		var memo;
+	describe("with a 10 millisecond cache duration", () => {
+		let spy;
+		let memo;
 
-		var counter;
+		let counter;
 
-		beforeEach(function() {
+		beforeEach(() => {
 			counter = 0;
 
 			spy = jasmine.createSpy('spy').and.callFake(function(x) {
@@ -106,44 +106,44 @@ describe('When using memoize.cache', function() {
 			memo = memoize.cache(spy, 10);
 		});
 
-		it('the memoized function should not have been called', function() {
+		it('the memoized function should not have been called', () => {
 			expect(spy).not.toHaveBeenCalled();
 		});
 
-		describe("and the memoized function is called", function() {
-			var paramOne;
-			var resultOne;
+		describe("and the memoized function is called", () => {
+			let paramOne;
+			let resultOne;
 
-			beforeEach(function() {
+			beforeEach(() => {
 				resultOne = memo();
 			});
 
-			it('the memoized function to have been called', function() {
+			it('the memoized function to have been called', () => {
 				expect(spy.calls.count()).toEqual(1);
 			});
 
-			it('the result should be one', function() {
+			it('the result should be one', () => {
 				expect(resultOne).toEqual(1);
 			});
 
-			describe("and the memoized function is with the same value again", function() {
-				var resultTwo;
+			describe("and the memoized function is with the same value again", () => {
+				let resultTwo;
 
-				beforeEach(function() {
+				beforeEach(() => {
 					resultTwo = memo(paramOne);
 				});
 
-				it('the memoized function not to have been called again', function() {
+				it('the memoized function not to have been called again', () => {
 					expect(spy.calls.count()).toEqual(1);
 				});
 
-				it('the memoized function should have returned the cached value', function() {
+				it('the memoized function should have returned the cached value', () => {
 					expect(resultTwo).toEqual(1);
 				});
 			});
 
-			describe("and the memoized function is called after the cache expires", function() {
-				var resultThree;
+			describe("and the memoized function is called after the cache expires", () => {
+				let resultThree;
 
 				beforeEach(function (done) {
 					setTimeout(() => {

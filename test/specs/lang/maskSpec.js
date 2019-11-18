@@ -1,151 +1,151 @@
-var mask = require('./../../../lang/mask');
+const mask = require('./../../../lang/mask');
 
-describe('When testing the suitibility of an bit-based enumeration item', function() {
-	it('zero should be valid', function() {
+describe('When testing the suitibility of an bit-based enumeration item', () => {
+	it('zero should be valid', () => {
 		expect(mask.checkItem(0)).toEqual(true);
 	});
 
-	it('one should be valid', function() {
+	it('one should be valid', () => {
 		expect(mask.checkItem(1)).toEqual(true);
 	});
 
-	it('two should be valid', function() {
+	it('two should be valid', () => {
 		expect(mask.checkItem(2)).toEqual(true);
 	});
 
-	it('three should not be valid', function() {
+	it('three should not be valid', () => {
 		expect(mask.checkItem(3)).toEqual(false);
 	});
 
-	it('four should be valid', function() {
+	it('four should be valid', () => {
 		expect(mask.checkItem(4)).toEqual(true);
 	});
 
-	it('five should not be valid', function() {
+	it('five should not be valid', () => {
 		expect(mask.checkItem(5)).toEqual(false);
 	});
 
-	it('4095 should not be valid', function() {
+	it('4095 should not be valid', () => {
 		expect(mask.checkItem(4095)).toEqual(false);
 	});
 
-	it('4096 should be valid', function() {
+	it('4096 should be valid', () => {
 		expect(mask.checkItem(4096)).toEqual(true);
 	});
 
-	it('4097 should not be valid', function() {
+	it('4097 should not be valid', () => {
 		expect(mask.checkItem(4097)).toEqual(false);
 	});
 });
 
-describe('When working with an empty flags collection', function() {
+describe('When working with an empty flags collection', () => {
 	'use strict';
 
-	var FLAG_ONE = 1;
-	var FLAG_TWO = 16;
-	var FLAG_THREE = 512;
+	let FLAG_ONE = 1;
+	let FLAG_TWO = 16;
+	let FLAG_THREE = 512;
 
-	var flags;
+	let flags;
 
-	beforeEach(function() {
+	beforeEach(() => {
 		flags = mask.getEmpty();
 	});
 
-	it('should not contain flag one', function() {
+	it('should not contain flag one', () => {
 		expect(mask.has(flags, FLAG_ONE)).toEqual(false);
 	});
 
-	it('should not contain flag two', function() {
+	it('should not contain flag two', () => {
 		expect(mask.has(flags, FLAG_TWO)).toEqual(false);
 	});
 
-	it('should not contain flag three', function() {
+	it('should not contain flag three', () => {
 		expect(mask.has(flags, FLAG_THREE)).toEqual(false);
 	});
 
-	describe('and adding the first flag', function() {
-		var updated;
+	describe('and adding the first flag', () => {
+		let updated;
 
-		beforeEach(function() {
+		beforeEach(() => {
 			updated = mask.add(flags, FLAG_ONE);
 		});
 
-		it('should contain flag one', function() {
+		it('should contain flag one', () => {
 			expect(mask.has(updated, FLAG_ONE)).toEqual(true);
 		});
 
-		it('should not contain flag two', function() {
+		it('should not contain flag two', () => {
 			expect(mask.has(updated, FLAG_TWO)).toEqual(false);
 		});
 
-		it('should not contain flag three', function() {
+		it('should not contain flag three', () => {
 			expect(mask.has(updated, FLAG_THREE)).toEqual(false);
 		});
 
-		describe('and adding the third flag', function() {
-			var again;
+		describe('and adding the third flag', () => {
+			let again;
 
-			beforeEach(function() {
+			beforeEach(() => {
 				again = mask.add(updated, FLAG_THREE);
 			});
 
-			it('should contain flag one', function() {
+			it('should contain flag one', () => {
 				expect(mask.has(again, FLAG_ONE)).toEqual(true);
 			});
 
-			it('should not contain flag two', function() {
+			it('should not contain flag two', () => {
 				expect(mask.has(again, FLAG_TWO)).toEqual(false);
 			});
 
-			it('should contain flag three', function() {
+			it('should contain flag three', () => {
 				expect(mask.has(again, FLAG_THREE)).toEqual(true);
 			});
 		});
 
-		describe('and removing the first flag', function() {
-			var again;
+		describe('and removing the first flag', () => {
+			let again;
 
-			beforeEach(function() {
+			beforeEach(() => {
 				again = mask.remove(updated, FLAG_ONE);
 			});
 
-			it('should be empty', function() {
+			it('should be empty', () => {
 				expect(again).toEqual(mask.getEmpty());
 			});
 
-			it('should not contain flag one', function() {
+			it('should not contain flag one', () => {
 				expect(mask.has(again, FLAG_ONE)).toEqual(false);
 			});
 
-			it('should not contain flag two', function() {
+			it('should not contain flag two', () => {
 				expect(mask.has(again, FLAG_TWO)).toEqual(false);
 			});
 
-			it('should not contain flag three', function() {
+			it('should not contain flag three', () => {
 				expect(mask.has(again, FLAG_THREE)).toEqual(false);
 			});
 		});
 
-		describe('and adding the first flag again', function() {
-			var again;
+		describe('and adding the first flag again', () => {
+			let again;
 
-			beforeEach(function() {
+			beforeEach(() => {
 				again = mask.add(updated, FLAG_ONE);
 			});
 
-			it('should be unchanged', function() {
+			it('should be unchanged', () => {
 				expect(again).toEqual(updated);
 			});
 
-			it('should contain flag one', function() {
+			it('should contain flag one', () => {
 				expect(mask.has(again, FLAG_ONE)).toEqual(true);
 			});
 
-			it('should not contain flag two', function() {
+			it('should not contain flag two', () => {
 				expect(mask.has(again, FLAG_TWO)).toEqual(false);
 			});
 
-			it('should not contain flag three', function() {
+			it('should not contain flag three', () => {
 				expect(mask.has(again, FLAG_THREE)).toEqual(false);
 			});
 		});

@@ -1,15 +1,15 @@
-var PriorityQueue = require('./../../../../collections/specialized/PriorityQueue');
+const PriorityQueue = require('./../../../../collections/specialized/PriorityQueue');
 
-describe('When a Queue is constructed, using a "ladies first" comparator', function() {
+describe('When a Queue is constructed, using a "ladies first" comparator', () => {
 	'use strict';
 
-	var queue;
+	let queue;
 
-	var comparator = function(a, b) {
-		var aLady = a.lady ? -1 : 0;
-		var bLady = b.lady ? -1 : 0;
+	let comparator = function(a, b) {
+		let aLady = a.lady ? -1 : 0;
+		let bLady = b.lady ? -1 : 0;
 
-		var result = aLady - bLady;
+		let result = aLady - bLady;
 
 		if (result === 0) {
 			result = a.name.localeCompare(b.name);
@@ -18,194 +18,194 @@ describe('When a Queue is constructed, using a "ladies first" comparator', funct
 		return result;
 	};
 
-	beforeEach(function() {
+	beforeEach(() => {
 		queue = new PriorityQueue(comparator);
 	});
 
-	it('should be empty', function() {
+	it('should be empty', () => {
 		expect(queue.empty()).toEqual(true);
 	});
 
-	it('should throw if "peek" is called', function() {
-		expect(function() {
+	it('should throw if "peek" is called', () => {
+		expect(() => {
 			queue.peek();
 		}).toThrow(new Error('Queue is empty'));
 	});
 
-	it('should throw if "dequeue" is called', function() {
-		expect(function() {
+	it('should throw if "dequeue" is called', () => {
+		expect(() => {
 			queue.peek();
 		}).toThrow(new Error('Queue is empty'));
 	});
 
-	describe('and an three objects are enqueued: Kim, Bryan, and Erica', function() {
-		var kim, bryan, erica;
+	describe('and an three objects are enqueued: Kim, Bryan, and Erica', () => {
+		let kim, bryan, erica;
 
-		beforeEach(function() {
+		beforeEach(() => {
 			queue.enqueue(kim = { name: 'kim', lady: true });
 			queue.enqueue(bryan = { name: 'bryan', lady: false });
 			queue.enqueue(erica = { name: 'erica', lady: true });
 
 		});
 
-		it('should not be empty', function() {
+		it('should not be empty', () => {
 			expect(queue.empty()).toEqual(false);
 		});
 
-		describe('and we peek at the top of the queue', function() {
-			var peek;
+		describe('and we peek at the top of the queue', () => {
+			let peek;
 
-			beforeEach(function() {
+			beforeEach(() => {
 				peek = queue.peek();
 			});
 
-			it('the peek result should be erica', function() {
+			it('the peek result should be erica', () => {
 				expect(peek).toBe(erica);
 			});
 
-			it('should not be empty', function() {
+			it('should not be empty', () => {
 				expect(queue.empty()).toEqual(false);
 			});
 		});
 
-		describe('and an object is dequeued', function() {
-			var dequeue;
+		describe('and an object is dequeued', () => {
+			let dequeue;
 
-			beforeEach(function() {
+			beforeEach(() => {
 				dequeue = queue.dequeue();
 			});
 
-			it('the dequeue result should be erica', function() {
+			it('the dequeue result should be erica', () => {
 				expect(dequeue).toBe(erica);
 			});
 
-			it('should not be empty', function() {
+			it('should not be empty', () => {
 				expect(queue.empty()).toEqual(false);
 			});
 
-			describe('and an second object is dequeued', function() {
-				var dequeue;
+			describe('and an second object is dequeued', () => {
+				let dequeue;
 
-				beforeEach(function() {
+				beforeEach(() => {
 					dequeue = queue.dequeue();
 				});
 
-				it('the dequeue result should be kim', function() {
+				it('the dequeue result should be kim', () => {
 					expect(dequeue).toBe(kim);
 				});
 
-				it('should not be empty', function() {
+				it('should not be empty', () => {
 					expect(queue.empty()).toEqual(false);
 				});
 
-				describe('and a third object is dequeued', function() {
-					var dequeue;
+				describe('and a third object is dequeued', () => {
+					let dequeue;
 
-					beforeEach(function() {
+					beforeEach(() => {
 						dequeue = queue.dequeue();
 					});
 
-					it('the dequeue result should be bryan', function() {
+					it('the dequeue result should be bryan', () => {
 						expect(dequeue).toBe(bryan);
 					});
 
-					it('should be empty', function() {
+					it('should be empty', () => {
 						expect(queue.empty()).toEqual(true);
 					});
 				});
 			});
 		});
 
-		describe('and the queue is exported to an array', function() {
-			var a;
+		describe('and the queue is exported to an array', () => {
+			let a;
 
-			beforeEach(function() {
+			beforeEach(() => {
 				a = queue.toArray();
 			});
 
-			it('should return an array with three items', function() {
+			it('should return an array with three items', () => {
 				expect(a.length).toEqual(3);
 			});
 
-			it('the first item should be erica', function() {
+			it('the first item should be erica', () => {
 				expect(a[0]).toBe(erica);
 			});
 
-			it('the second item should be kim', function() {
+			it('the second item should be kim', () => {
 				expect(a[1]).toBe(kim);
 			});
 
-			it('the third item should be bryan', function() {
+			it('the third item should be bryan', () => {
 				expect(a[2]).toBe(bryan);
 			});
 
-			it('should not be empty', function() {
+			it('should not be empty', () => {
 				expect(queue.empty()).toEqual(false);
 			});
 		});
 
-		describe('and the queue is scanned', function() {
-			var spy;
+		describe('and the queue is scanned', () => {
+			let spy;
 
-			beforeEach(function() {
+			beforeEach(() => {
 				spy = jasmine.createSpy();
 
 				queue.scan(spy);
 			});
 
-			it('should call the delegate one time for each item in the queue', function() {
+			it('should call the delegate one time for each item in the queue', () => {
 				expect(spy.calls.count()).toEqual(3);
 			});
 
-			it('should pass erica to the delegate first', function() {
+			it('should pass erica to the delegate first', () => {
 				expect(spy.calls.argsFor(0)[0]).toBe(erica);
 			});
 
-			it('should pass kim to the delegate second', function() {
+			it('should pass kim to the delegate second', () => {
 				expect(spy.calls.argsFor(1)[0]).toBe(kim);
 			});
 
-			it('should pass bryan to the delegate thrid', function() {
+			it('should pass bryan to the delegate thrid', () => {
 				expect(spy.calls.argsFor(2)[0]).toBe(bryan);
 			});
 
-			it('should not be empty', function() {
+			it('should not be empty', () => {
 				expect(queue.empty()).toEqual(false);
 			});
 		});
 	});
 });
 
-describe('When a Queue is constructed, using a simple (ascending) numeric comparator', function() {
+describe('When a Queue is constructed, using a simple (ascending) numeric comparator', () => {
 	'use strict';
 
-	var queue;
+	let queue;
 
-	var comparator = function(a, b) {
+	let comparator = function(a, b) {
 		return a - b;
 	};
 
-	beforeEach(function() {
+	beforeEach(() => {
 		queue = new PriorityQueue(comparator);
 	});
 
-	describe('and the following values are enqueued: 3, 2, and 1', function() {
+	describe('and the following values are enqueued: 3, 2, and 1', () => {
 		beforeEach(function () {
 			queue.enqueue(3);
 			queue.enqueue(2);
 			queue.enqueue(1);
 		});
 
-		describe('and all items are dequeued', function() {
-			var a, b, c;
+		describe('and all items are dequeued', () => {
+			let a, b, c;
 
-			beforeEach(function() {
+			beforeEach(() => {
 				a = queue.dequeue();
 				b = queue.dequeue();
 				c = queue.dequeue();
 			});
 
-			it('the dequeued items should be ordered property', function() {
+			it('the dequeued items should be ordered property', () => {
 				expect(a).toEqual(1);
 				expect(b).toEqual(2);
 				expect(c).toEqual(3);
@@ -213,23 +213,23 @@ describe('When a Queue is constructed, using a simple (ascending) numeric compar
 		});
 	});
 
-	describe('and the following values are enqueued: 1, 2, and 3', function() {
+	describe('and the following values are enqueued: 1, 2, and 3', () => {
 		beforeEach(function () {
 			queue.enqueue(1);
 			queue.enqueue(2);
 			queue.enqueue(3);
 		});
 
-		describe('and all items are dequeued', function() {
-			var a, b, c;
+		describe('and all items are dequeued', () => {
+			let a, b, c;
 
-			beforeEach(function() {
+			beforeEach(() => {
 				a = queue.dequeue();
 				b = queue.dequeue();
 				c = queue.dequeue();
 			});
 
-			it('the dequeued items should be ordered property', function() {
+			it('the dequeued items should be ordered property', () => {
 				expect(a).toEqual(1);
 				expect(b).toEqual(2);
 				expect(c).toEqual(3);
@@ -237,23 +237,23 @@ describe('When a Queue is constructed, using a simple (ascending) numeric compar
 		});
 	});
 
-	describe('and the following values are enqueued: 2, 3, and 1', function() {
+	describe('and the following values are enqueued: 2, 3, and 1', () => {
 		beforeEach(function () {
 			queue.enqueue(2);
 			queue.enqueue(3);
 			queue.enqueue(1);
 		});
 
-		describe('and all items are dequeued', function() {
-			var a, b, c;
+		describe('and all items are dequeued', () => {
+			let a, b, c;
 
-			beforeEach(function() {
+			beforeEach(() => {
 				a = queue.dequeue();
 				b = queue.dequeue();
 				c = queue.dequeue();
 			});
 
-			it('the dequeued items should be ordered property', function() {
+			it('the dequeued items should be ordered property', () => {
 				expect(a).toEqual(1);
 				expect(b).toEqual(2);
 				expect(c).toEqual(3);
@@ -261,23 +261,23 @@ describe('When a Queue is constructed, using a simple (ascending) numeric compar
 		});
 	});
 
-	describe('and the following values are enqueued: 3, 1, 2', function() {
+	describe('and the following values are enqueued: 3, 1, 2', () => {
 		beforeEach(function () {
 			queue.enqueue(3);
 			queue.enqueue(1);
 			queue.enqueue(2);
 		});
 
-		describe('and all items are dequeued', function() {
-			var a, b, c;
+		describe('and all items are dequeued', () => {
+			let a, b, c;
 
-			beforeEach(function() {
+			beforeEach(() => {
 				a = queue.dequeue();
 				b = queue.dequeue();
 				c = queue.dequeue();
 			});
 
-			it('the dequeued items should be ordered property', function() {
+			it('the dequeued items should be ordered property', () => {
 				expect(a).toEqual(1);
 				expect(b).toEqual(2);
 				expect(c).toEqual(3);
@@ -285,7 +285,7 @@ describe('When a Queue is constructed, using a simple (ascending) numeric compar
 		});
 	});
 
-	describe('and the following values are enqueued: 3, 1, 2', function() {
+	describe('and the following values are enqueued: 3, 1, 2', () => {
 		beforeEach(function () {
 			queue.enqueue(8);
 			queue.enqueue(7);
@@ -298,10 +298,10 @@ describe('When a Queue is constructed, using a simple (ascending) numeric compar
 			queue.enqueue(5);
 		});
 
-		describe('and all items are dequeued', function() {
-			var a, b, c, d, e, f, g, h, i;
+		describe('and all items are dequeued', () => {
+			let a, b, c, d, e, f, g, h, i;
 
-			beforeEach(function() {
+			beforeEach(() => {
 				a = queue.dequeue();
 				b = queue.dequeue();
 				c = queue.dequeue();
@@ -313,7 +313,7 @@ describe('When a Queue is constructed, using a simple (ascending) numeric compar
 				i = queue.dequeue();
 			});
 
-			it('the dequeued items should be ordered property', function() {
+			it('the dequeued items should be ordered property', () => {
 				expect(a).toEqual(1);
 				expect(b).toEqual(2);
 				expect(c).toEqual(3);

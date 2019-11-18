@@ -1,47 +1,47 @@
-var Fail = require('./../../../specifications/Fail');
+const Fail = require('./../../../specifications/Fail');
 
-describe('When a Fail is constructed', function() {
+describe('When a Fail is constructed', () => {
 	'use strict';
 
-	var specification;
-	var specificationValue;
+	let specification;
+	let specificationValue;
 
-	beforeEach(function() {
+	beforeEach(() => {
 		specification = new Fail(specificationValue = 'ignored');
 	});
 
-	describe('and a string is evaluated', function() {
-		var result;
+	describe('and a string is evaluated', () => {
+		let result;
 
-		beforeEach(function() {
+		beforeEach(() => {
 			result = specification.evaluate('abc');
 		});
 
-		it('should not pass', function() {
+		it('should not pass', () => {
 			expect(result).toEqual(false);
 		});
 	});
 
-	describe('and a null value is evaluated', function() {
-		var result;
+	describe('and a null value is evaluated', () => {
+		let result;
 
-		beforeEach(function() {
+		beforeEach(() => {
 			result = specification.evaluate(null);
 		});
 
-		it('should not pass', function() {
+		it('should not pass', () => {
 			expect(result).toEqual(false);
 		});
 	});
 
-	describe('and an undefined value is evaluated', function() {
-		var result;
+	describe('and an undefined value is evaluated', () => {
+		let result;
 
-		beforeEach(function() {
+		beforeEach(() => {
 			result = specification.evaluate(undefined);
 		});
 
-		it('should not pass', function() {
+		it('should not pass', () => {
 			expect(result).toEqual(false);
 		});
 	});

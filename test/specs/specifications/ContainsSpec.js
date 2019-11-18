@@ -1,47 +1,47 @@
-var Contains = require('./../../../specifications/Contains');
+const Contains = require('./../../../specifications/Contains');
 
-describe('When a Contains is constructed', function() {
+describe('When a Contains is constructed', () => {
 	'use strict';
 
-	var specification;
-	var specificationValue;
+	let specification;
+	let specificationValue;
 
-	beforeEach(function() {
+	beforeEach(() => {
 		specification = new Contains(specificationValue = 'xyz');
 	});
 
-	describe('and an array, containing the desired value, is evaluated', function() {
-		var result;
+	describe('and an array, containing the desired value, is evaluated', () => {
+		let result;
 
-		beforeEach(function() {
+		beforeEach(() => {
 			result = specification.evaluate(['abc', 'def', specificationValue, 1, 2, 3]);
 		});
 
-		it('should pass', function() {
+		it('should pass', () => {
 			expect(result).toEqual(true);
 		});
 	});
 
-	describe('and an array, missing the desired value, is evaluated', function() {
-		var result;
+	describe('and an array, missing the desired value, is evaluated', () => {
+		let result;
 
-		beforeEach(function() {
+		beforeEach(() => {
 			result = specification.evaluate(['abc', 'def', 1, 2, 3]);
 		});
 
-		it('should fail', function() {
+		it('should fail', () => {
 			expect(result).toEqual(false);
 		});
 	});
 
-	describe('and an object is evaluated', function() {
-		var result;
+	describe('and an object is evaluated', () => {
+		let result;
 
-		beforeEach(function() {
+		beforeEach(() => {
 			result = specification.evaluate({ abc: 'xyz', xyz: 'abc' });
 		});
 
-		it('should fail', function() {
+		it('should fail', () => {
 			expect(result).toEqual(false);
 		});
 	});

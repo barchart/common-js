@@ -1,13 +1,13 @@
-var promise = require('./../../../lang/promise');
+const promise = require('./../../../lang/promise');
 
-describe('When a timeout is set for a promise', function() {
+describe('When a timeout is set for a promise', () => {
 	'use strict';
 
-	describe('on a promise that has already been resolved', function() {
-		var originalPromise;
-		var timeoutPromise;
+	describe('on a promise that has already been resolved', () => {
+		let originalPromise;
+		let timeoutPromise;
 
-		var result;
+		let result;
 
 		beforeEach(function () {
 			originalPromise = Promise.resolve(result = 'instant');
@@ -23,11 +23,11 @@ describe('When a timeout is set for a promise', function() {
 		});
 	});
 
-	describe('on a promise that has already been rejected', function() {
-		var originalPromise;
-		var timeoutPromise;
+	describe('on a promise that has already been rejected', () => {
+		let originalPromise;
+		let timeoutPromise;
 
-		var result;
+		let result;
 
 		beforeEach(function () {
 			originalPromise = Promise.reject(result = 'instant');
@@ -43,15 +43,15 @@ describe('When a timeout is set for a promise', function() {
 		});
 	});
 
-	describe('on a promise that resolves quickly', function() {
-		var originalPromise;
-		var timeoutPromise;
+	describe('on a promise that resolves quickly', () => {
+		let originalPromise;
+		let timeoutPromise;
 
-		var result;
+		let result;
 
 		beforeEach(function () {
 			originalPromise = new Promise(function (resolveCallback, rejectCallback) {
-				setTimeout(function() {
+				setTimeout(() => {
 					resolveCallback(result = 'quick');
 				}, 5);
 			});
@@ -68,15 +68,15 @@ describe('When a timeout is set for a promise', function() {
 		});
 	});
 
-	describe('on a promise that rejects quickly', function() {
-		var originalPromise;
-		var timeoutPromise;
+	describe('on a promise that rejects quickly', () => {
+		let originalPromise;
+		let timeoutPromise;
 
-		var result;
+		let result;
 
 		beforeEach(function () {
 			originalPromise = new Promise(function (resolveCallback, rejectCallback) {
-				setTimeout(function() {
+				setTimeout(() => {
 					rejectCallback(result = 'quick');
 				}, 5);
 			});
@@ -93,15 +93,15 @@ describe('When a timeout is set for a promise', function() {
 		});
 	});
 
-	describe('on a promise that resolves slowly', function() {
-		var originalPromise;
-		var timeoutPromise;
+	describe('on a promise that resolves slowly', () => {
+		let originalPromise;
+		let timeoutPromise;
 
-		var result;
+		let result;
 
 		beforeEach(function () {
 			originalPromise = new Promise(function (resolveCallback, rejectCallback) {
-				setTimeout(function() {
+				setTimeout(() => {
 					resolveCallback(result = 'slow');
 				}, 20);
 			});
@@ -118,15 +118,15 @@ describe('When a timeout is set for a promise', function() {
 		});
 	});
 
-	describe('on a promise that rejects slowly', function() {
-		var originalPromise;
-		var timeoutPromise;
+	describe('on a promise that rejects slowly', () => {
+		let originalPromise;
+		let timeoutPromise;
 
-		var result;
+		let result;
 
 		beforeEach(function () {
 			originalPromise = new Promise(function (resolveCallback, rejectCallback) {
-				setTimeout(function() {
+				setTimeout(() => {
 					rejectCallback(result = 'slow');
 				}, 20);
 			});
@@ -143,9 +143,9 @@ describe('When a timeout is set for a promise', function() {
 		});
 	});
 
-	describe('on a promise that will never resolve', function() {
-		var originalPromise;
-		var timeoutPromise;
+	describe('on a promise that will never resolve', () => {
+		let originalPromise;
+		let timeoutPromise;
 
 		beforeEach(function () {
 			originalPromise = new Promise(function (resolveCallback, rejectCallback) {
@@ -165,22 +165,22 @@ describe('When a timeout is set for a promise', function() {
 	});
 });
 
-describe('When using the "promise.map" function', function() {
+describe('When using the "promise.map" function', () => {
 	'use strict';
 
-	describe('with an asynchronous, promise-based mapper', function() {
-		describe('and the array has zero items', function() {
-			var mapPromise;
+	describe('with an asynchronous, promise-based mapper', () => {
+		describe('and the array has zero items', () => {
+			let mapPromise;
 
-			var mapItems;
-			var mapSpy;
+			let mapItems;
+			let mapSpy;
 
-			beforeEach(function() {
+			beforeEach(() => {
 				mapItems = [ ];
 			});
 
-			describe('and the concurrency level is zero', function() {
-				beforeEach(function() {
+			describe('and the concurrency level is zero', () => {
+				beforeEach(() => {
 					mapPromise = promise.map(mapItems, mapSpy = jasmine.createSpy('mapSpy'), 0);
 				});
 
@@ -201,8 +201,8 @@ describe('When using the "promise.map" function', function() {
 				});
 			});
 
-			describe('and the concurrency level is six', function() {
-				beforeEach(function() {
+			describe('and the concurrency level is six', () => {
+				beforeEach(() => {
 					mapPromise = promise.map(mapItems, mapSpy = jasmine.createSpy('mapSpy'), 6);
 				});
 
@@ -224,22 +224,22 @@ describe('When using the "promise.map" function', function() {
 			});
 		});
 
-		describe('and the array has three items', function() {
-			var mapPromise;
+		describe('and the array has three items', () => {
+			let mapPromise;
 
-			var mapItems;
-			var mapSpy;
+			let mapItems;
+			let mapSpy;
 
-			var first;
-			var second;
-			var third;
+			let first;
+			let second;
+			let third;
 
-			beforeEach(function() {
+			beforeEach(() => {
 				mapItems = [ first = { }, second = { }, third = { } ];
 			});
 
-			describe('and the concurrency level is zero', function() {
-				beforeEach(function() {
+			describe('and the concurrency level is zero', () => {
+				beforeEach(() => {
 					mapPromise = promise.map(mapItems, mapSpy = getMapSpy(), 0);
 				});
 
@@ -284,8 +284,8 @@ describe('When using the "promise.map" function', function() {
 				});
 			});
 
-			describe('and the concurrency level is one', function() {
-				beforeEach(function() {
+			describe('and the concurrency level is one', () => {
+				beforeEach(() => {
 					mapPromise = promise.map(mapItems, mapSpy = getMapSpy(), 1);
 				});
 
@@ -330,8 +330,8 @@ describe('When using the "promise.map" function', function() {
 				});
 			});
 
-			describe('and the concurrency level is two', function() {
-				beforeEach(function() {
+			describe('and the concurrency level is two', () => {
+				beforeEach(() => {
 					mapPromise = promise.map(mapItems, mapSpy = getMapSpy(), 2);
 				});
 
@@ -376,8 +376,8 @@ describe('When using the "promise.map" function', function() {
 				});
 			});
 
-			describe('and the concurrency level is three', function() {
-				beforeEach(function() {
+			describe('and the concurrency level is three', () => {
+				beforeEach(() => {
 					mapPromise = promise.map(mapItems, mapSpy = getMapSpy(), 3);
 				});
 
@@ -422,8 +422,8 @@ describe('When using the "promise.map" function', function() {
 				});
 			});
 
-			describe('and the concurrency level is four', function() {
-				beforeEach(function() {
+			describe('and the concurrency level is four', () => {
+				beforeEach(() => {
 					mapPromise = promise.map(mapItems, mapSpy = getMapSpy(), 4);
 				});
 
@@ -469,25 +469,25 @@ describe('When using the "promise.map" function', function() {
 			});
 		});
 
-		describe('and the array has four items (with a concurrency level of two)', function() {
-			var mapPromise;
+		describe('and the array has four items (with a concurrency level of two)', () => {
+			let mapPromise;
 
-			var mapItems;
-			var mapSpy;
+			let mapItems;
+			let mapSpy;
 
-			var first;
-			var second;
-			var third;
-			var fourth;
+			let first;
+			let second;
+			let third;
+			let fourth;
 
-			beforeEach(function() {
+			beforeEach(() => {
 				mapItems = [ first = { }, second = { }, third = { }, fourth = { } ];
 			});
 
-			describe('and the first item takes a long time to process', function() {
-				beforeEach(function() {
+			describe('and the first item takes a long time to process', () => {
+				beforeEach(() => {
 					mapPromise = promise.map(mapItems, mapSpy = jasmine.createSpy('mapSpy').and.callFake(function(item) {
-						var delay;
+						let delay;
 
 						if (item === first) {
 							delay = 30;
@@ -495,11 +495,11 @@ describe('When using the "promise.map" function', function() {
 							delay = 5;
 						}
 
-						var startDate = new Date();
+						let startDate = new Date();
 
 						return new Promise(function(resolveCallback, rejectCallback) {
-							setTimeout(function() {
-								var endDate = new Date();
+							setTimeout(() => {
+								let endDate = new Date();
 
 								resolveCallback({
 									item: item,
@@ -545,13 +545,13 @@ describe('When using the "promise.map" function', function() {
 			});
 		});
 
-		var getMapSpy = function() {
+		let getMapSpy = () => {
 			return jasmine.createSpy('mapSpy').and.callFake(function(item) {
-				var startDate = new Date();
+				let startDate = new Date();
 
 				return new Promise(function(resolveCallback, rejectCallback) {
-					setTimeout(function() {
-						var endDate = new Date();
+					setTimeout(() => {
+						let endDate = new Date();
 
 						resolveCallback({
 							item: item,
@@ -564,14 +564,14 @@ describe('When using the "promise.map" function', function() {
 		};
 	});
 
-	describe('with an synchronous mapper', function() {
-		describe('and the array has no items (with an infinite concurrency level)', function() {
-			var mapPromise;
+	describe('with an synchronous mapper', () => {
+		describe('and the array has no items (with an infinite concurrency level)', () => {
+			let mapPromise;
 
-			var mapItems;
-			var mapSpy;
+			let mapItems;
+			let mapSpy;
 
-			beforeEach(function() {
+			beforeEach(() => {
 				mapPromise = promise.map(mapItems = [ ], mapSpy = jasmine.createSpy('mapSpy'));
 			});
 
@@ -600,13 +600,13 @@ describe('When using the "promise.map" function', function() {
 			});
 		});
 
-		describe('and the array has two items (with an infinite concurrency level)', function() {
-			var mapPromise;
+		describe('and the array has two items (with an infinite concurrency level)', () => {
+			let mapPromise;
 
-			var mapItems;
-			var mapSpy;
+			let mapItems;
+			let mapSpy;
 
-			beforeEach(function() {
+			beforeEach(() => {
 				mapPromise = promise.map(mapItems = [ 'x', 'y' ], mapSpy = jasmine.createSpy('mapSpy'));
 			});
 
@@ -652,13 +652,13 @@ describe('When using the "promise.map" function', function() {
 		});
 	});
 
-	var getConcurrency = function(results, index) {
-		var current = results[index];
+	let getConcurrency = function(results, index) {
+		let current = results[index];
 
-		var concurrency = 0;
+		let concurrency = 0;
 
-		for (var i = 0; i < results.length; i++) {
-			var other = results[i];
+		for (let i = 0; i < results.length; i++) {
+			let other = results[i];
 
 			if (!(other.end <= current.start || other.start >= current.end)) {
 				concurrency = concurrency + 1;
@@ -668,10 +668,10 @@ describe('When using the "promise.map" function', function() {
 		return concurrency;
 	};
 
-	var getMaximumConcurrency = function(results) {
-		var maximum = 0;
+	let getMaximumConcurrency = function(results) {
+		let maximum = 0;
 
-		for (var i = 0; i < results.length; i++) {
+		for (let i = 0; i < results.length; i++) {
 			maximum = Math.max(getConcurrency(results, i), maximum);
 		}
 
@@ -679,14 +679,14 @@ describe('When using the "promise.map" function', function() {
 	};
 });
 
-describe('When processing a "pipeline" of promises', function() {
+describe('When processing a "pipeline" of promises', () => {
 	'use strict';
 
-	describe('and no executors are specified', function() {
-		var input;
-		var p;
+	describe('and no executors are specified', () => {
+		let input;
+		let p;
 
-		beforeEach(function() {
+		beforeEach(() => {
 			p = promise.pipeline([], input = { });
 		});
 
@@ -699,17 +699,17 @@ describe('When processing a "pipeline" of promises', function() {
 		});
 	});
 
-	describe('and one asynchronous executor is specified', function() {
-		var input;
+	describe('and one asynchronous executor is specified', () => {
+		let input;
 
-		var spyOne;
+		let spyOne;
 
-		var p;
+		let p;
 
-		beforeEach(function() {
-			var delayedSquare = function(x) {
+		beforeEach(() => {
+			let delayedSquare = function(x) {
 				return new Promise((resolveCallback) => {
-					setTimeout(function() {
+					setTimeout(() => {
 						resolveCallback(x * x);
 					}, 10);
 				});
@@ -737,18 +737,18 @@ describe('When processing a "pipeline" of promises', function() {
 		});
 	});
 
-	describe('and two asynchronous executors are specified', function() {
-		var input;
+	describe('and two asynchronous executors are specified', () => {
+		let input;
 
-		var spyOne;
-		var spyTwo;
+		let spyOne;
+		let spyTwo;
 
-		var p;
+		let p;
 
-		beforeEach(function() {
-			var delayedSquare = function(x) {
+		beforeEach(() => {
+			let delayedSquare = function(x) {
 				return new Promise((resolveCallback) => {
-					setTimeout(function() {
+					setTimeout(() => {
 						resolveCallback(x * x);
 					}, 10);
 				});
@@ -785,15 +785,15 @@ describe('When processing a "pipeline" of promises', function() {
 		});
 	});
 	
-	describe('and one synchronous executor is specified', function() {
-		var input;
+	describe('and one synchronous executor is specified', () => {
+		let input;
 
-		var spyOne;
+		let spyOne;
 
-		var p;
+		let p;
 
-		beforeEach(function() {
-			var synchronousSquare = function(x) {
+		beforeEach(() => {
+			let synchronousSquare = function(x) {
 				return x * x;
 			};
 
@@ -819,16 +819,16 @@ describe('When processing a "pipeline" of promises', function() {
 		});
 	});
 
-	describe('and two synchronous executors are specified', function() {
-		var input;
+	describe('and two synchronous executors are specified', () => {
+		let input;
 
-		var spyOne;
-		var spyTwo;
+		let spyOne;
+		let spyTwo;
 
-		var p;
+		let p;
 
-		beforeEach(function() {
-			var synchronousSquare = function(x) {
+		beforeEach(() => {
+			let synchronousSquare = function(x) {
 				return x * x;
 			};
 
@@ -863,20 +863,20 @@ describe('When processing a "pipeline" of promises', function() {
 		});
 	});
 
-	describe('and an executor throws an exception', function() {
-		var input;
+	describe('and an executor throws an exception', () => {
+		let input;
 
-		var spyOne;
-		var spyTwo;
+		let spyOne;
+		let spyTwo;
 
-		var p;
+		let p;
 
-		beforeEach(function() {
-			var synchronousException = function(x) {
+		beforeEach(() => {
+			let synchronousException = function(x) {
 				throw new Exception('oops');
 			};
 			
-			var synchronousSquare = function(x) {
+			let synchronousSquare = function(x) {
 				return x * x;
 			};
 
@@ -912,13 +912,13 @@ describe('When processing a "pipeline" of promises', function() {
 	});
 });
 
-describe('When "promise.build" is used to create a promise', function() {
+describe('When "promise.build" is used to create a promise', () => {
 	'use strict';
 
-	describe('and the executor resolves', function() {
-		var p;
+	describe('and the executor resolves', () => {
+		let p;
 
-		beforeEach(function() {
+		beforeEach(() => {
 			p = promise.build(function(r, x) {
 				r('ok');
 			});
@@ -933,10 +933,10 @@ describe('When "promise.build" is used to create a promise', function() {
 		});
 	});
 
-	describe('and the executor rejects', function() {
-		var p;
+	describe('and the executor rejects', () => {
+		let p;
 
-		beforeEach(function() {
+		beforeEach(() => {
 			p = promise.build(function(r, x) {
 				x('not ok');
 			});
@@ -951,11 +951,11 @@ describe('When "promise.build" is used to create a promise', function() {
 		});
 	});
 
-	describe('and the executor throws an error', function() {
-		var p;
-		var e;
+	describe('and the executor throws an error', () => {
+		let p;
+		let e;
 
-		beforeEach(function() {
+		beforeEach(() => {
 			p = promise.build(function(r, x) {
 				e = new Error('oops');
 

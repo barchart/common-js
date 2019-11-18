@@ -1,42 +1,42 @@
-var TimeMap = require('./../../../../collections/specialized/TimeMap');
+const TimeMap = require('./../../../../collections/specialized/TimeMap');
 
-describe('When an TimeMap is constructed (with a 10 millisecond time to live)', function() {
+describe('When an TimeMap is constructed (with a 10 millisecond time to live)', () => {
 	'use strict';
 
-	var map;
+	let map;
 
-	beforeEach(function() {
+	beforeEach(() => {
 		map = new TimeMap(10);
 	});
 
-	describe('and an item is added to the map', function() {
-		var key;
-		var item;
+	describe('and an item is added to the map', () => {
+		let key;
+		let item;
 
-		beforeEach(function() {
+		beforeEach(() => {
 			map.set(key = 'a', item = {});
 		});
 
-		it('should contain the key', function() {
+		it('should contain the key', () => {
 			expect(map.has(key)).toEqual(true);
 		});
 
-		it('should return the original value', function() {
+		it('should return the original value', () => {
 			expect(map.get(key)).toBe(item);
 		});
 
-		describe('and 15 milliseconds elapses', function() {
+		describe('and 15 milliseconds elapses', () => {
 			beforeEach(function(done) {
-				setTimeout(function() {
+				setTimeout(() => {
 					done();
 				}, 15);
 			});
 
-			it('should not contain the key', function() {
+			it('should not contain the key', () => {
 				expect(map.has(key)).toEqual(false);
 			});
 
-			it('should not return the original value', function() {
+			it('should not return the original value', () => {
 				expect(map.get(key)).toEqual(null);
 			});
 		});

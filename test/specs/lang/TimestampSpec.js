@@ -1,61 +1,61 @@
-var Timestamp = require('./../../../lang/Timestamp');
+const Timestamp = require('./../../../lang/Timestamp');
 
-describe('When Timestamp is created from a timestamp (1502372574350)', function() {
+describe('When Timestamp is created from a timestamp (1502372574350)', () => {
 	'use strict';
 
-	var instance;
+	let instance;
 
-	beforeEach(function() {
+	beforeEach(() => {
 		instance = new Timestamp(1502372574350);
 	});
 
-	it('should not have instantiated the underlying moment', function() {
+	it('should not have instantiated the underlying moment', () => {
 		expect(instance._moment).toEqual(null);
 	});
 
-	it('should know the timestamp', function() {
+	it('should know the timestamp', () => {
 		expect(instance.timestamp).toEqual(1502372574350);
 	});
 
-	describe('and the "moment" property is accessed', function() {
-		var m;
+	describe('and the "moment" property is accessed', () => {
+		let m;
 
-		beforeEach(function() {
+		beforeEach(() => {
 			m = instance.moment;
 		});
 
-		it('should not have instantiated the underlying moment', function() {
+		it('should not have instantiated the underlying moment', () => {
 			expect(instance._moment).not.toEqual(null);
 		});
 
-		it('should return a moment', function() {
+		it('should return a moment', () => {
 			expect(m.isValid()).toEqual(true);
 		});
 
-		describe('and the "moment" property is accessed (again)', function() {
-			var n;
+		describe('and the "moment" property is accessed (again)', () => {
+			let n;
 
-			beforeEach(function() {
+			beforeEach(() => {
 				n = instance.moment;
 			});
 
-			it('should return the same moment', function() {
+			it('should return the same moment', () => {
 				expect(m).toBe(n);
 			});
 		});
 	});
 });
 
-describe('When Timestamp is created for the current moment', function() {
+describe('When Timestamp is created for the current moment', () => {
 	'use strict';
 
-	var instance;
+	let instance;
 
-	beforeEach(function() {
+	beforeEach(() => {
 		instance = Timestamp.now();
 	});
 
-	it('should not be close to the current time', function() {
+	it('should not be close to the current time', () => {
 		const milliseconds = (new Date()).getTime();
 
 		expect(milliseconds - instance.timestamp < 500).toEqual(true);

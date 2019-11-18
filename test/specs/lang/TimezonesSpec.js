@@ -1,4 +1,4 @@
-var Timezones = require('./../../../lang/Timezones');
+let Timezones = require('./../../../lang/Timezones');
 
 describe('When accessing static items', () =>  {
 	'use strict';

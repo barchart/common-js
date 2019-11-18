@@ -1,9 +1,9 @@
-var formatter = require('./../../../lang/formatter');
+const formatter = require('./../../../lang/formatter');
 
-describe('When formatting numbers', function() {
+describe('When formatting numbers', () => {
 	'use strict';
 
-	it('formatting 123 with six digits (no separator, no parenthesis)', function() {
+	it('formatting 123 with six digits (no separator, no parenthesis)', () => {
 		expect(formatter.numberToString(123, 6)).toEqual('123.000000');
 	});
 });
