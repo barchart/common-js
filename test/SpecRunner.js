@@ -16292,10 +16292,10 @@ describe('When a FailureType is created with a template string that references r
     });
     describe('and the item is formatted', () => {
       let formatted;
-      beforeEach(function () {
+      beforeEach(() => {
         formatted = item.format(root);
       });
-      it('should match the expected output', function () {
+      it('should match the expected output', () => {
         expect(formatted).toEqual('This is a test of the Emergency Broadcast system.');
       });
     });
@@ -16328,10 +16328,10 @@ describe('When a FailureType is created with a template string that references w
     });
     describe('and the item is formatted', () => {
       let formatted;
-      beforeEach(function () {
+      beforeEach(() => {
         formatted = item.format(root);
       });
-      it('should match the expected output', function () {
+      it('should match the expected output', () => {
         expect(formatted).toEqual('I believe that "all cats are animals" is a true statement.');
       });
     });
@@ -16361,10 +16361,10 @@ describe('When a FailureType is created with a template string that references d
     });
     describe('and the item is formatted', () => {
       let formatted;
-      beforeEach(function () {
+      beforeEach(() => {
         formatted = item.format(root);
       });
-      it('should match the expected output', function () {
+      it('should match the expected output', () => {
         expect(formatted).toEqual('The first letter is lowercase: abraham Lincoln. The first letter is uppercase: Abraham Lincoln. All letters are lowercase: abraham lincoln. All letters are uppercase: ABRAHAM LINCOLN.');
       });
     });
@@ -16437,7 +16437,7 @@ describe('When a schema is validated', () => {
   });
   describe('and a valid schema is processed', () => {
     let result;
-    beforeEach(function (done) {
+    beforeEach(done => {
       FailureReason.validateSchema(schema, {
         first: 'bryan',
         last: 'ingle'
@@ -16453,7 +16453,7 @@ describe('When a schema is validated', () => {
   describe('and an invalid schema is processed (with one invalid property)', () => {
     let successResult = null;
     let failureResult = null;
-    beforeEach(function (done) {
+    beforeEach(done => {
       FailureReason.validateSchema(schema, {
         first: 'bryan'
       }).then(r => {
@@ -16474,7 +16474,7 @@ describe('When a schema is validated', () => {
   describe('and an invalid schema is processed (with two invalid properties)', () => {
     let successResult = null;
     let failureResult = null;
-    beforeEach(function (done) {
+    beforeEach(done => {
       FailureReason.validateSchema(schema, {}).then(r => {
         successResult = r;
         done();
@@ -16933,10 +16933,10 @@ describe('When a ComparatorBuilder is composed with two comparators', () => {
     }
   };
   beforeEach(() => {
-    comparatorOne = jasmine.createSpy('comparatorOne').and.callFake(function (a, b) {
+    comparatorOne = jasmine.createSpy('comparatorOne').and.callFake((a, b) => {
       return a.x - b.x;
     });
-    comparatorTwo = jasmine.createSpy('comparatorTwo').and.callFake(function (a, b) {
+    comparatorTwo = jasmine.createSpy('comparatorTwo').and.callFake((a, b) => {
       return a.y - b.y;
     });
     comparatorBuilder = ComparatorBuilder.startWith(comparatorOne).thenBy(comparatorTwo);
@@ -17347,7 +17347,7 @@ describe('When an DisposableStack is constructed', () => {
     let promise;
     let resolveAction;
     beforeEach(() => {
-      promise = new Promise(function (resolveCallback) {
+      promise = new Promise(resolveCallback => {
         resolveAction = resolveCallback;
       });
       DisposableStack.pushPromise(disposeStack, promise);
@@ -17355,7 +17355,7 @@ describe('When an DisposableStack is constructed', () => {
     describe('and the promise resolves', () => {
       let spyOne;
       let disposableOne;
-      beforeEach(function (done) {
+      beforeEach(done => {
         resolveAction(disposableOne = Disposable.fromAction(spyOne = jasmine.createSpy('spyOne')));
         promise.then(() => {
           done();
@@ -17376,9 +17376,9 @@ describe('When an DisposableStack is constructed', () => {
     let resolveActionOne;
     let resolveActionTwo;
     beforeEach(() => {
-      promise = Promise.all([new Promise(function (resolveCallback) {
+      promise = Promise.all([new Promise(resolveCallback => {
         resolveActionOne = resolveCallback;
-      }), new Promise(function (resolveCallback) {
+      }), new Promise(resolveCallback => {
         resolveActionTwo = resolveCallback;
       })]);
       DisposableStack.pushPromise(disposeStack, promise);
@@ -17389,7 +17389,7 @@ describe('When an DisposableStack is constructed', () => {
       let spyTwo;
       let disposableTwo;
       let disposeOrder;
-      beforeEach(function (done) {
+      beforeEach(done => {
         disposeOrder = [];
         resolveActionTwo(disposableTwo = Disposable.fromAction(spyTwo = jasmine.createSpy('spyTwo').and.callFake(() => {
           disposeOrder.push(disposableTwo);
@@ -17845,7 +17845,7 @@ describe('When an EvictingMap is constructed', () => {
     let c;
     let x;
     let y;
-    beforeEach(function () {
+    beforeEach(() => {
       a = {
         key: 'a'
       };
@@ -17905,7 +17905,7 @@ describe('When a Queue is constructed, using a "ladies first" comparator', () =>
 
   let queue;
 
-  let comparator = function (a, b) {
+  let comparator = (a, b) => {
     let aLady = a.lady ? -1 : 0;
     let bLady = b.lady ? -1 : 0;
     let result = aLady - bLady;
@@ -18050,7 +18050,7 @@ describe('When a Queue is constructed, using a simple (ascending) numeric compar
 
   let queue;
 
-  let comparator = function (a, b) {
+  let comparator = (a, b) => {
     return a - b;
   };
 
@@ -18058,7 +18058,7 @@ describe('When a Queue is constructed, using a simple (ascending) numeric compar
     queue = new PriorityQueue(comparator);
   });
   describe('and the following values are enqueued: 3, 2, and 1', () => {
-    beforeEach(function () {
+    beforeEach(() => {
       queue.enqueue(3);
       queue.enqueue(2);
       queue.enqueue(1);
@@ -18078,7 +18078,7 @@ describe('When a Queue is constructed, using a simple (ascending) numeric compar
     });
   });
   describe('and the following values are enqueued: 1, 2, and 3', () => {
-    beforeEach(function () {
+    beforeEach(() => {
       queue.enqueue(1);
       queue.enqueue(2);
       queue.enqueue(3);
@@ -18098,7 +18098,7 @@ describe('When a Queue is constructed, using a simple (ascending) numeric compar
     });
   });
   describe('and the following values are enqueued: 2, 3, and 1', () => {
-    beforeEach(function () {
+    beforeEach(() => {
       queue.enqueue(2);
       queue.enqueue(3);
       queue.enqueue(1);
@@ -18118,7 +18118,7 @@ describe('When a Queue is constructed, using a simple (ascending) numeric compar
     });
   });
   describe('and the following values are enqueued: 3, 1, 2', () => {
-    beforeEach(function () {
+    beforeEach(() => {
       queue.enqueue(3);
       queue.enqueue(1);
       queue.enqueue(2);
@@ -18138,7 +18138,7 @@ describe('When a Queue is constructed, using a simple (ascending) numeric compar
     });
   });
   describe('and the following values are enqueued: 3, 1, 2', () => {
-    beforeEach(function () {
+    beforeEach(() => {
       queue.enqueue(8);
       queue.enqueue(7);
       queue.enqueue(9);
@@ -18200,7 +18200,7 @@ describe('When an TimeMap is constructed (with a 10 millisecond time to live)', 
       expect(map.get(key)).toBe(item);
     });
     describe('and 15 milliseconds elapses', () => {
-      beforeEach(function (done) {
+      beforeEach(done => {
         setTimeout(() => {
           done();
         }, 15);
@@ -18335,7 +18335,7 @@ describe('When a MappedCommandHandler is created with two mapped commands', () =
     selectorTwo = 'two';
     resultOne = 'a';
     resultTwo = 'b';
-    commandHandler = new MappedCommandHandler(function (data) {
+    commandHandler = new MappedCommandHandler(data => {
       return data.commandType || null;
     });
     commandHandler.addCommandHandler(selectorOne, CommandHandler.fromFunction(spyOne = jasmine.createSpy('spyOne').and.callFake(() => {
@@ -18572,77 +18572,77 @@ describe('When checking to see if a Day is valid', () => {
 describe('When adding days to a Day', () => {
   'use strict';
 
-  it('should return January 2, 2017 when adding 1 day to January 1, 2017', function () {
+  it('should return January 2, 2017 when adding 1 day to January 1, 2017', () => {
     const now = new Day(2017, 1, 1);
     const then = now.addDays(1);
     expect(then.year).toEqual(2017);
     expect(then.month).toEqual(1);
     expect(then.day).toEqual(2);
   });
-  it('should return March 1, 2017 when adding 1 day to Feb 28, 2017', function () {
+  it('should return March 1, 2017 when adding 1 day to Feb 28, 2017', () => {
     const now = new Day(2017, 2, 28);
     const then = now.addDays(1);
     expect(then.year).toEqual(2017);
     expect(then.month).toEqual(3);
     expect(then.day).toEqual(1);
   });
-  it('should return Feb 29, 2020 when adding 1 day Feb 28, 2020', function () {
+  it('should return Feb 29, 2020 when adding 1 day Feb 28, 2020', () => {
     const now = new Day(2020, 2, 28);
     const then = now.addDays(1);
     expect(then.year).toEqual(2020);
     expect(then.month).toEqual(2);
     expect(then.day).toEqual(29);
   });
-  it('should return Aug 18, 2018 when adding 400 days to Jul 14, 2017', function () {
+  it('should return Aug 18, 2018 when adding 400 days to Jul 14, 2017', () => {
     const now = new Day(2017, 7, 14);
     const then = now.addDays(400);
     expect(then.year).toEqual(2018);
     expect(then.month).toEqual(8);
     expect(then.day).toEqual(18);
   });
-  it('should return Aug 18, 2017 when subtracting 1 day from Aug 19, 2017 (using inverse)', function () {
+  it('should return Aug 18, 2017 when subtracting 1 day from Aug 19, 2017 (using inverse)', () => {
     const now = new Day(2017, 8, 19);
     const then = now.subtractDays(1);
     expect(then.year).toEqual(2017);
     expect(then.month).toEqual(8);
     expect(then.day).toEqual(18);
   });
-  it('should return Aug 18, 2017 when adding 1 "inverse" day to Aug 19, 2017', function () {
+  it('should return Aug 18, 2017 when adding 1 "inverse" day to Aug 19, 2017', () => {
     const now = new Day(2017, 8, 19);
     const then = now.addDays(1, true);
     expect(then.year).toEqual(2017);
     expect(then.month).toEqual(8);
     expect(then.day).toEqual(18);
   });
-  it('should return Aug 18, 2017 when adding -1 day to Aug 19, 2017', function () {
+  it('should return Aug 18, 2017 when adding -1 day to Aug 19, 2017', () => {
     const now = new Day(2017, 8, 19);
     const then = now.addDays(-1);
     expect(then.year).toEqual(2017);
     expect(then.month).toEqual(8);
     expect(then.day).toEqual(18);
   });
-  it('should return Jul 30, 2017 when subtracting 2 days from Aug 1, 2017', function () {
+  it('should return Jul 30, 2017 when subtracting 2 days from Aug 1, 2017', () => {
     const now = new Day(2017, 8, 1);
     const then = now.addDays(2, true);
     expect(then.year).toEqual(2017);
     expect(then.month).toEqual(7);
     expect(then.day).toEqual(30);
   });
-  it('should return Dec 31, 2017 when subtracting 2 days from Jan 10, 2018', function () {
+  it('should return Dec 31, 2017 when subtracting 2 days from Jan 10, 2018', () => {
     const now = new Day(2018, 1, 10);
     const then = now.addDays(10, true);
     expect(then.year).toEqual(2017);
     expect(then.month).toEqual(12);
     expect(then.day).toEqual(31);
   });
-  it('should return Feb 29, 2020 when subtracting 1 day from Mar 1, 2020', function () {
+  it('should return Feb 29, 2020 when subtracting 1 day from Mar 1, 2020', () => {
     const now = new Day(2020, 3, 1);
     const then = now.addDays(1, true);
     expect(then.year).toEqual(2020);
     expect(then.month).toEqual(2);
     expect(then.day).toEqual(29);
   });
-  it('should return Mar 1, 2020 when adding 0 days from Mar 1, 2020', function () {
+  it('should return Mar 1, 2020 when adding 0 days from Mar 1, 2020', () => {
     const now = new Day(2020, 3, 1);
     const then = now.addDays(0);
     expect(then.year).toEqual(2020);
@@ -18653,28 +18653,28 @@ describe('When adding days to a Day', () => {
 describe('When adding months to a Day', () => {
   'use strict';
 
-  it('should return January 2, 2017 when adding 13 months to December 2, 2015', function () {
+  it('should return January 2, 2017 when adding 13 months to December 2, 2015', () => {
     const now = new Day(2015, 12, 2);
     const then = now.addMonths(13);
     expect(then.year).toEqual(2017);
     expect(then.month).toEqual(1);
     expect(then.day).toEqual(2);
   });
-  it('should return December 2, 2015 when subtracting 13 months from January 2, 2017', function () {
+  it('should return December 2, 2015 when subtracting 13 months from January 2, 2017', () => {
     const now = new Day(2017, 1, 2);
     const then = now.subtractMonths(13);
     expect(then.year).toEqual(2015);
     expect(then.month).toEqual(12);
     expect(then.day).toEqual(2);
   });
-  it('should return February 28, 2018 when adding a month to January 30, 2018', function () {
+  it('should return February 28, 2018 when adding a month to January 30, 2018', () => {
     const now = new Day(2018, 1, 30);
     const then = now.addMonths(1);
     expect(then.year).toEqual(2018);
     expect(then.month).toEqual(2);
     expect(then.day).toEqual(28);
   });
-  it('should return February 28, 2018 when subtracting a month to March 29, 2018', function () {
+  it('should return February 28, 2018 when subtracting a month to March 29, 2018', () => {
     const now = new Day(2018, 3, 29);
     const then = now.subtractMonths(1);
     expect(then.year).toEqual(2018);
@@ -18685,49 +18685,49 @@ describe('When adding months to a Day', () => {
 describe('When adding years to a Day', () => {
   'use strict';
 
-  it('should return January 2, 2017 when adding 3 years to January 2, 2014', function () {
+  it('should return January 2, 2017 when adding 3 years to January 2, 2014', () => {
     const now = new Day(2014, 1, 2);
     const then = now.addYears(3);
     expect(then.year).toEqual(2017);
     expect(then.month).toEqual(1);
     expect(then.day).toEqual(2);
   });
-  it('should return January 2, 2014 when subtracting 3 years to January 2, 2017', function () {
+  it('should return January 2, 2014 when subtracting 3 years to January 2, 2017', () => {
     const now = new Day(2017, 1, 2);
     const then = now.subtractYears(3);
     expect(then.year).toEqual(2014);
     expect(then.month).toEqual(1);
     expect(then.day).toEqual(2);
   });
-  it('should return February 29, 2020 when adding 4 years to February 29, 2016', function () {
+  it('should return February 29, 2020 when adding 4 years to February 29, 2016', () => {
     const now = new Day(2016, 2, 29);
     const then = now.addYears(4);
     expect(then.year).toEqual(2020);
     expect(then.month).toEqual(2);
     expect(then.day).toEqual(29);
   });
-  it('should return February 29, 2016 when subtracting 4 years to February 29, 2020', function () {
+  it('should return February 29, 2016 when subtracting 4 years to February 29, 2020', () => {
     const now = new Day(2020, 2, 29);
     const then = now.subtractYears(4);
     expect(then.year).toEqual(2016);
     expect(then.month).toEqual(2);
     expect(then.day).toEqual(29);
   });
-  it('should return February 28, 2019 when adding 3 years to February 29, 2016', function () {
+  it('should return February 28, 2019 when adding 3 years to February 29, 2016', () => {
     const now = new Day(2016, 2, 29);
     const then = now.addYears(3);
     expect(then.year).toEqual(2019);
     expect(then.month).toEqual(2);
     expect(then.day).toEqual(28);
   });
-  it('should return February 28, 2016 when subtracting 3 years to February 28, 2019', function () {
+  it('should return February 28, 2016 when subtracting 3 years to February 28, 2019', () => {
     const now = new Day(2019, 2, 28);
     const then = now.subtractYears(3);
     expect(then.year).toEqual(2016);
     expect(then.month).toEqual(2);
     expect(then.day).toEqual(28);
   });
-  it('should return February 28, 2019 when subtracting 1 years to February 29, 2020', function () {
+  it('should return February 28, 2019 when subtracting 1 years to February 29, 2020', () => {
     const now = new Day(2020, 2, 29);
     const then = now.subtractYears(1);
     expect(then.year).toEqual(2019);
@@ -19638,7 +19638,7 @@ describe('when reducing an array of objects to unique values', () => {
         x: 2
       }, six = {
         x: 3
-      }], function (obj) {
+      }], obj => {
         return obj.x;
       });
     });
@@ -19806,7 +19806,7 @@ describe('when grouping an array', () => {
         value: 2
       }, {
         value: 1
-      }], function (item) {
+      }], item => {
         return item.value;
       });
     });
@@ -19850,7 +19850,7 @@ describe('when grouping an array', () => {
           value: 2
         }, three = {
           value: 3
-        }], function (item) {
+        }], item => {
           return item.value;
         });
       });
@@ -19893,7 +19893,7 @@ describe('when batching an array', () => {
         value: 'c'
       }, five = {
         value: 'c'
-      }], function (item) {
+      }], item => {
         return item.value;
       });
     });
@@ -19924,7 +19924,7 @@ describe('when batching an array', () => {
         value: 'a'
       }, five = {
         value: 'a'
-      }], function (item) {
+      }], item => {
         return item.value;
       });
     });
@@ -20453,7 +20453,7 @@ describe('when removing an item from an array using a predicate', () => {
   beforeEach(() => {
     a = [{}, item = {}, {}];
 
-    let predicate = function (i) {
+    let predicate = i => {
       return i === item;
     };
 
@@ -21880,7 +21880,7 @@ describe('When using memoize.simple', () => {
     let counter;
     beforeEach(() => {
       counter = 0;
-      spy = jasmine.createSpy('spy').and.callFake(function (x) {
+      spy = jasmine.createSpy('spy').and.callFake(x => {
         counter = counter + 1;
         return counter;
       });
@@ -21919,16 +21919,16 @@ describe('When using memoize.simple', () => {
       describe("and the memoized function is called with another value", () => {
         let paramTwo;
         let resultTwo;
-        beforeEach(function () {
+        beforeEach(() => {
           resultTwo = memo(paramTwo = 'b');
         });
-        it('the memoized function to have been called', function () {
+        it('the memoized function to have been called', () => {
           expect(spy.calls.count()).toEqual(2);
         });
-        it('the memoized function to have been called with the correct parameters', function () {
+        it('the memoized function to have been called with the correct parameters', () => {
           expect(spy).toHaveBeenCalledWith(paramTwo);
         });
-        it('the result should be a number', function () {
+        it('the result should be a number', () => {
           expect(typeof resultTwo).toEqual('number');
         });
       });
@@ -21944,7 +21944,7 @@ describe('When using memoize.cache', () => {
     let counter;
     beforeEach(() => {
       counter = 0;
-      spy = jasmine.createSpy('spy').and.callFake(function (x) {
+      spy = jasmine.createSpy('spy').and.callFake(x => {
         counter = counter + 1;
         return counter;
       });
@@ -21979,16 +21979,16 @@ describe('When using memoize.cache', () => {
       });
       describe("and the memoized function is called after the cache expires", () => {
         let resultThree;
-        beforeEach(function (done) {
+        beforeEach(done => {
           setTimeout(() => {
             resultThree = memo();
             done();
           }, 15);
         });
-        it('the memoized function to have been called again', function () {
+        it('the memoized function to have been called again', () => {
           expect(spy.calls.count()).toEqual(2);
         });
-        it('the result should be two', function () {
+        it('the result should be two', () => {
           expect(resultThree).toEqual(2);
         });
       });
@@ -22227,7 +22227,7 @@ describe('When running a deep comparison', () => {
             name: ['Elvis', 'Presley'],
             home: {
               name: 'Graceland',
-              equals: function (other) {
+              equals: other => {
                 return other.name === 'Graceland';
               }
             }
@@ -22240,7 +22240,7 @@ describe('When running a deep comparison', () => {
             name: ['Elvis', 'Presley'],
             home: {
               name: 'Graceland',
-              equals: function (other) {
+              equals: other => {
                 return other.name === 'Graceland';
               }
             }
@@ -22332,12 +22332,12 @@ describe('When a timeout is set for a promise', () => {
     let originalPromise;
     let timeoutPromise;
     let result;
-    beforeEach(function () {
+    beforeEach(() => {
       originalPromise = Promise.resolve(result = 'instant');
       timeoutPromise = promise.timeout(originalPromise, 10);
     });
-    it('it will resolve', function (done) {
-      timeoutPromise.then(function (r) {
+    it('it will resolve', done => {
+      timeoutPromise.then(r => {
         expect(r).toBe(result);
         done();
       });
@@ -22347,12 +22347,12 @@ describe('When a timeout is set for a promise', () => {
     let originalPromise;
     let timeoutPromise;
     let result;
-    beforeEach(function () {
+    beforeEach(() => {
       originalPromise = Promise.reject(result = 'instant');
       timeoutPromise = promise.timeout(originalPromise, 10);
     });
-    it('it reject normally', function (done) {
-      timeoutPromise.catch(function (r) {
+    it('it reject normally', done => {
+      timeoutPromise.catch(r => {
         expect(r).toBe(result);
         done();
       });
@@ -22362,16 +22362,16 @@ describe('When a timeout is set for a promise', () => {
     let originalPromise;
     let timeoutPromise;
     let result;
-    beforeEach(function () {
-      originalPromise = new Promise(function (resolveCallback, rejectCallback) {
+    beforeEach(() => {
+      originalPromise = new Promise((resolveCallback, rejectCallback) => {
         setTimeout(() => {
           resolveCallback(result = 'quick');
         }, 5);
       });
       timeoutPromise = promise.timeout(originalPromise, 10);
     });
-    it('it will resolve', function (done) {
-      timeoutPromise.then(function (r) {
+    it('it will resolve', done => {
+      timeoutPromise.then(r => {
         expect(r).toBe(result);
         done();
       });
@@ -22381,16 +22381,16 @@ describe('When a timeout is set for a promise', () => {
     let originalPromise;
     let timeoutPromise;
     let result;
-    beforeEach(function () {
-      originalPromise = new Promise(function (resolveCallback, rejectCallback) {
+    beforeEach(() => {
+      originalPromise = new Promise((resolveCallback, rejectCallback) => {
         setTimeout(() => {
           rejectCallback(result = 'quick');
         }, 5);
       });
       timeoutPromise = promise.timeout(originalPromise, 10);
     });
-    it('it reject normally', function (done) {
-      timeoutPromise.catch(function (r) {
+    it('it reject normally', done => {
+      timeoutPromise.catch(r => {
         expect(r).toBe(result);
         done();
       });
@@ -22400,16 +22400,16 @@ describe('When a timeout is set for a promise', () => {
     let originalPromise;
     let timeoutPromise;
     let result;
-    beforeEach(function () {
-      originalPromise = new Promise(function (resolveCallback, rejectCallback) {
+    beforeEach(() => {
+      originalPromise = new Promise((resolveCallback, rejectCallback) => {
         setTimeout(() => {
           resolveCallback(result = 'slow');
         }, 20);
       });
       timeoutPromise = promise.timeout(originalPromise, 10);
     });
-    it('will reject due to timeout', function (done) {
-      timeoutPromise.catch(function () {
+    it('will reject due to timeout', done => {
+      timeoutPromise.catch(() => {
         expect(true).toBe(true);
         done();
       });
@@ -22419,16 +22419,16 @@ describe('When a timeout is set for a promise', () => {
     let originalPromise;
     let timeoutPromise;
     let result;
-    beforeEach(function () {
-      originalPromise = new Promise(function (resolveCallback, rejectCallback) {
+    beforeEach(() => {
+      originalPromise = new Promise((resolveCallback, rejectCallback) => {
         setTimeout(() => {
           rejectCallback(result = 'slow');
         }, 20);
       });
       timeoutPromise = promise.timeout(originalPromise, 10);
     });
-    it('it reject normally', function (done) {
-      timeoutPromise.catch(function (r) {
+    it('it reject normally', done => {
+      timeoutPromise.catch(r => {
         expect(r).not.toBe(result);
         done();
       });
@@ -22437,14 +22437,14 @@ describe('When a timeout is set for a promise', () => {
   describe('on a promise that will never resolve', () => {
     let originalPromise;
     let timeoutPromise;
-    beforeEach(function () {
-      originalPromise = new Promise(function (resolveCallback, rejectCallback) {
+    beforeEach(() => {
+      originalPromise = new Promise((resolveCallback, rejectCallback) => {
         return;
       });
       timeoutPromise = promise.timeout(originalPromise, 10);
     });
-    it('will reject due to timeout', function (done) {
-      timeoutPromise.catch(function () {
+    it('will reject due to timeout', done => {
+      timeoutPromise.catch(() => {
         expect(true).toBe(true);
         done();
       });
@@ -22466,14 +22466,14 @@ describe('When using the "promise.map" function', () => {
         beforeEach(() => {
           mapPromise = promise.map(mapItems, mapSpy = jasmine.createSpy('mapSpy'), 0);
         });
-        it('the result should be an empty array', function (done) {
-          mapPromise.then(function (results) {
+        it('the result should be an empty array', done => {
+          mapPromise.then(results => {
             expect(results.length).toEqual(0);
             done();
           });
         });
-        it('the mapping function should not have been called', function (done) {
-          mapPromise.then(function (results) {
+        it('the mapping function should not have been called', done => {
+          mapPromise.then(results => {
             expect(mapSpy).not.toHaveBeenCalled();
             done();
           });
@@ -22483,14 +22483,14 @@ describe('When using the "promise.map" function', () => {
         beforeEach(() => {
           mapPromise = promise.map(mapItems, mapSpy = jasmine.createSpy('mapSpy'), 6);
         });
-        it('the result should be an empty array', function (done) {
-          mapPromise.then(function (results) {
+        it('the result should be an empty array', done => {
+          mapPromise.then(results => {
             expect(results.length).toEqual(0);
             done();
           });
         });
-        it('the mapping function should not have been called', function (done) {
-          mapPromise.then(function (results) {
+        it('the mapping function should not have been called', done => {
+          mapPromise.then(results => {
             expect(mapSpy).not.toHaveBeenCalled();
             done();
           });
@@ -22511,32 +22511,32 @@ describe('When using the "promise.map" function', () => {
         beforeEach(() => {
           mapPromise = promise.map(mapItems, mapSpy = getMapSpy(), 0);
         });
-        it('the maximum concurrency level should be three', function (done) {
-          mapPromise.then(function (results) {
+        it('the maximum concurrency level should be three', done => {
+          mapPromise.then(results => {
             expect(getMaximumConcurrency(results)).toEqual(3);
             done();
           });
         });
-        it('the actual concurrency for the first item should be three', function (done) {
-          mapPromise.then(function (results) {
+        it('the actual concurrency for the first item should be three', done => {
+          mapPromise.then(results => {
             expect(getConcurrency(results, 0)).toEqual(3);
             done();
           });
         });
-        it('the result for the first item should be first', function (done) {
-          mapPromise.then(function (results) {
+        it('the result for the first item should be first', done => {
+          mapPromise.then(results => {
             expect(results[0].item).toBe(first);
             done();
           });
         });
-        it('the result for the second item should be second', function (done) {
-          mapPromise.then(function (results) {
+        it('the result for the second item should be second', done => {
+          mapPromise.then(results => {
             expect(results[1].item).toBe(second);
             done();
           });
         });
-        it('the result for the third item should be third', function (done) {
-          mapPromise.then(function (results) {
+        it('the result for the third item should be third', done => {
+          mapPromise.then(results => {
             expect(results[2].item).toBe(third);
             done();
           });
@@ -22546,32 +22546,32 @@ describe('When using the "promise.map" function', () => {
         beforeEach(() => {
           mapPromise = promise.map(mapItems, mapSpy = getMapSpy(), 1);
         });
-        it('the maximum concurrency level should be one', function (done) {
-          mapPromise.then(function (results) {
+        it('the maximum concurrency level should be one', done => {
+          mapPromise.then(results => {
             expect(getMaximumConcurrency(results)).toEqual(1);
             done();
           });
         });
-        it('the actual concurrency for the first item should be one', function (done) {
-          mapPromise.then(function (results) {
+        it('the actual concurrency for the first item should be one', done => {
+          mapPromise.then(results => {
             expect(getConcurrency(results, 0)).toEqual(1);
             done();
           });
         });
-        it('the result for the first item should be first', function (done) {
-          mapPromise.then(function (results) {
+        it('the result for the first item should be first', done => {
+          mapPromise.then(results => {
             expect(results[0].item).toBe(first);
             done();
           });
         });
-        it('the result for the second item should be second', function (done) {
-          mapPromise.then(function (results) {
+        it('the result for the second item should be second', done => {
+          mapPromise.then(results => {
             expect(results[1].item).toBe(second);
             done();
           });
         });
-        it('the result for the third item should be third', function (done) {
-          mapPromise.then(function (results) {
+        it('the result for the third item should be third', done => {
+          mapPromise.then(results => {
             expect(results[2].item).toBe(third);
             done();
           });
@@ -22581,32 +22581,32 @@ describe('When using the "promise.map" function', () => {
         beforeEach(() => {
           mapPromise = promise.map(mapItems, mapSpy = getMapSpy(), 2);
         });
-        it('the maximum concurrency level should be two', function (done) {
-          mapPromise.then(function (results) {
+        it('the maximum concurrency level should be two', done => {
+          mapPromise.then(results => {
             expect(getMaximumConcurrency(results)).toEqual(2);
             done();
           });
         });
-        it('the actual concurrency for the first item should be two', function (done) {
-          mapPromise.then(function (results) {
+        it('the actual concurrency for the first item should be two', done => {
+          mapPromise.then(results => {
             expect(getConcurrency(results, 0)).toEqual(2);
             done();
           });
         });
-        it('the result for the first item should be first', function (done) {
-          mapPromise.then(function (results) {
+        it('the result for the first item should be first', done => {
+          mapPromise.then(results => {
             expect(results[0].item).toBe(first);
             done();
           });
         });
-        it('the result for the second item should be second', function (done) {
-          mapPromise.then(function (results) {
+        it('the result for the second item should be second', done => {
+          mapPromise.then(results => {
             expect(results[1].item).toBe(second);
             done();
           });
         });
-        it('the result for the third item should be third', function (done) {
-          mapPromise.then(function (results) {
+        it('the result for the third item should be third', done => {
+          mapPromise.then(results => {
             expect(results[2].item).toBe(third);
             done();
           });
@@ -22616,32 +22616,32 @@ describe('When using the "promise.map" function', () => {
         beforeEach(() => {
           mapPromise = promise.map(mapItems, mapSpy = getMapSpy(), 3);
         });
-        it('the maximum concurrency level should be three', function (done) {
-          mapPromise.then(function (results) {
+        it('the maximum concurrency level should be three', done => {
+          mapPromise.then(results => {
             expect(getMaximumConcurrency(results)).toEqual(3);
             done();
           });
         });
-        it('the actual concurrency for the first item should be three', function (done) {
-          mapPromise.then(function (results) {
+        it('the actual concurrency for the first item should be three', done => {
+          mapPromise.then(results => {
             expect(getConcurrency(results, 0)).toEqual(3);
             done();
           });
         });
-        it('the result for the first item should be first', function (done) {
-          mapPromise.then(function (results) {
+        it('the result for the first item should be first', done => {
+          mapPromise.then(results => {
             expect(results[0].item).toBe(first);
             done();
           });
         });
-        it('the result for the second item should be second', function (done) {
-          mapPromise.then(function (results) {
+        it('the result for the second item should be second', done => {
+          mapPromise.then(results => {
             expect(results[1].item).toBe(second);
             done();
           });
         });
-        it('the result for the third item should be third', function (done) {
-          mapPromise.then(function (results) {
+        it('the result for the third item should be third', done => {
+          mapPromise.then(results => {
             expect(results[2].item).toBe(third);
             done();
           });
@@ -22651,32 +22651,32 @@ describe('When using the "promise.map" function', () => {
         beforeEach(() => {
           mapPromise = promise.map(mapItems, mapSpy = getMapSpy(), 4);
         });
-        it('the maximum concurrency level should be three', function (done) {
-          mapPromise.then(function (results) {
+        it('the maximum concurrency level should be three', done => {
+          mapPromise.then(results => {
             expect(getMaximumConcurrency(results)).toEqual(3);
             done();
           });
         });
-        it('the actual concurrency for the first item should be three', function (done) {
-          mapPromise.then(function (results) {
+        it('the actual concurrency for the first item should be three', done => {
+          mapPromise.then(results => {
             expect(getConcurrency(results, 0)).toEqual(3);
             done();
           });
         });
-        it('the result for the first item should be first', function (done) {
-          mapPromise.then(function (results) {
+        it('the result for the first item should be first', done => {
+          mapPromise.then(results => {
             expect(results[0].item).toBe(first);
             done();
           });
         });
-        it('the result for the second item should be second', function (done) {
-          mapPromise.then(function (results) {
+        it('the result for the second item should be second', done => {
+          mapPromise.then(results => {
             expect(results[1].item).toBe(second);
             done();
           });
         });
-        it('the result for the third item should be third', function (done) {
-          mapPromise.then(function (results) {
+        it('the result for the third item should be third', done => {
+          mapPromise.then(results => {
             expect(results[2].item).toBe(third);
             done();
           });
@@ -22696,7 +22696,7 @@ describe('When using the "promise.map" function', () => {
       });
       describe('and the first item takes a long time to process', () => {
         beforeEach(() => {
-          mapPromise = promise.map(mapItems, mapSpy = jasmine.createSpy('mapSpy').and.callFake(function (item) {
+          mapPromise = promise.map(mapItems, mapSpy = jasmine.createSpy('mapSpy').and.callFake(item => {
             let delay;
 
             if (item === first) {
@@ -22706,7 +22706,7 @@ describe('When using the "promise.map" function', () => {
             }
 
             let startDate = new Date();
-            return new Promise(function (resolveCallback, rejectCallback) {
+            return new Promise((resolveCallback, rejectCallback) => {
               setTimeout(() => {
                 let endDate = new Date();
                 resolveCallback({
@@ -22718,26 +22718,26 @@ describe('When using the "promise.map" function', () => {
             });
           }), 2);
         });
-        it('the result for the first item should be first', function (done) {
-          mapPromise.then(function (results) {
+        it('the result for the first item should be first', done => {
+          mapPromise.then(results => {
             expect(results[0].item).toBe(first);
             done();
           });
         });
-        it('the result for the second item should be second', function (done) {
-          mapPromise.then(function (results) {
+        it('the result for the second item should be second', done => {
+          mapPromise.then(results => {
             expect(results[1].item).toBe(second);
             done();
           });
         });
-        it('the result for the third item should be third', function (done) {
-          mapPromise.then(function (results) {
+        it('the result for the third item should be third', done => {
+          mapPromise.then(results => {
             expect(results[2].item).toBe(third);
             done();
           });
         });
-        it('the result for the fourth item should be fourth', function (done) {
-          mapPromise.then(function (results) {
+        it('the result for the fourth item should be fourth', done => {
+          mapPromise.then(results => {
             expect(results[3].item).toBe(fourth);
             done();
           });
@@ -22746,9 +22746,9 @@ describe('When using the "promise.map" function', () => {
     });
 
     let getMapSpy = () => {
-      return jasmine.createSpy('mapSpy').and.callFake(function (item) {
+      return jasmine.createSpy('mapSpy').and.callFake(item => {
         let startDate = new Date();
-        return new Promise(function (resolveCallback, rejectCallback) {
+        return new Promise((resolveCallback, rejectCallback) => {
           setTimeout(() => {
             let endDate = new Date();
             resolveCallback({
@@ -22769,20 +22769,20 @@ describe('When using the "promise.map" function', () => {
       beforeEach(() => {
         mapPromise = promise.map(mapItems = [], mapSpy = jasmine.createSpy('mapSpy'));
       });
-      it('the result will be an array', function (done) {
-        mapPromise.then(function (results) {
+      it('the result will be an array', done => {
+        mapPromise.then(results => {
           expect(results instanceof Array).toEqual(true);
           done();
         });
       });
-      it('the resulting array will be the same size as the input array', function (done) {
-        mapPromise.then(function (results) {
+      it('the resulting array will be the same size as the input array', done => {
+        mapPromise.then(results => {
           expect(results.length).toEqual(mapItems.length);
           done();
         });
       });
-      it('the mapper function will be not have been called', function (done) {
-        mapPromise.then(function (results) {
+      it('the mapper function will be not have been called', done => {
+        mapPromise.then(results => {
           expect(mapSpy.calls.count()).toEqual(0);
           done();
         });
@@ -22795,32 +22795,32 @@ describe('When using the "promise.map" function', () => {
       beforeEach(() => {
         mapPromise = promise.map(mapItems = ['x', 'y'], mapSpy = jasmine.createSpy('mapSpy'));
       });
-      it('the result will be an array', function (done) {
-        mapPromise.then(function (results) {
+      it('the result will be an array', done => {
+        mapPromise.then(results => {
           expect(results instanceof Array).toEqual(true);
           done();
         });
       });
-      it('the resulting array have two items', function (done) {
-        mapPromise.then(function (results) {
+      it('the resulting array have two items', done => {
+        mapPromise.then(results => {
           expect(results.length).toEqual(2);
           done();
         });
       });
-      it('the mapper function to have been called twice', function (done) {
-        mapPromise.then(function (results) {
+      it('the mapper function to have been called twice', done => {
+        mapPromise.then(results => {
           expect(mapSpy.calls.count()).toEqual(2);
           done();
         });
       });
-      it('the mapper function will have been called once with the first item', function (done) {
-        mapPromise.then(function (results) {
+      it('the mapper function will have been called once with the first item', done => {
+        mapPromise.then(results => {
           expect(mapSpy).toHaveBeenCalledWith(mapItems[0]);
           done();
         });
       });
-      it('the mapper function will have been called once with the second item', function (done) {
-        mapPromise.then(function (results) {
+      it('the mapper function will have been called once with the second item', done => {
+        mapPromise.then(results => {
           expect(mapSpy).toHaveBeenCalledWith(mapItems[1]);
           done();
         });
@@ -22828,7 +22828,7 @@ describe('When using the "promise.map" function', () => {
     });
   });
 
-  let getConcurrency = function (results, index) {
+  let getConcurrency = (results, index) => {
     let current = results[index];
     let concurrency = 0;
 
@@ -22843,7 +22843,7 @@ describe('When using the "promise.map" function', () => {
     return concurrency;
   };
 
-  let getMaximumConcurrency = function (results) {
+  let getMaximumConcurrency = results => {
     let maximum = 0;
 
     for (let i = 0; i < results.length; i++) {
@@ -22862,8 +22862,8 @@ describe('When processing a "pipeline" of promises', () => {
     beforeEach(() => {
       p = promise.pipeline([], input = {});
     });
-    it('should return the original input', function (done) {
-      p.then(function (result) {
+    it('should return the original input', done => {
+      p.then(result => {
         expect(result).toBe(input);
         done();
       });
@@ -22874,7 +22874,7 @@ describe('When processing a "pipeline" of promises', () => {
     let spyOne;
     let p;
     beforeEach(() => {
-      let delayedSquare = function (x) {
+      let delayedSquare = x => {
         return new Promise(resolveCallback => {
           setTimeout(() => {
             resolveCallback(x * x);
@@ -22885,14 +22885,14 @@ describe('When processing a "pipeline" of promises', () => {
       spyOne = jasmine.createSpy('spyOne').and.callFake(delayedSquare);
       p = promise.pipeline([spyOne], input = 2);
     });
-    it('the first executor should be called with the input', function (done) {
-      p.then(function (result) {
+    it('the first executor should be called with the input', done => {
+      p.then(result => {
         expect(spyOne).toHaveBeenCalledWith(2);
         done();
       });
     });
-    it('the promise should return the correct result', function (done) {
-      p.then(function (result) {
+    it('the promise should return the correct result', done => {
+      p.then(result => {
         expect(result).toEqual(4);
         done();
       });
@@ -22904,7 +22904,7 @@ describe('When processing a "pipeline" of promises', () => {
     let spyTwo;
     let p;
     beforeEach(() => {
-      let delayedSquare = function (x) {
+      let delayedSquare = x => {
         return new Promise(resolveCallback => {
           setTimeout(() => {
             resolveCallback(x * x);
@@ -22916,20 +22916,20 @@ describe('When processing a "pipeline" of promises', () => {
       spyTwo = jasmine.createSpy('spyTwo').and.callFake(delayedSquare);
       p = promise.pipeline([spyOne, spyTwo], input = 2);
     });
-    it('the first executor should be called with the input', function (done) {
-      p.then(function (result) {
+    it('the first executor should be called with the input', done => {
+      p.then(result => {
         expect(spyOne).toHaveBeenCalledWith(2);
         done();
       });
     });
-    it('the second executor should be called with the result of the first executor', function (done) {
-      p.then(function (result) {
+    it('the second executor should be called with the result of the first executor', done => {
+      p.then(result => {
         expect(spyTwo).toHaveBeenCalledWith(4);
         done();
       });
     });
-    it('the promise should return the correct result', function (done) {
-      p.then(function (result) {
+    it('the promise should return the correct result', done => {
+      p.then(result => {
         expect(result).toEqual(16);
         done();
       });
@@ -22940,21 +22940,21 @@ describe('When processing a "pipeline" of promises', () => {
     let spyOne;
     let p;
     beforeEach(() => {
-      let synchronousSquare = function (x) {
+      let synchronousSquare = x => {
         return x * x;
       };
 
       spyOne = jasmine.createSpy('spyOne').and.callFake(synchronousSquare);
       p = promise.pipeline([spyOne], input = 2);
     });
-    it('the first executor should be called with the input', function (done) {
-      p.then(function (result) {
+    it('the first executor should be called with the input', done => {
+      p.then(result => {
         expect(spyOne).toHaveBeenCalledWith(2);
         done();
       });
     });
-    it('the promise should return the correct result', function (done) {
-      p.then(function (result) {
+    it('the promise should return the correct result', done => {
+      p.then(result => {
         expect(result).toEqual(4);
         done();
       });
@@ -22966,7 +22966,7 @@ describe('When processing a "pipeline" of promises', () => {
     let spyTwo;
     let p;
     beforeEach(() => {
-      let synchronousSquare = function (x) {
+      let synchronousSquare = x => {
         return x * x;
       };
 
@@ -22974,20 +22974,20 @@ describe('When processing a "pipeline" of promises', () => {
       spyTwo = jasmine.createSpy('spyTwo').and.callFake(synchronousSquare);
       p = promise.pipeline([spyOne, spyTwo], input = 2);
     });
-    it('the first executor should be called with the input', function (done) {
-      p.then(function (result) {
+    it('the first executor should be called with the input', done => {
+      p.then(result => {
         expect(spyOne).toHaveBeenCalledWith(2);
         done();
       });
     });
-    it('the second executor should be called with the result of the first executor', function (done) {
-      p.then(function (result) {
+    it('the second executor should be called with the result of the first executor', done => {
+      p.then(result => {
         expect(spyTwo).toHaveBeenCalledWith(4);
         done();
       });
     });
-    it('the promise should return the correct result', function (done) {
-      p.then(function (result) {
+    it('the promise should return the correct result', done => {
+      p.then(result => {
         expect(result).toEqual(16);
         done();
       });
@@ -22999,11 +22999,11 @@ describe('When processing a "pipeline" of promises', () => {
     let spyTwo;
     let p;
     beforeEach(() => {
-      let synchronousException = function (x) {
+      let synchronousException = x => {
         throw new Exception('oops');
       };
 
-      let synchronousSquare = function (x) {
+      let synchronousSquare = x => {
         return x * x;
       };
 
@@ -23011,20 +23011,20 @@ describe('When processing a "pipeline" of promises', () => {
       spyTwo = jasmine.createSpy('spyTwo').and.callFake(synchronousSquare);
       p = promise.pipeline([spyOne, spyTwo], input = 2);
     });
-    it('the promise should reject', function (done) {
-      p.catch(function (error) {
+    it('the promise should reject', done => {
+      p.catch(error => {
         expect(error instanceof Error).toEqual(true);
         done();
       });
     });
-    it('the first executor should be called with the input', function (done) {
-      p.catch(function (error) {
+    it('the first executor should be called with the input', done => {
+      p.catch(error => {
         expect(spyOne).toHaveBeenCalledWith(2);
         done();
       });
     });
-    it('the second executor not have should be called with the result of the first executor', function (done) {
-      p.catch(function (error) {
+    it('the second executor not have should be called with the result of the first executor', done => {
+      p.catch(error => {
         expect(spyTwo).not.toHaveBeenCalled();
         done();
       });
@@ -23037,12 +23037,12 @@ describe('When "promise.build" is used to create a promise', () => {
   describe('and the executor resolves', () => {
     let p;
     beforeEach(() => {
-      p = promise.build(function (r, x) {
+      p = promise.build((r, x) => {
         r('ok');
       });
     });
-    it('the promise should be fulfilled', function (done) {
-      p.then(function (result) {
+    it('the promise should be fulfilled', done => {
+      p.then(result => {
         expect(result).toEqual('ok');
         done();
       });
@@ -23051,12 +23051,12 @@ describe('When "promise.build" is used to create a promise', () => {
   describe('and the executor rejects', () => {
     let p;
     beforeEach(() => {
-      p = promise.build(function (r, x) {
+      p = promise.build((r, x) => {
         x('not ok');
       });
     });
-    it('the promise should be fulfilled', function (done) {
-      p.catch(function (result) {
+    it('the promise should be fulfilled', done => {
+      p.catch(result => {
         expect(result).toEqual('not ok');
         done();
       });
@@ -23066,13 +23066,13 @@ describe('When "promise.build" is used to create a promise', () => {
     let p;
     let e;
     beforeEach(() => {
-      p = promise.build(function (r, x) {
+      p = promise.build((r, x) => {
         e = new Error('oops');
         throw e;
       });
     });
-    it('the promise should be rejected', function (done) {
-      p.catch(function (error) {
+    it('the promise should be rejected', done => {
+      p.catch(error => {
         expect(error).toBe(e);
         done();
       });
@@ -23581,7 +23581,7 @@ describe('When an Model is constructed with "firstName" and "lastName" propertie
     describe('and both properties are updated with an explicit transaction', () => {
       let data;
       beforeEach(() => {
-        model.executeTransaction(function (m) {
+        model.executeTransaction(m => {
           m.firstName = 'Bryan';
           m.lastName = 'Ingle';
         });
@@ -23643,28 +23643,28 @@ describe('Using a customized JSON REST parser is created', () => {
 
   let parser;
   let spy;
-  beforeEach(function () {
+  beforeEach(() => {
     function parserFactory() {
-      return spy = jasmine.createSpy('spy').and.callFake(function (k, v) {
+      return spy = jasmine.createSpy('spy').and.callFake((k, v) => {
         return k === 'fizz' ? 3 : v;
       });
     }
 
     parser = RestParser.getJsonParser(parserFactory);
   });
-  describe('and JSON string is parsed (that represents a simple object)', function () {
+  describe('and JSON string is parsed (that represents a simple object)', () => {
     let serialzied;
     let deserialzied;
-    beforeEach(function () {
+    beforeEach(() => {
       deserialzied = parser.parse(serialzied = '{"fizz":"three","bang":5}');
     });
-    it('the "reviver" function should have been called', function () {
+    it('the "reviver" function should have been called', () => {
       expect(spy).toHaveBeenCalled();
     });
-    it('the resulting object should have a "fizz" property with value of 3 (an override)', function () {
+    it('the resulting object should have a "fizz" property with value of 3 (an override)', () => {
       expect(deserialzied.fizz).toEqual(3);
     });
-    it('the resulting object should have a "bang" property with a value of 5', function () {
+    it('the resulting object should have a "bang" property with a value of 5', () => {
       expect(deserialzied.bang).toEqual(5);
     });
   });
@@ -23674,16 +23674,16 @@ describe('Using another customized JSON REST parser is created', () => {
 
   let parser;
   let spy;
-  beforeEach(function () {
+  beforeEach(() => {
     function parserFactory() {
-      return spy = jasmine.createSpy('spy').and.callFake(function (k, v) {
+      return spy = jasmine.createSpy('spy').and.callFake((k, v) => {
         return k === 'fizz' ? 3 : v;
       });
     }
 
     parser = RestParser.getJsonParser(parserFactory);
   });
-  describe('and JSON string is parsed (that represents an array of simple objects)', function () {
+  describe('and JSON string is parsed (that represents an array of simple objects)', () => {
     let serialzied;
     let deserialzied;
     beforeEach(() => {
@@ -23695,16 +23695,16 @@ describe('Using another customized JSON REST parser is created', () => {
     it('the resulting object should be an array', () => {
       expect(Array.isArray(deserialzied)).toEqual(true);
     });
-    it('the first object should have a "fizz" property with value of 3 (an override)', function () {
+    it('the first object should have a "fizz" property with value of 3 (an override)', () => {
       expect(deserialzied[0].fizz).toEqual(3);
     });
-    it('the first object should have a "bang" property with a value of 5', function () {
+    it('the first object should have a "bang" property with a value of 5', () => {
       expect(deserialzied[0].bang).toEqual(5);
     });
-    it('the second object should have a "fizz" property with value of 3 (an override)', function () {
+    it('the second object should have a "fizz" property with value of 3 (an override)', () => {
       expect(deserialzied[1].fizz).toEqual(3);
     });
-    it('the second object should have a "bang" property with a value of 6', function () {
+    it('the second object should have a "bang" property with a value of 6', () => {
       expect(deserialzied[1].bang).toEqual(6);
     });
   });
@@ -24560,8 +24560,8 @@ describe('When using the schema builder to create a "Person" schema', () => {
     describe('and a "custom" component is added to the schema (using a component builder)', () => {
       let reviver;
       beforeEach(() => {
-        schemaBuilder = schemaBuilder.withComponentBuilder('custom', function (cb) {
-          cb.withField('b', DataType.STRING).withField('a', DataType.NUMBER).withReviver(reviver = function (x) {
+        schemaBuilder = schemaBuilder.withComponentBuilder('custom', cb => {
+          cb.withField('b', DataType.STRING).withField('a', DataType.NUMBER).withReviver(reviver = x => {
             return 'hola amigo';
           });
         });
@@ -24957,7 +24957,7 @@ describe('When a Not is constructed', () => {
     let spy;
     let result;
     beforeEach(() => {
-      specification = new Not(new DelegateSpecification(spy = jasmine.createSpy('fn').and.callFake(function (data) {
+      specification = new Not(new DelegateSpecification(spy = jasmine.createSpy('fn').and.callFake(data => {
         return false;
       })));
       result = specification.evaluate('abc');
@@ -24974,7 +24974,7 @@ describe('When a Not is constructed', () => {
     let spy;
     let result;
     beforeEach(() => {
-      specification = new Not(new DelegateSpecification(spy = jasmine.createSpy('fn').and.callFake(function (data) {
+      specification = new Not(new DelegateSpecification(spy = jasmine.createSpy('fn').and.callFake(data => {
         return true;
       })));
       result = specification.evaluate('abc');
@@ -25002,21 +25002,21 @@ describe('When a Specification (that always fails) is constructed', () => {
 
   }
 
-  describe('and inverted', function () {
+  describe('and inverted', () => {
     let specification;
     let spy;
     let result;
-    beforeEach(function () {
-      specification = new DelegateSpecification(spy = jasmine.createSpy('fn').and.callFake(function (data) {
+    beforeEach(() => {
+      specification = new DelegateSpecification(spy = jasmine.createSpy('fn').and.callFake(data => {
         return false;
       }));
       specification = specification.not();
       result = specification.evaluate('abc');
     });
-    it('should call the original specification', function () {
+    it('should call the original specification', () => {
       expect(spy).toHaveBeenCalled();
     });
-    it('should pass', function () {
+    it('should pass', () => {
       expect(result).toEqual(true);
     });
   });
@@ -25036,21 +25036,21 @@ describe('When a Specification (that always succeeds) is constructed', () => {
 
   }
 
-  describe('and inverted', function () {
+  describe('and inverted', () => {
     let specification;
     let spy;
     let result;
-    beforeEach(function () {
-      specification = new DelegateSpecification(spy = jasmine.createSpy('fn').and.callFake(function (data) {
+    beforeEach(() => {
+      specification = new DelegateSpecification(spy = jasmine.createSpy('fn').and.callFake(data => {
         return true;
       }));
       specification = specification.not();
       result = specification.evaluate('abc');
     });
-    it('should call the original specification', function () {
+    it('should call the original specification', () => {
       expect(spy).toHaveBeenCalled();
     });
-    it('should pass', function () {
+    it('should pass', () => {
       expect(result).toEqual(false);
     });
   });
@@ -25287,10 +25287,10 @@ describe('When a RateLimiter is constructed (1 execution per 25 milliseconds)', 
         promises.push(limiter.enqueue(spy));
       }
     });
-    it('the tasks should serialized', function (done) {
+    it('the tasks should serialized', done => {
       let promise = null;
 
-      let getValidatedPromise = function (promise, index) {
+      let getValidatedPromise = (promise, index) => {
         return promise.then(() => {
           for (let i = 0; i < spies.length; i++) {
             let count;
@@ -25322,10 +25322,10 @@ describe('When a RateLimiter is constructed (1 execution per 25 milliseconds)', 
         done();
       });
     });
-    it('the tasks not finish before the earliest possible moment', function (done) {
+    it('the tasks not finish before the earliest possible moment', done => {
       let promise = null;
 
-      let getValidatedPromise = function (promise, index) {
+      let getValidatedPromise = (promise, index) => {
         return promise.then(() => {
           let end = new Date();
           let duration = end.getTime() - start.getTime();
@@ -25370,11 +25370,11 @@ describe('When a RateLimiter is constructed (1 execution per 25 milliseconds)', 
         promises.push(limiter.enqueue(spy));
       }
     });
-    it('each task should be executed', function (done) {
+    it('each task should be executed', done => {
       let promise = null;
 
-      let getValidatedPromise = function (promise, index) {
-        return promise.catch(function (error) {
+      let getValidatedPromise = (promise, index) => {
+        return promise.catch(error => {
           let end = new Date();
           let duration = end.getTime() - start.getTime();
           let shortestPossibleDuration = Math.floor(index / windowMaximumCount) * windowDurationMilliseconds;
@@ -25426,10 +25426,10 @@ describe('When a RateLimiter is constructed (2 execution per 25 milliseconds)', 
         promises.push(limiter.enqueue(spy));
       }
     });
-    it('the tasks not finish before the earliest possible moment', function (done) {
+    it('the tasks not finish before the earliest possible moment', done => {
       let promise = null;
 
-      let getValidatedPromise = function (promise, index) {
+      let getValidatedPromise = (promise, index) => {
         return promise.then(() => {
           let end = new Date();
           let duration = end.getTime() - start.getTime();
@@ -25477,7 +25477,7 @@ describe('When a Scheduler is constructed', () => {
     it('should not execute the task synchronously', () => {
       expect(spy).not.toHaveBeenCalled();
     });
-    it('should execute the task asynchronously', function (done) {
+    it('should execute the task asynchronously', done => {
       promise.then(() => {
         expect(spy.calls.count()).toEqual(1);
       }).then(() => {
@@ -25492,7 +25492,7 @@ describe('When a Scheduler is constructed', () => {
     describe('and a task is scheduled', () => {
       let spy;
       let success;
-      beforeEach(function (done) {
+      beforeEach(done => {
         scheduler.schedule(spy = jasmine.createSpy('spy'), 10, 'A scheduled task').then(() => {
           success = true;
         }).catch(() => {
@@ -25522,12 +25522,12 @@ describe('When a backoff is used', () => {
     let spyFailure;
     let actualResult;
     let successfulResult;
-    beforeEach(function (done) {
-      spyAction = jasmine.createSpy('spyAction').and.callFake(function () {
+    beforeEach(done => {
+      spyAction = jasmine.createSpy('spyAction').and.callFake(() => {
         return successfulResult = 'ok computer';
       });
       spyFailure = jasmine.createSpy('spyFailure');
-      scheduler.backoff(spyAction, 5, 'succeeds immediately', 1, spyFailure).then(function (r) {
+      scheduler.backoff(spyAction, 5, 'succeeds immediately', 1, spyFailure).then(r => {
         actualResult = r;
         done();
       });
@@ -25548,9 +25548,9 @@ describe('When a backoff is used', () => {
     let actualResult;
     let successfulResult;
     let x;
-    beforeEach(function (done) {
+    beforeEach(done => {
       x = 0;
-      spyAction = jasmine.createSpy('spyAction').and.callFake(function () {
+      spyAction = jasmine.createSpy('spyAction').and.callFake(() => {
         if (++x > 1) {
           return successfulResult = 'ok computer';
         } else {
@@ -25558,7 +25558,7 @@ describe('When a backoff is used', () => {
         }
       });
       spyFailure = jasmine.createSpy('spyFailure');
-      scheduler.backoff(spyAction, 5, 'succeeds immediately', 5, spyFailure).then(function (r) {
+      scheduler.backoff(spyAction, 5, 'succeeds immediately', 5, spyFailure).then(r => {
         actualResult = r;
         done();
       });
@@ -25579,9 +25579,9 @@ describe('When a backoff is used', () => {
     let actualResult;
     let successfulResult;
     let x;
-    beforeEach(function (done) {
+    beforeEach(done => {
       x = 0;
-      spyAction = jasmine.createSpy('spyAction').and.callFake(function () {
+      spyAction = jasmine.createSpy('spyAction').and.callFake(() => {
         if (++x > 2) {
           return successfulResult = ['ok computer'];
         } else {
@@ -25589,7 +25589,7 @@ describe('When a backoff is used', () => {
         }
       });
       spyFailure = jasmine.createSpy('spyFailure');
-      scheduler.backoff(spyAction, 5, 'succeeds immediately', 5, spyFailure, []).then(function (r) {
+      scheduler.backoff(spyAction, 5, 'succeeds immediately', 5, spyFailure, []).then(r => {
         actualResult = r;
         done();
       });
@@ -25608,12 +25608,12 @@ describe('When a backoff is used', () => {
     let spyAction;
     let spyFailure;
     let actualResult;
-    beforeEach(function (done) {
-      spyAction = jasmine.createSpy('spyAction').and.callFake(function () {
+    beforeEach(done => {
+      spyAction = jasmine.createSpy('spyAction').and.callFake(() => {
         throw new Error('not gonna happen');
       });
       spyFailure = jasmine.createSpy('spyFailure');
-      scheduler.backoff(spyAction, 5, 'succeeds immediately', 3, spyFailure, []).catch(function (r) {
+      scheduler.backoff(spyAction, 5, 'succeeds immediately', 3, spyFailure, []).catch(r => {
         actualResult = r;
         done();
       });
@@ -25632,12 +25632,12 @@ describe('When a backoff is used', () => {
     let spyAction;
     let spyFailure;
     let actualResult;
-    beforeEach(function (done) {
-      spyAction = jasmine.createSpy('spyAction').and.callFake(function () {
+    beforeEach(done => {
+      spyAction = jasmine.createSpy('spyAction').and.callFake(() => {
         return 'boom';
       });
       spyFailure = jasmine.createSpy('spyFailure');
-      scheduler.backoff(spyAction, 5, 'detonate', 3, spyFailure, 'boom').catch(function (r) {
+      scheduler.backoff(spyAction, 5, 'detonate', 3, spyFailure, 'boom').catch(r => {
         actualResult = r;
         done();
       });
@@ -25677,7 +25677,7 @@ describe('When a Serializer is used to schedule four tasks', () => {
     }
   });
   describe('and the tasks complete', () => {
-    beforeEach(function (done) {
+    beforeEach(done => {
       Promise.all(promises).then(() => {
         done();
       });
@@ -25709,7 +25709,7 @@ describe('When a Serializer is used to schedule a task that throws', () => {
   let serializer;
   let promise;
   let reject;
-  beforeEach(function (done) {
+  beforeEach(done => {
     serializer = new Serializer();
     reject = false;
     promise = serializer.enqueue(() => {
@@ -25727,7 +25727,7 @@ describe('When a Serializer is used to schedule a task that rejects', () => {
   let serializer;
   let promise;
   let reject;
-  beforeEach(function (done) {
+  beforeEach(done => {
     serializer = new Serializer();
     reject = false;
     promise = serializer.enqueue(() => {
@@ -25744,7 +25744,7 @@ describe('When a Serializer is used to schedule a task that rejects', () => {
 
 function getSpy(results, fail) {
   return jasmine.createSpy('spy').and.callFake(() => {
-    return new Promise(function (resolveCallback, rejectCallback) {
+    return new Promise((resolveCallback, rejectCallback) => {
       let start = new Date();
       setTimeout(() => {
         let end = new Date();
@@ -25794,7 +25794,7 @@ describe('When a WindowCounter is constructed', () => {
     });
     describe('and the counter is incremented after the current window expires', () => {
       let b;
-      beforeEach(function (done) {
+      beforeEach(done => {
         setTimeout(() => {
           counter.increment(b = 3);
           done();
