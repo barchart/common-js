@@ -3,6 +3,7 @@ const axios = require('axios');
 const array = require('./../../lang/array'),
 	assert = require('./../../lang/assert'),
 	attributes = require('./../../lang/attributes'),
+	is = require('./../../lang/is'),
 	promise = require('./../../lang/promise');
 
 const Endpoint = require('./definitions/Endpoint'),
@@ -100,7 +101,15 @@ module.exports = (() => {
 								url.push('/');
 
 								return promise.pipeline(pathValues.map((value) => (previous) => {
-									previous.push(value);
+									let encodedValue;
+
+									if (is.null(value) || is.undefined(value)) {
+										encodedValue = value;
+									} else {
+										encodedValue = value.toString().replace(/\//g, '%2F');
+									}
+
+									previous.push(encodedValue);
 
 									return previous;
 								}), [ ]).then((paths) => {
