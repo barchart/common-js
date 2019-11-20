@@ -89,6 +89,10 @@ module.exports = (() => {
 					});
 				});
 
+				request.on('error', (error) => {
+					rejectCallback(error);
+				});
+
 				if (action.getAllowBody() && payload) {
 					request.write(JSON.stringify(payload));
 				}
