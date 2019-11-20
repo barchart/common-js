@@ -18,7 +18,7 @@ module.exports = (() => {
 		constructor(description, key, extractor, optional) {
 			this._description = description || null;
 			this._key = key || null;
-			this._extractor = extractor ||null;
+			this._extractor = extractor || null;
 			this._optional = is.boolean(optional) && optional;
 		}
 
