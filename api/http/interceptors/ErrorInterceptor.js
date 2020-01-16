@@ -102,17 +102,35 @@ module.exports = (() => {
 	const errorInterceptorGeneral = new DelegateErrorInterceptor((error, endpoint) => {
 		const response = error.response;
 
-		let rejectPromise;
+		let rejectPromise = null;
 
-		if (is.object(response) && is.object(response.headers) && response.headers['content-type'] === 'application/json' && is.object(response.data)) {
-			rejectPromise = Promise.reject(response.data);
-		} else if (is.undefined(response) && error.message === 'Network Error') {
+		if (rejectPromise === null && is.object(response) && is.object(response.headers) && response.headers['content-type'] === 'application/json') {
+			let deserialized = null;
+
+			if (is.object(response.data)) {
+				deserialized = response.data;
+			} else {
+				try {
+					deserialized = JSON.parse(response.data);
+				} catch (e) {
+					deserialized = null;
+				}
+			}
+
+			if (deserialized !== null) {
+				rejectPromise = Promise.reject(deserialized);
+			}
+		}
+
+		if (rejectPromise === null && is.undefined(response) && error.message === 'Network Error') {
 			rejectPromise = Promise.reject(
 				FailureReason.forRequest({endpoint: endpoint})
 					.addItem(FailureType.REQUEST_AUTHORIZATION_FAILURE)
 					.format()
 			);
-		} else {
+		}
+
+		if (rejectPromise === null) {
 			rejectPromise = Promise.reject(
 				FailureReason.forRequest({endpoint: endpoint})
 					.addItem(FailureType.REQUEST_GENERAL_FAILURE)
