@@ -25976,10 +25976,10 @@ module.exports = (() => {
           };
 
           token = setTimeout(wrappedAction, millisecondDelay);
-        });
-        this._timeoutBindings[token] = Disposable.fromAction(() => {
-          clearTimeout(token);
-          delete this._timeoutBindings[token];
+          this._timeoutBindings[token] = Disposable.fromAction(() => {
+            clearTimeout(token);
+            delete this._timeoutBindings[token];
+          });
         });
         return schedulePromise;
       });
@@ -26043,7 +26043,13 @@ module.exports = (() => {
               delay = (millisecondDelay || 1000) * Math.pow(2, attempts - 1);
             }
 
-            return this.schedule(actionToBackoff, delay, `Attempt [ ${attempts} ] for [ ${actionDescription || 'unnamed action'} ]`);
+            if (delay === 0) {
+              return Promise.resolve().then(() => {
+                return actionToBackoff();
+              });
+            } else {
+              return this.schedule(actionToBackoff, delay, `Attempt [ ${attempts} ] for [ ${actionDescription || 'unnamed action'} ]`);
+            }
           }).then(result => {
             let resultPromise;
 
