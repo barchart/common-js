@@ -55,12 +55,12 @@ module.exports = (() => {
 						};
 
 						token = setTimeout(wrappedAction, millisecondDelay);
-					});
 
-					this._timeoutBindings[token] = Disposable.fromAction(() => {
-						clearTimeout(token);
+						this._timeoutBindings[token] = Disposable.fromAction(() => {
+							clearTimeout(token);
 
-						delete this._timeoutBindings[token];
+							delete this._timeoutBindings[token];
+						});
 					});
 
 					return schedulePromise;
