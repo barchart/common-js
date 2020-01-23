@@ -83,6 +83,7 @@ module.exports = (() => {
 		 * item's value. If no matching item can be found, a null value is returned.
 		 *
 		 * @public
+		 * @static
 		 * @param {Function} type - The enumeration type.
 		 * @param {String} code - The enumeration item's code.
 		 * @returns {*|null}
@@ -95,6 +96,7 @@ module.exports = (() => {
 		 * Returns all of the enumeration's items (given an enumeration type).
 		 *
 		 * @public
+		 * @static
 		 * @param {Function} type - The enumeration to list.
 		 * @returns {Array}
 		 */
