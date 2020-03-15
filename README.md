@@ -8,7 +8,11 @@ A *public* library of shared JavaScript utilities. These utilities are agnostic 
 * Data structures (decimals, days, enumerations, etc)
 * Simple collections (queues, stacks, trees, etc)
 * Specialized collections (priority queues, evicting lists, evicting maps, etc)
-* More...browse the code...
+* Browse the code...
+
+### Companion Library
+
+A companion library called [@barchart/common-node-js](https://github.com/barchart/barchart-common-node-js) contains utilities for exclusive use in Node.js environments (i.e. not suitable for use in browsers).
 
 ### Documentation
 
