@@ -1,7 +1,8 @@
 # @barchart/common-js
-## Library of JavaScript utilities
 
-Utilities that can be used in a browser or Node.js environment.
+A *public* library of shared JavaScript utilities. These utilities are agnostic to environment. They should be suitable for use in Node.js and web browsers.
+
+### Overview
 
 Features include:
 
@@ -9,9 +10,7 @@ Features include:
 * Data structures (decimals, days, enumerations, etc)
 * Simple collections (queues, stacks, trees, etc)
 * Specialized collections (priority queues, evicting lists, evicting maps, etc)
-* Timing utilities (wrappers for setTimeout and setInterval)
 * More...
-
 
 ## Documentation
 
@@ -19,24 +18,17 @@ The code is documented with [JSDoc](http://usejsdoc.org/). While the output hasn
 
     > npm install
     > gulp document
-    
 
 ## Development
 
-Gulp is used to check "linting" and to run unit tests.
-
-    > nvm use 6.10.1
+    > nvm use 12.13.1
     > npm install
     > gulp lint
     > gulp test
-    
 
 ## Build
 
-Polyfills for ES6 are required:
-
-* Promise
-
+Modern JavaScript language features are used. Some browsers may still require polyfills.
 
 ## License
 
