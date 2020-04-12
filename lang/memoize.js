@@ -22,11 +22,11 @@ module.exports = (() => {
 			const cache = { };
 
 			return (x) => {
-				if (cache.hasOwnProperty(x)) {
-					return cache[x];
-				} else {
-					return cache[x] = fn(x);
+				if (!cache.hasOwnProperty(x)) {
+					cache[x] = fn(x);
 				}
+
+				return cache[x]
 			};
 		},
 
