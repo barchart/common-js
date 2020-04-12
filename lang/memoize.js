@@ -26,7 +26,7 @@ module.exports = (() => {
 					cache[x] = fn(x);
 				}
 
-				return cache[x]
+				return cache[x];
 			};
 		},
 
