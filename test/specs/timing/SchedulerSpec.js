@@ -82,7 +82,9 @@ describe('When a backoff is used', () => {
 
 		beforeEach((done) => {
 			spyAction = jasmine.createSpy('spyAction').and.callFake(() => {
-				return successfulResult = 'ok computer';
+				successfulResult = 'ok computer';
+
+				return successfulResult;
 			});
 
 			spyFailure = jasmine.createSpy('spyFailure');
@@ -122,7 +124,9 @@ describe('When a backoff is used', () => {
 
 			spyAction = jasmine.createSpy('spyAction').and.callFake(() => {
 				if (++x > 1) {
-					return successfulResult = 'ok computer';
+					successfulResult = 'ok computer';
+
+					return successfulResult;
 				} else {
 					throw new Error('nope...');
 				}
@@ -165,7 +169,9 @@ describe('When a backoff is used', () => {
 
 			spyAction = jasmine.createSpy('spyAction').and.callFake(() => {
 				if (++x > 2) {
-					return successfulResult = [ 'ok computer' ];
+					successfulResult = [ 'ok computer' ];
+
+					return successfulResult;
 				} else {
 					return [ ];
 				}

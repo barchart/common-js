@@ -8,9 +8,11 @@ describe('Using a customized JSON REST parser is created', () => {
 
 	beforeEach(() => {
 		function parserFactory() {
-			return spy = jasmine.createSpy('spy').and.callFake((k, v) => {
+			spy = jasmine.createSpy('spy').and.callFake((k, v) => {
 				return k === 'fizz' ? 3 : v;
 			});
+
+			return spy;
 		}
 
 		parser = RestParser.getJsonParser(parserFactory);
@@ -46,9 +48,11 @@ describe('Using another customized JSON REST parser is created', () => {
 
 	beforeEach(() => {
 		function parserFactory() {
-			return spy = jasmine.createSpy('spy').and.callFake((k, v) => {
+			spy = jasmine.createSpy('spy').and.callFake((k, v) => {
 				return k === 'fizz' ? 3 : v;
 			});
+
+			return spy;
 		}
 
 		parser = RestParser.getJsonParser(parserFactory);

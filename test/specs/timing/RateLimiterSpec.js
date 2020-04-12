@@ -53,15 +53,19 @@ describe('When a RateLimiter is constructed (1 execution per 25 milliseconds)', 
 				});
 			};
 
+			function wrapPromise(existing, next) {
+				return existing.then(() => {
+					return next;
+				});
+			}
+
 			for (let i = 0; i < promises.length; i++) {
 				let p = getValidatedPromise(promises[i], i);
 
 				if (promise === null) {
 					promise = p;
 				} else {
-					promise = promise.then(() => {
-						return p;
-					});
+					promise = wrapPromise(promise, p);
 				}
 			}
 
@@ -85,15 +89,19 @@ describe('When a RateLimiter is constructed (1 execution per 25 milliseconds)', 
 				});
 			};
 
+			function wrapPromise(existing, next) {
+				return existing.then(() => {
+					return next;
+				});
+			}
+
 			for (let i = 0; i < promises.length; i++) {
 				let p = getValidatedPromise(promises[i], i);
 
 				if (promise === null) {
 					promise = p;
 				} else {
-					promise = promise.then(() => {
-						return p;
-					});
+					promise = wrapPromise(promise, p);
 				}
 			}
 
@@ -119,10 +127,14 @@ describe('When a RateLimiter is constructed (1 execution per 25 milliseconds)', 
 
 			error = new Error('oops');
 
-			for (let i = 0; i < 2; i++) {
-				let spy = jasmine.createSpy('spy').and.callFake(() => {
+			const createSpy = () => {
+				return jasmine.createSpy('spy').and.callFake(() => {
 					throw error;
 				});
+			};
+
+			for (let i = 0; i < 2; i++) {
+				let spy = createSpy();
 
 				spies.push(spy);
 
@@ -145,15 +157,19 @@ describe('When a RateLimiter is constructed (1 execution per 25 milliseconds)', 
 				});
 			};
 
+			function wrapPromise(existing, next) {
+				return existing.then(() => {
+					return next;
+				});
+			}
+
 			for (let i = 0; i < promises.length; i++) {
 				let p = getValidatedPromise(promises[i], i);
 
 				if (promise === null) {
 					promise = p;
 				} else {
-					promise = promise.then(() => {
-						return p;
-					});
+					promise = wrapPromise(promise, p);
 				}
 			}
 
@@ -213,15 +229,19 @@ describe('When a RateLimiter is constructed (2 execution per 25 milliseconds)', 
 				});
 			};
 
+			function wrapPromise(existing, next) {
+				return existing.then(() => {
+					return next;
+				});
+			}
+
 			for (let i = 0; i < promises.length; i++) {
 				let p = getValidatedPromise(promises[i], i);
 
 				if (promise === null) {
 					promise = p;
 				} else {
-					promise = promise.then(() => {
-						return p;
-					});
+					promise = wrapPromise(promise, p);
 				}
 			}
 
