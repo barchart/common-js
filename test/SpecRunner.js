@@ -5649,11 +5649,11 @@ module.exports = (() => {
     simple(fn) {
       const cache = {};
       return x => {
-        if (cache.hasOwnProperty(x)) {
-          return cache[x];
-        } else {
-          return cache[x] = fn(x);
+        if (!cache.hasOwnProperty(x)) {
+          cache[x] = fn(x);
         }
+
+        return cache[x];
       };
     },
 
@@ -23642,9 +23642,10 @@ describe('Using a customized JSON REST parser is created', () => {
   let spy;
   beforeEach(() => {
     function parserFactory() {
-      return spy = jasmine.createSpy('spy').and.callFake((k, v) => {
+      spy = jasmine.createSpy('spy').and.callFake((k, v) => {
         return k === 'fizz' ? 3 : v;
       });
+      return spy;
     }
 
     parser = RestParser.getJsonParser(parserFactory);
@@ -23673,9 +23674,10 @@ describe('Using another customized JSON REST parser is created', () => {
   let spy;
   beforeEach(() => {
     function parserFactory() {
-      return spy = jasmine.createSpy('spy').and.callFake((k, v) => {
+      spy = jasmine.createSpy('spy').and.callFake((k, v) => {
         return k === 'fizz' ? 3 : v;
       });
+      return spy;
     }
 
     parser = RestParser.getJsonParser(parserFactory);
@@ -25303,15 +25305,19 @@ describe('When a RateLimiter is constructed (1 execution per 25 milliseconds)', 
         });
       };
 
+      function wrapPromise(existing, next) {
+        return existing.then(() => {
+          return next;
+        });
+      }
+
       for (let i = 0; i < promises.length; i++) {
         let p = getValidatedPromise(promises[i], i);
 
         if (promise === null) {
           promise = p;
         } else {
-          promise = promise.then(() => {
-            return p;
-          });
+          promise = wrapPromise(promise, p);
         }
       }
 
@@ -25331,15 +25337,19 @@ describe('When a RateLimiter is constructed (1 execution per 25 milliseconds)', 
         });
       };
 
+      function wrapPromise(existing, next) {
+        return existing.then(() => {
+          return next;
+        });
+      }
+
       for (let i = 0; i < promises.length; i++) {
         let p = getValidatedPromise(promises[i], i);
 
         if (promise === null) {
           promise = p;
         } else {
-          promise = promise.then(() => {
-            return p;
-          });
+          promise = wrapPromise(promise, p);
         }
       }
 
@@ -25359,10 +25369,14 @@ describe('When a RateLimiter is constructed (1 execution per 25 milliseconds)', 
       promises = [];
       error = new Error('oops');
 
-      for (let i = 0; i < 2; i++) {
-        let spy = jasmine.createSpy('spy').and.callFake(() => {
+      const createSpy = () => {
+        return jasmine.createSpy('spy').and.callFake(() => {
           throw error;
         });
+      };
+
+      for (let i = 0; i < 2; i++) {
+        let spy = createSpy();
         spies.push(spy);
         promises.push(limiter.enqueue(spy));
       }
@@ -25380,15 +25394,19 @@ describe('When a RateLimiter is constructed (1 execution per 25 milliseconds)', 
         });
       };
 
+      function wrapPromise(existing, next) {
+        return existing.then(() => {
+          return next;
+        });
+      }
+
       for (let i = 0; i < promises.length; i++) {
         let p = getValidatedPromise(promises[i], i);
 
         if (promise === null) {
           promise = p;
         } else {
-          promise = promise.then(() => {
-            return p;
-          });
+          promise = wrapPromise(promise, p);
         }
       }
 
@@ -25435,15 +25453,19 @@ describe('When a RateLimiter is constructed (2 execution per 25 milliseconds)', 
         });
       };
 
+      function wrapPromise(existing, next) {
+        return existing.then(() => {
+          return next;
+        });
+      }
+
       for (let i = 0; i < promises.length; i++) {
         let p = getValidatedPromise(promises[i], i);
 
         if (promise === null) {
           promise = p;
         } else {
-          promise = promise.then(() => {
-            return p;
-          });
+          promise = wrapPromise(promise, p);
         }
       }
 
@@ -25521,7 +25543,8 @@ describe('When a backoff is used', () => {
     let successfulResult;
     beforeEach(done => {
       spyAction = jasmine.createSpy('spyAction').and.callFake(() => {
-        return successfulResult = 'ok computer';
+        successfulResult = 'ok computer';
+        return successfulResult;
       });
       spyFailure = jasmine.createSpy('spyFailure');
       scheduler.backoff(spyAction, 5, 'succeeds immediately', 1, spyFailure).then(r => {
@@ -25549,7 +25572,8 @@ describe('When a backoff is used', () => {
       x = 0;
       spyAction = jasmine.createSpy('spyAction').and.callFake(() => {
         if (++x > 1) {
-          return successfulResult = 'ok computer';
+          successfulResult = 'ok computer';
+          return successfulResult;
         } else {
           throw new Error('nope...');
         }
@@ -25580,7 +25604,8 @@ describe('When a backoff is used', () => {
       x = 0;
       spyAction = jasmine.createSpy('spyAction').and.callFake(() => {
         if (++x > 2) {
-          return successfulResult = ['ok computer'];
+          successfulResult = ['ok computer'];
+          return successfulResult;
         } else {
           return [];
         }
