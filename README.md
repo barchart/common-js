@@ -1,6 +1,6 @@
 # @barchart/common-js
 
-[![AWS CodeBuild](https://codebuild.us-east-1.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiZk13ZThIVktsdFZGcXVCNERveTVJMjFnUytldjUzNDFpSGdxUXlGK3RsaTVmTnFEbmtkYXJxcUEwSmR6eFlDa3RobzNSMHl6K2ZCREJkMVc5YkNGanFNPSIsIml2UGFyYW1ldGVyU3BlYyI6IkpqVzNITHNVMHZ2YnE4UnUiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=master)](https://github.com/barchart/barchart-common-js)
+[![AWS CodeBuild](https://codebuild.us-east-1.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiYjhPK3NyazNKNlo4QmQzblZnbFFuR2ljMUljdXlRWGp6MEtaWW1pREpBRndCSkk1MkZyUDJCdzZWcCsxbEU5NERuZFhTU0RKZG9NbStjbTFIa3JnRlI4PSIsIml2UGFyYW1ldGVyU3BlYyI6IkFtZFhHQ0NLV0lhUlBoaWUiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=master)](https://github.com/barchart/common-js)
 
 A *public* library of shared JavaScript utilities. These utilities are agnostic to environment. They should be suitable for use in Node.js and web browsers.
 
