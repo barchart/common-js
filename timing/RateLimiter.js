@@ -19,7 +19,7 @@ module.exports = (() => {
 	 */
 	class RateLimiter extends Disposable {
 		constructor(windowMaximumCount, windowDurationMilliseconds) {
-			super();
+			super()
 
 			assert.argumentIsRequired(windowMaximumCount, 'windowMaximumCount', Number);
 			assert.argumentIsRequired(windowDurationMilliseconds, 'windowDurationMilliseconds', Number);
