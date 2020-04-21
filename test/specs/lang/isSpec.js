@@ -769,3 +769,55 @@ describe('When checking a zero-length string', () => {
 		expect(is.zeroLengthString(candidate)).toEqual(true);
 	});
 });
+
+describe('When checking inheritance', () => {
+	class Grandparent {
+		constructor() {
+
+		}
+	}
+
+	class Parent extends Grandparent {
+		constructor() {
+			super();
+		}
+	}
+
+	class Child extends Parent {
+		constructor() {
+			super();
+		}
+	}
+
+	class Uncle extends Grandparent {
+		constructor() {
+			super();
+		}
+	}
+
+	class Unrelated {
+		constructor() {
+
+		}
+	}
+
+	it('it should indicate that "Child" extends "Parent"', () => {
+		expect(is.extension(Parent, Child)).toEqual(true);
+	});
+
+	it('it should indicate that "Child" extends "Grandparent"', () => {
+		expect(is.extension(Grandparent, Child)).toEqual(true);
+	});
+
+	it('it should not indicate that "Child" extends "Uncle"', () => {
+		expect(is.extension(Uncle, Child)).toEqual(false);
+	});
+
+	it('it should not indicate that "Child" extends "Unrelated"', () => {
+		expect(is.extension(Unrelated, Child)).toEqual(false);
+	});
+
+	it('it should not indicate that "Parent" extends "Child"', () => {
+		expect(is.extension(Child, Parent)).toEqual(false);
+	});
+});
