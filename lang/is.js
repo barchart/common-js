@@ -186,7 +186,7 @@ module.exports = (() => {
 		 * @returns {boolean}
 		 */
 		zeroLengthString(candidate) {
-			return typeof(candidate) === 'string' && candidate.length === 0;
+			return this.string(candidate) && candidate.length === 0;
 		},
 
 		/**
