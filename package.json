@@ -1,10 +1,6 @@
 {
   "name": "@barchart/common-js",
-<<<<<<< HEAD
   "version": "3.3.114",
-=======
-  "version": "3.3.108",
->>>>>>> Allow some dependency version to auto-upgrade (use carat)
   "description": "Library of common JavaScript utilities",
   "author": {
     "name": "Bryan Ingle",
