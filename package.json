@@ -1,6 +1,10 @@
 {
   "name": "@barchart/common-js",
+<<<<<<< HEAD
   "version": "3.3.114",
+=======
+  "version": "3.3.108",
+>>>>>>> Allow some dependency version to auto-upgrade (use carat)
   "description": "Library of common JavaScript utilities",
   "author": {
     "name": "Bryan Ingle",
@@ -20,8 +24,8 @@
     "JavaScript"
   ],
   "dependencies": {
-    "axios": "0.19.0",
-    "big.js": "5.0.3",
+	"axios": "^0.19.2",
+	"big.js": "^5.2.2",
     "moment": "2.24.0",
     "moment-timezone": "0.5.26",
     "xhr": "2.3.2"
