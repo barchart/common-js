@@ -1,6 +1,6 @@
 {
   "name": "@barchart/common-js",
-  "version": "3.5.1",
+  "version": "3.4.2",
   "description": "Library of common JavaScript utilities",
   "author": {
     "name": "Bryan Ingle",
@@ -38,7 +38,6 @@
     "gulp-jasmine": "^2.2.1",
     "gulp-jshint": "~2.1.0",
     "gulp-prompt": "^1.2.0",
-    "jsdoc": "^3.5.5",
     "jshint": "2.9.5",
     "vinyl-buffer": "^1.0.1",
     "vinyl-source-stream": "^2.0.0"
