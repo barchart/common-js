@@ -5,7 +5,6 @@ const fs = require('fs');
 const browserify = require('browserify'),
 	buffer = require('vinyl-buffer'),
 	bump = require('gulp-bump'),
-	exec = require('child_process').exec,
 	git = require('gulp-git'),
 	gitStatus = require('git-get-status'),
 	glob = require('glob'),
