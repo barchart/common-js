@@ -518,6 +518,80 @@ describe('When checking an empty object', () => {
 	});
 });
 
+describe('When checking an empty array', () => {
+	'use strict';
+
+	let candidate;
+
+	beforeEach(() => {
+		candidate = [ ];
+	});
+
+	it("it should not be a number", () => {
+		expect(is.number(candidate)).toEqual(false);
+	});
+
+	it("it should not be nan", () => {
+		expect(is.nan(candidate)).toEqual(false);
+	});
+
+	it("it should not be an integer", () => {
+		expect(is.integer(candidate)).toEqual(false);
+	});
+
+	it("it should not be an large integer", () => {
+		expect(is.large(candidate)).toEqual(false);
+	});
+
+	it("it should not be positive", () => {
+		expect(is.positive(candidate)).toEqual(false);
+	});
+
+	it("it should not be negative", () => {
+		expect(is.negative(candidate)).toEqual(false);
+	});
+
+	it('it should be iterable', () => {
+		expect(is.iterable(candidate)).toEqual(true);
+	});
+
+	it("it should not be a string", () => {
+		expect(is.string(candidate)).toEqual(false);
+	});
+
+	it("it should not be a Date", () => {
+		expect(is.date(candidate)).toEqual(false);
+	});
+
+	it("it should not be a function", () => {
+		expect(is.fn(candidate)).toEqual(false);
+	});
+
+	it("it should be an array", () => {
+		expect(is.array(candidate)).toEqual(true);
+	});
+
+	it("it should not be a boolean", () => {
+		expect(is.boolean(candidate)).toEqual(false);
+	});
+
+	it("it should be an object", () => {
+		expect(is.object(candidate)).toEqual(true);
+	});
+
+	it("it should not be null", () => {
+		expect(is.null(candidate)).toEqual(false);
+	});
+
+	it("it should not be undefined", () => {
+		expect(is.undefined(candidate)).toEqual(false);
+	});
+
+	it("it should not be a zero-length string", () => {
+		expect(is.zeroLengthString(candidate)).toEqual(false);
+	});
+});
+
 describe('When checking a null value', () => {
 	'use strict';
 
