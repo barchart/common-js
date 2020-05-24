@@ -33,6 +33,10 @@ describe('When checking the number 3', () => {
 		expect(is.negative(candidate)).toEqual(false);
 	});
 
+	it('it should not be iterable', () => {
+		expect(is.iterable(candidate)).toEqual(false);
+	});
+
 	it("it should not be a string", () => {
 		expect(is.string(candidate)).toEqual(false);
 	});
@@ -101,6 +105,10 @@ describe('When checking the Math.PI', () => {
 
 	it("it should not be negative", () => {
 		expect(is.negative(candidate)).toEqual(false);
+	});
+
+	it('it should not be iterable', () => {
+		expect(is.iterable(candidate)).toEqual(false);
 	});
 
 	it("it should not be a string", () => {
@@ -173,6 +181,10 @@ describe('When checking the Number.NaN', () => {
 		expect(is.negative(candidate)).toEqual(false);
 	});
 
+	it('it should not be iterable', () => {
+		expect(is.iterable(candidate)).toEqual(false);
+	});
+
 	it("it should not be a string", () => {
 		expect(is.string(candidate)).toEqual(false);
 	});
@@ -241,6 +253,10 @@ describe('When checking the string "3"', () => {
 
 	it("it should not be negative", () => {
 		expect(is.negative(candidate)).toEqual(false);
+	});
+
+	it('it should be iterable', () => {
+		expect(is.iterable(candidate)).toEqual(true);
 	});
 
 	it("it should be a string", () => {
@@ -313,6 +329,10 @@ describe('When checking the date 08/29/2016', () => {
 		expect(is.negative(candidate)).toEqual(false);
 	});
 
+	it('it should not be iterable', () => {
+		expect(is.iterable(candidate)).toEqual(false);
+	});
+
 	it("it should not be a string", () => {
 		expect(is.string(candidate)).toEqual(false);
 	});
@@ -377,6 +397,10 @@ describe('When checking the "expect" function', () => {
 
 	it("it should not be positive", () => {
 		expect(is.positive(candidate)).toEqual(false);
+	});
+
+	it('it should not be iterable', () => {
+		expect(is.iterable(candidate)).toEqual(false);
 	});
 
 	it("it should not be negative", () => {
@@ -453,6 +477,10 @@ describe('When checking an empty object', () => {
 		expect(is.negative(candidate)).toEqual(false);
 	});
 
+	it('it should not be iterable', () => {
+		expect(is.iterable(candidate)).toEqual(false);
+	});
+
 	it("it should not be a string", () => {
 		expect(is.string(candidate)).toEqual(false);
 	});
@@ -521,6 +549,10 @@ describe('When checking a null value', () => {
 
 	it("it should not be negative", () => {
 		expect(is.negative(candidate)).toEqual(false);
+	});
+
+	it('it should not be iterable', () => {
+		expect(is.iterable(candidate)).toEqual(false);
 	});
 
 	it("it should not be a string", () => {
@@ -593,6 +625,10 @@ describe('When checking an undefined value', () => {
 		expect(is.negative(candidate)).toEqual(false);
 	});
 
+	it('it should not be iterable', () => {
+		expect(is.iterable(candidate)).toEqual(false);
+	});
+
 	it("it should not be a string", () => {
 		expect(is.string(candidate)).toEqual(false);
 	});
@@ -663,6 +699,10 @@ describe('When checking a large integer (exceeding 32-bits)', () => {
 		expect(is.negative(candidate)).toEqual(false);
 	});
 
+	it('it should not be iterable', () => {
+		expect(is.iterable(candidate)).toEqual(false);
+	});
+
 	it("it should not be a string", () => {
 		expect(is.string(candidate)).toEqual(false);
 	});
@@ -731,6 +771,10 @@ describe('When checking a zero-length string', () => {
 
 	it("it should not be negative", () => {
 		expect(is.negative(candidate)).toEqual(false);
+	});
+
+	it('it should be iterable', () => {
+		expect(is.iterable(candidate)).toEqual(true);
 	});
 
 	it("it should be a string", () => {
