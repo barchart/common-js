@@ -205,7 +205,7 @@ module.exports = (() => {
   return FailureReason;
 })();
 
-},{"./../../collections/Tree":7,"./../../lang/assert":30,"./../../lang/is":36,"./../../serialization/json/Schema":58,"./FailureReasonItem":2,"./FailureType":3}],2:[function(require,module,exports){
+},{"./../../collections/Tree":7,"./../../lang/assert":30,"./../../lang/is":36,"./../../serialization/json/Schema":59,"./FailureReasonItem":2,"./FailureType":3}],2:[function(require,module,exports){
 const assert = require('./../../lang/assert'),
       attributes = require('./../../lang/attributes');
 
@@ -3594,7 +3594,7 @@ module.exports = (() => {
   return Decimal;
 })();
 
-},{"./Enum":24,"./assert":30,"./is":36,"big.js":49}],23:[function(require,module,exports){
+},{"./Enum":24,"./assert":30,"./is":36,"big.js":50}],23:[function(require,module,exports){
 const assert = require('./assert');
 
 module.exports = (() => {
@@ -4138,7 +4138,7 @@ module.exports = (() => {
   return Rate;
 })();
 
-},{"./Currency":20,"./Decimal":22,"./assert":30,"./memoize":39}],27:[function(require,module,exports){
+},{"./Currency":20,"./Decimal":22,"./assert":30,"./memoize":40}],27:[function(require,module,exports){
 const assert = require('./assert'),
       is = require('./is');
 
@@ -4250,7 +4250,7 @@ module.exports = (() => {
   return Timestamp;
 })();
 
-},{"./assert":30,"./is":36,"moment-timezone":52}],28:[function(require,module,exports){
+},{"./assert":30,"./is":36,"moment-timezone":53}],28:[function(require,module,exports){
 const moment = require('moment-timezone/builds/moment-timezone-with-data-2012-2022');
 
 const Enum = require('./Enum'),
@@ -4372,7 +4372,7 @@ module.exports = (() => {
   return Timezones;
 })();
 
-},{"./Enum":24,"./is":36,"./timezone":44,"moment-timezone/builds/moment-timezone-with-data-2012-2022":50}],29:[function(require,module,exports){
+},{"./Enum":24,"./is":36,"./timezone":45,"moment-timezone/builds/moment-timezone-with-data-2012-2022":51}],29:[function(require,module,exports){
 const assert = require('./assert'),
       is = require('./is');
 
@@ -5435,6 +5435,18 @@ module.exports = (() => {
     },
 
     /**
+     * Returns true if the argument is iterable.
+     *
+     * @static
+     * @public
+     * @param {*} candidate
+     * @returns {boolean}
+     */
+    iterable(candidate) {
+      return !this.null(candidate) && !this.undefined(candidate) && this.fn(candidate[Symbol.iterator]);
+    },
+
+    /**
      * Returns true if the argument is a string.
      *
      * @static
@@ -5558,6 +5570,74 @@ module.exports = (() => {
 })();
 
 },{}],37:[function(require,module,exports){
+const is = require('./is'),
+      promise = require('./promise');
+
+module.exports = (() => {
+  /**
+   * A looping mechanism that allows iteration to continue asynchronously.
+   *
+   * @public
+   * @function
+   * @param {Iterable} iterable
+   * @param {LoopProcessorCallback=} processor
+   * @returns {Promise<void>}
+   */
+  function iterate(iterable, processor) {
+    return promise.build((resolveCallback, rejectCallback) => {
+      if (!is.iterable(iterable)) {
+        rejectCallback('Unable run loop function, the "iterable" argument must have an Iterator.');
+        return;
+      }
+
+      if (!is.fn(processor)) {
+        rejectCallback('Unable run loop function, the "processor" argument must be a function.');
+        return;
+      }
+
+      const processNext = (i, p, r) => {
+        const next = i.next();
+
+        if (next.done) {
+          return r();
+        }
+
+        const c = interrupt => {
+          if (interrupt === false) {
+            return r();
+          }
+
+          processNext(i, p, r);
+        };
+
+        p(next.value, c);
+      };
+
+      processNext(iterable[Symbol.iterator](), processor, resolveCallback);
+    });
+  }
+  /**
+   * A callback used to process a loop item.
+   *
+   * @public
+   * @callback LoopProcessorCallback
+   * @param {*} item
+   * @param {LoopContinueCallback} callback - Consumer will invoke when ready to continue.
+   */
+
+  /**
+   * A callback which is invoked to indicate a loop should continue processing.
+   *
+   * @public
+   * @callback LoopContinueCallback
+   * @@returns {Boolean=} - If false, loop breaks.
+   */
+
+
+  return iterate;
+})();
+
+},{"./is":36,"./promise":42}],38:[function(require,module,exports){
 const assert = require('./assert'),
       is = require('./is');
 
@@ -5605,7 +5685,7 @@ module.exports = (() => {
   return mask;
 })();
 
-},{"./assert":30,"./is":36}],38:[function(require,module,exports){
+},{"./assert":30,"./is":36}],39:[function(require,module,exports){
 const is = require('./is');
 
 module.exports = (() => {
@@ -5637,7 +5717,7 @@ module.exports = (() => {
   };
 })();
 
-},{"./is":36}],39:[function(require,module,exports){
+},{"./is":36}],40:[function(require,module,exports){
 const assert = require('./assert');
 
 module.exports = (() => {
@@ -5701,7 +5781,7 @@ module.exports = (() => {
   };
 })();
 
-},{"./assert":30}],40:[function(require,module,exports){
+},{"./assert":30}],41:[function(require,module,exports){
 const array = require('./array'),
       is = require('./is');
 
@@ -5861,7 +5941,7 @@ module.exports = (() => {
   return object;
 })();
 
-},{"./array":29,"./is":36}],41:[function(require,module,exports){
+},{"./array":29,"./is":36}],42:[function(require,module,exports){
 const assert = require('./assert');
 
 module.exports = (() => {
@@ -6025,7 +6105,7 @@ module.exports = (() => {
   };
 })();
 
-},{"./assert":30}],42:[function(require,module,exports){
+},{"./assert":30}],43:[function(require,module,exports){
 const assert = require('./assert');
 
 module.exports = (() => {
@@ -6043,7 +6123,7 @@ module.exports = (() => {
   };
 })();
 
-},{"./assert":30}],43:[function(require,module,exports){
+},{"./assert":30}],44:[function(require,module,exports){
 const assert = require('./assert'),
       is = require('./is');
 
@@ -6142,7 +6222,7 @@ module.exports = (() => {
   };
 })();
 
-},{"./assert":30,"./is":36}],44:[function(require,module,exports){
+},{"./assert":30,"./is":36}],45:[function(require,module,exports){
 const moment = require('moment-timezone/builds/moment-timezone-with-data-2012-2022'),
       assert = require('./assert');
 
@@ -6197,7 +6277,7 @@ module.exports = (() => {
   };
 })();
 
-},{"./assert":30,"moment-timezone/builds/moment-timezone-with-data-2012-2022":50}],45:[function(require,module,exports){
+},{"./assert":30,"moment-timezone/builds/moment-timezone-with-data-2012-2022":51}],46:[function(require,module,exports){
 const assert = require('./../lang/assert'),
       Disposable = require('./../lang/Disposable');
 
@@ -6329,7 +6409,7 @@ module.exports = (() => {
   return Event;
 })();
 
-},{"./../lang/Disposable":23,"./../lang/assert":30}],46:[function(require,module,exports){
+},{"./../lang/Disposable":23,"./../lang/assert":30}],47:[function(require,module,exports){
 const assert = require('./../lang/assert'),
       Disposable = require('./../lang/Disposable'),
       Event = require('./Event');
@@ -6499,7 +6579,7 @@ module.exports = (() => {
   return EventMap;
 })();
 
-},{"./../lang/Disposable":23,"./../lang/assert":30,"./Event":45}],47:[function(require,module,exports){
+},{"./../lang/Disposable":23,"./../lang/assert":30,"./Event":46}],48:[function(require,module,exports){
 const assert = require('./../lang/assert'),
       is = require('./../lang/is'),
       Disposable = require('./../lang/Disposable'),
@@ -6685,7 +6765,7 @@ module.exports = (() => {
   return Model;
 })();
 
-},{"./../lang/Disposable":23,"./../lang/assert":30,"./../lang/is":36,"./../messaging/Event":45}],48:[function(require,module,exports){
+},{"./../lang/Disposable":23,"./../lang/assert":30,"./../lang/is":36,"./../messaging/Event":46}],49:[function(require,module,exports){
 const assert = require('./../../lang/assert');
 
 const Schema = require('./../../serialization/json/Schema');
@@ -6803,7 +6883,7 @@ module.exports = (() => {
   return RestParser;
 })();
 
-},{"./../../lang/assert":30,"./../../serialization/json/Schema":58}],49:[function(require,module,exports){
+},{"./../../lang/assert":30,"./../../serialization/json/Schema":59}],50:[function(require,module,exports){
 /*
  *  big.js v5.2.2
  *  A small, fast, easy-to-use library for arbitrary-precision decimal arithmetic.
@@ -7746,7 +7826,7 @@ module.exports = (() => {
   }
 })(this);
 
-},{}],50:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 //! moment-timezone.js
 //! version : 0.5.26
 //! Copyright (c) JS Foundation and other contributors
@@ -8972,7 +9052,7 @@ module.exports = (() => {
 	return moment;
 }));
 
-},{"moment":54}],51:[function(require,module,exports){
+},{"moment":55}],52:[function(require,module,exports){
 module.exports={
 	"version": "2019b",
 	"zones": [
@@ -9573,11 +9653,11 @@ module.exports={
 		"Pacific/Tarawa|Pacific/Wallis"
 	]
 }
-},{}],52:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 var moment = module.exports = require("./moment-timezone");
 moment.tz.load(require('./data/packed/latest.json'));
 
-},{"./data/packed/latest.json":51,"./moment-timezone":53}],53:[function(require,module,exports){
+},{"./data/packed/latest.json":52,"./moment-timezone":54}],54:[function(require,module,exports){
 //! moment-timezone.js
 //! version : 0.5.26
 //! Copyright (c) JS Foundation and other contributors
@@ -10206,7 +10286,7 @@ moment.tz.load(require('./data/packed/latest.json'));
 	return moment;
 }));
 
-},{"moment":54}],54:[function(require,module,exports){
+},{"moment":55}],55:[function(require,module,exports){
 //! moment.js
 
 ;(function (global, factory) {
@@ -14810,7 +14890,7 @@ moment.tz.load(require('./data/packed/latest.json'));
 
 })));
 
-},{}],55:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 const Currency = require('./../../lang/Currency'),
       Money = require('./../../lang/Money');
 
@@ -14886,7 +14966,7 @@ module.exports = (() => {
   return Component;
 })();
 
-},{"./../../lang/Currency":20,"./../../lang/Money":25,"./DataType":56,"./Field":57}],56:[function(require,module,exports){
+},{"./../../lang/Currency":20,"./../../lang/Money":25,"./DataType":57,"./Field":58}],57:[function(require,module,exports){
 const moment = require('moment');
 
 const AdHoc = require('./../../lang/AdHoc'),
@@ -15202,7 +15282,7 @@ module.exports = (() => {
   return DataType;
 })();
 
-},{"./../../lang/AdHoc":19,"./../../lang/Day":21,"./../../lang/Decimal":22,"./../../lang/Enum":24,"./../../lang/Timestamp":27,"./../../lang/assert":30,"./../../lang/is":36,"moment":54}],57:[function(require,module,exports){
+},{"./../../lang/AdHoc":19,"./../../lang/Day":21,"./../../lang/Decimal":22,"./../../lang/Enum":24,"./../../lang/Timestamp":27,"./../../lang/assert":30,"./../../lang/is":36,"moment":55}],58:[function(require,module,exports){
 module.exports = (() => {
   'use strict';
   /**
@@ -15263,7 +15343,7 @@ module.exports = (() => {
   return Field;
 })();
 
-},{}],58:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 const attributes = require('./../../lang/attributes'),
       functions = require('./../../lang/functions'),
       is = require('./../../lang/is');
@@ -15586,7 +15666,7 @@ module.exports = (() => {
   return Schema;
 })();
 
-},{"./../../collections/LinkedList":4,"./../../collections/Tree":7,"./../../lang/attributes":31,"./../../lang/functions":35,"./../../lang/is":36,"./Component":55,"./Field":57}],59:[function(require,module,exports){
+},{"./../../collections/LinkedList":4,"./../../collections/Tree":7,"./../../lang/attributes":31,"./../../lang/functions":35,"./../../lang/is":36,"./Component":56,"./Field":58}],60:[function(require,module,exports){
 const assert = require('./../../../lang/assert');
 
 const Component = require('./../Component'),
@@ -15661,7 +15741,7 @@ module.exports = (() => {
   return ComponentBuilder;
 })();
 
-},{"./../../../lang/assert":30,"./../Component":55,"./../DataType":56,"./../Field":57}],60:[function(require,module,exports){
+},{"./../../../lang/assert":30,"./../Component":56,"./../DataType":57,"./../Field":58}],61:[function(require,module,exports){
 const assert = require('./../../../lang/assert'),
       is = require('./../../../lang/is');
 
@@ -15775,7 +15855,7 @@ module.exports = (() => {
   return SchemaBuilder;
 })();
 
-},{"./../../../lang/assert":30,"./../../../lang/is":36,"./../Component":55,"./../DataType":56,"./../Field":57,"./../Schema":58,"./ComponentBuilder":59}],61:[function(require,module,exports){
+},{"./../../../lang/assert":30,"./../../../lang/is":36,"./../Component":56,"./../DataType":57,"./../Field":58,"./../Schema":59,"./ComponentBuilder":60}],62:[function(require,module,exports){
 const Specification = require('./Specification');
 
 module.exports = (() => {
@@ -15784,7 +15864,7 @@ module.exports = (() => {
   return Specification.And;
 })();
 
-},{"./Specification":72}],62:[function(require,module,exports){
+},{"./Specification":73}],63:[function(require,module,exports){
 const assert = require('./../lang/assert');
 
 const Specification = require('./Specification');
@@ -15821,7 +15901,7 @@ module.exports = (() => {
   return Between;
 })();
 
-},{"./../lang/assert":30,"./Specification":72}],63:[function(require,module,exports){
+},{"./../lang/assert":30,"./Specification":73}],64:[function(require,module,exports){
 const assert = require('./../lang/assert');
 
 const Specification = require('./Specification');
@@ -15857,7 +15937,7 @@ module.exports = (() => {
   return Contained;
 })();
 
-},{"./../lang/assert":30,"./Specification":72}],64:[function(require,module,exports){
+},{"./../lang/assert":30,"./Specification":73}],65:[function(require,module,exports){
 const Specification = require('./Specification');
 
 module.exports = (() => {
@@ -15890,7 +15970,7 @@ module.exports = (() => {
   return Contains;
 })();
 
-},{"./Specification":72}],65:[function(require,module,exports){
+},{"./Specification":73}],66:[function(require,module,exports){
 const Specification = require('./Specification');
 
 module.exports = (() => {
@@ -15923,7 +16003,7 @@ module.exports = (() => {
   return Equals;
 })();
 
-},{"./Specification":72}],66:[function(require,module,exports){
+},{"./Specification":73}],67:[function(require,module,exports){
 const Specification = require('./Specification');
 
 module.exports = (() => {
@@ -15953,7 +16033,7 @@ module.exports = (() => {
   return Fail;
 })();
 
-},{"./Specification":72}],67:[function(require,module,exports){
+},{"./Specification":73}],68:[function(require,module,exports){
 const is = require('./../lang/is');
 
 const Specification = require('./Specification');
@@ -15987,7 +16067,7 @@ module.exports = (() => {
   return Nan;
 })();
 
-},{"./../lang/is":36,"./Specification":72}],68:[function(require,module,exports){
+},{"./../lang/is":36,"./Specification":73}],69:[function(require,module,exports){
 const Specification = require('./Specification');
 
 module.exports = (() => {
@@ -15996,7 +16076,7 @@ module.exports = (() => {
   return Specification.Not;
 })();
 
-},{"./Specification":72}],69:[function(require,module,exports){
+},{"./Specification":73}],70:[function(require,module,exports){
 const is = require('./../lang/is');
 
 const Specification = require('./Specification');
@@ -16030,7 +16110,7 @@ module.exports = (() => {
   return Numeric;
 })();
 
-},{"./../lang/is":36,"./Specification":72}],70:[function(require,module,exports){
+},{"./../lang/is":36,"./Specification":73}],71:[function(require,module,exports){
 const Specification = require('./Specification');
 
 module.exports = (() => {
@@ -16039,7 +16119,7 @@ module.exports = (() => {
   return Specification.Or;
 })();
 
-},{"./Specification":72}],71:[function(require,module,exports){
+},{"./Specification":73}],72:[function(require,module,exports){
 const Specification = require('./Specification');
 
 module.exports = (() => {
@@ -16069,7 +16149,7 @@ module.exports = (() => {
   return Pass;
 })();
 
-},{"./Specification":72}],72:[function(require,module,exports){
+},{"./Specification":73}],73:[function(require,module,exports){
 const assert = require('./../lang/assert');
 
 module.exports = (() => {
@@ -16214,7 +16294,7 @@ module.exports = (() => {
   return Specification;
 })();
 
-},{"./../lang/assert":30}],73:[function(require,module,exports){
+},{"./../lang/assert":30}],74:[function(require,module,exports){
 const Specification = require('./../Specification');
 
 module.exports = (() => {
@@ -16245,7 +16325,7 @@ module.exports = (() => {
   return GreaterThan;
 })();
 
-},{"./../Specification":72}],74:[function(require,module,exports){
+},{"./../Specification":73}],75:[function(require,module,exports){
 const Specification = require('./../Specification');
 
 module.exports = (() => {
@@ -16276,7 +16356,7 @@ module.exports = (() => {
   return LessThan;
 })();
 
-},{"./../Specification":72}],75:[function(require,module,exports){
+},{"./../Specification":73}],76:[function(require,module,exports){
 const Enum = require('./../../../../lang/Enum'),
       FailureReasonItem = require('./../../../../api/failures/FailureReasonItem'),
       FailureType = require('./../../../../api/failures/FailureType');
@@ -16382,7 +16462,7 @@ describe('When a FailureType is created with a template string that references d
   });
 });
 
-},{"./../../../../api/failures/FailureReasonItem":2,"./../../../../api/failures/FailureType":3,"./../../../../lang/Enum":24}],76:[function(require,module,exports){
+},{"./../../../../api/failures/FailureReasonItem":2,"./../../../../api/failures/FailureType":3,"./../../../../lang/Enum":24}],77:[function(require,module,exports){
 const FailureReason = require('./../../../../api/failures/FailureReason'),
       FailureType = require('./../../../../api/failures/FailureType');
 
@@ -16503,7 +16583,7 @@ describe('When a schema is validated', () => {
   });
 });
 
-},{"./../../../../api/failures/FailureReason":1,"./../../../../api/failures/FailureType":3,"./../../../../serialization/json/DataType":56,"./../../../../serialization/json/Field":57,"./../../../../serialization/json/Schema":58}],77:[function(require,module,exports){
+},{"./../../../../api/failures/FailureReason":1,"./../../../../api/failures/FailureType":3,"./../../../../serialization/json/DataType":57,"./../../../../serialization/json/Field":58,"./../../../../serialization/json/Schema":59}],78:[function(require,module,exports){
 const LinkedList = require('./../../../collections/LinkedList');
 
 describe('When "doe" is used to start a linked list', () => {
@@ -16563,7 +16643,7 @@ describe('When "doe" is used to start a linked list', () => {
   });
 });
 
-},{"./../../../collections/LinkedList":4}],78:[function(require,module,exports){
+},{"./../../../collections/LinkedList":4}],79:[function(require,module,exports){
 const Queue = require('./../../../collections/Queue');
 
 describe('When a Queue is constructed', () => {
@@ -16693,7 +16773,7 @@ describe('When a Queue is constructed', () => {
   });
 });
 
-},{"./../../../collections/Queue":5}],79:[function(require,module,exports){
+},{"./../../../collections/Queue":5}],80:[function(require,module,exports){
 const Stack = require('./../../../collections/Stack');
 
 describe('When a Stack is constructed', () => {
@@ -16820,7 +16900,7 @@ describe('When a Stack is constructed', () => {
   });
 });
 
-},{"./../../../collections/Stack":6}],80:[function(require,module,exports){
+},{"./../../../collections/Stack":6}],81:[function(require,module,exports){
 const Tree = require('./../../../collections/Tree');
 
 describe('When a Tree is constructed', () => {
@@ -16913,7 +16993,7 @@ describe('When a Tree is constructed', () => {
   });
 });
 
-},{"./../../../collections/Tree":7}],81:[function(require,module,exports){
+},{"./../../../collections/Tree":7}],82:[function(require,module,exports){
 const ComparatorBuilder = require('./../../../../collections/sorting/ComparatorBuilder');
 
 describe('When a ComparatorBuilder is composed with two comparators', () => {
@@ -16995,7 +17075,7 @@ describe('When a ComparatorBuilder is composed with two comparators', () => {
   });
 });
 
-},{"./../../../../collections/sorting/ComparatorBuilder":8}],82:[function(require,module,exports){
+},{"./../../../../collections/sorting/ComparatorBuilder":8}],83:[function(require,module,exports){
 const comparators = require('./../../../../collections/sorting/comparators');
 
 describe('When using the "compareDates" comparator', () => {
@@ -17143,7 +17223,7 @@ describe('When using the "compareBoolean" comparator', () => {
   });
 });
 
-},{"./../../../../collections/sorting/comparators":9}],83:[function(require,module,exports){
+},{"./../../../../collections/sorting/comparators":9}],84:[function(require,module,exports){
 const CompoundMap = require('./../../../../collections/specialized/CompoundMap');
 
 describe('When an CompoundMap is constructed', () => {
@@ -17278,7 +17358,7 @@ describe('When an CompoundMap is constructed', () => {
   });
 });
 
-},{"./../../../../collections/specialized/CompoundMap":10}],84:[function(require,module,exports){
+},{"./../../../../collections/specialized/CompoundMap":10}],85:[function(require,module,exports){
 const Disposable = require('./../../../../lang/Disposable'),
       DisposableStack = require('./../../../../collections/specialized/DisposableStack');
 
@@ -17441,7 +17521,7 @@ describe('When an DisposableStack is constructed', () => {
   });
 });
 
-},{"./../../../../collections/specialized/DisposableStack":11,"./../../../../lang/Disposable":23}],85:[function(require,module,exports){
+},{"./../../../../collections/specialized/DisposableStack":11,"./../../../../lang/Disposable":23}],86:[function(require,module,exports){
 const EvictingList = require('./../../../../collections/specialized/EvictingList');
 
 describe('When an EvictingList is constructed (with no capacity)', () => {
@@ -17614,7 +17694,7 @@ describe('When an EvictingList is constructed (with a capacity of 3)', () => {
   });
 });
 
-},{"./../../../../collections/specialized/EvictingList":12}],86:[function(require,module,exports){
+},{"./../../../../collections/specialized/EvictingList":12}],87:[function(require,module,exports){
 const EvictingMap = require('./../../../../collections/specialized/EvictingMap');
 
 describe('When an EvictingMap is constructed (with no capacity)', () => {
@@ -17908,7 +17988,7 @@ describe('When an EvictingMap is constructed', () => {
   });
 });
 
-},{"./../../../../collections/specialized/EvictingMap":13}],87:[function(require,module,exports){
+},{"./../../../../collections/specialized/EvictingMap":13}],88:[function(require,module,exports){
 const PriorityQueue = require('./../../../../collections/specialized/PriorityQueue');
 
 describe('When a Queue is constructed, using a "ladies first" comparator', () => {
@@ -18188,7 +18268,7 @@ describe('When a Queue is constructed, using a simple (ascending) numeric compar
   });
 });
 
-},{"./../../../../collections/specialized/PriorityQueue":14}],88:[function(require,module,exports){
+},{"./../../../../collections/specialized/PriorityQueue":14}],89:[function(require,module,exports){
 const TimeMap = require('./../../../../collections/specialized/TimeMap');
 
 describe('When an TimeMap is constructed (with a 10 millisecond time to live)', () => {
@@ -18226,7 +18306,7 @@ describe('When an TimeMap is constructed (with a 10 millisecond time to live)', 
   });
 });
 
-},{"./../../../../collections/specialized/TimeMap":15}],89:[function(require,module,exports){
+},{"./../../../../collections/specialized/TimeMap":15}],90:[function(require,module,exports){
 const CommandHandler = require('./../../../commands/CommandHandler');
 
 describe('When a CommandHandler is created from a function', () => {
@@ -18278,7 +18358,7 @@ describe('When a CommandHandler is created from a function', () => {
   });
 });
 
-},{"./../../../commands/CommandHandler":16}],90:[function(require,module,exports){
+},{"./../../../commands/CommandHandler":16}],91:[function(require,module,exports){
 const CommandHandler = require('./../../../commands/CommandHandler'),
       CompositeCommandHandler = require('./../../../commands/CompositeCommandHandler');
 
@@ -18327,7 +18407,7 @@ describe('When a CompositeCommandHandler is created', () => {
   });
 });
 
-},{"./../../../commands/CommandHandler":16,"./../../../commands/CompositeCommandHandler":17}],91:[function(require,module,exports){
+},{"./../../../commands/CommandHandler":16,"./../../../commands/CompositeCommandHandler":17}],92:[function(require,module,exports){
 const CommandHandler = require('./../../../commands/CommandHandler'),
       MappedCommandHandler = require('./../../../commands/MappedCommandHandler');
 
@@ -18394,7 +18474,7 @@ describe('When a MappedCommandHandler is created with two mapped commands', () =
   });
 });
 
-},{"./../../../commands/CommandHandler":16,"./../../../commands/MappedCommandHandler":18}],92:[function(require,module,exports){
+},{"./../../../commands/CommandHandler":16,"./../../../commands/MappedCommandHandler":18}],93:[function(require,module,exports){
 const AdHoc = require('./../../../lang/AdHoc');
 
 describe('When wrapping an object in an ad hoc serialization container', () => {
@@ -18435,7 +18515,7 @@ describe('When wrapping an object in an ad hoc serialization container', () => {
   });
 });
 
-},{"./../../../lang/AdHoc":19}],93:[function(require,module,exports){
+},{"./../../../lang/AdHoc":19}],94:[function(require,module,exports){
 const Day = require('./../../../lang/Day');
 
 describe('When "2017-08-31 is parsed as a Day', () => {
@@ -18906,7 +18986,7 @@ describe('When getting end of the month', () => {
   });
 });
 
-},{"./../../../lang/Day":21}],94:[function(require,module,exports){
+},{"./../../../lang/Day":21}],95:[function(require,module,exports){
 const Decimal = require('./../../../lang/Decimal');
 
 describe('When adding values that cause floating point problems (e.g. 1.1 + 2.2 != 3.3)', () => {
@@ -19252,7 +19332,7 @@ describe('When cloning a decimal', () => {
   });
 });
 
-},{"./../../../lang/Decimal":22}],95:[function(require,module,exports){
+},{"./../../../lang/Decimal":22}],96:[function(require,module,exports){
 const Disposable = require('./../../../lang/Disposable');
 
 describe('When a Disposable is extended', () => {
@@ -19348,7 +19428,7 @@ describe('When a Disposable.fromAction creates a Disposable', () => {
   });
 });
 
-},{"./../../../lang/Disposable":23}],96:[function(require,module,exports){
+},{"./../../../lang/Disposable":23}],97:[function(require,module,exports){
 const Enum = require('./../../../lang/Enum');
 
 describe('When Enum is extended (as types EnumA and EnumB) and type items are added to each (X and Y)', () => {
@@ -19395,7 +19475,7 @@ describe('When Enum is extended (as types EnumA and EnumB) and type items are ad
   });
 });
 
-},{"./../../../lang/Enum":24}],97:[function(require,module,exports){
+},{"./../../../lang/Enum":24}],98:[function(require,module,exports){
 const Currency = require('./../../../lang/Currency'),
       Decimal = require('./../../../lang/Decimal'),
       Rate = require('./../../../lang/Rate');
@@ -19467,7 +19547,7 @@ describe('When parsing an "^USDEUR" rate of 0.8333', () => {
   });
 });
 
-},{"./../../../lang/Currency":20,"./../../../lang/Decimal":22,"./../../../lang/Rate":26}],98:[function(require,module,exports){
+},{"./../../../lang/Currency":20,"./../../../lang/Decimal":22,"./../../../lang/Rate":26}],99:[function(require,module,exports){
 const Timestamp = require('./../../../lang/Timestamp');
 
 describe('When Timestamp is created from a timestamp (1502372574350)', () => {
@@ -19518,7 +19598,7 @@ describe('When Timestamp is created for the current moment', () => {
   });
 });
 
-},{"./../../../lang/Timestamp":27}],99:[function(require,module,exports){
+},{"./../../../lang/Timestamp":27}],100:[function(require,module,exports){
 let Timezones = require('./../../../lang/Timezones');
 
 describe('When accessing static items', () => {
@@ -19600,7 +19680,7 @@ describe('When calculating timezone offset on 2019-11-04 UTC', () => {
   });
 });
 
-},{"./../../../lang/Timezones":28}],100:[function(require,module,exports){
+},{"./../../../lang/Timezones":28}],101:[function(require,module,exports){
 const array = require('./../../../lang/array');
 
 describe('when reducing an array to unique values', () => {
@@ -20481,7 +20561,7 @@ describe('when removing an item from an array using a predicate', () => {
   });
 });
 
-},{"./../../../lang/array":29}],101:[function(require,module,exports){
+},{"./../../../lang/array":29}],102:[function(require,module,exports){
 const attributes = require('./../../../lang/attributes');
 
 describe('When "attributes.has" is used to check a top-level property', () => {
@@ -21037,7 +21117,7 @@ describe('When "attributes.read" is used with a non-default separator', () => {
   });
 });
 
-},{"./../../../lang/attributes":31}],102:[function(require,module,exports){
+},{"./../../../lang/attributes":31}],103:[function(require,module,exports){
 const connection = require('./../../../lang/connection');
 
 describe('When "getIsSecure is invoked', () => {
@@ -21057,7 +21137,7 @@ describe('When "getIsSecure is invoked', () => {
   });
 });
 
-},{"./../../../lang/connection":32}],103:[function(require,module,exports){
+},{"./../../../lang/connection":32}],104:[function(require,module,exports){
 const utilities = require('./../../../lang/date');
 
 describe('When extracting the "short" day of week', () => {
@@ -21167,7 +21247,7 @@ describe('When determining the ordinal for a date', () => {
   });
 });
 
-},{"./../../../lang/date":33}],104:[function(require,module,exports){
+},{"./../../../lang/date":33}],105:[function(require,module,exports){
 const formatter = require('./../../../lang/formatter');
 
 describe('When formatting numbers', () => {
@@ -21178,7 +21258,7 @@ describe('When formatting numbers', () => {
   });
 });
 
-},{"./../../../lang/formatter":34}],105:[function(require,module,exports){
+},{"./../../../lang/formatter":34}],106:[function(require,module,exports){
 const functions = require('./../../../lang/functions');
 
 describe('when using the tautology function', () => {
@@ -21203,7 +21283,7 @@ describe('when using the tautology function', () => {
   });
 });
 
-},{"./../../../lang/functions":35}],106:[function(require,module,exports){
+},{"./../../../lang/functions":35}],107:[function(require,module,exports){
 const is = require('./../../../lang/is');
 
 describe('When checking the number 3', () => {
@@ -21230,6 +21310,9 @@ describe('When checking the number 3', () => {
   });
   it("it should not be negative", () => {
     expect(is.negative(candidate)).toEqual(false);
+  });
+  it('it should not be iterable', () => {
+    expect(is.iterable(candidate)).toEqual(false);
   });
   it("it should not be a string", () => {
     expect(is.string(candidate)).toEqual(false);
@@ -21284,6 +21367,9 @@ describe('When checking the Math.PI', () => {
   it("it should not be negative", () => {
     expect(is.negative(candidate)).toEqual(false);
   });
+  it('it should not be iterable', () => {
+    expect(is.iterable(candidate)).toEqual(false);
+  });
   it("it should not be a string", () => {
     expect(is.string(candidate)).toEqual(false);
   });
@@ -21336,6 +21422,9 @@ describe('When checking the Number.NaN', () => {
   });
   it("it should not be negative", () => {
     expect(is.negative(candidate)).toEqual(false);
+  });
+  it('it should not be iterable', () => {
+    expect(is.iterable(candidate)).toEqual(false);
   });
   it("it should not be a string", () => {
     expect(is.string(candidate)).toEqual(false);
@@ -21390,6 +21479,9 @@ describe('When checking the string "3"', () => {
   it("it should not be negative", () => {
     expect(is.negative(candidate)).toEqual(false);
   });
+  it('it should be iterable', () => {
+    expect(is.iterable(candidate)).toEqual(true);
+  });
   it("it should be a string", () => {
     expect(is.string(candidate)).toEqual(true);
   });
@@ -21443,6 +21535,9 @@ describe('When checking the date 08/29/2016', () => {
   it("it should not be negative", () => {
     expect(is.negative(candidate)).toEqual(false);
   });
+  it('it should not be iterable', () => {
+    expect(is.iterable(candidate)).toEqual(false);
+  });
   it("it should not be a string", () => {
     expect(is.string(candidate)).toEqual(false);
   });
@@ -21492,6 +21587,9 @@ describe('When checking the "expect" function', () => {
   });
   it("it should not be positive", () => {
     expect(is.positive(candidate)).toEqual(false);
+  });
+  it('it should not be iterable', () => {
+    expect(is.iterable(candidate)).toEqual(false);
   });
   it("it should not be negative", () => {
     expect(is.negative(candidate)).toEqual(false);
@@ -21549,6 +21647,9 @@ describe('When checking an empty object', () => {
   it("it should not be negative", () => {
     expect(is.negative(candidate)).toEqual(false);
   });
+  it('it should not be iterable', () => {
+    expect(is.iterable(candidate)).toEqual(false);
+  });
   it("it should not be a string", () => {
     expect(is.string(candidate)).toEqual(false);
   });
@@ -21560,6 +21661,62 @@ describe('When checking an empty object', () => {
   });
   it("it should not be an array", () => {
     expect(is.array(candidate)).toEqual(false);
+  });
+  it("it should not be a boolean", () => {
+    expect(is.boolean(candidate)).toEqual(false);
+  });
+  it("it should be an object", () => {
+    expect(is.object(candidate)).toEqual(true);
+  });
+  it("it should not be null", () => {
+    expect(is.null(candidate)).toEqual(false);
+  });
+  it("it should not be undefined", () => {
+    expect(is.undefined(candidate)).toEqual(false);
+  });
+  it("it should not be a zero-length string", () => {
+    expect(is.zeroLengthString(candidate)).toEqual(false);
+  });
+});
+describe('When checking an empty array', () => {
+  'use strict';
+
+  let candidate;
+  beforeEach(() => {
+    candidate = [];
+  });
+  it("it should not be a number", () => {
+    expect(is.number(candidate)).toEqual(false);
+  });
+  it("it should not be nan", () => {
+    expect(is.nan(candidate)).toEqual(false);
+  });
+  it("it should not be an integer", () => {
+    expect(is.integer(candidate)).toEqual(false);
+  });
+  it("it should not be an large integer", () => {
+    expect(is.large(candidate)).toEqual(false);
+  });
+  it("it should not be positive", () => {
+    expect(is.positive(candidate)).toEqual(false);
+  });
+  it("it should not be negative", () => {
+    expect(is.negative(candidate)).toEqual(false);
+  });
+  it('it should be iterable', () => {
+    expect(is.iterable(candidate)).toEqual(true);
+  });
+  it("it should not be a string", () => {
+    expect(is.string(candidate)).toEqual(false);
+  });
+  it("it should not be a Date", () => {
+    expect(is.date(candidate)).toEqual(false);
+  });
+  it("it should not be a function", () => {
+    expect(is.fn(candidate)).toEqual(false);
+  });
+  it("it should be an array", () => {
+    expect(is.array(candidate)).toEqual(true);
   });
   it("it should not be a boolean", () => {
     expect(is.boolean(candidate)).toEqual(false);
@@ -21601,6 +21758,9 @@ describe('When checking a null value', () => {
   });
   it("it should not be negative", () => {
     expect(is.negative(candidate)).toEqual(false);
+  });
+  it('it should not be iterable', () => {
+    expect(is.iterable(candidate)).toEqual(false);
   });
   it("it should not be a string", () => {
     expect(is.string(candidate)).toEqual(false);
@@ -21655,6 +21815,9 @@ describe('When checking an undefined value', () => {
   it("it should not be negative", () => {
     expect(is.negative(candidate)).toEqual(false);
   });
+  it('it should not be iterable', () => {
+    expect(is.iterable(candidate)).toEqual(false);
+  });
   it("it should not be a string", () => {
     expect(is.string(candidate)).toEqual(false);
   });
@@ -21708,6 +21871,9 @@ describe('When checking a large integer (exceeding 32-bits)', () => {
   it("it should not be negative", () => {
     expect(is.negative(candidate)).toEqual(false);
   });
+  it('it should not be iterable', () => {
+    expect(is.iterable(candidate)).toEqual(false);
+  });
   it("it should not be a string", () => {
     expect(is.string(candidate)).toEqual(false);
   });
@@ -21760,6 +21926,9 @@ describe('When checking a zero-length string', () => {
   });
   it("it should not be negative", () => {
     expect(is.negative(candidate)).toEqual(false);
+  });
+  it('it should be iterable', () => {
+    expect(is.iterable(candidate)).toEqual(true);
   });
   it("it should be a string", () => {
     expect(is.string(candidate)).toEqual(true);
@@ -21838,7 +22007,66 @@ describe('When checking inheritance', () => {
   });
 });
 
-},{"./../../../lang/is":36}],107:[function(require,module,exports){
+},{"./../../../lang/is":36}],108:[function(require,module,exports){
+const iterate = require('./../../../lang/iterate');
+
+describe('When using the iterate function', () => {
+  let a;
+  let b;
+  let c;
+  let iterable;
+  beforeEach(() => {
+    a = {};
+    b = {};
+    c = {};
+    iterable = [a, b, c];
+  });
+  describe('to synchronously iterate over an array with three items', () => {
+    let processor;
+    beforeEach(done => {
+      processor = jasmine.createSpy('processor').and.callFake((item, callback) => {
+        callback();
+      });
+      iterate(iterable, processor).then(() => {
+        done();
+      });
+    });
+    it('the "processor" should have been called three times', () => {
+      expect(processor).toHaveBeenCalledTimes(3);
+    });
+    it('the "processor" should have been called first with the first item', () => {
+      expect(processor.calls.argsFor(0)[0]).toBe(a);
+    });
+    it('the "processor" should have been called second with the second item', () => {
+      expect(processor.calls.argsFor(1)[0]).toBe(b);
+    });
+    it('the "processor" should have been called third with the third item', () => {
+      expect(processor.calls.argsFor(2)[0]).toBe(c);
+    });
+  });
+  describe('to synchronously iterate over an array with three items, breaking after the second item', () => {
+    let processor;
+    beforeEach(done => {
+      processor = jasmine.createSpy('processor').and.callFake((item, callback) => {
+        callback(item !== b);
+      });
+      iterate(iterable, processor).then(() => {
+        done();
+      });
+    });
+    it('the "processor" should have been called three times', () => {
+      expect(processor).toHaveBeenCalledTimes(2);
+    });
+    it('the "processor" should have been called first with the first item', () => {
+      expect(processor.calls.argsFor(0)[0]).toBe(a);
+    });
+    it('the "processor" should have been called second with the second item', () => {
+      expect(processor.calls.argsFor(1)[0]).toBe(b);
+    });
+  });
+});
+
+},{"./../../../lang/iterate":37}],109:[function(require,module,exports){
 const mask = require('./../../../lang/mask');
 
 describe('When testing the suitibility of an bit-based enumeration item', () => {
@@ -21957,7 +22185,7 @@ describe('When working with an empty flags collection', () => {
   });
 });
 
-},{"./../../../lang/mask":37}],108:[function(require,module,exports){
+},{"./../../../lang/mask":38}],110:[function(require,module,exports){
 const math = require('./../../../lang/math');
 
 describe('When using math.approximate', () => {
@@ -22010,7 +22238,7 @@ describe('When using math.approximate', () => {
   });
 });
 
-},{"./../../../lang/math":38}],109:[function(require,module,exports){
+},{"./../../../lang/math":39}],111:[function(require,module,exports){
 const memoize = require('./../../../lang/memoize');
 
 describe('When using memoize.simple', () => {
@@ -22138,7 +22366,7 @@ describe('When using memoize.cache', () => {
   });
 });
 
-},{"./../../../lang/memoize":39}],110:[function(require,module,exports){
+},{"./../../../lang/memoize":40}],112:[function(require,module,exports){
 const object = require('./../../../lang/object');
 
 describe('When cloning an object', () => {
@@ -22464,7 +22692,7 @@ describe('When cloning a complex object (using a custom value extractor)', () =>
   });
 });
 
-},{"./../../../lang/object":40}],111:[function(require,module,exports){
+},{"./../../../lang/object":41}],113:[function(require,module,exports){
 const promise = require('./../../../lang/promise');
 
 describe('When a timeout is set for a promise', () => {
@@ -23222,7 +23450,7 @@ describe('When "promise.build" is used to create a promise', () => {
   });
 });
 
-},{"./../../../lang/promise":41}],112:[function(require,module,exports){
+},{"./../../../lang/promise":42}],114:[function(require,module,exports){
 const random = require('./../../../lang/random');
 
 describe('When generating a random number, restricting the range to one integer', () => {
@@ -23258,7 +23486,7 @@ describe('When generating a random number with a range of multiple values', () =
   });
 });
 
-},{"./../../../lang/random":42}],113:[function(require,module,exports){
+},{"./../../../lang/random":43}],115:[function(require,module,exports){
 const string = require('./../../../lang/string');
 
 describe('When converting a string to "start" casing', () => {
@@ -23394,7 +23622,7 @@ describe('When a formattable string ("&startDate={0}&endDate={1}"', () => {
   });
 });
 
-},{"./../../../lang/string":43}],114:[function(require,module,exports){
+},{"./../../../lang/string":44}],116:[function(require,module,exports){
 const EventMap = require('./../../../messaging/EventMap');
 
 describe('When an EventMap is constructed', () => {
@@ -23531,7 +23759,7 @@ describe('When an EventMap is constructed', () => {
   });
 });
 
-},{"./../../../messaging/EventMap":46}],115:[function(require,module,exports){
+},{"./../../../messaging/EventMap":47}],117:[function(require,module,exports){
 const Disposable = require('./../../../lang/Disposable'),
       Event = require('./../../../messaging/Event');
 
@@ -23674,7 +23902,7 @@ describe('When an Event is constructed', () => {
   });
 });
 
-},{"./../../../lang/Disposable":23,"./../../../messaging/Event":45}],116:[function(require,module,exports){
+},{"./../../../lang/Disposable":23,"./../../../messaging/Event":46}],118:[function(require,module,exports){
 const Disposable = require('./../../../lang/Disposable'),
       Model = require('./../../../models/Model');
 
@@ -23777,7 +24005,7 @@ describe('When an Model is constructed with "firstName" and "lastName" propertie
   });
 });
 
-},{"./../../../lang/Disposable":23,"./../../../models/Model":47}],117:[function(require,module,exports){
+},{"./../../../lang/Disposable":23,"./../../../models/Model":48}],119:[function(require,module,exports){
 const RestParser = require('./../../../../network/rest/RestParser');
 
 describe('Using a customized JSON REST parser is created', () => {
@@ -23854,7 +24082,7 @@ describe('Using another customized JSON REST parser is created', () => {
   });
 });
 
-},{"./../../../../network/rest/RestParser":48}],118:[function(require,module,exports){
+},{"./../../../../network/rest/RestParser":49}],120:[function(require,module,exports){
 const AdHoc = require('./../../../../lang/AdHoc'),
       Currency = require('./../../../../lang/Currency'),
       Day = require('./../../../../lang/Day'),
@@ -24631,7 +24859,7 @@ describe('When a schema is created with only two days', () => {
   });
 });
 
-},{"./../../../../lang/AdHoc":19,"./../../../../lang/Currency":20,"./../../../../lang/Day":21,"./../../../../lang/Decimal":22,"./../../../../lang/Enum":24,"./../../../../lang/Money":25,"./../../../../serialization/json/Component":55,"./../../../../serialization/json/DataType":56,"./../../../../serialization/json/Field":57,"./../../../../serialization/json/Schema":58}],119:[function(require,module,exports){
+},{"./../../../../lang/AdHoc":19,"./../../../../lang/Currency":20,"./../../../../lang/Day":21,"./../../../../lang/Decimal":22,"./../../../../lang/Enum":24,"./../../../../lang/Money":25,"./../../../../serialization/json/Component":56,"./../../../../serialization/json/DataType":57,"./../../../../serialization/json/Field":58,"./../../../../serialization/json/Schema":59}],121:[function(require,module,exports){
 const Component = require('./../../../../../serialization/json/Component'),
       DataType = require('./../../../../../serialization/json/DataType'),
       SchemaBuilder = require('./../../../../../serialization/json/builders/SchemaBuilder');
@@ -24754,7 +24982,7 @@ describe('When using the schema builder to create a "Person" schema', () => {
   });
 });
 
-},{"./../../../../../serialization/json/Component":55,"./../../../../../serialization/json/DataType":56,"./../../../../../serialization/json/builders/SchemaBuilder":60}],120:[function(require,module,exports){
+},{"./../../../../../serialization/json/Component":56,"./../../../../../serialization/json/DataType":57,"./../../../../../serialization/json/builders/SchemaBuilder":61}],122:[function(require,module,exports){
 const Specification = require('./../../../specifications/Specification'),
       And = require('./../../../specifications/And');
 
@@ -24827,7 +25055,7 @@ describe('When an And is constructed', () => {
   });
 });
 
-},{"./../../../specifications/And":61,"./../../../specifications/Specification":72}],121:[function(require,module,exports){
+},{"./../../../specifications/And":62,"./../../../specifications/Specification":73}],123:[function(require,module,exports){
 const Between = require('./../../../specifications/Between');
 
 describe('When a GreaterThan is constructed (with a range of 17 to 42)', () => {
@@ -24857,7 +25085,7 @@ describe('When a GreaterThan is constructed (with a range of 17 to 42)', () => {
   });
 });
 
-},{"./../../../specifications/Between":62}],122:[function(require,module,exports){
+},{"./../../../specifications/Between":63}],124:[function(require,module,exports){
 const Contained = require('./../../../specifications/Contained');
 
 describe('When a Contained is constructed', () => {
@@ -24906,7 +25134,7 @@ describe('When a Contained is constructed', () => {
   });
 });
 
-},{"./../../../specifications/Contained":63}],123:[function(require,module,exports){
+},{"./../../../specifications/Contained":64}],125:[function(require,module,exports){
 const Contains = require('./../../../specifications/Contains');
 
 describe('When a Contains is constructed', () => {
@@ -24949,7 +25177,7 @@ describe('When a Contains is constructed', () => {
   });
 });
 
-},{"./../../../specifications/Contains":64}],124:[function(require,module,exports){
+},{"./../../../specifications/Contains":65}],126:[function(require,module,exports){
 const Equals = require('./../../../specifications/Equals');
 
 describe('When a Equals is constructed', () => {
@@ -24980,7 +25208,7 @@ describe('When a Equals is constructed', () => {
   });
 });
 
-},{"./../../../specifications/Equals":65}],125:[function(require,module,exports){
+},{"./../../../specifications/Equals":66}],127:[function(require,module,exports){
 const Fail = require('./../../../specifications/Fail');
 
 describe('When a Fail is constructed', () => {
@@ -25020,7 +25248,7 @@ describe('When a Fail is constructed', () => {
   });
 });
 
-},{"./../../../specifications/Fail":66}],126:[function(require,module,exports){
+},{"./../../../specifications/Fail":67}],128:[function(require,module,exports){
 const Nan = require('./../../../specifications/Nan');
 
 describe('When a Nan is constructed', () => {
@@ -25077,7 +25305,7 @@ describe('When a Nan is constructed', () => {
   });
 });
 
-},{"./../../../specifications/Nan":67}],127:[function(require,module,exports){
+},{"./../../../specifications/Nan":68}],129:[function(require,module,exports){
 const Not = require('./../../../specifications/Not'),
       Specification = require('./../../../specifications/Specification');
 
@@ -25200,7 +25428,7 @@ describe('When a Specification (that always succeeds) is constructed', () => {
   });
 });
 
-},{"./../../../specifications/Not":68,"./../../../specifications/Specification":72}],128:[function(require,module,exports){
+},{"./../../../specifications/Not":69,"./../../../specifications/Specification":73}],130:[function(require,module,exports){
 const Numeric = require('./../../../specifications/Numeric');
 
 describe('When a Numeric is constructed', () => {
@@ -25248,7 +25476,7 @@ describe('When a Numeric is constructed', () => {
   });
 });
 
-},{"./../../../specifications/Numeric":69}],129:[function(require,module,exports){
+},{"./../../../specifications/Numeric":70}],131:[function(require,module,exports){
 const Specification = require('./../../../specifications/Specification'),
       Or = require('./../../../specifications/Or');
 
@@ -25321,7 +25549,7 @@ describe('When an Or is constructed', () => {
   });
 });
 
-},{"./../../../specifications/Or":70,"./../../../specifications/Specification":72}],130:[function(require,module,exports){
+},{"./../../../specifications/Or":71,"./../../../specifications/Specification":73}],132:[function(require,module,exports){
 const Pass = require('./../../../specifications/Pass');
 
 describe('When a Pass is constructed', () => {
@@ -25361,7 +25589,7 @@ describe('When a Pass is constructed', () => {
   });
 });
 
-},{"./../../../specifications/Pass":71}],131:[function(require,module,exports){
+},{"./../../../specifications/Pass":72}],133:[function(require,module,exports){
 const GreaterThan = require('./../../../../specifications/compound/GreaterThan');
 
 describe('When a GreaterThan is constructed', () => {
@@ -25382,7 +25610,7 @@ describe('When a GreaterThan is constructed', () => {
   });
 });
 
-},{"./../../../../specifications/compound/GreaterThan":73}],132:[function(require,module,exports){
+},{"./../../../../specifications/compound/GreaterThan":74}],134:[function(require,module,exports){
 const LessThan = require('./../../../../specifications/compound/LessThan');
 
 describe('When a LessThan is constructed', () => {
@@ -25403,7 +25631,7 @@ describe('When a LessThan is constructed', () => {
   });
 });
 
-},{"./../../../../specifications/compound/LessThan":74}],133:[function(require,module,exports){
+},{"./../../../../specifications/compound/LessThan":75}],135:[function(require,module,exports){
 const RateLimiter = require('./../../../timing/RateLimiter');
 
 describe('When a RateLimiter is constructed (1 execution per 25 milliseconds)', () => {
@@ -25621,7 +25849,7 @@ describe('When a RateLimiter is constructed (2 execution per 25 milliseconds)', 
   });
 });
 
-},{"./../../../timing/RateLimiter":137}],134:[function(require,module,exports){
+},{"./../../../timing/RateLimiter":139}],136:[function(require,module,exports){
 const Scheduler = require('./../../../timing/Scheduler');
 
 describe('When a Scheduler is constructed', () => {
@@ -25821,7 +26049,7 @@ describe('When a backoff is used', () => {
   });
 });
 
-},{"./../../../timing/Scheduler":138}],135:[function(require,module,exports){
+},{"./../../../timing/Scheduler":140}],137:[function(require,module,exports){
 const Serializer = require('./../../../timing/Serializer');
 
 describe('When a Serializer is used to schedule four tasks', () => {
@@ -25930,7 +26158,7 @@ function getSpy(results, fail) {
   });
 }
 
-},{"./../../../timing/Serializer":139}],136:[function(require,module,exports){
+},{"./../../../timing/Serializer":141}],138:[function(require,module,exports){
 const WindowCounter = require('./../../../timing/WindowCounter');
 
 describe('When a WindowCounter is constructed', () => {
@@ -25980,7 +26208,7 @@ describe('When a WindowCounter is constructed', () => {
   });
 });
 
-},{"./../../../timing/WindowCounter":140}],137:[function(require,module,exports){
+},{"./../../../timing/WindowCounter":142}],139:[function(require,module,exports){
 const assert = require('./../lang/assert'),
       Disposable = require('./../lang/Disposable'),
       promise = require('./../lang/promise');
@@ -26092,7 +26320,7 @@ module.exports = (() => {
   return RateLimiter;
 })();
 
-},{"./../collections/Queue":5,"./../lang/Disposable":23,"./../lang/assert":30,"./../lang/promise":41,"./Scheduler":138}],138:[function(require,module,exports){
+},{"./../collections/Queue":5,"./../lang/Disposable":23,"./../lang/assert":30,"./../lang/promise":42,"./Scheduler":140}],140:[function(require,module,exports){
 const assert = require('./../lang/assert'),
       Disposable = require('./../lang/Disposable'),
       is = require('./../lang/is'),
@@ -26298,7 +26526,7 @@ module.exports = (() => {
   return Scheduler;
 })();
 
-},{"./../lang/Disposable":23,"./../lang/assert":30,"./../lang/is":36,"./../lang/object":40,"./../lang/promise":41}],139:[function(require,module,exports){
+},{"./../lang/Disposable":23,"./../lang/assert":30,"./../lang/is":36,"./../lang/object":41,"./../lang/promise":42}],141:[function(require,module,exports){
 const assert = require('./../lang/assert'),
       Disposable = require('./../lang/Disposable'),
       promise = require('./../lang/promise');
@@ -26440,7 +26668,7 @@ module.exports = (() => {
   return Serializer;
 })();
 
-},{"./../collections/Queue":5,"./../lang/Disposable":23,"./../lang/assert":30,"./../lang/promise":41}],140:[function(require,module,exports){
+},{"./../collections/Queue":5,"./../lang/Disposable":23,"./../lang/assert":30,"./../lang/promise":42}],142:[function(require,module,exports){
 const assert = require('./../lang/assert');
 
 module.exports = (() => {
@@ -26555,4 +26783,4 @@ module.exports = (() => {
   return WindowCounter;
 })();
 
-},{"./../lang/assert":30}]},{},[75,76,77,78,81,82,83,84,85,86,87,88,79,80,89,90,91,92,100,101,102,103,93,94,95,96,104,105,106,107,108,109,110,111,112,97,113,98,99,114,115,116,117,119,118,120,121,131,132,122,123,124,125,126,127,128,129,130,133,134,135,136]);
+},{"./../lang/assert":30}]},{},[76,77,78,79,82,83,84,85,86,87,88,89,80,81,90,91,92,93,101,102,103,104,94,95,96,97,105,106,107,108,109,110,111,112,113,114,98,115,99,100,116,117,118,119,121,120,122,123,133,134,124,125,126,127,128,129,130,131,132,135,136,137,138]);

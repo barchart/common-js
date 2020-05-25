@@ -45,4 +45,31 @@ describe('When using the iterate function', () => {
 			expect(processor.calls.argsFor(2)[0]).toBe(c);
 		});
 	});
+
+	describe('to synchronously iterate over an array with three items, breaking after the second item', () => {
+		let processor;
+
+		beforeEach((done) => {
+			processor = jasmine.createSpy('processor').and.callFake((item, callback) => {
+				callback(item !== b);
+			});
+
+			iterate(iterable, processor)
+				.then(() => {
+					done();
+				});
+		});
+
+		it('the "processor" should have been called three times', () => {
+			expect(processor).toHaveBeenCalledTimes(2);
+		});
+
+		it('the "processor" should have been called first with the first item', () => {
+			expect(processor.calls.argsFor(0)[0]).toBe(a);
+		});
+
+		it('the "processor" should have been called second with the second item', () => {
+			expect(processor.calls.argsFor(1)[0]).toBe(b);
+		});
+	});
 });
