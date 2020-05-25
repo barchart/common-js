@@ -1,3 +1,6 @@
+const is = require('./is'),
+	promise = require('./promise');
+
 module.exports = (() => {
 	/**
 	 * A looping mechanism that allows iteration to continue asynchronously.
@@ -9,7 +12,7 @@ module.exports = (() => {
 	 * @returns {Promise<void>}
 	 */
 	function iterate(iterable, processor) {
-		return Promise.build((resolveCallback, rejectCallback) => {
+		return promise.build((resolveCallback, rejectCallback) => {
 			if (!is.iterable(iterable)) {
 				rejectCallback('Unable run loop function, the "iterable" argument must have an Iterator.');
 				return;
@@ -48,7 +51,7 @@ module.exports = (() => {
 	 * @public
 	 * @callback LoopProcessorCallback
 	 * @param {*} item
-	 * @param {LoopContinueCallback} - Consumer will invoke when ready to continue.
+	 * @param {LoopContinueCallback} callback - Consumer will invoke when ready to continue.
 	 */
 
 	/**
