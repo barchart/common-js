@@ -14,12 +14,12 @@ module.exports = (() => {
 	function iterate(iterable, processor) {
 		return promise.build((resolveCallback, rejectCallback) => {
 			if (!is.iterable(iterable)) {
-				rejectCallback('Unable run loop function, the "iterable" argument must have an Iterator.');
+				rejectCallback('Unable to iterate, the "iterable" argument must have an Iterator.');
 				return;
 			}
 
 			if (!is.fn(processor)) {
-				rejectCallback('Unable run loop function, the "processor" argument must be a function.');
+				rejectCallback('Unable to iterate, the "processor" argument must be a function.');
 				return;
 			}
 
