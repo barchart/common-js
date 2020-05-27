@@ -15,10 +15,9 @@ describe('When generating a random number, restricting the range to one integer'
 	});
 });
 
-describe('When generating a random number with a range of multiple values', () => {
+describe('When generating a random number with a range of values', () => {
 	'use strict';
 
-	let result;
 	let minimum;
 	let maximum;
 
@@ -28,13 +27,48 @@ describe('When generating a random number with a range of multiple values', () =
 	});
 
 	it('should generate a value within the range', () => {
-		let range = maximum - minimum;
-
-		for (let i = 0; i < range * 10; i++) {
-			let result = random.range(minimum, maximum);
+		for (let i = 0; i < 100; i++) {
+			const result = random.range(minimum, maximum);
 
 			expect(result < minimum).toEqual(false);
-			expect(result > maximum).toEqual(false);
+			expect(result < maximum).toEqual(true);
+		}
+	});
+
+	it('should generate an integer', () => {
+		for (let i = 0; i < 100; i++) {
+			const result = random.range(minimum, maximum);
+
+			expect(result | 0).toEqual(result);
+		}
+	});
+});
+
+describe('When generating a random number using an invalid range, the range is automatically corrected', () => {
+	'use strict';
+
+	let minimum;
+	let maximum;
+
+	beforeEach(() => {
+		minimum = 9;
+		maximum = 4;
+	});
+
+	it('should generate a value within the range', () => {
+		for (let i = 0; i < 100; i++) {
+			const result = random.range(minimum, maximum);
+
+			expect(result < maximum).toEqual(false);
+			expect(result < minimum).toEqual(true);
+		}
+	});
+
+	it('should generate an integer', () => {
+		for (let i = 0; i < 100; i++) {
+			const result = random.range(minimum, maximum);
+
+			expect(result | 0).toEqual(result);
 		}
 	});
 });
