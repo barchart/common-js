@@ -25,7 +25,7 @@ module.exports = (() => {
 		}
 
 		/**
-		 * The timestamp.
+		 * The timestamp (milliseconds since epoch).
 		 *
 		 * @public
 		 * @returns {Number}
