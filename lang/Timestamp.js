@@ -6,8 +6,11 @@ const moment = require('moment-timezone');
 module.exports = (() => {
 	'use strict';
 
+	const MILLISECONDS_PER_SECOND = 1000;
+
 	/**
-	 * A data structure encapsulates (and lazy loads) a moment (see https://momentjs.com/).
+	 * An immutable data structure that encapsulates (and lazy loads)
+	 * a moment (see https://momentjs.com/).
 	 *
 	 * @public
 	 * @param {Number} timestamp
@@ -50,6 +53,34 @@ module.exports = (() => {
 			}
 
 			return this._moment;
+		}
+
+		/**
+		 * Returns a new {@link Timestamp} instance shifted forward (or backward)
+		 * by a specific number of seconds.
+		 *
+		 * @public
+		 * @param {Number} milliseconds
+		 * @returns {Timestamp}
+		 */
+		add(milliseconds) {
+			assert.argumentIsRequired(milliseconds, 'seconds', Number);
+
+			return new Timestamp(this._timestamp + milliseconds, this._timezone);
+		}
+
+		/**
+		 * Returns a new {@link Timestamp} instance shifted forward (or backward)
+		 * by a specific number of seconds.
+		 *
+		 * @public
+		 * @param {Number} seconds
+		 * @returns {Timestamp}
+		 */
+		addSeconds(seconds) {
+			assert.argumentIsRequired(seconds, 'seconds', Number);
+
+			return this.add(seconds * MILLISECONDS_PER_SECOND);
 		}
 
 		/**
