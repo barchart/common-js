@@ -33,7 +33,6 @@
     "git-get-status": "^1.0.5",
     "glob": "^6.0.1",
     "gulp": "^4.0.2",
-    "gulp-bump": "~1.0.0",
     "gulp-git": "^2.9.0",
     "gulp-jasmine": "^2.2.1",
     "gulp-jshint": "^2.1.0",
