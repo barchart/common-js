@@ -13,13 +13,15 @@ module.exports = (() => {
 	 * @param {String} code - The enumeration code (and description).
 	 * @param {String} template - The template string for formatting human-readable messages.
 	 * @param {Boolean=} severe - Indicates if the failure is severe (default is true).
+	 * @param {Number=} error - The HTTP error code which should be used as part of an HTTP response.
 	 */
 	class FailureType extends Enum {
-		constructor(code, template, severe) {
+		constructor(code, template, severe, error) {
 			super(code, code);
 
 			assert.argumentIsRequired(template, 'template', String);
 			assert.argumentIsOptional(severe, 'severe', Boolean);
+			assert.argumentIsOptional(error, 'error', Number);
 
 			this._template = template;
 
@@ -28,6 +30,8 @@ module.exports = (() => {
 			} else {
 				this._severe = true;
 			}
+
+			this._error = error || null;
 		}
 
 		/**
@@ -48,6 +52,16 @@ module.exports = (() => {
 		 */
 		get severe() {
 			return this._severe;
+		}
+
+		/**
+		 * The HTTP error code which should be used as part of an HTTP response.
+		 *
+		 * @public
+		 * @return {Number|null}
+		 */
+		get error() {
+			return this._error;
 		}
 
 		/**

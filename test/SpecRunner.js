@@ -102,6 +102,24 @@ module.exports = (() => {
     getIsSevere() {
       return this._head.search(item => item.type.severe, false, false) !== null;
     }
+    /**
+     * Searches the tree of {@link FailureReasonItem} instances for a non-standard
+     * http error code.
+     *
+     * @public
+     * @returns {Number|null}
+     */
+
+
+    getErrorCode() {
+      const node = this._head.search(item => item.type.error !== null, true, false);
+
+      if (node !== null) {
+        return node.getValue().type.error;
+      } else {
+        return null;
+      }
+    }
 
     toJSON() {
       return this.format();
@@ -306,13 +324,15 @@ module.exports = (() => {
    * @param {String} code - The enumeration code (and description).
    * @param {String} template - The template string for formatting human-readable messages.
    * @param {Boolean=} severe - Indicates if the failure is severe (default is true).
+   * @param {Number=} error - The HTTP error code which should be used as part of an HTTP response.
    */
 
   class FailureType extends Enum {
-    constructor(code, template, severe) {
+    constructor(code, template, severe, error) {
       super(code, code);
       assert.argumentIsRequired(template, 'template', String);
       assert.argumentIsOptional(severe, 'severe', Boolean);
+      assert.argumentIsOptional(error, 'error', Number);
       this._template = template;
 
       if (is.boolean(severe)) {
@@ -320,6 +340,8 @@ module.exports = (() => {
       } else {
         this._severe = true;
       }
+
+      this._error = error || null;
     }
     /**
      * The template string for formatting human-readable messages.
@@ -342,6 +364,17 @@ module.exports = (() => {
 
     get severe() {
       return this._severe;
+    }
+    /**
+     * The HTTP error code which should be used as part of an HTTP response.
+     *
+     * @public
+     * @return {Number|null}
+     */
+
+
+    get error() {
+      return this._error;
     }
     /**
      * One or more data points is missing.
@@ -16502,6 +16535,8 @@ describe('When a FailureType is created with a template string that references d
 });
 
 },{"./../../../../api/failures/FailureReasonItem":2,"./../../../../api/failures/FailureType":3,"./../../../../lang/Enum":24}],77:[function(require,module,exports){
+const Enum = require('./../../../../lang/Enum');
+
 const FailureReason = require('./../../../../api/failures/FailureReason'),
       FailureType = require('./../../../../api/failures/FailureType');
 
@@ -16527,6 +16562,11 @@ describe('When a FailureReason is created', () => {
   describe('and the FailureReason is checked for severity', () => {
     it('should be considered severe', () => {
       expect(reason.getIsSevere()).toEqual(true);
+    });
+  });
+  describe('and the FailureReason error code is checked', () => {
+    it('it should return a null value', () => {
+      expect(reason.getErrorCode()).toEqual(null);
     });
   });
   describe('and the FailureReason is converted to a human-readable form', () => {
@@ -16557,6 +16597,23 @@ describe('When a FailureReason is created', () => {
     });
     it('should have the correct secondary code (2)', () => {
       expect(human[0].children[1].value.code).toEqual(FailureType.REQUEST_PARAMETER_MISSING.code);
+    });
+  });
+});
+describe('A FailureReason is created with a FailureType that has a non-standard error code', () => {
+  'use strict';
+
+  let type;
+  let reason;
+  beforeEach(() => {
+    const code = 'TEST_ERROR_CODE';
+    const template = 'This is an error with a non-standard error code';
+    type = Enum.fromCode(FailureType, code) || new FailureType(code, template, false, 403);
+    reason = new FailureReason().addItem(type, {});
+  });
+  describe('and the FailureReason error code is checked', () => {
+    it('it should return the non-standard error code', () => {
+      expect(reason.getErrorCode()).toEqual(403);
     });
   });
 });
@@ -16622,7 +16679,7 @@ describe('When a schema is validated', () => {
   });
 });
 
-},{"./../../../../api/failures/FailureReason":1,"./../../../../api/failures/FailureType":3,"./../../../../serialization/json/DataType":57,"./../../../../serialization/json/Field":58,"./../../../../serialization/json/Schema":59}],78:[function(require,module,exports){
+},{"./../../../../api/failures/FailureReason":1,"./../../../../api/failures/FailureType":3,"./../../../../lang/Enum":24,"./../../../../serialization/json/DataType":57,"./../../../../serialization/json/Field":58,"./../../../../serialization/json/Schema":59}],78:[function(require,module,exports){
 const LinkedList = require('./../../../collections/LinkedList');
 
 describe('When "doe" is used to start a linked list', () => {

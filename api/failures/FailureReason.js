@@ -100,6 +100,23 @@ module.exports = (() => {
 			return this._head.search(item => item.type.severe, false, false) !== null;
 		}
 
+		/**
+		 * Searches the tree of {@link FailureReasonItem} instances for a non-standard
+		 * http error code.
+		 *
+		 * @public
+		 * @returns {Number|null}
+		 */
+		getErrorCode() {
+			const node = this._head.search(item => item.type.error !== null, true, false);
+
+			if (node !== null) {
+				return node.getValue().type.error;
+			} else {
+				return null;
+			}
+		}
+
 		toJSON() {
 			return this.format();
 		}

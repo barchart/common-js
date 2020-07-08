@@ -1,3 +1,5 @@
+const Enum = require('./../../../../lang/Enum');
+
 const FailureReason = require('./../../../../api/failures/FailureReason'),
 	FailureType = require('./../../../../api/failures/FailureType');
 
@@ -20,6 +22,12 @@ describe('When a FailureReason is created', () => {
 	describe('and the FailureReason is checked for severity', () => {
 		it('should be considered severe', () => {
 			expect(reason.getIsSevere()).toEqual(true);
+		});
+	});
+
+	describe('and the FailureReason error code is checked', () => {
+		it('it should return a null value', () => {
+			expect(reason.getErrorCode()).toEqual(null);
 		});
 	});
 
@@ -60,6 +68,31 @@ describe('When a FailureReason is created', () => {
 
 		it('should have the correct secondary code (2)', () => {
 			expect(human[0].children[1].value.code).toEqual(FailureType.REQUEST_PARAMETER_MISSING.code);
+		});
+	});
+});
+
+
+describe('A FailureReason is created with a FailureType that has a non-standard error code', () => {
+	'use strict';
+
+	let type;
+	let reason;
+
+	beforeEach(() => {
+		const code = 'TEST_ERROR_CODE';
+		const template = 'This is an error with a non-standard error code';
+
+		type = Enum.fromCode(FailureType, code) || new FailureType(code, template, false, 403);
+
+		reason = new FailureReason()
+			.addItem(type, { });
+
+	});
+
+	describe('and the FailureReason error code is checked', () => {
+		it('it should return the non-standard error code', () => {
+			expect(reason.getErrorCode()).toEqual(403);
 		});
 	});
 });
