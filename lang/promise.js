@@ -157,6 +157,33 @@ module.exports = (() => {
 		},
 
 		/**
+		 * Given an array of functions, where each returns a promise, runs
+		 * the functions in sequential order, until one of the function
+		 * returns a successful promise with a non-null result. Any
+		 * rejected promise is ignored.
+		 *
+		 * @public
+		 * @param {Function[]} executors
+		 * @returns {Promise}
+		 */
+		first(executors) {
+			return Promise.resolve()
+				.then(() => {
+					assert.argumentIsArray(executors, 'executors', Function);
+
+					return executors.reduce((previous, executor) => {
+						return previous.then((result) => {
+							if (result === null) {
+								return executor().catch(() => Promise.resolve(null));
+							} else {
+								return previous;
+							}
+						});
+					}, Promise.resolve(null));
+				});
+		},
+
+		/**
 		 * Creates a new promise, given an executor.
 		 *
 		 * This is a wrapper for the {@link Promise} constructor; however, any error

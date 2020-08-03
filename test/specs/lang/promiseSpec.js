@@ -912,6 +912,165 @@ describe('When processing a "pipeline" of promises', () => {
 	});
 });
 
+describe('When searching for the "first" valid promise', () => {
+	describe('with an empty array', () => {
+		let result;
+
+		beforeEach((done) => {
+			promise.first([])
+				.then((r) => {
+					result = r;
+
+					done();
+				});
+		});
+
+		it('the result should be a null value', () => {
+			expect(result).toEqual(null);
+		});
+	});
+
+	describe('with an array of two executors, where both return null', () => {
+		let one;
+		let two;
+
+		let result;
+
+		beforeEach((done) => {
+			one = jasmine.createSpy('one').and.returnValue(Promise.resolve(null));
+			two = jasmine.createSpy('two').and.returnValue(Promise.resolve(null));
+
+			promise.first([ one, two ])
+				.then((r) => {
+					result = r;
+
+					done();
+				});
+		});
+
+		it('the result should be a null value', () => {
+			expect(result).toEqual(null);
+		});
+
+		it('the first executor should have been invoked', () => {
+			expect(one).toHaveBeenCalled();
+		});
+
+		it('the second executor should have been invoked', () => {
+			expect(two).toHaveBeenCalled();
+		});
+	});
+
+	describe('with an array of two executors, where both return values', () => {
+		let one;
+		let two;
+
+		let valueOne;
+		let valueTwo;
+
+		let result;
+
+		beforeEach((done) => {
+			valueOne = { };
+			valueTwo = { };
+
+			one = jasmine.createSpy('one').and.returnValue(Promise.resolve(valueOne));
+			two = jasmine.createSpy('two').and.returnValue(Promise.resolve(valueTwo));
+
+			promise.first([ one, two ])
+				.then((r) => {
+					result = r;
+
+					done();
+				});
+		});
+
+		it('the result the value from the first executor', () => {
+			expect(result).toBe(valueOne);
+		});
+
+		it('the first executor should have been invoked', () => {
+			expect(one).toHaveBeenCalled();
+		});
+
+		it('the second executor should not have been invoked', () => {
+			expect(two).not.toHaveBeenCalled();
+		});
+	});
+
+	describe('with an array of two executors, where only the last returns a value', () => {
+		let one;
+		let two;
+
+		let valueOne;
+		let valueTwo;
+
+		let result;
+
+		beforeEach((done) => {
+			valueOne = null;
+			valueTwo = { };
+
+			one = jasmine.createSpy('one').and.returnValue(Promise.resolve(valueOne));
+			two = jasmine.createSpy('two').and.returnValue(Promise.resolve(valueTwo));
+
+			promise.first([ one, two ])
+				.then((r) => {
+					result = r;
+
+					done();
+				});
+		});
+
+		it('the result the value from the second executor', () => {
+			expect(result).toBe(valueTwo);
+		});
+
+		it('the first executor should have been invoked', () => {
+			expect(one).toHaveBeenCalled();
+		});
+
+		it('the second executor should have been invoked', () => {
+			expect(two).toHaveBeenCalled();
+		});
+	});
+
+	describe('with an array of two executors, where the first returns a rejected promise', () => {
+		let one;
+		let two;
+
+		let valueTwo;
+
+		let result;
+
+		beforeEach((done) => {
+			valueTwo = { };
+
+			one = jasmine.createSpy('one').and.returnValue(Promise.reject('Oops'));
+			two = jasmine.createSpy('two').and.returnValue(Promise.resolve(valueTwo));
+
+			promise.first([ one, two ])
+				.then((r) => {
+					result = r;
+
+					done();
+				});
+		});
+
+		it('the result the value from the second executor', () => {
+			expect(result).toBe(valueTwo);
+		});
+
+		it('the first executor should have been invoked', () => {
+			expect(one).toHaveBeenCalled();
+		});
+
+		it('the second executor should have been invoked', () => {
+			expect(two).toHaveBeenCalled();
+		});
+	});
+});
+
 describe('When "promise.build" is used to create a promise', () => {
 	'use strict';
 
