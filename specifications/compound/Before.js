@@ -7,7 +7,7 @@ module.exports = (() => {
 
 	/**
 	 * A {@link Specification} that passes when the first item in an
-	 * array is Day instance that is before second item in the array.
+	 * array is Day instance that is before the second item in the array.
 	 *
 	 * @public
 	 * @extends {Specification}
