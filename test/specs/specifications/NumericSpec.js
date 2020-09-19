@@ -1,6 +1,6 @@
 const Numeric = require('./../../../specifications/Numeric');
 
-describe('When a Numeric is constructed', () => {
+describe('When a Numeric specification is constructed', () => {
 	'use strict';
 
 	let specification;

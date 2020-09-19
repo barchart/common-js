@@ -1,6 +1,6 @@
 const Equals = require('./../../../specifications/Equals');
 
-describe('When a Equals is constructed', () => {
+describe('When a Equals specification is constructed', () => {
 	'use strict';
 
 	let specification;

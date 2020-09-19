@@ -7,24 +7,24 @@ module.exports = (() => {
 
 	/**
 	 * A {@link Specification} that passes when the first item in an
-	 * array is less than the second item in the array.
+	 * array is Day instance that is before second item in the array.
 	 *
 	 * @public
 	 * @extends {Specification}
 	 */
-	class LessThan extends Specification {
+	class Before extends Specification {
 		constructor() {
 			super();
 		}
 
 		_evaluate(data) {
-			return is.array(data) && data.length === 2 && data[0] < data[1];
+			return is.array(data) && data.length === 2 && data[0].getIsBefore(data[1]);
 		}
 
 		toString() {
-			return '[LessThan]';
+			return '[Before]';
 		}
 	}
 
-	return LessThan;
+	return Before;
 })();

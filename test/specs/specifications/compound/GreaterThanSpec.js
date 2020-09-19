@@ -1,6 +1,6 @@
 const GreaterThan = require('./../../../../specifications/compound/GreaterThan');
 
-describe('When a GreaterThan is constructed', () => {
+describe('When evaluating a compound GreaterThan specification', () => {
 	'use strict';
 
 	let specification;

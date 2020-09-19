@@ -1,7 +1,7 @@
 const Specification = require('./../../../specifications/Specification'),
 	Or = require('./../../../specifications/Or');
 
-describe('When an Or is constructed', () => {
+describe('When an Or specification is constructed', () => {
 	'use strict';
 
 	class SpecPass extends Specification {

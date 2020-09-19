@@ -1,7 +1,7 @@
 const Not = require('./../../../specifications/Not'),
 	Specification = require('./../../../specifications/Specification');
 
-describe('When a Not is constructed', () => {
+describe('When a Not specification is constructed', () => {
 	'use strict';
 
 	class DelegateSpecification extends Specification {

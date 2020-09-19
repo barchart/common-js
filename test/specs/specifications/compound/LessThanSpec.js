@@ -1,6 +1,6 @@
 const LessThan = require('./../../../../specifications/compound/LessThan');
 
-describe('When a LessThan is constructed', () => {
+describe('When evaluating a compound LessThan specification', () => {
 	'use strict';
 
 	let specification;

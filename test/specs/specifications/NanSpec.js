@@ -1,6 +1,6 @@
 const Nan = require('./../../../specifications/Nan');
 
-describe('When a Nan is constructed', () => {
+describe('When a NaN specification is constructed', () => {
 	'use strict';
 
 	let specification;

@@ -1,6 +1,6 @@
 const Contains = require('./../../../specifications/Contains');
 
-describe('When a Contains is constructed', () => {
+describe('When a Contains specification is constructed', () => {
 	'use strict';
 
 	let specification;

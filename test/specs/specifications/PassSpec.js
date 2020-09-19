@@ -1,6 +1,6 @@
 const Pass = require('./../../../specifications/Pass');
 
-describe('When a Pass is constructed', () => {
+describe('When a Pass specification is constructed', () => {
 	'use strict';
 
 	let specification;

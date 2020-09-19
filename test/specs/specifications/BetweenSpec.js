@@ -1,6 +1,6 @@
 const Between = require('./../../../specifications/Between');
 
-describe('When a GreaterThan is constructed (with a range of 17 to 42)', () => {
+describe('When a Between specification is constructed (with a range of 17 to 42)', () => {
 	'use strict';
 
 	let specification;

@@ -1,4 +1,5 @@
-const is = require('./../../lang/is');
+const is = require('./../../lang/is'),
+	DayClazz = require('./../../lang/Day');
 
 const Specification = require('./../Specification');
 
@@ -9,19 +10,19 @@ module.exports = (() => {
 	 * @public
 	 * @extends {Specification}
 	 */
-	class Numeric extends Specification {
+	class Day extends Specification {
 		constructor() {
 			super();
 		}
 
 		_evaluate(data) {
-			return is.array(data) && data.every(item => is.number(item));
+			return is.array(data) && data.every(item => item instanceof DayClazz);
 		}
 
 		toString() {
-			return '[Numeric]';
+			return '[Day]';
 		}
 	}
 
-	return Numeric;
+	return Day;
 })();

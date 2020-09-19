@@ -1,7 +1,7 @@
 const Specification = require('./../../../specifications/Specification'),
 	And = require('./../../../specifications/And');
 
-describe('When an And is constructed', () => {
+describe('When an And specification is constructed', () => {
 	'use strict';
 
 	class SpecPass extends Specification {

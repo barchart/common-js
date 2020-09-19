@@ -1,3 +1,5 @@
+const is = require('./../../lang/is');
+
 const Specification = require('./../Specification');
 
 module.exports = (() => {
@@ -16,7 +18,7 @@ module.exports = (() => {
 		}
 
 		_evaluate(data) {
-			return Array.isArray(data) && data.length === 2 && data[0] > data[1];
+			return is.array(data) && data.length === 2 && data[0] > data[1];
 		}
 
 		toString() {

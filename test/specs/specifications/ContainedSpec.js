@@ -1,6 +1,6 @@
 const Contained = require('./../../../specifications/Contained');
 
-describe('When a Contained is constructed', () => {
+describe('When a Contained specifciation is constructed', () => {
 	'use strict';
 
 	let specification;

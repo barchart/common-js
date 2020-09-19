@@ -1,6 +1,6 @@
 const Fail = require('./../../../specifications/Fail');
 
-describe('When a Fail is constructed', () => {
+describe('When a Fail specification is constructed', () => {
 	'use strict';
 
 	let specification;
