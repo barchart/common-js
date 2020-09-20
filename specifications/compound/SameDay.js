@@ -12,7 +12,7 @@ module.exports = (() => {
 	 * @public
 	 * @extends {Specification}
 	 */
-	class After extends Specification {
+	class SameDay extends Specification {
 		constructor() {
 			super();
 		}
@@ -22,9 +22,9 @@ module.exports = (() => {
 		}
 
 		toString() {
-			return '[After]';
+			return '[SameDay]';
 		}
 	}
 
-	return After;
+	return SameDay;
 })();
