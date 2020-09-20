@@ -16599,7 +16599,7 @@ module.exports = (() => {
    * @extends {Specification}
    */
 
-  class After extends Specification {
+  class SameDay extends Specification {
     constructor() {
       super();
     }
@@ -16609,12 +16609,12 @@ module.exports = (() => {
     }
 
     toString() {
-      return '[After]';
+      return '[SameDay]';
     }
 
   }
 
-  return After;
+  return SameDay;
 })();
 
 },{"./../../lang/is":36,"./../Specification":73}],81:[function(require,module,exports){
