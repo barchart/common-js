@@ -4679,7 +4679,8 @@ module.exports = (() => {
     },
 
     /**
-     * Set difference operation (using strict equality).
+     * Set difference operation, returning any item in "a" that is not
+     * contained in "b" (using strict equality).
      *
      * @static
      * @param {Array} a
@@ -4691,7 +4692,8 @@ module.exports = (() => {
     },
 
     /**
-     * Set difference operation, where the uniqueness is determined by a delegate.
+     * Set difference operation, returning any item in "a" that is not
+     * contained in "b" (where the uniqueness is determined by a delegate).
      *
      * @static
      * @param {Array} a
