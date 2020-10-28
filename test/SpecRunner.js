@@ -130,6 +130,19 @@ module.exports = (() => {
       return this.format();
     }
     /**
+     * @public
+     * @static
+     * @param {FailureType} type
+     * @param {Object=} data
+     * @returns {FailureReason}
+     */
+
+
+    static from(type, data) {
+      const reason = new FailureReason();
+      return reason.addItem(type, data);
+    }
+    /**
      * Factory function for creating instances of {@link FailureReason}.
      *
      * @public
