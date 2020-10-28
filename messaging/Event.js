@@ -7,6 +7,7 @@ module.exports = (() => {
 	/**
 	 * An implementation of the observer pattern.
 	 *
+	 * @public
 	 * @param {*} sender - The object which owns the event.
 	 * @extends {Disposable}
 	 */
