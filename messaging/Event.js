@@ -83,6 +83,7 @@ module.exports = (() => {
 		/**
 		 * Returns true, if no handlers are currently registered.
 		 *
+		 * @public
 		 * @returns {boolean}
 		 */
 		getIsEmpty() {
