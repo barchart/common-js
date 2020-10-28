@@ -68,10 +68,15 @@ module.exports = (() => {
 
     format() {
       const reasons = this._head.toJSObj(item => {
-        return {
-          code: item ? item.type.code : null,
-          message: item ? item.format(this._data) : null
-        };
+        const formatted = {};
+        formatted.code = item ? item.type.code : null;
+        formatted.message = item ? item.format(this._data) : null;
+
+        if (item && item.type.verbose) {
+          formatted.data = item.data;
+        }
+
+        return formatted;
       });
 
       return reasons.children;
@@ -258,6 +263,17 @@ module.exports = (() => {
       return this._type;
     }
     /**
+     * The data.
+     *
+     * @public
+     * @return {Object}
+     */
+
+
+    get data() {
+      return this._data;
+    }
+    /**
      * Formats a human-readable message, describing the failure.
      *
      * @public
@@ -325,14 +341,16 @@ module.exports = (() => {
    * @param {String} template - The template string for formatting human-readable messages.
    * @param {Boolean=} severe - Indicates if the failure is severe (default is true).
    * @param {Number=} error - The HTTP error code which should be used as part of an HTTP response.
+   * @param {Boolean=} verbose - Indicates if data object should be included when serialized.
    */
 
   class FailureType extends Enum {
-    constructor(code, template, severe, error) {
+    constructor(code, template, severe, error, verbose) {
       super(code, code);
       assert.argumentIsRequired(template, 'template', String);
       assert.argumentIsOptional(severe, 'severe', Boolean);
       assert.argumentIsOptional(error, 'error', Number);
+      assert.argumentIsOptional(verbose, 'verbose', Boolean);
       this._template = template;
 
       if (is.boolean(severe)) {
@@ -342,6 +360,7 @@ module.exports = (() => {
       }
 
       this._error = error || null;
+      this._verbose = verbose || false;
     }
     /**
      * The template string for formatting human-readable messages.
@@ -375,6 +394,17 @@ module.exports = (() => {
 
     get error() {
       return this._error;
+    }
+    /**
+     * Indicates if data object should be included when serialized.
+     *
+     * @public
+     * @return {boolean}
+     */
+
+
+    get verbose() {
+      return this._verbose;
     }
     /**
      * One or more data points is missing.
@@ -473,6 +503,18 @@ module.exports = (() => {
       return requestGeneralFailure;
     }
     /**
+     * Insufficient permission level to access the resource.
+     *
+     * @public
+     * @static
+     * @returns {FailureType}
+     */
+
+
+    static get ENTITLEMENTS_FAILED() {
+      return entitlementsFailed;
+    }
+    /**
      * Returns an HTTP status code that would be suitable for use with the
      * failure type.
      *
@@ -512,6 +554,7 @@ module.exports = (() => {
   const requestInputMalformed = new FailureType('REQUEST_INPUT_MALFORMED', 'An attempt to {L|root.endpoint.description} failed, the data structure is invalid.');
   const schemaValidationFailure = new FailureType('SCHEMA_VALIDATION_FAILURE', 'An attempt to read {U|schema} data failed (found "{L|key}" when expecting "{L|name}")');
   const requestGeneralFailure = new FailureType('REQUEST_GENERAL_FAILURE', 'An attempt to {L|root.endpoint.description} failed for unspecified reason(s).');
+  const entitlementsFailed = new FailureType('ENTITLEMENTS_FAILED', 'An attempt to make request failed because you don\'t have enough permissions to perform this action.', false, 403, true);
   return FailureType;
 })();
 
@@ -16735,6 +16778,32 @@ const DataType = require('./../../../../serialization/json/DataType'),
       Field = require('./../../../../serialization/json/Field'),
       Schema = require('./../../../../serialization/json/Schema');
 
+describe('When a FailureReason is created with a verbose failure type', () => {
+  'use strict';
+
+  let reason;
+  beforeEach(() => {
+    reason = FailureReason.forRequest({
+      endpoint: {
+        description: 'do stuff'
+      }
+    }).addItem(FailureType.ENTITLEMENTS_FAILED, {
+      name: '1'
+    });
+  });
+  describe('and the FailureReason is converted to a human-readable form', () => {
+    let human;
+    beforeEach(() => {
+      human = reason.format();
+    });
+    it('should have data', () => {
+      expect(human[0].value.hasOwnProperty('data')).toEqual(true);
+    });
+    it('should have the correct data name', () => {
+      expect(human[0].value.data.name).toEqual('1');
+    });
+  });
+});
 describe('When a FailureReason is created', () => {
   'use strict';
 
@@ -16783,11 +16852,17 @@ describe('When a FailureReason is created', () => {
     it('should have the correct secondary code (1)', () => {
       expect(human[0].children[0].value.code).toEqual(FailureType.REQUEST_PARAMETER_MISSING.code);
     });
+    it('should not have verbose data for the secondary message (1)', () => {
+      expect(human[0].children[0].value.hasOwnProperty('data')).toEqual(false);
+    });
     it('should have the correct secondary message (2)', () => {
       expect(human[0].children[1].value.message).toEqual('The "second" field is required.');
     });
     it('should have the correct secondary code (2)', () => {
       expect(human[0].children[1].value.code).toEqual(FailureType.REQUEST_PARAMETER_MISSING.code);
+    });
+    it('should not have verbose data for the secondary message (2)', () => {
+      expect(human[0].children[1].value.hasOwnProperty('data')).toEqual(false);
     });
   });
 });
