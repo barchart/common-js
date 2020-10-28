@@ -14,14 +14,16 @@ module.exports = (() => {
 	 * @param {String} template - The template string for formatting human-readable messages.
 	 * @param {Boolean=} severe - Indicates if the failure is severe (default is true).
 	 * @param {Number=} error - The HTTP error code which should be used as part of an HTTP response.
+	 * @param {Boolean=} verbose - Indicates if data object should be included when serialized.
 	 */
 	class FailureType extends Enum {
-		constructor(code, template, severe, error) {
+		constructor(code, template, severe, error, verbose) {
 			super(code, code);
 
 			assert.argumentIsRequired(template, 'template', String);
 			assert.argumentIsOptional(severe, 'severe', Boolean);
 			assert.argumentIsOptional(error, 'error', Number);
+			assert.argumentIsOptional(verbose, 'verbose', Boolean);
 
 			this._template = template;
 
@@ -32,6 +34,7 @@ module.exports = (() => {
 			}
 
 			this._error = error || null;
+			this._verbose = verbose || false;
 		}
 
 		/**
@@ -62,6 +65,16 @@ module.exports = (() => {
 		 */
 		get error() {
 			return this._error;
+		}
+
+		/**
+		 * Indicates if data object should be included when serialized.
+		 *
+		 * @public
+		 * @return {boolean}
+		 */
+		get verbose() {
+			return this._verbose;
 		}
 
 		/**
@@ -153,6 +166,17 @@ module.exports = (() => {
 		}
 
 		/**
+		 * Insufficient permission level to access the resource.
+		 *
+		 * @public
+		 * @static
+		 * @returns {FailureType}
+		 */
+		static get ENTITLEMENTS_FAILED() {
+			return entitlementsFailed;
+		}
+
+		/**
 		 * Returns an HTTP status code that would be suitable for use with the
 		 * failure type.
 		 *
@@ -190,6 +214,7 @@ module.exports = (() => {
 	const requestInputMalformed = new FailureType('REQUEST_INPUT_MALFORMED', 'An attempt to {L|root.endpoint.description} failed, the data structure is invalid.');
 	const schemaValidationFailure = new FailureType('SCHEMA_VALIDATION_FAILURE', 'An attempt to read {U|schema} data failed (found "{L|key}" when expecting "{L|name}")');
 	const requestGeneralFailure = new FailureType('REQUEST_GENERAL_FAILURE', 'An attempt to {L|root.endpoint.description} failed for unspecified reason(s).');
+	const entitlementsFailed = new FailureType('ENTITLEMENTS_FAILED', 'An attempt to make request failed because you don\'t have enough permissions to perform this action.', false, 403, true);
 
 	return FailureType;
 })();

@@ -66,10 +66,16 @@ module.exports = (() => {
 		 */
 		format() {
 			const reasons = this._head.toJSObj((item) => {
-				return {
-					code: item ? item.type.code : null,
-					message: item ? item.format(this._data) : null
-				};
+				const formatted = { };
+
+				formatted.code = item ? item.type.code : null;
+				formatted.message = item ? item.format(this._data) : null;
+
+				if (item && item.type.verbose) {
+					formatted.data = item.data;
+				}
+
+				return formatted;
 			});
 
 			return reasons.children;

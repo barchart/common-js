@@ -33,6 +33,16 @@ module.exports = (() => {
 		}
 
 		/**
+		 * The data.
+		 *
+		 * @public
+		 * @return {Object}
+		 */
+		get data() {
+			return this._data;
+		}
+
+		/**
 		 * Formats a human-readable message, describing the failure.
 		 *
 		 * @public

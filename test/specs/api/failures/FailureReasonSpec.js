@@ -7,6 +7,33 @@ const DataType = require('./../../../../serialization/json/DataType'),
 	Field = require('./../../../../serialization/json/Field'),
 	Schema = require('./../../../../serialization/json/Schema');
 
+describe('When a FailureReason is created with a verbose failure type', () => {
+	'use strict';
+
+	let reason;
+
+	beforeEach(() => {
+		reason = FailureReason.forRequest({ endpoint: { description: 'do stuff' }})
+			.addItem(FailureType.ENTITLEMENTS_FAILED, { name: '1' });
+	});
+
+	describe('and the FailureReason is converted to a human-readable form', () => {
+		let human;
+
+		beforeEach(() => {
+			human = reason.format();
+		});
+
+		it('should have data', () => {
+			expect(human[0].value.hasOwnProperty('data')).toEqual(true);
+		});
+
+		it('should have the correct data name', () => {
+			expect(human[0].value.data.name).toEqual('1');
+		});
+	});
+});
+
 describe('When a FailureReason is created', () => {
 	'use strict';
 
@@ -62,12 +89,20 @@ describe('When a FailureReason is created', () => {
 			expect(human[0].children[0].value.code).toEqual(FailureType.REQUEST_PARAMETER_MISSING.code);
 		});
 
+		it('should not have verbose data for the secondary message (1)', () => {
+			expect(human[0].children[0].value.hasOwnProperty('data')).toEqual(false);
+		});
+
 		it('should have the correct secondary message (2)', () => {
 			expect(human[0].children[1].value.message).toEqual('The "second" field is required.');
 		});
 
 		it('should have the correct secondary code (2)', () => {
 			expect(human[0].children[1].value.code).toEqual(FailureType.REQUEST_PARAMETER_MISSING.code);
+		});
+
+		it('should not have verbose data for the secondary message (2)', () => {
+			expect(human[0].children[1].value.hasOwnProperty('data')).toEqual(false);
 		});
 	});
 });
