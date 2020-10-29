@@ -567,7 +567,7 @@ module.exports = (() => {
   const requestInputMalformed = new FailureType('REQUEST_INPUT_MALFORMED', 'An attempt to {L|root.endpoint.description} failed, the data structure is invalid.');
   const schemaValidationFailure = new FailureType('SCHEMA_VALIDATION_FAILURE', 'An attempt to read {U|schema} data failed (found "{L|key}" when expecting "{L|name}")');
   const requestGeneralFailure = new FailureType('REQUEST_GENERAL_FAILURE', 'An attempt to {L|root.endpoint.description} failed for unspecified reason(s).');
-  const entitlementsFailed = new FailureType('ENTITLEMENTS_FAILED', 'An attempt to make request failed because you don\'t have enough permissions to perform this action.', false, 403, true);
+  const entitlementsFailed = new FailureType('ENTITLEMENTS_FAILED', 'Action blocked. The current user requires elevated permissions or or the current user has exceeded a quota.', false, 403, true);
   return FailureType;
 })();
 
@@ -6441,6 +6441,7 @@ module.exports = (() => {
   /**
    * An implementation of the observer pattern.
    *
+   * @public
    * @param {*} sender - The object which owns the event.
    * @extends {Disposable}
    */
@@ -6514,6 +6515,7 @@ module.exports = (() => {
     /**
      * Returns true, if no handlers are currently registered.
      *
+     * @public
      * @returns {boolean}
      */
 
