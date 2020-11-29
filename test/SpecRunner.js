@@ -4395,6 +4395,26 @@ module.exports = (() => {
       super(code, code);
     }
     /**
+     * Attempts to determine if daylight savings time is in effect.
+     *
+     * @public
+     * @param {Number=} timestamp - The moment at which the daylight savings time is checked, otherwise now.
+     * @returns {Number}
+     */
+
+
+    getIsDaylightSavingsTime(timestamp) {
+      let m;
+
+      if (is.number(timestamp)) {
+        m = moment(timestamp);
+      } else {
+        m = moment();
+      }
+
+      return m.tz(this.code).isDST();
+    }
+    /**
      * Calculates and returns the timezone's offset from UTC.
      *
      * @public
@@ -6419,7 +6439,7 @@ module.exports = (() => {
     },
 
     /**
-     * Attempts to guess the lock timezone.
+     * Attempts to guess the timezone of the current computer.
      *
      * @public
      * @static
@@ -20090,6 +20110,14 @@ describe('When calculating timezone offset on 2019-11-04 UTC', () => {
     it('The Europe/Minsk offset should be 180', () => {
       expect(Timezones.parse('Europe/Minsk').getUtcOffset(timestamp, true)).toEqual(10800000);
     });
+  });
+});
+describe('When attempting to determine if daylight savings time is in effect', () => {
+  it('should be in effect on 2020-07-01 at 00:00 in AMERICA_CHICAGO', () => {
+    expect(Timezones.AMERICA_CHICAGO.getIsDaylightSavingsTime(1593666000000)).toEqual(true);
+  });
+  it('should not be in effect on 2020-12-01 at 00:00 in AMERICA_CHICAGO', () => {
+    expect(Timezones.AMERICA_CHICAGO.getIsDaylightSavingsTime(1606802400000)).toEqual(false);
   });
 });
 
