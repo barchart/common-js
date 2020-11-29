@@ -40,7 +40,7 @@ module.exports = (() => {
 		},
 
 		/**
-		 * Attempts to guess the lock timezone.
+		 * Attempts to guess the timezone of the current computer.
 		 *
 		 * @public
 		 * @static

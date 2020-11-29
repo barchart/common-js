@@ -99,3 +99,13 @@ describe('When calculating timezone offset on 2019-11-04 UTC', () =>  {
 		});
 	});
 });
+
+describe('When attempting to determine if daylight savings time is in effect', () => {
+	it('should be in effect on 2020-07-01 at 00:00 in AMERICA_CHICAGO', () => {
+		expect(Timezones.AMERICA_CHICAGO.getIsDaylightSavingsTime(1593666000000)).toEqual(true);
+	});
+
+	it('should not be in effect on 2020-12-01 at 00:00 in AMERICA_CHICAGO', () => {
+		expect(Timezones.AMERICA_CHICAGO.getIsDaylightSavingsTime(1606802400000)).toEqual(false);
+	});
+});
