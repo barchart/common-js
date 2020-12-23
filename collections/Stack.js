@@ -21,7 +21,7 @@ module.exports = (() => {
 		 * @returns {object} - The item added to the stack.
 		 */
 		push(item) {
-			this._array.unshift(item);
+			this._array.push(item);
 
 			return item;
 		}
@@ -37,7 +37,7 @@ module.exports = (() => {
 				throw new Error('Stack is empty');
 			}
 
-			return this._array.shift();
+			return this._array.pop();
 		}
 
 		/**
@@ -51,7 +51,7 @@ module.exports = (() => {
 				throw new Error('Stack is empty');
 			}
 
-			return this._array[0];
+			return this._array[this._array.length - 1];
 		}
 
 		/**
@@ -73,7 +73,9 @@ module.exports = (() => {
 		scan(action) {
 			assert.argumentIsRequired(action, 'action', Function);
 
-			this._array.forEach(x => action(x));
+			for (let i = this._array.length - 1; i >= 0; i--) {
+				action(this._array[i]);
+			}
 		}
 
 		/**
@@ -84,7 +86,7 @@ module.exports = (() => {
 		 * @returns {Array}
 		 */
 		toArray() {
-			return this._array.slice(0);
+			return this._array.slice(0).reverse();
 		}
 
 		toString() {
