@@ -161,7 +161,6 @@ module.exports = (() => {
 		 * Returns true, if the map contains no items; otherwise false.
 		 *
 		 * @public
-		 * @param {String} key
 		 * @returns {boolean}
 		 */
 		empty() {
