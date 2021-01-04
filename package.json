@@ -17,7 +17,9 @@
   "keywords": [
     "Barchart",
     "Utilities",
-    "JavaScript"
+    "JavaScript",
+    "Node.js",
+    "Browser"
   ],
   "dependencies": {
     "axios": "^0.19.2",
@@ -27,14 +29,14 @@
     "xhr": "2.3.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.6.2",
+    "@babel/core": "^7.12.10",
     "babelify": "^10.0.0",
-    "browserify": "^16.5.0",
+    "browserify": "^16.5.2",
     "git-get-status": "^1.0.5",
-    "glob": "^6.0.1",
+    "glob": "^6.0.4",
     "gulp": "^4.0.2",
-    "gulp-git": "^2.9.0",
-    "gulp-jasmine": "^2.2.1",
+    "gulp-git": "^2.10.1",
+    "gulp-jasmine": "^4.0.0",
     "gulp-jshint": "^2.1.0",
     "gulp-prompt": "^1.2.0",
     "jshint": "^2.10.3",
