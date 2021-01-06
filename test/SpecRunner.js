@@ -841,7 +841,7 @@ module.exports = (() => {
       }
     }
     /**
-     * Outputs an array of the stacks's items; without affecting the
+     * Outputs an array of the stack's items; without affecting the
      * queue's internal state;
      *
      * @public
