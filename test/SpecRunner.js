@@ -780,7 +780,7 @@ module.exports = (() => {
 
 
     push(item) {
-      this._array.push(item);
+      this._array.unshift(item);
 
       return item;
     }
@@ -797,7 +797,7 @@ module.exports = (() => {
         throw new Error('Stack is empty');
       }
 
-      return this._array.pop();
+      return this._array.shift();
     }
     /**
      * Returns the next item in the stack (without removing it). Throws if the stack is empty.
@@ -812,7 +812,7 @@ module.exports = (() => {
         throw new Error('Stack is empty');
       }
 
-      return this._array[this._array.length - 1];
+      return this._array[0];
     }
     /**
      * Returns true if the queue is empty; otherwise false.
@@ -836,9 +836,7 @@ module.exports = (() => {
     scan(action) {
       assert.argumentIsRequired(action, 'action', Function);
 
-      for (let i = this._array.length - 1; i >= 0; i--) {
-        action(this._array[i]);
-      }
+      this._array.forEach(x => action(x));
     }
     /**
      * Outputs an array of the stacks's items; without affecting the
@@ -850,7 +848,7 @@ module.exports = (() => {
 
 
     toArray() {
-      return this._array.slice(0).reverse();
+      return this._array.slice(0);
     }
 
     toString() {
