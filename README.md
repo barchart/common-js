@@ -3,7 +3,7 @@
 [![AWS CodeBuild](https://codebuild.us-east-1.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiYjhPK3NyazNKNlo4QmQzblZnbFFuR2ljMUljdXlRWGp6MEtaWW1pREpBRndCSkk1MkZyUDJCdzZWcCsxbEU5NERuZFhTU0RKZG9NbStjbTFIa3JnRlI4PSIsIml2UGFyYW1ldGVyU3BlYyI6IkFtZFhHQ0NLV0lhUlBoaWUiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=master)](https://github.com/barchart/common-js)
 [![NPM](https://img.shields.io/npm/v/@barchart/common-js)](https://www.npmjs.com/package/@barchart/common-js)
 
-A *public* library of shared JavaScript utilities. These utilities are agnostic to environment -- they are suitable for use in Node.js and web browsers.
+A *public* library of shared JavaScript utilities. These utilities are agnostic to environment — suitable for use in both Node.js and browser-based applications.
 
 ### Overview
 
@@ -17,7 +17,7 @@ A *public* library of shared JavaScript utilities. These utilities are agnostic 
 
 #### Companion Library
 
-A companion library called [@barchart/common-node-js](https://github.com/barchart/barchart-common-node-js) contains utilities for exclusive use in Node.js environments (i.e. not suitable for use in browsers).
+A companion library called [@barchart/common-node-js](https://github.com/barchart/barchart-common-node-js) contains utilities for exclusive use in Node.js environments (i.e. not suitable for use in web browsers).
 
 ### Development
 
