@@ -7,7 +7,6 @@ module.exports = (() => {
 	 * An object that has an end-of-life process.
 	 *
 	 * @public
-	 * @interface
 	 */
 	class Disposable {
 		constructor() {
@@ -59,7 +58,7 @@ module.exports = (() => {
 		 * delegated to a function.
 		 *
 		 * @public
-		 * @param disposeAction {Function}
+		 * @param {Function} disposeAction
 		 * @returns {Disposable}
 		 */
 		static fromAction(disposeAction) {
