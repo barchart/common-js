@@ -6154,7 +6154,8 @@ module.exports = (() => {
 
   return {
     /**
-     *
+     * Creates a composite promise which resolves normally or rejects is a specified
+     * amount of time elapses.
      *
      * @public
      * @static
