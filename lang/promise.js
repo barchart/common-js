@@ -10,43 +10,35 @@ module.exports = (() => {
 	 * @module lang/promise
 	 */
 	return {
-		timeout(promise, timeout) {
+		/**
+		 * Creates a composite promise which resolves normally or rejects is a specified
+		 * amount of time elapses.
+		 *
+		 * @public
+		 * @static
+		 * @param {Promise} promise
+		 * @param {Number} milliseconds
+		 * @param {String=} description
+		 * @returns {Promise<*>}
+		 */
+		timeout(promise, milliseconds, description) {
 			return Promise.resolve()
 				.then(() => {
 					assert.argumentIsRequired(promise, 'promise', Promise, 'Promise');
-					assert.argumentIsRequired(timeout, 'timeout', Number);
+					assert.argumentIsRequired(milliseconds, 'milliseconds', Number);
+					assert.argumentIsOptional(description, 'description', String);
 
-					if (!(timeout > 0)) {
-						throw new Error('Promise timeout must be greater than zero.');
+					if (!(milliseconds > 0)) {
+						return Promise.reject('Unable to configure promise timeout, the "milliseconds" argument must be positive');
 					}
 
-					return this.build((resolveCallback, rejectCallback) => {
-						let pending = true;
-
-						let token = setTimeout(() => {
-							if (pending) {
-								pending = false;
-
-								rejectCallback(`Promise timed out after ${timeout} milliseconds`);
-							}
-						}, timeout);
-
-						promise.then((result) => {
-							if (pending) {
-								pending = false;
-								clearTimeout(token);
-
-								resolveCallback(result);
-							}
-						}).catch((error) => {
-							if (pending) {
-								pending = false;
-								clearTimeout(token);
-
-								rejectCallback(error);
-							}
-						});
-					});
+					return Promise.race([
+						promise, this.build((resolveCallback, rejectCallback) => {
+							setTimeout(() => {
+								rejectCallback(description || `Promise timed out after ${milliseconds} milliseconds`);
+							}, milliseconds);
+						})
+					]);
 				});
 		},
 
