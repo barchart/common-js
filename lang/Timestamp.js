@@ -83,7 +83,6 @@ module.exports = (() => {
 			return this.add(seconds * MILLISECONDS_PER_SECOND);
 		}
 
-
 		/**
 		 * Indicates if another {@link Timestamp} occurs before the current instance.
 		 *
