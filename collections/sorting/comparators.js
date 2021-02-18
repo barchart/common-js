@@ -13,6 +13,7 @@ module.exports = (() => {
 		/**
 		 * Compares two dates (in ascending order).
 		 *
+		 * @public
 		 * @static
 		 * @param {Date} a
 		 * @param {Date} b
@@ -28,6 +29,7 @@ module.exports = (() => {
 		/**
 		 * Compares two numbers (in ascending order).
 		 *
+		 * @public
 		 * @static
 		 * @param {Number} a
 		 * @param {Number} b
@@ -43,6 +45,7 @@ module.exports = (() => {
 		/**
 		 * Compares two strings (in ascending order), using {@link String#localeCompare}.
 		 *
+		 * @public
 		 * @static
 		 * @param {String} a
 		 * @param {String} b
@@ -58,6 +61,7 @@ module.exports = (() => {
 		/**
 		 * Compares two boolean values (in ascending order -- false first, true second).
 		 *
+		 * @public
 		 * @static
 		 * @param {Boolean} a
 		 * @param {Boolean} b
@@ -79,6 +83,7 @@ module.exports = (() => {
 		/**
 		 * Compares two objects, always returning zero.
 		 *
+		 * @public
 		 * @static
 		 * @param {*} a
 		 * @param {*} b

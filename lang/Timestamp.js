@@ -83,6 +83,40 @@ module.exports = (() => {
 			return this.add(seconds * MILLISECONDS_PER_SECOND);
 		}
 
+
+		/**
+		 * Indicates if another {@link Timestamp} occurs before the current instance.
+		 *
+		 * @public
+		 * @param {Timestamp} other
+		 * @returns {boolean}
+		 */
+		getIsBefore(other) {
+			return Timestamp.compareTimestamps(this, other) < 0;
+		}
+
+		/**
+		 * Indicates if another {@link Timestamp} occurs after the current instance.
+		 *
+		 * @public
+		 * @param {Timestamp} other
+		 * @returns {boolean}
+		 */
+		getIsAfter(other) {
+			return Timestamp.compareTimestamps(this, other) > 0;
+		}
+
+		/**
+		 * Indicates if another {@link Timestamp} occurs after the current instance.
+		 *
+		 * @public
+		 * @param {Timestamp} other
+		 * @returns {boolean}
+		 */
+		getIsEqual(other) {
+			return Timestamp.compareTimestamps(this, other) === 0;
+		}
+
 		/**
 		 * Returns the JSON representation.
 		 *
@@ -126,6 +160,22 @@ module.exports = (() => {
 		 */
 		static now() {
 			return new Timestamp((new Date()).getTime());
+		}
+
+		/**
+		 * A comparator function for {@link Day} instances.
+		 *
+		 * @public
+		 * @static
+		 * @param {Timestamp} a
+		 * @param {Timestamp} b
+		 * @returns {Number}
+		 */
+		static compareTimestamps(a, b) {
+			assert.argumentIsRequired(a, 'a', Timestamp, 'Timestamp');
+			assert.argumentIsRequired(b, 'b', Timestamp, 'Timestamp');
+
+			return a.timestamp - b.timestamp;
 		}
 
 		toString() {
