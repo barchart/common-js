@@ -460,7 +460,7 @@ module.exports = (() => {
 		/**
 		 * Performs a binary search to locate an item within an array.
 		 *
-		 * @param {*[]}array
+		 * @param {*[]} a
 		 * @param {*} key
 		 * @param {Function} comparator
 		 * @param {Number=} start
