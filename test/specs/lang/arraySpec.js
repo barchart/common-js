@@ -999,3 +999,321 @@ describe('when removing an item from an array using a predicate', () => {
 		expect(a[1]).not.toBe(item);
 	});
 });
+
+describe('when inserting into an empty array', () => {
+	let a;
+	let b;
+
+	let item;
+	let comparator;
+
+	beforeEach(() => {
+		a = [ ];
+		comparator = (a, b) => a.localeCompare(b);
+
+		b = array.insert(a, item = 'bryan', comparator);
+	});
+
+	it('the array length should be 1', () => {
+		expect(a.length).toEqual(1);
+	});
+
+	it('the resulting array should be the same array', () => {
+		expect(a).toBe(a);
+	});
+
+	it('the first item should be the inserted item', () => {
+		expect(a[0]).toEqual(item);
+	});
+});
+
+describe('when inserting into an array with one item', () => {
+	let a;
+	let one;
+
+	let comparator;
+
+	beforeEach(() => {
+		a = [ one = 'imogen' ];
+		comparator = (a, b) => a.localeCompare(b);
+	});
+
+	describe('and the item will be sorted before the existing item', () => {
+		let two;
+
+		beforeEach(() => {
+			array.insert(a, two = 'bryan', comparator);
+		});
+
+		it('the array length should be 2', () => {
+			expect(a.length).toEqual(2);
+		});
+
+		it('the inserted item should be first', () => {
+			expect(a[0]).toEqual(two);
+		});
+
+		it('the existing item should be last', () => {
+			expect(a[1]).toEqual(one);
+		});
+	});
+
+	describe('and the item will be sorted before the existing item', () => {
+		let two;
+
+		beforeEach(() => {
+			array.insert(a, two = 'rachel', comparator);
+		});
+
+		it('the array length should be 2', () => {
+			expect(a.length).toEqual(2);
+		});
+
+		it('the existing item should be first', () => {
+			expect(a[0]).toEqual(one);
+		});
+
+		it('the inserted item should be last', () => {
+			expect(a[1]).toEqual(two);
+		});
+	});
+});
+
+describe('when performing a binary search on an empty array', () => {
+	let a;
+	let comparator;
+
+	beforeEach(() => {
+		a = [ ];
+		comparator = (a, b) => a - b;
+	});
+
+	it('for an item that is not in the array', () => {
+		expect(array.binarySearch(a, 42, comparator)).toEqual(null);
+	});
+});
+
+describe('when performing a binary search on an array with one item', () => {
+	let a;
+	let comparator;
+
+	beforeEach(() => {
+		a = [ 42 ];
+		comparator = (a, b) => a - b;
+	});
+
+	it('for an item that would be before the first item in the array', () => {
+		expect(array.binarySearch(a, 41, comparator)).toEqual(null);
+	});
+
+	it('for the first item in the array', () => {
+		expect(array.binarySearch(a, 42, comparator)).toEqual(42);
+	});
+
+	it('for an item that would be after the last item in the array', () => {
+		expect(array.binarySearch(a, 43, comparator)).toEqual(null);
+	});
+});
+
+describe('when performing a binary search on an array with two items', () => {
+	let a;
+	let comparator;
+
+	beforeEach(() => {
+		a = [ 123, 456 ];
+		comparator = (a, b) => a - b;
+	});
+
+	it('for an item that would be before the first item in the array', () => {
+		expect(array.binarySearch(a, 122, comparator)).toEqual(null);
+	});
+
+	it('for the first item in the array', () => {
+		expect(array.binarySearch(a, 123, comparator)).toEqual(123);
+	});
+
+	it('for an item that would be in the middle the array', () => {
+		expect(array.binarySearch(a, 250, comparator)).toEqual(null);
+	});
+
+	it('for the last item in the array', () => {
+		expect(array.binarySearch(a, 456, comparator)).toEqual(456);
+	});
+
+	it('for an item that would be after the last item in the array', () => {
+		expect(array.binarySearch(a, 457, comparator)).toEqual(null);
+	});
+});
+
+describe('when performing a binary search on an array with three items', () => {
+	let a;
+	let comparator;
+
+	beforeEach(() => {
+		a = [ 123, 456, 789 ];
+		comparator = (a, b) => a - b;
+	});
+
+	it('for an item that would be before the first item in the array', () => {
+		expect(array.binarySearch(a, 122, comparator)).toEqual(null);
+	});
+
+	it('for the first item in the array', () => {
+		expect(array.binarySearch(a, 123, comparator)).toEqual(123);
+	});
+
+	it('for an item that would be in the middle the array', () => {
+		expect(array.binarySearch(a, 455, comparator)).toEqual(null);
+	});
+
+	it('for an item that would be in the middle the array', () => {
+		expect(array.binarySearch(a, 457, comparator)).toEqual(null);
+	});
+
+	it('for the middle item in the array', () => {
+		expect(array.binarySearch(a, 456, comparator)).toEqual(456);
+	});
+
+	it('for the last item in the array', () => {
+		expect(array.binarySearch(a, 789, comparator)).toEqual(789);
+	});
+
+	it('for an item that would be after the last item in the array', () => {
+		expect(array.binarySearch(a, 790, comparator)).toEqual(null);
+	});
+});
+
+describe('when performing a binary search on an array with twenty contiguous items', () => {
+	let a;
+	let comparator;
+
+	beforeEach(() => {
+		a = [  ];
+		
+		for (let i = 1; i < 21; i++) {
+			a.push(i);
+		}
+
+		comparator = (a, b) => a - b;
+	});
+
+	it('for an item that would be before the first item in the array', () => {
+		expect(array.binarySearch(a, 0, comparator)).toEqual(null);
+	});
+
+	it('for the first item in the array', () => {
+		expect(array.binarySearch(a, 1, comparator)).toEqual(1);
+	});
+
+	it('for an item at the beginning of the array (2)', () => {
+		expect(array.binarySearch(a, 2, comparator)).toEqual(2);
+	});
+
+	it('for an an item in the middle of the array (9)', () => {
+		expect(array.binarySearch(a, 9, comparator)).toEqual(9);
+	});
+
+	it('for an an item in the middle of the array (10)', () => {
+		expect(array.binarySearch(a, 10, comparator)).toEqual(10);
+	});
+	
+	it('for an an item in the middle of the array (11)', () => {
+		expect(array.binarySearch(a, 11, comparator)).toEqual(11);
+	});
+
+	it('for an item at the end of the array (19)', () => {
+		expect(array.binarySearch(a, 2, comparator)).toEqual(2);
+	});
+
+	it('for the last item in the array', () => {
+		expect(array.binarySearch(a, 19, comparator)).toEqual(19);
+	});
+
+	it('for an item that would be after the last item in the array', () => {
+		expect(array.binarySearch(a, 21, comparator)).toEqual(null);
+	});
+});
+
+
+describe('when performing a binary search on an array with twenty one sparse items', () => {
+	let a;
+	let comparator;
+
+	beforeEach(() => {
+		a = [  ];
+
+		for (let i = 1; i < 22; i++) {
+			a.push(i * 2);
+		}
+
+		comparator = (a, b) => a - b;
+	});
+
+	it('for an item that would be before the first item in the array', () => {
+		expect(array.binarySearch(a, 1, comparator)).toEqual(null);
+	});
+
+	it('for the first item in the array', () => {
+		expect(array.binarySearch(a, 2, comparator)).toEqual(2);
+	});
+
+	it('for an item that would be after the first item in the array (3)', () => {
+		expect(array.binarySearch(a, 3, comparator)).toEqual(null);
+	});
+
+	it('for an item that would be after the first item in the array (5)', () => {
+		expect(array.binarySearch(a, 5, comparator)).toEqual(null);
+	});
+
+	it('for an item at the beginning of the array (4)', () => {
+		expect(array.binarySearch(a, 4, comparator)).toEqual(4);
+	});
+
+	it('for an item that would be around the the middle of the array (17)', () => {
+		expect(array.binarySearch(a, 17, comparator)).toEqual(null);
+	});
+
+	it('for an item that would be around the the middle of the array (19)', () => {
+		expect(array.binarySearch(a, 19, comparator)).toEqual(null);
+	});
+
+	it('for an item that would be around the the middle of the array (21)', () => {
+		expect(array.binarySearch(a, 21, comparator)).toEqual(null);
+	});
+
+	it('for an item that would be around the the middle of the array (23)', () => {
+		expect(array.binarySearch(a, 23, comparator)).toEqual(null);
+	});
+
+	it('for an an item in the middle of the array (18)', () => {
+		expect(array.binarySearch(a, 18, comparator)).toEqual(18);
+	});
+
+	it('for an an item in the middle of the array (20)', () => {
+		expect(array.binarySearch(a, 20, comparator)).toEqual(20);
+	});
+
+	it('for an an item in the middle of the array (22)', () => {
+		expect(array.binarySearch(a, 22, comparator)).toEqual(22);
+	});
+
+	it('for an item that would be before the last item in the array (39)', () => {
+		expect(array.binarySearch(a, 39, comparator)).toEqual(null);
+	});
+
+	it('for an item that would be before the last item in the array (41)', () => {
+		expect(array.binarySearch(a, 41, comparator)).toEqual(null);
+	});
+
+	it('for an item at the end of the array (40)', () => {
+		expect(array.binarySearch(a, 40, comparator)).toEqual(40);
+	});
+
+	it('for the last item in the array', () => {
+		expect(array.binarySearch(a, 42, comparator)).toEqual(42);
+	});
+
+	it('for an item that would be after the last item in the array', () => {
+		expect(array.binarySearch(a, 43, comparator)).toEqual(null);
+	});
+});
