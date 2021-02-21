@@ -1085,11 +1085,11 @@ describe('when performing a binary search on an empty array', () => {
 
 	beforeEach(() => {
 		a = [ ];
-		comparator = (a, b) => a - b;
+		comparator = (a, b) => a.value - b.value;
 	});
 
 	it('for an item that is not in the array', () => {
-		expect(array.binarySearch(a, 42, comparator)).toEqual(null);
+		expect(array.binarySearch(a, { value: 42 }, comparator)).toEqual(null);
 	});
 });
 

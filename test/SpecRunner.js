@@ -5001,17 +5001,23 @@ module.exports = (() => {
     /**
      * Performs a binary search to locate an item within an array.
      *
-     * @param {*[]}array
+     * @param {*[]} a
      * @param {*} key
      * @param {Function} comparator
      * @param {Number=} start
      * @param {Number=} end
+     * @returns {*|null}
      */
     binarySearch(a, key, comparator, start, end) {
       assert.argumentIsArray(a, 'a');
       assert.argumentIsRequired(comparator, 'comparator', Function);
       assert.argumentIsOptional(start, 'start', Number);
       assert.argumentIsOptional(end, 'end', Number);
+
+      if (a.length === 0) {
+        return null;
+      }
+
       return binarySearchForMatch(a, key, comparator, start || 0, end || a.length - 1);
     }
 
@@ -21231,10 +21237,12 @@ describe('when performing a binary search on an empty array', () => {
   beforeEach(() => {
     a = [];
 
-    comparator = (a, b) => a - b;
+    comparator = (a, b) => a.value - b.value;
   });
   it('for an item that is not in the array', () => {
-    expect(array.binarySearch(a, 42, comparator)).toEqual(null);
+    expect(array.binarySearch(a, {
+      value: 42
+    }, comparator)).toEqual(null);
   });
 });
 describe('when performing a binary search on an array with one item', () => {

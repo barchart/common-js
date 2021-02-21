@@ -465,6 +465,7 @@ module.exports = (() => {
 		 * @param {Function} comparator
 		 * @param {Number=} start
 		 * @param {Number=} end
+		 * @returns {*|null}
 		 */
 		binarySearch(a, key, comparator, start, end) {
 			assert.argumentIsArray(a, 'a');
@@ -472,6 +473,10 @@ module.exports = (() => {
 
 			assert.argumentIsOptional(start, 'start', Number);
 			assert.argumentIsOptional(end, 'end', Number);
+
+			if (a.length === 0) {
+				return null;
+			}
 
 			return binarySearchForMatch(a, key, comparator, start || 0, end || a.length - 1);
 		}
