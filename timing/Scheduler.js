@@ -215,6 +215,20 @@ module.exports = (() => {
 				});
 		}
 
+		static backoff(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts) {
+			return Promise.resolve()
+				.then(() => {
+					const scheduler = new Scheduler();
+
+					return scheduler.backoff(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts)
+						.catch((e) => {
+							scheduler.dispose();
+
+							return Promise.reject(e);
+						});
+				});
+		}
+
 		toString() {
 			return '[Scheduler]';
 		}
