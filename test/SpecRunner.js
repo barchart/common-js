@@ -6403,6 +6403,10 @@ const assert = require('./assert'),
 
 module.exports = (() => {
   'use strict';
+
+  const regex = {};
+  regex.camel = {};
+  regex.camel.violations = /\b[A-Z]/g;
   /**
    * Utility functions for strings.
    *
@@ -6411,6 +6415,15 @@ module.exports = (() => {
    */
 
   return {
+    /**
+     * Adjusts a string, replacing the first character of each word with an uppercase
+     * character and all subsequent characters in the word with lowercase characters.
+     *
+     * @public
+     * @static
+     * @param {String} s
+     * @returns {String}
+     */
     startCase(s) {
       return s.split(' ').reduce((phrase, word) => {
         if (word.length !== 0) {
@@ -6419,6 +6432,20 @@ module.exports = (() => {
 
         return phrase;
       }, []).join(' ');
+    },
+
+    /**
+     * Adjust a string to use camel case, where the first letter of each word is replaced
+     * with a lower case character.
+     *
+     * @public
+     * @static
+     * @param {String} s
+     * @returns {String}
+     */
+    camelCase(s) {
+      assert.argumentIsRequired(s, 's', String);
+      return s.replace(regex.camel.violations, m => m.toLocaleLowerCase());
     },
 
     /**
@@ -24548,15 +24575,48 @@ describe('When generating a random number using an invalid range, the range is a
 },{"./../../../lang/random":43}],120:[function(require,module,exports){
 const string = require('./../../../lang/string');
 
-describe('When converting a string to "start" casing', () => {
+describe('When converting a sentence to "start" casing', () => {
   'use strict';
 
   let result;
   beforeEach(() => {
     result = string.startCase('The quick brown Fox');
   });
-  it('should convert the first character (after each space) to a capital letter', () => {
+  it('should convert the first character (after each space) to an uppercase letter', () => {
     expect(result).toEqual('The Quick Brown Fox');
+  });
+});
+describe('When converting a sentence to "camel" casing', () => {
+  'use strict';
+
+  let result;
+  beforeEach(() => {
+    result = string.camelCase('The quick brown Fox');
+  });
+  it('should convert the first character (after each space) to a lowercase letter', () => {
+    expect(result).toEqual('the quick brown fox');
+  });
+});
+describe('When converting a word to "start" casing', () => {
+  'use strict';
+
+  let result;
+  beforeEach(() => {
+    result = string.startCase('myLittlePony');
+  });
+  it('should convert the first character (after each space) to a uppercase letter', () => {
+    expect(result).toEqual('Mylittlepony');
+  });
+});
+describe('When converting a word to "camel" casing', () => {
+  'use strict';
+
+  let result;
+  beforeEach(() => {
+    result = string.camelCase('MyLittlePony');
+  });
+  it('should convert the first character (after each space) to a lowercase letter', () => {
+    expect(result).toEqual('myLittlePony');
   });
 });
 describe('When truncating a string', () => {
