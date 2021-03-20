@@ -4,6 +4,11 @@ const assert = require('./assert'),
 module.exports = (() => {
 	'use strict';
 
+	const regex = { };
+
+	regex.camel = { };
+	regex.camel.violations = /\b[A-Z]/g;
+
 	/**
 	 * Utility functions for strings.
 	 *
@@ -11,6 +16,15 @@ module.exports = (() => {
 	 * @module lang/string
 	 */
 	return {
+		/**
+		 * Adjusts a string, replacing the first character of each word with an uppercase
+		 * character and all subsequent characters in the word with lowercase characters.
+		 *
+		 * @public
+		 * @static
+		 * @param {String} s
+		 * @returns {String}
+		 */
 		startCase(s) {
 			return s.split(' ').reduce((phrase, word) => {
 				if (word.length !== 0) {
@@ -19,6 +33,21 @@ module.exports = (() => {
 
 				return phrase;
 			}, [ ]).join(' ');
+		},
+
+		/**
+		 * Adjust a string to use camel case, where the first letter of each word is replaced
+		 * with a lower case character.
+		 *
+		 * @public
+		 * @static
+		 * @param {String} s
+		 * @returns {String}
+		 */
+		camelCase(s) {
+			assert.argumentIsRequired(s, 's', String);
+
+			return s.replace(regex.camel.violations, m => m.toLocaleLowerCase());
 		},
 
 		/**

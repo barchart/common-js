@@ -1,6 +1,6 @@
 const string = require('./../../../lang/string');
 
-describe('When converting a string to "start" casing', () => {
+describe('When converting a sentence to "start" casing', () => {
 	'use strict';
 
 	let result;
@@ -9,8 +9,50 @@ describe('When converting a string to "start" casing', () => {
 		result = string.startCase('The quick brown Fox');
 	});
 
-	it('should convert the first character (after each space) to a capital letter', () => {
+	it('should convert the first character (after each space) to an uppercase letter', () => {
 		expect(result).toEqual('The Quick Brown Fox');
+	});
+});
+
+describe('When converting a sentence to "camel" casing', () => {
+	'use strict';
+
+	let result;
+
+	beforeEach(() => {
+		result = string.camelCase('The quick brown Fox');
+	});
+
+	it('should convert the first character (after each space) to a lowercase letter', () => {
+		expect(result).toEqual('the quick brown fox');
+	});
+});
+
+describe('When converting a word to "start" casing', () => {
+	'use strict';
+
+	let result;
+
+	beforeEach(() => {
+		result = string.startCase('myLittlePony');
+	});
+
+	it('should convert the first character (after each space) to a uppercase letter', () => {
+		expect(result).toEqual('Mylittlepony');
+	});
+});
+
+describe('When converting a word to "camel" casing', () => {
+	'use strict';
+
+	let result;
+
+	beforeEach(() => {
+		result = string.camelCase('MyLittlePony');
+	});
+
+	it('should convert the first character (after each space) to a lowercase letter', () => {
+		expect(result).toEqual('myLittlePony');
 	});
 });
 
