@@ -211,6 +211,21 @@ module.exports = (() => {
 		}
 
 		/**
+		 * Returns the count of all descendant nodes by walking the tree. Consequently, this
+		 * function is not efficient.
+		 *
+		 * @public
+		 * @returns {Number}
+		 */
+		count() {
+			let count = 0;
+
+			this.walk(() => count ++, true, true);
+
+			return count;
+		}
+
+		/**
 		 * Climbs the parents of the current node -- current node up to the root node, running an action on each node.
 		 *
 		 * @public

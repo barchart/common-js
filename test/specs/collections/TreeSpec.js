@@ -22,6 +22,10 @@ describe('When a Tree is constructed', () => {
 		expect(root.getValue()).toBe(one);
 	});
 
+	it('the (root) descendant count should be one', () => {
+		expect(root.count()).toEqual(1);
+	});
+
 	describe('and the root node is retrieved from root node', () => {
 		it('should be itself', () => {
 			expect(root.getRoot()).toBe(root);
@@ -56,12 +60,28 @@ describe('When a Tree is constructed', () => {
 			expect(root.getChildren().find((c) => c === child)).toBe(child);
 		});
 
+		it('the (root) descendant count should be two', () => {
+			expect(root.count()).toEqual(2);
+		});
+
+		it('the (child) descendant count should be one', () => {
+			expect(child.count()).toEqual(1);
+		});
+
 		describe('and a second child is added', () => {
 			let secondChild;
 			let three;
 
 			beforeEach(() => {
 				secondChild = root.addChild(three = { });
+			});
+
+			it('the (root) descendant count should be three', () => {
+				expect(root.count()).toEqual(3);
+			});
+
+			it('the (child) descendant count should be one', () => {
+				expect(secondChild.count()).toEqual(1);
 			});
 
 			describe('and the second child is severed', () => {
