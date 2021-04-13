@@ -19866,6 +19866,12 @@ describe('When checking for values that approximate each other', () => {
   it('A value of "-0.01" should not approximate a value of "0.01" (when using two significant digits)', () => {
     expect(new Decimal('-0.01').getIsApproximate(new Decimal('0.01'), 2)).toEqual(false);
   });
+  it('A value of "0.00001" should approximate a value of Decimal.ZERO (when using four significant digits)', () => {
+    expect(new Decimal('0.00001').getIsApproximate(Decimal.ZERO, 4)).toEqual(true);
+  });
+  it('A value of "0.00001" should not approximate a value of Decimal.ZERO (when using five significant digits)', () => {
+    expect(new Decimal('0.00001').getIsApproximate(Decimal.ZERO, 5)).toEqual(false);
+  });
 });
 describe('When cloning a decimal', () => {
   'use strict';
