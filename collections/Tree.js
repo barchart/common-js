@@ -75,6 +75,16 @@ module.exports = (() => {
 		}
 
 		/**
+		 * Returns true if this node has children; otherwise false.
+		 *
+		 * @public
+		 * @returns {boolean}
+		 */
+		getIsInner() {
+			return this._children.length !== 0;
+		}
+
+		/**
 		 * Returns true if this node has no parent; otherwise false.
 		 *
 		 * @public
