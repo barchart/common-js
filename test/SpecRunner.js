@@ -943,6 +943,17 @@ module.exports = (() => {
       return this._children.length === 0;
     }
     /**
+     * Returns true if this node has children; otherwise false.
+     *
+     * @public
+     * @returns {boolean}
+     */
+
+
+    getIsInner() {
+      return this._children.length !== 0;
+    }
+    /**
      * Returns true if this node has no parent; otherwise false.
      *
      * @public
@@ -17451,6 +17462,9 @@ describe('When a Tree is constructed', () => {
   it('should be the root node', () => {
     expect(root.getIsRoot()).toEqual(true);
   });
+  it('should not be an inner node', () => {
+    expect(root.getIsInner()).toEqual(false);
+  });
   it('should be a leaf node', () => {
     expect(root.getIsLeaf()).toEqual(true);
   });
@@ -17471,6 +17485,9 @@ describe('When a Tree is constructed', () => {
     beforeEach(() => {
       child = root.addChild(two = {});
     });
+    it('should not be a leaf node', () => {
+      expect(child.getIsInner()).toEqual(false);
+    });
     it('should be a leaf node', () => {
       expect(child.getIsLeaf()).toEqual(true);
     });
@@ -17482,6 +17499,9 @@ describe('When a Tree is constructed', () => {
     });
     it('should not have a parent which is considered a leaf node', () => {
       expect(root.getIsLeaf()).toEqual(false);
+    });
+    it('should not a parent which is considered an inner node', () => {
+      expect(root.getIsInner()).toEqual(true);
     });
     it('should be in the parents collection of children', () => {
       expect(root.getChildren().find(c => c === child)).toBe(child);
