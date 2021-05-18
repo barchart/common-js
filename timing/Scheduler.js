@@ -45,7 +45,11 @@ module.exports = (() => {
 
 					const schedulePromise = promise.build((resolveCallback, rejectCallback) => {
 						const wrappedAction = () => {
-							delete this._timeoutBindings[token];
+							const disposable = this._timeoutBindings[token];
+
+							if (disposable) {
+								disposable.dispose();
+							}
 
 							try {
 								resolveCallback(actionToSchedule());
