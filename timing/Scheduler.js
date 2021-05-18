@@ -47,6 +47,16 @@ module.exports = (() => {
 						const wrappedAction = () => {
 							const disposable = this._timeoutBindings[token];
 
+							// 2021/05/18, BRI. Invoking dispose cases the clearTimeout function to run.
+							// Running clearTimeout should not be necessary because the timer has elapsed
+							// and the callback is being invoked. However, failing to call clearTimeout in
+							// a Node.js environment (after version 10) leads to a memory leak. Notice that
+							// this function has a reference to the Scheduler instance (via closure). In my
+							// view, this is breaking change between versions 10 and 12 of Node.js. I have
+							// been unable to locate any documentation regarding this change; however, a changes
+							// to did occur (which becomes obvious when inspecting the data structure returned by
+							// the setTimeout function).
+
 							if (disposable) {
 								disposable.dispose();
 							}
