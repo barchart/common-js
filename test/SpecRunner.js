@@ -23072,7 +23072,7 @@ describe('When using the iterate function', () => {
 },{"./../../../lang/iterate":37}],114:[function(require,module,exports){
 const mask = require('./../../../lang/mask');
 
-describe('When testing the suitibility of an bit-based enumeration item', () => {
+describe('When testing the suitability of an bit-based enumeration item', () => {
   it('zero should be valid', () => {
     expect(mask.checkItem(0)).toEqual(true);
   });
