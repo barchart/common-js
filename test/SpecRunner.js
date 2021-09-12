@@ -1405,6 +1405,25 @@ module.exports = (() => {
     },
 
     /**
+     * Compares two values for nulls (in ascending order -- null first, non-null second).
+     *
+     * @public
+     * @static
+     * @param {*|null} a
+     * @param {*|null} b
+     * @returns {Number}
+     */
+    compareNull: (a, b) => {
+      if (a === null && b !== null) {
+        return -1;
+      } else if (a !== null && b === null) {
+        return 1;
+      } else {
+        return 0;
+      }
+    },
+
+    /**
      * Compares two objects, always returning zero.
      *
      * @public
@@ -17786,6 +17805,42 @@ describe('When using the "compareBoolean" comparator', () => {
     beforeEach(() => {
       arrayToSort = [a, b, c];
       arrayToSort.sort(comparators.compareBooleans);
+    });
+    it('the array should be in the correct order', () => {
+      expect(arrayToSort[0]).toEqual(b);
+      expect(arrayToSort[1]).toEqual(a);
+      expect(arrayToSort[2]).toEqual(c);
+    });
+  });
+});
+describe('When using the "compareNull" comparator', () => {
+  'use strict';
+
+  describe('to rank values which are not null', () => {
+    it('comparing "1" with "2" should return a zero value', () => {
+      expect(comparators.compareNull('1', '2')).toEqual(0);
+    });
+    it('comparing "false" with "true" should return a zero value', () => {
+      expect(comparators.compareNull(false, true)).toEqual(0);
+    });
+    it('comparing two null values should return a zero value', () => {
+      expect(comparators.compareNull(null, null)).toEqual(0);
+    });
+    it('comparing a null value with "1" should return a negative value', () => {
+      expect(comparators.compareNull(null, 1) < 0).toEqual(true);
+    });
+    it('comparing "1"" with a null value should return a positive value', () => {
+      expect(comparators.compareNull(1, null) > 0).toEqual(true);
+    });
+  });
+  describe('to sort an array', () => {
+    let arrayToSort;
+    let a = 1;
+    let b = null;
+    let c = '2';
+    beforeEach(() => {
+      arrayToSort = [a, b, c];
+      arrayToSort.sort(comparators.compareNull);
     });
     it('the array should be in the correct order', () => {
       expect(arrayToSort[0]).toEqual(b);
