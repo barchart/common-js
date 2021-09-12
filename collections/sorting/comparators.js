@@ -81,6 +81,25 @@ module.exports = (() => {
 		},
 
 		/**
+		 * Compares two values for nulls (in ascending order -- null first, non-null second).
+		 *
+		 * @public
+		 * @static
+		 * @param {*|null} a
+		 * @param {*|null} b
+		 * @returns {Number}
+		 */
+		compareNull: (a, b) => {
+			if (a === null && b !== null) {
+				return -1;
+			} else if (a !== null && b === null) {
+				return 1;
+			} else {
+				return 0;
+			}
+		},
+
+		/**
 		 * Compares two objects, always returning zero.
 		 *
 		 * @public
