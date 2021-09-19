@@ -58,6 +58,7 @@ module.exports = (() => {
 		 * delegated to a function.
 		 *
 		 * @public
+		 * @static
 		 * @param {Function} disposeAction
 		 * @returns {Disposable}
 		 */
@@ -72,6 +73,7 @@ module.exports = (() => {
 		 * logic does nothing.
 		 *
 		 * @public
+		 * @static
 		 * @returns {Disposable}
 		 */
 		static getEmpty() {
