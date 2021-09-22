@@ -453,7 +453,7 @@ describe('When comparing days', () => {
 		expect(Day.parse('2017-07-18').getIsAfter(Day.parse('2017-08-18'))).toEqual(false);
 	});
 
-	it('The day "2017-07-18" should bit be afte "2018-07-18"', () => {
+	it('The day "2017-07-18" should bit be after "2018-07-18"', () => {
 		expect(Day.parse('2017-07-18').getIsAfter(Day.parse('2018-07-18'))).toEqual(false);
 	});
 
