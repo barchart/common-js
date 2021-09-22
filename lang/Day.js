@@ -228,7 +228,7 @@ module.exports = (() => {
 		}
 
 		/**
-		 * Indicates if another {@link Day} occurs before the current instance.
+		 * Indicates if the current {@link Day} instance occurs before another day.
 		 *
 		 * @public
 		 * @param {Day} other
@@ -239,7 +239,7 @@ module.exports = (() => {
 		}
 
 		/**
-		 * Indicates if another {@link Day} occurs after the current instance.
+		 * Indicates if the current {@link Day} instance occurs after another day.
 		 *
 		 * @public
 		 * @param {Day} other
@@ -278,7 +278,7 @@ module.exports = (() => {
 		}
 
 		/**
-		 * Indicates if another {@link Day} occurs after the current instance.
+		 * Indicates if another {@link Day} refers to the same moment.
 		 *
 		 * @public
 		 * @param {Day} other

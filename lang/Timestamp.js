@@ -84,7 +84,7 @@ module.exports = (() => {
 		}
 
 		/**
-		 * Indicates if another {@link Timestamp} occurs before the current instance.
+		 * Indicates if the current {@link Timestamp} instance occurs before another timestamp.
 		 *
 		 * @public
 		 * @param {Timestamp} other
@@ -95,7 +95,7 @@ module.exports = (() => {
 		}
 
 		/**
-		 * Indicates if another {@link Timestamp} occurs after the current instance.
+		 * Indicates if the current {@link Timestamp} instance occurs after another timestamp.
 		 *
 		 * @public
 		 * @param {Timestamp} other
@@ -106,7 +106,7 @@ module.exports = (() => {
 		}
 
 		/**
-		 * Indicates if another {@link Timestamp} occurs after the current instance.
+		 * Indicates if another {@link Timestamp} refers to the same moment.
 		 *
 		 * @public
 		 * @param {Timestamp} other
