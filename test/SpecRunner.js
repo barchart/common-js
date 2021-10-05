@@ -2865,7 +2865,7 @@ module.exports = (() => {
       return new Day(this.year, this.month, Day.getDaysInMonth(this.year, this.month));
     }
     /**
-     * Indicates if another {@link Day} occurs before the current instance.
+     * Indicates if the current {@link Day} instance occurs before another day.
      *
      * @public
      * @param {Day} other
@@ -2877,7 +2877,7 @@ module.exports = (() => {
       return Day.compareDays(this, other) < 0;
     }
     /**
-     * Indicates if another {@link Day} occurs after the current instance.
+     * Indicates if the current {@link Day} instance occurs after another day.
      *
      * @public
      * @param {Day} other
@@ -2917,7 +2917,7 @@ module.exports = (() => {
       return notAfter && notBefore;
     }
     /**
-     * Indicates if another {@link Day} occurs after the current instance.
+     * Indicates if another {@link Day} refers to the same moment.
      *
      * @public
      * @param {Day} other
@@ -3796,6 +3796,7 @@ module.exports = (() => {
      * delegated to a function.
      *
      * @public
+     * @static
      * @param {Function} disposeAction
      * @returns {Disposable}
      */
@@ -3810,6 +3811,7 @@ module.exports = (() => {
      * logic does nothing.
      *
      * @public
+     * @static
      * @returns {Disposable}
      */
 
@@ -4362,7 +4364,7 @@ module.exports = (() => {
       return this.add(seconds * MILLISECONDS_PER_SECOND);
     }
     /**
-     * Indicates if another {@link Timestamp} occurs before the current instance.
+     * Indicates if the current {@link Timestamp} instance occurs before another timestamp.
      *
      * @public
      * @param {Timestamp} other
@@ -4374,7 +4376,7 @@ module.exports = (() => {
       return Timestamp.compareTimestamps(this, other) < 0;
     }
     /**
-     * Indicates if another {@link Timestamp} occurs after the current instance.
+     * Indicates if the current {@link Timestamp} instance occurs after another timestamp.
      *
      * @public
      * @param {Timestamp} other
@@ -4386,7 +4388,7 @@ module.exports = (() => {
       return Timestamp.compareTimestamps(this, other) > 0;
     }
     /**
-     * Indicates if another {@link Timestamp} occurs after the current instance.
+     * Indicates if another {@link Timestamp} refers to the same moment.
      *
      * @public
      * @param {Timestamp} other
@@ -19501,7 +19503,7 @@ describe('When comparing days', () => {
   it('The day "2017-07-18" should not be after "2017-08-18"', () => {
     expect(Day.parse('2017-07-18').getIsAfter(Day.parse('2017-08-18'))).toEqual(false);
   });
-  it('The day "2017-07-18" should bit be afte "2018-07-18"', () => {
+  it('The day "2017-07-18" should bit be after "2018-07-18"', () => {
     expect(Day.parse('2017-07-18').getIsAfter(Day.parse('2018-07-18'))).toEqual(false);
   });
   it('The day "2017-07-18" should not be before "2017-07-17"', () => {
