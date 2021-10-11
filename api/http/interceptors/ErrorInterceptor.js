@@ -88,8 +88,8 @@ module.exports = (() => {
 			this._delegate = delegate;
 		}
 
-		_onProcess(response, endpoint) {
-			return this._delegate(response, endpoint);
+		_onProcess(error, endpoint) {
+			return this._delegate(error, endpoint);
 		}
 
 		toString() {
