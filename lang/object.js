@@ -68,6 +68,8 @@ module.exports = (() => {
 
 			if (is.fn(canExtract) && canExtract(source)) {
 				c = extractor(source);
+			} else if (is.date(source)) {
+				c = new Date(source.getTime());
 			} else if (is.array(source)) {
 				c = source.map((sourceItem) => {
 					return object.clone(sourceItem, canExtract, extractor);

@@ -6142,6 +6142,8 @@ module.exports = (() => {
 
       if (is.fn(canExtract) && canExtract(source)) {
         c = extractor(source);
+      } else if (is.date(source)) {
+        c = new Date(source.getTime());
       } else if (is.array(source)) {
         c = source.map(sourceItem => {
           return object.clone(sourceItem, canExtract, extractor);
@@ -23459,6 +23461,16 @@ describe('When cloning an object', () => {
     beforeEach(() => {
       clone = object.clone(target = {
         property: 23
+      });
+    });
+    it('the property value should equal the source property value', () => {
+      expect(clone.property).toEqual(target.property);
+    });
+  });
+  describe('that has a Date property', () => {
+    beforeEach(() => {
+      clone = object.clone(target = {
+        property: new Date()
       });
     });
     it('the property value should equal the source property value', () => {

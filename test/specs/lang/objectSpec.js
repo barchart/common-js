@@ -40,6 +40,16 @@ describe('When cloning an object', () => {
 		});
 	});
 
+	describe('that has a Date property', () => {
+		beforeEach(() => {
+			clone = object.clone(target = { property: new Date() });
+		});
+
+		it('the property value should equal the source property value', () => {
+			expect(clone.property).toEqual(target.property);
+		});
+	});
+
 	describe('that has an object-based property', () => {
 		beforeEach(() => {
 			clone = object.clone(target = { property: { } });
