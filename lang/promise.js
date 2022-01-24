@@ -51,7 +51,7 @@ module.exports = (() => {
 		 * @static
 		 * @param {Array} items - The items to map
 		 * @param {Function} mapper - The mapping function (e.g. given an item, return a promise).
-		 * @param {Number} concurrency - The maximum number of promises that are allowed to run at once.
+		 * @param {Number=} concurrency - The maximum number of promises that are allowed to run at once.
 		 * @returns {Promise<Array>}
 		 */
 		map(items, mapper, concurrency) {
