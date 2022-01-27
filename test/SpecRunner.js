@@ -16224,11 +16224,11 @@ module.exports = (() => {
   'use strict';
   /**
    * A {@link Specification} that passes when the value of the data item
-   * is between the values passed to the constructor
+   * is between the values passed to the constructor.
    *
    * @public
    * @extends {Specification}
-   * @param {Number} value
+   * @param {Number[]} values
    */
 
   class Between extends Specification {
@@ -16261,16 +16261,16 @@ module.exports = (() => {
   'use strict';
   /**
    * A stateful {@link Specification} that passes when the value of the data item
-   * is a changes. This specification will never pass on the first data
-   * item tested. Instead, the first data item sets the "previous" value
-   * used to compare the next data item to.
+   * a changes. This specification will never pass on the first data item tested.
+   * Each invocation compares the previous data item to the current data item,
+   * which means the specification can only pass on the second (or subsequent)
+   * invocation.
    *
    * @public
    * @extends {Specification}
-   * @param {*} value
    */
 
-  class ChangesSpecification extends Specification {
+  class Changes extends Specification {
     constructor() {
       super();
       this._previous = null;
@@ -16289,12 +16289,12 @@ module.exports = (() => {
     }
 
     toString() {
-      return '[ChangesSpecification]';
+      return '[Changes]';
     }
 
   }
 
-  return ChangesSpecification;
+  return Changes;
 })();
 
 },{"./../lang/is":36,"./Specification":74}],65:[function(require,module,exports){
@@ -16340,7 +16340,7 @@ module.exports = (() => {
   'use strict';
   /**
    * A {@link Specification} that passes when an item (passed to the
-   * constructor) is contained within an array.
+   * constructor) is contained within an array passed as the data item.
    *
    * @public
    * @extends {Specification}
@@ -16437,12 +16437,10 @@ const Specification = require('./Specification');
 module.exports = (() => {
   'use strict';
   /**
-   * A {@link Specification} that passes when the value of the data item
-   * is NaN.
+   * A {@link Specification} that passes when a data item evaluates to NaN.
    *
    * @public
    * @extends {Specification}
-   * @param {*} value
    */
 
   class Nan extends Specification {
@@ -16480,7 +16478,7 @@ const Specification = require('./Specification');
 module.exports = (() => {
   'use strict';
   /**
-   * A {@link Specification} that passes when the value of the data item
+   * A {@link Specification} that passes when the type of the data item
    * is a number.
    *
    * @public

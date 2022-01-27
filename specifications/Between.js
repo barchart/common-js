@@ -7,11 +7,11 @@ module.exports = (() => {
 
 	/**
 	 * A {@link Specification} that passes when the value of the data item
-	 * is between the values passed to the constructor
+	 * is between the values passed to the constructor.
 	 *
 	 * @public
 	 * @extends {Specification}
-	 * @param {Number} value
+	 * @param {Number[]} values
 	 */
 	class Between extends Specification {
 		constructor(values) {

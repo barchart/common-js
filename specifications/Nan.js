@@ -6,12 +6,10 @@ module.exports = (() => {
 	'use strict';
 
 	/**
-	 * A {@link Specification} that passes when the value of the data item
-	 * is NaN.
+	 * A {@link Specification} that passes when a data item evaluates to NaN.
 	 *
 	 * @public
 	 * @extends {Specification}
-	 * @param {*} value
 	 */
 	class Nan extends Specification {
 		constructor() {

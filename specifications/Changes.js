@@ -7,9 +7,10 @@ module.exports = (() => {
 
 	/**
 	 * A stateful {@link Specification} that passes when the value of the data item
-	 * is a changes. This specification will never pass on the first data
-	 * item tested. Instead, the first data item sets the "previous" value
-	 * used to compare the next data item to.
+	 * a changes. This specification will never pass on the first data item tested.
+	 * Each invocation compares the previous data item to the current data item,
+	 * which means the specification can only pass on the second (or subsequent)
+	 * invocation.
 	 *
 	 * @public
 	 * @extends {Specification}

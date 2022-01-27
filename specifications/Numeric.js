@@ -6,7 +6,7 @@ module.exports = (() => {
 	'use strict';
 
 	/**
-	 * A {@link Specification} that passes when the value of the data item
+	 * A {@link Specification} that passes when the type of the data item
 	 * is a number.
 	 *
 	 * @public

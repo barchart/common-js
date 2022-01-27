@@ -5,7 +5,7 @@ module.exports = (() => {
 
 	/**
 	 * A {@link Specification} that passes when an item (passed to the
-	 * constructor) is contained within an array.
+	 * constructor) is contained within an array passed as the data item.
 	 *
 	 * @public
 	 * @extends {Specification}
