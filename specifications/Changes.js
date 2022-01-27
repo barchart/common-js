@@ -13,9 +13,8 @@ module.exports = (() => {
 	 *
 	 * @public
 	 * @extends {Specification}
-	 * @param {*} value
 	 */
-	class ChangesSpecification extends Specification {
+	class Changes extends Specification {
 		constructor() {
 			super();
 
@@ -38,9 +37,9 @@ module.exports = (() => {
 		}
 
 		toString() {
-			return '[ChangesSpecification]';
+			return '[Changes]';
 		}
 	}
 
-	return ChangesSpecification;
+	return Changes;
 })();
