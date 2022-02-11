@@ -62,8 +62,8 @@ module.exports = (() => {
 		 *
 		 * @static
 		 * @param {*} variable - The value to check.
-		 * @param {String} variableName - The name of the value (used for formatting an error message).
-		 * @param {*} type - The expected type of the argument.
+		 * @param {String=} variableName - The name of the value (used for formatting an error message).
+		 * @param {*=} type - The expected type of the argument.
 		 * @param {String=} typeDescription - The description of the expected type (used for formatting an error message).
 		 */
 		argumentIsRequired(variable, variableName, type, typeDescription) {
@@ -76,8 +76,8 @@ module.exports = (() => {
 		 *
 		 * @static
 		 * @param {*} variable - The value to check.
-		 * @param {String} variableName - The name of the value (used for formatting an error message).
-		 * @param {*} type - The expected type of the argument.
+		 * @param {String=} variableName - The name of the value (used for formatting an error message).
+		 * @param {*=} type - The expected type of the argument.
 		 * @param {String=} typeDescription - The description of the expected type (used for formatting an error message).
 		 */
 		argumentIsOptional(variable, variableName, type, typeDescription, predicate, predicateDescription) {
@@ -116,7 +116,7 @@ module.exports = (() => {
 		 *
 		 * @static
 		 * @param {*} variable - The value to check.
-		 * @param {String} variableName - The name of the value (used for formatting an error message).
+		 * @param {String=} variableName - The name of the value (used for formatting an error message).
 		 * @param {Function=} predicate - A function used to validate the item (beyond type checking).
 		 * @param {String=} predicateDescription - A description of the assertion made by the predicate (e.g. "is an integer") that is used for formatting an error message.
 		 */
