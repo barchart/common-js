@@ -9,7 +9,6 @@ const browserify = require('browserify'),
 	git = require('gulp-git'),
 	gitStatus = require('git-get-status'),
 	glob = require('glob'),
-	jasmine = require('gulp-jasmine'),
 	jshint = require('gulp-jshint'),
 	prompt = require('gulp-prompt'),
 	source = require('vinyl-source-stream');
