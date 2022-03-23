@@ -28,7 +28,7 @@ describe('When "doe" is used to start a linked list', () => {
 			});
 
 			it('the "ray" node should have a value of "ray"', () => {
-				expect(me.getValue()).toEqual('me');
+				expect(ray.getValue()).toEqual('ray');
 			});
 
 			it('the "me" node should still be the the tail', () => {
