@@ -10,3 +10,4 @@ node_modules
 npm-debug.log
 buildspec.yml
 gulpfile.js
+jasmine.json
