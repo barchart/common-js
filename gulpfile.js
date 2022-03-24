@@ -84,14 +84,18 @@ gulp.task('build-test-bundle', () => {
 		.pipe(gulp.dest('test'));
 });
 
-gulp.task('execute-browser-tests', () => {
-    return gulp.src('test/SpecRunner.js')
-        .pipe(jasmine());
+gulp.task('execute-browser-tests', (cb) => {
+	cb();
 });
 
-gulp.task('execute-node-tests', () => {
-    return gulp.src(['test/specs/**/*.js'])
-        .pipe(jasmine());
+gulp.task('execute-node-tests', (cb) => {
+	exec(`npm test`, { cwd: './' }, (error) => {
+		if (error) {
+			cb(error);
+		}
+
+		cb();
+	});
 });
 
 gulp.task('execute-tests', gulp.series(
