@@ -7,7 +7,7 @@ node_modules
 .DS_Store
 .gitignore
 .jshintrc
-npm-debug.log
 buildspec.yml
 gulpfile.js
 jasmine.json
+npm-debug.log
