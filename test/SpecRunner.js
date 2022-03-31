@@ -5872,7 +5872,7 @@ module.exports = (() => {
    * @public
    * @function
    * @param {Iterable} iterable
-   * @param {LoopProcessorCallback=} processor
+   * @param {LoopProcessorCallback} processor
    * @returns {Promise<void>}
    */
   function iterate(iterable, processor) {
@@ -5909,20 +5909,21 @@ module.exports = (() => {
     });
   }
   /**
-   * A callback used to process a loop item.
+   * A callback used to process a single item (taken from the iterable object).
    *
    * @public
    * @callback LoopProcessorCallback
-   * @param {*} item
+   * @param {*} item - The item to process (taken from the iterable object).
    * @param {LoopContinueCallback} callback - Consumer will invoke when ready to continue.
    */
 
   /**
-   * A callback which is invoked to indicate a loop should continue processing.
+   * A callback which is invoked to indicate item processing is complete and loop
+   * should continue processing (with the next item from the iterable object).
    *
    * @public
    * @callback LoopContinueCallback
-   * @@returns {Boolean=} - If false, loop breaks.
+   * @returns {Boolean=} - If false, loop breaks.
    */
 
 
