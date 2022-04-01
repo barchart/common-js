@@ -8,6 +8,7 @@
     "url": "https://www.barchart.com"
   },
   "scripts": {
+    "lint": "gulp lint",
     "test": "jasmine --config=jasmine.json"
   },
   "repository": {
