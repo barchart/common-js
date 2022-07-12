@@ -80,6 +80,16 @@ module.exports = (() => {
 		}
 
 		/**
+		 * The Japanese Yen
+		 *
+		 * @returns {Currency}
+		 * @constructor
+		 */
+		static get JPY() {
+			return jpy;
+		}
+
+		/**
 		 * The US Dollar.
 		 *
 		 * @public
@@ -96,6 +106,7 @@ module.exports = (() => {
 
 	const cad = new Currency('CAD', 'Canadian Dollar', 2, 'CAD$');
 	const eur = new Currency('EUR', 'Euro', 2, 'EUR');
+	const jpy = new Currency('JPY', 'Japanese Yen', 2, 'JPY');
 	const usd = new Currency('USD', 'US Dollar', 2, 'US$');
 
 	return Currency;
