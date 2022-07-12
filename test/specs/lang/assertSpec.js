@@ -10,7 +10,7 @@ describe('when attempting to validate an array', () => {
 
 	class B extends A {
 		constructor() {
-			super()
+			super();
 		}
 	}
 
