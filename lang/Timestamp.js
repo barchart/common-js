@@ -57,7 +57,7 @@ module.exports = (() => {
 
 		/**
 		 * Returns a new {@link Timestamp} instance shifted forward (or backward)
-		 * by a specific number of seconds.
+		 * by a specific number of milliseconds.
 		 *
 		 * @public
 		 * @param {Number} milliseconds
