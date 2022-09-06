@@ -64,7 +64,7 @@ module.exports = (() => {
 		 * @returns {Timestamp}
 		 */
 		add(milliseconds) {
-			assert.argumentIsRequired(milliseconds, 'seconds', Number);
+			assert.argumentIsRequired(milliseconds, 'milliseconds', Number);
 
 			return new Timestamp(this._timestamp + milliseconds, this._timezone);
 		}
