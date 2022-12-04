@@ -86,7 +86,7 @@ module.exports = (() => {
 		 *
 		 * @public
 		 * @param {String} key
-		 * @returns {*}
+		 * @returns {*|null}
 		 */
 		get(key) {
 			let returnRef;

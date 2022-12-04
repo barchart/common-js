@@ -58,8 +58,7 @@ module.exports = (() => {
 		}
 
 		/**
-		 * Puts an item into the map (possibly causing eviction, if the size of the
-		 * list exceeds the capacity).
+		 * Puts an item into the map.
 		 *
 		 * @public
 		 * @param {String} key
@@ -75,7 +74,7 @@ module.exports = (() => {
 		 *
 		 * @public
 		 * @param {String} key
-		 * @returns {*}
+		 * @returns {*|null}
 		 */
 		get(key) {
 			assert.argumentIsRequired(key, 'key', String);
