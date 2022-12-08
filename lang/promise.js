@@ -136,8 +136,8 @@ module.exports = (() => {
 		 * @static
 		 * @public
 		 * @param {Function[]} functions - An array of functions, each expecting a single argument.
-		 * @param input - The argument to pass the first function.
-		 * @returns {Promise<TResult>}
+		 * @param {*=} input - The argument to pass the first function.
+		 * @returns {Promise<*>}
 		 */
 		pipeline(functions, input) {
 			return Promise.resolve()
