@@ -15,7 +15,7 @@ A *public* library of JavaScript utilities — suitable for use in both Node.js 
 * Specialized collections (priority queues, evicting lists, evicting maps, etc)
 * Browse the code...
 
-#### Companion Library
+#### A Companion Library
 
 A companion library called [@barchart/common-node-js](https://github.com/barchart/barchart-common-node-js) contains utilities for exclusive use in Node.js environments (i.e. not suitable for use in web browsers).
 
