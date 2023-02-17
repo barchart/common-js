@@ -1,7 +1,6 @@
-const getTimezoneOffset = require('date-fns-tz/getTimezoneOffset');
+const moment = require('moment-timezone/builds/moment-timezone-with-data-2012-2022');
 
-const assert = require('./assert'),
-	Enum = require('./Enum'),
+const Enum = require('./Enum'),
 	is = require('./is'),
 	timezone = require('./timezone');
 
@@ -28,30 +27,22 @@ module.exports = (() => {
 		 *
 		 * @public
 		 * @param {Number=} timestamp - The moment at which the daylight savings time is checked, otherwise now.
-		 * @returns {Boolean}
+		 * @returns {Number}
 		 */
 		getIsDaylightSavingsTime(timestamp) {
-			assert.argumentIsOptional(timestamp, 'timestamp', Number);
+			let m;
 
-			const now = new Date();
-
-			let baseline = Date.UTC(now.getFullYear(), 0, 1);
-			let candidate;
-
-			if (timestamp) {
-				candidate = timestamp;
+			if (is.number(timestamp)) {
+				m = moment(timestamp);
 			} else {
-				candidate = now.getTime();
+				m = moment();
 			}
 
-			const baselineOffset = this.getUtcOffset(baseline);
-			const candidateOffset = this.getUtcOffset(candidate);
-
-			return baselineOffset !== candidateOffset;
+			return m.tz(this.code).isDST();
 		}
 
 		/**
-		 * Calculates and returns the offset of a timezone from UTC.
+		 * Calculates and returns the timezone's offset from UTC.
 		 *
 		 * @public
 		 * @param {Number=} timestamp - The moment at which the offset is calculated, otherwise now.
@@ -59,9 +50,6 @@ module.exports = (() => {
 		 * @returns {Number}
 		 */
 		getUtcOffset(timestamp, milliseconds) {
-			assert.argumentIsOptional(timestamp, 'timestamp', Number);
-			assert.argumentIsOptional(milliseconds, milliseconds, Boolean);
-
 			let timestampToUse;
 
 			if (is.number(timestamp)) {
@@ -70,15 +58,21 @@ module.exports = (() => {
 				timestampToUse = (new Date()).getTime();
 			}
 
-			let divisor;
+			let multiplier;
 
 			if (is.boolean(milliseconds) && milliseconds) {
-				divisor = 1;
+				multiplier = 60 * 1000;
 			} else {
-				divisor = 60 * 1000;
+				multiplier = 1;
 			}
 
-			return getTimezoneOffset(this.code, new Date(timestampToUse)) / divisor;
+			const offset = moment.tz.zone(this.code).utcOffset(timestampToUse) * multiplier;
+
+			if (offset !== 0) {
+				return offset * -1;
+			} else {
+				return 0;
+			}
 		}
 
 		/**
