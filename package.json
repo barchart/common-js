@@ -1,6 +1,6 @@
 {
   "name": "@barchart/common-js",
-  "version": "4.24.1",
+  "version": "4.25.0",
   "description": "Library of common JavaScript utilities",
   "author": {
     "name": "Bryan Ingle",
@@ -25,6 +25,7 @@
   "dependencies": {
     "axios": "^0.21.1",
     "big.js": "^5.2.2",
+    "date-fns-tz": "^2.0.0",
     "moment": "^2.29.1",
     "moment-timezone": "^0.5.34",
     "xhr": "2.3.2"
