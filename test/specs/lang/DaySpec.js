@@ -330,6 +330,15 @@ describe('When adding (or subtracting) months to (or from) a Day', () => {
 		expect(then.month).toEqual(4);
 		expect(then.day).toEqual(29);
 	});
+
+	it('should return April 30, 2018 when subtracting a month from May 31, 2018', () => {
+		const now = new Day(2018, 5, 31);
+		const then = now.subtractMonths(1);
+
+		expect(then.year).toEqual(2018);
+		expect(then.month).toEqual(4);
+		expect(then.day).toEqual(30);
+	});
 });
 
 describe('When adding (or subtracting) years to (or from) a Day', () => {
