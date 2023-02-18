@@ -180,7 +180,7 @@ describe('When checking to see if a Day is valid', () => {
 	});
 });
 
-describe('When adding days to a Day', () => {
+describe('When adding (or subtracting) days to (or from) a Day', () => {
 	'use strict';
 
 	it('should return January 2, 2017 when adding 1 day to January 1, 2017', () => {
@@ -283,7 +283,7 @@ describe('When adding days to a Day', () => {
 	});
 });
 
-describe('When adding months to a Day', () => {
+describe('When adding (or subtracting) months to (or from) a Day', () => {
 	'use strict';
 
 	it('should return January 2, 2017 when adding 13 months to December 2, 2015', () => {
@@ -313,7 +313,7 @@ describe('When adding months to a Day', () => {
 		expect(then.day).toEqual(28);
 	});
 
-	it('should return February 28, 2018 when subtracting a month to March 29, 2018', () => {
+	it('should return February 28, 2018 when subtracting a month from March 29, 2018', () => {
 		const now = new Day(2018, 3, 29);
 		const then = now.subtractMonths(1);
 
@@ -321,9 +321,18 @@ describe('When adding months to a Day', () => {
 		expect(then.month).toEqual(2);
 		expect(then.day).toEqual(28);
 	});
+
+	it('should return April 29, 2018 when adding a month to March 29, 2018', () => {
+		const now = new Day(2018, 3, 29);
+		const then = now.addMonths(1);
+
+		expect(then.year).toEqual(2018);
+		expect(then.month).toEqual(4);
+		expect(then.day).toEqual(29);
+	});
 });
 
-describe('When adding years to a Day', () => {
+describe('When adding (or subtracting) years to (or from) a Day', () => {
 	'use strict';
 
 	it('should return January 2, 2017 when adding 3 years to January 2, 2014', () => {
@@ -335,7 +344,7 @@ describe('When adding years to a Day', () => {
 		expect(then.day).toEqual(2);
 	});
 
-	it('should return January 2, 2014 when subtracting 3 years to January 2, 2017', () => {
+	it('should return January 2, 2014 when subtracting 3 years from January 2, 2017', () => {
 		const now = new Day(2017, 1, 2);
 		const then = now.subtractYears(3);
 
@@ -353,7 +362,7 @@ describe('When adding years to a Day', () => {
 		expect(then.day).toEqual(29);
 	});
 
-	it('should return February 29, 2016 when subtracting 4 years to February 29, 2020', () => {
+	it('should return February 29, 2016 when subtracting 4 years from February 29, 2020', () => {
 		const now = new Day(2020, 2, 29);
 		const then = now.subtractYears(4);
 
@@ -371,7 +380,7 @@ describe('When adding years to a Day', () => {
 		expect(then.day).toEqual(28);
 	});
 
-	it('should return February 28, 2016 when subtracting 3 years to February 28, 2019', () => {
+	it('should return February 28, 2016 when subtracting 3 years from February 28, 2019', () => {
 		const now = new Day(2019, 2, 28);
 		const then = now.subtractYears(3);
 
@@ -380,7 +389,7 @@ describe('When adding years to a Day', () => {
 		expect(then.day).toEqual(28);
 	});
 
-	it('should return February 28, 2019 when subtracting 1 years to February 29, 2020', () => {
+	it('should return February 28, 2019 when subtracting 1 years from February 29, 2020', () => {
 		const now = new Day(2020, 2, 29);
 		const then = now.subtractYears(1);
 
