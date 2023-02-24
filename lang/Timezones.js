@@ -1,9 +1,12 @@
-const getTimezoneOffset = require('date-fns-tz/getTimezoneOffset');
-
 const assert = require('./assert'),
 	Enum = require('./Enum'),
 	is = require('./is'),
 	timezone = require('./timezone');
+
+const getTimezoneOffsetA = require('date-fns-tz/getTimezoneOffset'),
+	getTimezoneOffsetB = require('date-fns-tz/getTimezoneOffset').default;
+
+const getTimezoneOffset = is.fn(getTimezoneOffsetA) ? getTimezoneOffsetA : getTimezoneOffsetB;
 
 module.exports = (() => {
 	'use strict';
