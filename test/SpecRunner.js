@@ -3953,11 +3953,13 @@ module.exports = (() => {
 })();
 
 },{"./assert":30,"./is":36,"moment-timezone":56}],28:[function(require,module,exports){
-const getTimezoneOffset = require('date-fns-tz/getTimezoneOffset');
 const assert = require('./assert'),
   Enum = require('./Enum'),
   is = require('./is'),
   timezone = require('./timezone');
+const getTimezoneOffsetA = require('date-fns-tz/getTimezoneOffset'),
+  getTimezoneOffsetB = require('date-fns-tz/getTimezoneOffset').default;
+const getTimezoneOffset = is.fn(getTimezoneOffsetB) ? getTimezoneOffsetB : getTimezoneOffsetA;
 module.exports = (() => {
   'use strict';
 
@@ -18959,9 +18961,16 @@ describe('When adding (or subtracting) months to (or from) a Day', () => {
     expect(then.month).toEqual(2);
     expect(then.day).toEqual(28);
   });
-  it('should return April 30, 2018 when adding a month to March 30, 2018', () => {
+  it('should return April 29, 2018 when adding a month to March 29, 2018', () => {
     const now = new Day(2018, 3, 29);
     const then = now.addMonths(1);
+    expect(then.year).toEqual(2018);
+    expect(then.month).toEqual(4);
+    expect(then.day).toEqual(29);
+  });
+  it('should return April 30, 2018 when subtracting a month from May 31, 2018', () => {
+    const now = new Day(2018, 5, 31);
+    const then = now.subtractMonths(1);
     expect(then.year).toEqual(2018);
     expect(then.month).toEqual(4);
     expect(then.day).toEqual(30);
