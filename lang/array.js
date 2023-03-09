@@ -105,7 +105,8 @@ module.exports = (() => {
 
 		/**
 		 * Splits array into groups and returns an object (where the properties are items from the
-		 * original array). Unlike the groupBy, only one item can have a given key value.
+		 * original array). Unlike the {@link array#groupBy} function, only one item can have a
+		 * given key value.
 		 *
 		 * @static
 		 * @param {Array} a
