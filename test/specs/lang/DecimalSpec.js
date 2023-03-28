@@ -27,7 +27,6 @@ describe('When adding values that cause floating point problems (e.g. 1.1 + 2.2 
 	});
 });
 
-
 describe('When working with values that loss of precision occurs with floating point math (e.g. 100 trillion plus one third)', () => {
 	'use strict';
 
@@ -230,6 +229,28 @@ describe('When instantiating a Decimal', () => {
 
 		it('the fixed export should equal "1"', () => {
 			expect(d.toFixed()).toEqual('1');
+		});
+	});
+
+	describe('from another Decimal', () => {
+		let original;
+		let copy;
+
+		beforeEach(() => {
+			original = new Decimal('1.234');
+			copy = new Decimal(original);
+		});
+
+		it('the copied value should be equal to the original value', () => {
+			expect(copy.getIsEqual(original)).toEqual(true);
+		});
+
+		it('the original value should be equal to the copied value', () => {
+			expect(original.getIsEqual(copy)).toEqual(true);
+		});
+
+		it('the copied value should not be a reference to the original value', () => {
+			expect(original === copy).toEqual(false);
 		});
 	});
 });
@@ -445,5 +466,65 @@ describe('When cloning a decimal', () => {
 
 	it('the cloned instance should equal the source instance', () => {
 		expect(source.getIsEqual(clone)).toEqual(true);
+	});
+});
+
+describe('When checking for containment', () => {
+	let d;
+
+	beforeEach(() => {
+		d = new Decimal('1.234');
+	});
+
+	describe('with inclusivity', () => {
+		it('The value of 1.234 should be between -2 and 2', () => {
+			expect(d.getIsBetween(-2, 2)).toEqual(true);
+		});
+
+		it('The value of 1.234 should be between 1.234 and 1.235', () => {
+			expect(d.getIsBetween(1.234, 1.235)).toEqual(true);
+		});
+
+		it('The value of 1.234 should be between 1.233 and 1.234', () => {
+			expect(d.getIsBetween(1.233, 1.234)).toEqual(true);
+		});
+
+		it('The value of 1.234 should be between 1.234 and 1.234', () => {
+			expect(d.getIsBetween(1.234, 1.234)).toEqual(true);
+		});
+
+		it('The value of 1.234 should not be between 0 and 1', () => {
+			expect(d.getIsBetween(0, 1)).toEqual(false);
+		});
+
+		it('The value of 1.234 should not be between 2 and 1', () => {
+			expect(d.getIsBetween(2, 1)).toEqual(false);
+		});
+	});
+
+	describe('with exclusivity', () => {
+		it('The value of 1.234 should be between -2 and 2', () => {
+			expect(d.getIsBetween(-2, 2, true)).toEqual(true);
+		});
+
+		it('The value of 1.234 should not be between 1.234 and 1.235', () => {
+			expect(d.getIsBetween(1.234, 1.235, true)).toEqual(false);
+		});
+
+		it('The value of 1.234 should not be between 1.233 and 1.234', () => {
+			expect(d.getIsBetween(1.233, 1.234, true)).toEqual(false);
+		});
+
+		it('The value of 1.234 should not be between 1.234 and 1.234', () => {
+			expect(d.getIsBetween(1.234, 1.234, true)).toEqual(false);
+		});
+
+		it('The value of 1.234 should not be between 0 and 1', () => {
+			expect(d.getIsBetween(0, 1, true)).toEqual(false);
+		});
+
+		it('The value of 1.234 should not be between 2 and 1', () => {
+			expect(d.getIsBetween(2, 1, true)).toEqual(false);
+		});
 	});
 });

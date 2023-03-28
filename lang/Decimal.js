@@ -204,6 +204,26 @@ module.exports = (() => {
 		}
 
 		/**
+		 * Returns true if the current instance between two other values. The
+		 * test is inclusive, by default.
+		 *
+		 * @public
+		 * @param {Decimal|Number|String} minimum - The minimum value.
+		 * @param {Decimal|Number|String} minimum - The maximum value.
+		 * @param {Boolean=} exclusive - If true, the value cannot equal the minimum or maximum value and still be considered "between" the other values.
+		 * @returns {Boolean}
+		 */
+		getIsBetween(minimum, maximum, exclusive) {
+			assert.argumentIsOptional(exclusive, 'exclusive', Boolean);
+
+			if (is.boolean(exclusive) && exclusive) {
+				return this.getIsGreaterThan(minimum) && this.getIsLessThan(maximum);
+			} else {
+				return this.getIsGreaterThanOrEqual(minimum) && this.getIsLessThanOrEqual(maximum);
+			}
+		}
+
+		/**
 		 * Returns true if the current instance is equal to the value.
 		 *
 		 * @public
@@ -490,7 +510,7 @@ module.exports = (() => {
 	}
 
 	/**
-	 * An enumeration of strategies for rouding a {@link Decimal} instance.
+	 * An enumeration of strategies for rounding a {@link Decimal} instance.
 	 *
 	 * @public
 	 * @inner
