@@ -15,6 +15,7 @@ module.exports = (() => {
 	 */
 	class Serializer extends Disposable {
 		constructor() {
+			console.log("hello")
 			super();
 
 			this._workQueue = new Queue();
