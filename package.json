@@ -34,6 +34,8 @@
     "@babel/core": "^7.12.10",
     "babelify": "^10.0.0",
     "browserify": "^16.5.2",
+    "eslint": "^8.38.0",
+    "eslint-plugin-react": "^7.32.2",
     "git-get-status": "^1.0.5",
     "glob": "^6.0.4",
     "gulp": "^4.0.2",
