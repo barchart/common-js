@@ -60,6 +60,16 @@ module.exports = (() => {
 		}
 
 		/**
+		 * The Australian Dollar.
+		 *
+		 * @return {Currency}
+		 * @constructor
+		 */
+		static get AUD() {
+			return aud;
+		}
+
+		/**
 		 * The Canadian Dollar.
 		 *
 		 * @public
@@ -77,6 +87,16 @@ module.exports = (() => {
 		 */
 		static get EUR() {
 			return eur;
+		}
+
+		/**
+		 * The British Pound.
+		 *
+		 * @public
+		 * @returns {Currency}
+		 */
+		static get GBP() {
+			return gbp;
 		}
 
 		/**
@@ -114,8 +134,10 @@ module.exports = (() => {
 		}
 	}
 
+	const aud = new Currency('AUD', 'Australian Dollar', 2, 'AUD$');
 	const cad = new Currency('CAD', 'Canadian Dollar', 2, 'CAD$');
 	const eur = new Currency('EUR', 'Euro', 2, 'EUR');
+	const gbp = new Currency('GBP', 'British Pound', 2, 'GBP');
 	const hkd = new Currency('HKD', 'Hong Kong Dollar', 2, 'HK$');
 	const jpy = new Currency('JPY', 'Japanese Yen', 2, 'JPY');
 	const usd = new Currency('USD', 'US Dollar', 2, 'US$');
