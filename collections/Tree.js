@@ -174,7 +174,7 @@ module.exports = (() => {
 		 *
 		 * @public
 		 * @param {Tree~nodePredicate} predicate - A predicate that tests each child node. The predicate takes two arguments -- the node's value, and the node itself.
-		 * @param {boolean=} parentFirst - If true, the true will be searched from parent-to-child (breadth first). Otherwise, child-to-parent (depth first).
+		 * @param {boolean=} parentFirst - If true, the tree will be searched from parent-to-child (breadth first). Otherwise, child-to-parent (depth first).
 		 * @param {boolean=} includeCurrentNode - True, if the current node should be checked against the predicate.
 		 * @returns {Tree|null}
 		 */
@@ -207,7 +207,7 @@ module.exports = (() => {
 		 *
 		 * @public
 		 * @param {Tree~nodeAction} walkAction - A action to apply to each node. The action takes two arguments -- the node's value, and the node itself.
-		 * @param {boolean=} parentFirst - If true, the true will be searched from parent-to-child (breadth first). Otherwise, child-to-parent (depth first).
+		 * @param {boolean=} parentFirst - If true, the tree will be searched from parent-to-child (breadth first). Otherwise, child-to-parent (depth first).
 		 * @param {boolean=} includeCurrentNode - True if the current node should be applied to the action.
 		 */
 		walk(walkAction, parentFirst, includeCurrentNode) {
