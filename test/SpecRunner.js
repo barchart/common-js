@@ -926,7 +926,7 @@ module.exports = (() => {
      *
      * @public
      * @param {Tree~nodePredicate} predicate - A predicate that tests each child node. The predicate takes two arguments -- the node's value, and the node itself.
-     * @param {boolean=} parentFirst - If true, the true will be searched from parent-to-child (breadth first). Otherwise, child-to-parent (depth first).
+     * @param {boolean=} parentFirst - If true, the tree will be searched from parent-to-child (breadth first). Otherwise, child-to-parent (depth first).
      * @param {boolean=} includeCurrentNode - True, if the current node should be checked against the predicate.
      * @returns {Tree|null}
      */
@@ -935,11 +935,13 @@ module.exports = (() => {
       if (returnRef === null && parentFirst && includeCurrentNode && predicate(this.getValue(), this)) {
         returnRef = this;
       }
-      for (let i = 0; i < this._children.length; i++) {
-        const child = this._children[i];
-        returnRef = child.search(predicate, parentFirst, true);
-        if (returnRef !== null) {
-          break;
+      if (returnRef === null) {
+        for (let i = 0; i < this._children.length; i++) {
+          const child = this._children[i];
+          returnRef = child.search(predicate, parentFirst, true);
+          if (returnRef !== null) {
+            break;
+          }
         }
       }
       if (returnRef === null && !parentFirst && includeCurrentNode && predicate(this.getValue(), this)) {
@@ -953,7 +955,7 @@ module.exports = (() => {
      *
      * @public
      * @param {Tree~nodeAction} walkAction - A action to apply to each node. The action takes two arguments -- the node's value, and the node itself.
-     * @param {boolean=} parentFirst - If true, the true will be searched from parent-to-child (breadth first). Otherwise, child-to-parent (depth first).
+     * @param {boolean=} parentFirst - If true, the tree will be searched from parent-to-child (breadth first). Otherwise, child-to-parent (depth first).
      * @param {boolean=} includeCurrentNode - True if the current node should be applied to the action.
      */
     walk(walkAction, parentFirst, includeCurrentNode) {
@@ -17204,6 +17206,41 @@ describe('When a Tree is constructed', () => {
       it('should be the root node', () => {
         expect(child.getRoot()).toBe(root);
       });
+    });
+  });
+});
+describe('When a binary tree, having three levels, is constructed', () => {
+  let root;
+  let rootLeft;
+  let rootRight;
+  let rootLeftLeft;
+  let rootLeftRight;
+  let rootRightLeft;
+  let rootRightRight;
+  beforeEach(() => {
+    root = new Tree(1);
+    rootLeft = root.addChild(2);
+    rootRight = root.addChild(3);
+    rootLeftLeft = rootLeft.addChild(4);
+    rootLeftRight = rootLeft.addChild(5);
+    rootRightLeft = rootRight.addChild(6);
+    rootRightRight = rootRight.addChild(7);
+  });
+  describe('and searching for a value greater than zero', () => {
+    it('using default options, the "rootLeftLeft"" node should be identified', () => {
+      expect(root.search(v => v > 0)).toBe(rootLeftLeft);
+    });
+    it('using `parentFirst=true` and `includeCurrent=true`, the "root" node should be identified', () => {
+      expect(root.search(v => v > 0, true, true)).toBe(root);
+    });
+    it('using `parentFirst=true` and `includeCurrent=false`, the "rootLeft" node should be identified', () => {
+      expect(root.search(v => v > 0, true, false)).toBe(rootLeft);
+    });
+    it('using `parentFirst=false` and `includeCurrent=true`, the "rootLeftLeft" node should be identified', () => {
+      expect(root.search(v => v > 0, false, true)).toBe(rootLeftLeft);
+    });
+    it('using `parentFirst=false` and `includeCurrent=false`, the "rootLeftLeft" node should be identified', () => {
+      expect(root.search(v => v > 0, false, false)).toBe(rootLeftLeft);
     });
   });
 });
