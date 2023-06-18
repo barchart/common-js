@@ -185,13 +185,15 @@ module.exports = (() => {
 				returnRef = this;
 			}
 
-			for (let i = 0; i < this._children.length; i++) {
-				const child = this._children[i];
+			if (returnRef === null) {
+				for (let i = 0; i < this._children.length; i++) {
+					const child = this._children[i];
 
-				returnRef = child.search(predicate, parentFirst, true);
+					returnRef = child.search(predicate, parentFirst, true);
 
-				if (returnRef !== null) {
-					break;
+					if (returnRef !== null) {
+						break;
+					}
 				}
 			}
 

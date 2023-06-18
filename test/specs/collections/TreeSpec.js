@@ -146,3 +146,51 @@ describe('When a Tree is constructed', () => {
 		});
 	});
 });
+
+describe('When a binary tree, having three levels, is constructed', () => {
+	let root;
+
+	let rootLeft;
+	let rootRight;
+
+	let rootLeftLeft;
+	let rootLeftRight;
+
+	let rootRightLeft;
+	let rootRightRight;
+
+	beforeEach(() => {
+		root = new Tree(1);
+
+		rootLeft = root.addChild(2);
+		rootRight = root.addChild(3);
+
+		rootLeftLeft = rootLeft.addChild(4);
+		rootLeftRight = rootLeft.addChild(5);
+
+		rootRightLeft = rootRight.addChild(6);
+		rootRightRight = rootRight.addChild(7);
+	});
+
+	describe('and searching for a value greater than zero', () => {
+		it('using default options, the "rootLeftLeft"" node should be identified', () => {
+			expect(root.search(v => v > 0)).toBe(rootLeftLeft);
+		});
+
+		it('using `parentFirst=true` and `includeCurrent=true`, the "root" node should be identified', () => {
+			expect(root.search(v => v > 0, true, true)).toBe(root);
+		});
+
+		it('using `parentFirst=true` and `includeCurrent=false`, the "rootLeft" node should be identified', () => {
+			expect(root.search(v => v > 0, true, false)).toBe(rootLeft);
+		});
+
+		it('using `parentFirst=false` and `includeCurrent=true`, the "rootLeftLeft" node should be identified', () => {
+			expect(root.search(v => v > 0, false, true)).toBe(rootLeftLeft);
+		});
+
+		it('using `parentFirst=false` and `includeCurrent=false`, the "rootLeftLeft" node should be identified', () => {
+			expect(root.search(v => v > 0, false, false)).toBe(rootLeftLeft);
+		});
+	});
+});
