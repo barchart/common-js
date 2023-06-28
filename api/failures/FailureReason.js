@@ -10,8 +10,8 @@ module.exports = (() => {
 	'use strict';
 
 	/**
-	 * Describes all of the reasons for API failure. Since there can be multiple reasons, the reasons are
-	 * stored in a tree structure.
+	 * Describes all of the reasons for API failure. Since there can be multiple
+	 * reasons, the reasons are stored in a tree structure.
 	 *
 	 * @public
 	 * @param {Object=} data - Data regarding the API request itself, likely independent of the failure data (which is maintained in the tree structure).
@@ -20,8 +20,8 @@ module.exports = (() => {
 		constructor(data) {
 			this._data = data || null;
 
-			this._head = new Tree();
-			this._current = this._head;
+			this._root = new Tree();
+			this._current = this._root;
 		}
 
 		/**
@@ -50,10 +50,21 @@ module.exports = (() => {
 		 * Resets the current node to the head of the tree.
 		 *
 		 * @public
+		 * @param {Boolean=} previous
 		 * @returns {FailureReason} - The current instance, allowing for method chaining.
 		 */
-		reset() {
-			this._current = this._head;
+		reset(previous) {
+			assert.argumentIsOptional(previous, 'previous', Boolean);
+
+			let node;
+
+			if (previous && this._current.getIsInner()) {
+				node = this._current.getParent();
+			} else {
+				node = this._root;
+			}
+
+			this._current = node;
 
 			return this;
 		}
@@ -65,7 +76,7 @@ module.exports = (() => {
 		 * @returns {Array}
 		 */
 		format() {
-			const reasons = this._head.toJSObj((item) => {
+			const reasons = this._root.toJSObj((item) => {
 				const formatted = { };
 
 				formatted.code = item ? item.type.code : null;
@@ -76,7 +87,7 @@ module.exports = (() => {
 				}
 
 				return formatted;
-			});
+			}, true);
 
 			return reasons.children;
 		}
@@ -92,7 +103,7 @@ module.exports = (() => {
 		hasFailureType(type) {
 			assert.argumentIsRequired(type, 'type', FailureType, 'FailureType');
 
-			return this._head.search(item => item.type === type, false, false) !== null;
+			return this._root.search(item => item.type === type, false, false) !== null;
 		}
 
 		/**
@@ -103,7 +114,7 @@ module.exports = (() => {
 		 * @returns {Boolean}
 		 */
 		getIsSevere() {
-			return this._head.search(item => item.type.severe, false, false) !== null;
+			return this._root.search(item => item.type.severe, false, false) !== null;
 		}
 
 		/**
@@ -114,7 +125,7 @@ module.exports = (() => {
 		 * @returns {Number|null}
 		 */
 		getErrorCode() {
-			const node = this._head.search(item => item.type.error !== null, true, false);
+			const node = this._root.search(item => item.type.error !== null, true, false);
 
 			if (node !== null) {
 				return node.getValue().type.error;
@@ -166,7 +177,7 @@ module.exports = (() => {
 
 			let returnVal = null;
 
-			reason._head.walk((item) => {
+			reason._root.walk((item) => {
 				let code = FailureType.getHttpStatusCode(item.type);
 
 				if (returnVal === null || returnVal !== 400) {
