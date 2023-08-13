@@ -32,13 +32,32 @@ module.exports = (() => {
 						return Promise.reject('Unable to configure promise timeout, the "milliseconds" argument must be positive');
 					}
 
-					return Promise.race([
-						promise, this.build((resolveCallback, rejectCallback) => {
-							setTimeout(() => {
-								rejectCallback(description || `Promise timed out after ${milliseconds} milliseconds`);
-							}, milliseconds);
-						})
-					]);
+					let timeoutToken = null;
+
+					const timeoutPromise = this.build((resolveCallback, rejectCallback) => {
+						timeoutToken = setTimeout(() => {
+							rejectCallback(description || `Promise timed out after ${milliseconds} milliseconds`);
+						}, milliseconds);
+					});
+
+					const userPromise = Promise.resolve()
+						.then(() => {
+							return promise;
+						}).then((result) => {
+							if (timeoutToken !== null) {
+								clearTimeout(timeoutToken);
+							}
+
+							return result;
+						}).catch((e) => {
+							if (timeoutToken !== null) {
+								clearTimeout(timeoutToken);
+							}
+
+							return Promise.reject(e);
+						});
+
+					return Promise.race([ userPromise, timeoutPromise ]);
 				});
 		},
 
