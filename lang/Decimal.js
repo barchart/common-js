@@ -337,10 +337,11 @@ module.exports = (() => {
 		}
 
 		/**
-		 * Parses the value emitted by {@link Decimal#toJSON}.
+		 * An alias for the constructor. Creates a new instance. Suitable for
+		 * use with the value emitted by {@link Decimal#toJSON}.
 		 *
 		 * @public
-		 * @param {String} value
+		 * @param {Decimal|Number|String} value
 		 * @returns {Decimal}
 		 */
 		static parse(value) {
