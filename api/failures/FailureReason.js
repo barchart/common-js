@@ -139,6 +139,9 @@ module.exports = (() => {
 		}
 
 		/**
+		 * A convenience function for creating a new {@link FailureReason} with a
+		 * single {@link FailureType}.
+		 *
 		 * @public
 		 * @static
 		 * @param {FailureType} type
