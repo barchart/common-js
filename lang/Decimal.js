@@ -74,7 +74,7 @@ module.exports = (() => {
 		 * provided.
 		 *
 		 * @public
-		 * @param {Decimal|Number|String} exponent
+		 * @param {Number} exponent
 		 * @returns {Decimal}
 		 */
 		raise(exponent) {
