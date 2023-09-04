@@ -38,6 +38,18 @@ module.exports = (() => {
 		}
 
 		/**
+		 * An array of constant exchange rates.
+		 *
+		 * @static
+		 * @returns {Rate[]}
+		 */
+		static get CONSTANTS() {
+			return [
+				Rate.fromPair(0.01, '^GBXGBP')
+			];
+		}
+
+		/**
 		 * The rate.
 		 *
 		 * @public
@@ -112,7 +124,7 @@ module.exports = (() => {
 		formatPair(useCarat) {
 			assert.argumentIsOptional(useCarat, 'useCarat', Boolean);
 
-			return `${(useCarat ? '^' : '')}${this._numerator}${this._denominator}`;
+			return `${(useCarat ? '^' : '')}${this._numerator.code}${this._denominator.code}`;
 		}
 
 		/**
@@ -156,7 +168,33 @@ module.exports = (() => {
 				const numerator = desiredCurrency;
 				const denominator = currency;
 
-				let rate = rates.find(r => (r.numerator === numerator && r.denominator === denominator) || (r.numerator === denominator && r.denominator === numerator));
+				const staticRates = [ ];
+
+				Rate.CONSTANTS.forEach((staticRate) => {
+					staticRates.push(staticRate);
+
+					const staticRateInverted = staticRate.invert();
+
+					rates.forEach((rate) => {
+						[ staticRate, staticRateInverted ].forEach((r) => {
+							let indirect;
+
+							if (rate.numerator === r.denominator) {
+								indirect = new Rate(rate.decimal.multiply(r.decimal), r.numerator, rate.denominator);
+							} else if (rate.denominator === r.denominator) {
+								indirect = new Rate(rate.decimal.divide(r.decimal), rate.numerator, r.numerator);
+							} else {
+								indirect = null;
+							}
+
+							if (indirect !== null) {
+								staticRates.push(indirect);
+							}
+						});
+					});
+				});
+
+				let rate = rates.concat(staticRates).find(r => (r.numerator === numerator && r.denominator === denominator) || (r.numerator === denominator && r.denominator === numerator));
 
 				if (rate) {
 					if (rate.numerator === denominator) {
