@@ -2914,6 +2914,18 @@ module.exports = (() => {
     }
 
     /**
+     * Returns a new {@link Decimal} instance with a value that returns
+     * the remainder of dividing by the value supplied.
+     *
+     * @public
+     * @param {Decimal|Number|String} other
+     * @returns {Decimal}
+     */
+    mod(other) {
+      return new Decimal(this._big.mod(getBig(other)));
+    }
+
+    /**
      * Returns a new {@link Decimal} instance having the absolute value of
      * the current instance's value.
      *
@@ -19497,6 +19509,13 @@ describe('When instantiating a Decimal', () => {
       it('should throw', () => {
         expect(() => {
           let e = d.divideBy(0);
+        }).toThrow();
+      });
+    });
+    describe('and modulo by zero', () => {
+      it('should throw', () => {
+        expect(() => {
+          let e = d.mod(0);
         }).toThrow();
       });
     });
