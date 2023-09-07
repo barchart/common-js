@@ -206,6 +206,14 @@ describe('When instantiating a Decimal', () => {
 				}).toThrow();
 			});
 		});
+
+		describe('and modulo by zero', () => {
+			it('should throw', () => {
+				expect(() => {
+					let e = d.mod(0);
+				}).toThrow();
+			});
+		});
 	});
 
 	describe('from the string "1"', () => {

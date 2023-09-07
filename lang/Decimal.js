@@ -102,6 +102,18 @@ module.exports = (() => {
 		}
 
 		/**
+		 * Returns a new {@link Decimal} instance with a value that returns
+		 * the remainder of dividing by the value supplied.
+		 *
+		 * @public
+		 * @param {Decimal|Number|String} other
+		 * @returns {Decimal}
+		 */
+		mod(other) {
+			return new Decimal(this._big.mod(getBig(other)));
+		}
+
+		/**
 		 * Returns a new {@link Decimal} instance having the absolute value of
 		 * the current instance's value.
 		 *
