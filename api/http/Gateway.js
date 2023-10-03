@@ -30,11 +30,12 @@ module.exports = (() => {
 		 *
 		 * @public
 		 * @static
+		 * @async
 		 * @param {Endpoint} endpoint
 		 * @param {*=} payload
 		 * @returns {Promise<Object>}
 		 */
-		static invoke(endpoint, payload) {
+		static async invoke(endpoint, payload) {
 			return Promise.resolve()
 				.then(() => {
 					assert.argumentIsRequired(endpoint, 'endpoint', Endpoint, 'Endpoint');
