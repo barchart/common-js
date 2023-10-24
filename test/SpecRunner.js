@@ -2914,8 +2914,8 @@ module.exports = (() => {
     }
 
     /**
-     * Returns a new {@link Decimal} instance with a value that returns
-     * the remainder of dividing by the value supplied.
+     * Returns a new {@link Decimal} instance with of the remainder when
+     * dividing the current instance by the value supplied.
      *
      * @public
      * @param {Decimal|Number|String} other
