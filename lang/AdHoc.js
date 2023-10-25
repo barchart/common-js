@@ -42,10 +42,10 @@ module.exports = (() => {
 		}
 		
 		/**
-		 * Given a code, returns the enumeration item.
+		 * Converts a JSON-serialized object into an {@link AdHoc} instance.
 		 *
 		 * @public
-		 * @param {String} code
+		 * @param {String} serialized
 		 * @returns {AdHoc}
 		 */
 		static parse(serialized) {
