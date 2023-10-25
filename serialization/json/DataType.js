@@ -222,7 +222,8 @@ module.exports = (() => {
 		}
 
 		/**
-		 * References a {@link Timestamp} instance.
+		 * References an object whose internal properties are not important (for
+		 * serialization and deserialization purposes).
 		 *
 		 * @public
 		 * @static
