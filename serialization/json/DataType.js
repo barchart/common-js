@@ -17,6 +17,9 @@ module.exports = (() => {
 	 * @public
 	 * @param {String} description
 	 * @param {Function=} enumerationType
+	 * @param {Function=} reviver
+	 * @param {Function=} validator
+	 * @param {Function=} builder
 	 */
 	class DataType {
 		constructor(description, enumerationType, reviver, validator, builder) {

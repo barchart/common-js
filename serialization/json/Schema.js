@@ -16,8 +16,8 @@ module.exports = (() => {
 	 *
 	 * @public
 	 * @param {String} name - The name of the schema
-	 * @param {Array<Field>} fields
-	 * @param {Array<Component>} components
+	 * @param {Field[]} fields
+	 * @param {Component[]} components
 	 * @param {Boolean=} strict
 	 */
 	class Schema {
