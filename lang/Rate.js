@@ -38,18 +38,6 @@ module.exports = (() => {
 		}
 
 		/**
-		 * An array of constant exchange rates.
-		 *
-		 * @static
-		 * @returns {Rate[]}
-		 */
-		static get CONSTANTS() {
-			return [
-				Rate.fromPair(0.01, '^GBXGBP')
-			];
-		}
-
-		/**
 		 * The rate.
 		 *
 		 * @public
@@ -125,6 +113,18 @@ module.exports = (() => {
 			assert.argumentIsOptional(useCarat, 'useCarat', Boolean);
 
 			return `${(useCarat ? '^' : '')}${this._numerator.code}${this._denominator.code}`;
+		}
+
+		/**
+		 * An array of constant exchange rates.
+		 *
+		 * @static
+		 * @returns {Rate[]}
+		 */
+		static get CONSTANTS() {
+			return [
+				Rate.fromPair(0.01, '^GBXGBP')
+			];
 		}
 
 		/**
