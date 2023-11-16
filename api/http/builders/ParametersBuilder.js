@@ -37,7 +37,7 @@ module.exports = (() => {
 		 * @param {String} description
 		 * @param {String} key
 		 * @param {Function} delegate
-		 * @param (Boolean=} optional
+		 * @param {Boolean=} optional
 		 * @param {Function=} serializer
 		 * @returns {ParametersBuilder}
 		 */
@@ -53,7 +53,7 @@ module.exports = (() => {
 		 * @param {String} description
 		 * @param {String} key
 		 * @param {*=} value
-		 * @param (Boolean=} optional
+		 * @param {Boolean=} optional
 		 * @returns {ParametersBuilder}
 		 */
 		withLiteralParameter(description, key, value, optional) {
@@ -69,7 +69,7 @@ module.exports = (() => {
 		 * @param {String} description
 		 * @param {String} key
 		 * @param {String} variable
-		 * @param (Boolean=} optional
+		 * @param {Boolean=} optional
 		 * @param {Function=} serializer
 		 * @returns {ParametersBuilder}
 		 */
