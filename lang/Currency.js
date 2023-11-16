@@ -52,6 +52,7 @@ module.exports = (() => {
 		 * Given a code, returns the enumeration item.
 		 *
 		 * @public
+		 * @static
 		 * @param {String} code
 		 * @returns {Currency|null}
 		 */
@@ -62,8 +63,9 @@ module.exports = (() => {
 		/**
 		 * The Australian Dollar.
 		 *
-		 * @return {Currency}
-		 * @constructor
+		 * @public
+		 * @static
+		 * @returns {Currency}
 		 */
 		static get AUD() {
 			return aud;
@@ -73,6 +75,7 @@ module.exports = (() => {
 		 * The Canadian Dollar.
 		 *
 		 * @public
+		 * @static
 		 * @returns {Currency}
 		 */
 		static get CAD() {
@@ -83,6 +86,7 @@ module.exports = (() => {
 		 * The Euro.
 		 *
 		 * @public
+		 * @static
 		 * @returns {Currency}
 		 */
 		static get EUR() {
@@ -93,6 +97,7 @@ module.exports = (() => {
 		 * The British Pound.
 		 *
 		 * @public
+		 * @static
 		 * @returns {Currency}
 		 */
 		static get GBP() {
@@ -103,6 +108,7 @@ module.exports = (() => {
 		 * The British Penny.
 		 *
 		 * @public
+		 * @static
 		 * @returns {Currency}
 		 */
 		static get GBX() {
@@ -113,6 +119,7 @@ module.exports = (() => {
 		 * The Hong Kong Dollar.
 		 *
 		 * @public
+		 * @static
 		 * @returns {Currency}
 		 */
 		static get HKD() {
@@ -123,6 +130,7 @@ module.exports = (() => {
 		 * The Japanese Yen.
 		 *
 		 * @public
+		 * @static
 		 * @returns {Currency}
 		 */
 		static get JPY() {
@@ -133,6 +141,7 @@ module.exports = (() => {
 		 * The US Dollar.
 		 *
 		 * @public
+		 * @static
 		 * @returns {Currency}
 		 */
 		static get USD() {
