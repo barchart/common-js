@@ -86,6 +86,10 @@ describe('When accessing the "Zero" singleton', () => {
 	it('the fixed export should equal "0"', () => {
 		expect(zero.toFixed()).toEqual('0');
 	});
+
+	it('the number export should equal "0"', () => {
+		expect(zero.toNumber()).toEqual(0);
+	});
 });
 
 describe('When instantiating a Decimal', () => {
@@ -144,6 +148,10 @@ describe('When instantiating a Decimal', () => {
 
 		it('the fixed export should equal "42"', () => {
 			expect(d.toFixed()).toEqual('42');
+		});
+
+		it('the number export should equal "0"', () => {
+			expect(d.toNumber()).toEqual(42);
 		});
 
 		describe('and adding the number one', () => {

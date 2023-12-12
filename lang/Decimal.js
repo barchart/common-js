@@ -325,6 +325,18 @@ module.exports = (() => {
 		}
 
 		/**
+		 * Returns a {@link Number} that is approximately equal to the value of
+		 * this {@link Decimal} instance.
+		 *
+		 * @public
+		 * @returns {String}
+		 */
+		toNumber() {
+			return this._big.toNumber();
+		}
+
+
+		/**
 		 * Returns the JSON representation.
 		 *
 		 * @public
