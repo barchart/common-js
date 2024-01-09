@@ -144,6 +144,7 @@ module.exports = (() => {
 		 * Parses the value emitted by {@link Timestamp#toJSON}.
 		 *
 		 * @public
+		 * @static
 		 * @param {Number} value
 		 * @returns {Timestamp}
 		 */
@@ -155,6 +156,7 @@ module.exports = (() => {
 		 * Returns a new {@link Timestamp} instance, representing the current moment.
 		 *
 		 * @public
+		 * @static
 		 * @returns {Timestamp}
 		 */
 		static now() {

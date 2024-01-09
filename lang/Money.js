@@ -62,6 +62,7 @@ module.exports = (() => {
 		 * Parses the value emitted by {@link Decimal#toJSON}.
 		 *
 		 * @public
+		 * @static
 		 * @param {Object} value
 		 * @returns {Money}
 		 */

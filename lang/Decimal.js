@@ -365,6 +365,7 @@ module.exports = (() => {
 		 * use with the value emitted by {@link Decimal#toJSON}.
 		 *
 		 * @public
+		 * @static
 		 * @param {Decimal|Number|String} value
 		 * @returns {Decimal}
 		 */
@@ -376,6 +377,7 @@ module.exports = (() => {
 		 * Returns an instance with the value of zero.
 		 *
 		 * @public
+		 * @static
 		 * @returns {Decimal}
 		 */
 		static get ZERO() {
@@ -386,6 +388,7 @@ module.exports = (() => {
 		 * Returns an instance with the value of one.
 		 *
 		 * @public
+		 * @static
 		 * @returns {Decimal}
 		 */
 		static get ONE() {
@@ -396,6 +399,7 @@ module.exports = (() => {
 		 * Returns an instance with the value of one.
 		 *
 		 * @public
+		 * @static
 		 * @returns {Decimal}
 		 */
 		static get NEGATIVE_ONE() {
@@ -406,6 +410,7 @@ module.exports = (() => {
 		 * Return the {@link RoundingMode} enumeration.
 		 *
 		 * @public
+		 * @static
 		 * @returns {RoundingMode}
 		 */
 		static get ROUNDING_MODE() {
@@ -416,6 +421,7 @@ module.exports = (() => {
 		 * Runs {@link Decimal#getIsZero} and returns the result.
 		 *
 		 * @public
+		 * @static
 		 * @param {Decimal} instance
 		 * @returns {Boolean}
 		 */
@@ -429,6 +435,7 @@ module.exports = (() => {
 		 * Runs {@link Decimal#getIsZero} and returns the inverse.
 		 *
 		 * @public
+		 * @static
 		 * @param {Decimal} instance
 		 * @returns {Boolean}
 		 */
@@ -442,6 +449,7 @@ module.exports = (() => {
 		 * Runs {@link Decimal#getIsPositive} and returns the result.
 		 *
 		 * @public
+		 * @static
 		 * @param {Decimal} instance
 		 * @returns {Boolean}
 		 */
@@ -455,6 +463,7 @@ module.exports = (() => {
 		 * Checks an instance to see if its negative or zero.
 		 *
 		 * @public
+		 * @static
 		 * @param {Decimal} instance
 		 * @returns {Boolean}
 		 */
@@ -468,6 +477,7 @@ module.exports = (() => {
 		 * Runs {@link Decimal#getIsNegative} and returns the result.
 		 *
 		 * @public
+		 * @static
 		 * @param {Decimal} instance
 		 * @returns {Boolean}
 		 */
@@ -481,6 +491,7 @@ module.exports = (() => {
 		 * Checks an instance to see if its positive or zero.
 		 *
 		 * @public
+		 * @static
 		 * @param {Decimal} instance
 		 * @returns {Boolean}
 		 */
@@ -494,6 +505,7 @@ module.exports = (() => {
 		 * A comparator function for {@link Decimal} instances.
 		 *
 		 * @public
+		 * @static
 		 * @param {Decimal} a
 		 * @param {Decimal} b
 		 * @returns {Number}
@@ -562,6 +574,7 @@ module.exports = (() => {
 		 * Rounds away from zero.
 		 *
 		 * @public
+		 * @static
 		 * @returns {RoundingMode}
 		 */
 		static get UP() {
@@ -572,6 +585,7 @@ module.exports = (() => {
 		 * Rounds towards zero.
 		 *
 		 * @public
+		 * @static
 		 * @returns {RoundingMode}
 		 */
 		static get DOWN() {
@@ -582,6 +596,7 @@ module.exports = (() => {
 		 * Rounds towards nearest neighbor. If equidistant, rounds away from zero.
 		 *
 		 * @public
+		 * @static
 		 * @returns {RoundingMode}
 		 */
 		static get NORMAL() {

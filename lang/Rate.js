@@ -131,6 +131,7 @@ module.exports = (() => {
 		 * Creates a {@link Rate} instance, when given a value
 		 *
 		 * @public
+		 * @static
 		 * @param {Number|String|Decimal} value - The rate.
 		 * @param {String} symbol - A string that can be parsed as a currency pair.
 		 * @returns {Rate}
@@ -148,6 +149,7 @@ module.exports = (() => {
 		 * a {@link Decimal} converted to an alternate currency.
 		 *
 		 * @public
+		 * @static
 		 * @param {Decimal} amount - The amount to convert.
 		 * @param {Currency} currency - The currency of the amount.
 		 * @param {Currency} desiredCurrency - The currency to convert to.

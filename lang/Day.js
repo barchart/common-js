@@ -406,8 +406,8 @@ module.exports = (() => {
 		/**
 		 * Returns a {@link Day} instance using today's local date.
 		 *
-		 * @static
 		 * @public
+		 * @static
 		 * @returns {Day}
 		 */
 		static getToday() {

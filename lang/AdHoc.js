@@ -45,6 +45,7 @@ module.exports = (() => {
 		 * Converts a JSON-serialized object into an {@link AdHoc} instance.
 		 *
 		 * @public
+		 * @static
 		 * @param {String} serialized
 		 * @returns {AdHoc}
 		 */

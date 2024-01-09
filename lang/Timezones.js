@@ -89,6 +89,7 @@ module.exports = (() => {
 		 * Given a code, returns the enumeration item.
 		 *
 		 * @public
+		 * @static
 		 * @param {String} code
 		 * @returns {Timezones|null}
 		 */
