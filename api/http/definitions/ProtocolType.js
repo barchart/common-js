@@ -44,7 +44,19 @@ module.exports = (() => {
 		get prefix() {
 			return this._prefix;
 		}
-		
+
+		/**
+		 * Returns the {@link ProtocolType} associated with a specific code.
+		 *
+		 * @public
+		 * @static
+		 * @param {String} code
+		 * @returns {ProtocolType|null}
+		 */
+		static parse(code) {
+			return Enum.fromCode(ProtocolType, code);
+		}
+
 		/**
 		 * HTTP.
 		 *
