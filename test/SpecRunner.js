@@ -2190,6 +2190,7 @@ module.exports = (() => {
      * Converts a JSON-serialized object into an {@link AdHoc} instance.
      *
      * @public
+     * @static
      * @param {String} serialized
      * @returns {AdHoc}
      */
@@ -2735,8 +2736,8 @@ module.exports = (() => {
     /**
      * Returns a {@link Day} instance using today's local date.
      *
-     * @static
      * @public
+     * @static
      * @returns {Day}
      */
     static getToday() {
@@ -3177,6 +3178,7 @@ module.exports = (() => {
      * use with the value emitted by {@link Decimal#toJSON}.
      *
      * @public
+     * @static
      * @param {Decimal|Number|String} value
      * @returns {Decimal}
      */
@@ -3188,6 +3190,7 @@ module.exports = (() => {
      * Returns an instance with the value of zero.
      *
      * @public
+     * @static
      * @returns {Decimal}
      */
     static get ZERO() {
@@ -3198,6 +3201,7 @@ module.exports = (() => {
      * Returns an instance with the value of one.
      *
      * @public
+     * @static
      * @returns {Decimal}
      */
     static get ONE() {
@@ -3208,6 +3212,7 @@ module.exports = (() => {
      * Returns an instance with the value of one.
      *
      * @public
+     * @static
      * @returns {Decimal}
      */
     static get NEGATIVE_ONE() {
@@ -3218,6 +3223,7 @@ module.exports = (() => {
      * Return the {@link RoundingMode} enumeration.
      *
      * @public
+     * @static
      * @returns {RoundingMode}
      */
     static get ROUNDING_MODE() {
@@ -3228,6 +3234,7 @@ module.exports = (() => {
      * Runs {@link Decimal#getIsZero} and returns the result.
      *
      * @public
+     * @static
      * @param {Decimal} instance
      * @returns {Boolean}
      */
@@ -3240,6 +3247,7 @@ module.exports = (() => {
      * Runs {@link Decimal#getIsZero} and returns the inverse.
      *
      * @public
+     * @static
      * @param {Decimal} instance
      * @returns {Boolean}
      */
@@ -3252,6 +3260,7 @@ module.exports = (() => {
      * Runs {@link Decimal#getIsPositive} and returns the result.
      *
      * @public
+     * @static
      * @param {Decimal} instance
      * @returns {Boolean}
      */
@@ -3264,6 +3273,7 @@ module.exports = (() => {
      * Checks an instance to see if its negative or zero.
      *
      * @public
+     * @static
      * @param {Decimal} instance
      * @returns {Boolean}
      */
@@ -3276,6 +3286,7 @@ module.exports = (() => {
      * Runs {@link Decimal#getIsNegative} and returns the result.
      *
      * @public
+     * @static
      * @param {Decimal} instance
      * @returns {Boolean}
      */
@@ -3288,6 +3299,7 @@ module.exports = (() => {
      * Checks an instance to see if its positive or zero.
      *
      * @public
+     * @static
      * @param {Decimal} instance
      * @returns {Boolean}
      */
@@ -3300,6 +3312,7 @@ module.exports = (() => {
      * A comparator function for {@link Decimal} instances.
      *
      * @public
+     * @static
      * @param {Decimal} a
      * @param {Decimal} b
      * @returns {Number}
@@ -3362,6 +3375,7 @@ module.exports = (() => {
      * Rounds away from zero.
      *
      * @public
+     * @static
      * @returns {RoundingMode}
      */
     static get UP() {
@@ -3372,6 +3386,7 @@ module.exports = (() => {
      * Rounds towards zero.
      *
      * @public
+     * @static
      * @returns {RoundingMode}
      */
     static get DOWN() {
@@ -3382,6 +3397,7 @@ module.exports = (() => {
      * Rounds towards nearest neighbor. If equidistant, rounds away from zero.
      *
      * @public
+     * @static
      * @returns {RoundingMode}
      */
     static get NORMAL() {
@@ -3661,6 +3677,7 @@ module.exports = (() => {
      * Parses the value emitted by {@link Decimal#toJSON}.
      *
      * @public
+     * @static
      * @param {Object} value
      * @returns {Money}
      */
@@ -3813,6 +3830,7 @@ module.exports = (() => {
      * Creates a {@link Rate} instance, when given a value
      *
      * @public
+     * @static
      * @param {Number|String|Decimal} value - The rate.
      * @param {String} symbol - A string that can be parsed as a currency pair.
      * @returns {Rate}
@@ -3828,6 +3846,7 @@ module.exports = (() => {
      * a {@link Decimal} converted to an alternate currency.
      *
      * @public
+     * @static
      * @param {Decimal} amount - The amount to convert.
      * @param {Currency} currency - The currency of the amount.
      * @param {Currency} desiredCurrency - The currency to convert to.
@@ -4042,6 +4061,7 @@ module.exports = (() => {
      * Parses the value emitted by {@link Timestamp#toJSON}.
      *
      * @public
+     * @static
      * @param {Number} value
      * @returns {Timestamp}
      */
@@ -4053,6 +4073,7 @@ module.exports = (() => {
      * Returns a new {@link Timestamp} instance, representing the current moment.
      *
      * @public
+     * @static
      * @returns {Timestamp}
      */
     static now() {
@@ -4159,6 +4180,7 @@ module.exports = (() => {
      * Given a code, returns the enumeration item.
      *
      * @public
+     * @static
      * @param {String} code
      * @returns {Timezones|null}
      */
