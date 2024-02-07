@@ -25,7 +25,7 @@ module.exports = (() => {
 		process(request, endpoint) {
 			return Promise.resolve()
 				.then(() => {
-					return this._onProcess(request);
+					return this._onProcess(request, endpoint);
 				});
 		}
 
