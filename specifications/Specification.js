@@ -62,7 +62,6 @@ module.exports = (() => {
 			return new Or(this, other);
 		}
 
-
 		/**
 		 * Wraps the current instance in a new {@link Specification} which evaluates
 		 * to the inverse result of the wrapped specification.
