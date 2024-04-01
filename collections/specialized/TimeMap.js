@@ -8,7 +8,7 @@ module.exports = (() => {
 	 * A map that which only holds objects for a specified duration.
 	 *
 	 * @public
-	 * @param {Number=} duration - The time to live, in milliseconds.
+	 * @param {Number} duration - The time to live, in milliseconds.
 	 */
 	class TimeMap {
 		constructor(duration) {
