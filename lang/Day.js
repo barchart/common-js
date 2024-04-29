@@ -484,6 +484,60 @@ module.exports = (() => {
 			return comparator(a, b);
 		}
 
+		/**
+		 * Calculates the number of days between two {@link Day} instances (may return
+		 * a negative value).
+		 *
+		 * @param {Day} a
+		 * @param {Day} b
+		 * @returns {Number}
+		 */
+		static countDaysBetween(a, b) {
+			assert.argumentIsRequired(a, 'a', Day, 'Day');
+			assert.argumentIsRequired(b, 'b', Day, 'Day');
+
+			if (a.getIsEqual(b)) {
+				return 0;
+			}
+
+			let start;
+			let end;
+
+			let reversed = b.getIsBefore(a);
+
+			if (reversed) {
+				start = b;
+				end = a;
+			} else {
+				start = a;
+				end = b;
+			}
+
+			let currentMonth = start.month;
+			let currentYear = start.year;
+
+			let counter = 0 - start.day;
+
+			while (!(currentMonth === end.month && currentYear === end.year)) {
+				counter = counter + Day.getDaysInMonth(currentYear, currentMonth);
+
+				if (currentMonth === 12) {
+					currentMonth = 1;
+					currentYear = currentYear + 1;
+				} else {
+					currentMonth = currentMonth + 1;
+				}
+			}
+
+			counter = counter + end.day;
+
+			if (reversed) {
+				counter = counter * -1;
+			}
+
+			return counter;
+		}
+
 		toString() {
 			return '[Day]';
 		}
@@ -502,6 +556,8 @@ module.exports = (() => {
 		.thenBy((a, b) => comparators.compareNumbers(a.month, b.month))
 		.thenBy((a, b) => comparators.compareNumbers(a.day, b.day))
 		.toComparator();
+
+	const MONDAY = new Day(2024, 1, 1);
 
 	return Day;
 })();

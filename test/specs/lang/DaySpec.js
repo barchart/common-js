@@ -617,3 +617,45 @@ describe('When getting end of the month', () => {
 		expect(d.getEndOfMonth()).not.toBe(d);
 	});
 });
+
+describe('When counting days between two Days', () => {
+	it('the number of days between today and today should be zero', () => {
+		expect(Day.countDaysBetween(Day.getToday(), Day.getToday())).toEqual(0);
+	});
+
+	it('the number of days between today and tomorrow should be one', () => {
+		expect(Day.countDaysBetween(Day.getToday(), Day.getToday().addDays(1))).toEqual(1);
+	});
+
+	it('the number of days between yesterday and today should be one', () => {
+		expect(Day.countDaysBetween(Day.getToday().subtractDays(1), Day.getToday())).toEqual(1);
+	});
+
+	it('the number of days between tomorrow and yesterday should be negative two', () => {
+		expect(Day.countDaysBetween(Day.getToday().addDays(1), Day.getToday().subtractDays(1))).toEqual(-2);
+	});
+
+	it('the number of days between 2024-04-29 and 2024-04-30 should be one', () => {
+		expect(Day.countDaysBetween(new Day(2024, 4, 29), new Day(2024, 4, 30))).toEqual(1);
+	});
+
+	it('the number of days between 2024-04-29 and 2024-05-01 should be two', () => {
+		expect(Day.countDaysBetween(new Day(2024, 4, 29), new Day(2024, 5, 1))).toEqual(2);
+	});
+
+	it('the number of days between 2023-12-01 and 2023-12-31 should be 30', () => {
+		expect(Day.countDaysBetween(new Day(2023, 12, 1), new Day(2023, 12, 31))).toEqual(30);
+	});
+
+	it('the number of days between 2023-12-01 and 2024-01-01 should be 31', () => {
+		expect(Day.countDaysBetween(new Day(2023, 12, 1), new Day(2024, 1, 1))).toEqual(31);
+	});
+
+	it('the number of days between 2023-12-01 and 2024-02-01 should be 62', () => {
+		expect(Day.countDaysBetween(new Day(2023, 12, 1), new Day(2024, 2, 1))).toEqual(62);
+	});
+
+	it('the number of days between 2000-01-01 and 2024-04-29 should be 8885', () => {
+		expect(Day.countDaysBetween(new Day(2000, 1, 1), new Day(2024, 4, 29))).toEqual(8885);
+	});
+});
