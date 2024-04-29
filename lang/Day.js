@@ -18,7 +18,7 @@ module.exports = (() => {
 	class Day {
 		constructor(year, month, day) {
 			if (!Day.validate(year, month, day)) {
-				throw new Error(`Unable to instantiate Day, input is invalid [${year}], [${month}], [${day}]`);
+				throw new Error(`Unable to instantiate [ Day ], input is invalid [ ${year} ], [ ${month} ], [ ${day} ]`);
 			}
 
 			this._year = year;
