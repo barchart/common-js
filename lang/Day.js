@@ -288,6 +288,24 @@ module.exports = (() => {
 		}
 
 		/**
+		 * Calculates and returns name of the day of the week (e.g. Monday, Tuesday, Wednesday, etc).
+		 *
+		 * @public
+		 * @returns {String}
+		 */
+		getName() {
+			const count = Day.countDaysBetween(REFERENCE_MONDAY, this);
+
+			let index = count % NAMES_OF_DAYS.length;
+
+			if (index < 0) {
+				index = index + NAMES_OF_DAYS.length;
+			}
+
+			return NAMES_OF_DAYS[index];
+		}
+
+		/**
 		 * The year.
 		 *
 		 * @public
@@ -560,7 +578,8 @@ module.exports = (() => {
 		.thenBy((a, b) => comparators.compareNumbers(a.day, b.day))
 		.toComparator();
 
-	const MONDAY = new Day(2024, 1, 1);
+	const NAMES_OF_DAYS = [ 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday' ];
+	const REFERENCE_MONDAY = new Day(2024, 1, 1);
 
 	return Day;
 })();

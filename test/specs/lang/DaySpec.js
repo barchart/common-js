@@ -658,4 +658,34 @@ describe('When counting days between two Days', () => {
 	it('the number of days between 2000-01-01 and 2024-04-29 should be 8885', () => {
 		expect(Day.countDaysBetween(new Day(2000, 1, 1), new Day(2024, 4, 29))).toEqual(8885);
 	});
+
+	it('the number of days between 2024-04-29 and 2000-01-01 should be -8885', () => {
+		expect(Day.countDaysBetween( new Day(2024, 4, 29), new Day(2000, 1, 1))).toEqual(-8885);
+	});
+});
+
+describe('When checking the name of a day', () => {
+	it('the name of 2024-04-28 should be "Sunday"', () => {
+		expect((new Day(2024, 4, 28)).getName()).toEqual('Sunday');
+	});
+
+	it('the name of 2024-04-29 should be "Monday"', () => {
+		expect((new Day(2024, 4, 29)).getName()).toEqual('Monday');
+	});
+
+	it('the name of 2024-04-30 should be "Tuesday"', () => {
+		expect((new Day(2024, 4, 30)).getName()).toEqual('Tuesday');
+	});
+
+	it('the name of 2024-05-01 should be "Wednesday"', () => {
+		expect((new Day(2024, 5, 1)).getName()).toEqual('Wednesday');
+	});
+
+	it('the name of 2000-01-01 should be "Saturday"', () => {
+		expect((new Day(2000, 1, 1)).getName()).toEqual('Saturday');
+	});
+
+	it('the name of 2013-08-21 should be "Wednesday"', () => {
+		expect((new Day(2013, 8, 21)).getName()).toEqual('Wednesday');
+	});
 });
