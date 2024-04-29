@@ -256,7 +256,6 @@ module.exports = (() => {
 		 * @public
 		 * @param {Day=} first
 		 * @param {Day=} last
-		 * @param {boolean=} exclusive
 		 * @returns {boolean}
 		 */
 		getIsContained(first, last) {
