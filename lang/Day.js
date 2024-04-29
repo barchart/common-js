@@ -440,6 +440,7 @@ module.exports = (() => {
 		 * @static
 		 * @param {number} year - The year number (e.g. 2017)
 		 * @param {number} month - The month number (e.g. 2 is February)
+		 * @returns {number}
 		 */
 		static getDaysInMonth(year, month) {
 			switch (month) {
@@ -488,6 +489,8 @@ module.exports = (() => {
 		 * Calculates the number of days between two {@link Day} instances (may return
 		 * a negative value).
 		 *
+		 * @public
+		 * @static
 		 * @param {Day} a
 		 * @param {Day} b
 		 * @returns {Number}
