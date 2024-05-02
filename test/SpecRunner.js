@@ -2384,7 +2384,7 @@ module.exports = (() => {
   class Day {
     constructor(year, month, day) {
       if (!Day.validate(year, month, day)) {
-        throw new Error(`Unable to instantiate Day, input is invalid [${year}], [${month}], [${day}]`);
+        throw new Error(`Unable to instantiate [ Day ], input is invalid [ ${year} ], [ ${month} ], [ ${day} ]`);
       }
       this._year = year;
       this._month = month;
@@ -2595,7 +2595,6 @@ module.exports = (() => {
      * @public
      * @param {Day=} first
      * @param {Day=} last
-     * @param {boolean=} exclusive
      * @returns {boolean}
      */
     getIsContained(first, last) {
@@ -2622,6 +2621,21 @@ module.exports = (() => {
      */
     getIsEqual(other) {
       return Day.compareDays(this, other) === 0;
+    }
+
+    /**
+     * Calculates and returns name of the day of the week (e.g. Monday, Tuesday, Wednesday, etc).
+     *
+     * @public
+     * @returns {String}
+     */
+    getName() {
+      const count = Day.countDaysBetween(REFERENCE_MONDAY, this);
+      let index = count % NAMES_OF_DAYS.length;
+      if (index < 0) {
+        index = index + NAMES_OF_DAYS.length;
+      }
+      return NAMES_OF_DAYS[index];
     }
 
     /**
@@ -2765,6 +2779,7 @@ module.exports = (() => {
      * @static
      * @param {number} year - The year number (e.g. 2017)
      * @param {number} month - The month number (e.g. 2 is February)
+     * @returns {number}
      */
     static getDaysInMonth(year, month) {
       switch (month) {
@@ -2810,6 +2825,51 @@ module.exports = (() => {
       assert.argumentIsRequired(b, 'b', Day, 'Day');
       return comparator(a, b);
     }
+
+    /**
+     * Calculates the number of days between two {@link Day} instances (may return
+     * a negative value).
+     *
+     * @public
+     * @static
+     * @param {Day} a
+     * @param {Day} b
+     * @returns {Number}
+     */
+    static countDaysBetween(a, b) {
+      assert.argumentIsRequired(a, 'a', Day, 'Day');
+      assert.argumentIsRequired(b, 'b', Day, 'Day');
+      if (a.getIsEqual(b)) {
+        return 0;
+      }
+      let start;
+      let end;
+      let reversed = b.getIsBefore(a);
+      if (reversed) {
+        start = b;
+        end = a;
+      } else {
+        start = a;
+        end = b;
+      }
+      let currentMonth = start.month;
+      let currentYear = start.year;
+      let counter = 0 - start.day;
+      while (!(currentMonth === end.month && currentYear === end.year)) {
+        counter = counter + Day.getDaysInMonth(currentYear, currentMonth);
+        if (currentMonth === 12) {
+          currentMonth = 1;
+          currentYear = currentYear + 1;
+        } else {
+          currentMonth = currentMonth + 1;
+        }
+      }
+      counter = counter + end.day;
+      if (reversed) {
+        counter = counter * -1;
+      }
+      return counter;
+    }
     toString() {
       return '[Day]';
     }
@@ -2821,6 +2881,8 @@ module.exports = (() => {
     return `${character.repeat(padding)}${string}`;
   }
   const comparator = ComparatorBuilder.startWith((a, b) => comparators.compareNumbers(a.year, b.year)).thenBy((a, b) => comparators.compareNumbers(a.month, b.month)).thenBy((a, b) => comparators.compareNumbers(a.day, b.day)).toComparator();
+  const NAMES_OF_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  const REFERENCE_MONDAY = new Day(2024, 1, 1);
   return Day;
 })();
 
@@ -19561,6 +19623,61 @@ describe('When getting end of the month', () => {
   it('should not return the same object', () => {
     const d = new Day(2018, 2, 28);
     expect(d.getEndOfMonth()).not.toBe(d);
+  });
+});
+describe('When counting days between two Days', () => {
+  it('the number of days between today and today should be zero', () => {
+    expect(Day.countDaysBetween(Day.getToday(), Day.getToday())).toEqual(0);
+  });
+  it('the number of days between today and tomorrow should be one', () => {
+    expect(Day.countDaysBetween(Day.getToday(), Day.getToday().addDays(1))).toEqual(1);
+  });
+  it('the number of days between yesterday and today should be one', () => {
+    expect(Day.countDaysBetween(Day.getToday().subtractDays(1), Day.getToday())).toEqual(1);
+  });
+  it('the number of days between tomorrow and yesterday should be negative two', () => {
+    expect(Day.countDaysBetween(Day.getToday().addDays(1), Day.getToday().subtractDays(1))).toEqual(-2);
+  });
+  it('the number of days between 2024-04-29 and 2024-04-30 should be one', () => {
+    expect(Day.countDaysBetween(new Day(2024, 4, 29), new Day(2024, 4, 30))).toEqual(1);
+  });
+  it('the number of days between 2024-04-29 and 2024-05-01 should be two', () => {
+    expect(Day.countDaysBetween(new Day(2024, 4, 29), new Day(2024, 5, 1))).toEqual(2);
+  });
+  it('the number of days between 2023-12-01 and 2023-12-31 should be 30', () => {
+    expect(Day.countDaysBetween(new Day(2023, 12, 1), new Day(2023, 12, 31))).toEqual(30);
+  });
+  it('the number of days between 2023-12-01 and 2024-01-01 should be 31', () => {
+    expect(Day.countDaysBetween(new Day(2023, 12, 1), new Day(2024, 1, 1))).toEqual(31);
+  });
+  it('the number of days between 2023-12-01 and 2024-02-01 should be 62', () => {
+    expect(Day.countDaysBetween(new Day(2023, 12, 1), new Day(2024, 2, 1))).toEqual(62);
+  });
+  it('the number of days between 2000-01-01 and 2024-04-29 should be 8885', () => {
+    expect(Day.countDaysBetween(new Day(2000, 1, 1), new Day(2024, 4, 29))).toEqual(8885);
+  });
+  it('the number of days between 2024-04-29 and 2000-01-01 should be -8885', () => {
+    expect(Day.countDaysBetween(new Day(2024, 4, 29), new Day(2000, 1, 1))).toEqual(-8885);
+  });
+});
+describe('When checking the name of a day', () => {
+  it('the name of 2024-04-28 should be "Sunday"', () => {
+    expect(new Day(2024, 4, 28).getName()).toEqual('Sunday');
+  });
+  it('the name of 2024-04-29 should be "Monday"', () => {
+    expect(new Day(2024, 4, 29).getName()).toEqual('Monday');
+  });
+  it('the name of 2024-04-30 should be "Tuesday"', () => {
+    expect(new Day(2024, 4, 30).getName()).toEqual('Tuesday');
+  });
+  it('the name of 2024-05-01 should be "Wednesday"', () => {
+    expect(new Day(2024, 5, 1).getName()).toEqual('Wednesday');
+  });
+  it('the name of 2000-01-01 should be "Saturday"', () => {
+    expect(new Day(2000, 1, 1).getName()).toEqual('Saturday');
+  });
+  it('the name of 2013-08-21 should be "Wednesday"', () => {
+    expect(new Day(2013, 8, 21).getName()).toEqual('Wednesday');
   });
 });
 
