@@ -100,7 +100,7 @@ describe('When a person schema is created (first and last names)', () => {
 			});
 		});
 
-		describe('and various are checked for invalid fields', () => {
+		describe('and various objects are checked for invalid fields', () => {
 			it('a null object should have two invalid fields', () => {
 				expect(schema.getInvalidFields(null).length).toEqual(2);
 			});
