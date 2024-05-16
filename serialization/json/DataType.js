@@ -92,7 +92,7 @@ module.exports = (() => {
 		}
 
 		/**
-		 * The {@Enumeration} type, if applicable.
+		 * The {@Enum} type, if applicable.
 		 *
 		 * @public
 		 * @returns {Function|null}
