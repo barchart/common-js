@@ -15444,7 +15444,7 @@ module.exports = (() => {
     }
 
     /**
-     * The {@Enumeration} type, if applicable.
+     * The {@Enum} type, if applicable.
      *
      * @public
      * @returns {Function|null}
@@ -15648,6 +15648,9 @@ module.exports = (() => {
 })();
 
 },{"./../../lang/AdHoc":19,"./../../lang/Day":21,"./../../lang/Decimal":22,"./../../lang/Enum":24,"./../../lang/Timestamp":27,"./../../lang/assert":30,"./../../lang/is":37,"moment":59}],62:[function(require,module,exports){
+const assert = require('./../../lang/assert'),
+  is = require('./../../lang/is');
+const DataType = require('./DataType');
 module.exports = (() => {
   'use strict';
 
@@ -15657,13 +15660,19 @@ module.exports = (() => {
    * @public
    * @param {String} name
    * @param {DataType} dataType
-   * @param {Boolean} optional
+   * @param {Boolean=} optional
+   * @param {Boolean=} array
    */
   class Field {
-    constructor(name, dataType, optional) {
+    constructor(name, dataType, optional, array) {
+      assert.argumentIsRequired(name, 'name', String);
+      assert.argumentIsRequired(dataType, 'dataType', DataType, 'DataType');
+      assert.argumentIsOptional(optional, 'optional', Boolean);
+      assert.argumentIsOptional(array, 'array', Boolean);
       this._name = name;
       this._dataType = dataType;
-      this._optional = optional || false;
+      this._optional = is.boolean(optional) && optional;
+      this._array = is.boolean(array) && array;
     }
 
     /**
@@ -15695,6 +15704,16 @@ module.exports = (() => {
     get optional() {
       return this._optional;
     }
+
+    /**
+     * Indicates if the field is an array.
+     *
+     * @public
+     * @returns {Boolean}
+     */
+    get array() {
+      return this._array;
+    }
     toString() {
       return `[Field (name=${this._name})]`;
     }
@@ -15702,7 +15721,7 @@ module.exports = (() => {
   return Field;
 })();
 
-},{}],63:[function(require,module,exports){
+},{"./../../lang/assert":30,"./../../lang/is":37,"./DataType":61}],63:[function(require,module,exports){
 const attributes = require('./../../lang/attributes'),
   functions = require('./../../lang/functions'),
   is = require('./../../lang/is');
@@ -15838,26 +15857,30 @@ module.exports = (() => {
       let head = this._revivers;
       let node = null;
       const advance = key => {
+        const previous = node;
         if (node === null) {
           node = head;
         } else {
           node = node.getNext();
         }
-        let item = node.getValue();
-        if (key !== item.name) {
-          if (item.reset || key === '' && node === head) {
-            node = null;
-          } else if (item.optional) {
-            item = advance(key);
-          } else {
-            throw new SchemaError(key, item.name, `Schema parsing is using strict mode, unexpected key found [ found: ${key}, expected: ${item.name} ]`);
-          }
+        const item = node.getValue();
+        if (key === item.name) {
+          return item;
+        } else if (item.reset || key === '' && node === head) {
+          node = null;
+          return item;
+        } else if (item.array && is.integer(parseInt(key))) {
+          node = previous;
+          return item;
+        } else if (item.optional) {
+          return advance(key);
+        } else {
+          throw new SchemaError(key, item.name, `Schema parsing is using strict mode, unexpected key found [ found: ${key}, expected: ${item.name} ]`);
         }
-        return item;
       };
       return (key, value) => {
         const item = advance(key);
-        if (key === '') {
+        if (key === '' || item.array && key === item.name) {
           return value;
         } else {
           return item.reviver(value);
@@ -15890,11 +15913,12 @@ module.exports = (() => {
     }
   }
   class ReviverItem {
-    constructor(name, reviver, optional, reset) {
+    constructor(name, reviver, optional, reset, array) {
       this._name = name;
       this._reviver = reviver || functions.getTautology();
       this._optional = is.boolean(optional) && optional;
       this._reset = is.boolean(reset) && reset;
+      this._array = is.boolean(array) && array;
     }
     get name() {
       return this._name;
@@ -15908,6 +15932,9 @@ module.exports = (() => {
     get reset() {
       return this._reset;
     }
+    get array() {
+      return this._array;
+    }
   }
   function getReviverItems(fields, components) {
     const root = new Tree(new ReviverItem(null, null, false, true));
@@ -15920,7 +15947,7 @@ module.exports = (() => {
       let node = root;
       names.forEach((name, i) => {
         if (names.length === i + 1) {
-          node.addChild(new ReviverItem(name, field.dataType.reviver, field.optional));
+          node.addChild(new ReviverItem(name, field.dataType.reviver, field.optional, false, field.array));
         } else {
           let child = node.findChild(n => n.name === name);
           if (!child) {
@@ -15953,7 +15980,7 @@ module.exports = (() => {
       if (!node.getIsLeaf()) {
         const required = node.search((i, n) => n.getIsLeaf() && !i.optional, true, false) !== null;
         if (!required) {
-          itemToUse = new ReviverItem(item.name, item.reviver, true, item.reset);
+          itemToUse = new ReviverItem(item.name, item.reviver, true, item.reset, item.array);
         }
       } else {
         itemToUse = item;
@@ -16088,9 +16115,40 @@ module.exports = (() => {
       assert.argumentIsRequired(name, 'name', String);
       assert.argumentIsRequired(dataType, 'dataType', DataType, 'DataType');
       assert.argumentIsOptional(optional, 'optional', Boolean);
-      const optionalToUse = is.boolean(optional) && optional;
-      const fields = this._schema.fields.concat([new Field(name, dataType, optionalToUse)]);
+      const fields = this._schema.fields.concat([new Field(name, dataType, optional, false)]);
       this._schema = new Schema(this._schema.name, fields, this._schema.components, this._schema.strict);
+      return this;
+    }
+
+    /**
+     * Adds a new {@link Field} to the schema (where the field is an array) and returns the current instance.
+     *
+     * @public
+     * @param {String} name - The name of the new field.
+     * @param {DataType} dataType - The type of the new field.
+     * @param {Boolean=} optional - If true, the field is not required and may be omitted.
+     * @returns {SchemaBuilder}
+     */
+    withArray(name, dataType, optional) {
+      assert.argumentIsRequired(name, 'name', String);
+      assert.argumentIsRequired(dataType, 'dataType', DataType, 'DataType');
+      assert.argumentIsOptional(optional, 'optional', Boolean);
+      const fields = this._schema.fields.concat([new Field(name, dataType, optional, true)]);
+      this._schema = new Schema(this._schema.name, fields, this._schema.components, this._schema.strict);
+      return this;
+    }
+
+    /**
+     * Adds a new {@link Component} to the schema and returns the current instance.
+     *
+     * @public
+     * @param {Component} component - The new component to add.
+     * @returns {SchemaBuilder}
+     */
+    withComponent(component) {
+      assert.argumentIsRequired(component, 'component', Component, 'Component');
+      const components = this._schema.components.concat([component]);
+      this._schema = new Schema(this._schema.name, this._schema.fields, components, this._schema.strict);
       return this;
     }
 
@@ -16108,20 +16166,6 @@ module.exports = (() => {
       const componentBuilder = new ComponentBuilder(name);
       callback(componentBuilder);
       return this.withComponent(componentBuilder.component);
-    }
-
-    /**
-     * Adds a new {@link Component} to the schema and returns the current instance.
-     *
-     * @public
-     * @param {Component} component - The new component to add.
-     * @returns {SchemaBuilder}
-     */
-    withComponent(component) {
-      assert.argumentIsRequired(component, 'component', Component, 'Component');
-      const components = this._schema.components.concat([component]);
-      this._schema = new Schema(this._schema.name, this._schema.fields, components, this._schema.strict);
-      return this;
     }
 
     /**
@@ -25606,6 +25650,7 @@ class Letter extends Enum {
   }
 }
 const LETTER_A = new Letter('A');
+const LETTER_B = new Letter('B');
 describe('When a person schema is created (first and last names)', () => {
   'use strict';
 
@@ -25674,7 +25719,7 @@ describe('When a person schema is created (first and last names)', () => {
         })).toEqual(false);
       });
     });
-    describe('and various are checked for invalid fields', () => {
+    describe('and various objects are checked for invalid fields', () => {
       it('a null object should have two invalid fields', () => {
         expect(schema.getInvalidFields(null).length).toEqual(2);
       });
@@ -26348,11 +26393,151 @@ describe('When a schema is created with only two days', () => {
       describe('and the object is rehydrated using the schema reviver', () => {
         let deserialized;
         beforeEach(() => {
-          try {
-            deserialized = JSON.parse(serialized, schema.getReviver());
-          } catch (e) {
-            console.log(e);
-          }
+          deserialized = JSON.parse(serialized, schema.getReviver());
+        });
+        it('should be an array with two items', () => {
+          expect(deserialized.length).toEqual(2);
+        });
+      });
+    });
+  });
+});
+describe('When a schema is created with an array (that contains an enumeration)', () => {
+  'use strict';
+
+  let schema;
+  beforeEach(() => {
+    schema = new Schema('array-letters', [new Field('letters', DataType.forEnum(Letter, 'Letter'), true, true)]);
+  });
+  describe('and a schema-compliant object is created (where both arrays are empty)', () => {
+    let object;
+    beforeEach(() => {
+      object = {
+        letters: [LETTER_B, LETTER_A]
+      };
+    });
+    describe('and the object is "stringified" as JSON', () => {
+      let serialized;
+      beforeEach(() => {
+        serialized = JSON.stringify(object);
+      });
+      describe('and the object is rehydrated using the schema reviver', () => {
+        let deserialized;
+        beforeEach(() => {
+          deserialized = JSON.parse(serialized, schema.getReviver());
+        });
+        it('should have a "letters" array', () => {
+          expect(Array.isArray(deserialized.letters)).toEqual(true);
+        });
+        it('the "letters" array should have two items', () => {
+          expect(deserialized.letters.length).toEqual(2);
+        });
+        it('the "letters" array should have a LETTER_B item', () => {
+          expect(deserialized.letters[0]).toBe(LETTER_B);
+        });
+        it('the "letters" array should have a LETTER_A item', () => {
+          expect(deserialized.letters[1]).toBe(LETTER_A);
+        });
+      });
+    });
+  });
+  describe('and a schema-compliant array is created', () => {
+    let object;
+    beforeEach(() => {
+      object = [{
+        letters: [LETTER_A]
+      }, {
+        letters: [LETTER_B]
+      }, {
+        letters: [LETTER_A, LETTER_B]
+      }];
+    });
+    describe('and the object is "stringified" as JSON', () => {
+      let serialized;
+      beforeEach(() => {
+        serialized = JSON.stringify(object);
+      });
+      describe('and the object is rehydrated using the schema reviver', () => {
+        let deserialized;
+        beforeEach(() => {
+          deserialized = JSON.parse(serialized, schema.getReviver());
+        });
+        it('should be an array with three items', () => {
+          expect(deserialized.length).toEqual(3);
+        });
+      });
+    });
+  });
+});
+describe('When a schema is created with two nested arrays', () => {
+  'use strict';
+
+  let schema;
+  beforeEach(() => {
+    schema = new Schema('nested-arrays', [new Field('arr.a', DataType.forEnum(Letter, 'Letter'), true, true), new Field('arr.b', DataType.NUMBER, true, true)]);
+  });
+  describe('and a schema-compliant object is created (where both arrays are empty)', () => {
+    let object;
+    beforeEach(() => {
+      object = {
+        arr: {
+          a: [],
+          b: []
+        }
+      };
+    });
+    describe('and the object is "stringified" as JSON', () => {
+      let serialized;
+      beforeEach(() => {
+        serialized = JSON.stringify(object);
+      });
+      describe('and the object is rehydrated using the schema reviver', () => {
+        let deserialized;
+        beforeEach(() => {
+          deserialized = JSON.parse(serialized, schema.getReviver());
+        });
+        it('should have a "arr" object', () => {
+          expect(typeof deserialized.arr).toEqual('object');
+        });
+        it('should have an "arr.a" array', () => {
+          expect(Array.isArray(deserialized.arr.a)).toEqual(true);
+        });
+        it('the "arr.a" array should be empty', () => {
+          expect(deserialized.arr.a.length).toEqual(0);
+        });
+        it('should have an "arr.b" array', () => {
+          expect(Array.isArray(deserialized.arr.b)).toEqual(true);
+        });
+        it('the "arr.b" array should be empty', () => {
+          expect(deserialized.arr.b.length).toEqual(0);
+        });
+      });
+    });
+  });
+  describe('and a schema-compliant array is created', () => {
+    let object;
+    beforeEach(() => {
+      object = [{
+        arr: {
+          a: [],
+          b: []
+        }
+      }, {
+        arr: {
+          a: [LETTER_A],
+          b: [1]
+        }
+      }];
+    });
+    describe('and the object is "stringified" as JSON', () => {
+      let serialized;
+      beforeEach(() => {
+        serialized = JSON.stringify(object);
+      });
+      describe('and the object is rehydrated using the schema reviver', () => {
+        let deserialized;
+        beforeEach(() => {
+          deserialized = JSON.parse(serialized, schema.getReviver());
         });
         it('should be an array with two items', () => {
           expect(deserialized.length).toEqual(2);
