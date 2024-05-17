@@ -46,10 +46,47 @@ module.exports = (() => {
 			assert.argumentIsRequired(dataType, 'dataType', DataType, 'DataType');
 			assert.argumentIsOptional(optional, 'optional', Boolean);
 
-			const optionalToUse = is.boolean(optional) && optional;
-			const fields = this._schema.fields.concat([ new Field(name, dataType, optionalToUse) ]);
+			const fields = this._schema.fields.concat([ new Field(name, dataType, optional, false) ]);
 
 			this._schema = new Schema(this._schema.name, fields, this._schema.components, this._schema.strict);
+
+			return this;
+		}
+
+		/**
+		 * Adds a new {@link Field} to the schema (where the field is an array) and returns the current instance.
+		 *
+		 * @public
+		 * @param {String} name - The name of the new field.
+		 * @param {DataType} dataType - The type of the new field.
+		 * @param {Boolean=} optional - If true, the field is not required and may be omitted.
+		 * @returns {SchemaBuilder}
+		 */
+		withArray(name, dataType, optional) {
+			assert.argumentIsRequired(name, 'name', String);
+			assert.argumentIsRequired(dataType, 'dataType', DataType, 'DataType');
+			assert.argumentIsOptional(optional, 'optional', Boolean);
+
+			const fields = this._schema.fields.concat([ new Field(name, dataType, optional, true) ]);
+
+			this._schema = new Schema(this._schema.name, fields, this._schema.components, this._schema.strict);
+
+			return this;
+		}
+
+		/**
+		 * Adds a new {@link Component} to the schema and returns the current instance.
+		 *
+		 * @public
+		 * @param {Component} component - The new component to add.
+		 * @returns {SchemaBuilder}
+		 */
+		withComponent(component) {
+			assert.argumentIsRequired(component, 'component', Component, 'Component');
+
+			const components = this._schema.components.concat([ component ]);
+
+			this._schema = new Schema(this._schema.name, this._schema.fields, components, this._schema.strict);
 
 			return this;
 		}
@@ -71,23 +108,6 @@ module.exports = (() => {
 			callback(componentBuilder);
 
 			return this.withComponent(componentBuilder.component);
-		}
-
-		/**
-		 * Adds a new {@link Component} to the schema and returns the current instance.
-		 *
-		 * @public
-		 * @param {Component} component - The new component to add.
-		 * @returns {SchemaBuilder}
-		 */
-		withComponent(component) {
-			assert.argumentIsRequired(component, 'component', Component, 'Component');
-
-			const components = this._schema.components.concat([ component ]);
-
-			this._schema = new Schema(this._schema.name, this._schema.fields, components, this._schema.strict);
-
-			return this;
 		}
 
 		/**

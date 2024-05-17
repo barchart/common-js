@@ -147,31 +147,37 @@ module.exports = (() => {
 			let node = null;
 
 			const advance = (key) => {
+				const previous = node;
+
 				if (node === null) {
 					node = head;
 				} else {
 					node = node.getNext();
 				}
 
-				let item = node.getValue();
+				const item = node.getValue();
 
-				if (key !== item.name) {
-					if (item.reset || (key === '' && node === head)) {
-						node = null;
-					} else if (item.optional) {
-						item = advance(key);
-					} else {
-						throw new SchemaError(key, item.name, `Schema parsing is using strict mode, unexpected key found [ found: ${key}, expected: ${item.name} ]`);
-					}
+				if (key === item.name) {
+					return item;
+				} else if (item.reset || (key === '' && node === head)) {
+					node = null;
+
+					return item;
+				} else if (item.array && is.integer(parseInt(key))) {
+					node = previous;
+
+					return item;
+				} else if (item.optional) {
+					return advance(key);
+				} else {
+					throw new SchemaError(key, item.name, `Schema parsing is using strict mode, unexpected key found [ found: ${key}, expected: ${item.name} ]`);
 				}
-
-				return item;
 			};
 
 			return (key, value) => {
 				const item = advance(key);
 
-				if (key === '') {
+				if (key === '' || (item.array && key === item.name)) {
 					return value;
 				} else {
 					return item.reviver(value);
@@ -209,11 +215,12 @@ module.exports = (() => {
 	}
 
 	class ReviverItem {
-		constructor(name, reviver, optional, reset) {
+		constructor(name, reviver, optional, reset, array) {
 			this._name = name;
 			this._reviver = reviver || functions.getTautology();
 			this._optional = is.boolean(optional) && optional;
 			this._reset = is.boolean(reset) && reset;
+			this._array = is.boolean(array) && array;
 		}
 
 		get name() {
@@ -231,6 +238,10 @@ module.exports = (() => {
 		get reset() {
 			return this._reset;
 		}
+
+		get array() {
+			return this._array;
+		}
 	}
 
 	function getReviverItems(fields, components) {
@@ -246,7 +257,7 @@ module.exports = (() => {
 
 			names.forEach((name, i) => {
 				if (names.length === i + 1) {
-					node.addChild(new ReviverItem(name, field.dataType.reviver, field.optional));
+					node.addChild(new ReviverItem(name, field.dataType.reviver, field.optional, false, field.array));
 				} else {
 					let child = node.findChild(n => n.name === name);
 
@@ -291,7 +302,7 @@ module.exports = (() => {
 				const required = node.search((i, n) => n.getIsLeaf() && !i.optional, true, false) !== null;
 
 				if (!required) {
-					itemToUse = new ReviverItem(item.name, item.reviver, true, item.reset);
+					itemToUse = new ReviverItem(item.name, item.reviver, true, item.reset, item.array);
 				}
 			} else {
 				itemToUse = item;

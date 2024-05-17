@@ -17,6 +17,7 @@ class Letter extends Enum {
 }
 
 const LETTER_A = new Letter('A');
+const LETTER_B = new Letter('B');
 
 describe('When a person schema is created (first and last names)', () => {
 	'use strict';
@@ -953,11 +954,202 @@ describe('When a schema is created with only two days', () => {
 				let deserialized;
 
 				beforeEach(() => {
-					try {
-						deserialized = JSON.parse(serialized, schema.getReviver());
-					} catch (e) {
-						console.log(e);
+					deserialized = JSON.parse(serialized, schema.getReviver());
+				});
+
+				it('should be an array with two items', () => {
+					expect(deserialized.length).toEqual(2);
+				});
+			});
+		});
+	});
+});
+
+describe('When a schema is created with an array (that contains an enumeration)', () => {
+	'use strict';
+
+	let schema;
+
+	beforeEach(() => {
+		schema = new Schema('array-letters', [
+			new Field('letters', DataType.forEnum(Letter, 'Letter'), true, true)
+		]);
+	});
+
+	describe('and a schema-compliant object is created (where both arrays are empty)', () => {
+		let object;
+
+		beforeEach(() => {
+			object = {
+				letters: [ LETTER_B, LETTER_A ]
+			};
+		});
+
+		describe('and the object is "stringified" as JSON', () => {
+			let serialized;
+
+			beforeEach(() => {
+				serialized = JSON.stringify(object);
+			});
+
+			describe('and the object is rehydrated using the schema reviver', () => {
+				let deserialized;
+
+				beforeEach(() => {
+					deserialized = JSON.parse(serialized, schema.getReviver());
+				});
+
+				it('should have a "letters" array', () => {
+					expect(Array.isArray(deserialized.letters)).toEqual(true);
+				});
+
+				it('the "letters" array should have two items', () => {
+					expect(deserialized.letters.length).toEqual(2);
+				});
+
+				it('the "letters" array should have a LETTER_B item', () => {
+					expect(deserialized.letters[0]).toBe(LETTER_B);
+				});
+
+				it('the "letters" array should have a LETTER_A item', () => {
+					expect(deserialized.letters[1]).toBe(LETTER_A);
+				});
+			});
+		});
+	});
+
+	describe('and a schema-compliant array is created', () => {
+		let object;
+
+		beforeEach(() => {
+			object = [
+				{
+					letters: [ LETTER_A ]
+				},
+				{
+					letters: [ LETTER_B ]
+				},
+				{
+					letters: [ LETTER_A, LETTER_B ]
+				}
+			];
+		});
+
+		describe('and the object is "stringified" as JSON', () => {
+			let serialized;
+
+			beforeEach(() => {
+				serialized = JSON.stringify(object);
+			});
+
+			describe('and the object is rehydrated using the schema reviver', () => {
+				let deserialized;
+
+				beforeEach(() => {
+					deserialized = JSON.parse(serialized, schema.getReviver());
+				});
+
+				it('should be an array with three items', () => {
+					expect(deserialized.length).toEqual(3);
+				});
+			});
+		});
+	});
+});
+
+describe('When a schema is created with two nested arrays', () => {
+	'use strict';
+
+	let schema;
+
+	beforeEach(() => {
+		schema = new Schema('nested-arrays', [
+			new Field('arr.a', DataType.forEnum(Letter, 'Letter'), true, true),
+			new Field('arr.b', DataType.NUMBER, true, true)
+		]);
+	});
+
+	describe('and a schema-compliant object is created (where both arrays are empty)', () => {
+		let object;
+
+		beforeEach(() => {
+			object = {
+				arr: {
+					a: [ ],
+					b: [ ]
+				}
+			};
+		});
+
+		describe('and the object is "stringified" as JSON', () => {
+			let serialized;
+
+			beforeEach(() => {
+				serialized = JSON.stringify(object);
+			});
+
+			describe('and the object is rehydrated using the schema reviver', () => {
+				let deserialized;
+
+				beforeEach(() => {
+					deserialized = JSON.parse(serialized, schema.getReviver());
+				});
+
+				it('should have a "arr" object', () => {
+					expect(typeof deserialized.arr).toEqual('object');
+				});
+
+				it('should have an "arr.a" array', () => {
+					expect(Array.isArray(deserialized.arr.a)).toEqual(true);
+				});
+
+				it('the "arr.a" array should be empty', () => {
+					expect(deserialized.arr.a.length).toEqual(0);
+				});
+
+				it('should have an "arr.b" array', () => {
+					expect(Array.isArray(deserialized.arr.b)).toEqual(true);
+				});
+
+				it('the "arr.b" array should be empty', () => {
+					expect(deserialized.arr.b.length).toEqual(0);
+				});
+			});
+		});
+	});
+
+	describe('and a schema-compliant array is created', () => {
+		let object;
+
+		beforeEach(() => {
+			object = [
+				{
+					arr: {
+						a: [],
+						b: []
 					}
+				},
+				{
+					arr: {
+						a: [ LETTER_A ],
+						b: [ 1 ]
+					}
+				}
+			];
+		});
+
+		describe('and the object is "stringified" as JSON', () => {
+			let serialized;
+
+			beforeEach(() => {
+				serialized = JSON.stringify(object);
+			});
+
+			describe('and the object is rehydrated using the schema reviver', () => {
+				let deserialized;
+
+				beforeEach(() => {
+					deserialized = JSON.parse(serialized, schema.getReviver());
 				});
 
 				it('should be an array with two items', () => {
