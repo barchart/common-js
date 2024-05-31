@@ -6353,6 +6353,7 @@ module.exports = (() => {
      * @public
      * @param {String} eventName - The event's name.
      * @param {Function} handler
+     * @returns {Disposable}
      */
     register(eventName, handler) {
       assert.argumentIsRequired(eventName, 'eventName', String);
@@ -6403,6 +6404,8 @@ module.exports = (() => {
      * Returns true, if no handlers are currently registered for the
      * specified event. See {@link Event#getIsEmpty} for more information.
      *
+     * @public
+     * @param {String} eventName
      * @returns {boolean}
      */
     getIsEmpty(eventName) {
@@ -6419,6 +6422,7 @@ module.exports = (() => {
     /**
      * Returns an array of all the event names.
      *
+     * @public
      * @returns {Array<String>}
      */
     getKeys() {
@@ -6434,6 +6438,7 @@ module.exports = (() => {
     /**
      * Returns true, if an event with the given name exists.
      *
+     * @public
      * @param {String} key
      * @returns {boolean}
      */
