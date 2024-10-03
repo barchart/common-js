@@ -2285,6 +2285,17 @@ module.exports = (() => {
     }
 
     /**
+     * The Swiss Franc.
+     *
+     * @public
+     * @static
+     * @returns {Currency}
+     */
+    static get CHF() {
+      return chf;
+    }
+
+    /**
      * The Euro.
      *
      * @public
@@ -2355,6 +2366,7 @@ module.exports = (() => {
   }
   const aud = new Currency('AUD', 'Australian Dollar', 2, 'AUD$');
   const cad = new Currency('CAD', 'Canadian Dollar', 2, 'CAD$');
+  const chf = new Currency('CHF', 'Swiss Franc', 2, 'CHF');
   const eur = new Currency('EUR', 'Euro', 2, 'EUR');
   const gbp = new Currency('GBP', 'British Pound', 2, 'GBP');
   const gbx = new Currency('GBX', 'British Penny', 2, 'GBX');
