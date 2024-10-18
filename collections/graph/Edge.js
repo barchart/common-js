@@ -2,15 +2,15 @@ module.exports = (() => {
 	'use strict';
 
 	/**
-	 * One edge of a graph, describing the connection between two
-	 * vertices; where the edge has a direction.
+	 * One edge of a directed graph, describing the connection between
+	 * two vertices; where the edge has a direction.
 	 *
 	 * @public
-	 * @param {GraphVertex} from
-	 * @param {GraphVertex} to
+	 * @param {Vertex} from
+	 * @param {Vertex} to
 	 * @param {*=} data
 	 */
-	class GraphEdge {
+	class Edge {
 		constructor(from, to, data) {
 			this._from = from;
 			this._to = to;
@@ -22,7 +22,7 @@ module.exports = (() => {
 		 * The starting vertex.
 		 *
 		 * @public
-		 * @returns {GraphVertex}
+		 * @returns {Vertex}
 		 */
 		get from() {
 			return this._from;
@@ -32,7 +32,7 @@ module.exports = (() => {
 		 * The end vertex.
 		 *
 		 * @public
-		 * @returns {GraphVertex}
+		 * @returns {Vertex}
 		 */
 		get to() {
 			return this._to;
@@ -50,9 +50,9 @@ module.exports = (() => {
 		}
 
 		toString() {
-			return `[GraphEdge (from=${this.from.data.toString()}, to=${this.to.data.toString()}})]`;
+			return `[Edge (from=${this.from.data.toString()}, to=${this.to.data.toString()}})]`;
 		}
 	}
 
-	return GraphEdge;
+	return Edge;
 })();

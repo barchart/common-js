@@ -1,16 +1,17 @@
-const GraphEdge = require('./GraphEdge');
+const assert = require('./../../lang/assert');
+
+const Edge = require('./Edge');
 
 module.exports = (() => {
 	'use strict';
 
 	/**
-	 * One node (vertex) of a graph data structure including all
-	 * edges (connections) of the node.
+	 * One node (vertex) of a directed graph data structure.
 	 *
 	 * @public
 	 * @param {*=} data
 	 */
-	class GraphVertex {
+	class Vertex {
 		constructor(data) {
 			this._data = data || null;
 
@@ -32,7 +33,7 @@ module.exports = (() => {
 		 * Returns all edges from this vertex to other vertices.
 		 *
 		 * @public
-		 * @returns {GraphEdge[]}
+		 * @returns {Edge[]}
 		 */
 		getEdges() {
 			return this._edges;
@@ -42,16 +43,22 @@ module.exports = (() => {
 		 * Adds an edge.
 		 *
 		 * @public
-		 * @param {GraphVertex} other
-		 * @param {*} data
-		 * @returns {GraphEdge}
+		 * @param {Vertex} other
+		 * @param {*=} data
+		 * @returns {Edge}
 		 */
 		addEdge(other, data) {
-			if (this.hasEdge(data)) {
+			assert.argumentIsRequired(other, 'other', Vertex, 'Vertex');
+
+			if (other === this) {
+				throw new Error('Graph vertex cannot connect to itself.');
+			}
+
+			if (this.hasEdge(other)) {
 				throw new Error(`Graph already has edge between [ ${this.data.toString()} ] and [ ${other.data.toString()} ]`);
 			}
 
-			const edge = new GraphEdge(this, other, data);
+			const edge = new Edge(this, other, data);
 
 			this._edges.push(edge);
 
@@ -62,8 +69,8 @@ module.exports = (() => {
 		 * Locates an edge.
 		 *
 		 * @public
-		 * @param {GraphVertex} other
-		 * @returns {GraphEdge|null}
+		 * @param {Vertex} other
+		 * @returns {Edge|null}
 		 */
 		getEdge(other) {
 			return this._edges.find(e => e.to === other) || null;
@@ -73,7 +80,7 @@ module.exports = (() => {
 		 * Indicates if this vertex has an edge.
 		 *
 		 * @public
-		 * @param {GraphVertex} other
+		 * @param {Vertex} other
 		 * @returns {boolean}
 		 */
 		hasEdge(other) {
@@ -84,12 +91,12 @@ module.exports = (() => {
 		 * Finds all possible paths from this vertex (node) to another vertex (node).
 		 *
 		 * @public
-		 * @param {*} other
-		 * @param {GraphEdge[]=} walk
-		 * @returns {GraphEdge[][]}
+		 * @param {Vertex} other
+		 * @param {Edge[]=} walk
+		 * @returns {Edge[][]}
 		 */
 		getPaths(other, walk) {
-			if (walk && this._data === other) {
+			if (walk && this === other) {
 				return [ walk ];
 			}
 
@@ -117,9 +124,9 @@ module.exports = (() => {
 		}
 
 		toString() {
-			return `[GraphVertex (data=${this.data.toString()})]`;
+			return `[Vertex (data=${this.data.toString()})]`;
 		}
 	}
 
-	return GraphVertex;
+	return Vertex;
 })();

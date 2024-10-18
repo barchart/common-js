@@ -1,75 +1,134 @@
-const Graph = require('./../../../../collections/graph/Graph');
+const Vertex = require('./../../../../collections/graph/Vertex');
 
-describe('When graph is initialized', () => {
+describe('When graph vertex (a) is initialized', () => {
 	'use strict';
 
-	let graph;
+	let vertexA;
+	let vertexDataA;
 
 	beforeEach(() => {
-		graph = new Graph('doe');
+		vertexA = new Vertex(vertexDataA = 'a');
 	});
 
-	describe('and "me" is added to "doe"', () => {
-		let me;
+	it('the data for vertex (a) matches the data passed at construction', () => {
+		expect(vertexA.data).toEqual(vertexDataA);
+	});
+
+	it('the vertex (a) has no connected edges', () => {
+		expect(vertexA.getEdges().length).toEqual(0);
+	});
+	
+	describe('and vertex (b) is attached', () => {
+		let vertexB;
+		let vertexDataB;
+
+		let edgeAB;
+		let edgeDataAB;
 
 		beforeEach(() => {
-			me = doe.insert('me');
+			edgeAB = vertexA.addEdge(vertexB = new Vertex(vertexDataB = 'b'), edgeDataAB = 'a-to-b');
 		});
 
-		describe('and "ray" is inserted between "doe" and "me"', () => {
-			let ray;
+		it ('the data for edge (between a and b) matches the data passed at construction', () => {
+			expect(edgeAB.data).toEqual(edgeDataAB);
+		});
+
+		it ('the new edge starts at vertex (a)', () => {
+			expect(edgeAB.from).toEqual(vertexA);
+		});
+
+		it ('the new edge ends at vertex (a)', () => {
+			expect(edgeAB.to).toEqual(vertexB);
+		});
+
+		it('the vertex (a) has one edge', () => {
+			expect(vertexA.getEdges().length).toEqual(1);
+		});
+
+		it('the vertex (a) has an edge to vertex (b)', () => {
+			expect(vertexA.getEdge(vertexB)).toEqual(edgeAB);
+		});
+
+		it('the vertex (b) has no edges', () => {
+			expect(vertexB.getEdges().length).toEqual(0);
+		});
+
+		describe('and the paths between vertex (a) and vertex (b) are calculated', () => {
+			let paths;
 
 			beforeEach(() => {
-				ray = doe.insert('ray');
+				paths = vertexA.getPaths(vertexB);
 			});
 
-			it('the "ray" node should not be the the tail', () => {
-				expect(me.getIsTail()).toEqual(true);
+			it('only one path should exist', () => {
+				expect(paths.length).toEqual(1);
 			});
 
-			it('the "ray" node should have a value of "ray"', () => {
-				expect(ray.getValue()).toEqual('ray');
+			it('the path should have one edge', () => {
+				expect(paths[0].length).toEqual(1);
 			});
 
-			it('the "me" node should still be the the tail', () => {
-				expect(me.getIsTail()).toEqual(true);
+			it('the path should start at vertex (a)', () => {
+				expect(paths[0][0].from).toEqual(vertexA);
 			});
 
-			it('the "doe" node should reference the "ray" node', () => {
-				expect(doe.getNext()).toBe(ray);
-			});
-
-			it('the "ray" node should reference the "me" node', () => {
-				expect(ray.getNext()).toBe(me);
+			it('the path should end at vertex (B)', () => {
+				expect(paths[0][0].to).toEqual(vertexB);
 			});
 		});
 
-		it('the "me" node should be the the tail', () => {
-			expect(me.getIsTail()).toEqual(true);
+		describe('and vertex (b) is attached (again)', () => {
+			it('an error should be thrown', () => {
+				expect(() => {
+					vertexA.addEdge(vertexB);
+				}).toThrow();
+			});
 		});
 
-		it('the "me" node should have a value of "me"', () => {
-			expect(me.getValue()).toEqual('me');
-		});
+		describe('and a path from vertex (a) to vertex (b) is added through a new vertex (x)', () => {
+			let vertexX;
 
-		it('the "doe" node should not be the tail', () => {
-			expect(doe.getIsTail()).toEqual(false);
-		});
+			beforeEach(() => {
+				vertexX = new Vertex();
 
-		it('the "doe" node should still have the correct value', () => {
-			expect(doe.getValue()).toEqual('doe');
-		});
+				vertexA.addEdge(vertexX);
+				vertexX.addEdge(vertexB);
+			});
 
-		it('the "doe" node should reference the "me" node', () => {
-			expect(doe.getNext()).toBe(me);
+			describe('and the paths between vertex (a) and vertex (b) are calculated', () => {
+				let paths;
+
+				beforeEach(() => {
+					paths = vertexA.getPaths(vertexB);
+				});
+
+				it('only two paths should exist', () => {
+					expect(paths.length).toEqual(2);
+				});
+
+				it ('a direct path from vertex (a) to vertex (b) should exist', () => {
+					expect(paths.some((path) => {
+						return path.length === 1 &&
+							path[0].from === vertexA && path[0].to === vertexB;
+					})).toBeTrue();
+				});
+
+				it ('an indirect path from vertex (a) to vertex (b) through vertex (x) should exist', () => {
+					expect(paths.some((path) => {
+						return path.length === 2 &&
+							path[0].from === vertexA && path[0].to === vertexX &&
+							path[1].from === vertexX && path[1].to === vertexB;
+					})).toBeTrue();
+				});
+			});
 		});
 	});
 
-	it('should be the the tail', () => {
-		expect(doe.getIsTail()).toEqual(true);
-	});
-
-	it('should have a value of "doe"', () => {
-		expect(doe.getValue()).toEqual('doe');
+	describe('and vertex (a) is attached to itself', () => {
+		it('an error should be thrown', () => {
+			expect(() => {
+				vertexA.addEdge(vertexA);
+			}).toThrow();
+		});
 	});
 });
