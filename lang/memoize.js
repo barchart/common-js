@@ -16,7 +16,7 @@ module.exports = (() => {
 		 *
 		 * @static
 		 * @public
-		 * @param {Function} fn - The function to memoize. This function should accept one parameters whose "toString" function outputs a unique value.
+		 * @param {Function} fn - The function to memoize. This function should accept one parameter whose "toString" function outputs a unique value.
 		 */
 		simple(fn) {
 			const cache = { };
