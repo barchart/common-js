@@ -1,4 +1,5 @@
 const assert = require('./assert'),
+	is = require('./is'),
 	memoize = require('./memoize');
 
 const Currency = require('./Currency'),
@@ -26,25 +27,51 @@ module.exports = (() => {
 				throw new Error('A rate cannot use two identical currencies.');
 			}
 
-			const decimal = getDecimal(value);
+			if (is.number(value)) {
+				this._decimal = null;
+				this._float = value;
+			} else if (value instanceof Decimal) {
+				this._decimal = value;
+				this._float = null;
+			} else {
+				this._decimal = new Decimal(value);
+				this._float = null;
+			}
 
-			if (!decimal.getIsPositive()) {
+			if ((this._float !== null && !(this._float > 0)) || (this._decimal !== null && !this._decimal.getIsPositive())) {
 				throw new Error('Rate value must be positive.');
 			}
 
-			this._decimal = decimal;
 			this._numerator = numerator;
 			this._denominator = denominator;
 		}
 
 		/**
-		 * The rate.
+		 * The rate (as a {@link Decimal} instance.
 		 *
 		 * @public
 		 * @returns {Decimal}
 		 */
 		get decimal() {
+			if (this._decimal === null) {
+				this._decimal = new Decimal(this.float);
+			}
+
 			return this._decimal;
+		}
+
+		/**
+		 * The rate (as a floating point number).
+		 *
+		 * @public
+		 * @returns {Number}
+		 */
+		get float() {
+			if (this._float === null) {
+				this._float = this._decimal.toNumber();
+			}
+
+			return this._float;
 		}
 
 		/**
@@ -99,7 +126,15 @@ module.exports = (() => {
 		 * @returns {Rate}
 		 */
 		invert() {
-			return new Rate(Decimal.ONE.divide(this._decimal), this._denominator, this._numerator);
+			let inverted;
+
+			if (this._decimal === null) {
+				inverted = 1 / this._float;
+			} else {
+				inverted = Decimal.ONE.divide(this.decimal);
+			}
+
+			return new Rate(inverted, this._denominator, this._numerator);
 		}
 
 		/**
@@ -113,18 +148,6 @@ module.exports = (() => {
 			assert.argumentIsOptional(useCarat, 'useCarat', Boolean);
 
 			return `${(useCarat ? '^' : '')}${this._numerator.code}${this._denominator.code}`;
-		}
-
-		/**
-		 * An array of constant exchange rates.
-		 *
-		 * @static
-		 * @returns {Rate[]}
-		 */
-		static get CONSTANTS() {
-			return [
-				Rate.fromPair(0.01, '^GBXGBP')
-			];
 		}
 
 		/**
@@ -160,58 +183,24 @@ module.exports = (() => {
 			assert.argumentIsRequired(amount, 'amount', Decimal, 'Decimal');
 			assert.argumentIsRequired(currency, 'currency', Currency, 'Currency');
 			assert.argumentIsRequired(desiredCurrency, 'desiredCurrency', Currency, 'Currency');
-			//assert.argumentIsArray(rates, 'rates', Rate, 'Rate');
-
-			let converted;
 
 			if (currency === desiredCurrency) {
-				converted = amount;
-			} else {
-				const numerator = desiredCurrency;
-				const denominator = currency;
-
-				const staticRates = [ ];
-
-				Rate.CONSTANTS.forEach((staticRate) => {
-					staticRates.push(staticRate);
-
-					const staticRateInverted = staticRate.invert();
-
-					rates.forEach((rate) => {
-						[ staticRate, staticRateInverted ].forEach((r) => {
-							let indirect;
-
-							if (rate.numerator === r.denominator) {
-								indirect = new Rate(rate.decimal.multiply(r.decimal), r.numerator, rate.denominator);
-							} else if (rate.denominator === r.denominator) {
-								indirect = new Rate(rate.decimal.divide(r.decimal), rate.numerator, r.numerator);
-							} else {
-								indirect = null;
-							}
-
-							if (indirect !== null) {
-								staticRates.push(indirect);
-							}
-						});
-					});
-				});
-
-				let rate = rates.concat(staticRates).find(r => (r.numerator === numerator && r.denominator === denominator) || (r.numerator === denominator && r.denominator === numerator));
-
-				if (rate) {
-					if (rate.numerator === denominator) {
-						rate = rate.invert();
-					}
-				}
-
-				if (!rate) {
-					throw new Error('Unable to perform conversion, given the rates provided.');
-				}
-
-				converted = amount.multiply(rate.decimal);
+				return amount;
 			}
 
-			return converted;
+			if (currency === Currency.GBX) {
+				const gbp = convert(amount, Currency.GBX, Currency.GBP, [ GBPGBX ]);
+
+				return convert(gbp, Currency.GBP, desiredCurrency, rates);
+			}
+
+			if (desiredCurrency === Currency.GBX) {
+				const gbp = convert(amount, currency, Currency.GBP, [ GBXGBP, ...rates ]);
+
+				return convert(gbp, Currency.GBP, Currency.GBX, [ GBXGBP ]);
+			}
+
+			return convert(amount, currency, desiredCurrency, rates);
 		}
 
 		toString() {
@@ -220,14 +209,6 @@ module.exports = (() => {
 	}
 
 	const pairExpression = /^\^?([A-Z]{3})([A-Z]{3})$/;
-
-	function getDecimal(value) {
-		if (value instanceof Decimal) {
-			return value;
-		} else {
-			return new Decimal(value);
-		}
-	}
 
 	const parsePair = memoize.simple((symbol) => {
 		const match = symbol.match(pairExpression);
@@ -241,6 +222,30 @@ module.exports = (() => {
 			denominator: match[1]
 		};
 	});
+
+	function convert(amount, currency, desiredCurrency, rates) {
+		if (currency === desiredCurrency) {
+			return amount;
+		}
+
+		const numerator = desiredCurrency;
+		const denominator = currency;
+
+		let rate = rates.find(r => (r.numerator === numerator && r.denominator === denominator) || (r.numerator === denominator && r.denominator === numerator));
+
+		if (rate && rate.numerator === denominator) {
+			rate = rate.invert();
+		}
+
+		if (!rate) {
+			throw new Error('Unable to perform conversion, given the rates provided.');
+		}
+
+		return amount.multiply(rate.decimal);
+	}
+
+	const GBPGBX = Rate.fromPair(100, '^GBPGBX');
+	const GBXGBP = Rate.fromPair(0.01, '^GBXGBP');
 
 	return Rate;
 })();
