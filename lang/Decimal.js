@@ -335,7 +335,6 @@ module.exports = (() => {
 			return this._big.toNumber();
 		}
 
-
 		/**
 		 * Returns the JSON representation.
 		 *
