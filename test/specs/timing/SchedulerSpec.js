@@ -267,4 +267,33 @@ describe('When a backoff is used', () => {
 			expect(actualResult).toEqual('Maximum failures reached for detonate');
 		});
 	});
+
+	describe('that respects the maximum delay', () => {
+		let spyAction;
+		let spyFailure;
+		let delays;
+
+		beforeEach((done) => {
+			delays = [];
+			spyAction = jasmine.createSpy('spyAction').and.callFake(() => {
+				throw new Error('nope...');
+			});
+
+			spyFailure = jasmine.createSpy('spyFailure');
+
+			spyOn(scheduler, 'schedule').and.callFake((action, delay) => {
+				delays.push(delay);
+				return Promise.resolve().then(action);
+			});
+
+			scheduler.backoff(spyAction, 5, 'test max delay', 5, spyFailure, undefined, 20)
+				.catch(() => {
+					done();
+				});
+		});
+
+		it('should not exceed the maximum delay', () => {
+			expect(delays.every(delay => delay <= 20)).toBe(true);
+		});
+	});
 });
