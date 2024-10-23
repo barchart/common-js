@@ -119,9 +119,10 @@ module.exports = (() => {
 		 * @param {number=} maximumAttempts - The number of attempts to before giving up.
 		 * @param {Function=} failureCallback - If provided, will be invoked if a function is considered to be failing.
 		 * @param {Object=} failureValue - If provided, will consider the result to have failed, if this value is returned (a deep equality check is used). If not provided, an undefined value will trigger a retry.
+		 * @param {number=} maximumDelay - The maximum delay that can be used for the backoff. If not provided, the delay will continue to double until the maximum number of attempts is reached.
 		 * @returns {Promise}
 		 */
-		backoff(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts, failureCallback, failureValue) {
+		backoff(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts, failureCallback, failureValue, maximumDelay) {
 			return Promise.resolve()
 				.then(() => {
 					assert.argumentIsRequired(actionToBackoff, 'actionToBackoff', Function);
@@ -129,6 +130,7 @@ module.exports = (() => {
 					assert.argumentIsOptional(actionDescription, 'actionDescription', String);
 					assert.argumentIsOptional(maximumAttempts, 'maximumAttempts', Number);
 					assert.argumentIsOptional(failureCallback, 'failureCallback', Function);
+					assert.argumentIsOptional(maximumDelay, 'maximumDelay', Number);
 
 					if (this.getIsDisposed()) {
 						throw new Error('The Scheduler has been disposed.');
@@ -143,6 +145,9 @@ module.exports = (() => {
 									delay = 0;
 								} else {
 									delay = (millisecondDelay || 1000) * Math.pow(2, attempts - 1);
+									if (maximumDelay && delay > maximumDelay) {
+										delay = maximumDelay;
+									}
 								}
 
 								if (delay === 0) {
