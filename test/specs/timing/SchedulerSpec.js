@@ -89,7 +89,7 @@ describe('When a backoff is used', () => {
 
 			spyFailure = jasmine.createSpy('spyFailure');
 
-			scheduler.backoff(spyAction, 5, 'succeeds immediately', 1, spyFailure)
+			scheduler.backoff(spyAction, 5, 'succeeds immediately', 1, spyFailure, undefined, 100)
 				.then((r) => {
 					actualResult = r;
 
@@ -134,7 +134,7 @@ describe('When a backoff is used', () => {
 
 			spyFailure = jasmine.createSpy('spyFailure');
 
-			scheduler.backoff(spyAction, 5, 'succeeds immediately', 5, spyFailure)
+			scheduler.backoff(spyAction, 5, 'succeeds immediately', 5, spyFailure, undefined, 100)
 				.then((r) => {
 					actualResult = r;
 
@@ -179,7 +179,7 @@ describe('When a backoff is used', () => {
 
 			spyFailure = jasmine.createSpy('spyFailure');
 
-			scheduler.backoff(spyAction, 5, 'succeeds immediately', 5, spyFailure, [ ])
+			scheduler.backoff(spyAction, 5, 'succeeds immediately', 5, spyFailure, [ ], 100)
 				.then((r) => {
 					actualResult = r;
 
@@ -213,7 +213,7 @@ describe('When a backoff is used', () => {
 
 			spyFailure = jasmine.createSpy('spyFailure');
 
-			scheduler.backoff(spyAction, 5, 'succeeds immediately', 3, spyFailure, [ ])
+			scheduler.backoff(spyAction, 5, 'succeeds immediately', 3, spyFailure, [ ], 100)
 				.catch((r) => {
 					actualResult = r;
 
@@ -247,7 +247,7 @@ describe('When a backoff is used', () => {
 
 			spyFailure = jasmine.createSpy('spyFailure');
 
-			scheduler.backoff(spyAction, 5, 'detonate', 3, spyFailure, 'boom')
+			scheduler.backoff(spyAction, 5, 'detonate', 3, spyFailure, 'boom', 100)
 				.catch((r) => {
 					actualResult = r;
 
