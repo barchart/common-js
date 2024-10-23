@@ -234,12 +234,12 @@ module.exports = (() => {
 				});
 		}
 
-		static backoff(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts) {
+		static backoff(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts, failureCallback, failureValue, maximumDelay) {
 			return Promise.resolve()
 				.then(() => {
 					const scheduler = new Scheduler();
 
-					return scheduler.backoff(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts)
+					return scheduler.backoff(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts, failureCallback, failureValue, maximumDelay)
 						.catch((e) => {
 							scheduler.dispose();
 
