@@ -329,7 +329,7 @@ module.exports = (() => {
 		 * this {@link Decimal} instance.
 		 *
 		 * @public
-		 * @returns {String}
+		 * @returns {Number}
 		 */
 		toNumber() {
 			return this._big.toNumber();
