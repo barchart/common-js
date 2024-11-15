@@ -2601,8 +2601,8 @@ module.exports = (() => {
         });
       });
       this._translators.forEach(translator => {
-        const from = translator.from.data;
-        const to = translator.to.data;
+        const from = translator.from;
+        const to = translator.to;
         if (!this._maps.translation.has(from)) {
           this._maps.translation.set(from, new Map());
         }
@@ -2740,7 +2740,7 @@ module.exports = (() => {
      * @returns {Currency}
      */
     get from() {
-      return array.first(this._path).from;
+      return array.first(this._path).from.data;
     }
 
     /**
@@ -2750,7 +2750,7 @@ module.exports = (() => {
      * @returns {Currency}
      */
     get to() {
-      return array.last(this._path).to;
+      return array.last(this._path).to.data;
     }
 
     /**
@@ -2782,7 +2782,10 @@ module.exports = (() => {
      * @returns {Number|Decimal}
      */
     translate(amount) {
-      checkFactors.call(this);
+      const ready = checkFactors.call(this);
+      if (!ready) {
+        throw new Error(`Unable to translate from [ ${this.from.code} ] to [ ${this.to.code} ], exchange rate is unknown.`);
+      }
       if (amount instanceof Decimal) {
         return amount.multiply(this._factors.decimal);
       } else {
@@ -2790,20 +2793,24 @@ module.exports = (() => {
       }
     }
     toString() {
-      return `[Translator (path=${this._path.map(edge => `${edge.from.data.code} > ${edge.to.data.code}`).join()})]`;
+      return `[Translator (path=${this._path.map(edge => `${edge.from.code} > ${edge.to.code}`).join()})]`;
     }
   }
   function checkFactors() {
     if (this._factors.float !== null) {
-      return;
+      return true;
     }
     let factor = 1;
     for (let i = 0; i < this._path.length; i++) {
       const edge = this._path[i];
+      if (edge.data.rate === null) {
+        return false;
+      }
       factor = factor * edge.data.rate.float;
     }
     this._factors.float = factor;
     this._factors.decimal = Decimal.parse(factor);
+    return true;
   }
   const pathComparator = ComparatorBuilder.startWith((a, b) => comparators.compareNumbers(a.length, b.length), true).toComparator();
   return CurrencyTranslator;
@@ -19756,11 +19763,22 @@ describe('When a CurrencyTranslator is created with ^AUDUSD and ^CADUSD', () => 
   beforeEach(() => {
     translator = new CurrencyTranslator(['^AUDUSD', '^CADUSD']);
   });
+  describe('and translations are performed before rates are initialized', () => {
+    it('Direct translation of 0 AUD to USD should yield 0 USD', () => {
+      expect(() => translator.translate(0, Currency.AUD, Currency.USD)).toThrow();
+    });
+  });
   describe('and rates are initialized (^AUDUSD to 0.6656 and ^CADUSD to 0.7230)', () => {
     beforeEach(() => {
       translator.setRates([Rate.fromPair(0.6656, '^AUDUSD'), Rate.fromPair(0.7230, '^CADUSD')]);
     });
     describe('and translations are performed (on floats)', () => {
+      it('Direct translation of of a float should return a float', () => {
+        expect(typeof translator.translate(123.456, Currency.AUD, Currency.USD)).toEqual('number');
+      });
+      it('Direct translation of 0 AUD to USD should yield 0 USD', () => {
+        expect(translator.translate(0, Currency.AUD, Currency.USD)).toBeCloseTo(0, 4);
+      });
       it('Direct translation of 1 AUD to USD should yield 0.6656 USD', () => {
         expect(translator.translate(1, Currency.AUD, Currency.USD)).toBeCloseTo(0.6656, 4);
       });
@@ -19773,6 +19791,9 @@ describe('When a CurrencyTranslator is created with ^AUDUSD and ^CADUSD', () => 
       it('Direct translation of 1 USD to CAD should yield 1.3831 CAD', () => {
         expect(translator.translate(1, Currency.USD, Currency.CAD)).toBeCloseTo(1.3831, 4);
       });
+      it('Indirect translation of 0 AUD to CAD should yield 0 CAD', () => {
+        expect(translator.translate(0, Currency.AUD, Currency.CAD)).toBeCloseTo(0, 4);
+      });
       it('Indirect translation of 1 AUD to CAD should yield 0.9206 CAD', () => {
         expect(translator.translate(1, Currency.AUD, Currency.CAD)).toBeCloseTo(0.9206, 4);
       });
@@ -19780,46 +19801,93 @@ describe('When a CurrencyTranslator is created with ^AUDUSD and ^CADUSD', () => 
         expect(translator.translate(1, Currency.CAD, Currency.AUD)).toBeCloseTo(1.0862, 4);
       });
     });
-    describe('and translations are performed (on Deicmal instances)', () => {
+    describe('and translations are performed (on Decimal instances)', () => {
+      it('Direct translation of of a Decimal should return a Decimal', () => {
+        expect(translator.translate(new Decimal(123.456), Currency.AUD, Currency.USD) instanceof Decimal).toBeTrue();
+      });
+      it('Direct translation of 0 AUD to USD should yield 0 USD', () => {
+        expect(translator.translate(new Decimal(0), Currency.AUD, Currency.USD).toNumber()).toBeCloseTo(0, 4);
+      });
       it('Direct translation of 1 AUD to USD should yield 0.6656 USD', () => {
-        expect(translator.translate(new Decimal(1), Currency.AUD, Currency.USD)).toBeCloseTo(0.6656, 4);
+        expect(translator.translate(new Decimal(1), Currency.AUD, Currency.USD).toNumber()).toBeCloseTo(0.6656, 4);
       });
-    });
-  });
-  describe('and one rate changes rates are initialized (^AUDUSD to 0.6800)', () => {
-    beforeEach(() => {
-      translator.setRates([Rate.fromPair(0.6800, '^AUDUSD'), Rate.fromPair(0.7230, '^CADUSD')]);
-    });
-    describe('and translations are performed (on floats)', () => {
-      it('Direct translation of 1 AUD to USD should yield 0.6800 USD', () => {
-        expect(translator.translate(1, Currency.AUD, Currency.USD)).toBeCloseTo(0.6800, 4);
-      });
-      it('Direct translation of 1 USD to AUD should yield 1.4706 CAD', () => {
-        expect(translator.translate(1, Currency.USD, Currency.AUD)).toBeCloseTo(1.4706, 4);
+      it('Direct translation of 1 USD to AUD should yield 1.3831 AUD', () => {
+        expect(translator.translate(new Decimal(1), Currency.USD, Currency.AUD).toNumber()).toBeCloseTo(1.5024, 4);
       });
       it('Direct translation of 1 CAD to USD should yield 0.7230 USD', () => {
-        expect(translator.translate(1, Currency.CAD, Currency.USD)).toBeCloseTo(0.7230, 4);
+        expect(translator.translate(new Decimal(1), Currency.CAD, Currency.USD).toNumber()).toBeCloseTo(0.7230, 4);
       });
       it('Direct translation of 1 USD to CAD should yield 1.3831 CAD', () => {
-        expect(translator.translate(1, Currency.USD, Currency.CAD)).toBeCloseTo(1.3831, 4);
+        expect(translator.translate(new Decimal(1), Currency.USD, Currency.CAD).toNumber()).toBeCloseTo(1.3831, 4);
       });
-      it('Indirect translation of 1 AUD to CAD should yield 0.9405 CAD', () => {
-        expect(translator.translate(1, Currency.AUD, Currency.CAD)).toBeCloseTo(0.9405, 4);
+      it('Indirect translation of 0 AUD to CAD should yield 0 CAD', () => {
+        expect(translator.translate(new Decimal(0), Currency.AUD, Currency.CAD).toNumber()).toBeCloseTo(0, 4);
       });
-      it('Indirect translation of 1 CAD to AUD should yield 1.0632 AUD', () => {
-        expect(translator.translate(1, Currency.CAD, Currency.AUD)).toBeCloseTo(1.0632, 4);
+      it('Indirect translation of 1 AUD to CAD should yield 0.9206 CAD', () => {
+        expect(translator.translate(new Decimal(1), Currency.AUD, Currency.CAD).toNumber()).toBeCloseTo(0.9206, 4);
+      });
+      it('Indirect translation of 1 CAD to AUD should yield 1.0862 AUD', () => {
+        expect(translator.translate(new Decimal(1), Currency.CAD, Currency.AUD).toNumber()).toBeCloseTo(1.0862, 4);
+      });
+    });
+    describe('and one rate changes rates are initialized (^AUDUSD to 0.6800)', () => {
+      beforeEach(() => {
+        translator.setRates([Rate.fromPair(0.6800, '^AUDUSD')]);
+      });
+      describe('and translations are performed (on floats)', () => {
+        it('Direct translation of 0 AUD to USD should yield 0.6800 USD', () => {
+          expect(translator.translate(0, Currency.AUD, Currency.USD)).toBeCloseTo(0, 4);
+        });
+        it('Direct translation of 1 AUD to USD should yield 0.6800 USD', () => {
+          expect(translator.translate(1, Currency.AUD, Currency.USD)).toBeCloseTo(0.6800, 4);
+        });
+        it('Direct translation of 1 USD to AUD should yield 1.4706 CAD', () => {
+          expect(translator.translate(1, Currency.USD, Currency.AUD)).toBeCloseTo(1.4706, 4);
+        });
+        it('Direct translation of 1 CAD to USD should yield 0.7230 USD', () => {
+          expect(translator.translate(1, Currency.CAD, Currency.USD)).toBeCloseTo(0.7230, 4);
+        });
+        it('Direct translation of 1 USD to CAD should yield 1.3831 CAD', () => {
+          expect(translator.translate(1, Currency.USD, Currency.CAD)).toBeCloseTo(1.3831, 4);
+        });
+        it('Indirect translation of 0 AUD to CAD should yield 0.9405 CAD', () => {
+          expect(translator.translate(0, Currency.AUD, Currency.CAD)).toBeCloseTo(0, 4);
+        });
+        it('Indirect translation of 1 AUD to CAD should yield 0.9405 CAD', () => {
+          expect(translator.translate(1, Currency.AUD, Currency.CAD)).toBeCloseTo(0.9405, 4);
+        });
+        it('Indirect translation of 1 CAD to AUD should yield 1.0632 AUD', () => {
+          expect(translator.translate(1, Currency.CAD, Currency.AUD)).toBeCloseTo(1.0632, 4);
+        });
+      });
+      describe('and translations are performed (on Decimal instances)', () => {
+        it('Direct translation of 0 AUD to USD should yield 0.6800 USD', () => {
+          expect(translator.translate(new Decimal(0), Currency.AUD, Currency.USD).toNumber()).toBeCloseTo(0, 4);
+        });
+        it('Direct translation of 1 AUD to USD should yield 0.6800 USD', () => {
+          expect(translator.translate(new Decimal(1), Currency.AUD, Currency.USD).toNumber()).toBeCloseTo(0.6800, 4);
+        });
+        it('Direct translation of 1 USD to AUD should yield 1.4706 CAD', () => {
+          expect(translator.translate(new Decimal(1), Currency.USD, Currency.AUD).toNumber()).toBeCloseTo(1.4706, 4);
+        });
+        it('Direct translation of 1 CAD to USD should yield 0.7230 USD', () => {
+          expect(translator.translate(new Decimal(1), Currency.CAD, Currency.USD).toNumber()).toBeCloseTo(0.7230, 4);
+        });
+        it('Direct translation of 1 USD to CAD should yield 1.3831 CAD', () => {
+          expect(translator.translate(new Decimal(1), Currency.USD, Currency.CAD).toNumber()).toBeCloseTo(1.3831, 4);
+        });
+        it('Indirect translation of 0 AUD to CAD should yield 0.9405 CAD', () => {
+          expect(translator.translate(new Decimal(0), Currency.AUD, Currency.CAD).toNumber()).toBeCloseTo(0, 4);
+        });
+        it('Indirect translation of 1 AUD to CAD should yield 0.9405 CAD', () => {
+          expect(translator.translate(new Decimal(1), Currency.AUD, Currency.CAD).toNumber()).toBeCloseTo(0.9405, 4);
+        });
+        it('Indirect translation of 1 CAD to AUD should yield 1.0632 AUD', () => {
+          expect(translator.translate(new Decimal(1), Currency.CAD, Currency.AUD).toNumber()).toBeCloseTo(1.0632, 4);
+        });
       });
     });
   });
-});
-describe('When a CurrencyTranslator is created with ^AUDUSD, ^CADUSD, ^CHFUSD, ^EURUSD, ^GBPUSD,  ^GBXGBP', () => {
-  'use strict';
-
-  let translator;
-  beforeEach(() => {
-    translator = new CurrencyTranslator(['^AUDUSD', '^CADUSD', '^CHFUSD', '^EURUSD', '^GBPUSD', '^GBXGBP']);
-  });
-  it('', () => {});
 });
 
 },{"./../../../lang/Currency":22,"./../../../lang/CurrencyTranslator":23,"./../../../lang/Decimal":25,"./../../../lang/Rate":29}],113:[function(require,module,exports){
