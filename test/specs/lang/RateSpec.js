@@ -27,6 +27,10 @@ describe('When parsing an "^EURUSD" rate of 1.2', () => {
 		expect(rate.denominator.code).toEqual('EUR');
 	});
 
+	it('the reconstructed symbols should be ^EURUSD', () => {
+		expect(rate.getSymbol()).toEqual('^EURUSD');
+	});
+
 	it('the value should be 1.2', () => {
 		expect(rate.decimal.getIsEqual(1.2)).toEqual(true);
 	});
@@ -69,6 +73,10 @@ describe('When parsing an "^USDEUR" rate of 0.8333', () => {
 		expect(rate.denominator.code).toEqual('USD');
 	});
 
+	it('the reconstructed symbols should be ^USDEUR', () => {
+		expect(rate.getSymbol()).toEqual('^USDEUR');
+	});
+
 	it('the value should be 0.8333', () => {
 		expect(rate.decimal.getIsEqual(0.8333)).toEqual(true);
 	});
@@ -109,6 +117,10 @@ describe('When parsing a "^GBPUSD" rate of 1.25882', () => {
 
 	it('the denominator currency should be GBP', () => {
 		expect(rate.denominator.code).toEqual('GBP');
+	});
+
+	it('the reconstructed symbols should be ^GBPUSD', () => {
+		expect(rate.getSymbol()).toEqual('^GBPUSD');
 	});
 
 	it('the value should be 1.25882', () => {

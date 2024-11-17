@@ -151,6 +151,16 @@ module.exports = (() => {
 		}
 
 		/**
+		 * Returns the Barchart symbol for the exchange rate.
+		 *
+		 * @public
+		 * @return {string}
+		 */
+		getSymbol() {
+			return `^${this.denominator.code}${this.numerator.code}`;
+		}
+
+		/**
 		 * Creates a {@link Rate} instance, when given a value
 		 *
 		 * @public
@@ -201,6 +211,17 @@ module.exports = (() => {
 			}
 
 			return convert(amount, currency, desiredCurrency, rates);
+		}
+
+		/**
+		 * Returns a list of rates which do no change.
+		 *
+		 * @public
+		 * @static
+		 * @returns {Rate[]}
+		 */
+		static getStaticRates() {
+			return [ new Rate(GBXGBP.float, GBXGBP.numerator, GBXGBP.denominator) ];
 		}
 
 		toString() {
