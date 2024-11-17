@@ -7,7 +7,7 @@ const CurrencyTranslator = require('./../../../lang/CurrencyTranslator');
 describe('When a CurrencyTranslator is created with ^AUDUSD and ^CADUSD', () => {
 	'use strict';
 
-	let translator = new CurrencyTranslator([ '^AUDUSD', '^CADUSD' ]);;
+	let translator = new CurrencyTranslator([ '^AUDUSD', '^CADUSD' ]);
 
 	describe('and translations are performed before rates are initialized', () => {
 		it('Direct translation of 0 AUD to USD should yield 0 USD', () => {
