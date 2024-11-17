@@ -2590,14 +2590,12 @@ module.exports = (() => {
             this._maps.rates.set(from, new Map());
           }
           if (!this._maps.rates.get(from).has(to)) {
-            this._maps.rates.get(from).set(to, []);
+            this._maps.rates.get(from).set(to, {
+              edge: edge,
+              translators: []
+            });
           }
-          this._maps.rates.get(from).get(to).push(rate => {
-            if (edge.data.rate === null || edge.data.rate.float !== rate.float) {
-              edge.data.rate = rate;
-              translator.clear();
-            }
-          });
+          this._maps.rates.get(from).get(to).translators.push(translator);
         });
       });
       this._translators.forEach(translator => {
@@ -2656,12 +2654,6 @@ module.exports = (() => {
       return `[CurrencyTranslator]`;
     }
   }
-  function updateRate(rate) {
-    const from = rate.base;
-    const to = rate.quote;
-    const actions = this._maps.rates.get(from).get(to);
-    actions.forEach(action => action(rate));
-  }
   const pairExpression = /^\^?([A-Z]{3})([A-Z]{3})$/;
   const parsePair = memoize.simple(symbol => {
     const match = symbol.match(pairExpression);
@@ -2717,6 +2709,17 @@ module.exports = (() => {
     });
     return translators;
   };
+  function updateRate(rate) {
+    const from = rate.base;
+    const to = rate.quote;
+    const data = this._maps.rates.get(from).get(to);
+    const current = data.edge.data.rate;
+    if (current !== null && current === rate.float) {
+      return;
+    }
+    data.edge.data.rate = rate.float;
+    data.translators.forEach(t => t.clear());
+  }
 
   /**
    * Translates values from a source currency to values in another currency.
@@ -2806,7 +2809,7 @@ module.exports = (() => {
       if (edge.data.rate === null) {
         return false;
       }
-      factor = factor * edge.data.rate.float;
+      factor = factor * edge.data.rate;
     }
     this._factors.float = factor;
     this._factors.decimal = Decimal.parse(factor);
@@ -4362,6 +4365,16 @@ module.exports = (() => {
     }
 
     /**
+     * Returns the Barchart symbol for the exchange rate.
+     *
+     * @public
+     * @return {string}
+     */
+    getSymbol() {
+      return `^${this.denominator.code}${this.numerator.code}`;
+    }
+
+    /**
      * Creates a {@link Rate} instance, when given a value
      *
      * @public
@@ -4404,6 +4417,17 @@ module.exports = (() => {
         return convert(gbp, Currency.GBP, Currency.GBX, [GBXGBP]);
       }
       return convert(amount, currency, desiredCurrency, rates);
+    }
+
+    /**
+     * Returns a list of rates which do no change.
+     *
+     * @public
+     * @static
+     * @returns {Rate[]}
+     */
+    static getStaticRates() {
+      return [new Rate(GBXGBP.float, GBXGBP.numerator, GBXGBP.denominator)];
     }
     toString() {
       return `[Rate]`;
@@ -19759,10 +19783,7 @@ const CurrencyTranslator = require('./../../../lang/CurrencyTranslator');
 describe('When a CurrencyTranslator is created with ^AUDUSD and ^CADUSD', () => {
   'use strict';
 
-  let translator;
-  beforeEach(() => {
-    translator = new CurrencyTranslator(['^AUDUSD', '^CADUSD']);
-  });
+  let translator = new CurrencyTranslator(['^AUDUSD', '^CADUSD']);
   describe('and translations are performed before rates are initialized', () => {
     it('Direct translation of 0 AUD to USD should yield 0 USD', () => {
       expect(() => translator.translate(0, Currency.AUD, Currency.USD)).toThrow();
@@ -19830,7 +19851,7 @@ describe('When a CurrencyTranslator is created with ^AUDUSD and ^CADUSD', () => 
         expect(translator.translate(new Decimal(1), Currency.CAD, Currency.AUD).toNumber()).toBeCloseTo(1.0862, 4);
       });
     });
-    describe('and one rate changes rates are initialized (^AUDUSD to 0.6800)', () => {
+    describe('and one rate changes (^AUDUSD to 0.6800)', () => {
       beforeEach(() => {
         translator.setRates([Rate.fromPair(0.6800, '^AUDUSD')]);
       });
@@ -19884,6 +19905,37 @@ describe('When a CurrencyTranslator is created with ^AUDUSD and ^CADUSD', () => 
         });
         it('Indirect translation of 1 CAD to AUD should yield 1.0632 AUD', () => {
           expect(translator.translate(new Decimal(1), Currency.CAD, Currency.AUD).toNumber()).toBeCloseTo(1.0632, 4);
+        });
+      });
+    });
+  });
+});
+describe('When a CurrencyTranslator is created with ^AUDUSD and ^USDEUR', () => {
+  'use strict';
+
+  let translator = new CurrencyTranslator(['^AUDUSD', '^USDEUR']);
+  describe('and rates are initialized (^AUDUSD to 0.6 and ^USDEUR to 0.9)', () => {
+    beforeEach(() => {
+      translator.setRates([Rate.fromPair(0.6, '^AUDUSD'), Rate.fromPair(0.9, '^USDEUR')]);
+    });
+    describe('and translations are performed (on floats)', () => {
+      it('Direct translation of 1 AUD to USD should yield 0.6 USD', () => {
+        expect(translator.translate(1, Currency.AUD, Currency.USD)).toBeCloseTo(0.6, 4);
+      });
+      it('Indirect translation of 1 AUD to EUR should yield 0.54 EUR', () => {
+        expect(translator.translate(1, Currency.AUD, Currency.EUR)).toBeCloseTo(0.54, 4);
+      });
+    });
+    describe('and one rate changes (^AUDUSD to 0.7)', () => {
+      beforeEach(() => {
+        translator.setRates([Rate.fromPair(0.7, '^AUDUSD')]);
+      });
+      describe('and translations are performed (on floats)', () => {
+        it('Direct translation of 1 AUD to USD should yield 0.7 USD', () => {
+          expect(translator.translate(1, Currency.AUD, Currency.USD)).toBeCloseTo(0.7, 4);
+        });
+        it('Indirect translation of 1 AUD to EUR should yield 0.63 EUR', () => {
+          expect(translator.translate(1, Currency.AUD, Currency.EUR)).toBeCloseTo(0.63, 4);
         });
       });
     });
@@ -21011,6 +21063,9 @@ describe('When parsing an "^EURUSD" rate of 1.2', () => {
   it('the denominator currency should be EUR', () => {
     expect(rate.denominator.code).toEqual('EUR');
   });
+  it('the reconstructed symbols should be ^EURUSD', () => {
+    expect(rate.getSymbol()).toEqual('^EURUSD');
+  });
   it('the value should be 1.2', () => {
     expect(rate.decimal.getIsEqual(1.2)).toEqual(true);
   });
@@ -21044,6 +21099,9 @@ describe('When parsing an "^USDEUR" rate of 0.8333', () => {
   it('the denominator currency should be USD', () => {
     expect(rate.denominator.code).toEqual('USD');
   });
+  it('the reconstructed symbols should be ^USDEUR', () => {
+    expect(rate.getSymbol()).toEqual('^USDEUR');
+  });
   it('the value should be 0.8333', () => {
     expect(rate.decimal.getIsEqual(0.8333)).toEqual(true);
   });
@@ -21076,6 +21134,9 @@ describe('When parsing a "^GBPUSD" rate of 1.25882', () => {
   });
   it('the denominator currency should be GBP', () => {
     expect(rate.denominator.code).toEqual('GBP');
+  });
+  it('the reconstructed symbols should be ^GBPUSD', () => {
+    expect(rate.getSymbol()).toEqual('^GBPUSD');
   });
   it('the value should be 1.25882', () => {
     expect(rate.decimal.getIsEqual(1.25882)).toEqual(true);
