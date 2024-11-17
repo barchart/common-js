@@ -47,16 +47,10 @@ module.exports = (() => {
 					}
 
 					if (!this._maps.rates.get(from).has(to)) {
-						this._maps.rates.get(from).set(to, [ ]);
+						this._maps.rates.get(from).set(to, { edge: edge, translators: [ ] });
 					}
 
-					this._maps.rates.get(from).get(to).push((rate) => {
-						if (edge.data.rate === null || edge.data.rate.float !== rate.float) {
-							edge.data.rate = rate;
-
-							translator.clear();
-						}
-					});
+					this._maps.rates.get(from).get(to).translators.push(translator);
 				});
 			});
 
@@ -121,15 +115,6 @@ module.exports = (() => {
 		toString() {
 			return `[CurrencyTranslator]`;
 		}
-	}
-
-	function updateRate(rate) {
-		const from = rate.base;
-		const to = rate.quote;
-
-		const actions = this._maps.rates.get(from).get(to);
-
-		actions.forEach(action => action(rate));
 	}
 
 	const pairExpression = /^\^?([A-Z]{3})([A-Z]{3})$/;
@@ -206,6 +191,23 @@ module.exports = (() => {
 
 		return translators;
 	};
+
+	function updateRate(rate) {
+		const from = rate.base;
+		const to = rate.quote;
+
+		const data = this._maps.rates.get(from).get(to);
+
+		const current = data.edge.data.rate;
+
+		if (current !== null && current === rate.float) {
+			return;
+		}
+
+		data.edge.data.rate = rate.float;
+
+		data.translators.forEach(t => t.clear());
+	}
 
 	/**
 	 * Translates values from a source currency to values in another currency.
@@ -306,7 +308,7 @@ module.exports = (() => {
 				return false;
 			}
 
-			factor = factor * edge.data.rate.float;
+			factor = factor * edge.data.rate;
 		}
 
 		this._factors.float = factor;
