@@ -2815,7 +2815,7 @@ module.exports = (() => {
     this._factors.decimal = Decimal.parse(factor);
     return true;
   }
-  const pathComparator = ComparatorBuilder.startWith((a, b) => comparators.compareNumbers(a.length, b.length), true).toComparator();
+  const pathComparator = ComparatorBuilder.startWith((a, b) => comparators.compareNumbers(a.length, b.length)).toComparator();
   return CurrencyTranslator;
 })();
 
