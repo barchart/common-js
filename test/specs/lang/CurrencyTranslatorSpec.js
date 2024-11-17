@@ -7,11 +7,7 @@ const CurrencyTranslator = require('./../../../lang/CurrencyTranslator');
 describe('When a CurrencyTranslator is created with ^AUDUSD and ^CADUSD', () => {
 	'use strict';
 
-	let translator;
-
-	beforeEach(() => {
-		translator = new CurrencyTranslator([ '^AUDUSD', '^CADUSD' ]);
-	});
+	let translator = new CurrencyTranslator([ '^AUDUSD', '^CADUSD' ]);;
 
 	describe('and translations are performed before rates are initialized', () => {
 		it('Direct translation of 0 AUD to USD should yield 0 USD', () => {
@@ -103,7 +99,7 @@ describe('When a CurrencyTranslator is created with ^AUDUSD and ^CADUSD', () => 
 			});
 		});
 
-		describe('and one rate changes rates are initialized (^AUDUSD to 0.6800)', () => {
+		describe('and one rate changes (^AUDUSD to 0.6800)', () => {
 			beforeEach(() => {
 				translator.setRates([
 					Rate.fromPair(0.6800, '^AUDUSD')
@@ -180,3 +176,52 @@ describe('When a CurrencyTranslator is created with ^AUDUSD and ^CADUSD', () => 
 		});
 	});
 });
+
+describe('When a CurrencyTranslator is created with ^AUDUSD and ^USDEUR', () => {
+	'use strict';
+
+	let translator = new CurrencyTranslator([ '^AUDUSD', '^USDEUR' ]);
+
+	describe('and rates are initialized (^AUDUSD to 0.6 and ^USDEUR to 0.9)', () => {
+		beforeEach(() => {
+			translator.setRates([
+				Rate.fromPair(0.6, '^AUDUSD'),
+				Rate.fromPair(0.9, '^USDEUR')
+			]);
+		});
+
+		describe('and translations are performed (on floats)', () => {
+			it('Direct translation of 1 AUD to USD should yield 0.6 USD', () => {
+				expect(translator.translate(1, Currency.AUD, Currency.USD)).toBeCloseTo(0.6, 4);
+			});
+
+			it('Indirect translation of 1 AUD to EUR should yield 0.54 EUR', () => {
+				expect(translator.translate(1, Currency.AUD, Currency.EUR)).toBeCloseTo(0.54, 4);
+			});
+		});
+
+		describe('and one rate changes (^AUDUSD to 0.7)', () => {
+			beforeEach(() => {
+				translator.setRates([
+					Rate.fromPair(0.7, '^AUDUSD')
+				]);
+			});
+
+			describe('and translations are performed (on floats)', () => {
+				it('Direct translation of 1 AUD to USD should yield 0.7 USD', () => {
+					expect(translator.translate(1, Currency.AUD, Currency.USD)).toBeCloseTo(0.7, 4);
+				});
+
+				it('Indirect translation of 1 AUD to EUR should yield 0.63 EUR', () => {
+					expect(translator.translate(1, Currency.AUD, Currency.EUR)).toBeCloseTo(0.63, 4);
+				});
+			});
+		});
+	});
+});
+
+
+
+
+
+
