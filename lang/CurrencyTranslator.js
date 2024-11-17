@@ -317,7 +317,7 @@ module.exports = (() => {
 		return true;
 	}
 
-	const pathComparator = ComparatorBuilder.startWith((a, b) => comparators.compareNumbers(a.length, b.length), true)
+	const pathComparator = ComparatorBuilder.startWith((a, b) => comparators.compareNumbers(a.length, b.length))
 		.toComparator();
 
 	return CurrencyTranslator;
