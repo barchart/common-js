@@ -37,14 +37,75 @@ describe('When Enum is extended (as types EnumA and EnumB) and type items are ad
 	});
 
 	describe('and a duplicate item (A-x) is added', () => {
-		let axx = new EnumA('x', 'A-XX');
+		let invalid = new EnumA('x', 'A-XX');
 
-		it('should be still find the original instance in EnumA for X', () => {
+		it('should still only have two items', () => {
+			expect(Enum.getItems(EnumA).length).toEqual(2);
+		});
+
+		it('should still able to find the original instance in EnumA for X', () => {
 			expect(Enum.fromCode(EnumA, 'x')).toBe(ax);
 		});
 
+		it('should not be able to find the mapping for the duplicated item', () => {
+			expect(Enum.getItems(EnumA).some(x => x === invalid)).toEqual(false);
+		});
+
 		it('should should equal the original instance (for X)', () => {
-			expect(Enum.fromCode(EnumA, 'x').equals(axx)).toBe(true);
+			expect(Enum.fromCode(EnumA, 'x').equals(ax)).toBe(true);
+		});
+	});
+});
+
+describe('When Enum is extended (as types EnumA and EnumB) and type items are added to each (X and Y) which include mapping values', () => {
+	'use strict';
+
+	class EnumA extends Enum {
+		constructor(code, description, mapping) {
+			super(code, description, mapping);
+		}
+	}
+
+	class EnumB extends Enum {
+		constructor(code, description, mapping) {
+			super(code, description, mapping);
+		}
+	}
+
+	let ax = new EnumA('x', 'A-X', 1);
+	let ay = new EnumA('y', 'A-Y', 2);
+	let bx = new EnumB('x', 'B-X', 1);
+	let by = new EnumB('y', 'B-Y', 2);
+
+	it('should be able to find X in EnumA using the mapping value', () => {
+		expect(Enum.fromMapping(EnumA, 1)).toBe(ax);
+	});
+
+	it('should be able to find Y in EnumA using the mapping value', () => {
+		expect(Enum.fromMapping(EnumA, 2)).toBe(ay);
+	});
+
+	it('should be able to find X in EnumB using the mapping value', () => {
+		expect(Enum.fromMapping(EnumB, 1)).toBe(bx);
+	});
+
+	it('should be able to find Y in EnumB using the mapping value', () => {
+		expect(Enum.fromMapping(EnumB, 2)).toBe(by);
+	});
+
+	describe('and a duplicate mapping value is added', () => {
+		let invalid = new EnumA('z', 'A-Z', 2);
+
+		it('should still only have two items', () => {
+			expect(Enum.getItems(EnumA).length).toEqual(2);
+		});
+
+		it('should still able to find the original instance in EnumA for Y', () => {
+			expect(Enum.fromMapping(EnumA, 2)).toBe(ay);
+		});
+
+		it('should not be able to find the mapping for the duplicated item', () => {
+			expect(Enum.getItems(EnumA).some(x => x === invalid)).toEqual(false);
 		});
 	});
 });
