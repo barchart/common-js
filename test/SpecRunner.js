@@ -5703,6 +5703,13 @@ module.exports = (() => {
   return {
     /**
      * Formats a number into a string for display purposes.
+     *
+     * @function
+     * @public
+     * @param {number|null|undefined} value
+     * @param {number} digits
+     * @param {string=} thousandsSeparator
+     * @param {boolean=} useParenthesis
      */
     numberToString(value, digits, thousandsSeparator, useParenthesis) {
       if (value === '' || value === undefined || value === null || isNaN(value)) {
