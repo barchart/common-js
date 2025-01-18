@@ -5623,6 +5623,9 @@ module.exports = (() => {
   'use strict';
 
   const utilities = {
+    getTimestamp() {
+      return new Date().getTime();
+    },
     getShortDay(date) {
       const day = date.getDay();
       return days[day].short;
@@ -23321,11 +23324,18 @@ describe('When "getIsSecure is invoked', () => {
 
 },{"./../../../lang/connection":36}],125:[function(require,module,exports){
 const utilities = require('./../../../lang/date');
+describe('When requesting the current timestamp', () => {
+  'use strict';
+
+  it("should be a number", () => {
+    expect(typeof utilities.getTimestamp()).toEqual('number');
+  });
+});
 describe('When extracting the "short" day of week', () => {
   'use strict';
 
   const july = 7 - 1;
-  it("07/27/2016 should resove to 'Wed'", () => {
+  it("07/27/2016 should resolve to 'Wed'", () => {
     expect(utilities.getShortDay(new Date(2016, july, 27))).toEqual('Wed');
   });
 });
