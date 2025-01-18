@@ -2,6 +2,10 @@ module.exports = (() => {
 	'use strict';
 
 	const utilities = {
+		getTimestamp() {
+			return (new Date()).getTime();
+		},
+
 		getShortDay(date) {
 			const day = date.getDay();
 
