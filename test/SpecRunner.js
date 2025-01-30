@@ -4055,7 +4055,11 @@ module.exports = (() => {
       }
       this._code = code;
       this._description = description;
-      this._mapping = mapping || null;
+      if (is.number(mapping)) {
+        this._mapping = mapping;
+      } else {
+        this._mapping = null;
+      }
       const c = this.constructor;
       if (!types.has(c)) {
         types.set(c, []);
@@ -21103,29 +21107,29 @@ describe('When Enum is extended (as types EnumA and EnumB) and type items are ad
       super(code, description, mapping);
     }
   }
-  let ax = new EnumA('x', 'A-X', 1);
-  let ay = new EnumA('y', 'A-Y', 2);
-  let bx = new EnumB('x', 'B-X', 1);
-  let by = new EnumB('y', 'B-Y', 2);
+  let ax = new EnumA('x', 'A-X', 0);
+  let ay = new EnumA('y', 'A-Y', 1);
+  let bx = new EnumB('x', 'B-X', 0);
+  let by = new EnumB('y', 'B-Y', 1);
   it('should be able to find X in EnumA using the mapping value', () => {
-    expect(Enum.fromMapping(EnumA, 1)).toBe(ax);
+    expect(Enum.fromMapping(EnumA, 0)).toBe(ax);
   });
   it('should be able to find Y in EnumA using the mapping value', () => {
-    expect(Enum.fromMapping(EnumA, 2)).toBe(ay);
+    expect(Enum.fromMapping(EnumA, 1)).toBe(ay);
   });
   it('should be able to find X in EnumB using the mapping value', () => {
-    expect(Enum.fromMapping(EnumB, 1)).toBe(bx);
+    expect(Enum.fromMapping(EnumB, 0)).toBe(bx);
   });
   it('should be able to find Y in EnumB using the mapping value', () => {
-    expect(Enum.fromMapping(EnumB, 2)).toBe(by);
+    expect(Enum.fromMapping(EnumB, 1)).toBe(by);
   });
   describe('and a duplicate mapping value is added', () => {
-    let invalid = new EnumA('z', 'A-Z', 2);
+    let invalid = new EnumA('z', 'A-Z', 1);
     it('should still only have two items', () => {
       expect(Enum.getItems(EnumA).length).toEqual(2);
     });
     it('should still able to find the original instance in EnumA for Y', () => {
-      expect(Enum.fromMapping(EnumA, 2)).toBe(ay);
+      expect(Enum.fromMapping(EnumA, 1)).toBe(ay);
     });
     it('should not be able to find the mapping for the duplicated item', () => {
       expect(Enum.getItems(EnumA).some(x => x === invalid)).toEqual(false);
