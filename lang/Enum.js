@@ -30,7 +30,11 @@ module.exports = (() => {
 			this._code = code;
 			this._description = description;
 
-			this._mapping = mapping || null;
+			if (is.number(mapping)) {
+				this._mapping = mapping;
+			} else {
+				this._mapping = null;
+			}
 
 			const c = this.constructor;
 
