@@ -27,8 +27,7 @@
     "big.js": "^6.2.1",
     "date-fns-tz": "^2.0.0",
     "moment": "^2.29.1",
-    "moment-timezone": "^0.5.41",
-    "xhr": "2.3.2"
+    "moment-timezone": "^0.5.41"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
