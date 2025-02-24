@@ -149,6 +149,28 @@ module.exports = (() => {
 		}
 
 		/**
+		 * The Norwegian Krone.
+		 *
+		 * @public
+		 * @static
+		 * @returns {Currency}
+		 */
+		static get NOK() {
+			return nok;
+		}
+
+		/**
+		 * The Swedish Krona.
+		 *
+		 * @public
+		 * @static
+		 * @returns {Currency}
+		 */
+		static get SEK() {
+			return sek;
+		}
+
+		/**
 		 * The US Dollar.
 		 *
 		 * @public
@@ -172,6 +194,8 @@ module.exports = (() => {
 	const gbx = new Currency('GBX', 'British Penny', 2, 'GBX');
 	const hkd = new Currency('HKD', 'Hong Kong Dollar', 2, 'HK$');
 	const jpy = new Currency('JPY', 'Japanese Yen', 2, 'JPY');
+	const nok = new Currency('NOK', 'Norwegian Krone', 2, 'Nkr');
+	const sek = new Currency('SEK', 'Swedish Krona', 2, 'SEK');
 	const usd = new Currency('USD', 'US Dollar', 2, 'US$');
 
 	return Currency;
