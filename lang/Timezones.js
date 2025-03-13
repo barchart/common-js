@@ -3,7 +3,10 @@ const assert = require('./assert'),
 	is = require('./is'),
 	timezone = require('./timezone');
 
-const getTimezoneOffset = require('date-fns-tz/getTimezoneOffset').getTimezoneOffset;
+const getTimezoneOffsetA = require('date-fns-tz/getTimezoneOffset'),
+	getTimezoneOffsetB = require('date-fns-tz/getTimezoneOffset').default;
+
+const getTimezoneOffset = is.fn(getTimezoneOffsetB) ? getTimezoneOffsetB : getTimezoneOffsetA;
 
 module.exports = (() => {
 	'use strict';
