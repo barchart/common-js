@@ -7,6 +7,13 @@
     "email": "bryan.ingle@barchart.com",
     "url": "https://www.barchart.com"
   },
+  "contributors": [
+    {
+      "name": "Luka Sotra",
+      "email": "luka.sotra@barchart.com",
+      "url": "https://www.barchart.com"
+    }
+  ],
   "scripts": {
     "lint": "gulp lint",
     "test": "jasmine --config=jasmine.json"
