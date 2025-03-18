@@ -6374,12 +6374,13 @@ module.exports = (() => {
      *
      * @public
      * @static
+     * @async
      * @param {Promise} promise
      * @param {Number} milliseconds
      * @param {String=} description
      * @returns {Promise<*>}
      */
-    timeout(promise, milliseconds, description) {
+    async timeout(promise, milliseconds, description) {
       return Promise.resolve().then(() => {
         assert.argumentIsRequired(promise, 'promise', Promise, 'Promise');
         assert.argumentIsRequired(milliseconds, 'milliseconds', Number);
@@ -6416,12 +6417,13 @@ module.exports = (() => {
      *
      * @public
      * @static
+     * @async
      * @param {Array} items - The items to map
      * @param {Function} mapper - The mapping function (e.g. given an item, return a promise).
      * @param {Number=} concurrency - The maximum number of promises that are allowed to run at once.
      * @returns {Promise<Array>}
      */
-    map(items, mapper, concurrency) {
+    async map(items, mapper, concurrency) {
       return Promise.resolve().then(() => {
         assert.argumentIsArray(items, 'items');
         assert.argumentIsRequired(mapper, 'mapper', Function);
@@ -6483,11 +6485,12 @@ module.exports = (() => {
      *
      * @static
      * @public
+     * @async
      * @param {Function[]} functions - An array of functions, each expecting a single argument.
      * @param {*=} input - The argument to pass the first function.
      * @returns {Promise<*>}
      */
-    pipeline(functions, input) {
+    async pipeline(functions, input) {
       return Promise.resolve().then(() => {
         assert.argumentIsArray(functions, 'functions', Function);
         return functions.reduce((previous, fn) => previous.then(result => fn(result)), Promise.resolve(input));
@@ -6500,10 +6503,11 @@ module.exports = (() => {
      * rejected promise is ignored.
      *
      * @public
+     * @async
      * @param {Function[]} executors
      * @returns {Promise}
      */
-    first(executors) {
+    async first(executors) {
       return Promise.resolve().then(() => {
         assert.argumentIsArray(executors, 'executors', Function);
         return executors.reduce((previous, executor) => {
@@ -6526,10 +6530,11 @@ module.exports = (() => {
      *
      * @public
      * @static
+     * @async
      * @param {Function} executor - A function which has two callback parameters. The first is used to resolve the promise, the second rejects it.
      * @returns {Promise}
      */
-    build(executor) {
+    async build(executor) {
       return new Promise((resolve, reject) => {
         try {
           executor(resolve, reject);
