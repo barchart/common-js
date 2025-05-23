@@ -29164,6 +29164,7 @@ describe('When a WindowCounter is constructed', () => {
 },{"./../../../timing/WindowCounter":173}],170:[function(require,module,exports){
 const assert = require('./../lang/assert'),
   Disposable = require('./../lang/Disposable'),
+  is = require('./../lang/is'),
   promise = require('./../lang/promise');
 const Queue = require('./../collections/Queue'),
   Scheduler = require('./Scheduler');
@@ -29175,15 +29176,15 @@ module.exports = (() => {
    * processed.
    *
    * @public
-   * @param {number} - windowMaximumCount - The maximum number of items which can be processed during a timeframe.
-   * @param {number} - windowDurationMilliseconds - The number of milliseconds in the timeframe.
+   * @param {number} - windowMaximumCount - The maximum number of items which can be processed during a timeframe (positive integer).
+   * @param {number} - windowDurationMilliseconds - The number of milliseconds in the timeframe (positive integer).
    * @extends {Disposable}
    */
   class RateLimiter extends Disposable {
     constructor(windowMaximumCount, windowDurationMilliseconds) {
       super();
-      assert.argumentIsRequired(windowMaximumCount, 'windowMaximumCount', Number);
-      assert.argumentIsRequired(windowDurationMilliseconds, 'windowDurationMilliseconds', Number);
+      assert.argumentIsValid(windowMaximumCount, 'windowMaximumCount', x => is.integer(x) && is.positive(x));
+      assert.argumentIsValid(windowDurationMilliseconds, 'windowDurationMilliseconds', x => is.integer(x) && is.positive(x));
       this._windowMaximumCount = windowMaximumCount;
       this._windowDurationMilliseconds = windowDurationMilliseconds;
       this._scheduler = new Scheduler();
@@ -29196,6 +29197,7 @@ module.exports = (() => {
      * Adds an item to the work queue and returns a promise that will
      * resolve after the item completes execution.
      *
+     * @public
      * @param {Function} actionToEnqueue - The action to execute.
      * @returns {Promise}
      */
@@ -29254,7 +29256,7 @@ module.exports = (() => {
   return RateLimiter;
 })();
 
-},{"./../collections/Queue":5,"./../lang/Disposable":26,"./../lang/assert":33,"./../lang/promise":46,"./Scheduler":171}],171:[function(require,module,exports){
+},{"./../collections/Queue":5,"./../lang/Disposable":26,"./../lang/assert":33,"./../lang/is":40,"./../lang/promise":46,"./Scheduler":171}],171:[function(require,module,exports){
 const assert = require('./../lang/assert'),
   Disposable = require('./../lang/Disposable'),
   is = require('./../lang/is'),
