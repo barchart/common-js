@@ -1,5 +1,6 @@
 const assert = require('./../lang/assert'),
 	Disposable = require('./../lang/Disposable'),
+	is = require('./../lang/is'),
 	promise = require('./../lang/promise');
 
 const Queue = require('./../collections/Queue'),
@@ -13,16 +14,16 @@ module.exports = (() => {
 	 * processed.
 	 *
 	 * @public
-	 * @param {number} - windowMaximumCount - The maximum number of items which can be processed during a timeframe.
-	 * @param {number} - windowDurationMilliseconds - The number of milliseconds in the timeframe.
+	 * @param {number} - windowMaximumCount - The maximum number of items which can be processed during a timeframe (positive integer).
+	 * @param {number} - windowDurationMilliseconds - The number of milliseconds in the timeframe (positive integer).
 	 * @extends {Disposable}
 	 */
 	class RateLimiter extends Disposable {
 		constructor(windowMaximumCount, windowDurationMilliseconds) {
 			super();
 
-			assert.argumentIsRequired(windowMaximumCount, 'windowMaximumCount', Number);
-			assert.argumentIsRequired(windowDurationMilliseconds, 'windowDurationMilliseconds', Number);
+			assert.argumentIsValid(windowMaximumCount, 'windowMaximumCount', x => is.integer(x) && is.positive(x));
+			assert.argumentIsValid(windowDurationMilliseconds, 'windowDurationMilliseconds', x => is.integer(x) && is.positive(x));
 
 			this._windowMaximumCount = windowMaximumCount;
 			this._windowDurationMilliseconds = windowDurationMilliseconds;
