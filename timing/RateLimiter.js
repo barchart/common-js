@@ -39,6 +39,7 @@ module.exports = (() => {
 		 * Adds an item to the work queue and returns a promise that will
 		 * resolve after the item completes execution.
 		 *
+		 * @public
 		 * @param {Function} actionToEnqueue - The action to execute.
 		 * @returns {Promise}
 		 */
