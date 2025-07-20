@@ -29,13 +29,13 @@ describe('When "2017-08-31 is parsed as a Day', () => {
 	});
 });
 
-describe('When "2017-08-31 is parsed as a Day (using DayFormatType.YEAR_MONTH_DAY)', () => {
+describe('When "2017-08-31 is parsed as a Day (using DayFormatType.YYYY_MM_DD)', () => {
 	'use strict';
 
 	let day;
 
 	beforeEach(() => {
-		day = Day.parse('2017-08-31', DayFormatType.YEAR_MONTH_DAY);
+		day = Day.parse('2017-08-31', DayFormatType.YYYY_MM_DD);
 	});
 
 	it('the year should be 2017', () => {
@@ -57,13 +57,41 @@ describe('When "2017-08-31 is parsed as a Day (using DayFormatType.YEAR_MONTH_DA
 	});
 });
 
-describe('When "08-31-2017 is parsed as a Day (using DayFormatType.MONTH_DAY_YEAR)', () => {
+describe('When "08-31-2017 is parsed as a Day (using DayFormatType.MM_DD_YYYY)', () => {
 	'use strict';
 
 	let day;
 
 	beforeEach(() => {
-		day = Day.parse('08-31-2017', DayFormatType.MONTH_DAY_YEAR);
+		day = Day.parse('08-31-2017', DayFormatType.MM_DD_YYYY);
+	});
+
+	it('the year should be 2017', () => {
+		expect(day.year).toEqual(2017);
+	});
+
+	it('the month should be 8', () => {
+		expect(day.month).toEqual(8);
+	});
+
+	it('the day should be 31', () => {
+		expect(day.day).toEqual(31);
+	});
+
+	describe('and the Day instance is formatted', () => {
+		it('should output be "2017-08-31"', () => {
+			expect(day.format()).toEqual('2017-08-31');
+		});
+	});
+});
+
+describe('When "08-31-17 is parsed as a Day (using DayFormatType.MM_DD_YY)', () => {
+	'use strict';
+
+	let day;
+
+	beforeEach(() => {
+		day = Day.parse('08-31-17', DayFormatType.MM_DD_YY);
 	});
 
 	it('the year should be 2017', () => {

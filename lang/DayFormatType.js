@@ -11,7 +11,7 @@ module.exports = (() => {
 	 * @param {String} description
 	 */
 	class DayFormatType extends Enum {
-		constructor(description, regex, yearIndex, monthIndex, dayIndex) {
+		constructor(description, regex, yearIndex, monthIndex, dayIndex, yearShift) {
 			super(description, description);
 
 			this._regex = regex;
@@ -19,6 +19,8 @@ module.exports = (() => {
 			this._yearIndex = yearIndex;
 			this._monthIndex = monthIndex;
 			this._dayIndex = dayIndex;
+
+			this._yearShift = yearShift;
 		}
 
 		/**
@@ -62,25 +64,47 @@ module.exports = (() => {
 		}
 
 		/**
-		 * Specifies date formatting as year, then month, then day (e.g. 2025-11-31).
+		 * The amount to add to the year (extracted from a formatted string) to get the
+		 * full year (e.g. for "11-31-25" of a MM-DD-YY string, the value will be 2000).
 		 *
 		 * @public
-		 * @static
-		 * @returns {DayFormatType}
+		 * @returns {number}
 		 */
-		static get YEAR_MONTH_DAY() {
-			return yearMonthDay;
+		get yearShift() {
+			return this._yearShift;
 		}
 
 		/**
-		 * Specifies date formatting as month, then day, then year (e.g. 11-31-2025).
+		 * Specifies date formatting as four-digit year, then month, then day (e.g. 2025-11-31).
 		 *
 		 * @public
 		 * @static
 		 * @returns {DayFormatType}
 		 */
-		static get MONTH_DAY_YEAR() {
-			return monthDayYear;
+		static get YYYY_MM_DD() {
+			return yyyymmdd;
+		}
+
+		/**
+		 * Specifies date formatting as month, then day, then four-digit year (e.g. 11-31-2025).
+		 *
+		 * @public
+		 * @static
+		 * @returns {DayFormatType}
+		 */
+		static get MM_DD_YYYY() {
+			return mmddyyyy;
+		}
+
+		/**
+		 * Specifies date formatting as month, then day, then two-digit year (e.g. 11-31-25).
+		 *
+		 * @public
+		 * @static
+		 * @returns {DayFormatType}
+		 */
+		static get MM_DD_YY() {
+			return mmddyy;
 		}
 
 		toString() {
@@ -88,8 +112,16 @@ module.exports = (() => {
 		}
 	}
 
-	const yearMonthDay = new DayFormatType('YEAR_MONTH_DAY', /^([0-9]{4}).?([0-9]{2}).?([0-9]{2})$/, 1, 2, 3);
-	const monthDayYear = new DayFormatType('MONTH_DAY_YEAR', /^([0-9]{2}).?([0-9]{2}).?([0-9]{4})$/, 3, 1, 2);
+	function getCenturyShift() {
+		const today = new Date();
+
+		return Math.floor(today.getFullYear() / 100) * 100;
+	}
+
+	const yyyymmdd = new DayFormatType('YYYY_MM_DD', /^([0-9]{4}).?([0-9]{2}).?([0-9]{2})$/, 1, 2, 3, 0);
+
+	const mmddyyyy = new DayFormatType('MM_DD_YYYY', /^([0-9]{2}).?([0-9]{2}).?([0-9]{4})$/, 3, 1, 2, 0);
+	const mmddyy = new DayFormatType('MM_DD_YY', /^([0-9]{2}).?([0-9]{2}).?([0-9]{2})$/, 3, 1, 2, getCenturyShift());
 
 	return DayFormatType;
 })();

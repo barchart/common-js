@@ -388,7 +388,7 @@ module.exports = (() => {
 			if (type instanceof DayFormatType) {
 				t = type;
 			} else {
-				t = DayFormatType.YEAR_MONTH_DAY;
+				t = DayFormatType.YYYY_MM_DD;
 			}
 
 			const match = value.match(t.regex);
@@ -397,7 +397,7 @@ module.exports = (() => {
 				throw new Error(`Unable to parse value as Day [ ${value} ]`);
 			}
 
-			return new Day(parseInt(match[t.yearIndex]), parseInt(match[t.monthIndex]), parseInt(match[t.dayIndex]));
+			return new Day(parseInt(match[t.yearIndex]) + t.yearShift, parseInt(match[t.monthIndex]), parseInt(match[t.dayIndex]));
 		}
 
 		/**
@@ -573,8 +573,6 @@ module.exports = (() => {
 			return '[Day]';
 		}
 	}
-
-	const dayRegex = /^([0-9]{4}).?([0-9]{2}).?([0-9]{2})$/;
 
 	function leftPad(value, digits, character) {
 		let string = value.toString();
