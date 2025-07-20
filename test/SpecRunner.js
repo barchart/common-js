@@ -222,7 +222,7 @@ module.exports = (() => {
   return FailureReason;
 })();
 
-},{"./../../collections/Tree":7,"./../../lang/assert":33,"./../../lang/is":40,"./../../serialization/json/Schema":66,"./FailureReasonItem":2,"./FailureType":3}],2:[function(require,module,exports){
+},{"./../../collections/Tree":7,"./../../lang/assert":34,"./../../lang/is":41,"./../../serialization/json/Schema":67,"./FailureReasonItem":2,"./FailureType":3}],2:[function(require,module,exports){
 const assert = require('./../../lang/assert'),
   attributes = require('./../../lang/attributes');
 const FailureType = require('./FailureType');
@@ -307,7 +307,7 @@ module.exports = (() => {
   return FailureReasonItem;
 })();
 
-},{"./../../lang/assert":33,"./../../lang/attributes":34,"./FailureType":3}],3:[function(require,module,exports){
+},{"./../../lang/assert":34,"./../../lang/attributes":35,"./FailureType":3}],3:[function(require,module,exports){
 const assert = require('./../../lang/assert'),
   Enum = require('./../../lang/Enum'),
   is = require('./../../lang/is');
@@ -518,7 +518,7 @@ module.exports = (() => {
   return FailureType;
 })();
 
-},{"./../../lang/Enum":27,"./../../lang/assert":33,"./../../lang/is":40}],4:[function(require,module,exports){
+},{"./../../lang/Enum":28,"./../../lang/assert":34,"./../../lang/is":41}],4:[function(require,module,exports){
 module.exports = (() => {
   'use strict';
 
@@ -679,7 +679,7 @@ module.exports = (() => {
   return Queue;
 })();
 
-},{"./../lang/assert":33}],6:[function(require,module,exports){
+},{"./../lang/assert":34}],6:[function(require,module,exports){
 const assert = require('./../lang/assert');
 module.exports = (() => {
   'use strict';
@@ -772,7 +772,7 @@ module.exports = (() => {
   return Stack;
 })();
 
-},{"./../lang/assert":33}],7:[function(require,module,exports){
+},{"./../lang/assert":34}],7:[function(require,module,exports){
 const is = require('./../lang/is');
 module.exports = (() => {
   'use strict';
@@ -1076,7 +1076,7 @@ module.exports = (() => {
   return Tree;
 })();
 
-},{"./../lang/is":40}],8:[function(require,module,exports){
+},{"./../lang/is":41}],8:[function(require,module,exports){
 module.exports = (() => {
   'use strict';
 
@@ -1250,7 +1250,7 @@ module.exports = (() => {
   return Vertex;
 })();
 
-},{"./../../lang/assert":33,"./Edge":8}],10:[function(require,module,exports){
+},{"./../../lang/assert":34,"./Edge":8}],10:[function(require,module,exports){
 const assert = require('./../../lang/assert'),
   comparators = require('./comparators');
 module.exports = (() => {
@@ -1353,7 +1353,7 @@ module.exports = (() => {
   return ComparatorBuilder;
 })();
 
-},{"./../../lang/assert":33,"./comparators":11}],11:[function(require,module,exports){
+},{"./../../lang/assert":34,"./comparators":11}],11:[function(require,module,exports){
 const assert = require('./../../lang/assert');
 module.exports = (() => {
   'use strict';
@@ -1460,7 +1460,7 @@ module.exports = (() => {
   };
 })();
 
-},{"./../../lang/assert":33}],12:[function(require,module,exports){
+},{"./../../lang/assert":34}],12:[function(require,module,exports){
 const assert = require('./../../lang/assert'),
   is = require('./../../lang/is');
 module.exports = (() => {
@@ -1576,7 +1576,7 @@ module.exports = (() => {
   return CompoundMap;
 })();
 
-},{"./../../lang/assert":33,"./../../lang/is":40}],13:[function(require,module,exports){
+},{"./../../lang/assert":34,"./../../lang/is":41}],13:[function(require,module,exports){
 const Stack = require('./../Stack');
 const assert = require('./../../lang/assert'),
   Disposable = require('./../../lang/Disposable'),
@@ -1641,7 +1641,7 @@ module.exports = (() => {
   return DisposableStack;
 })();
 
-},{"./../../lang/Disposable":26,"./../../lang/assert":33,"./../../lang/is":40,"./../Stack":6}],14:[function(require,module,exports){
+},{"./../../lang/Disposable":27,"./../../lang/assert":34,"./../../lang/is":41,"./../Stack":6}],14:[function(require,module,exports){
 const assert = require('./../../lang/assert');
 module.exports = (() => {
   'use strict';
@@ -1761,7 +1761,7 @@ module.exports = (() => {
   return EvictingList;
 })();
 
-},{"./../../lang/assert":33}],15:[function(require,module,exports){
+},{"./../../lang/assert":34}],15:[function(require,module,exports){
 const assert = require('./../../lang/assert');
 module.exports = (() => {
   'use strict';
@@ -2006,7 +2006,7 @@ module.exports = (() => {
   return EvictingMap;
 })();
 
-},{"./../../lang/assert":33}],16:[function(require,module,exports){
+},{"./../../lang/assert":34}],16:[function(require,module,exports){
 const array = require('./../../lang/array'),
   assert = require('./../../lang/assert'),
   Queue = require('./../Queue');
@@ -2048,7 +2048,7 @@ module.exports = (() => {
   return PriorityQueue;
 })();
 
-},{"./../../lang/array":32,"./../../lang/assert":33,"./../Queue":5}],17:[function(require,module,exports){
+},{"./../../lang/array":33,"./../../lang/assert":34,"./../Queue":5}],17:[function(require,module,exports){
 const assert = require('./../../lang/assert'),
   is = require('./../../lang/is');
 module.exports = (() => {
@@ -2170,7 +2170,7 @@ module.exports = (() => {
   return TimeMap;
 })();
 
-},{"./../../lang/assert":33,"./../../lang/is":40}],18:[function(require,module,exports){
+},{"./../../lang/assert":34,"./../../lang/is":41}],18:[function(require,module,exports){
 const assert = require('./../lang/assert');
 module.exports = (() => {
   'use strict';
@@ -2245,7 +2245,7 @@ module.exports = (() => {
   return CommandHandler;
 })();
 
-},{"./../lang/assert":33}],19:[function(require,module,exports){
+},{"./../lang/assert":34}],19:[function(require,module,exports){
 const assert = require('./../lang/assert'),
   CommandHandler = require('./CommandHandler');
 module.exports = (() => {
@@ -2270,7 +2270,7 @@ module.exports = (() => {
   return CompositeCommandHandler;
 })();
 
-},{"./../lang/assert":33,"./CommandHandler":18}],20:[function(require,module,exports){
+},{"./../lang/assert":34,"./CommandHandler":18}],20:[function(require,module,exports){
 var assert = require('./../lang/assert'),
   CommandHandler = require('./CommandHandler');
 module.exports = (() => {
@@ -2319,7 +2319,7 @@ module.exports = (() => {
   return MappedCommandHandler;
 })();
 
-},{"./../lang/assert":33,"./CommandHandler":18}],21:[function(require,module,exports){
+},{"./../lang/assert":34,"./CommandHandler":18}],21:[function(require,module,exports){
 const assert = require('./assert');
 module.exports = (() => {
   'use strict';
@@ -2378,7 +2378,7 @@ module.exports = (() => {
   return AdHoc;
 })();
 
-},{"./assert":33}],22:[function(require,module,exports){
+},{"./assert":34}],22:[function(require,module,exports){
 const assert = require('./assert'),
   Enum = require('./Enum'),
   is = require('./is');
@@ -2574,7 +2574,7 @@ module.exports = (() => {
   return Currency;
 })();
 
-},{"./Enum":27,"./assert":33,"./is":40}],23:[function(require,module,exports){
+},{"./Enum":28,"./assert":34,"./is":41}],23:[function(require,module,exports){
 const assert = require('./assert'),
   array = require('./array'),
   Currency = require('./Currency'),
@@ -2843,10 +2843,11 @@ module.exports = (() => {
   return CurrencyTranslator;
 })();
 
-},{"./../collections/graph/Edge":8,"./../collections/graph/Vertex":9,"./../collections/sorting/ComparatorBuilder":10,"./../collections/sorting/comparators":11,"./Currency":22,"./Decimal":25,"./Rate":29,"./array":32,"./assert":33,"./memoize":44}],24:[function(require,module,exports){
+},{"./../collections/graph/Edge":8,"./../collections/graph/Vertex":9,"./../collections/sorting/ComparatorBuilder":10,"./../collections/sorting/comparators":11,"./Currency":22,"./Decimal":26,"./Rate":30,"./array":33,"./assert":34,"./memoize":45}],24:[function(require,module,exports){
 const assert = require('./assert'),
   ComparatorBuilder = require('./../collections/sorting/ComparatorBuilder'),
   comparators = require('./../collections/sorting/comparators'),
+  DayFormatType = require('.//DayFormatType'),
   is = require('./is');
 module.exports = (() => {
   'use strict';
@@ -3187,15 +3188,22 @@ module.exports = (() => {
      * @public
      * @static
      * @param {String} value
+     * @param {DayFormatType=} type
      * @returns {Day}
      */
-    static parse(value) {
+    static parse(value, type) {
       assert.argumentIsRequired(value, 'value', String);
-      const match = value.match(dayRegex);
+      let t;
+      if (type instanceof DayFormatType) {
+        t = type;
+      } else {
+        t = DayFormatType.YEAR_MONTH_DAY;
+      }
+      const match = value.match(t.regex);
       if (match === null) {
         throw new Error(`Unable to parse value as Day [ ${value} ]`);
       }
-      return new Day(parseInt(match[1]), parseInt(match[2]), parseInt(match[3]));
+      return new Day(parseInt(match[t.yearIndex]), parseInt(match[t.monthIndex]), parseInt(match[t.dayIndex]));
     }
 
     /**
@@ -3365,7 +3373,98 @@ module.exports = (() => {
   return Day;
 })();
 
-},{"./../collections/sorting/ComparatorBuilder":10,"./../collections/sorting/comparators":11,"./assert":33,"./is":40}],25:[function(require,module,exports){
+},{"./../collections/sorting/ComparatorBuilder":10,"./../collections/sorting/comparators":11,".//DayFormatType":25,"./assert":34,"./is":41}],25:[function(require,module,exports){
+const Enum = require('./Enum');
+module.exports = (() => {
+  'use strict';
+
+  /**
+   * Describes for a day can be formatted.
+   *
+   * @public
+   * @extends {Enum}
+   * @param {String} description
+   */
+  class DayFormatType extends Enum {
+    constructor(description, regex, yearIndex, monthIndex, dayIndex) {
+      super(description, description);
+      this._regex = regex;
+      this._yearIndex = yearIndex;
+      this._monthIndex = monthIndex;
+      this._dayIndex = dayIndex;
+    }
+
+    /**
+     * A regular expression for parsing the day type.
+     *
+     * @public
+     * @returns {RegExp}
+     */
+    get regex() {
+      return this._regex;
+    }
+
+    /**
+     * The index used to read the year from a regular expression match.
+     *
+     * @public
+     * @returns {number}
+     */
+    get yearIndex() {
+      return this._yearIndex;
+    }
+
+    /**
+     * The index used to read the month from a regular expression match.
+     *
+     * @public
+     * @returns {number}
+     */
+    get monthIndex() {
+      return this._monthIndex;
+    }
+
+    /**
+     * The index used to read the day from a regular expression match.
+     *
+     * @public
+     * @returns {number}
+     */
+    get dayIndex() {
+      return this._dayIndex;
+    }
+
+    /**
+     * Specifies date formatting as year, then month, then day (e.g. 2025-11-31).
+     *
+     * @public
+     * @static
+     * @returns {DayFormatType}
+     */
+    static get YEAR_MONTH_DAY() {
+      return yearMonthDay;
+    }
+
+    /**
+     * Specifies date formatting as month, then day, then year (e.g. 11-31-2025).
+     *
+     * @public
+     * @static
+     * @returns {DayFormatType}
+     */
+    static get MONTH_DAY_YEAR() {
+      return monthDayYear;
+    }
+    toString() {
+      return `[DayFormatType (description=${this.description})]`;
+    }
+  }
+  const yearMonthDay = new DayFormatType('YEAR_MONTH_DAY', /^([0-9]{4}).?([0-9]{2}).?([0-9]{2})$/, 1, 2, 3);
+  const monthDayYear = new DayFormatType('MONTH_DAY_YEAR', /^([0-9]{2}).?([0-9]{2}).?([0-9]{4})$/, 3, 1, 2);
+  return DayFormatType;
+})();
+
+},{"./Enum":28}],26:[function(require,module,exports){
 const assert = require('./assert'),
   Enum = require('./Enum'),
   is = require('./is');
@@ -3954,7 +4053,7 @@ module.exports = (() => {
   return Decimal;
 })();
 
-},{"./Enum":27,"./assert":33,"./is":40,"big.js":54}],26:[function(require,module,exports){
+},{"./Enum":28,"./assert":34,"./is":41,"big.js":55}],27:[function(require,module,exports){
 const assert = require('./assert');
 module.exports = (() => {
   'use strict';
@@ -4050,7 +4149,7 @@ module.exports = (() => {
   return Disposable;
 })();
 
-},{"./assert":33}],27:[function(require,module,exports){
+},{"./assert":34}],28:[function(require,module,exports){
 const assert = require('./assert'),
   is = require('./is');
 module.exports = (() => {
@@ -4196,7 +4295,7 @@ module.exports = (() => {
   return Enum;
 })();
 
-},{"./assert":33,"./is":40}],28:[function(require,module,exports){
+},{"./assert":34,"./is":41}],29:[function(require,module,exports){
 const assert = require('./assert'),
   is = require('./is');
 const Decimal = require('./Decimal'),
@@ -4285,7 +4384,7 @@ module.exports = (() => {
   return Money;
 })();
 
-},{"./Currency":22,"./Decimal":25,"./assert":33,"./is":40}],29:[function(require,module,exports){
+},{"./Currency":22,"./Decimal":26,"./assert":34,"./is":41}],30:[function(require,module,exports){
 const assert = require('./assert'),
   is = require('./is'),
   memoize = require('./memoize');
@@ -4527,7 +4626,7 @@ module.exports = (() => {
   return Rate;
 })();
 
-},{"./Currency":22,"./Decimal":25,"./assert":33,"./is":40,"./memoize":44}],30:[function(require,module,exports){
+},{"./Currency":22,"./Decimal":26,"./assert":34,"./is":41,"./memoize":45}],31:[function(require,module,exports){
 const assert = require('./assert'),
   is = require('./is');
 const moment = require('moment-timezone');
@@ -4705,7 +4804,7 @@ module.exports = (() => {
   return Timestamp;
 })();
 
-},{"./assert":33,"./is":40,"moment-timezone":60}],31:[function(require,module,exports){
+},{"./assert":34,"./is":41,"moment-timezone":61}],32:[function(require,module,exports){
 const assert = require('./assert'),
   Enum = require('./Enum'),
   is = require('./is'),
@@ -4835,7 +4934,7 @@ module.exports = (() => {
   return Timezones;
 })();
 
-},{"./Enum":27,"./assert":33,"./is":40,"./timezone":49,"date-fns-tz/getTimezoneOffset":58}],32:[function(require,module,exports){
+},{"./Enum":28,"./assert":34,"./is":41,"./timezone":50,"date-fns-tz/getTimezoneOffset":59}],33:[function(require,module,exports){
 const assert = require('./assert'),
   is = require('./is');
 module.exports = (() => {
@@ -5284,7 +5383,7 @@ module.exports = (() => {
   }
 })();
 
-},{"./assert":33,"./is":40}],33:[function(require,module,exports){
+},{"./assert":34,"./is":41}],34:[function(require,module,exports){
 const is = require('./is');
 module.exports = (() => {
   'use strict';
@@ -5412,7 +5511,7 @@ module.exports = (() => {
   };
 })();
 
-},{"./is":40}],34:[function(require,module,exports){
+},{"./is":41}],35:[function(require,module,exports){
 const assert = require('./assert'),
   is = require('./is');
 module.exports = (() => {
@@ -5553,7 +5652,7 @@ module.exports = (() => {
   };
 })();
 
-},{"./assert":33,"./is":40}],35:[function(require,module,exports){
+},{"./assert":34,"./is":41}],36:[function(require,module,exports){
 const assert = require('./assert'),
   is = require('./is');
 module.exports = (() => {
@@ -5621,7 +5720,7 @@ module.exports = (() => {
   };
 })();
 
-},{"./assert":33,"./is":40}],36:[function(require,module,exports){
+},{"./assert":34,"./is":41}],37:[function(require,module,exports){
 const is = require('./is');
 module.exports = (() => {
   'use strict';
@@ -5646,7 +5745,7 @@ module.exports = (() => {
   };
 })();
 
-},{"./is":40}],37:[function(require,module,exports){
+},{"./is":41}],38:[function(require,module,exports){
 module.exports = (() => {
   'use strict';
 
@@ -5727,7 +5826,7 @@ module.exports = (() => {
   return utilities;
 })();
 
-},{}],38:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 module.exports = (() => {
   'use strict';
 
@@ -5783,7 +5882,7 @@ module.exports = (() => {
   };
 })();
 
-},{}],39:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 module.exports = (() => {
   'use strict';
 
@@ -5822,7 +5921,7 @@ module.exports = (() => {
   };
 })();
 
-},{}],40:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 module.exports = (() => {
   'use strict';
 
@@ -6024,7 +6123,7 @@ module.exports = (() => {
   };
 })();
 
-},{}],41:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 const is = require('./is'),
   promise = require('./promise');
 module.exports = (() => {
@@ -6085,7 +6184,7 @@ module.exports = (() => {
   return iterate;
 })();
 
-},{"./is":40,"./promise":46}],42:[function(require,module,exports){
+},{"./is":41,"./promise":47}],43:[function(require,module,exports){
 const assert = require('./assert'),
   is = require('./is');
 module.exports = (() => {
@@ -6125,7 +6224,7 @@ module.exports = (() => {
   return mask;
 })();
 
-},{"./assert":33,"./is":40}],43:[function(require,module,exports){
+},{"./assert":34,"./is":41}],44:[function(require,module,exports){
 const is = require('./is');
 module.exports = (() => {
   'use strict';
@@ -6152,7 +6251,7 @@ module.exports = (() => {
   };
 })();
 
-},{"./is":40}],44:[function(require,module,exports){
+},{"./is":41}],45:[function(require,module,exports){
 const assert = require('./assert');
 module.exports = (() => {
   'use strict';
@@ -6210,7 +6309,7 @@ module.exports = (() => {
   };
 })();
 
-},{"./assert":33}],45:[function(require,module,exports){
+},{"./assert":34}],46:[function(require,module,exports){
 const array = require('./array'),
   is = require('./is');
 module.exports = (() => {
@@ -6356,7 +6455,7 @@ module.exports = (() => {
   return object;
 })();
 
-},{"./array":32,"./is":40}],46:[function(require,module,exports){
+},{"./array":33,"./is":41}],47:[function(require,module,exports){
 const assert = require('./assert');
 module.exports = (() => {
   'use strict';
@@ -6546,7 +6645,7 @@ module.exports = (() => {
   };
 })();
 
-},{"./assert":33}],47:[function(require,module,exports){
+},{"./assert":34}],48:[function(require,module,exports){
 const assert = require('./assert');
 module.exports = (() => {
   'use strict';
@@ -6570,7 +6669,7 @@ module.exports = (() => {
   };
 })();
 
-},{"./assert":33}],48:[function(require,module,exports){
+},{"./assert":34}],49:[function(require,module,exports){
 const assert = require('./assert'),
   is = require('./is');
 module.exports = (() => {
@@ -6684,7 +6783,7 @@ module.exports = (() => {
   };
 })();
 
-},{"./assert":33,"./is":40}],49:[function(require,module,exports){
+},{"./assert":34,"./is":41}],50:[function(require,module,exports){
 const assert = require('./assert');
 module.exports = (() => {
   'use strict';
@@ -6755,7 +6854,7 @@ module.exports = (() => {
   return timezone;
 })();
 
-},{"./assert":33}],50:[function(require,module,exports){
+},{"./assert":34}],51:[function(require,module,exports){
 const assert = require('./../lang/assert'),
   Disposable = require('./../lang/Disposable');
 module.exports = (() => {
@@ -6869,7 +6968,7 @@ module.exports = (() => {
   return Event;
 })();
 
-},{"./../lang/Disposable":26,"./../lang/assert":33}],51:[function(require,module,exports){
+},{"./../lang/Disposable":27,"./../lang/assert":34}],52:[function(require,module,exports){
 const assert = require('./../lang/assert'),
   Disposable = require('./../lang/Disposable'),
   Event = require('./Event');
@@ -7017,7 +7116,7 @@ module.exports = (() => {
   return EventMap;
 })();
 
-},{"./../lang/Disposable":26,"./../lang/assert":33,"./Event":50}],52:[function(require,module,exports){
+},{"./../lang/Disposable":27,"./../lang/assert":34,"./Event":51}],53:[function(require,module,exports){
 const assert = require('./../lang/assert'),
   is = require('./../lang/is'),
   Disposable = require('./../lang/Disposable'),
@@ -7162,7 +7261,7 @@ module.exports = (() => {
   return Model;
 })();
 
-},{"./../lang/Disposable":26,"./../lang/assert":33,"./../lang/is":40,"./../messaging/Event":50}],53:[function(require,module,exports){
+},{"./../lang/Disposable":27,"./../lang/assert":34,"./../lang/is":41,"./../messaging/Event":51}],54:[function(require,module,exports){
 const assert = require('./../../lang/assert');
 const Schema = require('./../../serialization/json/Schema');
 module.exports = (() => {
@@ -7265,7 +7364,7 @@ module.exports = (() => {
   return RestParser;
 })();
 
-},{"./../../lang/assert":33,"./../../serialization/json/Schema":66}],54:[function(require,module,exports){
+},{"./../../lang/assert":34,"./../../serialization/json/Schema":67}],55:[function(require,module,exports){
 /*
  *  big.js v6.2.2
  *  A small, fast, easy-to-use library for arbitrary-precision decimal arithmetic.
@@ -8310,7 +8409,7 @@ module.exports = (() => {
   }
 })(this);
 
-},{}],55:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8333,7 +8432,7 @@ function newDateUTC(fullYear, month, day, hour, minute, second, millisecond) {
 }
 
 module.exports = exports.default;
-},{}],56:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8471,7 +8570,7 @@ function isValidTimezoneIANAString(timeZoneString) {
 }
 
 module.exports = exports.default;
-},{"../newDateUTC/index.js":55,"../tzTokenizeDate/index.js":57}],57:[function(require,module,exports){
+},{"../newDateUTC/index.js":56,"../tzTokenizeDate/index.js":58}],58:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8572,7 +8671,7 @@ function getDateTimeFormat(timeZone) {
 }
 
 module.exports = exports.default;
-},{}],58:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8616,7 +8715,7 @@ function getTimezoneOffset(timeZone, date) {
 }
 
 module.exports = exports.default;
-},{"../_lib/tzParseTimezone/index.js":56}],59:[function(require,module,exports){
+},{"../_lib/tzParseTimezone/index.js":57}],60:[function(require,module,exports){
 module.exports={
 	"version": "2025a",
 	"zones": [
@@ -9469,11 +9568,11 @@ module.exports={
 		"ZW|Africa/Maputo Africa/Harare"
 	]
 }
-},{}],60:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
 var moment = module.exports = require("./moment-timezone");
 moment.tz.load(require('./data/packed/latest.json'));
 
-},{"./data/packed/latest.json":59,"./moment-timezone":61}],61:[function(require,module,exports){
+},{"./data/packed/latest.json":60,"./moment-timezone":62}],62:[function(require,module,exports){
 //! moment-timezone.js
 //! version : 0.5.47
 //! Copyright (c) JS Foundation and other contributors
@@ -10204,7 +10303,7 @@ moment.tz.load(require('./data/packed/latest.json'));
 	return moment;
 }));
 
-},{"moment":62}],62:[function(require,module,exports){
+},{"moment":63}],63:[function(require,module,exports){
 //! moment.js
 //! version : 2.30.1
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
@@ -15894,7 +15993,7 @@ moment.tz.load(require('./data/packed/latest.json'));
 
 })));
 
-},{}],63:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 const Currency = require('./../../lang/Currency'),
   Money = require('./../../lang/Money');
 const DataType = require('./DataType'),
@@ -15961,7 +16060,7 @@ module.exports = (() => {
   return Component;
 })();
 
-},{"./../../lang/Currency":22,"./../../lang/Money":28,"./DataType":64,"./Field":65}],64:[function(require,module,exports){
+},{"./../../lang/Currency":22,"./../../lang/Money":29,"./DataType":65,"./Field":66}],65:[function(require,module,exports){
 const moment = require('moment');
 const AdHoc = require('./../../lang/AdHoc'),
   assert = require('./../../lang/assert'),
@@ -16245,7 +16344,7 @@ module.exports = (() => {
   return DataType;
 })();
 
-},{"./../../lang/AdHoc":21,"./../../lang/Day":24,"./../../lang/Decimal":25,"./../../lang/Enum":27,"./../../lang/Timestamp":30,"./../../lang/assert":33,"./../../lang/is":40,"moment":62}],65:[function(require,module,exports){
+},{"./../../lang/AdHoc":21,"./../../lang/Day":24,"./../../lang/Decimal":26,"./../../lang/Enum":28,"./../../lang/Timestamp":31,"./../../lang/assert":34,"./../../lang/is":41,"moment":63}],66:[function(require,module,exports){
 const assert = require('./../../lang/assert'),
   is = require('./../../lang/is');
 const DataType = require('./DataType');
@@ -16319,7 +16418,7 @@ module.exports = (() => {
   return Field;
 })();
 
-},{"./../../lang/assert":33,"./../../lang/is":40,"./DataType":64}],66:[function(require,module,exports){
+},{"./../../lang/assert":34,"./../../lang/is":41,"./DataType":65}],67:[function(require,module,exports){
 const attributes = require('./../../lang/attributes'),
   functions = require('./../../lang/functions'),
   is = require('./../../lang/is');
@@ -16603,7 +16702,7 @@ module.exports = (() => {
   return Schema;
 })();
 
-},{"./../../collections/LinkedList":4,"./../../collections/Tree":7,"./../../lang/attributes":34,"./../../lang/functions":39,"./../../lang/is":40,"./Component":63,"./Field":65}],67:[function(require,module,exports){
+},{"./../../collections/LinkedList":4,"./../../collections/Tree":7,"./../../lang/attributes":35,"./../../lang/functions":40,"./../../lang/is":41,"./Component":64,"./Field":66}],68:[function(require,module,exports){
 const assert = require('./../../../lang/assert');
 const Component = require('./../Component'),
   DataType = require('./../DataType'),
@@ -16668,7 +16767,7 @@ module.exports = (() => {
   return ComponentBuilder;
 })();
 
-},{"./../../../lang/assert":33,"./../Component":63,"./../DataType":64,"./../Field":65}],68:[function(require,module,exports){
+},{"./../../../lang/assert":34,"./../Component":64,"./../DataType":65,"./../Field":66}],69:[function(require,module,exports){
 const assert = require('./../../../lang/assert'),
   is = require('./../../../lang/is');
 const Component = require('./../Component'),
@@ -16784,7 +16883,7 @@ module.exports = (() => {
   return SchemaBuilder;
 })();
 
-},{"./../../../lang/assert":33,"./../../../lang/is":40,"./../Component":63,"./../DataType":64,"./../Field":65,"./../Schema":66,"./ComponentBuilder":67}],69:[function(require,module,exports){
+},{"./../../../lang/assert":34,"./../../../lang/is":41,"./../Component":64,"./../DataType":65,"./../Field":66,"./../Schema":67,"./ComponentBuilder":68}],70:[function(require,module,exports){
 const Specification = require('./Specification');
 module.exports = (() => {
   'use strict';
@@ -16792,7 +16891,7 @@ module.exports = (() => {
   return Specification.And;
 })();
 
-},{"./Specification":84}],70:[function(require,module,exports){
+},{"./Specification":85}],71:[function(require,module,exports){
 const assert = require('./../lang/assert');
 const Specification = require('./Specification');
 module.exports = (() => {
@@ -16823,7 +16922,7 @@ module.exports = (() => {
   return Between;
 })();
 
-},{"./../lang/assert":33,"./Specification":84}],71:[function(require,module,exports){
+},{"./../lang/assert":34,"./Specification":85}],72:[function(require,module,exports){
 const is = require('./../lang/is');
 const Specification = require('./Specification');
 module.exports = (() => {
@@ -16861,7 +16960,7 @@ module.exports = (() => {
   return Changes;
 })();
 
-},{"./../lang/is":40,"./Specification":84}],72:[function(require,module,exports){
+},{"./../lang/is":41,"./Specification":85}],73:[function(require,module,exports){
 const assert = require('./../lang/assert');
 const Specification = require('./Specification');
 module.exports = (() => {
@@ -16891,7 +16990,7 @@ module.exports = (() => {
   return Contained;
 })();
 
-},{"./../lang/assert":33,"./Specification":84}],73:[function(require,module,exports){
+},{"./../lang/assert":34,"./Specification":85}],74:[function(require,module,exports){
 const Specification = require('./Specification');
 module.exports = (() => {
   'use strict';
@@ -16919,7 +17018,7 @@ module.exports = (() => {
   return Contains;
 })();
 
-},{"./Specification":84}],74:[function(require,module,exports){
+},{"./Specification":85}],75:[function(require,module,exports){
 const assert = require('./../lang/assert');
 is = require('./../lang/is');
 const Specification = require('./Specification');
@@ -16962,7 +17061,7 @@ module.exports = (() => {
   return CrossesSpecification;
 })();
 
-},{"./../lang/assert":33,"./../lang/is":40,"./Specification":84}],75:[function(require,module,exports){
+},{"./../lang/assert":34,"./../lang/is":41,"./Specification":85}],76:[function(require,module,exports){
 const Specification = require('./Specification');
 module.exports = (() => {
   'use strict';
@@ -16990,7 +17089,7 @@ module.exports = (() => {
   return Equals;
 })();
 
-},{"./Specification":84}],76:[function(require,module,exports){
+},{"./Specification":85}],77:[function(require,module,exports){
 const Specification = require('./Specification');
 const Null = require('./Null'),
   Undefined = require('./Undefined');
@@ -17021,7 +17120,7 @@ module.exports = (() => {
   return Exists;
 })();
 
-},{"./Null":80,"./Specification":84,"./Undefined":85}],77:[function(require,module,exports){
+},{"./Null":81,"./Specification":85,"./Undefined":86}],78:[function(require,module,exports){
 const Specification = require('./Specification');
 module.exports = (() => {
   'use strict';
@@ -17046,7 +17145,7 @@ module.exports = (() => {
   return Fail;
 })();
 
-},{"./Specification":84}],78:[function(require,module,exports){
+},{"./Specification":85}],79:[function(require,module,exports){
 const is = require('./../lang/is');
 const Specification = require('./Specification');
 module.exports = (() => {
@@ -17072,7 +17171,7 @@ module.exports = (() => {
   return Nan;
 })();
 
-},{"./../lang/is":40,"./Specification":84}],79:[function(require,module,exports){
+},{"./../lang/is":41,"./Specification":85}],80:[function(require,module,exports){
 const Specification = require('./Specification');
 module.exports = (() => {
   'use strict';
@@ -17080,7 +17179,7 @@ module.exports = (() => {
   return Specification.Not;
 })();
 
-},{"./Specification":84}],80:[function(require,module,exports){
+},{"./Specification":85}],81:[function(require,module,exports){
 const is = require('./../lang/is');
 const Specification = require('./Specification');
 module.exports = (() => {
@@ -17106,7 +17205,7 @@ module.exports = (() => {
   return Null;
 })();
 
-},{"./../lang/is":40,"./Specification":84}],81:[function(require,module,exports){
+},{"./../lang/is":41,"./Specification":85}],82:[function(require,module,exports){
 const is = require('./../lang/is');
 const Specification = require('./Specification');
 module.exports = (() => {
@@ -17134,7 +17233,7 @@ module.exports = (() => {
   return Numeric;
 })();
 
-},{"./../lang/is":40,"./Specification":84}],82:[function(require,module,exports){
+},{"./../lang/is":41,"./Specification":85}],83:[function(require,module,exports){
 const Specification = require('./Specification');
 module.exports = (() => {
   'use strict';
@@ -17142,7 +17241,7 @@ module.exports = (() => {
   return Specification.Or;
 })();
 
-},{"./Specification":84}],83:[function(require,module,exports){
+},{"./Specification":85}],84:[function(require,module,exports){
 const Specification = require('./Specification');
 module.exports = (() => {
   'use strict';
@@ -17167,7 +17266,7 @@ module.exports = (() => {
   return Pass;
 })();
 
-},{"./Specification":84}],84:[function(require,module,exports){
+},{"./Specification":85}],85:[function(require,module,exports){
 const assert = require('./../lang/assert');
 module.exports = (() => {
   'use strict';
@@ -17291,7 +17390,7 @@ module.exports = (() => {
   return Specification;
 })();
 
-},{"./../lang/assert":33}],85:[function(require,module,exports){
+},{"./../lang/assert":34}],86:[function(require,module,exports){
 const is = require('./../lang/is');
 const Specification = require('./Specification');
 module.exports = (() => {
@@ -17317,7 +17416,7 @@ module.exports = (() => {
   return Undefined;
 })();
 
-},{"./../lang/is":40,"./Specification":84}],86:[function(require,module,exports){
+},{"./../lang/is":41,"./Specification":85}],87:[function(require,module,exports){
 const is = require('./../../lang/is');
 const Specification = require('./../Specification');
 module.exports = (() => {
@@ -17344,7 +17443,7 @@ module.exports = (() => {
   return After;
 })();
 
-},{"./../../lang/is":40,"./../Specification":84}],87:[function(require,module,exports){
+},{"./../../lang/is":41,"./../Specification":85}],88:[function(require,module,exports){
 const is = require('./../../lang/is');
 const Specification = require('./../Specification');
 module.exports = (() => {
@@ -17371,7 +17470,7 @@ module.exports = (() => {
   return Before;
 })();
 
-},{"./../../lang/is":40,"./../Specification":84}],88:[function(require,module,exports){
+},{"./../../lang/is":41,"./../Specification":85}],89:[function(require,module,exports){
 const is = require('./../../lang/is'),
   DayClazz = require('./../../lang/Day');
 const Specification = require('./../Specification');
@@ -17396,7 +17495,7 @@ module.exports = (() => {
   return Day;
 })();
 
-},{"./../../lang/Day":24,"./../../lang/is":40,"./../Specification":84}],89:[function(require,module,exports){
+},{"./../../lang/Day":24,"./../../lang/is":41,"./../Specification":85}],90:[function(require,module,exports){
 const is = require('./../../lang/is');
 const Specification = require('./../Specification');
 module.exports = (() => {
@@ -17423,7 +17522,7 @@ module.exports = (() => {
   return GreaterThan;
 })();
 
-},{"./../../lang/is":40,"./../Specification":84}],90:[function(require,module,exports){
+},{"./../../lang/is":41,"./../Specification":85}],91:[function(require,module,exports){
 const is = require('./../../lang/is');
 const Specification = require('./../Specification');
 module.exports = (() => {
@@ -17450,7 +17549,7 @@ module.exports = (() => {
   return LessThan;
 })();
 
-},{"./../../lang/is":40,"./../Specification":84}],91:[function(require,module,exports){
+},{"./../../lang/is":41,"./../Specification":85}],92:[function(require,module,exports){
 const is = require('./../../lang/is');
 const Specification = require('./../Specification');
 module.exports = (() => {
@@ -17474,7 +17573,7 @@ module.exports = (() => {
   return Numeric;
 })();
 
-},{"./../../lang/is":40,"./../Specification":84}],92:[function(require,module,exports){
+},{"./../../lang/is":41,"./../Specification":85}],93:[function(require,module,exports){
 const is = require('./../../lang/is');
 const Specification = require('./../Specification');
 module.exports = (() => {
@@ -17501,7 +17600,7 @@ module.exports = (() => {
   return SameDay;
 })();
 
-},{"./../../lang/is":40,"./../Specification":84}],93:[function(require,module,exports){
+},{"./../../lang/is":41,"./../Specification":85}],94:[function(require,module,exports){
 const Enum = require('./../../../../lang/Enum'),
   FailureReasonItem = require('./../../../../api/failures/FailureReasonItem'),
   FailureType = require('./../../../../api/failures/FailureType');
@@ -17606,7 +17705,7 @@ describe('When a FailureType is created with a template string that references d
   });
 });
 
-},{"./../../../../api/failures/FailureReasonItem":2,"./../../../../api/failures/FailureType":3,"./../../../../lang/Enum":27}],94:[function(require,module,exports){
+},{"./../../../../api/failures/FailureReasonItem":2,"./../../../../api/failures/FailureType":3,"./../../../../lang/Enum":28}],95:[function(require,module,exports){
 const Enum = require('./../../../../lang/Enum');
 const FailureReason = require('./../../../../api/failures/FailureReason'),
   FailureType = require('./../../../../api/failures/FailureType');
@@ -17780,7 +17879,7 @@ describe('When a schema is validated', () => {
   });
 });
 
-},{"./../../../../api/failures/FailureReason":1,"./../../../../api/failures/FailureType":3,"./../../../../lang/Enum":27,"./../../../../serialization/json/DataType":64,"./../../../../serialization/json/Field":65,"./../../../../serialization/json/Schema":66}],95:[function(require,module,exports){
+},{"./../../../../api/failures/FailureReason":1,"./../../../../api/failures/FailureType":3,"./../../../../lang/Enum":28,"./../../../../serialization/json/DataType":65,"./../../../../serialization/json/Field":66,"./../../../../serialization/json/Schema":67}],96:[function(require,module,exports){
 const LinkedList = require('./../../../collections/LinkedList');
 describe('When "doe" is used to start a linked list', () => {
   'use strict';
@@ -17839,7 +17938,7 @@ describe('When "doe" is used to start a linked list', () => {
   });
 });
 
-},{"./../../../collections/LinkedList":4}],96:[function(require,module,exports){
+},{"./../../../collections/LinkedList":4}],97:[function(require,module,exports){
 const Queue = require('./../../../collections/Queue');
 describe('When a Queue is constructed', () => {
   'use strict';
@@ -17968,7 +18067,7 @@ describe('When a Queue is constructed', () => {
   });
 });
 
-},{"./../../../collections/Queue":5}],97:[function(require,module,exports){
+},{"./../../../collections/Queue":5}],98:[function(require,module,exports){
 const Stack = require('./../../../collections/Stack');
 describe('When a Stack is constructed', () => {
   'use strict';
@@ -18094,7 +18193,7 @@ describe('When a Stack is constructed', () => {
   });
 });
 
-},{"./../../../collections/Stack":6}],98:[function(require,module,exports){
+},{"./../../../collections/Stack":6}],99:[function(require,module,exports){
 const Tree = require('./../../../collections/Tree');
 describe('When a Tree is constructed', () => {
   'use strict';
@@ -18245,7 +18344,7 @@ describe('When a binary tree, having three levels, is constructed', () => {
   });
 });
 
-},{"./../../../collections/Tree":7}],99:[function(require,module,exports){
+},{"./../../../collections/Tree":7}],100:[function(require,module,exports){
 const Vertex = require('./../../../../collections/graph/Vertex');
 describe('When graph vertex (a) is initialized', () => {
   'use strict';
@@ -18349,7 +18448,7 @@ describe('When graph vertex (a) is initialized', () => {
   });
 });
 
-},{"./../../../../collections/graph/Vertex":9}],100:[function(require,module,exports){
+},{"./../../../../collections/graph/Vertex":9}],101:[function(require,module,exports){
 const ComparatorBuilder = require('./../../../../collections/sorting/ComparatorBuilder');
 describe('When a ComparatorBuilder is composed with two comparators', () => {
   'use strict';
@@ -18430,7 +18529,7 @@ describe('When a ComparatorBuilder is composed with two comparators', () => {
   });
 });
 
-},{"./../../../../collections/sorting/ComparatorBuilder":10}],101:[function(require,module,exports){
+},{"./../../../../collections/sorting/ComparatorBuilder":10}],102:[function(require,module,exports){
 const comparators = require('./../../../../collections/sorting/comparators');
 describe('When using the "compareDates" comparator', () => {
   'use strict';
@@ -18613,7 +18712,7 @@ describe('When using the "compareNull" comparator', () => {
   });
 });
 
-},{"./../../../../collections/sorting/comparators":11}],102:[function(require,module,exports){
+},{"./../../../../collections/sorting/comparators":11}],103:[function(require,module,exports){
 const CompoundMap = require('./../../../../collections/specialized/CompoundMap');
 describe('When an CompoundMap is constructed', () => {
   'use strict';
@@ -18747,7 +18846,7 @@ describe('When an CompoundMap is constructed', () => {
   });
 });
 
-},{"./../../../../collections/specialized/CompoundMap":12}],103:[function(require,module,exports){
+},{"./../../../../collections/specialized/CompoundMap":12}],104:[function(require,module,exports){
 const Disposable = require('./../../../../lang/Disposable'),
   DisposableStack = require('./../../../../collections/specialized/DisposableStack');
 describe('When an DisposableStack is constructed', () => {
@@ -18909,7 +19008,7 @@ describe('When an DisposableStack is constructed', () => {
   });
 });
 
-},{"./../../../../collections/specialized/DisposableStack":13,"./../../../../lang/Disposable":26}],104:[function(require,module,exports){
+},{"./../../../../collections/specialized/DisposableStack":13,"./../../../../lang/Disposable":27}],105:[function(require,module,exports){
 const EvictingList = require('./../../../../collections/specialized/EvictingList');
 describe('When an EvictingList is constructed (with no capacity)', () => {
   'use strict';
@@ -19081,7 +19180,7 @@ describe('When an EvictingList is constructed (with a capacity of 3)', () => {
   });
 });
 
-},{"./../../../../collections/specialized/EvictingList":14}],105:[function(require,module,exports){
+},{"./../../../../collections/specialized/EvictingList":14}],106:[function(require,module,exports){
 const EvictingMap = require('./../../../../collections/specialized/EvictingMap');
 describe('When an EvictingMap is constructed (with no capacity)', () => {
   'use strict';
@@ -19374,7 +19473,7 @@ describe('When an EvictingMap is constructed', () => {
   });
 });
 
-},{"./../../../../collections/specialized/EvictingMap":15}],106:[function(require,module,exports){
+},{"./../../../../collections/specialized/EvictingMap":15}],107:[function(require,module,exports){
 const PriorityQueue = require('./../../../../collections/specialized/PriorityQueue');
 describe('When a Queue is constructed, using a "ladies first" comparator', () => {
   'use strict';
@@ -19647,7 +19746,7 @@ describe('When a Queue is constructed, using a simple (ascending) numeric compar
   });
 });
 
-},{"./../../../../collections/specialized/PriorityQueue":16}],107:[function(require,module,exports){
+},{"./../../../../collections/specialized/PriorityQueue":16}],108:[function(require,module,exports){
 const TimeMap = require('./../../../../collections/specialized/TimeMap');
 describe('When an TimeMap is constructed (with a 10 millisecond time to live)', () => {
   'use strict';
@@ -19684,7 +19783,7 @@ describe('When an TimeMap is constructed (with a 10 millisecond time to live)', 
   });
 });
 
-},{"./../../../../collections/specialized/TimeMap":17}],108:[function(require,module,exports){
+},{"./../../../../collections/specialized/TimeMap":17}],109:[function(require,module,exports){
 const CommandHandler = require('./../../../commands/CommandHandler');
 describe('When a CommandHandler is created from a function', () => {
   'use strict';
@@ -19735,7 +19834,7 @@ describe('When a CommandHandler is created from a function', () => {
   });
 });
 
-},{"./../../../commands/CommandHandler":18}],109:[function(require,module,exports){
+},{"./../../../commands/CommandHandler":18}],110:[function(require,module,exports){
 const CommandHandler = require('./../../../commands/CommandHandler'),
   CompositeCommandHandler = require('./../../../commands/CompositeCommandHandler');
 describe('When a CompositeCommandHandler is created', () => {
@@ -19783,7 +19882,7 @@ describe('When a CompositeCommandHandler is created', () => {
   });
 });
 
-},{"./../../../commands/CommandHandler":18,"./../../../commands/CompositeCommandHandler":19}],110:[function(require,module,exports){
+},{"./../../../commands/CommandHandler":18,"./../../../commands/CompositeCommandHandler":19}],111:[function(require,module,exports){
 const CommandHandler = require('./../../../commands/CommandHandler'),
   MappedCommandHandler = require('./../../../commands/MappedCommandHandler');
 describe('When a MappedCommandHandler is created with two mapped commands', () => {
@@ -19849,7 +19948,7 @@ describe('When a MappedCommandHandler is created with two mapped commands', () =
   });
 });
 
-},{"./../../../commands/CommandHandler":18,"./../../../commands/MappedCommandHandler":20}],111:[function(require,module,exports){
+},{"./../../../commands/CommandHandler":18,"./../../../commands/MappedCommandHandler":20}],112:[function(require,module,exports){
 const AdHoc = require('./../../../lang/AdHoc');
 describe('When wrapping an object in an ad hoc serialization container', () => {
   'use strict';
@@ -19889,7 +19988,7 @@ describe('When wrapping an object in an ad hoc serialization container', () => {
   });
 });
 
-},{"./../../../lang/AdHoc":21}],112:[function(require,module,exports){
+},{"./../../../lang/AdHoc":21}],113:[function(require,module,exports){
 const Currency = require('./../../../lang/Currency'),
   Decimal = require('./../../../lang/Decimal'),
   Rate = require('./../../../lang/Rate');
@@ -20056,8 +20155,9 @@ describe('When a CurrencyTranslator is created with ^AUDUSD and ^USDEUR', () => 
   });
 });
 
-},{"./../../../lang/Currency":22,"./../../../lang/CurrencyTranslator":23,"./../../../lang/Decimal":25,"./../../../lang/Rate":29}],113:[function(require,module,exports){
-const Day = require('./../../../lang/Day');
+},{"./../../../lang/Currency":22,"./../../../lang/CurrencyTranslator":23,"./../../../lang/Decimal":26,"./../../../lang/Rate":30}],114:[function(require,module,exports){
+const Day = require('./../../../lang/Day'),
+  DayFormatType = require('./../../../lang/DayFormatType');
 describe('When "2017-08-31 is parsed as a Day', () => {
   'use strict';
 
@@ -20075,7 +20175,51 @@ describe('When "2017-08-31 is parsed as a Day', () => {
     expect(day.day).toEqual(31);
   });
   describe('and the Day instance is formatted', () => {
-    it('should output "2017-08-31"', () => {
+    it('should output be "2017-08-31"', () => {
+      expect(day.format()).toEqual('2017-08-31');
+    });
+  });
+});
+describe('When "2017-08-31 is parsed as a Day (using DayFormatType.YEAR_MONTH_DAY)', () => {
+  'use strict';
+
+  let day;
+  beforeEach(() => {
+    day = Day.parse('2017-08-31', DayFormatType.YEAR_MONTH_DAY);
+  });
+  it('the year should be 2017', () => {
+    expect(day.year).toEqual(2017);
+  });
+  it('the month should be 8', () => {
+    expect(day.month).toEqual(8);
+  });
+  it('the day should be 31', () => {
+    expect(day.day).toEqual(31);
+  });
+  describe('and the Day instance is formatted', () => {
+    it('should output be "2017-08-31"', () => {
+      expect(day.format()).toEqual('2017-08-31');
+    });
+  });
+});
+describe('When "08-31-2017 is parsed as a Day (using DayFormatType.MONTH_DAY_YEAR)', () => {
+  'use strict';
+
+  let day;
+  beforeEach(() => {
+    day = Day.parse('08-31-2017', DayFormatType.MONTH_DAY_YEAR);
+  });
+  it('the year should be 2017', () => {
+    expect(day.year).toEqual(2017);
+  });
+  it('the month should be 8', () => {
+    expect(day.month).toEqual(8);
+  });
+  it('the day should be 31', () => {
+    expect(day.day).toEqual(31);
+  });
+  describe('and the Day instance is formatted', () => {
+    it('should output be "2017-08-31"', () => {
       expect(day.format()).toEqual('2017-08-31');
     });
   });
@@ -20594,7 +20738,7 @@ describe('When checking the name of a day', () => {
   });
 });
 
-},{"./../../../lang/Day":24}],114:[function(require,module,exports){
+},{"./../../../lang/Day":24,"./../../../lang/DayFormatType":25}],115:[function(require,module,exports){
 const Decimal = require('./../../../lang/Decimal');
 describe('When adding values that cause floating point problems (e.g. 1.1 + 2.2 != 3.3)', () => {
   'use strict';
@@ -21021,7 +21165,7 @@ describe('When checking for containment', () => {
   });
 });
 
-},{"./../../../lang/Decimal":25}],115:[function(require,module,exports){
+},{"./../../../lang/Decimal":26}],116:[function(require,module,exports){
 const Disposable = require('./../../../lang/Disposable');
 describe('When a Disposable is extended', () => {
   'use strict';
@@ -21112,7 +21256,7 @@ describe('When a Disposable.fromAction creates a Disposable', () => {
   });
 });
 
-},{"./../../../lang/Disposable":26}],116:[function(require,module,exports){
+},{"./../../../lang/Disposable":27}],117:[function(require,module,exports){
 const Enum = require('./../../../lang/Enum');
 describe('When Enum is extended (as types EnumA and EnumB) and type items are added to each (X and Y)', () => {
   'use strict';
@@ -21202,7 +21346,7 @@ describe('When Enum is extended (as types EnumA and EnumB) and type items are ad
   });
 });
 
-},{"./../../../lang/Enum":27}],117:[function(require,module,exports){
+},{"./../../../lang/Enum":28}],118:[function(require,module,exports){
 const Currency = require('./../../../lang/Currency'),
   Decimal = require('./../../../lang/Decimal'),
   Rate = require('./../../../lang/Rate');
@@ -21326,7 +21470,7 @@ describe('When parsing a "^GBPUSD" rate of 1.25882', () => {
   });
 });
 
-},{"./../../../lang/Currency":22,"./../../../lang/Decimal":25,"./../../../lang/Rate":29}],118:[function(require,module,exports){
+},{"./../../../lang/Currency":22,"./../../../lang/Decimal":26,"./../../../lang/Rate":30}],119:[function(require,module,exports){
 const Timestamp = require('./../../../lang/Timestamp');
 describe('When Timestamp is created from a timestamp (1502372574350)', () => {
   'use strict';
@@ -21481,7 +21625,7 @@ describe('When comparing the same Timestamp instances', () => {
   });
 });
 
-},{"./../../../lang/Timestamp":30}],119:[function(require,module,exports){
+},{"./../../../lang/Timestamp":31}],120:[function(require,module,exports){
 let Timezones = require('./../../../lang/Timezones');
 describe('When accessing static items', () => {
   'use strict';
@@ -21570,7 +21714,7 @@ describe('When attempting to determine if daylight savings time is in effect', (
   });
 });
 
-},{"./../../../lang/Timezones":31}],120:[function(require,module,exports){
+},{"./../../../lang/Timezones":32}],121:[function(require,module,exports){
 const array = require('./../../../lang/array');
 describe('when reducing an array to unique values', () => {
   'use strict';
@@ -22687,7 +22831,7 @@ describe('when performing a binary search on an array with twenty one sparse ite
   });
 });
 
-},{"./../../../lang/array":32}],121:[function(require,module,exports){
+},{"./../../../lang/array":33}],122:[function(require,module,exports){
 const assert = require('./../../../lang/assert');
 describe('when attempting to validate an array', () => {
   'use strict';
@@ -22747,7 +22891,7 @@ describe('when attempting to validate an array', () => {
   });
 });
 
-},{"./../../../lang/assert":33}],122:[function(require,module,exports){
+},{"./../../../lang/assert":34}],123:[function(require,module,exports){
 const attributes = require('./../../../lang/attributes');
 describe('When "attributes.has" is used to check a top-level property', () => {
   'use strict';
@@ -23302,7 +23446,7 @@ describe('When "attributes.read" is used with a non-default separator', () => {
   });
 });
 
-},{"./../../../lang/attributes":34}],123:[function(require,module,exports){
+},{"./../../../lang/attributes":35}],124:[function(require,module,exports){
 const base52 = require('./../../../lang/base52');
 describe('when converting base ten numbers to base fifty-two strings', () => {
   'use strict';
@@ -23372,7 +23516,7 @@ describe('when converting base ten numbers to base fifty-two strings', () => {
   });
 });
 
-},{"./../../../lang/base52":35}],124:[function(require,module,exports){
+},{"./../../../lang/base52":36}],125:[function(require,module,exports){
 const connection = require('./../../../lang/connection');
 describe('When "getIsSecure is invoked', () => {
   'use strict';
@@ -23391,7 +23535,7 @@ describe('When "getIsSecure is invoked', () => {
   });
 });
 
-},{"./../../../lang/connection":36}],125:[function(require,module,exports){
+},{"./../../../lang/connection":37}],126:[function(require,module,exports){
 const utilities = require('./../../../lang/date');
 describe('When requesting the current timestamp', () => {
   'use strict';
@@ -23507,7 +23651,7 @@ describe('When determining the ordinal for a date', () => {
   });
 });
 
-},{"./../../../lang/date":37}],126:[function(require,module,exports){
+},{"./../../../lang/date":38}],127:[function(require,module,exports){
 const formatter = require('./../../../lang/formatter');
 describe('When formatting numbers', () => {
   'use strict';
@@ -23517,7 +23661,7 @@ describe('When formatting numbers', () => {
   });
 });
 
-},{"./../../../lang/formatter":38}],127:[function(require,module,exports){
+},{"./../../../lang/formatter":39}],128:[function(require,module,exports){
 const functions = require('./../../../lang/functions');
 describe('when using the tautology function', () => {
   'use strict';
@@ -23541,7 +23685,7 @@ describe('when using the tautology function', () => {
   });
 });
 
-},{"./../../../lang/functions":39}],128:[function(require,module,exports){
+},{"./../../../lang/functions":40}],129:[function(require,module,exports){
 const is = require('./../../../lang/is');
 describe('When checking the number 3', () => {
   'use strict';
@@ -24254,7 +24398,7 @@ describe('When checking inheritance', () => {
   });
 });
 
-},{"./../../../lang/is":40}],129:[function(require,module,exports){
+},{"./../../../lang/is":41}],130:[function(require,module,exports){
 const iterate = require('./../../../lang/iterate');
 describe('When using the iterate function', () => {
   let a;
@@ -24372,7 +24516,7 @@ describe('When using the iterate function', () => {
   });
 });
 
-},{"./../../../lang/iterate":41}],130:[function(require,module,exports){
+},{"./../../../lang/iterate":42}],131:[function(require,module,exports){
 const mask = require('./../../../lang/mask');
 describe('When testing the suitability of an bit-based enumeration item', () => {
   it('zero should be valid', () => {
@@ -24490,7 +24634,7 @@ describe('When working with an empty flags collection', () => {
   });
 });
 
-},{"./../../../lang/mask":42}],131:[function(require,module,exports){
+},{"./../../../lang/mask":43}],132:[function(require,module,exports){
 const math = require('./../../../lang/math');
 describe('When using math.approximate', () => {
   'use strict';
@@ -24542,7 +24686,7 @@ describe('When using math.approximate', () => {
   });
 });
 
-},{"./../../../lang/math":43}],132:[function(require,module,exports){
+},{"./../../../lang/math":44}],133:[function(require,module,exports){
 const memoize = require('./../../../lang/memoize');
 describe('When using memoize.simple', () => {
   'use strict';
@@ -24669,7 +24813,7 @@ describe('When using memoize.cache', () => {
   });
 });
 
-},{"./../../../lang/memoize":44}],133:[function(require,module,exports){
+},{"./../../../lang/memoize":45}],134:[function(require,module,exports){
 const object = require('./../../../lang/object');
 describe('When cloning an object', () => {
   'use strict';
@@ -24998,7 +25142,7 @@ describe('When cloning a complex object (using a custom value extractor)', () =>
   });
 });
 
-},{"./../../../lang/object":45}],134:[function(require,module,exports){
+},{"./../../../lang/object":46}],135:[function(require,module,exports){
 const promise = require('./../../../lang/promise');
 describe('When a timeout is set for a promise', () => {
   'use strict';
@@ -25851,7 +25995,7 @@ describe('When "promise.build" is used to create a promise', () => {
   });
 });
 
-},{"./../../../lang/promise":46}],135:[function(require,module,exports){
+},{"./../../../lang/promise":47}],136:[function(require,module,exports){
 const random = require('./../../../lang/random');
 describe('When generating a random number, restricting the range to one integer', () => {
   'use strict';
@@ -25912,7 +26056,7 @@ describe('When generating a random number using an invalid range, the range is a
   });
 });
 
-},{"./../../../lang/random":47}],136:[function(require,module,exports){
+},{"./../../../lang/random":48}],137:[function(require,module,exports){
 const string = require('./../../../lang/string');
 describe('When converting a sentence to "start" casing', () => {
   'use strict';
@@ -26079,7 +26223,7 @@ describe('When a formattable string ("&startDate={0}&endDate={1}"', () => {
   });
 });
 
-},{"./../../../lang/string":48}],137:[function(require,module,exports){
+},{"./../../../lang/string":49}],138:[function(require,module,exports){
 const EventMap = require('./../../../messaging/EventMap');
 describe('When an EventMap is constructed', () => {
   'use strict';
@@ -26215,7 +26359,7 @@ describe('When an EventMap is constructed', () => {
   });
 });
 
-},{"./../../../messaging/EventMap":51}],138:[function(require,module,exports){
+},{"./../../../messaging/EventMap":52}],139:[function(require,module,exports){
 const Disposable = require('./../../../lang/Disposable'),
   Event = require('./../../../messaging/Event');
 describe('When an Event is constructed', () => {
@@ -26357,7 +26501,7 @@ describe('When an Event is constructed', () => {
   });
 });
 
-},{"./../../../lang/Disposable":26,"./../../../messaging/Event":50}],139:[function(require,module,exports){
+},{"./../../../lang/Disposable":27,"./../../../messaging/Event":51}],140:[function(require,module,exports){
 const Disposable = require('./../../../lang/Disposable'),
   Model = require('./../../../models/Model');
 describe('When an Model is constructed with "firstName" and "lastName" properties', () => {
@@ -26459,7 +26603,7 @@ describe('When an Model is constructed with "firstName" and "lastName" propertie
   });
 });
 
-},{"./../../../lang/Disposable":26,"./../../../models/Model":52}],140:[function(require,module,exports){
+},{"./../../../lang/Disposable":27,"./../../../models/Model":53}],141:[function(require,module,exports){
 const RestParser = require('./../../../../network/rest/RestParser');
 describe('Using a customized JSON REST parser is created', () => {
   'use strict';
@@ -26533,7 +26677,7 @@ describe('Using another customized JSON REST parser is created', () => {
   });
 });
 
-},{"./../../../../network/rest/RestParser":53}],141:[function(require,module,exports){
+},{"./../../../../network/rest/RestParser":54}],142:[function(require,module,exports){
 const AdHoc = require('./../../../../lang/AdHoc'),
   Currency = require('./../../../../lang/Currency'),
   Day = require('./../../../../lang/Day'),
@@ -27447,7 +27591,7 @@ describe('When a schema is created with two nested arrays', () => {
   });
 });
 
-},{"./../../../../lang/AdHoc":21,"./../../../../lang/Currency":22,"./../../../../lang/Day":24,"./../../../../lang/Decimal":25,"./../../../../lang/Enum":27,"./../../../../lang/Money":28,"./../../../../serialization/json/Component":63,"./../../../../serialization/json/DataType":64,"./../../../../serialization/json/Field":65,"./../../../../serialization/json/Schema":66}],142:[function(require,module,exports){
+},{"./../../../../lang/AdHoc":21,"./../../../../lang/Currency":22,"./../../../../lang/Day":24,"./../../../../lang/Decimal":26,"./../../../../lang/Enum":28,"./../../../../lang/Money":29,"./../../../../serialization/json/Component":64,"./../../../../serialization/json/DataType":65,"./../../../../serialization/json/Field":66,"./../../../../serialization/json/Schema":67}],143:[function(require,module,exports){
 const Component = require('./../../../../../serialization/json/Component'),
   DataType = require('./../../../../../serialization/json/DataType'),
   SchemaBuilder = require('./../../../../../serialization/json/builders/SchemaBuilder');
@@ -27569,7 +27713,7 @@ describe('When using the schema builder to create a "Person" schema', () => {
   });
 });
 
-},{"./../../../../../serialization/json/Component":63,"./../../../../../serialization/json/DataType":64,"./../../../../../serialization/json/builders/SchemaBuilder":68}],143:[function(require,module,exports){
+},{"./../../../../../serialization/json/Component":64,"./../../../../../serialization/json/DataType":65,"./../../../../../serialization/json/builders/SchemaBuilder":69}],144:[function(require,module,exports){
 const Specification = require('./../../../specifications/Specification'),
   And = require('./../../../specifications/And');
 describe('When an And specification is constructed', () => {
@@ -27635,7 +27779,7 @@ describe('When an And specification is constructed', () => {
   });
 });
 
-},{"./../../../specifications/And":69,"./../../../specifications/Specification":84}],144:[function(require,module,exports){
+},{"./../../../specifications/And":70,"./../../../specifications/Specification":85}],145:[function(require,module,exports){
 const Between = require('./../../../specifications/Between');
 describe('When a Between specification is constructed (with a range of 17 to 42)', () => {
   'use strict';
@@ -27664,7 +27808,7 @@ describe('When a Between specification is constructed (with a range of 17 to 42)
   });
 });
 
-},{"./../../../specifications/Between":70}],145:[function(require,module,exports){
+},{"./../../../specifications/Between":71}],146:[function(require,module,exports){
 const Changes = require('./../../../specifications/Changes');
 describe('When a Changes specification is used to evaluate strings', () => {
   'use strict';
@@ -27733,7 +27877,7 @@ describe('When a Changes specification is used to evaluate numbers', () => {
   });
 });
 
-},{"./../../../specifications/Changes":71}],146:[function(require,module,exports){
+},{"./../../../specifications/Changes":72}],147:[function(require,module,exports){
 const Contained = require('./../../../specifications/Contained');
 describe('When a Contained specifciation is constructed', () => {
   'use strict';
@@ -27781,7 +27925,7 @@ describe('When a Contained specifciation is constructed', () => {
   });
 });
 
-},{"./../../../specifications/Contained":72}],147:[function(require,module,exports){
+},{"./../../../specifications/Contained":73}],148:[function(require,module,exports){
 const Contains = require('./../../../specifications/Contains');
 describe('When a Contains specification is constructed', () => {
   'use strict';
@@ -27823,7 +27967,7 @@ describe('When a Contains specification is constructed', () => {
   });
 });
 
-},{"./../../../specifications/Contains":73}],148:[function(require,module,exports){
+},{"./../../../specifications/Contains":74}],149:[function(require,module,exports){
 const Crosses = require('./../../../specifications/Crosses');
 describe('When a Crosses specification is initialized with a threshold of 1000', () => {
   'use strict';
@@ -27968,7 +28112,7 @@ describe('When a Crosses specification is initialized with a threshold of zero',
   });
 });
 
-},{"./../../../specifications/Crosses":74}],149:[function(require,module,exports){
+},{"./../../../specifications/Crosses":75}],150:[function(require,module,exports){
 const Equals = require('./../../../specifications/Equals');
 describe('When a Equals specification is constructed', () => {
   'use strict';
@@ -27998,7 +28142,7 @@ describe('When a Equals specification is constructed', () => {
   });
 });
 
-},{"./../../../specifications/Equals":75}],150:[function(require,module,exports){
+},{"./../../../specifications/Equals":76}],151:[function(require,module,exports){
 const Exists = require('./../../../specifications/Exists');
 describe('When a Exists specification is constructed', () => {
   'use strict';
@@ -28027,7 +28171,7 @@ describe('When a Exists specification is constructed', () => {
   });
 });
 
-},{"./../../../specifications/Exists":76}],151:[function(require,module,exports){
+},{"./../../../specifications/Exists":77}],152:[function(require,module,exports){
 const Fail = require('./../../../specifications/Fail');
 describe('When a Fail specification is constructed', () => {
   'use strict';
@@ -28066,7 +28210,7 @@ describe('When a Fail specification is constructed', () => {
   });
 });
 
-},{"./../../../specifications/Fail":77}],152:[function(require,module,exports){
+},{"./../../../specifications/Fail":78}],153:[function(require,module,exports){
 const Nan = require('./../../../specifications/Nan');
 describe('When a NaN specification is constructed', () => {
   'use strict';
@@ -28122,7 +28266,7 @@ describe('When a NaN specification is constructed', () => {
   });
 });
 
-},{"./../../../specifications/Nan":78}],153:[function(require,module,exports){
+},{"./../../../specifications/Nan":79}],154:[function(require,module,exports){
 const Not = require('./../../../specifications/Not'),
   Specification = require('./../../../specifications/Specification');
 describe('When a Not specification is constructed', () => {
@@ -28235,7 +28379,7 @@ describe('When a Specification (that always succeeds) is constructed', () => {
   });
 });
 
-},{"./../../../specifications/Not":79,"./../../../specifications/Specification":84}],154:[function(require,module,exports){
+},{"./../../../specifications/Not":80,"./../../../specifications/Specification":85}],155:[function(require,module,exports){
 const Null = require('./../../../specifications/Null');
 describe('When a Null specification is constructed', () => {
   'use strict';
@@ -28261,7 +28405,7 @@ describe('When a Null specification is constructed', () => {
   });
 });
 
-},{"./../../../specifications/Null":80}],155:[function(require,module,exports){
+},{"./../../../specifications/Null":81}],156:[function(require,module,exports){
 const Numeric = require('./../../../specifications/Numeric');
 describe('When a Numeric specification is constructed', () => {
   'use strict';
@@ -28308,7 +28452,7 @@ describe('When a Numeric specification is constructed', () => {
   });
 });
 
-},{"./../../../specifications/Numeric":81}],156:[function(require,module,exports){
+},{"./../../../specifications/Numeric":82}],157:[function(require,module,exports){
 const Specification = require('./../../../specifications/Specification'),
   Or = require('./../../../specifications/Or');
 describe('When an Or specification is constructed', () => {
@@ -28374,7 +28518,7 @@ describe('When an Or specification is constructed', () => {
   });
 });
 
-},{"./../../../specifications/Or":82,"./../../../specifications/Specification":84}],157:[function(require,module,exports){
+},{"./../../../specifications/Or":83,"./../../../specifications/Specification":85}],158:[function(require,module,exports){
 const Pass = require('./../../../specifications/Pass');
 describe('When a Pass specification is constructed', () => {
   'use strict';
@@ -28413,7 +28557,7 @@ describe('When a Pass specification is constructed', () => {
   });
 });
 
-},{"./../../../specifications/Pass":83}],158:[function(require,module,exports){
+},{"./../../../specifications/Pass":84}],159:[function(require,module,exports){
 const Undefined = require('./../../../specifications/Undefined');
 describe('When a Undefined specification is constructed', () => {
   'use strict';
@@ -28439,7 +28583,7 @@ describe('When a Undefined specification is constructed', () => {
   });
 });
 
-},{"./../../../specifications/Undefined":85}],159:[function(require,module,exports){
+},{"./../../../specifications/Undefined":86}],160:[function(require,module,exports){
 const Day = require('./../../../../lang/Day');
 const After = require('./../../../../specifications/compound/After');
 describe('When evaluating a compound After specification', () => {
@@ -28460,7 +28604,7 @@ describe('When evaluating a compound After specification', () => {
   });
 });
 
-},{"./../../../../lang/Day":24,"./../../../../specifications/compound/After":86}],160:[function(require,module,exports){
+},{"./../../../../lang/Day":24,"./../../../../specifications/compound/After":87}],161:[function(require,module,exports){
 const Day = require('./../../../../lang/Day');
 const Before = require('./../../../../specifications/compound/Before');
 describe('When evaluating a compound Before specification', () => {
@@ -28481,7 +28625,7 @@ describe('When evaluating a compound Before specification', () => {
   });
 });
 
-},{"./../../../../lang/Day":24,"./../../../../specifications/compound/Before":87}],161:[function(require,module,exports){
+},{"./../../../../lang/Day":24,"./../../../../specifications/compound/Before":88}],162:[function(require,module,exports){
 const Day = require('./../../../../lang/Day');
 const DaySpecification = require('./../../../../specifications/compound/Day');
 describe('When evaluating a compound Day specification', () => {
@@ -28508,7 +28652,7 @@ describe('When evaluating a compound Day specification', () => {
   });
 });
 
-},{"./../../../../lang/Day":24,"./../../../../specifications/compound/Day":88}],162:[function(require,module,exports){
+},{"./../../../../lang/Day":24,"./../../../../specifications/compound/Day":89}],163:[function(require,module,exports){
 const GreaterThan = require('./../../../../specifications/compound/GreaterThan');
 describe('When evaluating a compound GreaterThan specification', () => {
   'use strict';
@@ -28528,7 +28672,7 @@ describe('When evaluating a compound GreaterThan specification', () => {
   });
 });
 
-},{"./../../../../specifications/compound/GreaterThan":89}],163:[function(require,module,exports){
+},{"./../../../../specifications/compound/GreaterThan":90}],164:[function(require,module,exports){
 const LessThan = require('./../../../../specifications/compound/LessThan');
 describe('When evaluating a compound LessThan specification', () => {
   'use strict';
@@ -28548,7 +28692,7 @@ describe('When evaluating a compound LessThan specification', () => {
   });
 });
 
-},{"./../../../../specifications/compound/LessThan":90}],164:[function(require,module,exports){
+},{"./../../../../specifications/compound/LessThan":91}],165:[function(require,module,exports){
 const Numeric = require('./../../../../specifications/compound/Numeric');
 describe('When evaluating a compound Numeric specification', () => {
   'use strict';
@@ -28574,7 +28718,7 @@ describe('When evaluating a compound Numeric specification', () => {
   });
 });
 
-},{"./../../../../specifications/compound/Numeric":91}],165:[function(require,module,exports){
+},{"./../../../../specifications/compound/Numeric":92}],166:[function(require,module,exports){
 const Day = require('./../../../../lang/Day');
 const SameDay = require('./../../../../specifications/compound/SameDay');
 describe('When evaluating a compound SameDay specification', () => {
@@ -28595,7 +28739,7 @@ describe('When evaluating a compound SameDay specification', () => {
   });
 });
 
-},{"./../../../../lang/Day":24,"./../../../../specifications/compound/SameDay":92}],166:[function(require,module,exports){
+},{"./../../../../lang/Day":24,"./../../../../specifications/compound/SameDay":93}],167:[function(require,module,exports){
 const RateLimiter = require('./../../../timing/RateLimiter');
 describe('When a RateLimiter is constructed (1 execution per 25 milliseconds)', () => {
   'use strict';
@@ -28786,7 +28930,7 @@ describe('When a RateLimiter is constructed (2 execution per 25 milliseconds)', 
   });
 });
 
-},{"./../../../timing/RateLimiter":170}],167:[function(require,module,exports){
+},{"./../../../timing/RateLimiter":171}],168:[function(require,module,exports){
 const Scheduler = require('./../../../timing/Scheduler');
 describe('When a Scheduler is constructed', () => {
   'use strict';
@@ -29007,7 +29151,7 @@ describe('When a backoff is used', () => {
   });
 });
 
-},{"./../../../timing/Scheduler":171}],168:[function(require,module,exports){
+},{"./../../../timing/Scheduler":172}],169:[function(require,module,exports){
 const Serializer = require('./../../../timing/Serializer');
 describe('When a Serializer is used to schedule four tasks', () => {
   'use strict';
@@ -29112,7 +29256,7 @@ function getSpy(results, fail) {
   });
 }
 
-},{"./../../../timing/Serializer":172}],169:[function(require,module,exports){
+},{"./../../../timing/Serializer":173}],170:[function(require,module,exports){
 const WindowCounter = require('./../../../timing/WindowCounter');
 describe('When a WindowCounter is constructed', () => {
   'use strict';
@@ -29161,7 +29305,7 @@ describe('When a WindowCounter is constructed', () => {
   });
 });
 
-},{"./../../../timing/WindowCounter":173}],170:[function(require,module,exports){
+},{"./../../../timing/WindowCounter":174}],171:[function(require,module,exports){
 const assert = require('./../lang/assert'),
   Disposable = require('./../lang/Disposable'),
   is = require('./../lang/is'),
@@ -29256,7 +29400,7 @@ module.exports = (() => {
   return RateLimiter;
 })();
 
-},{"./../collections/Queue":5,"./../lang/Disposable":26,"./../lang/assert":33,"./../lang/is":40,"./../lang/promise":46,"./Scheduler":171}],171:[function(require,module,exports){
+},{"./../collections/Queue":5,"./../lang/Disposable":27,"./../lang/assert":34,"./../lang/is":41,"./../lang/promise":47,"./Scheduler":172}],172:[function(require,module,exports){
 const assert = require('./../lang/assert'),
   Disposable = require('./../lang/Disposable'),
   is = require('./../lang/is'),
@@ -29462,7 +29606,7 @@ module.exports = (() => {
   return Scheduler;
 })();
 
-},{"./../lang/Disposable":26,"./../lang/assert":33,"./../lang/is":40,"./../lang/object":45,"./../lang/promise":46}],172:[function(require,module,exports){
+},{"./../lang/Disposable":27,"./../lang/assert":34,"./../lang/is":41,"./../lang/object":46,"./../lang/promise":47}],173:[function(require,module,exports){
 const assert = require('./../lang/assert'),
   Disposable = require('./../lang/Disposable'),
   promise = require('./../lang/promise');
@@ -29585,7 +29729,7 @@ module.exports = (() => {
   return Serializer;
 })();
 
-},{"./../collections/Queue":5,"./../lang/Disposable":26,"./../lang/assert":33,"./../lang/promise":46}],173:[function(require,module,exports){
+},{"./../collections/Queue":5,"./../lang/Disposable":27,"./../lang/assert":34,"./../lang/promise":47}],174:[function(require,module,exports){
 const assert = require('./../lang/assert');
 module.exports = (() => {
   'use strict';
@@ -29673,4 +29817,4 @@ module.exports = (() => {
   return WindowCounter;
 })();
 
-},{"./../lang/assert":33}]},{},[93,94,99,95,96,100,101,102,103,104,105,106,107,97,98,108,109,110,111,120,121,122,123,124,112,125,113,114,115,116,126,127,128,129,130,131,132,133,134,135,117,136,118,119,137,138,139,140,142,141,143,144,145,159,160,161,162,163,164,165,146,147,148,149,150,151,152,153,154,155,156,157,158,166,167,168,169]);
+},{"./../lang/assert":34}]},{},[94,95,100,96,97,101,102,103,104,105,106,107,108,98,99,109,110,111,112,121,122,123,124,125,113,126,114,115,116,117,127,128,129,130,131,132,133,134,135,136,118,137,119,120,138,139,140,141,143,142,144,145,146,160,161,162,163,164,165,166,147,148,149,150,151,152,153,154,155,156,157,158,159,167,168,169,170]);
