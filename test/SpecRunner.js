@@ -3197,13 +3197,13 @@ module.exports = (() => {
       if (type instanceof DayFormatType) {
         t = type;
       } else {
-        t = DayFormatType.YEAR_MONTH_DAY;
+        t = DayFormatType.YYYY_MM_DD;
       }
       const match = value.match(t.regex);
       if (match === null) {
         throw new Error(`Unable to parse value as Day [ ${value} ]`);
       }
-      return new Day(parseInt(match[t.yearIndex]), parseInt(match[t.monthIndex]), parseInt(match[t.dayIndex]));
+      return new Day(parseInt(match[t.yearIndex]) + t.yearShift, parseInt(match[t.monthIndex]), parseInt(match[t.dayIndex]));
     }
 
     /**
@@ -3361,7 +3361,6 @@ module.exports = (() => {
       return '[Day]';
     }
   }
-  const dayRegex = /^([0-9]{4}).?([0-9]{2}).?([0-9]{2})$/;
   function leftPad(value, digits, character) {
     let string = value.toString();
     let padding = digits - string.length;
@@ -3386,12 +3385,13 @@ module.exports = (() => {
    * @param {String} description
    */
   class DayFormatType extends Enum {
-    constructor(description, regex, yearIndex, monthIndex, dayIndex) {
+    constructor(description, regex, yearIndex, monthIndex, dayIndex, yearShift) {
       super(description, description);
       this._regex = regex;
       this._yearIndex = yearIndex;
       this._monthIndex = monthIndex;
       this._dayIndex = dayIndex;
+      this._yearShift = yearShift;
     }
 
     /**
@@ -3435,32 +3435,59 @@ module.exports = (() => {
     }
 
     /**
-     * Specifies date formatting as year, then month, then day (e.g. 2025-11-31).
+     * The amount to add to the year (extracted from a formatted string) to get the
+     * full year (e.g. for "11-31-25" of a MM-DD-YY string, the value will be 2000).
      *
      * @public
-     * @static
-     * @returns {DayFormatType}
+     * @returns {number}
      */
-    static get YEAR_MONTH_DAY() {
-      return yearMonthDay;
+    get yearShift() {
+      return this._yearShift;
     }
 
     /**
-     * Specifies date formatting as month, then day, then year (e.g. 11-31-2025).
+     * Specifies date formatting as four-digit year, then month, then day (e.g. 2025-11-31).
      *
      * @public
      * @static
      * @returns {DayFormatType}
      */
-    static get MONTH_DAY_YEAR() {
-      return monthDayYear;
+    static get YYYY_MM_DD() {
+      return yyyymmdd;
+    }
+
+    /**
+     * Specifies date formatting as month, then day, then four-digit year (e.g. 11-31-2025).
+     *
+     * @public
+     * @static
+     * @returns {DayFormatType}
+     */
+    static get MM_DD_YYYY() {
+      return mmddyyyy;
+    }
+
+    /**
+     * Specifies date formatting as month, then day, then two-digit year (e.g. 11-31-25).
+     *
+     * @public
+     * @static
+     * @returns {DayFormatType}
+     */
+    static get MM_DD_YY() {
+      return mmddyy;
     }
     toString() {
       return `[DayFormatType (description=${this.description})]`;
     }
   }
-  const yearMonthDay = new DayFormatType('YEAR_MONTH_DAY', /^([0-9]{4}).?([0-9]{2}).?([0-9]{2})$/, 1, 2, 3);
-  const monthDayYear = new DayFormatType('MONTH_DAY_YEAR', /^([0-9]{2}).?([0-9]{2}).?([0-9]{4})$/, 3, 1, 2);
+  function getCenturyShift() {
+    const today = new Date();
+    return Math.floor(today.getFullYear() / 100) * 100;
+  }
+  const yyyymmdd = new DayFormatType('YYYY_MM_DD', /^([0-9]{4}).?([0-9]{2}).?([0-9]{2})$/, 1, 2, 3, 0);
+  const mmddyyyy = new DayFormatType('MM_DD_YYYY', /^([0-9]{2}).?([0-9]{2}).?([0-9]{4})$/, 3, 1, 2, 0);
+  const mmddyy = new DayFormatType('MM_DD_YY', /^([0-9]{2}).?([0-9]{2}).?([0-9]{2})$/, 3, 1, 2, getCenturyShift());
   return DayFormatType;
 })();
 
@@ -20180,12 +20207,12 @@ describe('When "2017-08-31 is parsed as a Day', () => {
     });
   });
 });
-describe('When "2017-08-31 is parsed as a Day (using DayFormatType.YEAR_MONTH_DAY)', () => {
+describe('When "2017-08-31 is parsed as a Day (using DayFormatType.YYYY_MM_DD)', () => {
   'use strict';
 
   let day;
   beforeEach(() => {
-    day = Day.parse('2017-08-31', DayFormatType.YEAR_MONTH_DAY);
+    day = Day.parse('2017-08-31', DayFormatType.YYYY_MM_DD);
   });
   it('the year should be 2017', () => {
     expect(day.year).toEqual(2017);
@@ -20202,12 +20229,34 @@ describe('When "2017-08-31 is parsed as a Day (using DayFormatType.YEAR_MONTH_DA
     });
   });
 });
-describe('When "08-31-2017 is parsed as a Day (using DayFormatType.MONTH_DAY_YEAR)', () => {
+describe('When "08-31-2017 is parsed as a Day (using DayFormatType.MM_DD_YYYY)', () => {
   'use strict';
 
   let day;
   beforeEach(() => {
-    day = Day.parse('08-31-2017', DayFormatType.MONTH_DAY_YEAR);
+    day = Day.parse('08-31-2017', DayFormatType.MM_DD_YYYY);
+  });
+  it('the year should be 2017', () => {
+    expect(day.year).toEqual(2017);
+  });
+  it('the month should be 8', () => {
+    expect(day.month).toEqual(8);
+  });
+  it('the day should be 31', () => {
+    expect(day.day).toEqual(31);
+  });
+  describe('and the Day instance is formatted', () => {
+    it('should output be "2017-08-31"', () => {
+      expect(day.format()).toEqual('2017-08-31');
+    });
+  });
+});
+describe('When "08-31-17 is parsed as a Day (using DayFormatType.MM_DD_YY)', () => {
+  'use strict';
+
+  let day;
+  beforeEach(() => {
+    day = Day.parse('08-31-17', DayFormatType.MM_DD_YY);
   });
   it('the year should be 2017', () => {
     expect(day.year).toEqual(2017);
