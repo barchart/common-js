@@ -1,6 +1,7 @@
 const assert = require('./assert'),
 	ComparatorBuilder = require('./../collections/sorting/ComparatorBuilder'),
 	comparators = require('./../collections/sorting/comparators'),
+	DayFormatType = require('.//DayFormatType'),
 	is = require('./is');
 
 module.exports = (() => {
@@ -376,18 +377,27 @@ module.exports = (() => {
 		 * @public
 		 * @static
 		 * @param {String} value
+		 * @param {DayFormatType=} type
 		 * @returns {Day}
 		 */
-		static parse(value) {
+		static parse(value, type) {
 			assert.argumentIsRequired(value, 'value', String);
 
-			const match = value.match(dayRegex);
+			let t;
+
+			if (type instanceof DayFormatType) {
+				t = type;
+			} else {
+				t = DayFormatType.YEAR_MONTH_DAY;
+			}
+
+			const match = value.match(t.regex);
 
 			if (match === null) {
 				throw new Error(`Unable to parse value as Day [ ${value} ]`);
 			}
 
-			return new Day(parseInt(match[1]), parseInt(match[2]), parseInt(match[3]));
+			return new Day(parseInt(match[t.yearIndex]), parseInt(match[t.monthIndex]), parseInt(match[t.dayIndex]));
 		}
 
 		/**

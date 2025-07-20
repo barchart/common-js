@@ -1,4 +1,5 @@
-const Day = require('./../../../lang/Day');
+const Day = require('./../../../lang/Day'),
+	DayFormatType = require('./../../../lang/DayFormatType');
 
 describe('When "2017-08-31 is parsed as a Day', () => {
 	'use strict';
@@ -22,7 +23,63 @@ describe('When "2017-08-31 is parsed as a Day', () => {
 	});
 
 	describe('and the Day instance is formatted', () => {
-		it('should output "2017-08-31"', () => {
+		it('should output be "2017-08-31"', () => {
+			expect(day.format()).toEqual('2017-08-31');
+		});
+	});
+});
+
+describe('When "2017-08-31 is parsed as a Day (using DayFormatType.YEAR_MONTH_DAY)', () => {
+	'use strict';
+
+	let day;
+
+	beforeEach(() => {
+		day = Day.parse('2017-08-31', DayFormatType.YEAR_MONTH_DAY);
+	});
+
+	it('the year should be 2017', () => {
+		expect(day.year).toEqual(2017);
+	});
+
+	it('the month should be 8', () => {
+		expect(day.month).toEqual(8);
+	});
+
+	it('the day should be 31', () => {
+		expect(day.day).toEqual(31);
+	});
+
+	describe('and the Day instance is formatted', () => {
+		it('should output be "2017-08-31"', () => {
+			expect(day.format()).toEqual('2017-08-31');
+		});
+	});
+});
+
+describe('When "08-31-2017 is parsed as a Day (using DayFormatType.MONTH_DAY_YEAR)', () => {
+	'use strict';
+
+	let day;
+
+	beforeEach(() => {
+		day = Day.parse('08-31-2017', DayFormatType.MONTH_DAY_YEAR);
+	});
+
+	it('the year should be 2017', () => {
+		expect(day.year).toEqual(2017);
+	});
+
+	it('the month should be 8', () => {
+		expect(day.month).toEqual(8);
+	});
+
+	it('the day should be 31', () => {
+		expect(day.day).toEqual(31);
+	});
+
+	describe('and the Day instance is formatted', () => {
+		it('should output be "2017-08-31"', () => {
 			expect(day.format()).toEqual('2017-08-31');
 		});
 	});
