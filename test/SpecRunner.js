@@ -3481,13 +3481,13 @@ module.exports = (() => {
       return `[DayFormatType (description=${this.description})]`;
     }
   }
-  function getCenturyShift() {
+  function getMillenniumShift() {
     const today = new Date();
     return Math.floor(today.getFullYear() / 100) * 100;
   }
   const yyyymmdd = new DayFormatType('YYYY_MM_DD', /^([0-9]{4}).?([0-9]{2}).?([0-9]{2})$/, 1, 2, 3, 0);
   const mmddyyyy = new DayFormatType('MM_DD_YYYY', /^([0-9]{2}).?([0-9]{2}).?([0-9]{4})$/, 3, 1, 2, 0);
-  const mmddyy = new DayFormatType('MM_DD_YY', /^([0-9]{2}).?([0-9]{2}).?([0-9]{2})$/, 3, 1, 2, getCenturyShift());
+  const mmddyy = new DayFormatType('MM_DD_YY', /^([0-9]{2}).?([0-9]{2}).?([0-9]{2})$/, 3, 1, 2, getMillenniumShift());
   return DayFormatType;
 })();
 
