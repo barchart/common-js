@@ -1,3 +1,5 @@
+const assert = require("./assert");
+
 module.exports = (() => {
     'use strict';
 
@@ -88,6 +90,29 @@ module.exports = (() => {
                 hours >= 0 && hours < 24 &&
                 minutes >= 0 && minutes < 60 &&
                 seconds >= 0 && seconds < 60;
+        }
+
+        /**
+         * Parses a string in the format "hh:mm:ss" and returns a Time instance.
+         *
+         * @public
+         * @static
+         * @param {String} time
+         * @returns {Time}
+         */
+        static parse(time) {
+            assert.argumentIsRequired(time, 'time', String);
+
+            const parts = time.split(':');
+            if (parts.length !== 3) {
+                throw new Error(`Unable to parse [ Time ], invalid format [ ${time} ]`);
+            }
+
+            const hours = parseInt(parts[0], 10);
+            const minutes = parseInt(parts[1], 10);
+            const seconds = parseInt(parts[2], 10);
+
+            return new Time(hours, minutes, seconds);
         }
 
         toString() {
