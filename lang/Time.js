@@ -54,6 +54,45 @@ module.exports = (() => {
         }
 
         /**
+         * Indicates if the current {@link Time} instance is before another time.
+         *
+         * @public
+         * @param {Time} other
+         * @returns {boolean}
+         */
+        getIsBefore(other) {
+            assert.argumentIsRequired(other, 'other', Time, 'Time');
+
+            return this.hours < other.hours || (this.hours === other.hours && this.minutes < other.minutes) || (this.hours === other.hours && this.minutes === other.minutes && this.seconds < other.seconds);
+        }
+
+        /**
+         * Indicates if the current {@link Time} instance is after another time.
+         *
+         * @public
+         * @param {Time} other
+         * @returns {boolean}
+         */
+        getIsAfter(other) {
+            assert.argumentIsRequired(other, 'other', Time, 'Time');
+
+            return !this.getIsBefore(other) && !this.getIsEqual(other);
+        }
+
+        /**
+         * Indicates if the current {@link Time} instance is the same as the another time.
+         *
+         * @public
+         * @param {Time} other
+         * @returns {boolean}
+         */
+        getIsEqual(other) {
+            assert.argumentIsRequired(other, 'other', Time, 'Time');
+
+            return this._hours === other.hours && this._minutes === other.minutes && this._seconds === other.seconds;
+        }
+
+        /**
          * Outputs the time as the formatted string: {hh}:{mm}:{ss}.
          *
          * @public
@@ -114,6 +153,36 @@ module.exports = (() => {
             const seconds = match[4] ? parseInt(match[4]) : 0;
 
             return new Time(hours, minutes, seconds);
+        }
+
+        /**
+         * Creates a {@link Time} from the hours, minutes, and seconds properties (in local time)
+         * of the {@link Date} argument.
+         *
+         * @public
+         * @static
+         * @param {Date} date
+         * @returns {Time}
+         */
+        static fromDate(date) {
+            assert.argumentIsRequired(date, 'date', Date);
+
+            return new Time(date.getHours(), date.getMinutes(), date.getSeconds());
+        }
+
+        /**
+         * Creates a {@link Time} from the hours, minutes, and seconds properties (in UTC)
+         * of the {@link Date} argument.
+         *
+         * @public
+         * @static
+         * @param {Date} date
+         * @returns {Time}
+         */
+        static fromDateUtc(date) {
+            assert.argumentIsRequired(date, 'date', Date);
+
+            return new Time(date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
         }
 
         toString() {
