@@ -4708,6 +4708,42 @@ module.exports = (() => {
     }
 
     /**
+     * Indicates if the current {@link Time} instance is before another time.
+     *
+     * @public
+     * @param {Time} other
+     * @returns {boolean}
+     */
+    getIsBefore(other) {
+      assert.argumentIsRequired(other, 'other', Time, 'Time');
+      return this.hours < other.hours || this.hours === other.hours && this.minutes < other.minutes || this.hours === other.hours && this.minutes === other.minutes && this.seconds < other.seconds;
+    }
+
+    /**
+     * Indicates if the current {@link Time} instance is after another time.
+     *
+     * @public
+     * @param {Time} other
+     * @returns {boolean}
+     */
+    getIsAfter(other) {
+      assert.argumentIsRequired(other, 'other', Time, 'Time');
+      return !this.getIsBefore(other) && !this.getIsEqual(other);
+    }
+
+    /**
+     * Indicates if the current {@link Time} instance is the same as the another time.
+     *
+     * @public
+     * @param {Time} other
+     * @returns {boolean}
+     */
+    getIsEqual(other) {
+      assert.argumentIsRequired(other, 'other', Time, 'Time');
+      return this._hours === other.hours && this._minutes === other.minutes && this._seconds === other.seconds;
+    }
+
+    /**
      * Outputs the time as the formatted string: {hh}:{mm}:{ss}.
      *
      * @public
@@ -4751,19 +4787,48 @@ module.exports = (() => {
      */
     static parse(time) {
       assert.argumentIsRequired(time, 'time', String);
-      const parts = time.split(':');
-      if (parts.length !== 3) {
+      const match = time.match(regex);
+      if (match === null) {
         throw new Error(`Unable to parse [ Time ], invalid format [ ${time} ]`);
       }
-      const hours = parseInt(parts[0], 10);
-      const minutes = parseInt(parts[1], 10);
-      const seconds = parseInt(parts[2], 10);
+      const hours = parseInt(match[1]);
+      const minutes = parseInt(match[2]);
+      const seconds = match[4] ? parseInt(match[4]) : 0;
       return new Time(hours, minutes, seconds);
+    }
+
+    /**
+     * Creates a {@link Time} from the hours, minutes, and seconds properties (in local time)
+     * of the {@link Date} argument.
+     *
+     * @public
+     * @static
+     * @param {Date} date
+     * @returns {Time}
+     */
+    static fromDate(date) {
+      assert.argumentIsRequired(date, 'date', Date);
+      return new Time(date.getHours(), date.getMinutes(), date.getSeconds());
+    }
+
+    /**
+     * Creates a {@link Time} from the hours, minutes, and seconds properties (in UTC)
+     * of the {@link Date} argument.
+     *
+     * @public
+     * @static
+     * @param {Date} date
+     * @returns {Time}
+     */
+    static fromDateUtc(date) {
+      assert.argumentIsRequired(date, 'date', Date);
+      return new Time(date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
     }
     toString() {
       return '[Time]';
     }
   }
+  const regex = /^([0-2]?[0-9]):([0-5][0-9])(:([0-5][0-9]))?$/i;
   function leftPad(value, digits, character) {
     const string = value.toString();
     const padding = digits - string.length;
@@ -21757,6 +21822,60 @@ describe('When checking if a Time is valid', () => {
   });
   it('should not consider 12:30:60 valid', () => {
     expect(Time.validate(12, 30, 60)).toEqual(false);
+  });
+});
+describe('When comparing two Time instances', () => {
+  let earlier, later, equal;
+  beforeEach(() => {
+    earlier = Time.parse('10:15:30');
+    later = Time.parse('12:45:00');
+    equal = Time.parse('10:15:30');
+  });
+  it('earlier should be before later', () => {
+    expect(earlier.getIsBefore(later)).toEqual(true);
+  });
+  it('later should be after earlier', () => {
+    expect(later.getIsAfter(earlier)).toEqual(true);
+  });
+  it('earlier should not be after later', () => {
+    expect(earlier.getIsAfter(later)).toEqual(false);
+  });
+  it('equal times should be equal', () => {
+    expect(earlier.getIsEqual(equal)).toEqual(true);
+  });
+  it('equal times should not be before each other', () => {
+    expect(earlier.getIsBefore(equal)).toEqual(false);
+  });
+  it('equal times should not be after each other', () => {
+    expect(earlier.getIsAfter(equal)).toEqual(false);
+  });
+});
+describe('When creating Time from Date', () => {
+  it('should take local time into account', () => {
+    const date = new Date(2020, 0, 1, 15, 45, 20);
+    const time = Time.fromDate(date);
+    expect(time.hours).toEqual(15);
+    expect(time.minutes).toEqual(45);
+    expect(time.seconds).toEqual(20);
+  });
+  it('should take UTC time into account', () => {
+    const date = new Date(Date.UTC(2020, 0, 1, 8, 30, 50));
+    const time = Time.fromDateUtc(date);
+    expect(time.hours).toEqual(8);
+    expect(time.minutes).toEqual(30);
+    expect(time.seconds).toEqual(50);
+  });
+});
+describe('When converting Time to JSON', () => {
+  it('should output the same as format()', () => {
+    const time = Time.parse('06:07:08');
+    expect(time.toJSON()).toEqual('06:07:08');
+  });
+});
+describe('When toString is called', () => {
+  it('should return "[Time]"', () => {
+    const time = Time.parse('01:02:03');
+    expect(time.toString()).toEqual('[Time]');
   });
 });
 
