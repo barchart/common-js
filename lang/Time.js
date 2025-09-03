@@ -103,14 +103,15 @@ module.exports = (() => {
         static parse(time) {
             assert.argumentIsRequired(time, 'time', String);
 
-            const parts = time.split(':');
-            if (parts.length !== 3) {
+            const match = time.match(regex);
+
+            if (match === null) {
                 throw new Error(`Unable to parse [ Time ], invalid format [ ${time} ]`);
             }
 
-            const hours = parseInt(parts[0], 10);
-            const minutes = parseInt(parts[1], 10);
-            const seconds = parseInt(parts[2], 10);
+            const hours = parseInt(match[1]);
+            const minutes = parseInt(match[2]);
+            const seconds = parseInt(match[3]);
 
             return new Time(hours, minutes, seconds);
         }
@@ -119,6 +120,8 @@ module.exports = (() => {
             return '[Time]';
         }
     }
+
+    const regex = /^([0-2]?[0-9]):([0-5][0-9]):([0-5][0-9])$/i;
 
     function leftPad(value, digits, character) {
         const string = value.toString();
