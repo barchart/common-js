@@ -111,3 +111,73 @@ describe('When checking if a Time is valid', () => {
         expect(Time.validate(12, 30, 60)).toEqual(false);
     });
 });
+
+describe('When comparing two Time instances', () => {
+    let earlier, later, equal;
+
+    beforeEach(() => {
+        earlier = Time.parse('10:15:30');
+        later = Time.parse('12:45:00');
+        equal = Time.parse('10:15:30');
+    });
+
+    it('earlier should be before later', () => {
+        expect(earlier.getIsBefore(later)).toEqual(true);
+    });
+
+    it('later should be after earlier', () => {
+        expect(later.getIsAfter(earlier)).toEqual(true);
+    });
+
+    it('earlier should not be after later', () => {
+        expect(earlier.getIsAfter(later)).toEqual(false);
+    });
+
+    it('equal times should be equal', () => {
+        expect(earlier.getIsEqual(equal)).toEqual(true);
+    });
+
+    it('equal times should not be before each other', () => {
+        expect(earlier.getIsBefore(equal)).toEqual(false);
+    });
+
+    it('equal times should not be after each other', () => {
+        expect(earlier.getIsAfter(equal)).toEqual(false);
+    });
+});
+
+describe('When creating Time from Date', () => {
+    it('should take local time into account', () => {
+        const date = new Date(2020, 0, 1, 15, 45, 20);
+        const time = Time.fromDate(date);
+
+        expect(time.hours).toEqual(15);
+        expect(time.minutes).toEqual(45);
+        expect(time.seconds).toEqual(20);
+    });
+
+    it('should take UTC time into account', () => {
+        const date = new Date(Date.UTC(2020, 0, 1, 8, 30, 50));
+        const time = Time.fromDateUtc(date);
+
+        expect(time.hours).toEqual(8);
+        expect(time.minutes).toEqual(30);
+        expect(time.seconds).toEqual(50);
+    });
+});
+
+describe('When converting Time to JSON', () => {
+    it('should output the same as format()', () => {
+        const time = Time.parse('06:07:08');
+
+        expect(time.toJSON()).toEqual('06:07:08');
+    });
+});
+
+describe('When toString is called', () => {
+    it('should return "[Time]"', () => {
+        const time = Time.parse('01:02:03');
+
+        expect(time.toString()).toEqual('[Time]');
+    });
+});
