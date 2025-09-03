@@ -111,7 +111,7 @@ module.exports = (() => {
 
             const hours = parseInt(match[1]);
             const minutes = parseInt(match[2]);
-            const seconds = parseInt(match[3]);
+            const seconds = match[4] ? parseInt(match[4]) : 0;
 
             return new Time(hours, minutes, seconds);
         }
@@ -121,7 +121,7 @@ module.exports = (() => {
         }
     }
 
-    const regex = /^([0-2]?[0-9]):([0-5][0-9]):([0-5][0-9])$/i;
+    const regex = /^([0-2]?[0-9]):([0-5][0-9])(:([0-5][0-9]))?$/i;
 
     function leftPad(value, digits, character) {
         const string = value.toString();
