@@ -4732,7 +4732,7 @@ module.exports = (() => {
     }
 
     /**
-     * Indicates if the current {@link Time} instance is the same as the another time.
+     * Indicates if the current {@link Time} instance is the same as another time.
      *
      * @public
      * @param {Time} other
@@ -5134,6 +5134,17 @@ module.exports = (() => {
     static get AMERICA_NEW_YORK() {
       return america_new_york;
     }
+
+    /**
+     * America/Denver
+     *
+     * @public
+     * @static
+     * @returns {Timezones}
+     */
+    static get AMERICA_DENVER() {
+      return america_denver;
+    }
     toString() {
       return `[Timezone (name=${this.code})]`;
     }
@@ -5142,6 +5153,7 @@ module.exports = (() => {
   const utc = Enum.fromCode(Timezones, 'UTC');
   const america_chicago = Enum.fromCode(Timezones, 'America/Chicago');
   const america_new_york = Enum.fromCode(Timezones, 'America/New_York');
+  const america_denver = Enum.fromCode(Timezones, 'America/Denver');
   return Timezones;
 })();
 
