@@ -80,7 +80,7 @@ module.exports = (() => {
         }
 
         /**
-         * Indicates if the current {@link Time} instance is the same as the another time.
+         * Indicates if the current {@link Time} instance is the same as another time.
          *
          * @public
          * @param {Time} other
