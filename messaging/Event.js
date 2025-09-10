@@ -68,7 +68,7 @@ module.exports = (() => {
 		 * Triggers the event, calling all previously registered handlers.
 		 *
 		 * @public
-		 * @param {*) data - The data to pass each handler.
+		 * @param {*} data - The data to pass each handler.
 		 */
 		fire(data) {
 			let observers = this._observers;
@@ -81,7 +81,7 @@ module.exports = (() => {
 		}
 
 		/**
-		 * Returns true, if no handlers are currently registered.
+		 * Returns true if no handlers are currently registered.
 		 *
 		 * @public
 		 * @returns {boolean}
