@@ -544,3 +544,15 @@ describe('When checking for containment', () => {
 		});
 	});
 });
+
+describe('When parsing string values', () => {
+    'use strict';
+
+    it('Parsing the string "1.234" should yield a valid decimal', () => {
+        expect(Decimal.parse('1.234') instanceof Decimal).toEqual(true);
+    });
+
+    it('Parsing the string "1.234abcd" should not yield a valid decimal', () => {
+        expect(() => Decimal.parse('1.234abcd')).toThrow();
+    });
+});
