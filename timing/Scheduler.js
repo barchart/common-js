@@ -25,12 +25,13 @@ module.exports = (() => {
 		 * Schedules an action to execute in the future, returning a Promise.
 		 *
 		 * @public
+		 * @async
 		 * @param {Function} actionToSchedule - The action to execute.
 		 * @param {number} millisecondDelay - Milliseconds before the action can be started.
 		 * @param {string=} actionDescription - A description of the action, used for logging purposes.
 		 * @returns {Promise}
 		 */
-		schedule(actionToSchedule, millisecondDelay, actionDescription) {
+		async schedule(actionToSchedule, millisecondDelay, actionDescription) {
 			return Promise.resolve()
 				.then(() => {
 					assert.argumentIsRequired(actionToSchedule, 'actionToSchedule', Function);
@@ -113,6 +114,7 @@ module.exports = (() => {
 		 * Attempts an action, repeating if necessary, using an exponential backoff.
 		 *
 		 * @public
+		 * @async
 		 * @param {Function} actionToBackoff - The action to attempt. If it fails -- because an error is thrown, a promise is rejected, or the function returns a falsey value -- the action will be invoked again.
 		 * @param {number=} millisecondDelay - The amount of time to wait to execute the action. Subsequent failures are multiply this value by 2 ^ [number of failures]. So, a 1000 millisecond backoff would schedule attempts using the following delays: 0, 1000, 2000, 4000, 8000, etc. If not specified, the first attempt will execute immediately, then a value of 1000 will be used.
 		 * @param {string=} actionDescription - Description of the action to attempt, used for logging purposes.
@@ -219,7 +221,7 @@ module.exports = (() => {
 			this._intervalBindings = null;
 		}
 
-		static schedule(actionToSchedule, millisecondDelay, actionDescription) {
+		static async schedule(actionToSchedule, millisecondDelay, actionDescription) {
 			const scheduler = new Scheduler();
 
 			scheduler.schedule(actionToSchedule, millisecondDelay, actionDescription)
@@ -234,7 +236,7 @@ module.exports = (() => {
 				});
 		}
 
-		static backoff(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts, failureCallback, failureValue, maximumDelay) {
+		static async backoff(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts, failureCallback, failureValue, maximumDelay) {
 			return Promise.resolve()
 				.then(() => {
 					const scheduler = new Scheduler();
