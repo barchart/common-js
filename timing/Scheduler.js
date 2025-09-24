@@ -224,7 +224,7 @@ module.exports = (() => {
 		static async schedule(actionToSchedule, millisecondDelay, actionDescription) {
 			const scheduler = new Scheduler();
 
-			scheduler.schedule(actionToSchedule, millisecondDelay, actionDescription)
+			return scheduler.schedule(actionToSchedule, millisecondDelay, actionDescription)
 				.then((result) => {
 					scheduler.dispose();
 
