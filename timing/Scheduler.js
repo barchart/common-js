@@ -32,54 +32,51 @@ module.exports = (() => {
 		 * @returns {Promise}
 		 */
 		async schedule(actionToSchedule, millisecondDelay, actionDescription) {
-			return Promise.resolve()
-				.then(() => {
-					assert.argumentIsRequired(actionToSchedule, 'actionToSchedule', Function);
-					assert.argumentIsRequired(millisecondDelay, 'millisecondDelay', Number);
-					assert.argumentIsOptional(actionDescription, 'actionDescription', String);
+			assert.argumentIsRequired(actionToSchedule, 'actionToSchedule', Function);
+			assert.argumentIsRequired(millisecondDelay, 'millisecondDelay', Number);
+			assert.argumentIsOptional(actionDescription, 'actionDescription', String);
 
-					if (this.getIsDisposed()) {
-						throw new Error('The Scheduler has been disposed.');
+			if (this.getIsDisposed()) {
+				throw new Error('The Scheduler has been disposed.');
+			}
+
+			let token;
+
+			const schedulePromise = promise.build((resolveCallback, rejectCallback) => {
+				const wrappedAction = () => {
+					const disposable = this._timeoutBindings[token];
+
+					// 2021/05/18, BRI. Invoking dispose cases the clearTimeout function to run.
+					// Running clearTimeout should not be necessary because the timer has elapsed
+					// and the callback is being invoked. However, failing to call clearTimeout in
+					// a Node.js environment (after version 10) leads to a memory leak. Notice that
+					// this function has a reference to the Scheduler instance (via closure). In my
+					// view, this is breaking change between versions 10 and 12 of Node.js. I have
+					// been unable to locate any documentation regarding this change; however, a changes
+					// to did occur (which becomes obvious when inspecting the data structure returned by
+					// the setTimeout function).
+
+					if (disposable) {
+						disposable.dispose();
 					}
 
-					let token;
+					try {
+						resolveCallback(actionToSchedule());
+					} catch (e) {
+						rejectCallback(e);
+					}
+				};
 
-					const schedulePromise = promise.build((resolveCallback, rejectCallback) => {
-						const wrappedAction = () => {
-							const disposable = this._timeoutBindings[token];
+				token = setTimeout(wrappedAction, millisecondDelay);
 
-							// 2021/05/18, BRI. Invoking dispose cases the clearTimeout function to run.
-							// Running clearTimeout should not be necessary because the timer has elapsed
-							// and the callback is being invoked. However, failing to call clearTimeout in
-							// a Node.js environment (after version 10) leads to a memory leak. Notice that
-							// this function has a reference to the Scheduler instance (via closure). In my
-							// view, this is breaking change between versions 10 and 12 of Node.js. I have
-							// been unable to locate any documentation regarding this change; however, a changes
-							// to did occur (which becomes obvious when inspecting the data structure returned by
-							// the setTimeout function).
+				this._timeoutBindings[token] = Disposable.fromAction(() => {
+					clearTimeout(token);
 
-							if (disposable) {
-								disposable.dispose();
-							}
-
-							try {
-								resolveCallback(actionToSchedule());
-							} catch (e) {
-								rejectCallback(e);
-							}
-						};
-
-						token = setTimeout(wrappedAction, millisecondDelay);
-
-						this._timeoutBindings[token] = Disposable.fromAction(() => {
-							clearTimeout(token);
-
-							delete this._timeoutBindings[token];
-						});
-					});
-
-					return schedulePromise;
+					delete this._timeoutBindings[token];
 				});
+			});
+
+			return schedulePromise;
 		}
 
 		repeat(actionToRepeat, millisecondInterval, actionDescription) {
@@ -124,88 +121,85 @@ module.exports = (() => {
 		 * @param {number=} maximumDelay - The maximum delay that can be used for the backoff. If not provided, the delay will continue to double until the maximum number of attempts is reached.
 		 * @returns {Promise}
 		 */
-		backoff(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts, failureCallback, failureValue, maximumDelay) {
-			return Promise.resolve()
-				.then(() => {
-					assert.argumentIsRequired(actionToBackoff, 'actionToBackoff', Function);
-					assert.argumentIsOptional(millisecondDelay, 'millisecondDelay', Number);
-					assert.argumentIsOptional(actionDescription, 'actionDescription', String);
-					assert.argumentIsOptional(maximumAttempts, 'maximumAttempts', Number);
-					assert.argumentIsOptional(failureCallback, 'failureCallback', Function);
-					assert.argumentIsOptional(maximumDelay, 'maximumDelay', Number);
+		async backoff(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts, failureCallback, failureValue, maximumDelay) {
+			assert.argumentIsRequired(actionToBackoff, 'actionToBackoff', Function);
+			assert.argumentIsOptional(millisecondDelay, 'millisecondDelay', Number);
+			assert.argumentIsOptional(actionDescription, 'actionDescription', String);
+			assert.argumentIsOptional(maximumAttempts, 'maximumAttempts', Number);
+			assert.argumentIsOptional(failureCallback, 'failureCallback', Function);
+			assert.argumentIsOptional(maximumDelay, 'maximumDelay', Number);
 
-					if (this.getIsDisposed()) {
-						throw new Error('The Scheduler has been disposed.');
-					}
+			if (this.getIsDisposed()) {
+				throw new Error('The Scheduler has been disposed.');
+			}
 
-					const processAction = (attempts) => {
-						return Promise.resolve()
-							.then(() => {
-								let delay;
+			const processAction = (attempts) => {
+				return Promise.resolve()
+					.then(() => {
+						let delay;
 
-								if (attempts === 0) {
-									delay = 0;
-								} else {
-									delay = (millisecondDelay || 1000) * Math.pow(2, attempts - 1);
-									if (maximumDelay && delay > maximumDelay) {
-										delay = maximumDelay;
-									}
-								}
+						if (attempts === 0) {
+							delay = 0;
+						} else {
+							delay = (millisecondDelay || 1000) * Math.pow(2, attempts - 1);
+							if (maximumDelay && delay > maximumDelay) {
+								delay = maximumDelay;
+							}
+						}
 
-								if (delay === 0) {
-									return Promise.resolve()
-										.then(() => {
-											return actionToBackoff();
-										});
-								} else {
-									return this.schedule(actionToBackoff, delay, `Attempt [ ${attempts} ] for [ ${(actionDescription || 'unnamed action')} ]`);
-								}
-							}).then((result) => {
-								let resultPromise;
+						if (delay === 0) {
+							return Promise.resolve()
+								.then(() => {
+									return actionToBackoff();
+								});
+						} else {
+							return this.schedule(actionToBackoff, delay, `Attempt [ ${attempts} ] for [ ${(actionDescription || 'unnamed action')} ]`);
+						}
+					}).then((result) => {
+						let resultPromise;
 
-								if (!is.undefined(failureValue) && object.equals(result, failureValue)) {
-									resultPromise = Promise.reject(`Attempt [ ${attempts} ] for [ ${(actionDescription || 'unnamed action')} ] failed due to invalid result`);
-								} else {
-									resultPromise = Promise.resolve(result);
-								}
+						if (!is.undefined(failureValue) && object.equals(result, failureValue)) {
+							resultPromise = Promise.reject(`Attempt [ ${attempts} ] for [ ${(actionDescription || 'unnamed action')} ] failed due to invalid result`);
+						} else {
+							resultPromise = Promise.resolve(result);
+						}
 
-								return resultPromise;
-							}).catch((e) => {
-								if (is.fn(failureCallback)) {
-									failureCallback(attempts);
-								}
+						return resultPromise;
+					}).catch((e) => {
+						if (is.fn(failureCallback)) {
+							failureCallback(attempts);
+						}
 
-								return Promise.reject(e);
-							});
-					};
+						return Promise.reject(e);
+					});
+			};
 
-					let attempts = 0;
+			let attempts = 0;
 
-					const processActionRecursive = () => {
-						return processAction(attempts++)
-							.catch((e) => {
-								if (maximumAttempts > 0 && attempts === maximumAttempts) {
-									let message = `Maximum failures reached for ${(actionDescription || 'unnamed action')}`;
+			const processActionRecursive = () => {
+				return processAction(attempts++)
+					.catch((e) => {
+						if (maximumAttempts > 0 && attempts === maximumAttempts) {
+							let message = `Maximum failures reached for ${(actionDescription || 'unnamed action')}`;
 
-									let rejectPromise;
+							let rejectPromise;
 
-									if (is.object(e)) {
-										e.backoff = message;
+							if (is.object(e)) {
+								e.backoff = message;
 
-										rejectPromise = Promise.reject(e);
-									} else {
-										rejectPromise = Promise.reject(message);
-									}
+								rejectPromise = Promise.reject(e);
+							} else {
+								rejectPromise = Promise.reject(message);
+							}
 
-									return rejectPromise;
-								} else {
-									return processActionRecursive();
-								}
-							});
-					};
+							return rejectPromise;
+						} else {
+							return processActionRecursive();
+						}
+					});
+			};
 
-					return processActionRecursive();
-				});
+			return processActionRecursive();
 		}
 
 		_onDispose() {
