@@ -224,30 +224,29 @@ module.exports = (() => {
 		static async schedule(actionToSchedule, millisecondDelay, actionDescription) {
 			const scheduler = new Scheduler();
 
-			return scheduler.schedule(actionToSchedule, millisecondDelay, actionDescription)
-				.then((result) => {
-					scheduler.dispose();
+			let result;
 
-					return result;
-				}).catch((e) => {
-					scheduler.dispose();
+			try {
+				result = await scheduler.schedule(actionToSchedule, millisecondDelay, actionDescription);
+			} finally {
+				scheduler.dispose();
+			}
 
-					throw e;
-				});
+			return result;
 		}
 
 		static async backoff(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts, failureCallback, failureValue, maximumDelay) {
-			return Promise.resolve()
-				.then(() => {
-					const scheduler = new Scheduler();
+			const scheduler = new Scheduler();
 
-					return scheduler.backoff(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts, failureCallback, failureValue, maximumDelay)
-						.catch((e) => {
-							scheduler.dispose();
+			let result;
 
-							return Promise.reject(e);
-						});
-				});
+			try {
+				result = await scheduler.backoff(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts, failureCallback, failureValue, maximumDelay);
+			} finally {
+				scheduler.dispose();
+			}
+
+			return result;
 		}
 
 		toString() {
