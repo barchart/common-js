@@ -1,7 +1,8 @@
 declare module '@barchart/common-js/lang/DayFormatType' {
     export default class DayFormatType {
-        static get YEAR_MONTH_DAY(): DayFormatType;
-        static get MONTH_DAY_YEAR(): DayFormatType;
+        static get YYYY_MM_DD(): DayFormatType;
+        static get MM_DD_YYYY(): DayFormatType;
+        static get MM_DD_YY(): DayFormatType;
     }
 }
 
