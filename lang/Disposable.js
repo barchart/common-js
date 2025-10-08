@@ -14,6 +14,16 @@ module.exports = (() => {
 		}
 
 		/**
+		 * Indicates if the dispose action has been executed.
+		 *
+		 * @public
+		 * @returns {boolean}
+		 */
+		get disposed() {
+			return this._disposed;
+		}
+
+		/**
 		 * Invokes end-of-life logic. Once this function has been
 		 * invoked, further interaction with the object is not
 		 * recommended.
@@ -43,10 +53,11 @@ module.exports = (() => {
 		 * Returns true if the {@link Disposable#dispose} function has been invoked.
 		 *
 		 * @public
+		 * @deprecated
 		 * @returns {boolean}
 		 */
 		getIsDisposed() {
-			return this._disposed || false;
+			return this._disposed;
 		}
 
 		toString() {

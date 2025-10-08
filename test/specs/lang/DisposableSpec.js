@@ -29,6 +29,10 @@ describe('When a Disposable is extended', () => {
 		expect(testDisposable.getIsDisposed()).toEqual(false);
 	});
 
+	it('should not indicate that it has been disposed (using disposed property)', () => {
+		expect(testDisposable.disposed).toEqual(false);
+	});
+
 	it('should not have triggered the dispose action', () => {
 		expect(testDisposable.getDisposeSpy()).not.toHaveBeenCalled();
 	});
@@ -38,8 +42,12 @@ describe('When a Disposable is extended', () => {
 			testDisposable.dispose();
 		});
 
-		it('should not indicate that it has been disposed', () => {
+		it('should indicate that it has been disposed', () => {
 			expect(testDisposable.getIsDisposed()).toEqual(true);
+		});
+
+		it('should indicate that it has been disposed (using disposed property)', () => {
+			expect(testDisposable.disposed).toEqual(true);
 		});
 
 		it('should have triggered the dispose action', () => {
@@ -51,8 +59,12 @@ describe('When a Disposable is extended', () => {
 				testDisposable.dispose();
 			});
 
-			it('should not indicate that it has been disposed', () => {
+			it('should indicate that it has been disposed', () => {
 				expect(testDisposable.getIsDisposed()).toEqual(true);
+			});
+
+			it('should indicate that it has been disposed (using the disposed property)', () => {
+				expect(testDisposable.disposed).toEqual(true);
 			});
 
 			it('should not dispose action again', () => {
@@ -80,6 +92,10 @@ describe('When a Disposable.fromAction creates a Disposable', () => {
 		expect(testDisposable.getIsDisposed()).toEqual(false);
 	});
 
+	it('should not indicate that it has been disposed (using the disposed property)', () => {
+		expect(testDisposable.disposed).toEqual(false);
+	});
+
 	it('should not have triggered the dispose action', () => {
 		expect(testDisposableSpy).not.toHaveBeenCalled();
 	});
@@ -89,8 +105,12 @@ describe('When a Disposable.fromAction creates a Disposable', () => {
 			testDisposable.dispose();
 		});
 
-		it('should not indicate that it has been disposed', () => {
+		it('should indicate that it has been disposed', () => {
 			expect(testDisposable.getIsDisposed()).toEqual(true);
+		});
+
+		it('should indicate that it has been disposed (using the disposed proeprty)', () => {
+			expect(testDisposable.disposed).toEqual(true);
 		});
 
 		it('should have triggered the dispose action', () => {
@@ -102,8 +122,12 @@ describe('When a Disposable.fromAction creates a Disposable', () => {
 				testDisposable.dispose();
 			});
 
-			it('should not indicate that it has been disposed', () => {
+			it('should indicate that it has been disposed', () => {
 				expect(testDisposable.getIsDisposed()).toEqual(true);
+			});
+
+			it('should indicate that it has been disposed (using the disposed property)', () => {
+				expect(testDisposable.disposed).toEqual(true);
 			});
 
 			it('should not dispose action again', () => {
