@@ -36,7 +36,7 @@ module.exports = (() => {
 			assert.argumentIsRequired(millisecondDelay, 'millisecondDelay', Number);
 			assert.argumentIsOptional(actionDescription, 'actionDescription', String);
 
-			if (this.getIsDisposed()) {
+			if (this.disposed) {
 				throw new Error('The Scheduler has been disposed.');
 			}
 
@@ -84,7 +84,7 @@ module.exports = (() => {
 			assert.argumentIsRequired(millisecondInterval, 'millisecondInterval', Number);
 			assert.argumentIsOptional(actionDescription, 'actionDescription', String);
 
-			if (this.getIsDisposed()) {
+			if (this.disposed) {
 				throw new Error('The Scheduler has been disposed.');
 			}
 
@@ -129,7 +129,7 @@ module.exports = (() => {
 			assert.argumentIsOptional(failureCallback, 'failureCallback', Function);
 			assert.argumentIsOptional(maximumDelay, 'maximumDelay', Number);
 
-			if (this.getIsDisposed()) {
+			if (this.disposed) {
 				throw new Error('The Scheduler has been disposed.');
 			}
 

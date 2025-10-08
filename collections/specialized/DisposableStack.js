@@ -31,7 +31,7 @@ module.exports = (() => {
 		push(disposable) {
 			assert.argumentIsRequired(disposable, 'disposable', Disposable, 'Disposable');
 
-			if (this.getIsDisposed()) {
+			if (this.disposed) {
 				throw new Error('Unable to push item onto DisposableStack because it has been disposed.');
 			}
 

@@ -48,7 +48,7 @@ module.exports = (() => {
 			return promise.build((resolveCallback, rejectCallback) => {
 				assert.argumentIsRequired(actionToEnqueue, 'actionToEnqueue', Function);
 
-				if (this.getIsDisposed()) {
+				if (this.disposed) {
 					throw new Error('Unable to enqueue action, the rate limiter has been disposed.');
 				}
 
@@ -81,7 +81,7 @@ module.exports = (() => {
 	}
 
 	function checkStart() {
-		if (this.getIsDisposed()) {
+		if (this.disposed) {
 			return;
 		}
 

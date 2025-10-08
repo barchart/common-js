@@ -46,7 +46,7 @@ module.exports = (() => {
 		register(eventName, handler) {
 			assert.argumentIsRequired(eventName, 'eventName', String);
 
-			if (this.getIsDisposed()) {
+			if (this.disposed) {
 				throw new Error('The event has been disposed.');
 			}
 

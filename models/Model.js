@@ -45,7 +45,7 @@ module.exports = (() => {
 				return;
 			}
 
-			if (this.getIsDisposed()) {
+			if (this.disposed) {
 				return;
 			}
 
@@ -83,7 +83,7 @@ module.exports = (() => {
 		}
 
 		onTransactionCommitted(observer) {
-			if (this.getIsDisposed()) {
+			if (this.disposed) {
 				return;
 			}
 
@@ -103,7 +103,7 @@ module.exports = (() => {
 				return null;
 			}
 
-			if (this.getIsDisposed()) {
+			if (this.disposed) {
 				return null;
 			}
 
@@ -119,7 +119,7 @@ module.exports = (() => {
 				return;
 			}
 
-			if (this.getIsDisposed()) {
+			if (this.disposed) {
 				return;
 			}
 
