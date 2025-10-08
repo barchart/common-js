@@ -46,7 +46,7 @@ module.exports = (() => {
 		 * @ignore
 		 */
 		_onDispose() {
-			return;
+
 		}
 
 		/**
@@ -89,7 +89,7 @@ module.exports = (() => {
 		 */
 		static getEmpty() {
 			return Disposable.fromAction(() => {
-				return;
+
 			});
 		}
 	}

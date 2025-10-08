@@ -1,13 +1,6 @@
-declare module '@barchart/common-js/lang/DayFormatType' {
-    export default class DayFormatType {
-        static get YYYY_MM_DD(): DayFormatType;
-        static get MM_DD_YYYY(): DayFormatType;
-        static get MM_DD_YY(): DayFormatType;
-    }
-}
-
 declare module '@barchart/common-js/lang/Day' {
     import DayFormatType from "@barchart/common-js/lang/DayFormatType";
+
     export default class Day {
         format(): string;
 
@@ -19,5 +12,21 @@ declare module '@barchart/common-js/lang/Day' {
 
         static parse(value: string, type?: DayFormatType): Day;
         static fromDate(date: Date): Day;
+    }
+}
+
+declare module '@barchart/common-js/lang/DayFormatType' {
+    export default class DayFormatType {
+        static get YYYY_MM_DD(): DayFormatType;
+        static get MM_DD_YYYY(): DayFormatType;
+        static get MM_DD_YY(): DayFormatType;
+    }
+}
+
+declare module '@barchart/common-js/lang/Disposable' {
+    export default class Disposable {
+        get disposed(): boolean;
+
+        dispose(): void;
     }
 }
