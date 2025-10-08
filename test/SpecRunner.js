@@ -1606,7 +1606,7 @@ module.exports = (() => {
      */
     push(disposable) {
       assert.argumentIsRequired(disposable, 'disposable', Disposable, 'Disposable');
-      if (this.getIsDisposed()) {
+      if (this.disposed) {
         throw new Error('Unable to push item onto DisposableStack because it has been disposed.');
       }
       this._stack.push(disposable);
@@ -7120,7 +7120,7 @@ module.exports = (() => {
       assert.argumentIsRequired(handler, 'handler', Function);
       addRegistration.call(this, handler);
       return Disposable.fromAction(() => {
-        if (this.getIsDisposed()) {
+        if (this.disposed) {
           return;
         }
         removeRegistration.call(this, handler);
@@ -7247,7 +7247,7 @@ module.exports = (() => {
      */
     register(eventName, handler) {
       assert.argumentIsRequired(eventName, 'eventName', String);
-      if (this.getIsDisposed()) {
+      if (this.disposed) {
         throw new Error('The event has been disposed.');
       }
       let event = this._events[eventName];
@@ -7385,7 +7385,7 @@ module.exports = (() => {
       if (!this._transactionOpen) {
         return;
       }
-      if (this.getIsDisposed()) {
+      if (this.disposed) {
         return;
       }
       this._transactionOpen = false;
@@ -7412,7 +7412,7 @@ module.exports = (() => {
       this.endTransaction();
     }
     onTransactionCommitted(observer) {
-      if (this.getIsDisposed()) {
+      if (this.disposed) {
         return;
       }
       return this._transactionCommit.register(observer);
@@ -7427,7 +7427,7 @@ module.exports = (() => {
       if (!this._trackerOpen) {
         return null;
       }
-      if (this.getIsDisposed()) {
+      if (this.disposed) {
         return null;
       }
       const returnRef = this._trackerData;
@@ -7438,7 +7438,7 @@ module.exports = (() => {
       if (!this._trackerOpen) {
         return;
       }
-      if (this.getIsDisposed()) {
+      if (this.disposed) {
         return;
       }
       this._trackerOpen = false;
@@ -29856,7 +29856,7 @@ module.exports = (() => {
     enqueue(actionToEnqueue) {
       return promise.build((resolveCallback, rejectCallback) => {
         assert.argumentIsRequired(actionToEnqueue, 'actionToEnqueue', Function);
-        if (this.getIsDisposed()) {
+        if (this.disposed) {
           throw new Error('Unable to enqueue action, the rate limiter has been disposed.');
         }
         this._workQueue.enqueue(() => {
@@ -29882,7 +29882,7 @@ module.exports = (() => {
     }
   }
   function checkStart() {
-    if (this.getIsDisposed()) {
+    if (this.disposed) {
       return;
     }
     if (this._workQueue.empty()) {
@@ -29944,7 +29944,7 @@ module.exports = (() => {
       assert.argumentIsRequired(actionToSchedule, 'actionToSchedule', Function);
       assert.argumentIsRequired(millisecondDelay, 'millisecondDelay', Number);
       assert.argumentIsOptional(actionDescription, 'actionDescription', String);
-      if (this.getIsDisposed()) {
+      if (this.disposed) {
         throw new Error('The Scheduler has been disposed.');
       }
       let token;
@@ -29983,7 +29983,7 @@ module.exports = (() => {
       assert.argumentIsRequired(actionToRepeat, 'actionToRepeat', Function);
       assert.argumentIsRequired(millisecondInterval, 'millisecondInterval', Number);
       assert.argumentIsOptional(actionDescription, 'actionDescription', String);
-      if (this.getIsDisposed()) {
+      if (this.disposed) {
         throw new Error('The Scheduler has been disposed.');
       }
       const wrappedAction = () => {
@@ -30020,7 +30020,7 @@ module.exports = (() => {
       assert.argumentIsOptional(maximumAttempts, 'maximumAttempts', Number);
       assert.argumentIsOptional(failureCallback, 'failureCallback', Function);
       assert.argumentIsOptional(maximumDelay, 'maximumDelay', Number);
-      if (this.getIsDisposed()) {
+      if (this.disposed) {
         throw new Error('The Scheduler has been disposed.');
       }
       const processAction = attempts => {
