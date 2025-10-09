@@ -30,3 +30,13 @@ declare module '@barchart/common-js/lang/Disposable' {
         dispose(): void;
     }
 }
+
+declare module '@barchart/common-js/lang/Timespan' {
+    export default class Timespan {
+        get days(): number;
+        get hours(): number;
+        get minutes(): number;
+        get seconds(): number;
+        get milliseconds(): number;
+    }
+}
