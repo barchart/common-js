@@ -6558,14 +6558,15 @@ module.exports = (() => {
    *
    * @public
    * @function
+   * @async
    * @param {Iterable} iterable
    * @param {LoopProcessorCallback} processor
    * @returns {Promise<void>}
    */
-  function iterate(iterable, processor) {
+  async function iterate(iterable, processor) {
     return promise.build((resolveCallback, rejectCallback) => {
       if (!is.iterable(iterable)) {
-        rejectCallback('Unable to iterate, the "iterable" argument must have an Iterator.');
+        rejectCallback('Unable to iterate, the "iterable" argument must have an iterator.');
         return;
       }
       if (!is.fn(processor)) {
@@ -6604,7 +6605,7 @@ module.exports = (() => {
    *
    * @public
    * @callback LoopContinueCallback
-   * @returns {Boolean=} - If false, loop breaks.
+   * @returns {*} - If false, loop breaks.
    */
 
   return iterate;
