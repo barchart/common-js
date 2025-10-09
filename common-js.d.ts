@@ -2,13 +2,15 @@ declare module '@barchart/common-js/lang/Day' {
     import DayFormatType from "@barchart/common-js/lang/DayFormatType";
 
     export default class Day {
-        format(): string;
+        constructor(month: number, day: number, year: number);
 
         get year(): number;
         get month(): number;
         get day(): number;
 
         addDays(days: number, inverse?: boolean): Day;
+
+        format(): string;
 
         static parse(value: string, type?: DayFormatType): Day;
         static fromDate(date: Date): Day;
@@ -25,6 +27,8 @@ declare module '@barchart/common-js/lang/DayFormatType' {
 
 declare module '@barchart/common-js/lang/Disposable' {
     export default class Disposable {
+        constructor();
+
         get disposed(): boolean;
 
         dispose(): void;
@@ -33,6 +37,8 @@ declare module '@barchart/common-js/lang/Disposable' {
 
 declare module '@barchart/common-js/lang/Timespan' {
     export default class Timespan {
+        constructor(start: number, end: number);
+
         get days(): number;
         get hours(): number;
         get minutes(): number;
