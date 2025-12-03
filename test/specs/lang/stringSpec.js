@@ -1,8 +1,6 @@
 const string = require('./../../../lang/string');
 
 describe('When converting a sentence to "start" casing', () => {
-	'use strict';
-
 	let result;
 
 	beforeEach(() => {
@@ -15,8 +13,6 @@ describe('When converting a sentence to "start" casing', () => {
 });
 
 describe('When converting a sentence to "camel" casing', () => {
-	'use strict';
-
 	let result;
 
 	beforeEach(() => {
@@ -29,8 +25,6 @@ describe('When converting a sentence to "camel" casing', () => {
 });
 
 describe('When converting a word to "start" casing', () => {
-	'use strict';
-
 	let result;
 
 	beforeEach(() => {
@@ -43,8 +37,6 @@ describe('When converting a word to "start" casing', () => {
 });
 
 describe('When converting a word to "camel" casing', () => {
-	'use strict';
-
 	let result;
 
 	beforeEach(() => {
@@ -57,8 +49,6 @@ describe('When converting a word to "camel" casing', () => {
 });
 
 describe('When truncating a string', () => {
-	'use strict';
-
 	let base;
 
 	beforeEach(() => {
@@ -114,8 +104,6 @@ describe('When truncating a string', () => {
 });
 
 describe('When left padding a string', () => {
-	'use strict';
-
 	let base;
 
 	beforeEach(() => {
@@ -182,9 +170,59 @@ describe('When left padding a string', () => {
 	});
 });
 
-describe('When a formattable string ("&startDate={0}&endDate={1}"', () => {
-	'use strict';
+describe('When masking a string the string "12345678"', () => {
+	let s;
 
+	beforeEach(() => {
+		s = '12345678';
+	});
+
+	it('with zero characters shown and a mask of "*" should be "********"', () => {
+		expect(string.mask(s, "*", 0)).toEqual('********');
+	});
+
+	it('with four characters shown and a mask of "*" should be "****5678"', () => {
+		expect(string.mask(s, "*", 4)).toEqual('****5678');
+	});
+
+	it('with eight characters shown and a mask of "*" should be "12345678"', () => {
+		expect(string.mask(s, "*", 8)).toEqual('12345678');
+	});
+
+	it('with nine characters shown and a mask of "*" should be "12345678"', () => {
+		expect(string.mask(s, "*", 9)).toEqual('12345678');
+	});
+
+	it('with four characters shown and a mask of "*" and a final length of six should be "**5678"', () => {
+		expect(string.mask(s, "*", 4, 6)).toEqual('**5678');
+	});
+
+	it('with four characters shown and a mask of "*" and a final length of ten should be "******5678"', () => {
+		expect(string.mask(s, "*", 4, 10)).toEqual('******5678');
+	});
+
+	it('with zero characters shown and a mask of "*" and a final length of ten should be "**********"', () => {
+		expect(string.mask(s, "*", 0, 10)).toEqual('**********');
+	});
+
+	it('with four characters shown and a mask of "*" and a final length of one should be "8"', () => {
+		expect(string.mask(s, "*", 4, 1)).toEqual('8');
+	});
+
+	it('with four characters shown and a mask of "*" and a final length of zero should be a zero-length string', () => {
+		expect(string.mask(s, "*", 4, 0)).toEqual('');
+	});
+
+	it('with negative characters shown and a mask of "*" should be "********"', () => {
+		expect(string.mask(s, "*", -1)).toEqual('********');
+	});
+
+	it('with negative characters shown and a mask of "*" and a final negative length should be a zero-length string', () => {
+		expect(string.mask(s, "*", -1, -1)).toEqual('');
+	});
+});
+
+describe('When a format pattern is used ("&startDate={0}&endDate={1})"', () => {
 	let stringToFormat;
 
 	beforeEach(() => {

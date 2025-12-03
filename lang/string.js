@@ -92,6 +92,39 @@ module.exports = (() => {
 		},
 
 		/**
+		 * Replaces starting characters of a string with a mask character and optionally
+		 * truncates the string.
+		 *
+		 * @public
+		 * @static
+		 * @param {String} s - The string to format.
+		 * @param {String} mask - The character to use for masking.
+		 * @param {Number} show - The number of characters to preserve (of the left).
+		 * @param {Number=} length - The final length of the string (truncating characters of the right).
+		 */
+		mask(s, mask, show, length) {
+			assert.argumentIsRequired(s, 's', String);
+			assert.argumentIsRequired(mask, 'mask', String);
+			assert.argumentIsRequired(show, 'show', Number);
+			assert.argumentIsOptional(length, 'length', Number);
+
+			if (is.number(length) && !(length > 0)) {
+				return '';
+			}
+
+			const countShown = Math.min(s.length, Math.max(show, 0));
+			const countMasked = Math.max(s.length, Math.max(length || 0), 0) - countShown;
+
+			let masked = `${mask.slice(-1).repeat(countMasked)}${countShown > 0 ? s.slice(~countShown + 1) : ''}`;
+
+			if (is.number(length) && !(length < 0) && length < s.length) {
+				masked = masked.slice(~length + 1);
+			}
+
+			return masked;
+		},
+
+		/**
 		 * Performs a simple token replacement on a string; where the tokens
 		 * are braced numbers (e.g. {0}, {1}, {2}).
 		 *
