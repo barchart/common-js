@@ -7181,6 +7181,33 @@ module.exports = (() => {
       return character.repeat(length - s.length) + s;
     },
     /**
+     * Replaces starting characters of a string with a mask character and optionally
+     * truncates the string.
+     *
+     * @public
+     * @static
+     * @param {String} s - The string to format.
+     * @param {String} mask - The character to use for masking.
+     * @param {Number} show - The number of characters to preserve (of the left).
+     * @param {Number=} length - The final length of the string (truncating characters of the right).
+     */
+    mask(s, mask, show, length) {
+      assert.argumentIsRequired(s, 's', String);
+      assert.argumentIsRequired(mask, 'mask', String);
+      assert.argumentIsRequired(show, 'show', Number);
+      assert.argumentIsOptional(length, 'length', Number);
+      if (is.number(length) && !(length > 0)) {
+        return '';
+      }
+      const countShown = Math.min(s.length, Math.max(show, 0));
+      const countMasked = Math.max(s.length, Math.max(length || 0), 0) - countShown;
+      let masked = `${mask.slice(-1).repeat(countMasked)}${countShown > 0 ? s.slice(~countShown + 1) : ''}`;
+      if (is.number(length) && !(length < 0) && length < s.length) {
+        masked = masked.slice(~length + 1);
+      }
+      return masked;
+    },
+    /**
      * Performs a simple token replacement on a string; where the tokens
      * are braced numbers (e.g. {0}, {1}, {2}).
      *
@@ -26829,8 +26856,6 @@ describe('When generating a random number using an invalid range, the range is a
 },{"./../../../lang/random":50}],142:[function(require,module,exports){
 const string = require('./../../../lang/string');
 describe('When converting a sentence to "start" casing', () => {
-  'use strict';
-
   let result;
   beforeEach(() => {
     result = string.startCase('The quick brown Fox');
@@ -26840,8 +26865,6 @@ describe('When converting a sentence to "start" casing', () => {
   });
 });
 describe('When converting a sentence to "camel" casing', () => {
-  'use strict';
-
   let result;
   beforeEach(() => {
     result = string.camelCase('The quick brown Fox');
@@ -26851,8 +26874,6 @@ describe('When converting a sentence to "camel" casing', () => {
   });
 });
 describe('When converting a word to "start" casing', () => {
-  'use strict';
-
   let result;
   beforeEach(() => {
     result = string.startCase('myLittlePony');
@@ -26862,8 +26883,6 @@ describe('When converting a word to "start" casing', () => {
   });
 });
 describe('When converting a word to "camel" casing', () => {
-  'use strict';
-
   let result;
   beforeEach(() => {
     result = string.camelCase('MyLittlePony');
@@ -26873,8 +26892,6 @@ describe('When converting a word to "camel" casing', () => {
   });
 });
 describe('When truncating a string', () => {
-  'use strict';
-
   let base;
   beforeEach(() => {
     base = '1234567890';
@@ -26917,8 +26934,6 @@ describe('When truncating a string', () => {
   });
 });
 describe('When left padding a string', () => {
-  'use strict';
-
   let base;
   beforeEach(() => {
     base = 'base';
@@ -26969,9 +26984,46 @@ describe('When left padding a string', () => {
     });
   });
 });
-describe('When a formattable string ("&startDate={0}&endDate={1}"', () => {
-  'use strict';
-
+describe('When masking a string the string "12345678"', () => {
+  let s;
+  beforeEach(() => {
+    s = '12345678';
+  });
+  it('with zero characters shown and a mask of "*" should be "********"', () => {
+    expect(string.mask(s, "*", 0)).toEqual('********');
+  });
+  it('with four characters shown and a mask of "*" should be "****5678"', () => {
+    expect(string.mask(s, "*", 4)).toEqual('****5678');
+  });
+  it('with eight characters shown and a mask of "*" should be "12345678"', () => {
+    expect(string.mask(s, "*", 8)).toEqual('12345678');
+  });
+  it('with nine characters shown and a mask of "*" should be "12345678"', () => {
+    expect(string.mask(s, "*", 9)).toEqual('12345678');
+  });
+  it('with four characters shown and a mask of "*" and a final length of six should be "**5678"', () => {
+    expect(string.mask(s, "*", 4, 6)).toEqual('**5678');
+  });
+  it('with four characters shown and a mask of "*" and a final length of ten should be "******5678"', () => {
+    expect(string.mask(s, "*", 4, 10)).toEqual('******5678');
+  });
+  it('with zero characters shown and a mask of "*" and a final length of ten should be "**********"', () => {
+    expect(string.mask(s, "*", 0, 10)).toEqual('**********');
+  });
+  it('with four characters shown and a mask of "*" and a final length of one should be "8"', () => {
+    expect(string.mask(s, "*", 4, 1)).toEqual('8');
+  });
+  it('with four characters shown and a mask of "*" and a final length of zero should be a zero-length string', () => {
+    expect(string.mask(s, "*", 4, 0)).toEqual('');
+  });
+  it('with negative characters shown and a mask of "*" should be "********"', () => {
+    expect(string.mask(s, "*", -1)).toEqual('********');
+  });
+  it('with negative characters shown and a mask of "*" and a final negative length should be a zero-length string', () => {
+    expect(string.mask(s, "*", -1, -1)).toEqual('');
+  });
+});
+describe('When a format pattern is used ("&startDate={0}&endDate={1})"', () => {
   let stringToFormat;
   beforeEach(() => {
     stringToFormat = '&startDate={0}&endDate={1}';
