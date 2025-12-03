@@ -201,6 +201,10 @@ describe('When masking a string the string "12345678"', () => {
 		expect(string.mask(s, "*", 4, 10)).toEqual('******5678');
 	});
 
+	it('with four characters shown and a mask of "*" and a final length of three should be 678"', () => {
+		expect(string.mask(s, "*", 4, 3)).toEqual('678');
+	});
+
 	it('with zero characters shown and a mask of "*" and a final length of ten should be "**********"', () => {
 		expect(string.mask(s, "*", 0, 10)).toEqual('**********');
 	});
