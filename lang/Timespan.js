@@ -107,6 +107,7 @@ module.exports = (() => {
 		 * Returns the duration between the start and end times as days, hours, minutes, seconds, and
 		 * milliseconds.
 		 *
+		 * @public
 		 * @param {Boolean} days
 		 * @param {Boolean} hours
 		 * @param {Boolean} minutes
