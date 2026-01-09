@@ -232,6 +232,7 @@ module.exports = (() => {
 	verbs.set(VerbType.DELETE, 'delete');
 	verbs.set(VerbType.POST, 'post');
 	verbs.set(VerbType.PUT, 'put');
+	verbs.set(VerbType.PATCH, 'patch');
 
 	return Gateway;
 })();

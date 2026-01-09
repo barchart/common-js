@@ -55,6 +55,16 @@ module.exports = (() => {
 			return verbTypePut;
 		}
 
+		/**
+		 * PATCH.
+		 *
+		 * @static
+		 * @returns {VerbType}
+		 */
+		static get PATCH() {
+			return verbTypePatch;
+		}
+
 		toString() {
 			return `[VerbType (description=${this.description})]`;
 		}
@@ -64,6 +74,7 @@ module.exports = (() => {
 	const verbTypeGet = new VerbType('GET');
 	const verbTypePost = new VerbType('POST');
 	const verbTypePut = new VerbType('PUT');
+	const verbTypePatch = new VerbType('PATCH');
 
 	return VerbType;
 })();
