@@ -2,7 +2,7 @@ declare module '@barchart/common-js/lang/Day' {
     import DayFormatType from "@barchart/common-js/lang/DayFormatType";
 
     export default class Day {
-        constructor(month: number, day: number, year: number);
+        constructor(year: number, month: number, day: number);
 
         get year(): number;
         get month(): number;
