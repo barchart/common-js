@@ -48,7 +48,7 @@ module.exports = (() => {
 		 * current instance's value and the value supplied.
 		 *
 		 * @public
-		 * @param {Decimal|Number|String} other - The value to add.
+		 * @param {Decimal|Number|String} other - The value to multiply the current instance by.
 		 * @returns {Decimal}
 		 */
 		multiply(other) {
@@ -61,7 +61,7 @@ module.exports = (() => {
 		 * supplied.
 		 *
 		 * @public
-		 * @param {Decimal|Number|String} other - The value to subtract.
+		 * @param {Decimal|Number|String} other - The value to divide the current instance by.
 		 * @returns {Decimal}
 		 */
 		divide(other) {
