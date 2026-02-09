@@ -181,3 +181,183 @@ describe('When toString is called', () => {
         expect(time.toString()).toEqual('[Time]');
     });
 });
+
+describe('When adding seconds to 12:34:56', () => {
+    let time;
+
+    beforeEach(() => {
+        time = Time.parse('12:34:56');
+    });
+
+    it('adding 0 seconds should return 12:34:56', () => {
+        expect(time.addSeconds(0).getIsEqual(Time.parse('12:34:56'))).toBeTrue();
+    });
+
+    it('adding 1 second should return 12:34:57', () => {
+        expect(time.addSeconds(1).getIsEqual(Time.parse('12:34:57'))).toBeTrue();
+    });
+
+    it('adding 4 seconds should return 12:35:00', () => {
+        expect(time.addSeconds(4).getIsEqual(Time.parse('12:35:00'))).toBeTrue();
+    });
+
+    it('adding 5 seconds should return 12:35:01', () => {
+        expect(time.addSeconds(5).getIsEqual(Time.parse('12:35:01'))).toBeTrue();
+    });
+
+    it('adding 41104 seconds should return 00:00:00', () => {
+        expect(time.addSeconds(4 + (25 * 60) + (11 * 60 * 60)).getIsEqual(Time.parse('00:00:00'))).toBeTrue();
+    });
+
+    it('adding 127504 seconds should return 00:00:00', () => {
+        expect(time.addSeconds(4 + (25 * 60) + (35 * 60 * 60)).getIsEqual(Time.parse('00:00:00'))).toBeTrue();
+    });
+});
+
+describe('When subtracting seconds from 12:34:56', () => {
+    let time;
+
+    beforeEach(() => {
+        time = Time.parse('12:34:56');
+    });
+
+    it('subtracting 0 seconds should return 12:34:56', () => {
+        expect(time.subtractSeconds(0).getIsEqual(Time.parse('12:34:56'))).toBeTrue();
+    });
+
+    it('subtracting 1 second should return 12:34:55', () => {
+        expect(time.subtractSeconds(1).getIsEqual(Time.parse('12:34:55'))).toBeTrue();
+    });
+
+    it('subtracting 6 seconds should return 12:34:50', () => {
+        expect(time.subtractSeconds(6).getIsEqual(Time.parse('12:34:50'))).toBeTrue();
+    });
+
+    it('subtracting 7 seconds should return 12:34:49', () => {
+        expect(time.subtractSeconds(7).getIsEqual(Time.parse('12:34:49'))).toBeTrue();
+    });
+
+    it('subtracting 45296 seconds should return 12:34:49', () => {
+        expect(time.subtractSeconds(56 + (34 * 60) + (12 * 60 * 60)).getIsEqual(Time.parse('00:00:00'))).toBeTrue();
+    });
+
+    it('subtracting 45297 seconds should return 12:34:49', () => {
+        expect(time.subtractSeconds(56 + (34 * 60) + (12 * 60 * 60) + 1).getIsEqual(Time.parse('23:59:59'))).toBeTrue();
+    });
+
+    it('subtracting 131696 seconds should return 12:34:49', () => {
+        expect(time.subtractSeconds(56 + (34 * 60) + (36 * 60 * 60)).getIsEqual(Time.parse('00:00:00'))).toBeTrue();
+    });
+});
+
+describe('When adding minutes to 12:34:56', () => {
+    let time;
+
+    beforeEach(() => {
+        time = Time.parse('12:34:56');
+    });
+
+    it('adding 0 minutes should return 12:34:56', () => {
+        expect(time.addMinutes(0).getIsEqual(Time.parse('12:34:56'))).toBeTrue();
+    });
+
+    it('adding 1 minute should return 12:35:56', () => {
+        expect(time.addMinutes(1).getIsEqual(Time.parse('12:35:56'))).toBeTrue();
+    });
+
+    it('adding 6 minutes should return 12:40:56', () => {
+        expect(time.addMinutes(6).getIsEqual(Time.parse('12:40:56'))).toBeTrue();
+    });
+
+    it('adding 26 minutes should return 13:00:56', () => {
+        expect(time.addMinutes(26).getIsEqual(Time.parse('13:00:56'))).toBeTrue();
+    });
+
+    it('adding 87 minutes should return 14:01:56', () => {
+        expect(time.addMinutes(87).getIsEqual(Time.parse('14:01:56'))).toBeTrue();
+    });
+});
+
+describe('When subtracting minutes from 12:34:56', () => {
+    let time;
+
+    beforeEach(() => {
+        time = Time.parse('12:34:56');
+    });
+
+    it('subtracting 0 minutes should return 12:34:56', () => {
+        expect(time.subtractMinutes(0).getIsEqual(Time.parse('12:34:56'))).toBeTrue();
+    });
+
+    it('subtracting 1 minute should return 12:35:56', () => {
+        expect(time.subtractMinutes(1).getIsEqual(Time.parse('12:33:56'))).toBeTrue();
+    });
+
+    it('subtracting 5 minutes should return 12:29:56', () => {
+        expect(time.subtractMinutes(5).getIsEqual(Time.parse('12:29:56'))).toBeTrue();
+    });
+
+    it('subtracting 34 minutes should return 12:00:56', () => {
+        expect(time.subtractMinutes(34).getIsEqual(Time.parse('12:00:56'))).toBeTrue();
+    });
+
+    it('subtracting 35 minutes should return 11:59:56', () => {
+        expect(time.subtractMinutes(35).getIsEqual(Time.parse('11:59:56'))).toBeTrue();
+    });
+});
+
+describe('When adding hours seconds to 12:34:56', () => {
+    let time;
+
+    beforeEach(() => {
+        time = Time.parse('12:34:56');
+    });
+
+    it('adding 0 hours should return 12:34:56', () => {
+        expect(time.addHours(0).getIsEqual(Time.parse('12:34:56'))).toBeTrue();
+    });
+
+    it('adding 1 hour should return 13:34:56', () => {
+        expect(time.addHours(1).getIsEqual(Time.parse('13:34:56'))).toBeTrue();
+    });
+
+    it('adding 6 hours should return 18:34:56', () => {
+        expect(time.addHours(6).getIsEqual(Time.parse('18:34:56'))).toBeTrue();
+    });
+
+    it('adding 12 hours should return 00:34:56', () => {
+        expect(time.addHours(12).getIsEqual(Time.parse('00:34:56'))).toBeTrue();
+    });
+
+    it('adding 13 hours should return 01:34:56', () => {
+        expect(time.addHours(13).getIsEqual(Time.parse('01:34:56'))).toBeTrue();
+    });
+});
+
+describe('When subtracting hours from 12:34:56', () => {
+    let time;
+
+    beforeEach(() => {
+        time = Time.parse('12:34:56');
+    });
+
+    it('subtracting 0 hours should return 12:34:56', () => {
+        expect(time.subtractHours(0).getIsEqual(Time.parse('12:34:56'))).toBeTrue();
+    });
+
+    it('subtracting 1 hours should return 11:34:56', () => {
+        expect(time.subtractHours(1).getIsEqual(Time.parse('11:34:56'))).toBeTrue();
+    });
+
+    it('subtracting 5 hours should return 07:34:56', () => {
+        expect(time.subtractHours(5).getIsEqual(Time.parse('07:34:56'))).toBeTrue();
+    });
+
+    it('subtracting 34 hours should return 02:34:56', () => {
+        expect(time.subtractHours(34).getIsEqual(Time.parse('02:34:56'))).toBeTrue();
+    });
+
+    it('subtracting 37 hours should return 23:34:56', () => {
+        expect(time.subtractHours(37).getIsEqual(Time.parse('23:34:56'))).toBeTrue();
+    });
+});

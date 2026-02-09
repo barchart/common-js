@@ -1,7 +1,12 @@
-const assert = require("./assert");
+const assert = require('./assert'),
+    is = require('./is');
 
 module.exports = (() => {
     'use strict';
+
+    const SECONDS_PER_MINUTE = 60;
+    const MINUTES_PER_HOUR = 60;
+    const HOURS_PER_DAY = 24;
 
     /**
      * A data structure that represents a time of day (hours, minutes, seconds),
@@ -51,6 +56,115 @@ module.exports = (() => {
          */
         get seconds() {
             return this._seconds;
+        }
+
+        addSeconds(seconds) {
+            assert.argumentIsValid(seconds, 'seconds', is.integer, 'must be an integer');
+
+            let negative = seconds < 0;
+
+            let secondsToAdd = seconds % SECONDS_PER_MINUTE;
+            let minutesToAdd = (seconds / SECONDS_PER_MINUTE) % MINUTES_PER_HOUR;
+            let hoursToAdd = (seconds / (SECONDS_PER_MINUTE * MINUTES_PER_HOUR)) % HOURS_PER_DAY;
+
+            if (negative) {
+                minutesToAdd = Math.ceil(minutesToAdd);
+                hoursToAdd = Math.ceil(hoursToAdd);
+            } else {
+                minutesToAdd = Math.floor(minutesToAdd);
+                hoursToAdd = Math.floor(hoursToAdd);
+            }
+
+            let secondsShifted = this._seconds + secondsToAdd;
+
+            if (negative && secondsShifted < 0) {
+                secondsShifted += SECONDS_PER_MINUTE;
+
+                minutesToAdd--;
+            }
+
+            if (!negative && !(secondsShifted < SECONDS_PER_MINUTE)) {
+                secondsShifted -= SECONDS_PER_MINUTE;
+
+                minutesToAdd++;
+            }
+
+            let minutesShifted = this._minutes + minutesToAdd;
+
+            if (negative && minutesShifted < 0) {
+                minutesShifted += MINUTES_PER_HOUR;
+
+                hoursToAdd--;
+            }
+
+            if (!negative && !(minutesShifted < MINUTES_PER_HOUR)) {
+                minutesShifted -= MINUTES_PER_HOUR;
+
+                hoursToAdd++;
+            }
+
+            let hoursShifted = (this._hours + hoursToAdd) % HOURS_PER_DAY;
+
+            if (hoursShifted < 0) {
+                hoursShifted += HOURS_PER_DAY;
+            }
+
+            return new Time(hoursShifted, minutesShifted, secondsShifted);
+        }
+
+        /**
+         * Returns a new {@link Time} instance with some number of seconds subtracted.
+         *
+         * @public
+         * @param {Number} seconds
+         * @returns {Time}
+         */
+        subtractSeconds(seconds) {
+            return this.addSeconds(~seconds + 1);
+        }
+
+        /**
+         * Returns a new {@link Time} instance with some number of minutes added.
+         *
+         * @public
+         * @param {Number} minutes
+         * @returns {Time}
+         */
+        addMinutes(minutes) {
+            return this.addSeconds(minutes * SECONDS_PER_MINUTE);
+        }
+
+        /**
+         * Returns a new {@link Time} instance with some number of minutes subtracted.
+         *
+         * @public
+         * @param {Number} minutes
+         * @returns {Time}
+         */
+        subtractMinutes(minutes) {
+            return this.addMinutes(~minutes + 1);
+        }
+
+        /**
+         * Returns a new {@link Time} instance with some number of minutes added.
+         *
+         * @public
+         * @param {Number} hours
+         * @returns {Time}
+         */
+        addHours(hours) {
+            return this.addMinutes(hours * MINUTES_PER_HOUR);
+        }
+
+        /**
+         * Returns a new {@link Time} instance with some number of minutes subtracted.
+         *
+         * @public
+         * @param {Number} hours
+         * @returns {Time}
+         */
+        subtractHours(hours) {
+            return this.addHours(~hours + 1);
         }
 
         /**
@@ -126,9 +240,9 @@ module.exports = (() => {
             return Number.isInteger(hours) &&
                 Number.isInteger(minutes) &&
                 Number.isInteger(seconds) &&
-                hours >= 0 && hours < 24 &&
-                minutes >= 0 && minutes < 60 &&
-                seconds >= 0 && seconds < 60;
+                hours >= 0 && hours < HOURS_PER_DAY &&
+                minutes >= 0 && minutes < MINUTES_PER_HOUR &&
+                seconds >= 0 && seconds < SECONDS_PER_MINUTE;
         }
 
         /**
