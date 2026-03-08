@@ -90,6 +90,5 @@ module.exports = (() => {
 	const rootPrefix = 'root.';
 	const rootLength = rootPrefix.length;
 
-
 	return FailureReasonItem;
 })();
