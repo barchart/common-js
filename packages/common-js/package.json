@@ -45,7 +45,7 @@
     "browserify": "^17.0.1",
     "git-get-status": "^1.0.2",
     "glob": "^13.0.6",
-    "gulp": "^4.0.2",
+    "gulp": "^5.0.1",
     "gulp-git": "^2.11.0",
     "gulp-jshint": "^2.1.0",
     "gulp-prompt": "^1.2.0",
