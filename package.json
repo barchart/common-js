@@ -1,7 +1,7 @@
 {
-  "name": "@barchart/common-js",
-  "version": "4.73.0",
-  "description": "Library of common JavaScript utilities",
+  "name": "@barchart/common-js-monorepo",
+  "private": true,
+  "description": "Packages which compose the Barchart Engagement Service",
   "author": {
     "name": "Bryan Ingle",
     "email": "bryan.ingle@barchart.com",
@@ -14,59 +14,19 @@
       "url": "https://www.barchart.com"
     }
   ],
-  "main": "",
-  "typings": ".common-js.d.ts",
-  "scripts": {
-    "lint": "gulp lint",
-    "test": "jasmine --config=jasmine.json"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@github.com/barchart/barchart-common-js.git"
-  },
-  "keywords": [
-    "Barchart",
-    "Utilities",
-    "JavaScript",
-    "Node.js",
-    "Browser"
+  "workspaces": [
+    "packages/*"
   ],
-  "dependencies": {
-    "axios": "^0.21.1",
-    "big.js": "^6.2.1",
-    "date-fns-tz": "^2.0.0",
-    "moment": "^2.29.1",
-    "moment-timezone": "^0.5.41",
-    "xhr": "2.3.2"
+  "scripts": {
+    "clean": "lerna clean --yes && rm -rf node_modules",
+    "lint": "lerna run lint --stream",
+    "test": "lerna run test --stream",
+    "publish": "lerna run publish:npm --stream --concurrency 1",
+    "preversion": "git diff --exit-code",
+    "release": "lerna version -m 'Release. Bump version number %v' --tag-version-prefix='' --force-publish --sign-git-tag --sign-git-commit"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.10",
-    "babelify": "^10.0.0",
-    "browserify": "^16.5.2",
-    "git-get-status": "^1.0.5",
-    "glob": "^6.0.4",
-    "gulp": "^4.0.2",
-    "gulp-git": "^2.10.1",
-    "gulp-jshint": "^2.1.0",
-    "gulp-prompt": "^1.2.0",
-    "jasmine": "^4.0.2",
-    "jshint": "^2.10.3",
-    "vinyl-buffer": "^1.0.1",
-    "vinyl-source-stream": "^2.0.0"
-  },
-  "browserify": {
-    "transform": [
-      [
-        "babelify"
-      ]
-    ]
-  },
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/barchart/barchart-common-js/issues"
-  },
-  "homepage": "https://github.com/barchart/barchart-common-js#readme",
-  "directories": {
-    "test": "test"
+    "jshint": "^2.13.6",
+    "lerna": "^9.0.7"
   }
 }

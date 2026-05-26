@@ -1,0 +1,71 @@
+{
+  "name": "@barchart/common-node-js",
+  "version": "4.73.0",
+  "description": "Common classes, utilities, and functions for building Node.js servers",
+  "author": {
+    "name": "Bryan Ingle",
+    "email": "bryan.ingle@barchart.com",
+    "url": "https://www.barchart.com"
+  },
+  "contributors": [
+    {
+      "name": "Luka Sotra",
+      "email": "luka.sotra@barchart.com",
+      "url": "https://www.barchart.com"
+    }
+  ],
+  "scripts": {
+    "lint": "gulp lint",
+    "publish:npm": "npm publish",
+    "test": "jasmine --config=jasmine.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/barchart/barchart-common-node-js.git"
+  },
+  "keywords": [
+    "Barchart",
+    "Utilities",
+    "JavaScript",
+    "Node.js"
+  ],
+  "dependencies": {
+    "@barchart/common-js": "^4.73.0",
+    "@barchart/marketdata-api-js": "^6.3.2",
+    "aws-sdk": "^2.1693.0",
+    "body-parser": "^2.2.2",
+    "client-sessions": "^0.8.0",
+    "express": "^5.2.1",
+    "express-handlebars": "^9.0.1",
+    "express-http-proxy": "^2.1.2",
+    "http-digest-client": "^0.0.3",
+    "log4js": "^6.9.1",
+    "moment": "^2.30.1",
+    "moment-timezone": "^0.6.2",
+    "multer": "^2.1.1",
+    "node-yaml-config": "^1.0.0",
+    "nodemailer": "^8.0.8",
+    "numeral": "^2.0.6",
+    "socket.io": "^4.8.3",
+    "twilio": "^6.0.2",
+    "uuid": "^14.0.0",
+    "xml2js": "^0.6.2"
+  },
+  "devDependencies": {
+    "git-get-status": "^1.0.2",
+    "gulp": "^5.0.1",
+    "gulp-git": "^2.11.0",
+    "gulp-jshint": "^2.1.0",
+    "gulp-prompt": "^1.2.0",
+    "jasmine": "^6.2.0",
+    "jshint": "^2.13.6"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/barchart/barchart-common-node-js/issues"
+  },
+  "homepage": "https://github.com/barchart/barchart-common-node-js#readme",
+  "directories": {
+    "test": "test"
+  }
+}
