@@ -164,10 +164,9 @@ module.exports = (() => {
 		}
 
 		/**
-		 * A comparator function for {@link Day} instances.
+		 * A comparator function for {@link Timestamp} instances.
 		 *
 		 * @public
-		 * @static
 		 * @param {Timestamp} a
 		 * @param {Timestamp} b
 		 * @returns {Number}
