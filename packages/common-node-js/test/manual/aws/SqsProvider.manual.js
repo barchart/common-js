@@ -1,0 +1,90 @@
+const SqsProvider = require('../../../aws/SqsProvider');
+const utils = require('../utils/ManualTestUtils');
+
+utils.run('SqsProvider manual test', async () => {
+	const region = utils.region();
+	const prefix = utils.prefix();
+
+	const queueName = 'manual-queue';
+	const queueNameByUrl = 'manual-queue-url';
+	const observeQueueName = 'manual-observe-queue';
+
+	const provider = new SqsProvider({ region, prefix });
+
+	let queueUrl = null;
+	let queueUrlByUrl = null;
+	let observeDisposable = null;
+
+	const started = await provider.start();
+	utils.assertEqual(started, true, 'SQS provider should start');
+
+	console.log('Configuration:', provider.getConfiguration());
+	utils.assertEqual(provider.getConfiguration().prefix, prefix, 'getConfiguration should return configured prefix');
+
+	try {
+		queueUrl = await utils.step('getQueueUrl/createQueue', () => provider.getQueueUrl(queueName, { retentionTime: 120, tags: { ManualTest: 'true' } }));
+		utils.assertString(queueUrl, 'getQueueUrl should return QueueUrl');
+
+		const queues = await utils.step('getQueues', () => provider.getQueues('-manual'));
+		utils.assertIncludes(queues, queueUrl, 'getQueues should include created queue URL');
+
+		const queueAttributes = await utils.step('getQueueAttributes', () => provider.getQueueAttributes(queueUrl));
+		utils.assertString(queueAttributes.QueueArn, 'getQueueAttributes should include QueueArn');
+
+		const queueArn = await utils.step('getQueueArn', () => provider.getQueueArn(queueName));
+		utils.assertEqual(queueArn, queueAttributes.QueueArn, 'getQueueArn should match QueueArn attribute');
+
+		console.log('Generated SNS policy:', SqsProvider.getPolicyForSnsDelivery(queueArn, `arn:aws:sns:${region}:000000000000:manual-topic`));
+
+		await utils.step('setQueuePolicy', () => provider.setQueuePolicy(queueName, SqsProvider.getPolicyForSnsDelivery(queueArn, `arn:aws:sns:${region}:000000000000:manual-topic`)));
+		await utils.step('send', () => provider.send(queueName, { type: 'single', createdAt: new Date().toISOString() }));
+
+		const received = await utils.step('receive', () => provider.receive(queueName, 0, 1, true));
+
+		utils.assertEqual(received.length, 1, 'receive should return one message');
+		utils.assertEqual(received[0].type, 'single', 'receive should return sent message payload');
+
+		await utils.step('sendBatch', () => provider.sendBatch(queueName, [{ type: 'batch-1' }, { type: 'batch-2' }]));
+
+		const drained = await utils.step('drain', () => provider.drain(queueName, message => ({ mapped: true, message }), true, 10));
+
+		utils.assert(drained.some(item => item.message.type === 'batch-1'), 'drain should include first batch message');
+		utils.assert(drained.some(item => item.message.type === 'batch-2'), 'drain should include second batch message');
+
+		const purged = await utils.step('purge', () => provider.purge(queueName));
+		utils.assertEqual(purged, true, 'purge should return true');
+
+		queueUrlByUrl = await utils.step('createQueue direct', () => provider.createQueue(queueNameByUrl, 120));
+		utils.assertString(queueUrlByUrl, 'createQueue should return QueueUrl');
+
+		const observed = await utils.step('observe', () => new Promise((resolve, reject) => {
+			const timeout = setTimeout(() => reject(new Error('Timed out waiting for observed message')), 30000);
+
+			observeDisposable = provider.observe(observeQueueName, (message) => {
+				clearTimeout(timeout);
+				resolve(message);
+			}, 500, 0, 1, { retentionTime: 120 });
+
+			provider.send(observeQueueName, { type: 'observed', createdAt: new Date().toISOString() })
+				.catch(reject);
+		}));
+
+		utils.assertEqual(observed.type, 'observed', 'observe should receive sent message');
+
+		if (observeDisposable) {
+			observeDisposable.dispose();
+			observeDisposable = null;
+		}
+
+	} finally {
+		await utils.pauseBeforeCleanup(`Inspect SQS queues with prefix [ ${prefix} ], then press Enter to cleanup.`);
+
+		if (observeDisposable) {
+			observeDisposable.dispose();
+		}
+
+		await utils.cleanup('deleteQueue cleanup', () => provider.deleteQueue(queueName));
+		await utils.cleanup('deleteQueueUrl cleanup', () => queueUrlByUrl ? provider.deleteQueueUrl(queueUrlByUrl) : Promise.resolve());
+		await utils.cleanup('delete observed queue cleanup', () => provider.deleteQueue(observeQueueName));
+	}
+});
