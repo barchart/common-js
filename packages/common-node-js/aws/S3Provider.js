@@ -1,11 +1,12 @@
-const aws = require('aws-sdk'),
+const { DeleteObjectCommand, GetObjectCommand, HeadObjectCommand, ListObjectsV2Command, PutObjectCommand, S3Client } = require('@aws-sdk/client-s3'),
+	{ Upload } = require('@aws-sdk/lib-storage'),
+	{ getSignedUrl: getS3SignedUrl } = require('@aws-sdk/s3-request-presigner'),
 	log4js = require('log4js');
 
 const assert = require('@barchart/common-js/lang/assert'),
 	Disposable = require('@barchart/common-js/lang/Disposable'),
 	is = require('@barchart/common-js/lang/is'),
-	object = require('@barchart/common-js/lang/object'),
-	promise = require('@barchart/common-js/lang/promise');
+	object = require('@barchart/common-js/lang/object');
 
 module.exports = (() => {
 	'use strict';
@@ -65,22 +66,21 @@ module.exports = (() => {
 			}
 
 			if (this._startPromise === null) {
-				this._startPromise = Promise.resolve()
-					.then(() => {
-						aws.config.update({ region: this._configuration.region });
+				this._startPromise = (async () => {
+					try {
+						this._s3 = new S3Client({ apiVersion: this._configuration.apiVersion || '2006-03-01', region: this._configuration.region });
 
-						this._s3 = new aws.S3({ apiVersion: this._configuration.apiVersion || '2006-03-01' });
-					}).then(() => {
 						logger.info('The S3 provider has started');
 
 						this._started = true;
 
 						return this._started;
-					}).catch((e) => {
+					} catch (e) {
 						logger.error('The S3 provider failed to start', e);
 
 						throw e;
-					});
+					}
+				})();
 			}
 
 			return this._startPromise;
@@ -119,54 +119,51 @@ module.exports = (() => {
 
 			checkReady.call(this);
 
-			const getBucketContentsRecursive = (continuationToken) => {
-				return promise.build((resolveCallback, rejectCallback) => {
-					const payload = { };
+			const getBucketContentsRecursive = async (continuationToken) => {
+				const payload = { };
 
-					if (bucket) {
-						payload.Bucket = bucket;
-					} else {
-						payload.Bucket = this._configuration.bucket;
-					}
+				if (bucket) {
+					payload.Bucket = bucket;
+				} else {
+					payload.Bucket = this._configuration.bucket;
+				}
 
-					if (prefix) {
-						payload.Prefix = prefix;
-					}
+				if (prefix) {
+					payload.Prefix = prefix;
+				}
 
-					if (start) {
-						payload.StartAfter = start;
-					}
+				if (start) {
+					payload.StartAfter = start;
+				}
 
-					if (continuationToken) {
-						payload.ContinuationToken = continuationToken;
-					}
+				if (continuationToken) {
+					payload.ContinuationToken = continuationToken;
+				}
 
-					this._s3.listObjectsV2(payload, (e, data) => {
-						if (e) {
-							logger.error('S3 failed to retrieve bucket contents', e);
+				try {
+					const data = await this._s3.send(new ListObjectsV2Command(payload));
 
-							rejectCallback(e);
-						} else {
-							const results = data.Contents.map((item) => {
-								const transformed = { };
+					const results = data.Contents.map((item) => {
+						const transformed = { };
 
-								transformed.key = item.Key;
-								transformed.size = item.Size;
+						transformed.key = item.Key;
+						transformed.size = item.Size;
 
-								return transformed;
-							});
-
-							if (data.IsTruncated === true) {
-								getBucketContentsRecursive(data.NextContinuationToken)
-									.then((more) => {
-										resolveCallback(results.concat(more));
-									});
-							} else {
-								resolveCallback(results);
-							}
-						}
+						return transformed;
 					});
-				});
+
+					if (data.IsTruncated === true) {
+						const more = await getBucketContentsRecursive(data.NextContinuationToken);
+
+						return results.concat(more);
+					}
+
+					return results;
+				} catch (e) {
+					logger.error('S3 failed to retrieve bucket contents', e);
+
+					throw e;
+				}
 			};
 
 			return getBucketContentsRecursive();
@@ -189,26 +186,24 @@ module.exports = (() => {
 
 			checkReady.call(this);
 
-			return promise.build((resolveCallback, rejectCallback) => {
-				const payload = { };
+			const payload = { };
 
-				payload.Bucket = this._configuration.bucket;
-				payload.Key = key;
+			payload.Bucket = this._configuration.bucket;
+			payload.Key = key;
 
-				if (is.number(expires)) {
-					payload.Expires = expires;
-				}
+			const options = { };
 
-				this._s3.getSignedUrl(operation, payload, (e, url) => {
-					if (e) {
-						logger.error('S3 failed to get signed url', e);
+			if (is.number(expires)) {
+				options.expiresIn = expires;
+			}
 
-						rejectCallback(e);
-					} else {
-						resolveCallback(url);
-					}
-				});
-			});
+			try {
+				return await getS3SignedUrl(this._s3, getSignedUrlCommand(operation, payload), options);
+			} catch (e) {
+				logger.error('S3 failed to get signed url', e);
+
+				throw e;
+			}
 		}
 
 		/**
@@ -242,52 +237,57 @@ module.exports = (() => {
 		async uploadObject(bucket, filename, content, mimeType, secure) {
 			checkReady.call(this);
 
-			return promise.build((resolveCallback, rejectCallback) => {
-				let acl;
+			let acl;
 
-				if (is.boolean(secure) && secure) {
-					acl = 'private';
-				} else {
-					acl = 'public-read';
-				}
+			if (is.boolean(secure) && secure) {
+				acl = 'private';
+			} else {
+				acl = 'public-read';
+			}
 
-				let mimeTypeToUse;
+			let mimeTypeToUse;
 
-				if (is.string(mimeType)) {
-					mimeTypeToUse = mimeType;
-				} else if (is.string(content)) {
-					mimeTypeToUse = mimeTypes.text;
-				} else if (is.object) {
-					mimeTypeToUse = mimeTypes.json;
-				} else {
-					throw new Error('Unable to automatically determine MIME type for file.');
-				}
+			if (is.string(mimeType)) {
+				mimeTypeToUse = mimeType;
+			} else if (is.string(content)) {
+				mimeTypeToUse = mimeTypes.text;
+			} else if (is.object) {
+				mimeTypeToUse = mimeTypes.json;
+			} else {
+				throw new Error('Unable to automatically determine MIME type for file.');
+			}
 
-				const params = getParameters(bucket, filename, {
-					ACL: acl,
-					Body: ContentHandler.getHandlerFor(mimeTypeToUse).toBuffer(content),
-					ContentType: mimeTypeToUse
-				});
-
-				if (is.string(secure) && secure === 'none') {
-					delete params.ACL;
-				}
-
-				const options = {
-					partSize: 10 * 1024 * 1024,
-					queueSize: 1
-				};
-
-				this._s3.upload(params, options, (e, data) => {
-					if (e) {
-						logger.error('S3 failed to upload object', e);
-
-						rejectCallback(e);
-					} else {
-						resolveCallback({data: data});
-					}
-				});
+			const params = getParameters(bucket, filename, {
+				ACL: acl,
+				Body: ContentHandler.getHandlerFor(mimeTypeToUse).toBuffer(content),
+				ContentType: mimeTypeToUse
 			});
+
+			if (is.string(secure) && secure === 'none') {
+				delete params.ACL;
+			}
+
+			const options = {
+				partSize: 10 * 1024 * 1024,
+				queueSize: 1
+			};
+
+			const upload = new Upload({
+				client: this._s3,
+				params,
+				partSize: options.partSize,
+				queueSize: options.queueSize
+			});
+
+			try {
+				const data = await upload.done();
+
+				return { data: data };
+			} catch (e) {
+				logger.error('S3 failed to upload object', e);
+
+				throw e;
+			}
 		}
 
 		/**
@@ -303,7 +303,10 @@ module.exports = (() => {
 		async uploadStream(bucket, key, reader) {
 			checkReady.call(this);
 
-			return this._s3.upload({ Bucket: bucket, Key: key, Body: reader }).promise();
+			return new Upload({
+				client: this._s3,
+				params: { Bucket: bucket, Key: key, Body: reader }
+			}).done();
 		}
 
 		/**
@@ -331,17 +334,16 @@ module.exports = (() => {
 		async downloadObject(bucket, filename) {
 			checkReady.call(this);
 
-			return promise.build((resolveCallback, rejectCallback) => {
-				this._s3.getObject(getParameters(bucket, filename), (e, data) => {
-					if (e) {
-						logger.error('S3 failed to get object', e);
+			try {
+				const data = await this._s3.send(new GetObjectCommand(getParameters(bucket, filename)));
+				const buffer = await data.Body.transformToByteArray();
 
-						rejectCallback(e);
-					} else {
-						resolveCallback(ContentHandler.getHandlerFor(data.ContentType).fromBuffer(data.Body));
-					}
-				});
-			});
+				return ContentHandler.getHandlerFor(data.ContentType).fromBuffer(Buffer.from(buffer));
+			} catch (e) {
+				logger.error('S3 failed to get object', e);
+
+				throw e;
+			}
 		}
 
 		/**
@@ -354,12 +356,11 @@ module.exports = (() => {
 		 * @return {Promise<stream.Readable>}
 		 */
 		async createReadStream(bucket, key) {
-			return Promise.resolve()
-				.then(() => {
-					checkReady.call(this);
+			checkReady.call(this);
 
-					return this._s3.getObject({ Bucket: bucket, Key: key }).createReadStream();
-				});
+			const data = await this._s3.send(new GetObjectCommand({ Bucket: bucket, Key: key }));
+
+			return data.Body;
 		}
 
 		/**
@@ -374,17 +375,15 @@ module.exports = (() => {
 		async deleteObject(bucket, filename) {
 			checkReady.call(this);
 
-			return promise.build((resolveCallback, rejectCallback) => {
-				this._s3.deleteObject(getParameters(bucket, filename), (e, data) => {
-					if (e) {
-						logger.error('S3 failed to delete object', e);
+			try {
+				const data = await this._s3.send(new DeleteObjectCommand(getParameters(bucket, filename)));
 
-						rejectCallback(e);
-					} else {
-						resolveCallback({data: data});
-					}
-				});
-			});
+				return { data: data };
+			} catch (e) {
+				logger.error('S3 failed to delete object', e);
+
+				throw e;
+			}
 		}
 
 		/**
@@ -415,17 +414,15 @@ module.exports = (() => {
 			assert.argumentIsRequired(bucket, 'bucket', String);
 			assert.argumentIsRequired(filename, 'filename', String);
 
-			return promise.build((resolveCallback, rejectCallback) => {
-				this._s3.headObject(getParameters(bucket, filename), (e, data) => {
-					if (e) {
-						logger.error('S3 failed to delete object', e);
+			try {
+				const data = await this._s3.send(new HeadObjectCommand(getParameters(bucket, filename)));
 
-						rejectCallback(e);
-					} else {
-						resolveCallback({data: data});
-					}
-				});
-			});
+				return { data: data };
+			} catch (e) {
+				logger.error('S3 failed to delete object', e);
+
+				throw e;
+			}
 		}
 
 		/**
@@ -479,6 +476,21 @@ module.exports = (() => {
 			Bucket: bucket,
 			Key: S3Provider.getQualifiedFilename(filename)
 		});
+	}
+
+	function getSignedUrlCommand(operation, payload) {
+		switch (operation) {
+			case 'getObject':
+				return new GetObjectCommand(payload);
+			case 'putObject':
+				return new PutObjectCommand(payload);
+			case 'deleteObject':
+				return new DeleteObjectCommand(payload);
+			case 'headObject':
+				return new HeadObjectCommand(payload);
+			default:
+				throw new Error(`Unsupported S3 signed URL operation [ ${operation} ]`);
+		}
 	}
 
 	const contentHandlers = [ ];

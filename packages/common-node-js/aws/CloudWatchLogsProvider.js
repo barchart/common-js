@@ -1,10 +1,9 @@
-const aws = require('aws-sdk'),
+const { CloudWatchLogsClient, DeleteLogGroupCommand, DeleteLogStreamCommand, DeleteRetentionPolicyCommand, DescribeLogGroupsCommand, DescribeLogStreamsCommand, GetQueryResultsCommand, PutRetentionPolicyCommand, StartQueryCommand, TagResourceCommand, UntagResourceCommand } = require('@aws-sdk/client-cloudwatch-logs'),
 	log4js = require('log4js');
 
 const assert = require('@barchart/common-js/lang/assert'),
 	Disposable = require('@barchart/common-js/lang/Disposable'),
 	is = require('@barchart/common-js/lang/is'),
-	promise = require('@barchart/common-js/lang/promise'),
 	Scheduler = require('@barchart/common-js/timing/Scheduler');
 
 module.exports = (() => {
@@ -55,22 +54,21 @@ module.exports = (() => {
 			}
 
 			if (this._startPromise === null) {
-				this._startPromise = Promise.resolve()
-					.then(() => {
-						aws.config.update({region: this._configuration.region});
+				this._startPromise = (async () => {
+					try {
+						this._cloudWatchLogs = new CloudWatchLogsClient({apiVersion: this._configuration.apiVersion || '2014-03-28', region: this._configuration.region});
 
-						this._cloudWatchLogs = new aws.CloudWatchLogs({apiVersion: this._configuration.apiVersion || '2014-03-28'});
-					}).then(() => {
 						logger.info('The CloudWatchLogsProvider has started');
 
 						this._started = true;
 
 						return this._started;
-					}).catch((e) => {
+					} catch (e) {
 						logger.error('The CloudWatchLogsProvider failed to start', e);
 
 						throw e;
-					});
+					}
+				})();
 			}
 
 			return this._startPromise;
@@ -89,39 +87,34 @@ module.exports = (() => {
 		 * @returns {Promise<Object>}
 		 */
 		async startQuery(name, query, startTime, endTime, limit) {
-			return Promise.resolve()
-				.then(() => {
-					assert.argumentIsRequired(name, 'name', String);
-					assert.argumentIsRequired(query, 'query', String);
-					assert.argumentIsRequired(startTime, 'startTime', Number);
-					assert.argumentIsRequired(endTime, 'endTime', Number);
-					assert.argumentIsOptional(limit, 'limit', Number);
+			assert.argumentIsRequired(name, 'name', String);
+			assert.argumentIsRequired(query, 'query', String);
+			assert.argumentIsRequired(startTime, 'startTime', Number);
+			assert.argumentIsRequired(endTime, 'endTime', Number);
+			assert.argumentIsOptional(limit, 'limit', Number);
 
-					checkReady.call(this);
+			checkReady.call(this);
 
-					return promise.build((resolve, reject) => {
-						const params = {
-							logGroupName: name,
-							queryString: query,
-							startTime: startTime,
-							endTime: endTime,
-							limit: limit
-						};
+			const params = {
+				logGroupName: name,
+				queryString: query,
+				startTime: startTime,
+				endTime: endTime,
+				limit: limit
+			};
 
-						this._cloudWatchLogs.startQuery(params, (e, data) => {
-							if (e) {
-								logger.error(`Failed to start query on [ ${name} ]`);
-								logger.error(e);
+			try {
+				const data = await this._cloudWatchLogs.send(new StartQueryCommand(params));
 
-								reject(e);
-							} else {
-								logger.debug(`Started query on [ ${name} ]`);
+				logger.debug(`Started query on [ ${name} ]`);
 
-								resolve(data);
-							}
-						});
-					});
-				});
+				return data;
+			} catch (e) {
+				logger.error(`Failed to start query on [ ${name} ]`);
+				logger.error(e);
+
+				throw e;
+			}
 		}
 
 		/**
@@ -133,24 +126,17 @@ module.exports = (() => {
 		 * @returns {Promise<Object>}
 		 */
 		async getQueryResults(queryId) {
-			return Promise.resolve()
-				.then(() => {
-					assert.argumentIsRequired(queryId, 'queryId', String);
+			assert.argumentIsRequired(queryId, 'queryId', String);
 
-					checkReady.call(this);
+			checkReady.call(this);
 
-					return promise.build((resolve, reject) => {
-						this._cloudWatchLogs.getQueryResults({queryId: queryId}, (e, data) => {
-							if (e) {
-								logger.error(e);
+			try {
+				return await this._cloudWatchLogs.send(new GetQueryResultsCommand({queryId: queryId}));
+			} catch (e) {
+				logger.error(e);
 
-								reject(e);
-							} else {
-								resolve(data);
-							}
-						});
-					});
-				});
+				throw e;
+			}
 		}
 
 		/**
@@ -162,24 +148,17 @@ module.exports = (() => {
 		 * @returns {Promise<Object>}
 		 */
 		async describeLogGroups(logGroupNamePrefix) {
-			return Promise.resolve()
-				.then(() => {
-					assert.argumentIsRequired(logGroupNamePrefix, 'logGroupNamePrefix', String);
+			assert.argumentIsRequired(logGroupNamePrefix, 'logGroupNamePrefix', String);
 
-					checkReady.call(this);
+			checkReady.call(this);
 
-					return promise.build((resolve, reject) => {
-						this._cloudWatchLogs.describeLogGroups({logGroupNamePrefix: logGroupNamePrefix}, (e, data) => {
-							if (e) {
-								logger.error(e);
+			try {
+				return await this._cloudWatchLogs.send(new DescribeLogGroupsCommand({ logGroupNamePrefix: logGroupNamePrefix }));
+			} catch (e) {
+				logger.error(e);
 
-								reject(e);
-							} else {
-								resolve(data);
-							}
-						});
-					});
-				});
+				throw e;
+			}
 		}
 
 		/**
@@ -194,49 +173,40 @@ module.exports = (() => {
 		 * @returns {Promise<Array>}
 		 */
 		async getLogGroups(options = {}) {
-			return Promise.resolve()
-				.then(() => {
-					checkReady.call(this);
+			checkReady.call(this);
 
-					assert.argumentIsRequired(options, 'options', Object);
-					assert.argumentIsOptional(options.logGroupNamePrefix, 'options.logGroupNamePrefix', String);
-					assert.argumentIsOptional(options.nextToken, 'options.nextToken', String);
-					assert.argumentIsOptional(options.limit, 'options.limit', Number);
+			assert.argumentIsRequired(options, 'options', Object);
+			assert.argumentIsOptional(options.logGroupNamePrefix, 'options.logGroupNamePrefix', String);
+			assert.argumentIsOptional(options.nextToken, 'options.nextToken', String);
+			assert.argumentIsOptional(options.limit, 'options.limit', Number);
 
-					let logGroups = [];
+			let logGroups = [];
 
-					const readLogGroups = (options) => {
-						return promise.build((resolve, reject) => {
-							return this._cloudWatchLogs.describeLogGroups(options, (e, data) => {
-								if (e) {
-									logger.error(e);
+			const readLogGroups = async (options) => {
+				try {
+					const data = await this._cloudWatchLogs.send(new DescribeLogGroupsCommand(options));
 
-									reject(e);
-								} else {
-									if (data.logGroups) {
-										logGroups = [ ...logGroups, ...data.logGroups ];
-									}
+					if (data.logGroups) {
+						logGroups = [ ...logGroups, ...data.logGroups ];
+					}
 
-									if (data.nextToken) {
-										const newOptions = { ...options };
+					if (data.nextToken) {
+						const newOptions = { ...options };
 
-										newOptions.nextToken = data.nextToken;
+						newOptions.nextToken = data.nextToken;
 
-										readLogGroups(newOptions).then(() => {
-											resolve();
-										});
-									} else {
-										return resolve();
-									}
-								}
-							});
-						});
-					};
+						await readLogGroups(newOptions);
+					}
+				} catch (e) {
+					logger.error(e);
 
-					return readLogGroups(options).then(() => {
-						return logGroups;
-					});
-				});
+					throw e;
+				}
+			};
+
+			await readLogGroups(options);
+
+			return logGroups;
 		}
 
 		/**
@@ -248,19 +218,17 @@ module.exports = (() => {
 		 * @returns {Promise<Boolean>}
 		 */
 		async getLogStreamExists(logGroupName) {
-			return Promise.resolve()
-				.then(() => {
-					assert.argumentIsRequired(logGroupName, 'logGroupName', String);
+			assert.argumentIsRequired(logGroupName, 'logGroupName', String);
 
-					checkReady.call(this);
+			checkReady.call(this);
 
-					return describeLogStreams.call(this, logGroupName, 1)
-						.then((results) => {
-							return results.logStreams.length !== 0;
-						}).catch((e) => {
-							return false;
-						});
-				});
+			try {
+				const results = await describeLogStreams.call(this, logGroupName, 1);
+
+				return results.logStreams.length !== 0;
+			} catch (e) {
+				return false;
+			}
 		}
 
 		/**
@@ -273,56 +241,48 @@ module.exports = (() => {
 		 * @param {String} options.logStreamNamePrefix - The log stream prefix to match.
 		 * @param {String} options.orderBy - If the value is LogStreamName, the results are ordered by log stream name. If the value is LastEventTime, the results are ordered by the event time. The default value is LogStreamName.
 		 * @param {Boolean} options.descending - If the value is true, results are returned in descending order. If the value is false, results are returned in ascending order. The default value is false.
+		 * @param {String} options.nextToken - The token for the next set of items to return.
 		 * @param {Number} options.limit - The maximum number of items returned. If you don't specify a value, the default is up to 50 items.
 		 * @returns {Promise<Array<Array>>}
 		 */
 		async getLogStreams(options) {
-			return Promise.resolve()
-				.then(() => {
-					checkReady.call(this);
+			checkReady.call(this);
 
-					assert.argumentIsRequired(options, 'options', Object);
-					assert.argumentIsRequired(options.logGroupName, 'options.logGroupName', String);
-					assert.argumentIsOptional(options.logStreamNamePrefix, 'options.logStreamNamePrefix', String);
-					assert.argumentIsOptional(options.orderBy, 'options.orderBy', String);
-					assert.argumentIsOptional(options.descending, 'options.descending', Boolean);
-					assert.argumentIsOptional(options.nextToken, 'options.nextToken', String);
-					assert.argumentIsOptional(options.limit, 'options.limit', Number);
+			assert.argumentIsRequired(options, 'options', Object);
+			assert.argumentIsRequired(options.logGroupName, 'options.logGroupName', String);
+			assert.argumentIsOptional(options.logStreamNamePrefix, 'options.logStreamNamePrefix', String);
+			assert.argumentIsOptional(options.orderBy, 'options.orderBy', String);
+			assert.argumentIsOptional(options.descending, 'options.descending', Boolean);
+			assert.argumentIsOptional(options.nextToken, 'options.nextToken', String);
+			assert.argumentIsOptional(options.limit, 'options.limit', Number);
 
-					let logStreams = [];
+			let logStreams = [];
 
-					const readLogStreams = (options) => {
-						return promise.build((resolve, reject) => {
-							this._cloudWatchLogs.describeLogStreams(options, (e, data) => {
-								if (e) {
-									logger.error(e);
+			const readLogStreams = async (options) => {
+				try {
+					const data = await this._cloudWatchLogs.send(new DescribeLogStreamsCommand(options));
 
-									reject(e);
-								} else {
-									if (data.logStreams && data.logStreams.length > 0) {
-										logStreams.push(data.logStreams);
-									}
+					if (data.logStreams && data.logStreams.length > 0) {
+						logStreams.push(data.logStreams);
+					}
 
-									if (data.nextToken) {
-										const newOptions = { ...options };
+					if (data.nextToken) {
+						const newOptions = { ...options };
 
-										newOptions.nextToken = data.nextToken;
+						newOptions.nextToken = data.nextToken;
 
-										return this._scheduler.backoff(readLogStreams.bind(this, newOptions)).then(() => {
-											resolve();
-										});
-									} else {
-										return resolve();
-									}
-								}
-							});
-						});
-					};
+						await this._scheduler.backoff(readLogStreams.bind(this, newOptions));
+					}
+				} catch (e) {
+					logger.error(e);
 
-					return this._scheduler.backoff(readLogStreams.bind(this, options)).then(() => {
-						return logStreams;
-					});
-				});
+					throw e;
+				}
+			};
+
+			await this._scheduler.backoff(readLogStreams.bind(this, options));
+
+			return logStreams;
 		}
 
 		/**
@@ -334,24 +294,19 @@ module.exports = (() => {
 		 * @returns {Promise}
 		 */
 		async deleteLogGroup(logGroupName) {
-			return Promise.resolve()
-				.then(() => {
-					checkReady.call(this);
+			checkReady.call(this);
 
-					assert.argumentIsRequired(logGroupName, 'logGroupName', String);
+			assert.argumentIsRequired(logGroupName, 'logGroupName', String);
 
-					return promise.build((resolve, reject) => {
-						this._cloudWatchLogs.deleteLogGroup({ logGroupName }, (e) => {
-							if (e) {
-								logger.error(e);
+			try {
+				await this._cloudWatchLogs.send(new DeleteLogGroupCommand({ logGroupName }));
 
-								reject(e);
-							} else {
-								resolve(true);
-							}
-						});
-					});
-				});
+				return true;
+			} catch (e) {
+				logger.error(e);
+
+				throw e;
+			}
 		}
 
 		/**
@@ -364,87 +319,72 @@ module.exports = (() => {
 		 * @returns {Promise}
 		 */
 		async deleteLogStream(logGroupName, logStreamName) {
-			return Promise.resolve()
-				.then(() => {
-					checkReady.call(this);
+			checkReady.call(this);
 
-					assert.argumentIsRequired(logGroupName, 'logGroupName', String);
-					assert.argumentIsRequired(logStreamName, 'logStreamName', String);
+			assert.argumentIsRequired(logGroupName, 'logGroupName', String);
+			assert.argumentIsRequired(logStreamName, 'logStreamName', String);
 
-					return promise.build((resolve, reject) => {
-						this._cloudWatchLogs.deleteLogStream({ logGroupName, logStreamName }, (e) => {
-							if (e) {
-								logger.error(e);
+			try {
+				await this._cloudWatchLogs.send(new DeleteLogStreamCommand({ logGroupName, logStreamName }));
 
-								reject(e);
-							} else {
-								resolve(true);
-							}
-						});
-					});
-				});
+				return true;
+			} catch (e) {
+				logger.error(e);
+
+				throw e;
+			}
 		}
 
 		/**
-		 * Creates tags for a log group
+		 * Creates tags for a CloudWatch Logs resource.
 		 *
 		 * @public
 		 * @async
-		 * @param {String} logGroupName - The name of the log group.
+		 * @param {String} resourceArn - The ARN of the CloudWatch Logs resource.
 		 * @param {Object} tags - The key-value pairs to use for the tags.
 		 * @returns {Promise}
 		 */
-		async tagLogGroup(logGroupName, tags) {
-			return Promise.resolve()
-				.then(() => {
-					checkReady.call(this);
+		async tagResource(resourceArn, tags) {
+			checkReady.call(this);
 
-					assert.argumentIsRequired(logGroupName, 'logGroupName', String);
-					assert.argumentIsRequired(tags, 'tags', Object);
+			assert.argumentIsRequired(resourceArn, 'resourceArn', String);
+			assert.argumentIsRequired(tags, 'tags', Object);
 
-					return promise.build((resolve, reject) => {
-						this._cloudWatchLogs.tagLogGroup({ logGroupName, tags }, (e) => {
-							if (e) {
-								logger.error(e);
+			try {
+				await this._cloudWatchLogs.send(new TagResourceCommand({ resourceArn, tags }));
 
-								reject(e);
-							} else {
-								resolve(true);
-							}
-						});
-					});
-				});
+				return true;
+			} catch (e) {
+				logger.error(e);
+
+				throw e;
+			}
 		}
 
 		/**
-		 * Deletes tags for a log group
+		 * Deletes tags for a CloudWatch Logs resource.
 		 *
 		 * @public
 		 * @async
-		 * @param {String} logGroupName - The name of the log group.
-		 * @param {Array<String>} tags - The tag keys. The corresponding tags are removed from the log group.
+		 * @param {String} resourceArn - The ARN of the CloudWatch Logs resource.
+		 * @param {Array<String>} tagKeys - The tag keys. The corresponding tags are removed from the resource.
 		 * @returns {Promise}
 		 */
-		async untagLogGroup(logGroupName, tags) {
-			return Promise.resolve()
-				.then(() => {
-					checkReady.call(this);
+		async untagResource(resourceArn, tagKeys) {
+			checkReady.call(this);
 
-					assert.argumentIsRequired(logGroupName, 'logGroupName', String);
-					assert.argumentIsRequired(tags, 'tags', Array);
+			assert.argumentIsRequired(resourceArn, 'resourceArn', String);
+			assert.argumentIsRequired(tagKeys, 'tagKeys', Array);
 
-					return promise.build((resolve, reject) => {
-						this._cloudWatchLogs.untagLogGroup({ logGroupName, tags }, (e) => {
-							if (e) {
-								logger.error(e);
+			try {
+				await this._cloudWatchLogs.send(new UntagResourceCommand({ resourceArn, tagKeys }));
 
-								reject(e);
-							} else {
-								resolve(true);
-							}
-						});
-					});
-				});
+				return true;
+			} catch (e) {
+				logger.error(e);
+
+				throw e;
+			}
 		}
 
 		/**
@@ -457,25 +397,20 @@ module.exports = (() => {
 		 * @returns {Promise}
 		 */
 		async putRetentionPolicy(logGroupName, retentionInDays) {
-			return Promise.resolve()
-				.then(() => {
-					checkReady.call(this);
+			checkReady.call(this);
 
-					assert.argumentIsRequired(logGroupName, 'logGroupName', String);
-					assert.argumentIsRequired(retentionInDays, 'retentionInDays', Number);
+			assert.argumentIsRequired(logGroupName, 'logGroupName', String);
+			assert.argumentIsRequired(retentionInDays, 'retentionInDays', Number);
 
-					return promise.build((resolve, reject) => {
-						this._cloudWatchLogs.putRetentionPolicy({ logGroupName, retentionInDays }, (e) => {
-							if (e) {
-								logger.error(e);
+			try {
+				await this._cloudWatchLogs.send(new PutRetentionPolicyCommand({ logGroupName, retentionInDays }));
 
-								reject(e);
-							} else {
-								resolve(true);
-							}
-						});
-					});
-				});
+				return true;
+			} catch (e) {
+				logger.error(e);
+
+				throw e;
+			}
 		}
 
 		/**
@@ -487,24 +422,19 @@ module.exports = (() => {
 		 * @returns {Promise}
 		 */
 		async deleteRetentionPolicy(logGroupName) {
-			return Promise.resolve()
-				.then(() => {
-					checkReady.call(this);
+			checkReady.call(this);
 
-					assert.argumentIsRequired(logGroupName, 'logGroupName', String);
+			assert.argumentIsRequired(logGroupName, 'logGroupName', String);
 
-					return promise.build((resolve, reject) => {
-						this._cloudWatchLogs.deleteRetentionPolicy({ logGroupName }, (e) => {
-							if (e) {
-								logger.error(e);
+			try {
+				await this._cloudWatchLogs.send(new DeleteRetentionPolicyCommand({ logGroupName }));
 
-								reject(e);
-							} else {
-								resolve(true);
-							}
-						});
-					});
-				});
+				return true;
+			} catch (e) {
+				logger.error(e);
+
+				throw e;
+			}
 		}
 
 		_onDispose() {
@@ -527,25 +457,21 @@ module.exports = (() => {
 	}
 
 	async function describeLogStreams(logGroupName, limit) {
-		return promise.build((resolve, reject) => {
-			const payload = {};
+		const payload = { };
 
-			payload.logGroupName = logGroupName;
+		payload.logGroupName = logGroupName;
 
-			if (is.integer(limit)) {
-				payload.limit = limit;
-			}
+		if (is.integer(limit)) {
+			payload.limit = limit;
+		}
 
-			this._cloudWatchLogs.describeLogStreams(payload, (e, data) => {
-				if (e) {
-					logger.error(e);
+		try {
+			return await this._cloudWatchLogs.send(new DescribeLogStreamsCommand(payload));
+		} catch (e) {
+			logger.error(e);
 
-					reject(e);
-				} else {
-					resolve(data);
-				}
-			});
-		});
+			throw e;
+		}
 	}
 
 	return CloudWatchLogsProvider;

@@ -1,4 +1,4 @@
-const aws = require('aws-sdk'),
+const { GetSecretValueCommand, SecretsManagerClient } = require('@aws-sdk/client-secrets-manager'),
 	log4js = require('log4js');
 
 const assert = require('@barchart/common-js/lang/assert'),
@@ -49,22 +49,21 @@ module.exports = (() => {
 			}
 
 			if (this._startPromise === null) {
-				this._startPromise = Promise.resolve()
-					.then(() => {
-						aws.config.update({ region: this._configuration.region });
+				this._startPromise = (async () => {
+					try {
+						this._secretsManager = new SecretsManagerClient({ apiVersion: this._configuration.apiVersion || '2017-10-17', region: this._configuration.region });
 
-						this._secretsManager = new aws.SecretsManager({ apiVersion: this._configuration.apiVersion || '2017-10-17' });
-					}).then(() => {
 						logger.info('The Secrets Manager provider has started');
 
 						this._started = true;
 
 						return this._started;
-					}).catch((e) => {
+					} catch (e) {
 						logger.error('The Secrets Manager provider failed to start', e);
 
 						throw e;
-					});
+					}
+				})();
 			}
 
 			return this._startPromise;
@@ -79,29 +78,27 @@ module.exports = (() => {
 		 * @returns {Promise<String>}
 		 */
 		async getSecretValue(secretId) {
-			return Promise.resolve()
-				.then(() => {
-					assert.argumentIsRequired(secretId, 'secretId', String);
+			assert.argumentIsRequired(secretId, 'secretId', String);
 
-					if (secretId.length === 0) {
-						throw new Error('The "secretId" argument cannot be a zero-length string');
-					}
+			if (secretId.length === 0) {
+				throw new Error('The "secretId" argument cannot be a zero-length string');
+			}
 
-					checkReady.call(this);
+			checkReady.call(this);
 
-					logger.debug(`Attempting to retrieve secret [ ${secretId} ]`);
+			logger.debug(`Attempting to retrieve secret [ ${secretId} ]`);
 
-					return Promise.resolve(this._secretsManager.getSecretValue({ SecretId: secretId }).promise())
-						.then((response) => {
-							logger.info(`Retrieved secret [ ${secretId} ]`);
+			try {
+				const response = await this._secretsManager.send(new GetSecretValueCommand({ SecretId: secretId }));
 
-							return response.SecretString;
-						}).catch((err) => {
-							logger.error(`Failed to retrieve secret [ ${secretId} ]`);
+				logger.info(`Retrieved secret [ ${secretId} ]`);
 
-							return Promise.reject(err);
-						});
-				});
+				return response.SecretString;
+			} catch (err) {
+				logger.error(`Failed to retrieve secret [ ${secretId} ]`);
+
+				throw err;
+			}
 		}
 
 		toString() {

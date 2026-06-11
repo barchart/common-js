@@ -1,10 +1,9 @@
-const aws = require('aws-sdk'),
+const { InvokeCommand, LambdaClient } = require('@aws-sdk/client-lambda'),
 	log4js = require('log4js');
 
 const assert = require('@barchart/common-js/lang/assert'),
 	Disposable = require('@barchart/common-js/lang/Disposable'),
-	is = require('@barchart/common-js/lang/is'),
-	promise = require('@barchart/common-js/lang/promise');
+	is = require('@barchart/common-js/lang/is');
 
 module.exports = (() => {
 
@@ -51,22 +50,21 @@ module.exports = (() => {
 			}
 
 			if (this._startPromise === null) {
-				this._startPromise = Promise.resolve()
-					.then(() => {
-						aws.config.update({ region: this._configuration.region });
+				this._startPromise = (async () => {
+					try {
+						this._lambda = new LambdaClient({ apiVersion: this._configuration.apiVersion || '2015-03-31', region: this._configuration.region });
 
-						this._lambda = new aws.Lambda({ apiVersion: this._configuration.apiVersion || '2015-03-31' });
-					}).then(() => {
 						logger.info('The Lambda provider has started');
 
 						this._started = true;
 
 						return this._started;
-					}).catch((e) => {
+					} catch (e) {
 						logger.error('The Lambda provider failed to start', e);
 
 						throw e;
-					});
+					}
+				})();
 			}
 
 			return this._startPromise;
@@ -83,33 +81,22 @@ module.exports = (() => {
 		 * @return {Promise<Object>}
 		 */
 		async invoke(functionName, event, synchronous) {
-			return Promise.resolve()
-				.then(() => {
-					assert.argumentIsRequired(functionName, 'functionName', String);
-					assert.argumentIsRequired(event, 'event');
-					assert.argumentIsOptional(synchronous, 'synchronous', Boolean);
+			assert.argumentIsRequired(functionName, 'functionName', String);
+			assert.argumentIsRequired(event, 'event');
+			assert.argumentIsOptional(synchronous, 'synchronous', Boolean);
 
-					checkReady.call(this);
+			checkReady.call(this);
 
-					return promise.build((resolveCallback, rejectCallback) => {
-						const data = { };
+			const data = { };
 
-						data.FunctionName = functionName;
-						data.Payload = JSON.stringify(event);
+			data.FunctionName = functionName;
+			data.Payload = Buffer.from(JSON.stringify(event));
 
-						if (!(is.boolean(synchronous) && synchronous)) {
-							data.InvocationType = 'Event';
-						}
+			if (!(is.boolean(synchronous) && synchronous)) {
+				data.InvocationType = 'Event';
+			}
 
-						this._lambda.invoke(data, (err, data) => {
-							if (err) {
-								rejectCallback(err);
-							}
-
-							resolveCallback(data);
-						});
-					});
-				});
+			return this._lambda.send(new InvokeCommand(data));
 		}
 
 		toString() {

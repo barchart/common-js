@@ -1,11 +1,10 @@
-const aws = require('aws-sdk'),
+const { CreateTopicCommand, DeleteTopicCommand, ListSubscriptionsCommand, ListTopicsCommand, PublishCommand, SNSClient, SubscribeCommand, UnsubscribeCommand } = require('@aws-sdk/client-sns'),
 	log4js = require('log4js');
 
 const assert = require('@barchart/common-js/lang/assert'),
 	Disposable = require('@barchart/common-js/lang/Disposable'),
 	is = require('@barchart/common-js/lang/is'),
-	object = require('@barchart/common-js/lang/object'),
-	promise = require('@barchart/common-js/lang/promise');
+	object = require('@barchart/common-js/lang/object');
 
 module.exports = (() => {
 	'use strict';
@@ -58,22 +57,21 @@ module.exports = (() => {
 			}
 
 			if (this._startPromise === null) {
-				this._startPromise = Promise.resolve()
-					.then(() => {
-						aws.config.update({region: this._configuration.region});
+				this._startPromise = (async () => {
+					try {
+						this._sns = new SNSClient({apiVersion: this._configuration.apiVersion || '2010-03-31', region: this._configuration.region});
 
-						this._sns = new aws.SNS({apiVersion: this._configuration.apiVersion || '2010-03-31'});
-					}).then(() => {
 						logger.info('The SNS provider has started');
 
 						this._started = true;
 
 						return this._started;
-					}).catch((e) => {
+					} catch (e) {
 						logger.error('The SNS provider failed to start', e);
 
 						throw e;
-					});
+					}
+				})();
 			}
 
 			return this._startPromise;
@@ -105,28 +103,25 @@ module.exports = (() => {
 		 * @returns {Promise<String>}
 		 */
 		async getTopicArn(topicName, createOptions) {
-			return Promise.resolve()
-				.then(() => {
-					assert.argumentIsRequired(topicName, 'topicName', String);
+			assert.argumentIsRequired(topicName, 'topicName', String);
 
-					checkReady.call(this);
+			checkReady.call(this);
 
-					const qualifiedTopicName = getQualifiedTopicName(this._configuration.prefix, topicName);
+			const qualifiedTopicName = getQualifiedTopicName(this._configuration.prefix, topicName);
 
-					if (!this._topicPromises.hasOwnProperty(qualifiedTopicName)) {
-						logger.debug('The SNS provider has not cached the topic. Issuing request to create topic.');
+			if (!this._topicPromises.hasOwnProperty(qualifiedTopicName)) {
+				logger.debug('The SNS provider has not cached the topic. Issuing request to create topic.');
 
-						let tags = null;
+				let tags = null;
 
-						if (createOptions && createOptions.tags) {
-							tags = createOptions.tags;
-						}
+				if (createOptions && createOptions.tags) {
+					tags = createOptions.tags;
+				}
 
-						this._topicPromises[qualifiedTopicName] = this.createTopic(topicName, tags);
-					}
+				this._topicPromises[qualifiedTopicName] = this.createTopic(topicName, tags);
+			}
 
-					return this._topicPromises[qualifiedTopicName];
-				});
+			return this._topicPromises[qualifiedTopicName];
 		}
 
 		/**
@@ -140,57 +135,50 @@ module.exports = (() => {
 		 * @returns {Promise<String>}
 		 */
 		async createTopic(topicName, tags) {
-			return Promise.resolve()
-				.then(() => {
-					assert.argumentIsRequired(topicName, 'topicName', String);
-					assert.argumentIsOptional(tags, 'tags', Object);
+			assert.argumentIsRequired(topicName, 'topicName', String);
+			assert.argumentIsOptional(tags, 'tags', Object);
 
-					checkReady.call(this);
+			checkReady.call(this);
 
-					return promise.build(
-						(resolveCallback, rejectCallback) => {
-							const qualifiedTopicName = getQualifiedTopicName(this._configuration.prefix, topicName);
+			const qualifiedTopicName = getQualifiedTopicName(this._configuration.prefix, topicName);
 
-							logger.debug('Creating SNS topic [', qualifiedTopicName, ']');
+			logger.debug('Creating SNS topic [', qualifiedTopicName, ']');
 
-							const payload = {
-								Name: qualifiedTopicName
-							};
+			const payload = {
+				Name: qualifiedTopicName
+			};
 
-							if (is.object(tags)) {
-								const keys = object.keys(tags);
+			if (is.object(tags)) {
+				const keys = object.keys(tags);
 
-								const t = keys.reduce((accumulator, key) => {
-									const tag = { };
+				const t = keys.reduce((accumulator, key) => {
+					const tag = { };
 
-									tag.Key = key;
-									tag.Value = tags[key];
+					tag.Key = key;
+					tag.Value = tags[key];
 
-									accumulator.push(tag);
+					accumulator.push(tag);
 
-									return accumulator;
-								}, [ ]);
+					return accumulator;
+				}, [ ]);
 
-								if (t.length > 0) {
-									payload.Tags = t;
-								}
-							}
+				if (t.length > 0) {
+					payload.Tags = t;
+				}
+			}
 
-							this._sns.createTopic(payload, (error, data) => {
-								if (error === null) {
-									logger.info('SNS topic created [', qualifiedTopicName, ']');
+			try {
+				const data = await this._sns.send(new CreateTopicCommand(payload));
 
-									resolveCallback(data.TopicArn);
-								} else {
-									logger.error('SNS topic creation failed [', qualifiedTopicName, ']');
-									logger.error(error);
+				logger.info('SNS topic created [', qualifiedTopicName, ']');
 
-									rejectCallback('Failed to create SNS topic.');
-								}
-							});
-						}
-					);
-				});
+				return data.TopicArn;
+			} catch (error) {
+				logger.error('SNS topic creation failed [', qualifiedTopicName, ']');
+				logger.error(error);
+
+				throw 'Failed to create SNS topic.';
+			}
 		}
 
 		/**
@@ -202,21 +190,16 @@ module.exports = (() => {
 		 * @returns {Promise}
 		 */
 		async deleteTopic(topicName) {
-			return Promise.resolve()
-				.then(() => {
-					assert.argumentIsRequired(topicName, 'topicName', String);
+			assert.argumentIsRequired(topicName, 'topicName', String);
 
-					checkReady.call(this);
+			checkReady.call(this);
 
-					return this.getTopicArn(topicName)
-						.then((topicArn) => {
-							const qualifiedTopicName = getQualifiedTopicName(this._configuration.prefix, topicName);
+			const topicArn = await this.getTopicArn(topicName);
+			const qualifiedTopicName = getQualifiedTopicName(this._configuration.prefix, topicName);
 
-							logger.info('Deleting SNS topic [', qualifiedTopicName, '] at topic ARN [', topicArn, ']');
+			logger.info('Deleting SNS topic [', qualifiedTopicName, '] at topic ARN [', topicArn, ']');
 
-							return this.deleteTopicArn(topicArn);
-						});
-				});
+			return this.deleteTopicArn(topicArn);
 		}
 
 		/**
@@ -228,33 +211,24 @@ module.exports = (() => {
 		 * @returns {Promise}
 		 */
 		async deleteTopicArn(topicArn) {
-			return Promise.resolve()
-				.then(() => {
-					assert.argumentIsRequired(topicArn, 'topicArn', String);
+			assert.argumentIsRequired(topicArn, 'topicArn', String);
 
-					checkReady.call(this);
+			checkReady.call(this);
 
-					return promise.build(
-						(resolveCallback, rejectCallback) => {
-							logger.debug('Deleting SNS topic at ARN [', topicArn, ']');
+			logger.debug('Deleting SNS topic at ARN [', topicArn, ']');
 
-							this._sns.deleteTopic({
-								TopicArn: topicArn
-							}, (error, data) => {
-								if (error === null) {
-									logger.info('SNS topic deleted at ARN [', topicArn, ']');
+			try {
+				await this._sns.send(new DeleteTopicCommand({
+					TopicArn: topicArn
+				}));
 
-									resolveCallback();
-								} else {
-									logger.error('SNS topic deletion failed at ARN [', topicArn, ']');
-									logger.error(error);
+				logger.info('SNS topic deleted at ARN [', topicArn, ']');
+			} catch (error) {
+				logger.error('SNS topic deletion failed at ARN [', topicArn, ']');
+				logger.error(error);
 
-									rejectCallback('Failed to delete SNS topic.');
-								}
-							});
-						}
-					);
-				});
+				throw 'Failed to delete SNS topic.';
+			}
 		}
 
 		/**
@@ -268,40 +242,29 @@ module.exports = (() => {
 		 * @returns {Promise}
 		 */
 		async publish(topicName, payload, createOptions) {
-			return Promise.resolve()
-				.then(() => {
-					assert.argumentIsRequired(topicName, 'topicName', String);
-					assert.argumentIsRequired(payload, 'payload', Object);
+			assert.argumentIsRequired(topicName, 'topicName', String);
+			assert.argumentIsRequired(payload, 'payload', Object);
 
-					checkReady.call(this);
+			checkReady.call(this);
 
-					return this.getTopicArn(topicName, createOptions)
-						.then((topicArn) => {
-							const qualifiedTopicName = getQualifiedTopicName(this._configuration.prefix, topicName);
+			const topicArn = await this.getTopicArn(topicName, createOptions);
+			const qualifiedTopicName = getQualifiedTopicName(this._configuration.prefix, topicName);
 
-							return promise.build(
-								(resolveCallback, rejectCallback) => {
-									logger.debug('Publishing to SNS topic [', qualifiedTopicName, ']');
-									logger.trace(payload);
+			logger.debug('Publishing to SNS topic [', qualifiedTopicName, ']');
+			logger.trace(payload);
 
-									this._sns.publish({
-										TopicArn: topicArn,
-										Message: JSON.stringify(payload)
-									}, (error, data) => {
-										if (error === null) {
-											logger.info('Published to SNS topic [', qualifiedTopicName, ']');
+			try {
+				await this._sns.send(new PublishCommand({
+					TopicArn: topicArn,
+					Message: JSON.stringify(payload)
+				}));
 
-											resolveCallback();
-										} else {
-											logger.error(error);
+				logger.info('Published to SNS topic [', qualifiedTopicName, ']');
+			} catch (error) {
+				logger.error(error);
 
-											rejectCallback('Failed to publish message to SNS topic.');
-										}
-									});
-								}
-							);
-						});
-				});
+				throw 'Failed to publish message to SNS topic.';
+			}
 		}
 
 		/**
@@ -319,64 +282,62 @@ module.exports = (() => {
 		 * @returns {Promise<Disposable>}
 		 */
 		async subscribe(topicName, queueArn) {
-			return Promise.resolve()
-				.then(() => {
-					assert.argumentIsRequired(topicName, 'topicName', String);
-					assert.argumentIsRequired(queueArn, 'queueArn', String);
+			assert.argumentIsRequired(topicName, 'topicName', String);
+			assert.argumentIsRequired(queueArn, 'queueArn', String);
 
-					checkReady.call(this);
+			checkReady.call(this);
 
-					const qualifiedTopicName = getQualifiedTopicName(this._configuration.prefix, topicName);
+			const qualifiedTopicName = getQualifiedTopicName(this._configuration.prefix, topicName);
 
-					if (!this._subscriptionPromises.hasOwnProperty(qualifiedTopicName)) {
-						this._subscriptionPromises[qualifiedTopicName] = this.getTopicArn(topicName)
-							.then((topicArn) => {
-								return promise.build(
-									(resolveCallback, rejectCallback) => {
-										logger.debug('Subscribing SQS queue to SNS topic [', qualifiedTopicName, ']');
+			if (!this._subscriptionPromises.hasOwnProperty(qualifiedTopicName)) {
+				this._subscriptionPromises[qualifiedTopicName] = (async () => {
+					const topicArn = await this.getTopicArn(topicName);
 
-										this._sns.subscribe({
-											'TopicArn': topicArn,
-											'Endpoint': queueArn,
-											'Protocol': 'sqs'
-										}, (error, data) => {
-											if (error === null) {
-												logger.info('SNS subscription to SQS topic complete [', qualifiedTopicName, ']');
+					logger.debug('Subscribing SQS queue to SNS topic [', qualifiedTopicName, ']');
 
-												resolveCallback(Disposable.fromAction(() => {
-													if (this.disposed) {
-														return;
-													}
+					let data;
 
-													logger.debug('Unsubscribing SQS queue from SNS topic [', qualifiedTopicName, ']');
+					try {
+						data = await this._sns.send(new SubscribeCommand({
+							'TopicArn': topicArn,
+							'Endpoint': queueArn,
+							'Protocol': 'sqs'
+						}));
+					} catch (error) {
+						logger.error('SNS subscription to SQS topic failed [', qualifiedTopicName, ']');
+						logger.error(error);
 
-													delete this._subscriptionPromises[qualifiedTopicName];
-
-													this._sns.unsubscribe({
-														SubscriptionArn: data.SubscriptionArn
-													}, (error, data) => {
-														if (error === null) {
-															logger.info('SQS unsubscribe from SNS topic complete [', qualifiedTopicName, ']');
-														} else {
-															logger.error('SQS unsubscribe from SNS topic failed [', qualifiedTopicName, ']');
-															logger.error(error);
-														}
-													});
-												}));
-											} else {
-												logger.error('SNS subscription to SQS topic failed [', qualifiedTopicName, ']');
-												logger.error(error);
-
-												rejectCallback('Failed to subscribe to SNS topic.');
-											}
-										});
-									}
-								);
-							});
+						throw 'Failed to subscribe to SNS topic.';
 					}
 
-					return this._subscriptionPromises[qualifiedTopicName];
-				});
+					logger.info('SNS subscription to SQS topic complete [', qualifiedTopicName, ']');
+
+					return Disposable.fromAction(() => {
+						if (this.disposed) {
+							return;
+						}
+
+						logger.debug('Unsubscribing SQS queue from SNS topic [', qualifiedTopicName, ']');
+
+						delete this._subscriptionPromises[qualifiedTopicName];
+
+						(async () => {
+							try {
+								await this._sns.send(new UnsubscribeCommand({
+									SubscriptionArn: data.SubscriptionArn
+								}));
+
+								logger.info('SQS unsubscribe from SNS topic complete [', qualifiedTopicName, ']');
+							} catch (error) {
+								logger.error('SQS unsubscribe from SNS topic failed [', qualifiedTopicName, ']');
+								logger.error(error);
+							}
+						})();
+					});
+				})();
+			}
+
+			return this._subscriptionPromises[qualifiedTopicName];
 		}
 
 		/**
@@ -388,81 +349,71 @@ module.exports = (() => {
 		 * @returns {Promise<Object>}
 		 */
 		async getSubscriptions() {
-			return Promise.resolve()
-				.then(() => {
-					checkReady.call(this);
+			checkReady.call(this);
 
-					let counts = { };
+			let counts = { };
 
-					counts.queries = 0;
-					counts.total = 0;
-					counts.matches = 0;
+			counts.queries = 0;
+			counts.total = 0;
+			counts.matches = 0;
 
-					const topicArnRegex = new RegExp(`^(arn:aws:sns):(${this._configuration.region}):(.*):(${this._configuration.prefix})-(.*)$`);
+			const topicArnRegex = new RegExp(`^(arn:aws:sns):(${this._configuration.region}):(.*):(${this._configuration.prefix})-(.*)$`);
 
-					const listSubscriptionsRecursive = (nextToken) => {
-						return promise.build((resolveCallback, rejectCallback) => {
-							const payload = { };
+			const listSubscriptionsRecursive = async (nextToken) => {
+				const payload = { };
 
-							if (nextToken) {
-								payload.NextToken = nextToken;
-							}
+				if (nextToken) {
+					payload.NextToken = nextToken;
+				}
 
-							const query = ++counts.queries;
+				const query = ++counts.queries;
 
-							logger.debug('Executing subscription query [', query, '] for prefix [', this._configuration.prefix, ']');
+				logger.debug('Executing subscription query [', query, '] for prefix [', this._configuration.prefix, ']');
 
-							this._sns.listSubscriptions(payload, (error, data) => {
-								if (error) {
-									logger.warn('Encountered error [', error.code, '] while executing subscription query [', query, ']');
+				let data;
 
-									rejectCallback({ error });
+				try {
+					data = await this._sns.send(new ListSubscriptionsCommand(payload));
+				} catch (error) {
+					logger.warn('Encountered error [', error.name, '] while executing subscription query [', query, ']');
 
-									return;
-								}
+					throw { error };
+				}
 
-								logger.debug('Finished subscription query [', query, '] for prefix [', this._configuration.prefix, '] with [', data.Subscriptions.length, '] results');
+				logger.debug('Finished subscription query [', query, '] for prefix [', this._configuration.prefix, '] with [', data.Subscriptions.length, '] results');
 
-								const matches = data.Subscriptions.filter(s => s.Protocol === 'sqs')
-									.filter(s => topicArnRegex.test(s.TopicArn));
+				const matches = data.Subscriptions.filter(s => s.Protocol === 'sqs')
+					.filter(s => topicArnRegex.test(s.TopicArn));
 
-								counts.total = counts.total + data.Subscriptions.length;
-								counts.matches = counts.matches + matches.length;
+				counts.total = counts.total + data.Subscriptions.length;
+				counts.matches = counts.matches + matches.length;
 
-								const currentResults = matches.map((m) => {
-									const result = { };
+				const currentResults = matches.map((m) => {
+					const result = { };
 
-									result.topicArn = m.TopicArn;
-									result.queueArn = m.Endpoint;
-									result.subscriptionArn = m.SubscriptionArn;
+					result.topicArn = m.TopicArn;
+					result.queueArn = m.Endpoint;
+					result.subscriptionArn = m.SubscriptionArn;
 
-									return result;
-								});
-
-								const continuationPromise = Promise.resolve()
-									.then(() => {
-										if (data.NextToken) {
-											return listSubscriptionsRecursive(data.NextToken);
-										} else {
-											return Promise.resolve([ ]);
-										}
-									});
-
-								return continuationPromise
-									.then((continuationResults) => {
-										resolveCallback(currentResults.concat(continuationResults));
-									});
-							});
-						});
-					};
-
-					return listSubscriptionsRecursive()
-						.then((results) => {
-							logger.debug('Completed [', counts.queries, '] queries for subscriptions to SNS topics with prefix [', this._configuration.prefix, '] yielding [', counts.matches, '] matching subscriptions out of [', counts.total, '] total subscriptions');
-
-							return results;
-						});
+					return result;
 				});
+
+				let continuationResults;
+
+				if (data.NextToken) {
+					continuationResults = await listSubscriptionsRecursive(data.NextToken);
+				} else {
+					continuationResults = [ ];
+				}
+
+				return currentResults.concat(continuationResults);
+			};
+
+			const results = await listSubscriptionsRecursive();
+
+			logger.debug('Completed [', counts.queries, '] queries for subscriptions to SNS topics with prefix [', this._configuration.prefix, '] yielding [', counts.matches, '] matching subscriptions out of [', counts.total, '] total subscriptions');
+
+			return results;
 		}
 
 		/**
@@ -474,33 +425,24 @@ module.exports = (() => {
 		 * @returns {Promise}
 		 */
 		async unsubscribe(subscriptionArn) {
-			return Promise.resolve()
-				.then(() => {
-					assert.argumentIsRequired(subscriptionArn, 'subscriptionArn', String);
+			assert.argumentIsRequired(subscriptionArn, 'subscriptionArn', String);
 
-					checkReady.call(this);
+			checkReady.call(this);
 
-					return promise.build(
-						(resolveCallback, rejectCallback) => {
-							logger.debug('Deleting SNS subscription at ARN [', subscriptionArn, ']');
+			logger.debug('Deleting SNS subscription at ARN [', subscriptionArn, ']');
 
-							this._sns.unsubscribe({
-								SubscriptionArn: subscriptionArn
-							}, (error, data) => {
-								if (error === null) {
-									logger.info('SNS subscription deleted at ARN [', subscriptionArn, ']');
+			try {
+				await this._sns.send(new UnsubscribeCommand({
+					SubscriptionArn: subscriptionArn
+				}));
 
-									resolveCallback();
-								} else {
-									logger.error('SNS subscription deletion failed at ARN [', subscriptionArn, ']');
-									logger.error(error);
+				logger.info('SNS subscription deleted at ARN [', subscriptionArn, ']');
+			} catch (error) {
+				logger.error('SNS subscription deletion failed at ARN [', subscriptionArn, ']');
+				logger.error(error);
 
-									rejectCallback('Failed to delete SNS subscription.');
-								}
-							});
-						}
-					);
-				});
+				throw 'Failed to delete SNS subscription.';
+			}
 		}
 
 		/**
@@ -512,71 +454,59 @@ module.exports = (() => {
 		 * @returns {Promise<String[]>}
 		 */
 		async getTopics(topicNamePrefix) {
-			return Promise.resolve()
-				.then(() => {
-					assert.argumentIsOptional(topicNamePrefix, 'topicNamePrefix', String);
+			assert.argumentIsOptional(topicNamePrefix, 'topicNamePrefix', String);
 
-					checkReady.call(this);
+			checkReady.call(this);
 
-					let batchCount = 0;
+			let batchCount = 0;
 
-					const getTopicBatch = (token) => {
-						return promise.build((resolveCallback, rejectCallback) => {
-							logger.debug('Requesting batch of SNS topics');
+			const getTopicBatch = async (token) => {
+				logger.debug('Requesting batch of SNS topics');
 
-							const params = { };
+				const params = { };
 
-							if (token) {
-								params.NextToken = token;
-							}
+				if (token) {
+					params.NextToken = token;
+				}
 
-							this._sns.listTopics(params, (error, data) => {
-								if (error === null) {
-									logger.info('SNS topic list batch [', ++batchCount, '] received');
+				try {
+					const data = await this._sns.send(new ListTopicsCommand(params));
 
-									resolveCallback(data);
-								} else {
-									logger.info('SNS topic list batch [', ++batchCount, '] failed', error);
+					logger.info('SNS topic list batch [', ++batchCount, '] received');
 
-									rejectCallback('Failed to retrieve list of SNS topics.');
-								}
-							});
-						});
-					};
+					return data;
+				} catch (error) {
+					logger.info('SNS topic list batch [', ++batchCount, '] failed', error);
 
-					const getTopicBatches = (topics, token) => {
-						return getTopicBatch(token || null)
-							.then((data) => {
-								const previousTopics = topics || [ ];
+					throw 'Failed to retrieve list of SNS topics.';
+				}
+			};
 
-								let nextTopics = previousTopics.concat(data.Topics || [ ]);
-								let nextPromise = null;
+			const getTopicBatches = async (topics, token) => {
+				const data = await getTopicBatch(token || null);
 
-								if (data.NextToken) {
-									nextPromise = getTopicBatches(nextTopics, data.NextToken);
-								} else {
-									logger.info('Final SNS topic batch complete, [', nextTopics.length, '] topics received');
+				const previousTopics = topics || [ ];
+				const nextTopics = previousTopics.concat(data.Topics || [ ]);
 
-									nextPromise = Promise.resolve(nextTopics);
-								}
+				if (data.NextToken) {
+					return getTopicBatches(nextTopics, data.NextToken);
+				}
 
-								return nextPromise;
-							});
-					};
+				logger.info('Final SNS topic batch complete, [', nextTopics.length, '] topics received');
 
-					return getTopicBatches()
-						.then((topics) => {
-							const topicArnRegex = new RegExp(`^arn:aws:sns:.*:[0-9]*:${this._configuration.prefix}${(topicNamePrefix || '')}`);
+				return nextTopics;
+			};
 
-							return topics.reduce((accumulator, topic) => {
-								if (topicArnRegex.test(topic.TopicArn)) {
-									accumulator.push(topic.TopicArn);
-								}
+			const topics = await getTopicBatches();
+			const topicArnRegex = new RegExp(`^arn:aws:sns:.*:[0-9]*:${this._configuration.prefix}${(topicNamePrefix || '')}`);
 
-								return accumulator;
-							}, [ ]);
-						});
-				});
+			return topics.reduce((accumulator, topic) => {
+				if (topicArnRegex.test(topic.TopicArn)) {
+					accumulator.push(topic.TopicArn);
+				}
+
+				return accumulator;
+			}, [ ]);
 		}
 
 		_onDispose() {

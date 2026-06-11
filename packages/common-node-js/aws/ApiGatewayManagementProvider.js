@@ -1,4 +1,4 @@
-const aws = require('aws-sdk'),
+const { ApiGatewayManagementApiClient, PostToConnectionCommand } = require('@aws-sdk/client-apigatewaymanagementapi'),
 	log4js = require('log4js');
 
 const assert = require('@barchart/common-js/lang/assert'),
@@ -53,24 +53,25 @@ module.exports = (() => {
 			}
 
 			if (this._startPromise === null) {
-				this._startPromise = Promise.resolve()
-					.then(() => {
-						this._agm = new aws.ApiGatewayManagementApi({
+				this._startPromise = (async () => {
+					try {
+						this._agm = new ApiGatewayManagementApiClient({
 							apiVersion: this._configuration.apiVersion || '2018-11-29',
 							endpoint: this._configuration.endpoint,
 							region: this._configuration.region,
 						});
-					}).then(() => {
+
 						logger.info('The API Gateway provider has started');
 
 						this._started = true;
 
 						return this._started;
-					}).catch((e) => {
+					} catch (e) {
 						logger.error('The API Gateway provider failed to start', e);
 
 						throw e;
-					});
+					}
+				})();
 			}
 
 			return this._startPromise;
@@ -86,14 +87,11 @@ module.exports = (() => {
 		 * @returns {Promise}
 		 */
 		async postToConnection(connectionId, data) {
-			return Promise.resolve()
-				.then(() => {
-					assert.argumentIsRequired(connectionId, 'connectionId', String);
+			assert.argumentIsRequired(connectionId, 'connectionId', String);
 
-					checkReady.call(this);
+			checkReady.call(this);
 
-					return this._agm.postToConnection({ ConnectionId: connectionId, Data: data, }).promise();
-				});
+			return this._agm.send(new PostToConnectionCommand({ ConnectionId: connectionId, Data: Buffer.isBuffer(data) ? data : Buffer.from(data) }));
 		}
 
 		toString() {

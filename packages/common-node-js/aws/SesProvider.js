@@ -1,6 +1,5 @@
-const aws = require('aws-sdk'),
-	log4js = require('log4js'),
-	nodemailer = require('nodemailer');
+const { DeleteSuppressedDestinationCommand, GetSuppressedDestinationCommand, ListSuppressedDestinationsCommand, PutSuppressedDestinationCommand, SendEmailCommand, SESv2Client } = require('@aws-sdk/client-sesv2'),
+	log4js = require('log4js');
 
 const assert = require('@barchart/common-js/lang/assert'),
 	Disposable = require('@barchart/common-js/lang/Disposable'),
@@ -47,7 +46,6 @@ module.exports = (() => {
 			this._configuration = configuration;
 
 			this._sesv2 = null;
-			this._transport = null;
 
 			this._started = false;
 
@@ -72,15 +70,15 @@ module.exports = (() => {
 
 			if (!this._started) {
 				try {
-					aws.config.update({ region: this._configuration.region });
+					const clientConfiguration = {
+						region: this._configuration.region
+					};
 
-					this._transport = nodemailer.createTransport({
-						SES: new aws.SES({
-							apiVersion: '2010-12-01'
-						})
-					});
+					if (this._configuration.apiVersion) {
+						clientConfiguration.apiVersion = this._configuration.apiVersion;
+					}
 
-					this._sesv2 = new aws.SESV2({ apiVersion: this._configuration.apiVersion || '2019-09-27' });
+					this._sesv2 = new SESv2Client(clientConfiguration);
 
 					logger.info('The SES provider has started');
 
@@ -147,6 +145,22 @@ module.exports = (() => {
 
 			if (attachments) {
 				assert.argumentIsArray(attachments, 'attachments', Object, 'Object');
+
+				attachments.forEach((attachment, index) => {
+					const name = `attachments[${index}]`;
+
+					if (!is.string(attachment.content) && !Buffer.isBuffer(attachment.content) && !(attachment.content instanceof Uint8Array)) {
+						throw new Error(`${name}.content must be a String, Buffer, or Uint8Array.`);
+					}
+
+					assert.argumentIsOptional(attachment.filename, `${name}.filename`, String);
+					assert.argumentIsOptional(attachment.name, `${name}.name`, String);
+					assert.argumentIsOptional(attachment.contentType, `${name}.contentType`, String);
+					assert.argumentIsOptional(attachment.contentDisposition, `${name}.contentDisposition`, String);
+					assert.argumentIsOptional(attachment.cid, `${name}.cid`, String);
+					assert.argumentIsOptional(attachment.contentDescription, `${name}.contentDescription`, String);
+					assert.argumentIsOptional(attachment.contentTransferEncoding, `${name}.contentTransferEncoding`, String);
+				});
 			}
 
 			if (this._configuration.recipientOverride) {
@@ -155,19 +169,27 @@ module.exports = (() => {
 				recipientAddress = this._configuration.recipientOverride;
 			}
 
-			const recipientAddressesToUse = is.array(recipientAddress) ? recipientAddress : [recipientAddress];
+			const recipientAddressesToUse = is.array(recipientAddress) ? recipientAddress : [ recipientAddress ];
 
-			const message = buildMessage({ senderAddress, recipientAddresses: recipientAddressesToUse, subject, htmlBody, textBody, attachments, headers });
+			const message = buildEmailMessage(subject, htmlBody, textBody, attachments, headers);
 
 			await this._rateLimiters.send.enqueue(async () => {
 				try {
 					logger.debug('Sending email to [', recipientAddress, ']');
 
-					await this._transport.sendMail(message);
+					await this._sesv2.send(new SendEmailCommand({
+						FromEmailAddress: senderAddress,
+						Destination: {
+							ToAddresses: recipientAddressesToUse
+						},
+						Content: {
+							Simple: message
+						}
+					}));
 
 					logger.debug('Sent email to [', recipientAddress, ']');
 				} catch (error) {
-					logger.error('SES provider failed to send email message', message);
+					logger.error('SES provider failed to send email message');
 					logger.error(error);
 
 					throw error;
@@ -191,11 +213,11 @@ module.exports = (() => {
 			let item;
 
 			try {
-				const response = await this._sesv2.getSuppressedDestination({ EmailAddress: email }).promise();
+				const response = await this._sesv2.send(new GetSuppressedDestinationCommand({ EmailAddress: email }));
 
 				item = transformSuppressionListItem(response.SuppressedDestination);
 			} catch (e) {
-				if (e && e.code === 'NotFoundException') {
+				if (e && e.name === 'NotFoundException') {
 					item = null;
 				} else {
 					throw e;
@@ -226,7 +248,7 @@ module.exports = (() => {
 					params.NextToken = token;
 				}
 
-				const response = await this._sesv2.listSuppressedDestinations(params).promise();
+				const response = await this._sesv2.send(new ListSuppressedDestinationsCommand(params));
 				const batch = response.SuppressedDestinationSummaries;
 
 				for (let i = 0; i < batch.length; i++) {
@@ -268,7 +290,7 @@ module.exports = (() => {
 						params.NextToken = token;
 					}
 
-					return this._sesv2.listSuppressedDestinations(params).promise();
+					return this._sesv2.send(new ListSuppressedDestinationsCommand(params));
 				});
 
 				const items = response.SuppressedDestinationSummaries.reduce((accumulator, raw) => {
@@ -306,9 +328,9 @@ module.exports = (() => {
 
 			assert.argumentIsValid(reason, 'reason', r => r.toUpperCase() === 'BOUNCE' || r.toUpperCase() === 'COMPLAINT', 'must be one of [ BOUNCE, COMPLIANT ]');
 
-			await this._sesv2.putSuppressedDestination({ EmailAddress: email, Reason: reason.toUpperCase() }).promise();
+			await this._sesv2.send(new PutSuppressedDestinationCommand({ EmailAddress: email, Reason: reason.toUpperCase() }));
 
-			return await this.getSuppressedItem(email);
+			return this.getSuppressedItem(email);
 		}
 
 		/**
@@ -324,7 +346,7 @@ module.exports = (() => {
 
 			assert.argumentIsRequired(email, 'email', String);
 
-			await this._sesv2.deleteSuppressedDestination({ EmailAddress: email }).promise();
+			await this._sesv2.send(new DeleteSuppressedDestinationCommand({ EmailAddress: email }));
 		}
 
 		_onDispose() {
@@ -353,30 +375,59 @@ module.exports = (() => {
 		return { email: data.EmailAddress, reason: data.Reason, date: data.LastUpdateTime };
 	}
 
-	function buildMessage(options) {
+	function buildEmailMessage(subject, htmlBody, textBody, attachments, headers) {
 		const message = {
-			from: options.senderAddress,
-			to: options.recipientAddresses,
-			subject: options.subject || ''
+			Subject: { Data: subject || '' },
+			Body: { }
 		};
 
-		if (is.string(options.htmlBody) && options.htmlBody.length > 0) {
-			message.html = options.htmlBody;
+		if (is.string(textBody) && textBody.length > 0) {
+			message.Body.Text = { Data: textBody };
 		}
 
-		if (is.string(options.textBody) && options.textBody.length > 0) {
-			message.text = options.textBody;
+		if (is.string(htmlBody) && htmlBody.length > 0) {
+			message.Body.Html = { Data: htmlBody };
 		}
 
-		if (options.headers) {
-			message.headers = options.headers;
+		if (headers) {
+			message.Headers = Object.keys(headers).map((name) => {
+				return { Name: name, Value: String(headers[name]) };
+			});
 		}
 
-		if (options.attachments && options.attachments.length > 0) {
-			message.attachments = options.attachments;
+		if (attachments && attachments.length > 0) {
+			message.Attachments = attachments.map(toAttachment);
 		}
 
 		return message;
+	}
+
+	function toAttachment(attachment) {
+		return {
+			RawContent: convertToBuffer(attachment.content),
+			FileName: attachment.filename || attachment.name || 'attachment',
+			ContentType: attachment.contentType || 'application/octet-stream',
+			ContentDisposition: getContentDisposition(attachment),
+			ContentId: attachment.cid,
+			ContentDescription: attachment.contentDescription,
+			ContentTransferEncoding: attachment.contentTransferEncoding || 'BASE64'
+		};
+	}
+
+	function getContentDisposition(attachment) {
+		if (attachment.contentDisposition) {
+			return attachment.contentDisposition.toUpperCase();
+		}
+
+		return attachment.cid ? 'INLINE' : 'ATTACHMENT';
+	}
+
+	function convertToBuffer(content) {
+		if (Buffer.isBuffer(content)) {
+			return content;
+		}
+
+		return Buffer.from(content);
 	}
 
 	return SesProvider;
