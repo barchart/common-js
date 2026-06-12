@@ -3,6 +3,8 @@ const is = require('./is');
 module.exports = (() => {
 	'use strict';
 
+	const nativeTypes = [ String, Number, Function, Boolean, Date, Array, Object ];
+
 	function checkArgumentType(variable, variableName, type, typeDescription, index) {
 		if (type === String) {
 			if (!is.string(variable)) {
@@ -98,10 +100,16 @@ module.exports = (() => {
 			if (itemConstraint) {
 				let itemValidator;
 
-				if (typeof(itemConstraint) === 'function' && itemConstraint !== Function) {
-					itemValidator = (value, index) => (itemConstraint.prototype !== undefined && value instanceof itemConstraint) || itemConstraint(value, `${variableName}[${index}]`);
-				} else {
+				if (nativeTypes.includes(itemConstraint)) {
 					itemValidator = (value, index) => checkArgumentType(value, variableName, itemConstraint, itemConstraintDescription, index);
+				} else {
+					itemValidator = (value, index) => {
+						if (itemConstraint.prototype !== undefined && value instanceof itemConstraint) {
+							return;
+						}
+
+						itemConstraint(value, `${variableName}[${index}]`);
+					};
 				}
 
 				variable.forEach((v, i) => {
