@@ -217,7 +217,7 @@ module.exports = (() => {
 	 */
 	class Translator {
 		constructor(path) {
-			assert.argumentIsArray(path, 'path', String);
+			assert.argumentIsArray(path, 'path', Edge, 'Edge');
 
 			this._path = path;
 
