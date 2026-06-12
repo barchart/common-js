@@ -7,7 +7,11 @@ const CurrencyTranslator = require('./../../../lang/CurrencyTranslator');
 describe('When a CurrencyTranslator is created with ^AUDUSD and ^CADUSD', () => {
 	'use strict';
 
-	let translator = new CurrencyTranslator([ '^AUDUSD', '^CADUSD' ]);
+	let translator;
+
+	beforeEach(() => {
+		translator = new CurrencyTranslator([ '^AUDUSD', '^CADUSD' ]);
+	});
 
 	describe('and translations are performed before rates are initialized', () => {
 		it('Direct translation of 0 AUD to USD should yield 0 USD', () => {
@@ -180,7 +184,11 @@ describe('When a CurrencyTranslator is created with ^AUDUSD and ^CADUSD', () => 
 describe('When a CurrencyTranslator is created with ^AUDUSD and ^USDEUR', () => {
 	'use strict';
 
-	let translator = new CurrencyTranslator([ '^AUDUSD', '^USDEUR' ]);
+	let translator;
+
+	beforeEach(() => {
+		translator = new CurrencyTranslator([ '^AUDUSD', '^USDEUR' ]);
+	});
 
 	describe('and rates are initialized (^AUDUSD to 0.6 and ^USDEUR to 0.9)', () => {
 		beforeEach(() => {
@@ -219,7 +227,6 @@ describe('When a CurrencyTranslator is created with ^AUDUSD and ^USDEUR', () => 
 		});
 	});
 });
-
 
 
 
