@@ -3,7 +3,7 @@ const is = require('./is');
 module.exports = (() => {
 	'use strict';
 
-	const nativeTypes = [ String, Number, Function, Boolean, Date, Array, Object ];
+	const nativeTypes = [ String, Number, Function, Boolean, Date, Array, Object, RegExp ];
 
 	function checkArgumentType(variable, variableName, type, typeDescription, index) {
 		if (type === String) {
@@ -25,6 +25,10 @@ module.exports = (() => {
 		} else if (type === Date) {
 			if (!is.date(variable)) {
 				throwInvalidTypeError(variableName, 'date', index);
+			}
+		} else if (type === RegExp) {
+			if (!is.regexp(variable)) {
+				throwInvalidTypeError(variableName, 'RegExp', index);
 			}
 		} else if (type === Array) {
 			if (!is.array(variable)) {

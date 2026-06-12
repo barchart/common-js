@@ -131,6 +131,20 @@ describe('when attempting to validate an array', () => {
 		});
 	});
 
+	describe('that uses a RegExp type constraint', () => {
+		it('should be valid when all items are regular expressions', () => {
+			const value = [ /first/, /second/ ];
+
+			expect(() => assert.argumentIsArray(value, 'value', RegExp)).not.toThrow();
+		});
+
+		it('should not be valid when an item is not a regular expression', () => {
+			const value = [ /first/, 'second' ];
+
+			expect(() => assert.argumentIsArray(value, 'value', RegExp)).toThrow();
+		});
+	});
+
 	describe('that uses an Array type constraint', () => {
 		it('should be valid when all items are arrays', () => {
 			const value = [ [ 1 ], [ 2 ] ];

@@ -118,6 +118,18 @@ module.exports = (() => {
 		},
 
 		/**
+		 * Returns true if the argument is a JavaScript RegExp instance.
+		 *
+		 * @static
+		 * @public
+		 * @param {*} candidate
+		 * @returns {boolean}
+		 */
+		regexp(candidate) {
+			return candidate instanceof RegExp;
+		},
+
+		/**
 		 * Returns true if the argument is a function.
 		 *
 		 * @static
