@@ -214,5 +214,4 @@ describe('When comparing the same Timestamp instances', () => {
 	it('The timestamp should not be considered "before" itself', () => {
 		expect(ts.getIsBefore(ts)).toEqual(false);
 	});
-
 });
