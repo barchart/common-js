@@ -52,7 +52,7 @@ describe('When Timestamp is created from a timestamp (1502372574350)', () => {
 			result = instance.addSeconds(2);
 		});
 
-		it('should return a Timestanp instance', () => {
+		it('should return a Timestamp instance', () => {
 			expect(result instanceof Timestamp).toEqual(true);
 		});
 
@@ -76,7 +76,7 @@ describe('When Timestamp is created from a timestamp (1502372574350)', () => {
 			result = instance.add(10);
 		});
 
-		it('should return a Timestanp instance', () => {
+		it('should return a Timestamp instance', () => {
 			expect(result instanceof Timestamp).toEqual(true);
 		});
 
@@ -100,7 +100,7 @@ describe('When Timestamp is created from a timestamp (1502372574350)', () => {
 			result = instance.subtractSeconds(2);
 		});
 
-		it('should return a Timestanp instance', () => {
+		it('should return a Timestamp instance', () => {
 			expect(result instanceof Timestamp).toEqual(true);
 		});
 
@@ -124,7 +124,7 @@ describe('When Timestamp is created from a timestamp (1502372574350)', () => {
 			result = instance.subtract(10);
 		});
 
-		it('should return a Timestanp instance', () => {
+		it('should return a Timestamp instance', () => {
 			expect(result instanceof Timestamp).toEqual(true);
 		});
 
