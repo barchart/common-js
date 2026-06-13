@@ -1,30 +1,23 @@
 const assert = require('./assert'),
 	is = require('./is');
 
-const moment = require('moment-timezone');
-
 module.exports = (() => {
 	'use strict';
 
 	const MILLISECONDS_PER_SECOND = 1000;
 
 	/**
-	 * An immutable data structure that encapsulates (and lazy loads)
-	 * a moment (see https://momentjs.com/).
+	 * An immutable data structure that encapsulates a unix timestamp (in
+	 * milliseconds).
 	 *
 	 * @public
 	 * @param {Number} timestamp
-	 * @param {String=} timezone
 	 */
 	class Timestamp {
 		constructor(timestamp, timezone) {
 			assert.argumentIsValid(timestamp, 'timestamp', is.large, 'is an integer');
-			assert.argumentIsOptional(timezone, 'timezone', String);
 
 			this._timestamp = timestamp;
-			this._timezone = timezone || null;
-
-			this._moment = null;
 		}
 
 		/**
@@ -38,24 +31,6 @@ module.exports = (() => {
 		}
 
 		/**
-		 * The moment instance.
-		 *
-		 * @public
-		 * @returns {moment}
-		 */
-		get moment() {
-			if (this._moment === null) {
-				this._moment = moment(this._timestamp);
-
-				if (this._timezone !== null) {
-					this.moment.tz(this._timezone);
-				}
-			}
-
-			return this._moment;
-		}
-
-		/**
 		 * Returns a new {@link Timestamp} instance shifted forward (or backward)
 		 * by a specific number of milliseconds.
 		 *
@@ -66,7 +41,7 @@ module.exports = (() => {
 		add(milliseconds) {
 			assert.argumentIsRequired(milliseconds, 'milliseconds', Number);
 
-			return new Timestamp(this._timestamp + milliseconds, this._timezone);
+			return new Timestamp(this._timestamp + milliseconds);
 		}
 
 		/**

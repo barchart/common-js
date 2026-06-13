@@ -9,40 +9,8 @@ describe('When Timestamp is created from a timestamp (1502372574350)', () => {
 		instance = new Timestamp(1502372574350);
 	});
 
-	it('should not have instantiated the underlying moment', () => {
-		expect(instance._moment).toEqual(null);
-	});
-
 	it('should know the timestamp', () => {
 		expect(instance.timestamp).toEqual(1502372574350);
-	});
-
-	describe('and the "moment" property is accessed', () => {
-		let m;
-
-		beforeEach(() => {
-			m = instance.moment;
-		});
-
-		it('should not have instantiated the underlying moment', () => {
-			expect(instance._moment).not.toEqual(null);
-		});
-
-		it('should return a moment', () => {
-			expect(m.isValid()).toEqual(true);
-		});
-
-		describe('and the "moment" property is accessed (again)', () => {
-			let n;
-
-			beforeEach(() => {
-				n = instance.moment;
-			});
-
-			it('should return the same moment', () => {
-				expect(m).toBe(n);
-			});
-		});
 	});
 
 	describe('and two seconds are added', () => {
