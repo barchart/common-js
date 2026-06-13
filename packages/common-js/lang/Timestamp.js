@@ -55,7 +55,7 @@ module.exports = (() => {
 		subtract(milliseconds) {
 			assert.argumentIsRequired(milliseconds, 'milliseconds', Number);
 
-			return new Timestamp(this._timestamp - milliseconds, this._timezone);
+			return new Timestamp(this._timestamp - milliseconds);
 		}
 
 		/**
@@ -140,7 +140,7 @@ module.exports = (() => {
 		static clone(other) {
 			assert.argumentIsRequired(other, 'other', Timestamp, 'Timestamp');
 
-			return new Timestamp(other._timestamp, other._timezone);
+			return new Timestamp(other._timestamp);
 		}
 
 		/**
