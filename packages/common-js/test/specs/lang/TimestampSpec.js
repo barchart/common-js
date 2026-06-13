@@ -20,7 +20,7 @@ describe('When Timestamp is created from a timestamp (1502372574350)', () => {
 			result = instance.addSeconds(2);
 		});
 
-		it('should return a Timestanp instance', () => {
+		it('should return a Timestamp instance', () => {
 			expect(result instanceof Timestamp).toEqual(true);
 		});
 
@@ -44,7 +44,7 @@ describe('When Timestamp is created from a timestamp (1502372574350)', () => {
 			result = instance.add(10);
 		});
 
-		it('should return a Timestanp instance', () => {
+		it('should return a Timestamp instance', () => {
 			expect(result instanceof Timestamp).toEqual(true);
 		});
 
@@ -54,6 +54,54 @@ describe('When Timestamp is created from a timestamp (1502372574350)', () => {
 
 		it('should reflect the correct timestamp (10 milliseconds in the future)', () => {
 			expect(result.timestamp).toEqual(1502372574360);
+		});
+
+		it('should not have changed the timestamp of the original instance', () => {
+			expect(instance.timestamp).toEqual(1502372574350);
+		});
+	});
+
+	describe('and two seconds are subtracted', () => {
+		let result;
+
+		beforeEach(() => {
+			result = instance.subtractSeconds(2);
+		});
+
+		it('should return a Timestamp instance', () => {
+			expect(result instanceof Timestamp).toEqual(true);
+		});
+
+		it('should not be the same instance as the original timestamp', () => {
+			expect(result).not.toBe(instance);
+		});
+
+		it('should reflect the correct timestamp (2000 milliseconds in the past)', () => {
+			expect(result.timestamp).toEqual(1502372572350);
+		});
+
+		it('should not have changed the timestamp of the original instance', () => {
+			expect(instance.timestamp).toEqual(1502372574350);
+		});
+	});
+
+	describe('and ten milliseconds are subtracted', () => {
+		let result;
+
+		beforeEach(() => {
+			result = instance.subtract(10);
+		});
+
+		it('should return a Timestamp instance', () => {
+			expect(result instanceof Timestamp).toEqual(true);
+		});
+
+		it('should not be the same instance as the original timestamp', () => {
+			expect(result).not.toBe(instance);
+		});
+
+		it('should reflect the correct timestamp (10 milliseconds in the past)', () => {
+			expect(result.timestamp).toEqual(1502372574340);
 		});
 
 		it('should not have changed the timestamp of the original instance', () => {
