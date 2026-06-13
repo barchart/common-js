@@ -56,8 +56,8 @@ module.exports = (() => {
 		}
 
 		/**
-		 * Returns a new {@link Timestamp} instance shifted forward (or backward)
-		 * by a specific number of milliseconds.
+		 * Returns a new {@link Timestamp} instance shifted forward by a specific
+		 * number of milliseconds.
 		 *
 		 * @public
 		 * @param {Number} milliseconds
@@ -70,8 +70,22 @@ module.exports = (() => {
 		}
 
 		/**
-		 * Returns a new {@link Timestamp} instance shifted forward (or backward)
-		 * by a specific number of seconds.
+		 * Returns a new {@link Timestamp} instance shifted backwards by a specific
+		 * number of milliseconds.
+		 *
+		 * @public
+		 * @param {Number} milliseconds
+		 * @returns {Timestamp}
+		 */
+		subtract(milliseconds) {
+			assert.argumentIsRequired(milliseconds, 'milliseconds', Number);
+
+			return new Timestamp(this._timestamp - milliseconds, this._timezone);
+		}
+
+		/**
+		 * Returns a new {@link Timestamp} instance shifted forward by a specific
+		 * number of seconds.
 		 *
 		 * @public
 		 * @param {Number} seconds
@@ -81,6 +95,20 @@ module.exports = (() => {
 			assert.argumentIsRequired(seconds, 'seconds', Number);
 
 			return this.add(seconds * MILLISECONDS_PER_SECOND);
+		}
+
+		/**
+		 * Returns a new {@link Timestamp} instance shifted backwards by a specific
+		 * number of seconds.
+		 *
+		 * @public
+		 * @param {Number} seconds
+		 * @returns {Timestamp}
+		 */
+		subtractSeconds(seconds) {
+			assert.argumentIsRequired(seconds, 'seconds', Number);
+
+			return this.subtract(seconds * MILLISECONDS_PER_SECOND);
 		}
 
 		/**
