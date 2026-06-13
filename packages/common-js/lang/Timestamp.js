@@ -14,7 +14,7 @@ module.exports = (() => {
 	 * @param {Number} timestamp
 	 */
 	class Timestamp {
-		constructor(timestamp, timezone) {
+		constructor(timestamp) {
 			assert.argumentIsValid(timestamp, 'timestamp', is.large, 'is an integer');
 
 			this._timestamp = timestamp;
