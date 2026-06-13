@@ -1,5 +1,3 @@
-const moment = require('moment');
-
 const AdHoc = require('./../../lang/AdHoc'),
 	assert = require('./../../lang/assert'),
 	Day = require('./../../lang/Day'),
@@ -275,8 +273,6 @@ module.exports = (() => {
 			return Day.fromDate(data);
 		} else if (is.string(data)) {
 			return Day.parse(data);
-		} else if (data instanceof moment) {
-			return new Day(data.year(), data.month() + 1, data.date());
 		} else {
 			return data;
 		}
