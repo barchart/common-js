@@ -134,13 +134,13 @@ module.exports = (() => {
 		 *
 		 * @public
 		 * @static
-		 * @param {Timestamp} value
+		 * @param {Timestamp} other
 		 * @returns {Timestamp}
 		 */
-		static clone(value) {
-			assert.argumentIsRequired(value, 'value', Timestamp, 'Timestamp');
+		static clone(other) {
+			assert.argumentIsRequired(other, 'other', Timestamp, 'Timestamp');
 
-			return new Timestamp(value._timestamp, value._timezone);
+			return new Timestamp(other._timestamp, other._timezone);
 		}
 
 		/**

@@ -46,3 +46,26 @@ declare module '@barchart/common-js/lang/Timespan' {
         get milliseconds(): number;
     }
 }
+
+declare module '@barchart/common-js/lang/Timestamp' {
+    export default class Timestamp {
+        constructor(timestamp: number);
+
+        get timestamp(): number;
+
+        add(milliseconds: number): Timestamp;
+        addSeconds(milliseconds: number): Timestamp;
+
+        subtract(milliseconds: number): Timestamp;
+        subtractSeconds(milliseconds: number): Timestamp;
+
+        getIsBefore(other: Timestamp): boolean;
+        getIsAfter(other: Timestamp): boolean;
+        getIsEqual(other: Timestamp): boolean;
+
+        static now(): Timestamp;
+
+        static clone(other: Timestamp): Timestamp;
+        static parse(value: number): Timestamp;
+    }
+}
