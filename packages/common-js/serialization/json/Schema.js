@@ -1,6 +1,7 @@
 import * as attributes from './../../lang/attributes.js';
 import * as functions from './../../lang/functions.js';
 import * as is from './../../lang/is.js';
+
 import LinkedList from './../../collections/LinkedList.js';
 import Tree from './../../collections/Tree.js';
 import Component from './Component.js';

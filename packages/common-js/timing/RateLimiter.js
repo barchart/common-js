@@ -1,7 +1,8 @@
 import * as assert from './../lang/assert.js';
-import Disposable from './../lang/Disposable.js';
 import * as is from './../lang/is.js';
-import * as promise from './../lang/promise.js';
+import * as promise from './../lang/promise.js'
+
+import Disposable from './../lang/Disposable.js';
 import Queue from './../collections/Queue.js';
 import Scheduler from './Scheduler.js';
 

@@ -1,9 +1,10 @@
-import AdHoc from './../../lang/AdHoc.js';
 import * as assert from './../../lang/assert.js';
+import * as is from './../../lang/is.js';
+
+import AdHoc from './../../lang/AdHoc.js';
 import Day from './../../lang/Day.js';
 import Decimal from './../../lang/Decimal.js';
 import Enum from './../../lang/Enum.js';
-import * as is from './../../lang/is.js';
 import Timestamp from './../../lang/Timestamp.js';
 
 /**

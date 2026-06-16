@@ -1,8 +1,9 @@
 import * as assert from './../lang/assert.js';
-import Disposable from './../lang/Disposable.js';
 import * as is from './../lang/is.js';
 import * as object from './../lang/object.js';
 import * as promise from './../lang/promise.js';
+
+import Disposable from './../lang/Disposable.js';
 
 /**
  * An object that wraps asynchronous delays (i.e. timeout and interval).

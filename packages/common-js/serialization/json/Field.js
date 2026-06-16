@@ -1,5 +1,6 @@
 import * as assert from './../../lang/assert.js';
 import * as is from './../../lang/is.js';
+
 import DataType from './DataType.js';
 
 /**
