@@ -1,5 +1,5 @@
-const Not = require('./../../../specifications/Not'),
-	Specification = require('./../../../specifications/Specification');
+import Not from './../../../specifications/Not.js';
+import Specification from './../../../specifications/Specification.js';
 
 describe('When a Not specification is constructed', () => {
 	'use strict';

@@ -1,135 +1,129 @@
-const assert = require('./../../lang/assert'),
-	is = require('./../../lang/is');
+import * as assert from './../../lang/assert.js';
+import * as is from './../../lang/is.js';
 
-module.exports = (() => {
-	'use strict';
+/**
+ * A map that stores data using a compound key -- without the need
+ * to implement objects needing to implement equals and hashcode.
+ *
+ * @public
+ * @param {Number} depth - The number of keys.
+ */
+export default class CompoundMap {
+	constructor(depth) {
+		assert.argumentIsRequired(depth, 'depth', Number);
+
+		this._depth = depth;
+
+		this._map = { };
+	}
 
 	/**
-	 * A map that stores data using a compound key -- without the need
-	 * to implement objects needing to implement equals and hashcode.
+	 * Returns true if the map has a value (or a grouping of values) at the
+	 * given key.
 	 *
 	 * @public
-	 * @param {Number} depth - The number of keys.
+	 * @param {...String} keys
+	 * @returns {Boolean}
 	 */
-	class CompoundMap {
-		constructor(depth) {
-			assert.argumentIsRequired(depth, 'depth', Number);
+	has(...keys) {
+		validateKeys(keys, this._depth, false);
 
-			this._depth = depth;
+		let target = this._map;
 
-			this._map = { };
-		}
+		return keys.every((k) => {
+			const returnVal = target.hasOwnProperty(k);
 
-		/**
-		 * Returns true if the map has a value (or a grouping of values) at the
-		 * given key.
-		 *
-		 * @public
-		 * @param {...String} keys
-		 * @returns {Boolean}
-		 */
-		has(...keys) {
-			validateKeys(keys, this._depth, false);
+			if (returnVal) {
+				target = target[k];
+			}
 
-			let target = this._map;
+			return returnVal;
+		});
+	}
 
-			return keys.every((k) => {
-				const returnVal = target.hasOwnProperty(k);
+	/**
+	 * Puts a value into the map, overwriting any preexisting value.
+	 *
+	 * @public
+	 * @param {*} value
+	 * @param {...String} keys
+	 */
+	put(value, ...keys) {
+		validateKeys(keys, this._depth, true);
 
-				if (returnVal) {
-					target = target[k];
+		let target = this._map;
+		let final = keys.length - 1;
+
+		keys.forEach((k, i) => {
+			if (i === final) {
+				target[k] = value;
+			} else {
+				if (!target.hasOwnProperty(k)) {
+					target[k] = { };
 				}
 
-				return returnVal;
-			});
-		}
+				target = target[k];
+			}
+		});
+	}
 
-		/**
-		 * Puts a value into the map, overwriting any preexisting value.
-		 *
-		 * @public
-		 * @param {*} value
-		 * @param {...String} keys
-		 */
-		put(value, ...keys) {
-			validateKeys(keys, this._depth, true);
+	/**
+	 * Gets a value from the map, returning null if the value does not exist.
+	 *
+	 * @public
+	 * @param {...String} keys
+	 * @returns {*}
+	 */
+	get(...keys) {
+		validateKeys(keys, this._depth, true);
 
-			let target = this._map;
-			let final = keys.length - 1;
+		return keys.reduce((target, k) => {
+			let next;
 
-			keys.forEach((k, i) => {
-				if (i === final) {
-					target[k] = value;
-				} else {
-					if (!target.hasOwnProperty(k)) {
-						target[k] = { };
-					}
+			if (is.object(target) && target.hasOwnProperty(k)) {
+				next = target[k];
+			} else {
+				next = null;
+			}
 
-					target = target[k];
-				}
-			});
-		}
+			return next;
+		}, this._map);
+	}
 
-		/**
-		 * Gets a value from the map, returning null if the value does not exist.
-		 *
-		 * @public
-		 * @param {...String} keys
-		 * @returns {*}
-		 */
-		get(...keys) {
-			validateKeys(keys, this._depth, true);
+	/**
+	 * Deletes a value (or a group of values) from the tree.
+	 *
+	 * @public
+	 * @param {...String} keys
+	 * @returns {Boolean}
+	 */
+	remove(...keys) {
+		validateKeys(keys, this._depth, false);
 
-			return keys.reduce((target, k) => {
+		let returnVal = this.has(...keys);
+
+		if (returnVal) {
+			keys.reduce((target, k, i) => {
 				let next;
 
-				if (is.object(target) && target.hasOwnProperty(k)) {
-					next = target[k];
+				if (keys.length === (i + 1)) {
+					delete target[k];
 				} else {
-					next = null;
+					next = target[k];
 				}
 
 				return next;
 			}, this._map);
 		}
 
-		/**
-		 * Deletes a value (or a group of values) from the tree.
-		 *
-		 * @public
-		 * @param {...String} keys
-		 * @returns {Boolean}
-		 */
-		remove(...keys) {
-			validateKeys(keys, this._depth, false);
-
-			let returnVal = this.has(...keys);
-
-			if (returnVal) {
-				keys.reduce((target, k, i) => {
-					let next;
-
-					if (keys.length === (i + 1)) {
-						delete target[k];
-					} else {
-						next = target[k];
-					}
-
-					return next;
-				}, this._map);
-			}
-
-			return returnVal;
-		}
-
-		toString() {
-			return '[CompoundMap]';
-		}
+		return returnVal;
 	}
 
-	function validateKeys(keys, depth, exact) {
-		assert.argumentIsValid(keys, 'keys', k => (exact && k.length === depth) || (!exact && !(k.length > depth)), 'incorrect number of keys');
+	toString() {
+		return '[CompoundMap]';
 	}
+}
 
-	return CompoundMap;
-})();
+function validateKeys(keys, depth, exact) {
+	assert.argumentIsValid(keys, 'keys', k => (exact && k.length === depth) || (!exact && !(k.length > depth)), 'incorrect number of keys');
+}

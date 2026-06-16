@@ -1,4 +1,4 @@
-const promise = require('./../../../lang/promise');
+import * as promise from './../../../lang/promise.js';
 
 describe('When a timeout is set for a promise', () => {
 	'use strict';

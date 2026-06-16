@@ -2,6 +2,7 @@
   "name": "@barchart/common-js",
   "version": "4.73.0",
   "description": "Library of common JavaScript utilities",
+  "type": "module",
   "author": {
     "name": "Bryan Ingle",
     "email": "bryan.ingle@barchart.com",
@@ -39,6 +40,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.29.7",
+    "@babel/plugin-transform-modules-commonjs": "^7.29.7",
     "babelify": "^10.0.0",
     "browserify": "^17.0.1",
     "date-fns": "^3.6.0",

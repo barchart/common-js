@@ -1,324 +1,317 @@
-const assert = require('./assert'),
-	array = require('./array'),
-	Currency = require('./Currency'),
-	Decimal = require('./Decimal'),
-	Rate = require('./Rate');
+import * as assert from './assert.js';
+import * as array from './array.js';
+import * as comparators from './../collections/sorting/comparators.js';
+import * as memoize from './memoize.js';
 
-const comparators = require('./../collections/sorting/comparators'),
-	ComparatorBuilder = require('./../collections/sorting/ComparatorBuilder');
+import Currency from './Currency.js';
+import Decimal from './Decimal.js';
+import Rate from './Rate.js';
+import ComparatorBuilder from './../collections/sorting/ComparatorBuilder.js';
+import Edge from './../collections/graph/Edge.js';
+import Vertex from './../collections/graph/Vertex.js';
 
-const Edge = require('./../collections/graph/Edge'),
-	Vertex = require('./../collections/graph/Vertex'),
-	memoize = require('./memoize');
+/**
+ * A calculator that translates an amount of one currency into an amount
+ * in another currency. The calculator prefers to use direct conversions;
+ * however, it supports indirect conversions (which require conversions
+ * to one or more intermediate currencies before translation to the final,
+ * desired currency).
+ *
+ * @public
+ * @param {String[]} symbols - Forex symbols which will be used for translations.
+ */
+export default class CurrencyTranslator {
+	constructor(symbols) {
+		assert.argumentIsArray(symbols, 'symbols', String);
 
-module.exports = (() => {
-	'use strict';
+		this._translators = solve(symbols);
+
+		this._maps = { };
+
+		this._maps.rates = new Map();
+		this._maps.translation = new Map();
+
+		this._translators.forEach((translator) => {
+			const path = translator.path;
+
+			path.forEach((edge) => {
+				const from = edge.from.data;
+				const to = edge.to.data;
+
+				if (!this._maps.rates.has(from)) {
+					this._maps.rates.set(from, new Map());
+				}
+
+				if (!this._maps.rates.get(from).has(to)) {
+					this._maps.rates.get(from).set(to, { edge: edge, translators: [ ] });
+				}
+
+				this._maps.rates.get(from).get(to).translators.push(translator);
+			});
+		});
+
+		this._translators.forEach((translator) => {
+			const from = translator.from;
+			const to = translator.to;
+
+			if (!this._maps.translation.has(from)) {
+				this._maps.translation.set(from, new Map());
+			}
+
+			this._maps.translation.get(from).set(to, translator);
+		});
+	}
 
 	/**
-	 * A calculator that translates an amount of one currency into an amount
-	 * in another currency. The calculator prefers to use direct conversions;
-	 * however, it supports indirect conversions (which require conversions
-	 * to one or more intermediate currencies before translation to the final,
-	 * desired currency).
+	 * Updates the calculator with new rates.
 	 *
 	 * @public
-	 * @param {String[]} symbols - Forex symbols which will be used for translations.
+	 * @param {Rate[]} rates
 	 */
-	class CurrencyTranslator {
-		constructor(symbols) {
-			assert.argumentIsArray(symbols, 'symbols', String);
-
-			this._translators = solve(symbols);
-
-			this._maps = { };
-
-			this._maps.rates = new Map();
-			this._maps.translation = new Map();
-
-			this._translators.forEach((translator) => {
-				const path = translator.path;
-
-				path.forEach((edge) => {
-					const from = edge.from.data;
-					const to = edge.to.data;
-
-					if (!this._maps.rates.has(from)) {
-						this._maps.rates.set(from, new Map());
-					}
-
-					if (!this._maps.rates.get(from).has(to)) {
-						this._maps.rates.get(from).set(to, { edge: edge, translators: [ ] });
-					}
-
-					this._maps.rates.get(from).get(to).translators.push(translator);
-				});
-			});
-
-			this._translators.forEach((translator) => {
-				const from = translator.from;
-				const to = translator.to;
-
-				if (!this._maps.translation.has(from)) {
-					this._maps.translation.set(from, new Map());
-				}
-
-				this._maps.translation.get(from).set(to, translator);
-			});
-		}
-
-		/**
-		 * Updates the calculator with new rates.
-		 *
-		 * @public
-		 * @param {Rate[]} rates
-		 */
-		setRates(rates) {
-			rates.forEach((rate) => {
-				this.setRate(rate);
-			});
-		}
-
-		/**
-		 * Updates the calculator with a new rate.
-		 *
-		 * @public
-		 * @param {Rate} rate
-		 */
-		setRate(rate) {
-			assert.argumentIsRequired(rate, 'rate', Rate, 'Rate');
-
-			updateRate.call(this, rate);
-			updateRate.call(this, rate.invert());
-		}
-
-		/**
-		 * Performs a currency translation, using the rates previously supplied to
-		 * the calculator.
-		 *
-		 * @public
-		 * @param {Number|Decimal} amount
-		 * @param {Currency} current
-		 * @param {Currency} desired
-		 * @returns {Number|Decimal}
-		 */
-		translate(amount, current, desired) {
-			assert.argumentIsRequired(current, 'current', Currency, 'Currency');
-			assert.argumentIsRequired(desired, 'desired', Currency, 'Currency');
-
-			if (current === desired) {
-				return amount;
-			}
-
-			return this._maps.translation.get(current).get(desired).translate(amount);
-		}
-
-		toString() {
-			return `[CurrencyTranslator]`;
-		}
-	}
-
-	const pairExpression = /^\^?([A-Z]{3})([A-Z]{3})$/;
-
-	const parsePair = memoize.simple((symbol) => {
-		const match = symbol.match(pairExpression);
-
-		if (match === null) {
-			throw new Error('The "pair" argument cannot be parsed.');
-		}
-
-		return {
-			quote: Currency.parse(match[1]),
-			base: Currency.parse(match[2])
-		};
-	});
-
-	const solve = (symbols) => {
-		const vertices = new Map();
-
-		const getVertex = (currency, create) => {
-			if (create && !vertices.has(currency)) {
-				vertices.set(currency, new Vertex(currency));
-			}
-
-			return vertices.get(currency) || null;
-		};
-
-		const graph = (currencyA, currencyB) => {
-			const vertexA = getVertex(currencyA, true);
-			const vertexB = getVertex(currencyB, true);
-
-			if (!vertexA.hasEdge(vertexB)) {
-				vertexA.addEdge(vertexB, { rate: null });
-			}
-		};
-
-		const currencies = new Set();
-
-		symbols.forEach((symbol) => {
-			const pair = parsePair(symbol);
-
-			currencies.add(pair.quote);
-			currencies.add(pair.base);
-
-			graph(pair.quote, pair.base);
-			graph(pair.base, pair.quote);
+	setRates(rates) {
+		rates.forEach((rate) => {
+			this.setRate(rate);
 		});
-
-		const translators = [ ];
-
-		currencies.forEach((currencyA) => {
-			currencies.forEach((currencyB) => {
-				if (currencyA === currencyB) {
-					return;
-				}
-
-				const vertexA = getVertex(currencyA, false);
-				const vertexB = getVertex(currencyB, false);
-
-				const candidates = vertexA.getPaths(vertexB);
-
-				if (candidates.length === 0) {
-					console.warn(`Unable to find path for [ ${currencyA.code} ] to [ ${currencyB.code} ]`);
-
-					return;
-				}
-
-				candidates.sort(pathComparator);
-
-				translators.push(new Translator(candidates[0]));
-			});
-		});
-
-		return translators;
-	};
-
-	function updateRate(rate) {
-		const from = rate.base;
-		const to = rate.quote;
-
-		const data = this._maps.rates.get(from).get(to);
-
-		const current = data.edge.data.rate;
-
-		if (current !== null && current === rate.float) {
-			return;
-		}
-
-		data.edge.data.rate = rate.float;
-
-		data.translators.forEach(t => t.clear());
 	}
 
 	/**
-	 * Translates values from a source currency to values in another currency.
+	 * Updates the calculator with a new rate.
 	 *
-	 * @private
-	 * @param {Edge[]} path
+	 * @public
+	 * @param {Rate} rate
 	 */
-	class Translator {
-		constructor(path) {
-			assert.argumentIsArray(path, 'path', Edge, 'Edge');
+	setRate(rate) {
+		assert.argumentIsRequired(rate, 'rate', Rate, 'Rate');
 
-			this._path = path;
+		updateRate.call(this, rate);
+		updateRate.call(this, rate.invert());
+	}
 
-			this._factors = { };
+	/**
+	 * Performs a currency translation, using the rates previously supplied to
+	 * the calculator.
+	 *
+	 * @public
+	 * @param {Number|Decimal} amount
+	 * @param {Currency} current
+	 * @param {Currency} desired
+	 * @returns {Number|Decimal}
+	 */
+	translate(amount, current, desired) {
+		assert.argumentIsRequired(current, 'current', Currency, 'Currency');
+		assert.argumentIsRequired(desired, 'desired', Currency, 'Currency');
 
-			this._factors.float = null;
-			this._factors.decimal = null;
+		if (current === desired) {
+			return amount;
 		}
 
-		/**
-		 * The currency of the input value.
-		 *
-		 * @public
-		 * @returns {Currency}
-		 */
-		get from() {
-			return array.first(this._path).from.data;
+		return this._maps.translation.get(current).get(desired).translate(amount);
+	}
+
+	toString() {
+		return `[CurrencyTranslator]`;
+	}
+}
+
+const pairExpression = /^\^?([A-Z]{3})([A-Z]{3})$/;
+
+const parsePair = memoize.simple((symbol) => {
+	const match = symbol.match(pairExpression);
+
+	if (match === null) {
+		throw new Error('The "pair" argument cannot be parsed.');
+	}
+
+	return {
+		quote: Currency.parse(match[1]),
+		base: Currency.parse(match[2])
+	};
+});
+
+const solve = (symbols) => {
+	const vertices = new Map();
+
+	const getVertex = (currency, create) => {
+		if (create && !vertices.has(currency)) {
+			vertices.set(currency, new Vertex(currency));
 		}
 
-		/**
-		 * The currency of the output value.
-		 *
-		 * @public
-		 * @returns {Currency}
-		 */
-		get to() {
-			return array.last(this._path).to.data;
+		return vertices.get(currency) || null;
+	};
+
+	const graph = (currencyA, currencyB) => {
+		const vertexA = getVertex(currencyA, true);
+		const vertexB = getVertex(currencyB, true);
+
+		if (!vertexA.hasEdge(vertexB)) {
+			vertexA.addEdge(vertexB, { rate: null });
 		}
+	};
 
-		/**
-		 * The graph edges (steps) used to convert from the source
-		 * currency to the desired currency.
-		 *
-		 * @public
-		 * @returns {Edge[]}
-		 */
-		get path() {
-			return this._path.slice(0);
-		}
+	const currencies = new Set();
 
-		/**
-		 * Clears the cached factor used to convert values.
-		 *
-		 * @public
-		 */
-		clear() {
-			this._factors.float = null;
-			this._factors.decimal = null;
-		}
+	symbols.forEach((symbol) => {
+		const pair = parsePair(symbol);
 
-		/**
-		 * Translates an amount in the source currency to the desired currency.
-		 *
-		 * @public
-		 * @param {Number|Decimal} amount
-		 * @returns {Number|Decimal}
-		 */
-		translate(amount) {
-			const ready = checkFactors.call(this);
+		currencies.add(pair.quote);
+		currencies.add(pair.base);
 
-			if (!ready) {
-				throw new Error(`Unable to translate from [ ${this.from.code} ] to [ ${this.to.code} ], exchange rate is unknown.`);
+		graph(pair.quote, pair.base);
+		graph(pair.base, pair.quote);
+	});
+
+	const translators = [ ];
+
+	currencies.forEach((currencyA) => {
+		currencies.forEach((currencyB) => {
+			if (currencyA === currencyB) {
+				return;
 			}
 
-			if (amount instanceof Decimal) {
-				return amount.multiply(this._factors.decimal);
-			} else {
-				return amount * this._factors.float;
+			const vertexA = getVertex(currencyA, false);
+			const vertexB = getVertex(currencyB, false);
+
+			const candidates = vertexA.getPaths(vertexB);
+
+			if (candidates.length === 0) {
+				console.warn(`Unable to find path for [ ${currencyA.code} ] to [ ${currencyB.code} ]`);
+
+				return;
 			}
+
+			candidates.sort(pathComparator);
+
+			translators.push(new Translator(candidates[0]));
+		});
+	});
+
+	return translators;
+};
+
+function updateRate(rate) {
+	const from = rate.base;
+	const to = rate.quote;
+
+	const data = this._maps.rates.get(from).get(to);
+
+	const current = data.edge.data.rate;
+
+	if (current !== null && current === rate.float) {
+		return;
+	}
+
+	data.edge.data.rate = rate.float;
+
+	data.translators.forEach(t => t.clear());
+}
+
+/**
+ * Translates values from a source currency to values in another currency.
+ *
+ * @private
+ * @param {Edge[]} path
+ */
+class Translator {
+	constructor(path) {
+		assert.argumentIsArray(path, 'path', Edge, 'Edge');
+
+		this._path = path;
+
+		this._factors = { };
+
+		this._factors.float = null;
+		this._factors.decimal = null;
+	}
+
+	/**
+	 * The currency of the input value.
+	 *
+	 * @public
+	 * @returns {Currency}
+	 */
+	get from() {
+		return array.first(this._path).from.data;
+	}
+
+	/**
+	 * The currency of the output value.
+	 *
+	 * @public
+	 * @returns {Currency}
+	 */
+	get to() {
+		return array.last(this._path).to.data;
+	}
+
+	/**
+	 * The graph edges (steps) used to convert from the source
+	 * currency to the desired currency.
+	 *
+	 * @public
+	 * @returns {Edge[]}
+	 */
+	get path() {
+		return this._path.slice(0);
+	}
+
+	/**
+	 * Clears the cached factor used to convert values.
+	 *
+	 * @public
+	 */
+	clear() {
+		this._factors.float = null;
+		this._factors.decimal = null;
+	}
+
+	/**
+	 * Translates an amount in the source currency to the desired currency.
+	 *
+	 * @public
+	 * @param {Number|Decimal} amount
+	 * @returns {Number|Decimal}
+	 */
+	translate(amount) {
+		const ready = checkFactors.call(this);
+
+		if (!ready) {
+			throw new Error(`Unable to translate from [ ${this.from.code} ] to [ ${this.to.code} ], exchange rate is unknown.`);
 		}
 
-		toString() {
-			return `[Translator (path=${this._path.map(edge => `${edge.from.code} > ${edge.to.code}`).join()})]`;
+		if (amount instanceof Decimal) {
+			return amount.multiply(this._factors.decimal);
+		} else {
+			return amount * this._factors.float;
 		}
 	}
 
-	function checkFactors() {
-		if (this._factors.float !== null) {
-			return true;
-		}
+	toString() {
+		return `[Translator (path=${this._path.map(edge => `${edge.from.code} > ${edge.to.code}`).join()})]`;
+	}
+}
 
-		let factor = 1;
-
-		for (let i = 0; i < this._path.length; i++) {
-			const edge = this._path[i];
-
-			if (edge.data.rate === null) {
-				return false;
-			}
-
-			factor = factor * edge.data.rate;
-		}
-
-		this._factors.float = factor;
-		this._factors.decimal = Decimal.parse(factor);
-
+function checkFactors() {
+	if (this._factors.float !== null) {
 		return true;
 	}
 
-	const pathComparator = ComparatorBuilder.startWith((a, b) => comparators.compareNumbers(a.length, b.length))
-		.toComparator();
+	let factor = 1;
 
-	return CurrencyTranslator;
-})();
+	for (let i = 0; i < this._path.length; i++) {
+		const edge = this._path[i];
+
+		if (edge.data.rate === null) {
+			return false;
+		}
+
+		factor = factor * edge.data.rate;
+	}
+
+	this._factors.float = factor;
+	this._factors.decimal = Decimal.parse(factor);
+
+	return true;
+}
+
+const pathComparator = ComparatorBuilder.startWith((a, b) => comparators.compareNumbers(a.length, b.length))
+	.toComparator();

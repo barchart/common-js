@@ -1,11 +1,9 @@
-const Enum = require('./../../../../lang/Enum');
-
-const FailureReason = require('./../../../../api/failures/FailureReason'),
-	FailureType = require('./../../../../api/failures/FailureType');
-
-const DataType = require('./../../../../serialization/json/DataType'),
-	Field = require('./../../../../serialization/json/Field'),
-	Schema = require('./../../../../serialization/json/Schema');
+import Enum from './../../../../lang/Enum.js';
+import FailureReason from './../../../../api/failures/FailureReason.js';
+import FailureType from './../../../../api/failures/FailureType.js';
+import DataType from './../../../../serialization/json/DataType.js';
+import Field from './../../../../serialization/json/Field.js';
+import Schema from './../../../../serialization/json/Schema.js';
 
 describe('When a FailureReason is created with a verbose failure type', () => {
 	'use strict';

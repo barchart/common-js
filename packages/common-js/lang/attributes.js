@@ -1,168 +1,163 @@
-const assert = require('./assert'),
-	is = require('./is');
+import * as assert from './assert.js';
+import * as is from './is.js';
 
-module.exports = (() => {
-	'use strict';
+function getPropertyNameArray(propertyNames, separator = '.') {
+	let returnRef;
 
-	function getPropertyNameArray(propertyNames, separator = '.') {
-		let returnRef;
+	if (is.array(propertyNames)) {
+		returnRef = propertyNames;
+	} else {
+		returnRef = propertyNames.split(separator);
+	}
 
-		if (is.array(propertyNames)) {
-			returnRef = propertyNames;
+	return returnRef;
+}
+
+function getPropertyTarget(target, propertyNameArray, create) {
+	let returnRef;
+
+	let propertyTarget = target;
+
+	for (let i = 0; i < (propertyNameArray.length - 1); i++) {
+		let propertyName = propertyNameArray[i];
+
+		if (propertyTarget.hasOwnProperty(propertyName) && !is.null(propertyTarget[propertyName]) && !is.undefined(propertyTarget[propertyName])) {
+			propertyTarget = propertyTarget[propertyName];
+		} else if (create) {
+			propertyTarget = propertyTarget[propertyName] = {};
 		} else {
-			returnRef = propertyNames.split(separator);
-		}
+			propertyTarget = null;
 
-		return returnRef;
-	}
-
-	function getPropertyTarget(target, propertyNameArray, create) {
-		let returnRef;
-
-		let propertyTarget = target;
-
-		for (let i = 0; i < (propertyNameArray.length - 1); i++) {
-			let propertyName = propertyNameArray[i];
-
-			if (propertyTarget.hasOwnProperty(propertyName) && !is.null(propertyTarget[propertyName]) && !is.undefined(propertyTarget[propertyName])) {
-				propertyTarget = propertyTarget[propertyName];
-			} else if (create) {
-				propertyTarget = propertyTarget[propertyName] = {};
-			} else {
-				propertyTarget = null;
-
-				break;
-			}
-		}
-
-		return propertyTarget;
-	}
-
-	function last(array) {
-		if (array.length !== 0) {
-			return array[array.length - 1];
-		} else {
-			return null;
+			break;
 		}
 	}
 
-	/**
-	 * Utilities for reading and writing "complex" properties to
-	 * objects. For example, the property "name.first" reads the
-	 * "first" property on the "name" object of the target.
-	 *
-	 * @public
-	 * @module lang/attributes
-	 */
-	return {
-		/**
-		 * Checks to see if an attribute exists on the target object.
-		 *
-		 * @public
-		 * @static
-		 * @param {Object} target - The object to check for existence of the property.
-		 * @param {String|String[]} propertyNames - The property to check -- either a string with separators, or an array of strings (already split by separator).
-		 * @param {String=} separator - The separator (defaults to a period character).
-		 * @returns {boolean}
-		 */
-		has(target, propertyNames, separator) {
-			assert.argumentIsRequired(target, 'target', Object);
+	return propertyTarget;
+}
 
-			if (is.array(propertyNames)) {
-				assert.argumentIsArray(propertyNames, 'propertyNames', String);
-			} else {
-				assert.argumentIsRequired(propertyNames, 'propertyNames', String);
-			}
+function last(array) {
+	if (array.length !== 0) {
+		return array[array.length - 1];
+	} else {
+		return null;
+	}
+}
 
-			const propertyNameArray = getPropertyNameArray(propertyNames, separator);
-			const propertyTarget = getPropertyTarget(target, propertyNameArray, false);
+/**
+ * Utilities for reading and writing "complex" properties to
+ * objects. For example, the property "name.first" reads the
+ * "first" property on the "name" object of the target.
+ *
+ * @public
+ * @module lang/attributes
+ */
 
-			return propertyTarget !== null && propertyTarget.hasOwnProperty(last(propertyNameArray));
-		},
+/**
+ * Checks to see if an attribute exists on the target object.
+ *
+ * @public
+ * @static
+ * @param {Object} target - The object to check for existence of the property.
+ * @param {String|String[]} propertyNames - The property to check -- either a string with separators, or an array of strings (already split by separator).
+ * @param {String=} separator - The separator (defaults to a period character).
+ * @returns {boolean}
+ */
+export function has(target, propertyNames, separator) {
+	assert.argumentIsRequired(target, 'target', Object);
 
-		/**
-		 * Returns a value from the target object. If the property doesn't exist; undefined
-		 * is returned.
-		 *
-		 * @public
-		 * @static
-		 * @param {Object} target - The object to read from.
-		 * @param {String|String[]} propertyNames - The property to read -- either a string with separators, or an array of strings (already split by separator).
-		 * @param {String=} separator - The separator (defaults to a period character).
-		 * @returns {*}
-		 */
-		read(target, propertyNames, separator) {
-			assert.argumentIsRequired(target, 'target', Object);
+	if (is.array(propertyNames)) {
+		assert.argumentIsArray(propertyNames, 'propertyNames', String);
+	} else {
+		assert.argumentIsRequired(propertyNames, 'propertyNames', String);
+	}
 
-			if (is.array(propertyNames)) {
-				assert.argumentIsArray(propertyNames, 'propertyNames', String);
-			} else {
-				assert.argumentIsRequired(propertyNames, 'propertyNames', String);
-			}
+	const propertyNameArray = getPropertyNameArray(propertyNames, separator);
+	const propertyTarget = getPropertyTarget(target, propertyNameArray, false);
 
-			const propertyNameArray = getPropertyNameArray(propertyNames, separator);
-			const propertyTarget = getPropertyTarget(target, propertyNameArray, false);
+	return propertyTarget !== null && propertyTarget.hasOwnProperty(last(propertyNameArray));
+}
 
-			let returnRef;
+/**
+ * Returns a value from the target object. If the property doesn't exist; undefined
+ * is returned.
+ *
+ * @public
+ * @static
+ * @param {Object} target - The object to read from.
+ * @param {String|String[]} propertyNames - The property to read -- either a string with separators, or an array of strings (already split by separator).
+ * @param {String=} separator - The separator (defaults to a period character).
+ * @returns {*}
+ */
+export function read(target, propertyNames, separator) {
+	assert.argumentIsRequired(target, 'target', Object);
 
-			if (propertyTarget) {
-				const propertyName = last(propertyNameArray);
+	if (is.array(propertyNames)) {
+		assert.argumentIsArray(propertyNames, 'propertyNames', String);
+	} else {
+		assert.argumentIsRequired(propertyNames, 'propertyNames', String);
+	}
 
-				returnRef = propertyTarget[propertyName];
-			} else {
-				returnRef = undefined;
-			}
+	const propertyNameArray = getPropertyNameArray(propertyNames, separator);
+	const propertyTarget = getPropertyTarget(target, propertyNameArray, false);
 
-			return returnRef;
-		},
+	let returnRef;
 
-		/**
-		 * Writes a value to the target object.
-		 *
-		 * @public
-		 * @static
-		 * @param {Object} target - The object to write to.
-		 * @param {String|String[]} propertyNames - The property to write -- either a string with separators, or an array of strings (already split by separator).
-		 * @param {*} value - The value to assign.
-		 * @param {String=} separator - The separator (defaults to a period character).
-		 */
-		write(target, propertyNames, value, separator) {
-			assert.argumentIsRequired(target, 'target', Object);
+	if (propertyTarget) {
+		const propertyName = last(propertyNameArray);
 
-			if (is.array(propertyNames)) {
-				assert.argumentIsArray(propertyNames, 'propertyNames', String);
-			} else {
-				assert.argumentIsRequired(propertyNames, 'propertyNames', String);
-			}
+		returnRef = propertyTarget[propertyName];
+	} else {
+		returnRef = undefined;
+	}
 
-			const propertyNameArray = getPropertyNameArray(propertyNames, separator);
-			const propertyTarget = getPropertyTarget(target, propertyNameArray, true);
+	return returnRef;
+}
 
-			const propertyName = last(propertyNameArray);
+/**
+ * Writes a value to the target object.
+ *
+ * @public
+ * @static
+ * @param {Object} target - The object to write to.
+ * @param {String|String[]} propertyNames - The property to write -- either a string with separators, or an array of strings (already split by separator).
+ * @param {*} value - The value to assign.
+ * @param {String=} separator - The separator (defaults to a period character).
+ */
+export function write(target, propertyNames, value, separator) {
+	assert.argumentIsRequired(target, 'target', Object);
 
-			propertyTarget[propertyName] = value;
-		},
+	if (is.array(propertyNames)) {
+		assert.argumentIsArray(propertyNames, 'propertyNames', String);
+	} else {
+		assert.argumentIsRequired(propertyNames, 'propertyNames', String);
+	}
 
-		/**
-		 * Erases a property from the target object.
-		 *
-		 * @public
-		 * @static
-		 * @param {Object} target - The object to erase a property from.
-		 * @param {String|String} propertyNames - The property to write -- either a string with separators, or an array of strings (already split by separator).
-		 * @param {String=} separator - The separator (defaults to a period character).
-		 */
-		erase(target, propertyNames, separator) {
-			if (!this.has(target, propertyNames)) {
-				return;
-			}
+	const propertyNameArray = getPropertyNameArray(propertyNames, separator);
+	const propertyTarget = getPropertyTarget(target, propertyNameArray, true);
 
-			const propertyNameArray = getPropertyNameArray(propertyNames, separator);
-			const propertyTarget = getPropertyTarget(target, propertyNameArray, true);
+	const propertyName = last(propertyNameArray);
 
-			const propertyName = last(propertyNameArray);
+	propertyTarget[propertyName] = value;
+}
 
-			delete propertyTarget[propertyName];
-		}
-	};
-})();
+/**
+ * Erases a property from the target object.
+ *
+ * @public
+ * @static
+ * @param {Object} target - The object to erase a property from.
+ * @param {String|String} propertyNames - The property to write -- either a string with separators, or an array of strings (already split by separator).
+ * @param {String=} separator - The separator (defaults to a period character).
+ */
+export function erase(target, propertyNames, separator) {
+	if (!has(target, propertyNames)) {
+		return;
+	}
+
+	const propertyNameArray = getPropertyNameArray(propertyNames, separator);
+	const propertyTarget = getPropertyTarget(target, propertyNameArray, true);
+
+	const propertyName = last(propertyNameArray);
+
+	delete propertyTarget[propertyName];
+}

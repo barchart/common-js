@@ -1,4 +1,4 @@
-const Stack = require('./../../../collections/Stack');
+import Stack from './../../../collections/Stack.js';
 
 describe('When a Stack is constructed', () => {
 	'use strict';

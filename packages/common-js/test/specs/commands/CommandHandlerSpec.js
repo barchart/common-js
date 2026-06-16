@@ -1,4 +1,4 @@
-const CommandHandler = require('./../../../commands/CommandHandler');
+import CommandHandler from './../../../commands/CommandHandler.js';
 
 describe('When a CommandHandler is created from a function', () => {
 	'use strict';

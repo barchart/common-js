@@ -1,4 +1,4 @@
-const Timespan = require('./../../../lang/Timespan');
+import Timespan from './../../../lang/Timespan.js';
 
 describe('When a timespan is created with an elapsed time of 2 days, 3 hours, 4 minutes, 5 seconds, and 6 milliseconds', () => {
 	'use strict';

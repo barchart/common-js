@@ -1,4 +1,4 @@
-const WindowCounter = require('./../../../timing/WindowCounter');
+import WindowCounter from './../../../timing/WindowCounter.js';
 
 describe('When a WindowCounter is constructed', () => {
 	'use strict';

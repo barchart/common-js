@@ -1,60 +1,54 @@
-const is = require('./../../../lang/is');
+import * as is from './../../../lang/is.js';
 
-module.exports = (() => {
-	'use strict';
+/**
+ * Encapsulates credential detection logic.
+ *
+ * @public
+ * @param {Function} usernameExtractor
+ * @param {Function=} passwordExtractor
+ */
+export default class Credentials {
+	constructor(usernameExtractor, passwordExtractor) {
+		this._usernameExtractor = usernameExtractor;
+		this._passwordExtractor = passwordExtractor;
+	}
 
 	/**
-	 * Encapsulates credential detection logic.
+	 * The password extractor.
 	 *
 	 * @public
-	 * @param {Function} usernameExtractor
-	 * @param {Function=} passwordExtractor
+	 * @returns {Function}
 	 */
-	class Credentials {
-		constructor(usernameExtractor, passwordExtractor) {
-			this._usernameExtractor = usernameExtractor;
-			this._passwordExtractor = passwordExtractor;
+	get usernameExtractor() {
+		return this._usernameExtractor;
+	}
+
+	/**
+	 * The password extractor.
+	 *
+	 * @public
+	 * @returns {Function}
+	 */
+	get passwordExtractor() {
+		return this._passwordExtractor;
+	}
+
+	/**
+	 * Throws an {@link Error} if the instance is invalid.
+	 *
+	 * @public
+	 */
+	validate() {
+		if (!is.fn(this.usernameExtractor)) {
+			throw new Error('Credentials username extractor must be a function.');
 		}
 
-		/**
-		 * The password extractor.
-		 *
-		 * @public
-		 * @returns {Function}
-		 */
-		get usernameExtractor() {
-			return this._usernameExtractor;
-		}
-
-		/**
-		 * The password extractor.
-		 *
-		 * @public
-		 * @returns {Function}
-		 */
-		get passwordExtractor() {
-			return this._passwordExtractor;
-		}
-
-		/**
-		 * Throws an {@link Error} if the instance is invalid.
-		 *
-		 * @public
-		 */
-		validate() {
-			if (!is.fn(this.usernameExtractor)) {
-				throw new Error('Credentials username extractor must be a function.');
-			}
-
-			if (!is.fn(this.passwordExtractor)) {
-				throw new Error('Credentials password extractor must be a function.');
-			}
-		}
-
-		toString() {
-			return `[Credentials]`;
+		if (!is.fn(this.passwordExtractor)) {
+			throw new Error('Credentials password extractor must be a function.');
 		}
 	}
 
-	return Credentials;
-})();
+	toString() {
+		return `[Credentials]`;
+	}
+}

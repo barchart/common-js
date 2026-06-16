@@ -1,4 +1,4 @@
-const Decimal = require('./../../../lang/Decimal');
+import Decimal from './../../../lang/Decimal.js';
 
 describe('When adding values that cause floating point problems (e.g. 1.1 + 2.2 != 3.3)', () => {
 	'use strict';

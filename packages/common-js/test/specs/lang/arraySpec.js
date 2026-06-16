@@ -1,4 +1,4 @@
-const array = require('./../../../lang/array');
+import * as array from './../../../lang/array.js';
 
 describe('when reducing an array to unique values', () => {
 	'use strict';

@@ -1,4 +1,4 @@
-const object = require('./../../../lang/object');
+import * as object from './../../../lang/object.js';
 
 describe('When cloning an object', () => {
 	'use strict';

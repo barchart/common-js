@@ -1,5 +1,5 @@
-const Specification = require('./../../../specifications/Specification'),
-	Or = require('./../../../specifications/Or');
+import Specification from './../../../specifications/Specification.js';
+import Or from './../../../specifications/Or.js';
 
 describe('When an Or specification is constructed', () => {
 	'use strict';

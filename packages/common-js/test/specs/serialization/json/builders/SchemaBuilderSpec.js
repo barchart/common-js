@@ -1,6 +1,6 @@
-const Component = require('./../../../../../serialization/json/Component'),
-	DataType = require('./../../../../../serialization/json/DataType'),
-	SchemaBuilder = require('./../../../../../serialization/json/builders/SchemaBuilder');
+import Component from './../../../../../serialization/json/Component.js';
+import DataType from './../../../../../serialization/json/DataType.js';
+import SchemaBuilder from './../../../../../serialization/json/builders/SchemaBuilder.js';
 
 describe('When using the schema builder to create a "Person" schema', () => {
 	'use strict';

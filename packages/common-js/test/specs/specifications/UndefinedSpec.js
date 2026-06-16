@@ -1,4 +1,4 @@
-const Undefined = require('./../../../specifications/Undefined');
+import Undefined from './../../../specifications/Undefined.js';
 
 describe('When a Undefined specification is constructed', () => {
 	'use strict';

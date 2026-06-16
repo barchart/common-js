@@ -1,31 +1,25 @@
-const is = require('./../lang/is');
+import * as is from './../lang/is.js';
 
-const Specification = require('./Specification');
+import Specification from './Specification.js';
 
-module.exports = (() => {
-	'use strict';
-
-	/**
-	 * A {@link Specification} that passes when the type of the data item
-	 * is a number.
-	 *
-	 * @public
-	 * @extends {Specification}
-	 * @param {*} value
-	 */
-	class Numeric extends Specification {
-		constructor() {
-			super();
-		}
-
-		_evaluate(data) {
-			return is.number(data);
-		}
-
-		toString() {
-			return '[Numeric]';
-		}
+/**
+ * A {@link Specification} that passes when the type of the data item
+ * is a number.
+ *
+ * @public
+ * @extends {Specification}
+ * @param {*} value
+ */
+export default class Numeric extends Specification {
+	constructor() {
+		super();
 	}
 
-	return Numeric;
-})();
+	_evaluate(data) {
+		return is.number(data);
+	}
+
+	toString() {
+		return '[Numeric]';
+	}
+}

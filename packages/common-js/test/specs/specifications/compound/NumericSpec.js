@@ -1,4 +1,4 @@
-const Numeric = require('./../../../../specifications/compound/Numeric');
+import Numeric from './../../../../specifications/compound/Numeric.js';
 
 describe('When evaluating a compound Numeric specification', () => {
 	'use strict';

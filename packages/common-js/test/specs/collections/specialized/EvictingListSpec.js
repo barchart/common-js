@@ -1,4 +1,4 @@
-const EvictingList = require('./../../../../collections/specialized/EvictingList');
+import EvictingList from './../../../../collections/specialized/EvictingList.js';
 
 describe('When an EvictingList is constructed (with no capacity)', () => {
 	'use strict';

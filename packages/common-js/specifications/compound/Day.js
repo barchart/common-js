@@ -1,28 +1,22 @@
-const is = require('./../../lang/is'),
-	DayClazz = require('./../../lang/Day');
+import * as is from './../../lang/is.js';
 
-const Specification = require('./../Specification');
+import DayClazz from './../../lang/Day.js';
+import Specification from './../Specification.js';
 
-module.exports = (() => {
-	'use strict';
-
-	/**
-	 * @public
-	 * @extends {Specification}
-	 */
-	class Day extends Specification {
-		constructor() {
-			super();
-		}
-
-		_evaluate(data) {
-			return is.array(data) && data.every(item => item instanceof DayClazz);
-		}
-
-		toString() {
-			return '[Day]';
-		}
+/**
+ * @public
+ * @extends {Specification}
+ */
+export default class Day extends Specification {
+	constructor() {
+		super();
 	}
 
-	return Day;
-})();
+	_evaluate(data) {
+		return is.array(data) && data.every(item => item instanceof DayClazz);
+	}
+
+	toString() {
+		return '[Day]';
+	}
+}

@@ -1,4 +1,4 @@
-const ComparatorBuilder = require('./../../../../collections/sorting/ComparatorBuilder');
+import ComparatorBuilder from './../../../../collections/sorting/ComparatorBuilder.js';
 
 describe('When a ComparatorBuilder is composed with two comparators', () => {
     'use strict';

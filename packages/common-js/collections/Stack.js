@@ -1,98 +1,92 @@
-const assert = require('./../lang/assert');
+import * as assert from './../lang/assert.js';
 
-module.exports = (() => {
-	'use strict';
+/**
+ * A stack collection (supports LIFO operations).
+ *
+ * @public
+ */
+export default class Stack {
+	constructor() {
+		this._array = [ ];
+	}
 
 	/**
-	 * A stack collection (supports LIFO operations).
+	 * Adds an item to the stack.
 	 *
 	 * @public
+	 * @param {object} item
+	 * @returns {object} - The item added to the stack.
 	 */
-	class Stack {
-		constructor() {
-			this._array = [];
+	push(item) {
+		this._array.push(item);
+
+		return item;
+	}
+
+	/**
+	 * Removes and returns an item from the stack. Throws if the stack is empty.
+	 *
+	 * @public
+	 * @returns {object} - The removed from the stack.
+	 */
+	pop() {
+		if (this.empty()) {
+			throw new Error('Stack is empty');
 		}
 
-		/**
-		 * Adds an item to the stack.
-		 *
-		 * @public
-		 * @param {object} item
-		 * @returns {object} - The item added to the stack.
-		 */
-		push(item) {
-			this._array.push(item);
+		return this._array.pop();
+	}
 
-			return item;
+	/**
+	 * Returns the next item in the stack (without removing it). Throws if the stack is empty.
+	 *
+	 * @public
+	 * @returns {object} - The item added to the queue.
+	 */
+	peek() {
+		if (this.empty()) {
+			throw new Error('Stack is empty');
 		}
 
-		/**
-		 * Removes and returns an item from the stack. Throws if the stack is empty.
-		 *
-		 * @public
-		 * @returns {object} - The removed from the stack.
-		 */
-		pop() {
-			if (this.empty()) {
-				throw new Error('Stack is empty');
-			}
+		return this._array[this._array.length - 1];
+	}
 
-			return this._array.pop();
-		}
+	/**
+	 * Returns true if the queue is empty; otherwise false.
+	 *
+	 * @public
+	 * @returns {boolean}
+	 */
+	empty() {
+		return this._array.length === 0;
+	}
 
-		/**
-		 * Returns the next item in the stack (without removing it). Throws if the stack is empty.
-		 *
-		 * @public
-		 * @returns {object} - The item added to the queue.
-		 */
-		peek() {
-			if (this.empty()) {
-				throw new Error('Stack is empty');
-			}
+	/**
+	 * Runs an action on each item in the stack.
+	 *
+	 * @public
+	 * @param {Function} action - The action to run.
+	 */
+	scan(action) {
+		assert.argumentIsRequired(action, 'action', Function);
 
-			return this._array[this._array.length - 1];
-		}
-
-		/**
-		 * Returns true if the queue is empty; otherwise false.
-		 *
-		 * @public
-		 * @returns {boolean}
-		 */
-		empty() {
-			return this._array.length === 0;
-		}
-
-		/**
-		 * Runs an action on each item in the stack.
-		 *
-		 * @public
-		 * @param {Function} action - The action to run.
-		 */
-		scan(action) {
-			assert.argumentIsRequired(action, 'action', Function);
-
-			for (let i = this._array.length - 1; i >= 0; i--) {
-				action(this._array[i]);
-			}
-		}
-
-		/**
-		 * Outputs an array of the stack's items; without affecting the
-		 * queue's internal state;
-		 *
-		 * @public
-		 * @returns {Array}
-		 */
-		toArray() {
-			return this._array.slice(0).reverse();
-		}
-
-		toString() {
-			return '[Stack]';
+		for (let i = this._array.length - 1; i >= 0; i--) {
+			action(this._array[i]);
 		}
 	}
 
-	return Stack;
-})();
+	/**
+	 * Outputs an array of the stack's items; without affecting the
+	 * queue's internal state;
+	 *
+	 * @public
+	 * @returns {Array}
+	 */
+	toArray() {
+		return this._array.slice(0).reverse();
+	}
+
+	toString() {
+		return '[Stack]';
+	}
+}

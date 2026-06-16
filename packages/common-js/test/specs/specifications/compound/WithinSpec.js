@@ -1,4 +1,4 @@
-const WithinSpecification = require('./../../../../specifications/compound/Within');
+import WithinSpecification from './../../../../specifications/compound/Within.js';
 
 describe('When evaluating a compound Within specification (with a tolerance of 5)', () => {
 	'use strict';

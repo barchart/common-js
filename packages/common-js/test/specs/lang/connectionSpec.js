@@ -1,4 +1,4 @@
-const connection = require('./../../../lang/connection');
+import * as connection from './../../../lang/connection.js';
 
 describe('When "getIsSecure is invoked', () => {
 	'use strict';

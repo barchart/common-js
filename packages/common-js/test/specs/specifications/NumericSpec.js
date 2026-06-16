@@ -1,4 +1,4 @@
-const Numeric = require('./../../../specifications/Numeric');
+import Numeric from './../../../specifications/Numeric.js';
 
 describe('When a Numeric specification is constructed', () => {
 	'use strict';

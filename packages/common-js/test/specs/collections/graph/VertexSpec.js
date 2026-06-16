@@ -1,4 +1,4 @@
-const Vertex = require('./../../../../collections/graph/Vertex');
+import Vertex from './../../../../collections/graph/Vertex.js';
 
 describe('When graph vertex (a) is initialized', () => {
 	'use strict';

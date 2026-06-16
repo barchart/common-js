@@ -1,159 +1,154 @@
-const assert = require('./assert'),
-	is = require('./is');
+import * as assert from './assert.js';
+import * as is from './is.js';
 
-module.exports = (() => {
-	'use strict';
+const regex = { };
 
-	const regex = { };
+regex.camel = { };
+regex.camel.violations = /\b[A-Z]/g;
 
-	regex.camel = { };
-	regex.camel.violations = /\b[A-Z]/g;
+/**
+* Utility functions for strings.
+*
+* @public
+* @module lang/string
+*/
 
-	/**
-	 * Utility functions for strings.
-	 *
-	 * @public
-	 * @module lang/string
-	 */
-	return {
-		/**
-		 * Adjusts a string, replacing the first character of each word with an uppercase
-		 * character and all subsequent characters in the word with lowercase characters.
-		 *
-		 * @public
-		 * @static
-		 * @param {String} s
-		 * @returns {String}
-		 */
-		startCase(s) {
-			return s.split(' ').reduce((phrase, word) => {
-				if (word.length !== 0) {
-					phrase.push(word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
-				}
-
-				return phrase;
-			}, [ ]).join(' ');
-		},
-
-		/**
-		 * Adjust a string to use camel case, where the first letter of each word is replaced
-		 * with a lower case character.
-		 *
-		 * @public
-		 * @static
-		 * @param {String} s
-		 * @returns {String}
-		 */
-		camelCase(s) {
-			assert.argumentIsRequired(s, 's', String);
-
-			return s.replace(regex.camel.violations, m => m.toLocaleLowerCase());
-		},
-
-		/**
-		 * If a string exceeds a desired length, it is truncated and a poor man's
-		 * ellipsis (i.e. three periods) is appended. Otherwise, the original
-		 * string is returned.
-		 *
-		 * @public
-		 * @static
-		 * @param {String} s
-		 * @param {Number} length
-		 * @returns {String}
-		 */
-		truncate(s, length) {
-			if (is.string(s) && s.length > length) {
-				return s.substring(0, length) + ' ...';
-			} else {
-				return s;
-			}
-		},
-
-		/**
-		 * Adds leading characters to a string, until the string length is a desired size.
-		 *
-		 * @public
-		 * @static
-		 * @param {String} s - The string to pad.
-		 * @param {Number} length - The desired overall length of the string.
-		 * @param {String} character - The character to use for padding.
-		 * @returns {String}
-		 */
-		padLeft(s, length, character) {
-			assert.argumentIsRequired(s, 's', String);
-			assert.argumentIsRequired(length, 'length', Number);
-			assert.argumentIsRequired(character, 'character', String);
-
-			if (character.length !== 1) {
-				throw new Error('The "character" argument must be one character in length.');
-			}
-
-			return character.repeat(length - s.length) + s;
-		},
-
-		/**
-		 * Replaces starting characters of a string with a mask character and optionally
-		 * truncates the string.
-		 *
-		 * @public
-		 * @static
-		 * @param {String} s - The string to format.
-		 * @param {String} mask - The character to use for masking.
-		 * @param {Number} show - The number of characters to preserve (of the left).
-		 * @param {Number=} length - The final length of the string (truncating characters of the right).
-		 */
-		mask(s, mask, show, length) {
-			assert.argumentIsRequired(s, 's', String);
-			assert.argumentIsRequired(mask, 'mask', String);
-			assert.argumentIsRequired(show, 'show', Number);
-			assert.argumentIsOptional(length, 'length', Number);
-
-			if (is.number(length) && !(length > 0)) {
-				return '';
-			}
-
-			const countShown = Math.min(s.length, Math.max(show, 0));
-			const countMasked = Math.max(s.length, Math.max(length || 0), 0) - countShown;
-
-			let masked = `${mask.slice(-1).repeat(countMasked)}${countShown > 0 ? s.slice(~countShown + 1) : ''}`;
-
-			if (is.number(length) && !(length < 0) && length < s.length) {
-				masked = masked.slice(~length + 1);
-			}
-
-			return masked;
-		},
-
-		/**
-		 * Performs a simple token replacement on a string; where the tokens
-		 * are braced numbers (e.g. {0}, {1}, {2}).
-		 *
-		 * @public
-		 * @static
-		 * @param {String} s - The string to format (e.g. 'my first name is {0} and my last name is {1}')
-		 * @param {Array<String>} data - The replacement data
-		 * @returns {String}
-		 */
-		format(s, ...data) {
-			assert.argumentIsRequired(s, 's', String);
-
-            return s.replace(/{(\d+)}/g, (match, i) => {
-            	let replacement;
-
-            	if (i < data.length) {
-            		const item = data[i];
-
-            		if (!is.undefined(item) && !is.null(item)) {
-			            replacement = item.toString();
-		            } else {
-			            replacement = match;
-		            }
-				} else {
-		            replacement = match;
-				}
-
-				return replacement;
-            });
+/**
+ * Adjusts a string, replacing the first character of each word with an uppercase
+ * character and all subsequent characters in the word with lowercase characters.
+ *
+ * @public
+ * @static
+ * @param {String} s
+ * @returns {String}
+ */
+export function startCase(s) {
+	return s.split(' ').reduce((phrase, word) => {
+		if (word.length !== 0) {
+			phrase.push(word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
 		}
-	};
-})();
+
+		return phrase;
+	}, [ ]).join(' ');
+}
+
+/**
+ * Adjust a string to use camel case, where the first letter of each word is replaced
+ * with a lower case character.
+ *
+ * @public
+ * @static
+ * @param {String} s
+ * @returns {String}
+ */
+export function camelCase(s) {
+	assert.argumentIsRequired(s, 's', String);
+
+	return s.replace(regex.camel.violations, m => m.toLocaleLowerCase());
+}
+
+/**
+ * If a string exceeds a desired length, it is truncated and a poor man's
+ * ellipsis (i.e. three periods) is appended. Otherwise, the original
+ * string is returned.
+ *
+ * @public
+ * @static
+ * @param {String} s
+ * @param {Number} length
+ * @returns {String}
+ */
+export function truncate(s, length) {
+	if (is.string(s) && s.length > length) {
+		return s.substring(0, length) + ' ...';
+	} else {
+		return s;
+	}
+}
+
+/**
+ * Adds leading characters to a string, until the string length is a desired size.
+ *
+ * @public
+ * @static
+ * @param {String} s - The string to pad.
+ * @param {Number} length - The desired overall length of the string.
+ * @param {String} character - The character to use for padding.
+ * @returns {String}
+ */
+export function padLeft(s, length, character) {
+	assert.argumentIsRequired(s, 's', String);
+	assert.argumentIsRequired(length, 'length', Number);
+	assert.argumentIsRequired(character, 'character', String);
+
+	if (character.length !== 1) {
+		throw new Error('The "character" argument must be one character in length.');
+	}
+
+	return character.repeat(length - s.length) + s;
+}
+
+/**
+ * Replaces starting characters of a string with a mask character and optionally
+ * truncates the string.
+ *
+ * @public
+ * @static
+ * @param {String} s - The string to format.
+ * @param {String} mask - The character to use for masking.
+ * @param {Number} show - The number of characters to preserve (of the left).
+ * @param {Number=} length - The final length of the string (truncating characters of the right).
+ */
+export function mask(s, mask, show, length) {
+	assert.argumentIsRequired(s, 's', String);
+	assert.argumentIsRequired(mask, 'mask', String);
+	assert.argumentIsRequired(show, 'show', Number);
+	assert.argumentIsOptional(length, 'length', Number);
+
+	if (is.number(length) && !(length > 0)) {
+		return '';
+	}
+
+	const countShown = Math.min(s.length, Math.max(show, 0));
+	const countMasked = Math.max(s.length, Math.max(length || 0), 0) - countShown;
+
+	let masked = `${mask.slice(-1).repeat(countMasked)}${countShown > 0 ? s.slice(~countShown + 1) : ''}`;
+
+	if (is.number(length) && !(length < 0) && length < s.length) {
+		masked = masked.slice(~length + 1);
+	}
+
+	return masked;
+}
+
+/**
+ * Performs a simple token replacement on a string; where the tokens
+ * are braced numbers (e.g. {0}, {1}, {2}).
+ *
+ * @public
+ * @static
+ * @param {String} s - The string to format (e.g. 'my first name is {0} and my last name is {1}')
+ * @param {Array<String>} data - The replacement data
+ * @returns {String}
+ */
+export function format(s, ...data) {
+	assert.argumentIsRequired(s, 's', String);
+
+	return s.replace(/{(\d+)}/g, (match, i) => {
+		let replacement;
+
+		if (i < data.length) {
+			const item = data[i];
+
+			if (!is.undefined(item) && !is.null(item)) {
+				replacement = item.toString();
+			} else {
+				replacement = match;
+			}
+		} else {
+			replacement = match;
+		}
+
+		return replacement;
+	});
+}

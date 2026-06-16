@@ -1,6 +1,5 @@
-const Day = require('./../../../../lang/Day');
-
-const SameDay = require('./../../../../specifications/compound/SameDay');
+import Day from './../../../../lang/Day.js';
+import SameDay from './../../../../specifications/compound/SameDay.js';
 
 describe('When evaluating a compound SameDay specification', () => {
 	'use strict';

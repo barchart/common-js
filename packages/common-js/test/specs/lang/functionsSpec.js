@@ -1,4 +1,4 @@
-const functions = require('./../../../lang/functions');
+import * as functions from './../../../lang/functions.js';
 
 describe('when using the tautology function', () => {
 	'use strict';

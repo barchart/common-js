@@ -1,4 +1,4 @@
-const comparators = require('./../../../../collections/sorting/comparators');
+import * as comparators from './../../../../collections/sorting/comparators.js';
 
 describe('When using the "compareDates" comparator', () => {
 	'use strict';

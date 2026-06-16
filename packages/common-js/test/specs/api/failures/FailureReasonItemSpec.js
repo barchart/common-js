@@ -1,6 +1,6 @@
-const Enum = require('./../../../../lang/Enum'),
-	FailureReasonItem = require('./../../../../api/failures/FailureReasonItem'),
-	FailureType = require('./../../../../api/failures/FailureType');
+import Enum from './../../../../lang/Enum.js';
+import FailureReasonItem from './../../../../api/failures/FailureReasonItem.js';
+import FailureType from './../../../../api/failures/FailureType.js';
 
 describe('When a FailureType is created with a template string that references root level data', () => {
 	'use strict';

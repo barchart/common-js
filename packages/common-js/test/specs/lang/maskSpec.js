@@ -1,4 +1,4 @@
-const mask = require('./../../../lang/mask');
+import * as mask from './../../../lang/mask.js';
 
 describe('When testing the suitability of an bit-based enumeration item', () => {
 	it('zero should be valid', () => {

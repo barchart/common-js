@@ -1,4 +1,4 @@
-const LessThan = require('./../../../../specifications/compound/LessThan');
+import LessThan from './../../../../specifications/compound/LessThan.js';
 
 describe('When evaluating a compound LessThan specification', () => {
 	'use strict';

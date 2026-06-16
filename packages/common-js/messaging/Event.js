@@ -1,133 +1,128 @@
-const assert = require('./../lang/assert'),
-	Disposable = require('./../lang/Disposable');
+import * as assert from './../lang/assert.js';
 
-module.exports = (() => {
-	'use strict';
+import Disposable from './../lang/Disposable.js';
+
+/**
+ * An implementation of the observer pattern.
+ *
+ * @public
+ * @param {*} sender - The object which owns the event.
+ * @extends {Disposable}
+ */
+export default class Event extends Disposable {
+	constructor(sender) {
+		super();
+
+		this._sender = sender || null;
+
+		this._observers = [];
+	}
 
 	/**
-	 * An implementation of the observer pattern.
+	 * Registers an event handler which will receive a notification when
+	 * {@link Event#fire} is called.
 	 *
 	 * @public
-	 * @param {*} sender - The object which owns the event.
-	 * @extends {Disposable}
+	 * @param {Function} handler - The function which will be called each time the event fires. The first argument will be the event data. The second argument will be the event owner (i.e. sender).
+	 * @returns {Disposable}
 	 */
-	class Event extends Disposable {
-		constructor(sender) {
-			super();
+	register(handler) {
+		assert.argumentIsRequired(handler, 'handler', Function);
 
-			this._sender = sender || null;
+		addRegistration.call(this, handler);
 
-			this._observers = [];
-		}
-
-		/**
-		 * Registers an event handler which will receive a notification when
-		 * {@link Event#fire} is called.
-		 *
-		 * @public
-		 * @param {Function} handler - The function which will be called each time the event fires. The first argument will be the event data. The second argument will be the event owner (i.e. sender).
-		 * @returns {Disposable}
-		 */
-		register(handler) {
-			assert.argumentIsRequired(handler, 'handler', Function);
-
-			addRegistration.call(this, handler);
-
-			return Disposable.fromAction(() => {
-				if (this.disposed) {
-					return;
-				}
-
-				removeRegistration.call(this, handler);
-			});
-		}
-
-		/**
-		 * Removes registration for an event handler. That is, the handler will
-		 * no longer be called if the event fires.
-		 *
-		 * @public
-		 * @param {Function} handler
-		 */
-		unregister(handler) {
-			assert.argumentIsRequired(handler, 'handler', Function);
+		return Disposable.fromAction(() => {
+			if (this.disposed) {
+				return;
+			}
 
 			removeRegistration.call(this, handler);
-		}
+		});
+	}
 
-		/**
-		 * Removes all handlers from the event.
-		 *
-		 * @public
-		 */
-		clear() {
-			this._observers = [];
-		}
+	/**
+	 * Removes registration for an event handler. That is, the handler will
+	 * no longer be called if the event fires.
+	 *
+	 * @public
+	 * @param {Function} handler
+	 */
+	unregister(handler) {
+		assert.argumentIsRequired(handler, 'handler', Function);
 
-		/**
-		 * Triggers the event, calling all previously registered handlers.
-		 *
-		 * @public
-		 * @param {*} data - The data to pass each handler.
-		 */
-		fire(data) {
-			let observers = this._observers;
+		removeRegistration.call(this, handler);
+	}
 
-			for (let i = 0; i < observers.length; i++) {
-				let observer = observers[i];
+	/**
+	 * Removes all handlers from the event.
+	 *
+	 * @public
+	 */
+	clear() {
+		this._observers = [];
+	}
 
-				observer(data, this._sender);
-			}
-		}
+	/**
+	 * Triggers the event, calling all previously registered handlers.
+	 *
+	 * @public
+	 * @param {*} data - The data to pass each handler.
+	 */
+	fire(data) {
+		let observers = this._observers;
 
-		/**
-		 * Returns true if no handlers are currently registered.
-		 *
-		 * @public
-		 * @returns {boolean}
-		 */
-		getIsEmpty() {
-			return this._observers.length === 0;
-		}
+		for (let i = 0; i < observers.length; i++) {
+			let observer = observers[i];
 
-		_onDispose() {
-			this._observers = null;
-		}
-
-		toString() {
-			return '[Event]';
+			observer(data, this._sender);
 		}
 	}
 
-	function addRegistration(handler) {
-		let copiedObservers = this._observers.slice();
+	/**
+	 * Returns true if no handlers are currently registered.
+	 *
+	 * @public
+	 * @returns {boolean}
+	 */
+	getIsEmpty() {
+		return this._observers.length === 0;
+	}
 
-		copiedObservers.push(handler);
+	_onDispose() {
+		this._observers = null;
+	}
+
+	toString() {
+		return '[Event]';
+	}
+}
+
+function addRegistration(handler) {
+	let copiedObservers = this._observers.slice();
+
+	copiedObservers.push(handler);
+
+	this._observers = copiedObservers;
+}
+
+function removeRegistration(handler) {
+	const indicesToRemove = [];
+
+	for (let i = 0; i < this._observers.length; i++) {
+		let candidate = this._observers[i];
+
+		if (candidate === handler) {
+			indicesToRemove.push(i);
+		}
+	}
+
+	if (indicesToRemove.length > 0) {
+		const copiedObservers = this._observers.slice();
+
+		for (let j = indicesToRemove.length - 1; !(j < 0); j--) {
+			copiedObservers.splice(indicesToRemove[j], 1);
+		}
 
 		this._observers = copiedObservers;
 	}
-
-	function removeRegistration(handler) {
-		const indicesToRemove = [];
-
-		for (let i = 0; i < this._observers.length; i++) {
-			let candidate = this._observers[i];
-
-			if (candidate === handler) {
-				indicesToRemove.push(i);
-			}
-		}
-
-		if (indicesToRemove.length > 0) {
-			const copiedObservers = this._observers.slice();
-
-			for (let j = indicesToRemove.length - 1; !(j < 0); j--) {
-				copiedObservers.splice(indicesToRemove[j], 1);
-			}
-
-			this._observers = copiedObservers;
-		}
-	}
-
-	return Event;
-})();
+}

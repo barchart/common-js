@@ -1,4 +1,4 @@
-const Tree = require('./../../../collections/Tree');
+import Tree from './../../../collections/Tree.js';
 
 describe('When a Tree is constructed', () => {
 	'use strict';

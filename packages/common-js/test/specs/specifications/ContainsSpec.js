@@ -1,4 +1,4 @@
-const Contains = require('./../../../specifications/Contains');
+import Contains from './../../../specifications/Contains.js';
 
 describe('When a Contains specification is constructed', () => {
 	'use strict';

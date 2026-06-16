@@ -1,27 +1,21 @@
-const is = require('./../../lang/is');
+import * as is from './../../lang/is.js';
 
-const Specification = require('./../Specification');
+import Specification from './../Specification.js';
 
-module.exports = (() => {
-	'use strict';
-
-	/**
-	 * @public
-	 * @extends {Specification}
-	 */
-	class Numeric extends Specification {
-		constructor() {
-			super();
-		}
-
-		_evaluate(data) {
-			return is.array(data) && data.every(item => is.number(item));
-		}
-
-		toString() {
-			return '[Numeric]';
-		}
+/**
+ * @public
+ * @extends {Specification}
+ */
+export default class Numeric extends Specification {
+	constructor() {
+		super();
 	}
 
-	return Numeric;
-})();
+	_evaluate(data) {
+		return is.array(data) && data.every(item => is.number(item));
+	}
+
+	toString() {
+		return '[Numeric]';
+	}
+}

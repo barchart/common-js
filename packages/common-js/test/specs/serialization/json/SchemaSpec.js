@@ -1,14 +1,13 @@
-const AdHoc = require('./../../../../lang/AdHoc'),
-	Currency = require('./../../../../lang/Currency'),
-	Day = require('./../../../../lang/Day'),
-	Decimal = require('./../../../../lang/Decimal'),
-	Enum = require('./../../../../lang/Enum'),
-	Money = require('./../../../../lang/Money');
-
-const DataType = require('./../../../../serialization/json/DataType'),
-	Component = require('./../../../../serialization/json/Component'),
-	Field = require('./../../../../serialization/json/Field'),
-	Schema = require('./../../../../serialization/json/Schema');
+import AdHoc from './../../../../lang/AdHoc.js';
+import Currency from './../../../../lang/Currency.js';
+import Day from './../../../../lang/Day.js';
+import Decimal from './../../../../lang/Decimal.js';
+import Enum from './../../../../lang/Enum.js';
+import Money from './../../../../lang/Money.js';
+import DataType from './../../../../serialization/json/DataType.js';
+import Component from './../../../../serialization/json/Component.js';
+import Field from './../../../../serialization/json/Field.js';
+import Schema from './../../../../serialization/json/Schema.js';
 
 class Letter extends Enum {
 	constructor(name) {

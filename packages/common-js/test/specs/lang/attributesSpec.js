@@ -1,4 +1,4 @@
-const attributes = require('./../../../lang/attributes');
+import * as attributes from './../../../lang/attributes.js';
 
 describe('When "attributes.has" is used to check a top-level property', () => {
 	'use strict';

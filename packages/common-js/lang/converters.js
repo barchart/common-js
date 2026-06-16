@@ -1,13 +1,7 @@
-module.exports = (() => {
-	'use strict';
+export function toDate(object) {
+	return new Date(object);
+}
 
-	return {
-		toDate(object) {
-			return new Date(object);
-		},
-
-		empty(object) {
-			return object;
-		}
-	};
-})();
+export function empty(object) {
+	return object;
+}

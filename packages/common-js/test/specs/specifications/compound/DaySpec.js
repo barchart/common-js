@@ -1,6 +1,5 @@
-const Day = require('./../../../../lang/Day');
-
-const DaySpecification = require('./../../../../specifications/compound/Day');
+import Day from './../../../../lang/Day.js';
+import DaySpecification from './../../../../specifications/compound/Day.js';
 
 describe('When evaluating a compound Day specification', () => {
 	'use strict';

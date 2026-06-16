@@ -1,4 +1,4 @@
-const Exists = require('./../../../specifications/Exists');
+import Exists from './../../../specifications/Exists.js';
 
 describe('When a Exists specification is constructed', () => {
 	'use strict';

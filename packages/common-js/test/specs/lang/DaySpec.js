@@ -1,5 +1,5 @@
-const Day = require('./../../../lang/Day'),
-	DayFormatType = require('./../../../lang/DayFormatType');
+import Day from './../../../lang/Day.js';
+import DayFormatType from './../../../lang/DayFormatType.js';
 
 describe('When "2017-08-31 is parsed as a Day', () => {
 	'use strict';

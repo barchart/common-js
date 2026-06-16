@@ -1,4 +1,4 @@
-const CompoundMap = require('./../../../../collections/specialized/CompoundMap');
+import CompoundMap from './../../../../collections/specialized/CompoundMap.js';
 
 describe('When an CompoundMap is constructed', () => {
 	'use strict';

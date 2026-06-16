@@ -1,4 +1,4 @@
-const Equals = require('./../../../specifications/Equals');
+import Equals from './../../../specifications/Equals.js';
 
 describe('When a Equals specification is constructed', () => {
 	'use strict';

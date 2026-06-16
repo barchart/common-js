@@ -1,170 +1,165 @@
-const assert = require('./../lang/assert'),
-	Disposable = require('./../lang/Disposable'),
-	Event = require('./Event');
+import * as assert from './../lang/assert.js';
 
-module.exports = (() => {
-	'use strict';
+import Disposable from './../lang/Disposable.js';
+import Event from './Event.js';
+
+/**
+ * A container for {@link Event} instances where each event is
+ * keyed by name.
+ *
+ * @public
+ * @extends {Disposable}
+ */
+export default class EventMap extends Disposable {
+	constructor() {
+		super();
+
+		this._events = {};
+	}
 
 	/**
-	 * A container for {@link Event} instances where each event is
-	 * keyed by name.
+	 * Fires the appropriate event which is mapped to the event name.
+	 * See {@link Event#fire} for more information.
 	 *
 	 * @public
-	 * @extends {Disposable}
+	 * @param {String} eventName - The event's name.
+	 * @param {*} data - The data to provide to observers.
 	 */
-	class EventMap extends Disposable {
-		constructor() {
-			super();
+	fire(eventName, data) {
+		const event = this._events[eventName];
 
-			this._events = {};
-		}
-
-		/**
-		 * Fires the appropriate event which is mapped to the event name.
-		 * See {@link Event#fire} for more information.
-		 *
-		 * @public
-		 * @param {String} eventName - The event's name.
-		 * @param {*} data - The data to provide to observers.
-		 */
-		fire(eventName, data) {
-			const event = this._events[eventName];
-
-			if (event) {
-				event.fire(data);
-			}
-		}
-
-		/**
-		 * Registers a handler. See {@link Event#register} for more information.
-		 *
-		 * @public
-		 * @param {String} eventName - The event's name.
-		 * @param {Function} handler
-		 * @returns {Disposable}
-		 */
-		register(eventName, handler) {
-			assert.argumentIsRequired(eventName, 'eventName', String);
-
-			if (this.disposed) {
-				throw new Error('The event has been disposed.');
-			}
-
-			let event = this._events[eventName];
-
-			if (!event) {
-				event = this._events[eventName] = new Event(this);
-			}
-
-			return event.register(handler);
-		}
-
-		/**
-		 * Removes a handler. See {@link Event#unregister} for more information.
-		 *
-		 * @public
-		 * @param {String} eventName - The event's name.
-		 * @param {Function} handler
-		 */
-		unregister(eventName, handler) {
-			assert.argumentIsRequired(eventName, 'eventName', String);
-
-			const event = this._events[eventName];
-
-			if (event) {
-				event.unregister(handler);
-
-				if (event.getIsEmpty()) {
-					delete this._events[eventName];
-				}
-			}
-		}
-
-		/**
-		 * Clears an event's handlers. See {@link Event#clear} for more information.
-		 *
-		 * @public
-		 * @param {String} eventName - The event's name.
-		 */
-		clear(eventName) {
-			assert.argumentIsRequired(eventName, 'eventName', String);
-
-			const event = this._events[eventName];
-
-			if (event) {
-				event.clear();
-
-				delete this._events[eventName];
-			}
-		}
-
-		/**
-		 * Returns true, if no handlers are currently registered for the
-		 * specified event. See {@link Event#getIsEmpty} for more information.
-		 *
-		 * @public
-		 * @param {String} eventName
-		 * @returns {boolean}
-		 */
-		getIsEmpty(eventName) {
-			const event = this._events[eventName];
-
-			let returnVal;
-
-			if (event) {
-				returnVal = event.getIsEmpty();
-			} else {
-				returnVal = true;
-			}
-
-			return returnVal;
-		}
-
-		/**
-		 * Returns an array of all the event names.
-		 *
-		 * @public
-		 * @returns {Array<String>}
-		 */
-		getKeys() {
-			const keys = [];
-
-			for (let key in this._events) {
-				if (this._events.hasOwnProperty(key)) {
-					keys.push(key);
-				}
-			}
-
-			return keys;
-		}
-
-		/**
-		 * Returns true, if an event with the given name exists.
-		 *
-		 * @public
-		 * @param {String} key
-		 * @returns {boolean}
-		 */
-		hasKey(key) {
-			return this._events.hasOwnProperty(key);
-		}
-
-		_onDispose() {
-			let keys = this.getKeys();
-
-			for (let i = 0; i < keys.length; i++) {
-				let key = keys[i];
-
-				this._events[key].dispose();
-			}
-
-			this._events = { };
-		}
-
-		toString() {
-			return '[EventMap]';
+		if (event) {
+			event.fire(data);
 		}
 	}
 
-	return EventMap;
-})();
+	/**
+	 * Registers a handler. See {@link Event#register} for more information.
+	 *
+	 * @public
+	 * @param {String} eventName - The event's name.
+	 * @param {Function} handler
+	 * @returns {Disposable}
+	 */
+	register(eventName, handler) {
+		assert.argumentIsRequired(eventName, 'eventName', String);
+
+		if (this.disposed) {
+			throw new Error('The event has been disposed.');
+		}
+
+		let event = this._events[eventName];
+
+		if (!event) {
+			event = this._events[eventName] = new Event(this);
+		}
+
+		return event.register(handler);
+	}
+
+	/**
+	 * Removes a handler. See {@link Event#unregister} for more information.
+	 *
+	 * @public
+	 * @param {String} eventName - The event's name.
+	 * @param {Function} handler
+	 */
+	unregister(eventName, handler) {
+		assert.argumentIsRequired(eventName, 'eventName', String);
+
+		const event = this._events[eventName];
+
+		if (event) {
+			event.unregister(handler);
+
+			if (event.getIsEmpty()) {
+				delete this._events[eventName];
+			}
+		}
+	}
+
+	/**
+	 * Clears an event's handlers. See {@link Event#clear} for more information.
+	 *
+	 * @public
+	 * @param {String} eventName - The event's name.
+	 */
+	clear(eventName) {
+		assert.argumentIsRequired(eventName, 'eventName', String);
+
+		const event = this._events[eventName];
+
+		if (event) {
+			event.clear();
+
+			delete this._events[eventName];
+		}
+	}
+
+	/**
+	 * Returns true, if no handlers are currently registered for the
+	 * specified event. See {@link Event#getIsEmpty} for more information.
+	 *
+	 * @public
+	 * @param {String} eventName
+	 * @returns {boolean}
+	 */
+	getIsEmpty(eventName) {
+		const event = this._events[eventName];
+
+		let returnVal;
+
+		if (event) {
+			returnVal = event.getIsEmpty();
+		} else {
+			returnVal = true;
+		}
+
+		return returnVal;
+	}
+
+	/**
+	 * Returns an array of all the event names.
+	 *
+	 * @public
+	 * @returns {Array<String>}
+	 */
+	getKeys() {
+		const keys = [];
+
+		for (let key in this._events) {
+			if (this._events.hasOwnProperty(key)) {
+				keys.push(key);
+			}
+		}
+
+		return keys;
+	}
+
+	/**
+	 * Returns true, if an event with the given name exists.
+	 *
+	 * @public
+	 * @param {String} key
+	 * @returns {boolean}
+	 */
+	hasKey(key) {
+		return this._events.hasOwnProperty(key);
+	}
+
+	_onDispose() {
+		let keys = this.getKeys();
+
+		for (let i = 0; i < keys.length; i++) {
+			let key = keys[i];
+
+			this._events[key].dispose();
+		}
+
+		this._events = { };
+	}
+
+	toString() {
+		return '[EventMap]';
+	}
+}

@@ -1,4 +1,4 @@
-const Scheduler = require('./../../../timing/Scheduler');
+import Scheduler from './../../../timing/Scheduler.js';
 
 describe('When a Scheduler is constructed', () => {
 	'use strict';

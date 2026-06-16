@@ -1,4 +1,4 @@
-const Enum = require('./../../../lang/Enum');
+import Enum from './../../../lang/Enum.js';
 
 describe('When Enum is extended (as types EnumA and EnumB) and type items are added to each (X and Y)', () => {
 	'use strict';

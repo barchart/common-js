@@ -1,4 +1,4 @@
-const Null = require('./../../../specifications/Null');
+import Null from './../../../specifications/Null.js';
 
 describe('When a Null specification is constructed', () => {
 	'use strict';

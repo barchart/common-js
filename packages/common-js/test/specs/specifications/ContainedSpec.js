@@ -1,4 +1,4 @@
-const Contained = require('./../../../specifications/Contained');
+import Contained from './../../../specifications/Contained.js';
 
 describe('When a Contained specifciation is constructed', () => {
 	'use strict';

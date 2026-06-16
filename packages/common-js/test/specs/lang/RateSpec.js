@@ -1,6 +1,6 @@
-const Currency = require('./../../../lang/Currency'),
-	Decimal = require('./../../../lang/Decimal'),
-	Rate = require('./../../../lang/Rate');
+import Currency from './../../../lang/Currency.js';
+import Decimal from './../../../lang/Decimal.js';
+import Rate from './../../../lang/Rate.js';
 
 describe('When parsing an "^EURUSD" rate of 1.2', () => {
 	'use strict';

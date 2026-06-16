@@ -1,4 +1,4 @@
-const Serializer = require('./../../../timing/Serializer');
+import Serializer from './../../../timing/Serializer.js';
 
 describe('When a Serializer is used to schedule four tasks', () => {
 	'use strict';

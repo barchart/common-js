@@ -1,17 +1,18 @@
-const exec = require('child_process').exec;
+import { exec } from 'child_process';
 
-const gulp = require('gulp');
+import gulp from 'gulp';
 
-const fs = require('fs');
+import fs from 'fs';
 
-const browserify = require('browserify'),
-	buffer = require('vinyl-buffer'),
-	git = require('gulp-git'),
-	gitStatus = require('git-get-status'),
-	glob = require('glob'),
-	jshint = require('gulp-jshint'),
-	prompt = require('gulp-prompt'),
-	source = require('vinyl-source-stream');
+import browserify from 'browserify';
+import babelify from 'babelify';
+import buffer from 'vinyl-buffer';
+import git from 'gulp-git';
+import gitStatus from 'git-get-status';
+import { globSync } from 'glob';
+import jshint from 'gulp-jshint';
+import prompt from 'gulp-prompt';
+import source from 'vinyl-source-stream';
 
 function getVersionFromPackage() {
     return JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
@@ -77,7 +78,10 @@ gulp.task('create-tag', (cb) => {
 });
 
 gulp.task('build-test-bundle', () => {
-	return browserify({ entries: glob.sync('test/specs/**/*.js') })
+	return browserify({ entries: globSync('test/specs/**/*.js') })
+		.transform(babelify.configure({
+			plugins: [ '@babel/plugin-transform-modules-commonjs' ]
+		}))
 		.bundle()
 		.pipe(source('SpecRunner.js'))
 		.pipe(buffer())

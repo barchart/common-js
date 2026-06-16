@@ -1,4 +1,4 @@
-const Fail = require('./../../../specifications/Fail');
+import Fail from './../../../specifications/Fail.js';
 
 describe('When a Fail specification is constructed', () => {
 	'use strict';

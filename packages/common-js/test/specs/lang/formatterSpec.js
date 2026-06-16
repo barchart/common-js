@@ -1,4 +1,4 @@
-const formatter = require('./../../../lang/formatter');
+import * as formatter from './../../../lang/formatter.js';
 
 describe('When formatting numbers', () => {
 	'use strict';

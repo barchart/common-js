@@ -1,4 +1,4 @@
-const Between = require('./../../../specifications/Between');
+import Between from './../../../specifications/Between.js';
 
 describe('When a Between specification is constructed (with a range of 17 to 42)', () => {
 	'use strict';

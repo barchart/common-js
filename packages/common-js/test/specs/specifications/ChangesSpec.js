@@ -1,4 +1,4 @@
-const Changes = require('./../../../specifications/Changes');
+import Changes from './../../../specifications/Changes.js';
 
 describe('When a Changes specification is used to evaluate strings', () => {
 	'use strict';

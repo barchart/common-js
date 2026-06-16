@@ -1,4 +1,4 @@
-const EventMap = require('./../../../messaging/EventMap');
+import EventMap from './../../../messaging/EventMap.js';
 
 describe('When an EventMap is constructed', () => {
 	'use strict';

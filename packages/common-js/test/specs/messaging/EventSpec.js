@@ -1,5 +1,5 @@
-const Disposable = require('./../../../lang/Disposable'),
-	Event = require('./../../../messaging/Event');
+import Disposable from './../../../lang/Disposable.js';
+import Event from './../../../messaging/Event.js';
 
 describe('When an Event is constructed', () => {
 	'use strict';

@@ -1,4 +1,4 @@
-const string = require('./../../../lang/string');
+import * as string from './../../../lang/string.js';
 
 describe('When converting a sentence to "start" casing', () => {
 	let result;

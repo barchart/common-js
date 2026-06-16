@@ -1,4 +1,4 @@
-const math = require('./../../../lang/math');
+import * as math from './../../../lang/math.js';
 
 describe('When using math.approximate', () => {
 	'use strict';

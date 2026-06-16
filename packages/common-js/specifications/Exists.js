@@ -1,36 +1,29 @@
-const Specification = require('./Specification');
+import Specification from './Specification.js';
+import Null from './Null.js';
+import Undefined from './Undefined.js';
 
-const Null = require('./Null'),
-	Undefined = require('./Undefined');
+/**
+ * A {@link Specification} that passes when the value of the item passed to
+ * the constructor is neither null or undefined.
+ *
+ * @public
+ * @extends {Specification}
+ */
+export default class Exists extends Specification {
+	constructor() {
+		super();
 
-module.exports = (() => {
-	'use strict';
+		const n = new Null();
+		const u = new Undefined();
 
-	/**
-	 * A {@link Specification} that passes when the value of the item passed to
-	 * the constructor is neither null or undefined.
-	 *
-	 * @public
-	 * @extends {Specification}
-	 */
-	class Exists extends Specification {
-		constructor() {
-			super();
-
-			const n = new Null();
-			const u = new Undefined();
-
-			this._wrapped = n.or(u).not();
-		}
-
-		_evaluate(data) {
-			return this._wrapped.evaluate(data);
-		}
-
-		toString() {
-			return '[Exists]';
-		}
+		this._wrapped = n.or(u).not();
 	}
 
-	return Exists;
-})();
+	_evaluate(data) {
+		return this._wrapped.evaluate(data);
+	}
+
+	toString() {
+		return '[Exists]';
+	}
+}

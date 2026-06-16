@@ -1,4 +1,4 @@
-const Nan = require('./../../../specifications/Nan');
+import Nan from './../../../specifications/Nan.js';
 
 describe('When a NaN specification is constructed', () => {
 	'use strict';

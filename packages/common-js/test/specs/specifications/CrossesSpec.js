@@ -1,4 +1,4 @@
-const Crosses = require('./../../../specifications/Crosses');
+import Crosses from './../../../specifications/Crosses.js';
 
 describe('When a Crosses specification is initialized with a threshold of 1000', () => {
 	'use strict';

@@ -1,4 +1,4 @@
-const base52 = require('./../../../lang/base52');
+import * as base52 from './../../../lang/base52.js';
 
 describe('when converting base ten numbers to base fifty-two strings', () => {
 	'use strict';

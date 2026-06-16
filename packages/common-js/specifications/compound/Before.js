@@ -1,30 +1,24 @@
-const is = require('./../../lang/is');
+import * as is from './../../lang/is.js';
 
-const Specification = require('./../Specification');
+import Specification from './../Specification.js';
 
-module.exports = (() => {
-	'use strict';
-
-	/**
-	 * A {@link Specification} that passes when the first item in an
-	 * array is Day instance that is before the second item in the array.
-	 *
-	 * @public
-	 * @extends {Specification}
-	 */
-	class Before extends Specification {
-		constructor() {
-			super();
-		}
-
-		_evaluate(data) {
-			return is.array(data) && data.length === 2 && data[0].getIsBefore(data[1]);
-		}
-
-		toString() {
-			return '[Before]';
-		}
+/**
+ * A {@link Specification} that passes when the first item in an
+ * array is Day instance that is before the second item in the array.
+ *
+ * @public
+ * @extends {Specification}
+ */
+export default class Before extends Specification {
+	constructor() {
+		super();
 	}
 
-	return Before;
-})();
+	_evaluate(data) {
+		return is.array(data) && data.length === 2 && data[0].getIsBefore(data[1]);
+	}
+
+	toString() {
+		return '[Before]';
+	}
+}

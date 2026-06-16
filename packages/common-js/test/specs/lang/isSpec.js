@@ -1,4 +1,4 @@
-const is = require('./../../../lang/is');
+import * as is from './../../../lang/is.js';
 
 describe('When checking the number 3', () => {
 	'use strict';

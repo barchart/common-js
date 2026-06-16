@@ -1,4 +1,4 @@
-const PriorityQueue = require('./../../../../collections/specialized/PriorityQueue');
+import PriorityQueue from './../../../../collections/specialized/PriorityQueue.js';
 
 describe('When a Queue is constructed, using a "ladies first" comparator', () => {
 	'use strict';

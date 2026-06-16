@@ -1,5 +1,5 @@
-const Specification = require('./../../../specifications/Specification'),
-	And = require('./../../../specifications/And');
+import Specification from './../../../specifications/Specification.js';
+import And from './../../../specifications/And.js';
 
 describe('When an And specification is constructed', () => {
 	'use strict';

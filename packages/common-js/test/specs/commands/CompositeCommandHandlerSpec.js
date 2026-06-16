@@ -1,5 +1,5 @@
-const CommandHandler = require('./../../../commands/CommandHandler'),
-	CompositeCommandHandler = require('./../../../commands/CompositeCommandHandler');
+import CommandHandler from './../../../commands/CommandHandler.js';
+import CompositeCommandHandler from './../../../commands/CompositeCommandHandler.js';
 
 describe('When a CompositeCommandHandler is created', () => {
 	'use strict';

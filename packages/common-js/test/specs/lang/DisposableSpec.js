@@ -1,4 +1,4 @@
-const Disposable = require('./../../../lang/Disposable');
+import Disposable from './../../../lang/Disposable.js';
 
 describe('When a Disposable is extended', () => {
 	'use strict';

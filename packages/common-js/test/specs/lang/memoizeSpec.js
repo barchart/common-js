@@ -1,4 +1,4 @@
-const memoize = require('./../../../lang/memoize');
+import * as memoize from './../../../lang/memoize.js';
 
 describe('When using memoize.simple', () => {
 	'use strict';

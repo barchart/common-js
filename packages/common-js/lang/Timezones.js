@@ -1,131 +1,129 @@
-const assert = require('./assert'),
-	Enum = require('./Enum'),
-	is = require('./is'),
-	timezone = require('./timezone');
+import * as assert from './assert.js';
+import * as is from './is.js';
+import * as timezone from './timezone.js';
 
-const { getTimezoneOffset } = require('date-fns-tz');
+import Enum from './Enum.js';
 
-module.exports = (() => {
-	'use strict';
+import { getTimezoneOffset } from 'date-fns-tz';
+
+/**
+ * An enumeration item that lists timezones, according to the common names
+ * used in the tz database (see https://en.wikipedia.org/wiki/Tz_database).
+ * The full list of names is sourced from moment.js; however, this wikipedia
+ * article lists them: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+ *
+ * @public
+ * @param {String} code - The timezone name
+ * @extends {Enum}
+ */
+export default class Timezones extends Enum {
+	constructor(code) {
+		super(code, code);
+	}
 
 	/**
-	 * An enumeration item that lists timezones, according to the common names
-	 * used in the tz database (see https://en.wikipedia.org/wiki/Tz_database).
-	 * The full list of names is sourced from moment.js; however, this wikipedia
-	 * article lists them: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+	 * Attempts to determine if daylight savings time is in effect.
 	 *
 	 * @public
-	 * @param {String} code - The timezone name
-	 * @extends {Enum}
+	 * @param {Number=} timestamp - The moment at which the daylight savings time is checked, otherwise now.
+	 * @returns {Boolean}
 	 */
-	class Timezones extends Enum {
-		constructor(code) {
-			super(code, code);
+	getIsDaylightSavingsTime(timestamp) {
+		assert.argumentIsOptional(timestamp, 'timestamp', Number);
+
+		const now = new Date();
+
+		let baseline = Date.UTC(now.getFullYear(), 0, 1);
+		let candidate;
+
+		if (timestamp) {
+			candidate = timestamp;
+		} else {
+			candidate = now.getTime();
 		}
 
-		/**
-		 * Attempts to determine if daylight savings time is in effect.
-		 *
-		 * @public
-		 * @param {Number=} timestamp - The moment at which the daylight savings time is checked, otherwise now.
-		 * @returns {Boolean}
-		 */
-		getIsDaylightSavingsTime(timestamp) {
-			assert.argumentIsOptional(timestamp, 'timestamp', Number);
+		const baselineOffset = this.getUtcOffset(baseline);
+		const candidateOffset = this.getUtcOffset(candidate);
 
-			const now = new Date();
+		return baselineOffset !== candidateOffset;
+	}
 
-			let baseline = Date.UTC(now.getFullYear(), 0, 1);
-			let candidate;
+	/**
+	 * Calculates and returns the offset of a timezone from UTC.
+	 *
+	 * @public
+	 * @param {Number=} timestamp - The moment at which the offset is calculated, otherwise now.
+	 * @param {Boolean=} milliseconds - If true, the offset is returned in milliseconds; otherwise minutes.
+	 * @returns {Number}
+	 */
+	getUtcOffset(timestamp, milliseconds) {
+		assert.argumentIsOptional(timestamp, 'timestamp', Number);
+		assert.argumentIsOptional(milliseconds, milliseconds, Boolean);
 
-			if (timestamp) {
-				candidate = timestamp;
-			} else {
-				candidate = now.getTime();
-			}
+		let timestampToUse;
 
-			const baselineOffset = this.getUtcOffset(baseline);
-			const candidateOffset = this.getUtcOffset(candidate);
-
-			return baselineOffset !== candidateOffset;
+		if (is.number(timestamp)) {
+			timestampToUse = timestamp;
+		} else {
+			timestampToUse = (new Date()).getTime();
 		}
 
-		/**
-		 * Calculates and returns the offset of a timezone from UTC.
-		 *
-		 * @public
-		 * @param {Number=} timestamp - The moment at which the offset is calculated, otherwise now.
-		 * @param {Boolean=} milliseconds - If true, the offset is returned in milliseconds; otherwise minutes.
-		 * @returns {Number}
-		 */
-		getUtcOffset(timestamp, milliseconds) {
-			assert.argumentIsOptional(timestamp, 'timestamp', Number);
-			assert.argumentIsOptional(milliseconds, milliseconds, Boolean);
+		let divisor;
 
-			let timestampToUse;
-
-			if (is.number(timestamp)) {
-				timestampToUse = timestamp;
-			} else {
-				timestampToUse = (new Date()).getTime();
-			}
-
-			let divisor;
-
-			if (is.boolean(milliseconds) && milliseconds) {
-				divisor = 1;
-			} else {
-				divisor = 60 * 1000;
-			}
-
-			return getTimezoneOffset(this.code, new Date(timestampToUse)) / divisor;
+		if (is.boolean(milliseconds) && milliseconds) {
+			divisor = 1;
+		} else {
+			divisor = 60 * 1000;
 		}
 
-		/**
-		 *
-		 * Given a code, returns the enumeration item.
-		 *
-		 * @public
-		 * @static
-		 * @param {String} code
-		 * @returns {Timezones|null}
-		 */
-		static parse(code) {
-			return Enum.fromCode(Timezones, code);
-		}
+		return getTimezoneOffset(this.code, new Date(timestampToUse)) / divisor;
+	}
 
-		/**
-		 * UTC
-		 *
-		 * @public
-		 * @static
-		 * @returns {Timezones}
-		 */
-		static get UTC() {
-			return utc;
-		}
+	/**
+	 *
+	 * Given a code, returns the enumeration item.
+	 *
+	 * @public
+	 * @static
+	 * @param {String} code
+	 * @returns {Timezones|null}
+	 */
+	static parse(code) {
+		return Enum.fromCode(Timezones, code);
+	}
 
-		/**
-		 * America/Chicago
-		 *
-		 * @public
-		 * @static
-		 * @returns {Timezones}
-		 */
-		static get AMERICA_CHICAGO() {
-			return america_chicago;
-		}
+	/**
+	 * UTC
+	 *
+	 * @public
+	 * @static
+	 * @returns {Timezones}
+	 */
+	static get UTC() {
+		return utc;
+	}
 
-		/**
-		 * America/New_York
-		 *
-		 * @public
-		 * @static
-		 * @returns {Timezones}
-		 */
-		static get AMERICA_NEW_YORK() {
-			return america_new_york;
-		}
+	/**
+	 * America/Chicago
+	 *
+	 * @public
+	 * @static
+	 * @returns {Timezones}
+	 */
+	static get AMERICA_CHICAGO() {
+		return america_chicago;
+	}
+
+	/**
+	 * America/New_York
+	 *
+	 * @public
+	 * @static
+	 * @returns {Timezones}
+	 */
+	static get AMERICA_NEW_YORK() {
+		return america_new_york;
+	}
 
         /**
          * America/Denver
@@ -138,17 +136,14 @@ module.exports = (() => {
             return america_denver;
         }
 
-		toString() {
-			return `[Timezone (name=${this.code})]`;
-		}
+	toString() {
+		return `[Timezone (name=${this.code})]`;
 	}
+}
 
-	timezone.getTimezones().forEach(name => new Timezones(name));
+timezone.getTimezones().forEach(name => new Timezones(name));
 
-	const utc = Enum.fromCode(Timezones, 'UTC');
-	const america_chicago = Enum.fromCode(Timezones, 'America/Chicago');
-	const america_new_york = Enum.fromCode(Timezones, 'America/New_York');
-    const america_denver = Enum.fromCode(Timezones, 'America/Denver');
-
-	return Timezones;
-})();
+const utc = Enum.fromCode(Timezones, 'UTC');
+const america_chicago = Enum.fromCode(Timezones, 'America/Chicago');
+const america_new_york = Enum.fromCode(Timezones, 'America/New_York');
+const america_denver = Enum.fromCode(Timezones, 'America/Denver');

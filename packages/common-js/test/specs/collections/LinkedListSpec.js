@@ -1,4 +1,4 @@
-const LinkedList = require('./../../../collections/LinkedList');
+import LinkedList from './../../../collections/LinkedList.js';
 
 describe('When "doe" is used to start a linked list', () => {
 	'use strict';

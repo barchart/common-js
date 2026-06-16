@@ -1,7 +1,3 @@
-const Specification = require('./Specification');
+import Specification from './Specification.js';
 
-module.exports = (() => {
-	'use strict';
-
-	return Specification.Or;
-})();
+export default Specification.Or;

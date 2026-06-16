@@ -1,31 +1,23 @@
-const is = require('./../is');
+import * as is from './../is.js';
 
-module.exports = (() => {
-	'use strict';
+export function getIsSecure(secure) {
+	let returnVal;
 
-	const connection = {
-		getIsSecure(secure) {
-			let returnVal;
+	if (is.boolean(secure)) {
+		returnVal = secure;
+	} else {
+		let protocol;
 
-			if (is.boolean(secure)) {
-				returnVal = secure;
-			} else {
-				let protocol;
-
-				if (window && window.location && is.string(window.location.protocol)) {
-					protocol = window.location.protocol;
-				} else if (document && document.location && is.string(document.location.protocol)) {
-					protocol = document.location.protocol;
-				} else {
-					protocol = '';
-				}
-
-				returnVal = protocol.indexOf('https') === 0;
-			}
-
-			return returnVal;
+		if (window && window.location && is.string(window.location.protocol)) {
+			protocol = window.location.protocol;
+		} else if (document && document.location && is.string(document.location.protocol)) {
+			protocol = document.location.protocol;
+		} else {
+			protocol = '';
 		}
-	};
 
-	return connection;
-})();
+		returnVal = protocol.indexOf('https') === 0;
+	}
+
+	return returnVal;
+}

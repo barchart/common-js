@@ -1,118 +1,111 @@
-const assert = require('./../lang/assert'),
-	Disposable = require('./../lang/Disposable'),
-	is = require('./../lang/is'),
-	promise = require('./../lang/promise');
+import * as assert from './../lang/assert.js';
+import Disposable from './../lang/Disposable.js';
+import * as is from './../lang/is.js';
+import * as promise from './../lang/promise.js';
+import Queue from './../collections/Queue.js';
+import Scheduler from './Scheduler.js';
 
-const Queue = require('./../collections/Queue'),
-	Scheduler = require('./Scheduler');
+/**
+ * A work queue that restricts the rate at which items are
+ * processed.
+ *
+ * @public
+ * @param {number} - windowMaximumCount - The maximum number of items which can be processed during a timeframe (positive integer).
+ * @param {number} - windowDurationMilliseconds - The number of milliseconds in the timeframe (positive integer).
+ * @extends {Disposable}
+ */
+export default class RateLimiter extends Disposable {
+	constructor(windowMaximumCount, windowDurationMilliseconds) {
+		super();
 
-module.exports = (() => {
-	'use strict';
+		assert.argumentIsValid(windowMaximumCount, 'windowMaximumCount', x => is.integer(x) && is.positive(x));
+		assert.argumentIsValid(windowDurationMilliseconds, 'windowDurationMilliseconds', x => is.integer(x) && is.positive(x));
+
+		this._windowMaximumCount = windowMaximumCount;
+		this._windowDurationMilliseconds = windowDurationMilliseconds;
+
+		this._scheduler = new Scheduler();
+
+		this._workQueue = new Queue();
+
+		this._windowStart = null;
+		this._windowCounter = 0;
+	}
 
 	/**
-	 * A work queue that restricts the rate at which items are
-	 * processed.
+	 * Adds an item to the work queue and returns a promise that will
+	 * resolve after the item completes execution.
 	 *
 	 * @public
-	 * @param {number} - windowMaximumCount - The maximum number of items which can be processed during a timeframe (positive integer).
-	 * @param {number} - windowDurationMilliseconds - The number of milliseconds in the timeframe (positive integer).
-	 * @extends {Disposable}
+	 * @param {Function} actionToEnqueue - The action to execute.
+	 * @returns {Promise}
 	 */
-	class RateLimiter extends Disposable {
-		constructor(windowMaximumCount, windowDurationMilliseconds) {
-			super();
+	enqueue(actionToEnqueue) {
+		return promise.build((resolveCallback, rejectCallback) => {
+			assert.argumentIsRequired(actionToEnqueue, 'actionToEnqueue', Function);
 
-			assert.argumentIsValid(windowMaximumCount, 'windowMaximumCount', x => is.integer(x) && is.positive(x));
-			assert.argumentIsValid(windowDurationMilliseconds, 'windowDurationMilliseconds', x => is.integer(x) && is.positive(x));
+			if (this.disposed) {
+				throw new Error('Unable to enqueue action, the rate limiter has been disposed.');
+			}
 
-			this._windowMaximumCount = windowMaximumCount;
-			this._windowDurationMilliseconds = windowDurationMilliseconds;
+			this._workQueue.enqueue(() => {
+				Promise.resolve()
+					.then(() => {
+						return actionToEnqueue();
+					}).then((result) => {
+						resolveCallback(result);
+					}).catch((error) => {
+						rejectCallback(error);
+					}).then(() => {
+						checkStart.call(this);
+					});
+			});
 
-			this._scheduler = new Scheduler();
+			checkStart.call(this);
+		});
+	}
 
-			this._workQueue = new Queue();
+	_onDispose() {
+		this._scheduler.dispose();
 
+		this._workQueue = null;
+	}
+
+	toString() {
+		return '[RateLimiter]';
+	}
+}
+
+function checkStart() {
+	if (this.disposed) {
+		return;
+	}
+
+	if (this._workQueue.empty()) {
+		return;
+	}
+
+	if (this._windowStart === null) {
+		const timestamp = new Date();
+
+		this._windowStart = timestamp.getTime();
+		this._windowCounter = 0;
+
+		const resetWindow = () => {
 			this._windowStart = null;
 			this._windowCounter = 0;
-		}
 
-		/**
-		 * Adds an item to the work queue and returns a promise that will
-		 * resolve after the item completes execution.
-		 *
-		 * @public
-		 * @param {Function} actionToEnqueue - The action to execute.
-		 * @returns {Promise}
-		 */
-		enqueue(actionToEnqueue) {
-			return promise.build((resolveCallback, rejectCallback) => {
-				assert.argumentIsRequired(actionToEnqueue, 'actionToEnqueue', Function);
+			checkStart.call(this);
+		};
 
-				if (this.disposed) {
-					throw new Error('Unable to enqueue action, the rate limiter has been disposed.');
-				}
-
-				this._workQueue.enqueue(() => {
-					Promise.resolve()
-						.then(() => {
-							return actionToEnqueue();
-						}).then((result) => {
-							resolveCallback(result);
-						}).catch((error) => {
-							rejectCallback(error);
-						}).then(() => {
-							checkStart.call(this);
-						});
-				});
-
-				checkStart.call(this);
-			});
-		}
-
-		_onDispose() {
-			this._scheduler.dispose();
-
-			this._workQueue = null;
-		}
-
-		toString() {
-			return '[RateLimiter]';
-		}
+		this._scheduler.schedule(resetWindow, this._windowDurationMilliseconds, 'Rate Limiter Window Reset');
 	}
 
-	function checkStart() {
-		if (this.disposed) {
-			return;
-		}
+	if (this._windowCounter < this._windowMaximumCount) {
+		this._windowCounter = this._windowCounter + 1;
 
-		if (this._workQueue.empty()) {
-			return;
-		}
+		const actionToExecute = this._workQueue.dequeue();
 
-		if (this._windowStart === null) {
-			const timestamp = new Date();
-
-			this._windowStart = timestamp.getTime();
-			this._windowCounter = 0;
-
-			const resetWindow = () => {
-				this._windowStart = null;
-				this._windowCounter = 0;
-
-				checkStart.call(this);
-			};
-
-			this._scheduler.schedule(resetWindow, this._windowDurationMilliseconds, 'Rate Limiter Window Reset');
-		}
-
-		if (this._windowCounter < this._windowMaximumCount) {
-			this._windowCounter = this._windowCounter + 1;
-
-			const actionToExecute = this._workQueue.dequeue();
-
-			actionToExecute();
-		}
+		actionToExecute();
 	}
-
-	return RateLimiter;
-})();
+}

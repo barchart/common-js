@@ -1,5 +1,5 @@
-const Disposable = require('./../../../lang/Disposable'),
-	Model = require('./../../../models/Model');
+import Disposable from './../../../lang/Disposable.js';
+import Model from './../../../models/Model.js';
 
 describe('When an Model is constructed with "firstName" and "lastName" properties', () => {
 	'use strict';

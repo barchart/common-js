@@ -1,4 +1,4 @@
-const utilities = require('./../../../lang/date');
+import * as utilities from './../../../lang/date.js';
 
 describe('When requesting the current timestamp', () => {
 	'use strict';

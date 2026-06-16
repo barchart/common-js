@@ -1,4 +1,4 @@
-const RateLimiter = require('./../../../timing/RateLimiter');
+import RateLimiter from './../../../timing/RateLimiter.js';
 
 describe('When a RateLimiter is constructed (1 execution per 25 milliseconds)', () => {
 	'use strict';

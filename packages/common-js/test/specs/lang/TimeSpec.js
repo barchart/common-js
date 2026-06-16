@@ -1,4 +1,4 @@
-const Time = require('./../../../lang/Time');
+import Time from './../../../lang/Time.js';
 
 describe('When "12:34:56" is parsed as a Time', () => {
     'use strict';

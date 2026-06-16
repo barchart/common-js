@@ -1,4 +1,4 @@
-const random = require('./../../../lang/random');
+import * as random from './../../../lang/random.js';
 
 describe('When generating a random number, restricting the range to one integer', () => {
 	'use strict';

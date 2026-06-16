@@ -1,4 +1,4 @@
-const AdHoc = require('./../../../lang/AdHoc');
+import AdHoc from './../../../lang/AdHoc.js';
 
 describe('When wrapping an object in an ad hoc serialization container', () => {
 	'use strict';

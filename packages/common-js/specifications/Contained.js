@@ -1,35 +1,29 @@
-const assert = require('./../lang/assert');
+import * as assert from './../lang/assert.js';
 
-const Specification = require('./Specification');
+import Specification from './Specification.js';
 
-module.exports = (() => {
-	'use strict';
+/**
+ * A {@link Specification} that passes when an array (passed to the
+ * constructor) contains the data item.
+ *
+ * @public
+ * @extends {Specification}
+ * @param {Array} value
+ */
+export default class Contained extends Specification {
+	constructor(value) {
+		super();
 
-	/**
-	 * A {@link Specification} that passes when an array (passed to the
-	 * constructor) contains the data item.
-	 *
-	 * @public
-	 * @extends {Specification}
-	 * @param {Array} value
-	 */
-	class Contained extends Specification {
-		constructor(value) {
-			super();
+		assert.argumentIsArray(value, 'value');
 
-			assert.argumentIsArray(value, 'value');
-
-			this._value = value;
-		}
-
-		_evaluate(data) {
-			return this._value.some((candidate) => candidate === data);
-		}
-
-		toString() {
-			return '[Contained]';
-		}
+		this._value = value;
 	}
 
-	return Contained;
-})();
+	_evaluate(data) {
+		return this._value.some((candidate) => candidate === data);
+	}
+
+	toString() {
+		return '[Contained]';
+	}
+}

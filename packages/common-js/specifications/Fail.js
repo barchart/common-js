@@ -1,27 +1,21 @@
-const Specification = require('./Specification');
+import Specification from './Specification.js';
 
-module.exports = (() => {
-	'use strict';
-
-	/**
-	 * A {@link Specification} that always fails.
-	 *
-	 * @public
-	 * @extends {Specification}
-	 */
-	class Fail extends Specification {
-		constructor() {
-			super();
-		}
-
-		_evaluate(data) {
-			return false;
-		}
-
-		toString() {
-			return '[Fail]';
-		}
+/**
+ * A {@link Specification} that always fails.
+ *
+ * @public
+ * @extends {Specification}
+ */
+export default class Fail extends Specification {
+	constructor() {
+		super();
 	}
 
-	return Fail;
-})();
+	_evaluate(data) {
+		return false;
+	}
+
+	toString() {
+		return '[Fail]';
+	}
+}

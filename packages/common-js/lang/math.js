@@ -1,29 +1,23 @@
-const is = require('./is');
+import * as is from './is.js';
 
-module.exports = (() => {
-	'use strict';
+export function approximate(a, b) {
+	if (!is.number(a) || !is.number(b)) {
+		return false;
+	}
 
-	return {
-		approximate(a, b) {
-			if (!is.number(a) || !is.number(b)) {
-				return false;
-			}
+	if (a == b) {
+		return true;
+	}
 
-			if (a == b) {
-				return true;
-			}
+	if (isFinite(a) && isFinite(b)) {
+		const absoluteDifference = Math.abs(a - b);
 
-			if (isFinite(a) && isFinite(b)) {
-				const absoluteDifference = Math.abs(a - b);
-
-				if (absoluteDifference < Number.EPSILON) {
-					return true;
-				} else {
-					return !(absoluteDifference > Math.max(Math.abs(a), Math.abs(b)) * Number.EPSILON);
-				}
-			} else {
-				return false;
-			}
+		if (absoluteDifference < Number.EPSILON) {
+			return true;
+		} else {
+			return !(absoluteDifference > Math.max(Math.abs(a), Math.abs(b)) * Number.EPSILON);
 		}
-	};
-})();
+	} else {
+		return false;
+	}
+}

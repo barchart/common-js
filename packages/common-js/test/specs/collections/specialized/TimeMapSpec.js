@@ -1,4 +1,4 @@
-const TimeMap = require('./../../../../collections/specialized/TimeMap');
+import TimeMap from './../../../../collections/specialized/TimeMap.js';
 
 describe('When an TimeMap is constructed (with a 10 millisecond time to live)', () => {
 	'use strict';

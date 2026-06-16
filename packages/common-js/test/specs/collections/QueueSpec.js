@@ -1,4 +1,4 @@
-const Queue = require('./../../../collections/Queue');
+import Queue from './../../../collections/Queue.js';
 
 describe('When a Queue is constructed', () => {
 	'use strict';

@@ -1,4 +1,4 @@
-const assert = require('./../../../lang/assert');
+import * as assert from './../../../lang/assert.js';
 
 describe('when attempting to validate an array', () => {
 	'use strict';

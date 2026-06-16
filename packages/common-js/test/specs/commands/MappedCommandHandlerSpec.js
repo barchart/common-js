@@ -1,5 +1,5 @@
-const CommandHandler = require('./../../../commands/CommandHandler'),
-	MappedCommandHandler = require('./../../../commands/MappedCommandHandler');
+import CommandHandler from './../../../commands/CommandHandler.js';
+import MappedCommandHandler from './../../../commands/MappedCommandHandler.js';
 
 describe('When a MappedCommandHandler is created with two mapped commands', () => {
 	'use strict';

@@ -1,4 +1,4 @@
-const iterate = require('./../../../lang/iterate');
+import iterate from './../../../lang/iterate.js';
 
 describe('When using the iterate function', () => {
 	let a;

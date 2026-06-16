@@ -1,4 +1,4 @@
-const GreaterThan = require('./../../../../specifications/compound/GreaterThan');
+import GreaterThan from './../../../../specifications/compound/GreaterThan.js';
 
 describe('When evaluating a compound GreaterThan specification', () => {
 	'use strict';

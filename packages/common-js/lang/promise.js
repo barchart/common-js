@@ -1,224 +1,219 @@
-const assert = require('./assert');
+import * as assert from './assert.js';
 
-module.exports = (() => {
-	'use strict';
+/**
+ * Utilities for working with promises.
+ *
+ * @public
+ * @module lang/promise
+ */
 
-	/**
-	 * Utilities for working with promises.
-	 *
-	 * @public
-	 * @module lang/promise
-	 */
-	return {
-		/**
-		 * Creates a composite promise which resolves normally or rejects is a specified
-		 * amount of time elapses.
-		 *
-		 * @public
-		 * @static
-		 * @async
-		 * @param {Promise} promise
-		 * @param {Number} milliseconds
-		 * @param {String=} description
-		 * @returns {Promise<*>}
-		 */
-		async timeout(promise, milliseconds, description) {
-			return Promise.resolve()
+/**
+ * Creates a composite promise which resolves normally or rejects is a specified
+ * amount of time elapses.
+ *
+ * @public
+ * @static
+ * @async
+ * @param {Promise} promise
+ * @param {Number} milliseconds
+ * @param {String=} description
+ * @returns {Promise<*>}
+ */
+export async function timeout(promise, milliseconds, description) {
+	return Promise.resolve()
+		.then(() => {
+			assert.argumentIsRequired(promise, 'promise', Promise, 'Promise');
+			assert.argumentIsRequired(milliseconds, 'milliseconds', Number);
+			assert.argumentIsOptional(description, 'description', String);
+
+			if (!(milliseconds > 0)) {
+				return Promise.reject('Unable to configure promise timeout, the "milliseconds" argument must be positive');
+			}
+
+			let timeoutToken = null;
+
+			const timeoutPromise = build((resolveCallback, rejectCallback) => {
+				timeoutToken = setTimeout(() => {
+					rejectCallback(description || `Promise timed out after ${milliseconds} milliseconds`);
+				}, milliseconds);
+			});
+
+			const userPromise = Promise.resolve()
 				.then(() => {
-					assert.argumentIsRequired(promise, 'promise', Promise, 'Promise');
-					assert.argumentIsRequired(milliseconds, 'milliseconds', Number);
-					assert.argumentIsOptional(description, 'description', String);
-
-					if (!(milliseconds > 0)) {
-						return Promise.reject('Unable to configure promise timeout, the "milliseconds" argument must be positive');
+					return promise;
+				}).then((result) => {
+					if (timeoutToken !== null) {
+						clearTimeout(timeoutToken);
 					}
 
-					let timeoutToken = null;
+					return result;
+				}).catch((e) => {
+					if (timeoutToken !== null) {
+						clearTimeout(timeoutToken);
+					}
 
-					const timeoutPromise = this.build((resolveCallback, rejectCallback) => {
-						timeoutToken = setTimeout(() => {
-							rejectCallback(description || `Promise timed out after ${milliseconds} milliseconds`);
-						}, milliseconds);
-					});
-
-					const userPromise = Promise.resolve()
-						.then(() => {
-							return promise;
-						}).then((result) => {
-							if (timeoutToken !== null) {
-								clearTimeout(timeoutToken);
-							}
-
-							return result;
-						}).catch((e) => {
-							if (timeoutToken !== null) {
-								clearTimeout(timeoutToken);
-							}
-
-							return Promise.reject(e);
-						});
-
-					return Promise.race([ userPromise, timeoutPromise ]);
+					return Promise.reject(e);
 				});
-		},
 
-		/**
-		 * A mapping function that works asynchronously. Given an array of items, each item through
-		 * a mapping function, which can return a promise. Then, this function returns a single promise
-		 * which is the result of each mapped promise.
-		 *
-		 * @public
-		 * @static
-		 * @async
-		 * @param {Array} items - The items to map
-		 * @param {Function} mapper - The mapping function (e.g. given an item, return a promise).
-		 * @param {Number=} concurrency - The maximum number of promises that are allowed to run at once.
-		 * @returns {Promise<Array>}
-		 */
-		async map(items, mapper, concurrency) {
-			return Promise.resolve()
-				.then(() => {
-					assert.argumentIsArray(items, 'items');
-					assert.argumentIsRequired(mapper, 'mapper', Function);
-					assert.argumentIsOptional(concurrency, 'concurrency', Number);
+			return Promise.race([ userPromise, timeoutPromise ]);
+		});
+}
 
-					const c = Math.max(0, concurrency || 0);
+/**
+ * A mapping function that works asynchronously. Given an array of items, each item through
+ * a mapping function, which can return a promise. Then, this function returns a single promise
+ * which is the result of each mapped promise.
+ *
+ * @public
+ * @static
+ * @async
+ * @param {Array} items - The items to map
+ * @param {Function} mapper - The mapping function (e.g. given an item, return a promise).
+ * @param {Number=} concurrency - The maximum number of promises that are allowed to run at once.
+ * @returns {Promise<Array>}
+ */
+export async function map(items, mapper, concurrency) {
+	return Promise.resolve()
+		.then(() => {
+			assert.argumentIsArray(items, 'items');
+			assert.argumentIsRequired(mapper, 'mapper', Function);
+			assert.argumentIsOptional(concurrency, 'concurrency', Number);
 
-					let mapPromise;
+			const c = Math.max(0, concurrency || 0);
 
-					if (c === 0 || items.length === 0) {
-						mapPromise = Promise.all(items.map((item) => Promise.resolve(mapper(item))));
-					} else {
-						let total = items.length;
-						let active = 0;
-						let complete = 0;
-						let failure = false;
+			let mapPromise;
 
-						const results = Array.of(total);
+			if (c === 0 || items.length === 0) {
+				mapPromise = Promise.all(items.map((item) => Promise.resolve(mapper(item))));
+			} else {
+				let total = items.length;
+				let active = 0;
+				let complete = 0;
+				let failure = false;
 
-						const executors = items.map((item, index) => {
-							return () => {
-								return Promise.resolve()
-									.then(() => {
-										return mapper(item);
-									}).then((result) => {
-										results[index] = result;
-									});
-							};
-						});
+				const results = Array.of(total);
 
-						mapPromise = this.build((resolveCallback, rejectCallback) => {
-							const execute = () => {
-								if (!(executors.length > 0 && c > active && !failure)) {
+				const executors = items.map((item, index) => {
+					return () => {
+						return Promise.resolve()
+							.then(() => {
+								return mapper(item);
+							}).then((result) => {
+								results[index] = result;
+							});
+					};
+				});
+
+				mapPromise = build((resolveCallback, rejectCallback) => {
+					const execute = () => {
+						if (!(executors.length > 0 && c > active && !failure)) {
+							return;
+						}
+
+						active = active + 1;
+
+						const executor = executors.shift();
+
+						executor()
+							.then(() => {
+								if (failure) {
 									return;
 								}
 
-								active = active + 1;
+								active = active - 1;
+								complete = complete + 1;
 
-								const executor = executors.shift();
+								if (complete < total) {
+									execute();
+								} else {
+									resolveCallback(results);
+								}
+							}).catch((error) => {
+								failure = false;
 
-								executor()
-									.then(() => {
-										if (failure) {
-											return;
-										}
+								rejectCallback(error);
+							});
 
-										active = active - 1;
-										complete = complete + 1;
+						execute();
+					};
 
-										if (complete < total) {
-											execute();
-										} else {
-											resolveCallback(results);
-										}
-									}).catch((error) => {
-										failure = false;
+					execute();
+				});
+			}
 
-										rejectCallback(error);
-									});
+			return mapPromise;
+		});
+}
 
-								execute();
-							};
+/**
+ * Runs a series of functions sequentially (where each function can be
+ * synchronous or asynchronous). The result of each function is passed
+ * to the successive function and the result of the final function is
+ * returned to the consumer.
+ *
+ * @static
+ * @public
+ * @async
+ * @param {Function[]} functions - An array of functions, each expecting a single argument.
+ * @param {*=} input - The argument to pass the first function.
+ * @returns {Promise<*>}
+ */
+export async function pipeline(functions, input) {
+	return Promise.resolve()
+		.then(() => {
+			assert.argumentIsArray(functions, 'functions', Function);
 
-							execute();
-						});
+			return functions.reduce((previous, fn) => previous.then((result) => fn(result)), Promise.resolve(input));
+		});
+}
+
+/**
+ * Given an array of functions, where each returns a promise, runs
+ * the functions in sequential order, until one of the function
+ * returns a successful promise with a non-null result. Any
+ * rejected promise is ignored.
+ *
+ * @public
+ * @async
+ * @param {Function[]} executors
+ * @returns {Promise}
+ */
+export async function first(executors) {
+	return Promise.resolve()
+		.then(() => {
+			assert.argumentIsArray(executors, 'executors', Function);
+
+			return executors.reduce((previous, executor) => {
+				return previous.then((result) => {
+					if (result === null) {
+						return executor().catch(() => Promise.resolve(null));
+					} else {
+						return previous;
 					}
-
-					return mapPromise;
 				});
-		},
+			}, Promise.resolve(null));
+		});
+}
 
-		/**
-		 * Runs a series of functions sequentially (where each function can be
-		 * synchronous or asynchronous). The result of each function is passed
-		 * to the successive function and the result of the final function is
-		 * returned to the consumer.
-		 *
-		 * @static
-		 * @public
-		 * @async
-		 * @param {Function[]} functions - An array of functions, each expecting a single argument.
-		 * @param {*=} input - The argument to pass the first function.
-		 * @returns {Promise<*>}
-		 */
-		async pipeline(functions, input) {
-			return Promise.resolve()
-				.then(() => {
-					assert.argumentIsArray(functions, 'functions', Function);
-
-					return functions.reduce((previous, fn) => previous.then((result) => fn(result)), Promise.resolve(input));
-				});
-		},
-
-		/**
-		 * Given an array of functions, where each returns a promise, runs
-		 * the functions in sequential order, until one of the function
-		 * returns a successful promise with a non-null result. Any
-		 * rejected promise is ignored.
-		 *
-		 * @public
-		 * @async
-		 * @param {Function[]} executors
-		 * @returns {Promise}
-		 */
-		async first(executors) {
-			return Promise.resolve()
-				.then(() => {
-					assert.argumentIsArray(executors, 'executors', Function);
-
-					return executors.reduce((previous, executor) => {
-						return previous.then((result) => {
-							if (result === null) {
-								return executor().catch(() => Promise.resolve(null));
-							} else {
-								return previous;
-							}
-						});
-					}, Promise.resolve(null));
-				});
-		},
-
-		/**
-		 * Creates a new promise, given an executor.
-		 *
-		 * This is a wrapper for the {@link Promise} constructor; however, any error
-		 * is caught and the resulting promise is rejected (instead of letting the
-		 * error bubble up to the top-level handler).
-		 *
-		 * @public
-		 * @static
-		 * @async
-		 * @param {Function} executor - A function which has two callback parameters. The first is used to resolve the promise, the second rejects it.
-		 * @returns {Promise}
-		 */
-		async build(executor) {
-			return new Promise((resolve, reject) => {
-				try {
-					executor(resolve, reject);
-				} catch(e) {
-					reject(e);
-				}
-			});
+/**
+ * Creates a new promise, given an executor.
+ *
+ * This is a wrapper for the {@link Promise} constructor; however, any error
+ * is caught and the resulting promise is rejected (instead of letting the
+ * error bubble up to the top-level handler).
+ *
+ * @public
+ * @static
+ * @async
+ * @param {Function} executor - A function which has two callback parameters. The first is used to resolve the promise, the second rejects it.
+ * @returns {Promise}
+ */
+export async function build(executor) {
+	return new Promise((resolve, reject) => {
+		try {
+			executor(resolve, reject);
+		} catch(e) {
+			reject(e);
 		}
-	};
-})();
+	});
+}

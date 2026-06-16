@@ -1,4 +1,4 @@
-const Timestamp = require('./../../../lang/Timestamp');
+import Timestamp from './../../../lang/Timestamp.js';
 
 describe('When Timestamp is created from a timestamp (1502372574350)', () => {
 	'use strict';

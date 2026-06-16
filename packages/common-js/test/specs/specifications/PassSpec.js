@@ -1,4 +1,4 @@
-const Pass = require('./../../../specifications/Pass');
+import Pass from './../../../specifications/Pass.js';
 
 describe('When a Pass specification is constructed', () => {
 	'use strict';

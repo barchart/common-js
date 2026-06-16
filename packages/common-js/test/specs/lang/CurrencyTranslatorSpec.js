@@ -1,8 +1,7 @@
-const Currency= require('./../../../lang/Currency'),
-	Decimal= require('./../../../lang/Decimal'),
-	Rate = require('./../../../lang/Rate');
-
-const CurrencyTranslator = require('./../../../lang/CurrencyTranslator');
+import Currency from './../../../lang/Currency.js';
+import Decimal from './../../../lang/Decimal.js';
+import Rate from './../../../lang/Rate.js';
+import CurrencyTranslator from './../../../lang/CurrencyTranslator.js';
 
 describe('When a CurrencyTranslator is created with ^AUDUSD and ^CADUSD', () => {
 	'use strict';

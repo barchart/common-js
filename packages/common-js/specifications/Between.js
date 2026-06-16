@@ -1,37 +1,31 @@
-const assert = require('./../lang/assert');
+import * as assert from './../lang/assert.js';
 
-const Specification = require('./Specification');
+import Specification from './Specification.js';
 
-module.exports = (() => {
-	'use strict';
+/**
+ * A {@link Specification} that passes when the value of the data item
+ * is between the values passed to the constructor.
+ *
+ * @public
+ * @extends {Specification}
+ * @param {Number[]} values
+ */
+export default class Between extends Specification {
+	constructor(values) {
+		super();
 
-	/**
-	 * A {@link Specification} that passes when the value of the data item
-	 * is between the values passed to the constructor.
-	 *
-	 * @public
-	 * @extends {Specification}
-	 * @param {Number[]} values
-	 */
-	class Between extends Specification {
-		constructor(values) {
-			super();
+		assert.argumentIsArray(values, 'values', Number);
 
-			assert.argumentIsArray(values, 'values', Number);
-
-			this._values = values;
-		}
-
-		_evaluate(data) {
-			assert.argumentIsRequired(data, 'data', Number);
-
-			return data > this._values[0] && data < this._values[1];
-		}
-
-		toString() {
-			return '[Between]';
-		}
+		this._values = values;
 	}
 
-	return Between;
-})();
+	_evaluate(data) {
+		assert.argumentIsRequired(data, 'data', Number);
+
+		return data > this._values[0] && data < this._values[1];
+	}
+
+	toString() {
+		return '[Between]';
+	}
+}

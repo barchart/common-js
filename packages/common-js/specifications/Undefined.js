@@ -1,31 +1,23 @@
-const is = require('./../lang/is');
+import * as is from './../lang/is.js';
 
-const Specification = require('./Specification');
+import Specification from './Specification.js';
 
-module.exports = (() => {
-	'use strict';
-
-	/**
-	 * A {@link Specification} that passes when a data item is an undefined value.
-	 *
-	 * @public
-	 * @extends {Specification}
-	 */
-	class Undefined extends Specification {
-		constructor() {
-			super();
-		}
-
-		_evaluate(data) {
-			return is.undefined(data);
-		}
-
-		toString() {
-			return '[Undefined]';
-		}
+/**
+ * A {@link Specification} that passes when a data item is an undefined value.
+ *
+ * @public
+ * @extends {Specification}
+ */
+export default class Undefined extends Specification {
+	constructor() {
+		super();
 	}
 
-	return Undefined;
-})();
+	_evaluate(data) {
+		return is.undefined(data);
+	}
 
-
+	toString() {
+		return '[Undefined]';
+	}
+}

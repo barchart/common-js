@@ -1,4 +1,4 @@
-const EvictingMap = require('./../../../../collections/specialized/EvictingMap');
+import EvictingMap from './../../../../collections/specialized/EvictingMap.js';
 
 describe('When an EvictingMap is constructed (with no capacity)', () => {
 	'use strict';

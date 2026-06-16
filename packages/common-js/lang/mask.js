@@ -1,47 +1,39 @@
-const assert = require('./assert'),
-	is = require('./is');
+import * as assert from './assert.js';
+import * as is from './is.js';
 
-module.exports = (() => {
-	'use strict';
+export function getEmpty() {
+	return 0;
+}
 
-	const mask = {
-		getEmpty() {
-			return 0;
-		},
+export function add(existing, itemToAdd) {
+	assert.argumentIsRequired(existing, 'existing', Number);
+	assert.argumentIsRequired(itemToAdd, 'itemToAdd', Number);
 
-		add(existing, itemToAdd) {
-			assert.argumentIsRequired(existing, 'existing', Number);
-			assert.argumentIsRequired(itemToAdd, 'itemToAdd', Number);
+	if (checkItem(itemToAdd)) {
+		return existing | itemToAdd;
+	} else {
+		return existing;
+	}
+}
 
-			if (mask.checkItem(itemToAdd)) {
-				return existing | itemToAdd;
-			} else {
-				return existing;
-			}
-		},
+export function remove(existing, itemToRemove) {
+	assert.argumentIsRequired(existing, 'existing', Number);
+	assert.argumentIsRequired(itemToRemove, 'itemToRemove', Number);
 
-		remove(existing, itemToRemove) {
-			assert.argumentIsRequired(existing, 'existing', Number);
-			assert.argumentIsRequired(itemToRemove, 'itemToRemove', Number);
+	if (checkItem(itemToRemove)) {
+		return existing & ~itemToRemove;
+	} else {
+		return existing;
+	}
+}
 
-			if (mask.checkItem(itemToRemove)) {
-				return existing & ~itemToRemove;
-			} else {
-				return existing;
-			}
-		},
+export function has(existing, itemToCheck) {
+	assert.argumentIsRequired(existing, 'existing', Number);
+	assert.argumentIsRequired(itemToCheck, 'itemToCheck', Number);
 
-		has(existing, itemToCheck) {
-			assert.argumentIsRequired(existing, 'existing', Number);
-			assert.argumentIsRequired(itemToCheck, 'itemToCheck', Number);
+	return checkItem(itemToCheck) && (existing & itemToCheck) === itemToCheck;
+}
 
-			return mask.checkItem(itemToCheck) && (existing & itemToCheck) === itemToCheck;
-		},
-
-		checkItem(itemToCheck) {
-			return is.number(itemToCheck) && (itemToCheck === 0 || ((itemToCheck & (~itemToCheck + 1)) === itemToCheck));
-		}
-	};
-
-	return mask;
-})();
+export function checkItem(itemToCheck) {
+	return is.number(itemToCheck) && (itemToCheck === 0 || ((itemToCheck & (~itemToCheck + 1)) === itemToCheck));
+}

@@ -1,5 +1,5 @@
-const Disposable = require('./../../../../lang/Disposable'),
-	DisposableStack = require('./../../../../collections/specialized/DisposableStack');
+import Disposable from './../../../../lang/Disposable.js';
+import DisposableStack from './../../../../collections/specialized/DisposableStack.js';
 
 describe('When an DisposableStack is constructed', () => {
 	'use strict';
