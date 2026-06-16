@@ -182,7 +182,7 @@ export function object(candidate) {
  * @param {*} candidate
  * @returns {boolean}
  */
-function isNull(candidate) {
+export function nil(candidate) {
 	return candidate === null;
 }
 
@@ -194,7 +194,7 @@ function isNull(candidate) {
  * @param {*} candidate
  * @returns {boolean}
  */
-function isUndefined(candidate) {
+export function undef(candidate) {
 	return candidate === undefined;
 }
 
@@ -222,4 +222,4 @@ export function extension(parent, child) {
 	return fn(parent) && fn(child) && child.prototype instanceof parent;
 }
 
-export { isNull as null, isUndefined as undefined };
+export { nil as null, undef as undefined };
