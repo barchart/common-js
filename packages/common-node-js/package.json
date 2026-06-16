@@ -1,13 +1,6 @@
 {
   "name": "@barchart/common-node-js",
   "version": "4.73.0",
-  "type": "module",
-  "exports": {
-    "./*": {
-      "types": "./types/*.d.ts",
-      "import": "./*.js"
-    }
-  },
   "description": "Common classes, utilities, and functions for building Node.js servers",
   "type": "module",
   "author": {
@@ -22,15 +15,10 @@
       "url": "https://www.barchart.com"
     }
   ],
-  "engines": {
-    "node": ">=20.0.0"
-  },
   "scripts": {
     "lint": "gulp lint",
-    "prepack": "npm run types",
     "publish:npm": "npm publish",
-    "test": "jasmine --config=jasmine.json",
-    "types": "tsc -p tsconfig.types.json"
+    "test": "jasmine --config=jasmine.json"
   },
   "repository": {
     "type": "git",
@@ -79,8 +67,7 @@
     "gulp-jshint": "^2.1.0",
     "gulp-prompt": "^1.2.0",
     "jasmine": "^6.2.0",
-    "jshint": "^2.13.6",
-    "typescript": "^5.9.3"
+    "jshint": "^2.13.6"
   },
   "license": "MIT",
   "bugs": {

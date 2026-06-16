@@ -1,0 +1,71 @@
+declare module '@barchart/common-js/lang/Day' {
+    import DayFormatType from "@barchart/common-js/lang/DayFormatType";
+
+    export default class Day {
+        constructor(year: number, month: number, day: number);
+
+        get year(): number;
+        get month(): number;
+        get day(): number;
+
+        addDays(days: number, inverse?: boolean): Day;
+
+        format(): string;
+
+        static parse(value: string, type?: DayFormatType): Day;
+        static fromDate(date: Date): Day;
+    }
+}
+
+declare module '@barchart/common-js/lang/DayFormatType' {
+    export default class DayFormatType {
+        static get YYYY_MM_DD(): DayFormatType;
+        static get MM_DD_YYYY(): DayFormatType;
+        static get MM_DD_YY(): DayFormatType;
+    }
+}
+
+declare module '@barchart/common-js/lang/Disposable' {
+    export default class Disposable {
+        constructor();
+
+        get disposed(): boolean;
+
+        dispose(): void;
+    }
+}
+
+declare module '@barchart/common-js/lang/Timespan' {
+    export default class Timespan {
+        constructor(start: number, end: number);
+
+        get days(): number;
+        get hours(): number;
+        get minutes(): number;
+        get seconds(): number;
+        get milliseconds(): number;
+    }
+}
+
+declare module '@barchart/common-js/lang/Timestamp' {
+    export default class Timestamp {
+        constructor(timestamp: number);
+
+        get timestamp(): number;
+
+        add(milliseconds: number): Timestamp;
+        addSeconds(milliseconds: number): Timestamp;
+
+        subtract(milliseconds: number): Timestamp;
+        subtractSeconds(milliseconds: number): Timestamp;
+
+        getIsBefore(other: Timestamp): boolean;
+        getIsAfter(other: Timestamp): boolean;
+        getIsEqual(other: Timestamp): boolean;
+
+        static now(): Timestamp;
+
+        static clone(other: Timestamp): Timestamp;
+        static parse(value: number): Timestamp;
+    }
+}
