@@ -1,8 +1,14 @@
 {
   "name": "@barchart/common-js",
   "version": "4.73.0",
-  "description": "Library of common JavaScript utilities",
   "type": "module",
+  "exports": {
+    "./*": {
+      "types": "./types/*.d.ts",
+      "import": "./*.js"
+    }
+  },
+  "description": "Library of common JavaScript utilities",
   "author": {
     "name": "Bryan Ingle",
     "email": "bryan.ingle@barchart.com",
@@ -15,12 +21,15 @@
       "url": "https://www.barchart.com"
     }
   ],
-  "main": "",
-  "typings": "common-js.d.ts",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "scripts": {
     "lint": "gulp lint",
+    "prepack": "npm run types",
     "publish:npm": "npm publish",
-    "test": "jasmine --config=jasmine.json"
+    "test": "jasmine --config=jasmine.json",
+    "types": "tsc -p tsconfig.types.json"
   },
   "repository": {
     "type": "git",
@@ -40,7 +49,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.29.7",
-    "@babel/plugin-transform-modules-commonjs": "^7.29.7",
+    "@babel/preset-env": "^7.29.0",
     "babelify": "^10.0.0",
     "browserify": "^17.0.1",
     "date-fns": "^3.6.0",
@@ -52,6 +61,7 @@
     "gulp-prompt": "^1.2.0",
     "jasmine": "^6.2.0",
     "jshint": "^2.13.6",
+    "typescript": "^5.9.3",
     "vinyl-buffer": "^1.0.1",
     "vinyl-source-stream": "^2.0.0"
   },
