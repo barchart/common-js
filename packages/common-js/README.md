@@ -37,16 +37,6 @@ npm install @barchart/common-js -S
 
 Modern JavaScript language features are used. Some browsers may still require polyfills.
 
-#### Type Declarations
-
-TypeScript declarations are generated from JavaScript and JSDoc:
-
-```shell
-npm run types
-```
-
-The command writes declarations to `types/` using the same directory structure as the JavaScript source.
-
 #### License
 
 This software is provided under the MIT license.

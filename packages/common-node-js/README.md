@@ -36,16 +36,6 @@ This library has been published as a *public* module to NPM as [@barchart/common
 npm install @barchart/common-node-js -S
 ```
 
-#### Type Declarations
-
-TypeScript declarations are generated from JavaScript and JSDoc:
-
-```shell
-npm run types
-```
-
-The command writes declarations to `types/` using the same directory structure as the JavaScript source.
-
 #### License
 
 This software is provided under the MIT license.
