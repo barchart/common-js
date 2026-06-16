@@ -3,7 +3,7 @@
   "version": "4.73.0",
   "type": "module",
   "exports": {
-    "./*": {
+    "./*.js": {
       "types": "./types/*.d.ts",
       "import": "./*.js"
     }
