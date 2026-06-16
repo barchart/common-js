@@ -1,7 +1,5 @@
 .idea
 node_modules
-packages/common-js/types/
-packages/common-node-js/types/
 
 .DS_Store
 npm-debug.log
