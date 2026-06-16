@@ -87,7 +87,7 @@ export function negative(candidate) {
  * @returns {boolean}
  */
 export function iterable(candidate) {
-	return !isNull(candidate) && !isUndefined(candidate) && fn(candidate[Symbol.iterator]);
+	return !nil(candidate) && !undef(candidate) && fn(candidate[Symbol.iterator]);
 }
 
 /**
