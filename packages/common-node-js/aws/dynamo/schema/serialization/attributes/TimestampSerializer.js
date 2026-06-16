@@ -1,51 +1,46 @@
-const assert = require('@barchart/common-js/lang/assert'),
-	Timestamp = require('@barchart/common-js/lang/Timestamp');
+import * as assert from '@barchart/common-js/lang/assert.js';
 
-const DelegateSerializer = require('./DelegateSerializer'),
-	NumberSerializer = require('./NumberSerializer');
+import Timestamp from '@barchart/common-js/lang/Timestamp.js';
 
-module.exports = (() => {
-	'use strict';
+import DelegateSerializer from './DelegateSerializer.js';
+import NumberSerializer from './NumberSerializer.js';
+
+/**
+ * Converts a {@link Timestamp} instance into (and back from) the
+ * representation used on a DynamoDB record.
+ *
+ * @public
+ * @extends {DelegateSerializer}
+ */
+export default class TimestampSerializer extends DelegateSerializer {
+	constructor() {
+		super(NumberSerializer.INSTANCE, serializeTimestamp, deserializeTimestamp);
+	}
 
 	/**
-	 * Converts a {@link Timestamp} instance into (and back from) the
-	 * representation used on a DynamoDB record.
+	 * A singleton.
 	 *
 	 * @public
-	 * @extends {DelegateSerializer}
+	 * @static
+	 * @returns {TimestampSerializer}
 	 */
-	class TimestampSerializer extends DelegateSerializer {
-		constructor() {
-			super(NumberSerializer.INSTANCE, serializeTimestamp, deserializeTimestamp);
-		}
-
-		/**
-		 * A singleton.
-		 *
-		 * @public
-		 * @static
-		 * @returns {TimestampSerializer}
-		 */
-		static get INSTANCE() {
-			return instance;
-		}
-
-		toString() {
-			return '[TimestampSerializer]';
-		}
+	static get INSTANCE() {
+		return instance;
 	}
 
-	function serializeTimestamp(value) {
-		assert.argumentIsRequired(value, 'value', Timestamp, 'Timestamp');
-
-		return value.timestamp;
+	toString() {
+		return '[TimestampSerializer]';
 	}
+}
 
-	function deserializeTimestamp(value) {
-		return new Timestamp(value);
-	}
+function serializeTimestamp(value) {
+	assert.argumentIsRequired(value, 'value', Timestamp, 'Timestamp');
 
-	const instance = new TimestampSerializer();
+	return value.timestamp;
+}
 
-	return TimestampSerializer;
-})();
+function deserializeTimestamp(value) {
+	return new Timestamp(value);
+}
+
+const instance = new TimestampSerializer();

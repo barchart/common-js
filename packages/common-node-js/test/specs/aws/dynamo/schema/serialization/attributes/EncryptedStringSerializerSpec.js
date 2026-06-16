@@ -1,9 +1,8 @@
-const Attribute = require('./../../../../../../../aws/dynamo/schema/definitions/Attribute'),
-	DataType = require('./../../../../../../../aws/dynamo/schema/definitions/DataType'),
-	EncryptionType = require('./../../../../../../../aws/dynamo/schema/definitions/EncryptionType'),
-	Encryptor = require('./../../../../../../../aws/dynamo/schema/definitions/Encryptor');
-
-const EncryptedStringSerializer = require('./../../../../../../../aws/dynamo/schema/serialization/attributes/EncryptedStringSerializer');
+import Attribute from './../../../../../../../aws/dynamo/schema/definitions/Attribute.js';
+import DataType from './../../../../../../../aws/dynamo/schema/definitions/DataType.js';
+import EncryptionType from './../../../../../../../aws/dynamo/schema/definitions/EncryptionType.js';
+import Encryptor from './../../../../../../../aws/dynamo/schema/definitions/Encryptor.js';
+import EncryptedStringSerializer from './../../../../../../../aws/dynamo/schema/serialization/attributes/EncryptedStringSerializer.js';
 
 describe('When a EncryptedStringSerializer is instantiated using the AES-192 algorithm', () => {
 	'use strict';

@@ -1,53 +1,48 @@
-const assert = require('@barchart/common-js/lang/assert'),
-	Money = require('@barchart/common-js/lang/Money');
+import * as assert from '@barchart/common-js/lang/assert.js';
 
-const ComponentSerializer = require('./ComponentSerializer'),
-	ComponentType = require('./../../definitions/ComponentType');
+import Money from '@barchart/common-js/lang/Money.js';
 
-module.exports = (() => {
-	'use strict';
+import ComponentSerializer from './ComponentSerializer.js';
+import ComponentType from './../../definitions/ComponentType.js';
 
-	/**
-	 * A component serializer for {@link Money} instances.
-	 *
-	 * @public
-	 * @extends {ComponentSerializer}
-	 */
-	class MoneySerializer extends ComponentSerializer {
-		constructor() {
-			super(ComponentType.MONEY);
-		}
-
-		_readComponent(object) {
-			assert.argumentIsRequired(object, 'object', Money, 'Money');
-
-			return [
-				object.decimal,
-				object.currency
-			];
-		}
-
-		_createComponent(data) {
-			return new Money(data[0], data[1]);
-		}
-
-		/**
-		 * A singleton.
-		 *
-		 * @public
-		 * @static
-		 * @returns {MoneySerializer}
-		 */
-		static get INSTANCE() {
-			return instance;
-		}
-
-		toString() {
-			return '[MoneySerializer]';
-		}
+/**
+ * A component serializer for {@link Money} instances.
+ *
+ * @public
+ * @extends {ComponentSerializer}
+ */
+export default class MoneySerializer extends ComponentSerializer {
+	constructor() {
+		super(ComponentType.MONEY);
 	}
 
-	const instance = new MoneySerializer();
+	_readComponent(object) {
+		assert.argumentIsRequired(object, 'object', Money, 'Money');
 
-	return MoneySerializer;
-})();
+		return [
+			object.decimal,
+			object.currency
+		];
+	}
+
+	_createComponent(data) {
+		return new Money(data[0], data[1]);
+	}
+
+	/**
+	 * A singleton.
+	 *
+	 * @public
+	 * @static
+	 * @returns {MoneySerializer}
+	 */
+	static get INSTANCE() {
+		return instance;
+	}
+
+	toString() {
+		return '[MoneySerializer]';
+	}
+}
+
+const instance = new MoneySerializer();

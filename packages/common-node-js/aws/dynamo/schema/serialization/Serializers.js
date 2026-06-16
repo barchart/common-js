@@ -1,224 +1,214 @@
-const assert = require('@barchart/common-js/lang/assert');
+import * as assert from '@barchart/common-js/lang/assert.js';
 
-const Attribute = require('./../../schema/definitions/Attribute'),
-	Component = require('./../../schema/definitions/Component'),
-	ComponentType = require('./../../schema/definitions/ComponentType'),
-	DataType = require('./../../schema/definitions/DataType');
+import Attribute from './../../schema/definitions/Attribute.js';
+import Component from './../../schema/definitions/Component.js';
+import ComponentType from './../../schema/definitions/ComponentType.js';
+import DataType from './../../schema/definitions/DataType.js';
+import AttributeSerializer from './attributes/AttributeSerializer.js';
+import BinarySerializer from './attributes/BinarySerializer.js';
+import BooleanSerializer from './attributes/BooleanSerializer.js';
+import DaySerializer from './attributes/DaySerializer.js';
+import DecimalSerializer from './attributes/DecimalSerializer.js';
+import EnumSerializer from './attributes/EnumSerializer.js';
+import JsonSerializer from './attributes/JsonSerializer.js';
+import { MapSerializer } from './attributes/NestedSerializers.js';
+import { ListSerializer } from './attributes/NestedSerializers.js';
+import NumberSerializer from './attributes/NumberSerializer.js';
+import StringSerializer from './attributes/StringSerializer.js';
+import StringSetSerializer from './attributes/StringSetSerializer.js';
+import TimestampSerializer from './attributes/TimestampSerializer.js';
+import CompressedAdHocSerializer from './attributes/CompressedAdHocSerializer.js';
+import CompressedBinarySerializer from './attributes/CompressedBinarySerializer.js';
+import CompressedJsonSerializer from './attributes/CompressedJsonSerializer.js';
+import CompressedStringSerializer from './attributes/CompressedStringSerializer.js';
+import EncryptedAdHocSerializer from './attributes/EncryptedAdHocSerializer.js';
+import EncryptedJsonSerializer from './attributes/EncryptedJsonSerializer.js';
+import EncryptedStringSerializer from './attributes/EncryptedStringSerializer.js';
+import ComponentSerializer from './components/ComponentSerializer.js';
+import MoneySerializer from './components/MoneySerializer.js';
 
-const AttributeSerializer = require('./attributes/AttributeSerializer'),
-	BinarySerializer = require('./attributes/BinarySerializer'),
-	BooleanSerializer = require('./attributes/BooleanSerializer'),
-	DaySerializer = require('./attributes/DaySerializer'),
-	DecimalSerializer = require('./attributes/DecimalSerializer'),
-	EnumSerializer = require('./attributes/EnumSerializer'),
-	JsonSerializer = require('./attributes/JsonSerializer'),
-	MapSerializer = require('./attributes/NestedSerializers').MapSerializer,
-	ListSerializer = require('./attributes/NestedSerializers').ListSerializer,
-	NumberSerializer = require('./attributes/NumberSerializer'),
-	StringSerializer = require('./attributes/StringSerializer'),
-	StringSetSerializer = require('./attributes/StringSetSerializer'),
-	TimestampSerializer = require('./attributes/TimestampSerializer');
+/**
+ * Utility for looking up {@link AttributeSerializer} and {@link ComponentSerializer}
+ * instances. (no instance-level functionality exists -- static functions only).
+ *
+ * @public
+ */
+export default class Serializers {
+	constructor() {
 
-const CompressedAdHocSerializer = require('./attributes/CompressedAdHocSerializer'),
-	CompressedBinarySerializer = require('./attributes/CompressedBinarySerializer'),
-	CompressedJsonSerializer = require('./attributes/CompressedJsonSerializer'),
-	CompressedStringSerializer = require('./attributes/CompressedStringSerializer');
-
-const EncryptedAdHocSerializer = require('./attributes/EncryptedAdHocSerializer'),
-	EncryptedJsonSerializer = require('./attributes/EncryptedJsonSerializer'),
-	EncryptedStringSerializer = require('./attributes/EncryptedStringSerializer');
-
-const ComponentSerializer = require('./components/ComponentSerializer'),
-	MoneySerializer = require('./components/MoneySerializer');
-
-module.exports = (() => {
-	'use strict';
-
-	/**
-	 * Utility for looking up {@link AttributeSerializer} and {@link ComponentSerializer}
-	 * instances. (no instance-level functionality exists -- static functions only).
-	 *
-	 * @public
-	 */
-	class Serializers {
-		constructor() {
-
-		}
-
-		/**
-		 * Binds a {@link DataType} to an {@link AttributeSerializer}, allowing the underlying framework
-		 * to automatically handle the a custom attribute type.
-		 *
-		 * @public
-		 * @static
-		 * @param {DataType} dataType
-		 * @param {AttributeSerializer} serializer
-		 */
-		static registerAttributeSerializer(dataType, serializer) {
-			assert.argumentIsRequired(dataType, 'dataType', DataType, 'DataType');
-			assert.argumentIsRequired(serializer, 'serializer', AttributeSerializer, 'AttributeSerializer');
-
-			if (attributeSerializers.has(dataType)) {
-				throw new Error('An attribute serializer has already been registered for the data type (' + dataType.toString() + ')');
-			}
-
-			attributeSerializers.set(dataType, serializer);
-		}
-
-		/**
-		 * Binds a {@link DataType} to an {@link AttributeSerializer} generated by a custom factory.
-		 *
-		 * @public
-		 * @static
-		 * @param {DataType} dataType
-		 * @param {Function} serializerFactory - A function which returns an {@link AttributeSerializer}
-		 */
-		static registerAttributeSerializerFactory(dataType, serializerFactory) {
-			assert.argumentIsRequired(dataType, 'dataType', DataType, 'DataType');
-			assert.argumentIsRequired(serializerFactory, 'serializerFactory', Function);
-
-			if (attributeSerializerFactories.has(dataType)) {
-				throw new Error('An attribute serializer factory has already been registered for the data type (' + dataType.toString() + ')');
-			}
-
-			attributeSerializerFactories.set(dataType, serializerFactory);
-		}
-
-		/**
-		 * Returns the appropriate {@link AttributeSerializer} given an {@link Attribute}.
-		 *
-		 * @public
-		 * @static
-		 * @param {Attribute} attribute
-		 * @returns {AttributeSerializer|null}
-		 */
-		static forAttribute(attribute) {
-			assert.argumentIsRequired(attribute, 'attribute', Attribute, 'Attribute');
-
-			const dataType = attribute.dataType;
-
-			let serializer = Serializers.forDataType(dataType);
-
-			if (serializer === null && attributeSerializerFactories.has(dataType)) {
-				const factory = attributeSerializerFactories.get(dataType);
-
-				serializer = factory(attribute);
-			}
-
-			return serializer || null;
-		}
-
-		/**
-		 * Returns the appropriate {@link AttributeSerializer} given a {@link DataType}.
-		 *
-		 * @public
-		 * @static
-		 * @param {DataType} dataType
-		 * @returns {AttributeSerializer|null}
-		 */
-		static forDataType(dataType) {
-			assert.argumentIsRequired(dataType, 'dataType', DataType, 'DataType');
-
-			const enumerationType = dataType.enumerationType;
-
-			let returnRef;
-
-			if (enumerationType) {
-				if (!enumSerializers.has(enumerationType)) {
-					enumSerializers.set(enumerationType, new EnumSerializer(enumerationType));
-				}
-
-				returnRef = enumSerializers.get(enumerationType);
-			} else if (attributeSerializers.has(dataType)) {
-				returnRef = attributeSerializers.get(dataType);
-			} else {
-				returnRef = null;
-			}
-
-			return returnRef || null;
-		}
-
-		/**
-		 * Binds a {@link DataType} to a {@link ComponentSerializer}, allowing the underlying framework
-		 * to automatically handle the a custom attribute type.
-		 *
-		 * @public
-		 * @static
-		 * @param {ComponentType} componentType
-		 * @param {ComponentSerializer} serializer
-		 */
-		static registerComponentSerializer(componentType, serializer) {
-			assert.argumentIsRequired(componentType, 'componentType', ComponentType, 'ComponentType');
-			assert.argumentIsRequired(serializer, 'serializer', ComponentSerializer, 'ComponentSerializer');
-
-			if (componentSerializers.has(componentType)) {
-				throw new Error('A component serializer has already been registered for the component type (' + componentType.toString() + ')');
-			}
-
-			componentSerializers.set(componentType, serializer);
-		}
-
-		/**
-		 * Returns the appropriate {@link ComponentSerializer} given a {@link Component}.
-		 *
-		 * @public
-		 * @static
-		 * @param {Component} component
-		 * @returns {ComponentSerializer|null}
-		 */
-		static forComponent(component) {
-			assert.argumentIsRequired(component, 'component', Component, 'Component');
-
-			return Serializers.forComponentType(component.componentType);
-		}
-
-		/**
-		 * Returns the appropriate {@link ComponentSerializer} given a {@link ComponentType}.
-		 *
-		 * @public
-		 * @static
-		 * @param {ComponentType} componentType
-		 * @returns {ComponentSerializer|null}
-		 */
-		static forComponentType(componentType) {
-			assert.argumentIsRequired(componentType, 'componentType', ComponentType, 'ComponentType');
-
-			return componentSerializers.get(componentType) || null;
-		}
-
-		toString() {
-			return '[Serializers]';
-		}
 	}
 
-	const enumSerializers = new Map();
-	const attributeSerializers = new Map();
-	const componentSerializers = new Map();
+	/**
+	 * Binds a {@link DataType} to an {@link AttributeSerializer}, allowing the underlying framework
+	 * to automatically handle the a custom attribute type.
+	 *
+	 * @public
+	 * @static
+	 * @param {DataType} dataType
+	 * @param {AttributeSerializer} serializer
+	 */
+	static registerAttributeSerializer(dataType, serializer) {
+		assert.argumentIsRequired(dataType, 'dataType', DataType, 'DataType');
+		assert.argumentIsRequired(serializer, 'serializer', AttributeSerializer, 'AttributeSerializer');
 
-	Serializers.registerAttributeSerializer(DataType.BINARY, BinarySerializer.INSTANCE);
-	Serializers.registerAttributeSerializer(DataType.BOOLEAN, BooleanSerializer.INSTANCE);
-	Serializers.registerAttributeSerializer(DataType.NUMBER, NumberSerializer.INSTANCE);
-	Serializers.registerAttributeSerializer(DataType.STRING, StringSerializer.INSTANCE);
-	Serializers.registerAttributeSerializer(DataType.LIST, ListSerializer.INSTANCE);
-	Serializers.registerAttributeSerializer(DataType.MAP, MapSerializer.INSTANCE);
-	Serializers.registerAttributeSerializer(DataType.STRING_SET, StringSetSerializer.INSTANCE);
-	Serializers.registerAttributeSerializer(DataType.JSON, JsonSerializer.INSTANCE);
-	Serializers.registerAttributeSerializer(DataType.DAY, DaySerializer.INSTANCE);
-	Serializers.registerAttributeSerializer(DataType.DECIMAL, DecimalSerializer.INSTANCE);
-	Serializers.registerAttributeSerializer(DataType.TIMESTAMP, TimestampSerializer.INSTANCE);
+		if (attributeSerializers.has(dataType)) {
+			throw new Error('An attribute serializer has already been registered for the data type (' + dataType.toString() + ')');
+		}
 
-	Serializers.registerComponentSerializer(ComponentType.MONEY, MoneySerializer.INSTANCE);
+		attributeSerializers.set(dataType, serializer);
+	}
 
-	const attributeSerializerFactories = new Map();
+	/**
+	 * Binds a {@link DataType} to an {@link AttributeSerializer} generated by a custom factory.
+	 *
+	 * @public
+	 * @static
+	 * @param {DataType} dataType
+	 * @param {Function} serializerFactory - A function which returns an {@link AttributeSerializer}
+	 */
+	static registerAttributeSerializerFactory(dataType, serializerFactory) {
+		assert.argumentIsRequired(dataType, 'dataType', DataType, 'DataType');
+		assert.argumentIsRequired(serializerFactory, 'serializerFactory', Function);
 
-	Serializers.registerAttributeSerializerFactory(DataType.AD_HOC_COMPRESSED, (a) => new CompressedAdHocSerializer(a));
-	Serializers.registerAttributeSerializerFactory(DataType.BINARY_COMPRESSED, (a) => new CompressedBinarySerializer(a));
-	Serializers.registerAttributeSerializerFactory(DataType.STRING_COMPRESSED, (a) => new CompressedStringSerializer(a));
-	Serializers.registerAttributeSerializerFactory(DataType.JSON_COMPRESSED, (a) => new CompressedJsonSerializer(a));
+		if (attributeSerializerFactories.has(dataType)) {
+			throw new Error('An attribute serializer factory has already been registered for the data type (' + dataType.toString() + ')');
+		}
 
-	Serializers.registerAttributeSerializerFactory(DataType.AD_HOC_ENCRYPTED, (a) => new EncryptedAdHocSerializer(a));
-	Serializers.registerAttributeSerializerFactory(DataType.STRING_ENCRYPTED, (a) => new EncryptedStringSerializer(a));
-	Serializers.registerAttributeSerializerFactory(DataType.JSON_ENCRYPTED, (a) => new EncryptedJsonSerializer(a));
+		attributeSerializerFactories.set(dataType, serializerFactory);
+	}
 
-	return Serializers;
-})();
+	/**
+	 * Returns the appropriate {@link AttributeSerializer} given an {@link Attribute}.
+	 *
+	 * @public
+	 * @static
+	 * @param {Attribute} attribute
+	 * @returns {AttributeSerializer|null}
+	 */
+	static forAttribute(attribute) {
+		assert.argumentIsRequired(attribute, 'attribute', Attribute, 'Attribute');
+
+		const dataType = attribute.dataType;
+
+		let serializer = Serializers.forDataType(dataType);
+
+		if (serializer === null && attributeSerializerFactories.has(dataType)) {
+			const factory = attributeSerializerFactories.get(dataType);
+
+			serializer = factory(attribute);
+		}
+
+		return serializer || null;
+	}
+
+	/**
+	 * Returns the appropriate {@link AttributeSerializer} given a {@link DataType}.
+	 *
+	 * @public
+	 * @static
+	 * @param {DataType} dataType
+	 * @returns {AttributeSerializer|null}
+	 */
+	static forDataType(dataType) {
+		assert.argumentIsRequired(dataType, 'dataType', DataType, 'DataType');
+
+		const enumerationType = dataType.enumerationType;
+
+		let returnRef;
+
+		if (enumerationType) {
+			if (!enumSerializers.has(enumerationType)) {
+				enumSerializers.set(enumerationType, new EnumSerializer(enumerationType));
+			}
+
+			returnRef = enumSerializers.get(enumerationType);
+		} else if (attributeSerializers.has(dataType)) {
+			returnRef = attributeSerializers.get(dataType);
+		} else {
+			returnRef = null;
+		}
+
+		return returnRef || null;
+	}
+
+	/**
+	 * Binds a {@link DataType} to a {@link ComponentSerializer}, allowing the underlying framework
+	 * to automatically handle the a custom attribute type.
+	 *
+	 * @public
+	 * @static
+	 * @param {ComponentType} componentType
+	 * @param {ComponentSerializer} serializer
+	 */
+	static registerComponentSerializer(componentType, serializer) {
+		assert.argumentIsRequired(componentType, 'componentType', ComponentType, 'ComponentType');
+		assert.argumentIsRequired(serializer, 'serializer', ComponentSerializer, 'ComponentSerializer');
+
+		if (componentSerializers.has(componentType)) {
+			throw new Error('A component serializer has already been registered for the component type (' + componentType.toString() + ')');
+		}
+
+		componentSerializers.set(componentType, serializer);
+	}
+
+	/**
+	 * Returns the appropriate {@link ComponentSerializer} given a {@link Component}.
+	 *
+	 * @public
+	 * @static
+	 * @param {Component} component
+	 * @returns {ComponentSerializer|null}
+	 */
+	static forComponent(component) {
+		assert.argumentIsRequired(component, 'component', Component, 'Component');
+
+		return Serializers.forComponentType(component.componentType);
+	}
+
+	/**
+	 * Returns the appropriate {@link ComponentSerializer} given a {@link ComponentType}.
+	 *
+	 * @public
+	 * @static
+	 * @param {ComponentType} componentType
+	 * @returns {ComponentSerializer|null}
+	 */
+	static forComponentType(componentType) {
+		assert.argumentIsRequired(componentType, 'componentType', ComponentType, 'ComponentType');
+
+		return componentSerializers.get(componentType) || null;
+	}
+
+	toString() {
+		return '[Serializers]';
+	}
+}
+
+const enumSerializers = new Map();
+const attributeSerializers = new Map();
+const componentSerializers = new Map();
+
+Serializers.registerAttributeSerializer(DataType.BINARY, BinarySerializer.INSTANCE);
+Serializers.registerAttributeSerializer(DataType.BOOLEAN, BooleanSerializer.INSTANCE);
+Serializers.registerAttributeSerializer(DataType.NUMBER, NumberSerializer.INSTANCE);
+Serializers.registerAttributeSerializer(DataType.STRING, StringSerializer.INSTANCE);
+Serializers.registerAttributeSerializer(DataType.LIST, ListSerializer.INSTANCE);
+Serializers.registerAttributeSerializer(DataType.MAP, MapSerializer.INSTANCE);
+Serializers.registerAttributeSerializer(DataType.STRING_SET, StringSetSerializer.INSTANCE);
+Serializers.registerAttributeSerializer(DataType.JSON, JsonSerializer.INSTANCE);
+Serializers.registerAttributeSerializer(DataType.DAY, DaySerializer.INSTANCE);
+Serializers.registerAttributeSerializer(DataType.DECIMAL, DecimalSerializer.INSTANCE);
+Serializers.registerAttributeSerializer(DataType.TIMESTAMP, TimestampSerializer.INSTANCE);
+
+Serializers.registerComponentSerializer(ComponentType.MONEY, MoneySerializer.INSTANCE);
+
+const attributeSerializerFactories = new Map();
+
+Serializers.registerAttributeSerializerFactory(DataType.AD_HOC_COMPRESSED, (a) => new CompressedAdHocSerializer(a));
+Serializers.registerAttributeSerializerFactory(DataType.BINARY_COMPRESSED, (a) => new CompressedBinarySerializer(a));
+Serializers.registerAttributeSerializerFactory(DataType.STRING_COMPRESSED, (a) => new CompressedStringSerializer(a));
+Serializers.registerAttributeSerializerFactory(DataType.JSON_COMPRESSED, (a) => new CompressedJsonSerializer(a));
+
+Serializers.registerAttributeSerializerFactory(DataType.AD_HOC_ENCRYPTED, (a) => new EncryptedAdHocSerializer(a));
+Serializers.registerAttributeSerializerFactory(DataType.STRING_ENCRYPTED, (a) => new EncryptedStringSerializer(a));
+Serializers.registerAttributeSerializerFactory(DataType.JSON_ENCRYPTED, (a) => new EncryptedJsonSerializer(a));

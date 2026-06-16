@@ -1,149 +1,143 @@
-const log4js = require('log4js');
+import * as assert from '@barchart/common-js/lang/assert.js';
+import * as promise from '@barchart/common-js/lang/promise.js';
 
-const uuid = require('uuid');
+import Disposable from '@barchart/common-js/lang/Disposable.js';
 
-const assert = require('@barchart/common-js/lang/assert'),
-	Disposable = require('@barchart/common-js/lang/Disposable'),
-	promise = require('@barchart/common-js/lang/promise');
+import log4js from 'log4js';
+import * as uuid from 'uuid';
 
-module.exports = (() => {
-	'use strict';
+const logger = log4js.getLogger('common-node/database/mysql/Client');
 
-	const logger = log4js.getLogger('common-node/database/mysql/Client');
+let queryCounter = 0;
 
-	let queryCounter = 0;
+/**
+ * An abstract class for executing queries against a MySQL database.
+ *
+ * @public
+ * @abstract
+ */
+export default class Client extends Disposable {
+	constructor(connection) {
+		super();
+
+		assert.argumentIsRequired(connection, 'connection', Object);
+
+		this._id = uuid.v4();
+		this._connection = connection;
+	}
 
 	/**
-	 * An abstract class for executing queries against a MySQL database.
+	 * A unique identifier to identify the client.
 	 *
 	 * @public
-	 * @abstract
+	 * @returns {String}
 	 */
-	class Client extends Disposable {
-		constructor(connection) {
-			super();
+	get id() {
+		return this._id;
+	}
 
-			assert.argumentIsRequired(connection, 'connection', Object);
-
-			this._id = uuid.v4();
-			this._connection = connection;
+	/**
+	 * Executes a query.
+	 *
+	 * @public
+	 * @async
+	 * @param {String} query
+	 * @param {Array=} parameters
+	 * @param {String=} name
+	 * @returns {Promise<Object[]>}
+	 */
+	async query(query, parameters, name) {
+		if (this.disposed) {
+			throw new Error(`Unable to execute query, the ${this.toString()} has been disposed`);
 		}
 
-		/**
-		 * A unique identifier to identify the client.
-		 *
-		 * @public
-		 * @returns {String}
-		 */
-		get id() {
-			return this._id;
-		}
+		assert.argumentIsRequired(query, 'query', String);
+		assert.argumentIsOptional(name, 'name', String);
 
-		/**
-		 * Executes a query.
-		 *
-		 * @public
-		 * @async
-		 * @param {String} query
-		 * @param {Array=} parameters
-		 * @param {String=} name
-		 * @returns {Promise<Object[]>}
-		 */
-		async query(query, parameters, name) {
-			if (this.disposed) {
-				throw new Error(`Unable to execute query, the ${this.toString()} has been disposed`);
-			}
+		return promise.build((resolveCallback, rejectCallback) => {
+			queryCounter = queryCounter + 1;
 
-			assert.argumentIsRequired(query, 'query', String);
-			assert.argumentIsOptional(name, 'name', String);
+			const queryCount = queryCounter;
 
-			return promise.build((resolveCallback, rejectCallback) => {
-				queryCounter = queryCounter + 1;
+			logger.debug('Executing query [', queryCount, '] from client [', this._id, ']');
 
-				const queryCount = queryCounter;
+			this._connection.query(query, parameters || [ ], (e, result) => {
+				if (e) {
+					logger.debug('Query [', queryCount, '] from client [', this._id, '] failed');
 
-				logger.debug('Executing query [', queryCount, '] from client [', this._id, ']');
+					rejectCallback(e);
+				} else {
+					logger.debug('Query [', queryCount, '] from client [', this._id, '] finished');
 
-				this._connection.query(query, parameters || [ ], (e, result) => {
-					if (e) {
-						logger.debug('Query [', queryCount, '] from client [', this._id, '] failed');
-
-						rejectCallback(e);
-					} else {
-						logger.debug('Query [', queryCount, '] from client [', this._id, '] finished');
-
-						resolveCallback(result);
-					}
-				});
+					resolveCallback(result);
+				}
 			});
+		});
+	}
+
+	/**
+	 * Finalizes instance operations and disposes instance. If the graceful parameter is true, any outstanding
+	 * queries will be completed.
+	 *
+	 * @public
+	 * @async
+	 * @param {Boolean} graceful
+	 * @returns {Promise<void>}
+	 */
+	async shutdown(graceful) {
+		if (this.disposed) {
+			throw new Error(`Unable to shutdown, the [ ${this.toString()} ] has been disposed`);
 		}
 
-		/**
-		 * Finalizes instance operations and disposes instance. If the graceful parameter is true, any outstanding
-		 * queries will be completed.
-		 *
-		 * @public
-		 * @async
-		 * @param {Boolean} graceful
-		 * @returns {Promise<void>}
-		 */
-		async shutdown(graceful) {
-			if (this.disposed) {
-				throw new Error(`Unable to shutdown, the [ ${this.toString()} ] has been disposed`);
-			}
+		if (this._connection === null) {
+			throw new Error(`Unable to shutdown, the [ ${this.toString()} ] has been shutdown`);
+		}
 
-			if (this._connection === null) {
-				throw new Error(`Unable to shutdown, the [ ${this.toString()} ] has been shutdown`);
-			}
+		assert.argumentIsRequired(graceful, 'graceful', Boolean);
 
-			assert.argumentIsRequired(graceful, 'graceful', Boolean);
+		const connection = this._connection;
+		this._connection = null;
 
-			const connection = this._connection;
-			this._connection = null;
+		this.dispose();
 
-			this.dispose();
+		let shutdownPromise;
 
-			let shutdownPromise;
+		if (graceful) {
+			shutdownPromise = new Promise((resolve, reject) => {
+				connection.end((error) => {
+					if (error) {
+						reject(error);
+					}
 
-			if (graceful) {
-				shutdownPromise = new Promise((resolve, reject) => {
-					connection.end((error) => {
-						if (error) {
-							reject(error);
-						}
-
-						logger.info(`Shutdown [ ${this.toString()} ] [ ${this.id} ] gracefully`);
-
-						resolve();
-					});
-				});
-			} else {
-				shutdownPromise = new Promise((resolve) => {
-					connection.destroy();
-
-					logger.info(`Shutdown [ ${this.toString()} ] [ ${this.id} ] immediately`);
+					logger.info(`Shutdown [ ${this.toString()} ] [ ${this.id} ] gracefully`);
 
 					resolve();
 				});
-			}
+			});
+		} else {
+			shutdownPromise = new Promise((resolve) => {
+				connection.destroy();
 
-			return shutdownPromise;
+				logger.info(`Shutdown [ ${this.toString()} ] [ ${this.id} ] immediately`);
+
+				resolve();
+			});
 		}
 
-		_onDispose() {
-			if (this._connection !== null) {
-				this._connection.destroy();
-
-				this._connection = null;
-			}
-
-			logger.info(`Disposed [ ${this.toString()} ] [ ${this.id} ]`);
-		}
-
-		toString() {
-			return '[Client]';
-		}
+		return shutdownPromise;
 	}
 
-	return Client;
-})();
+	_onDispose() {
+		if (this._connection !== null) {
+			this._connection.destroy();
+
+			this._connection = null;
+		}
+
+		logger.info(`Disposed [ ${this.toString()} ] [ ${this.id} ]`);
+	}
+
+	toString() {
+		return '[Client]';
+	}
+}

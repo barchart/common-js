@@ -1,32 +1,27 @@
-const assert = require('@barchart/common-js/lang/assert'),
-	CommandHandler = require('@barchart/common-js/commands/CommandHandler');
+import * as assert from '@barchart/common-js/lang/assert.js';
 
-module.exports = (() => {
-	'use strict';
+import CommandHandler from '@barchart/common-js/commands/CommandHandler.js';
 
-	class Endpoint {
-		constructor(executionCommand, validationCommand) {
-			assert.argumentIsRequired(executionCommand, 'executionCommand', CommandHandler, 'CommandHandler');
-			assert.argumentIsOptional(validationCommand, 'validationCommand', CommandHandler, 'CommandHandler');
+export default class Endpoint {
+	constructor(executionCommand, validationCommand) {
+		assert.argumentIsRequired(executionCommand, 'executionCommand', CommandHandler, 'CommandHandler');
+		assert.argumentIsOptional(validationCommand, 'validationCommand', CommandHandler, 'CommandHandler');
 
-			this._executionCommand = executionCommand;
-			this._validationCommand = validationCommand || emptyValidationCommand;
-		}
-
-		getExecutionCommand() {
-			return this._executionCommand;
-		}
-
-		getValidationCommand() {
-			return this._validationCommand;
-		}
-
-		toString() {
-			return '[Endpoint]';
-		}
+		this._executionCommand = executionCommand;
+		this._validationCommand = validationCommand || emptyValidationCommand;
 	}
 
-	const emptyValidationCommand = CommandHandler.fromFunction((context) => true);
+	getExecutionCommand() {
+		return this._executionCommand;
+	}
 
-	return Endpoint;
-})();
+	getValidationCommand() {
+		return this._validationCommand;
+	}
+
+	toString() {
+		return '[Endpoint]';
+	}
+}
+
+const emptyValidationCommand = CommandHandler.fromFunction((context) => true);

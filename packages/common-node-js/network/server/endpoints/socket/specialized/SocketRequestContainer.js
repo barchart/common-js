@@ -1,22 +1,16 @@
-const Container = require('./../../Container'),
-	SocketRequestEndpoint = require('./SocketRequestEndpoint');
+import Container from './../../Container.js';
+import SocketRequestEndpoint from './SocketRequestEndpoint.js';
 
-module.exports = (() => {
-	'use strict';
-
-	class SocketRequestContainer extends Container {
-		constructor(port, path, secure) {
-			super(port, path, secure);
-		}
-
-		_getEndpointType() {
-			return SocketRequestEndpoint;
-		}
-
-		toString() {
-			return '[SocketRequestContainer]';
-		}
+export default class SocketRequestContainer extends Container {
+	constructor(port, path, secure) {
+		super(port, path, secure);
 	}
 
-	return SocketRequestContainer;
-})();
+	_getEndpointType() {
+		return SocketRequestEndpoint;
+	}
+
+	toString() {
+		return '[SocketRequestContainer]';
+	}
+}

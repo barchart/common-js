@@ -1,27 +1,21 @@
-const assert = require('@barchart/common-js/lang/assert');
+import * as assert from '@barchart/common-js/lang/assert.js';
 
-const Endpoint = require('./../../Endpoint');
+import Endpoint from './../../Endpoint.js';
 
-module.exports = (() => {
-	'use strict';
+export default class SocketRequestEndpoint extends Endpoint {
+	constructor(channel, executionCommand, validationCommand) {
+		super(executionCommand, validationCommand);
 
-	class SocketRequestEndpoint extends Endpoint {
-		constructor(channel, executionCommand, validationCommand) {
-			super(executionCommand, validationCommand);
+		assert.argumentIsRequired(channel, 'channel', String);
 
-			assert.argumentIsRequired(channel, 'channel', String);
-
-			this._channel = channel;
-		}
-
-		getChannel() {
-			return this._channel;
-		}
-
-		toString() {
-			return '[SocketRequestEndpoint]';
-		}
+		this._channel = channel;
 	}
 
-	return SocketRequestEndpoint;
-})();
+	getChannel() {
+		return this._channel;
+	}
+
+	toString() {
+		return '[SocketRequestEndpoint]';
+	}
+}

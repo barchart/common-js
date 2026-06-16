@@ -1,93 +1,87 @@
-const assert = require('@barchart/common-js/lang/assert'),
-	is = require('@barchart/common-js/lang/is');
+import * as assert from '@barchart/common-js/lang/assert.js';
+import * as is from '@barchart/common-js/lang/is.js';
 
-const Container = require('./endpoints/Container');
+import Container from './endpoints/Container.js';
 
-module.exports = (() => {
-	'use strict';
+const staticPathTypes = {
+	local: 'local',
+	s3: 's3'
+};
 
-	const staticPathTypes = {
-		local: 'local',
-		s3: 's3'
-	};
+export default class ServerDefinition {
+	constructor() {
+		this._containers = [];
 
-	class ServerDefinition {
-		constructor() {
-			this._containers = [];
-
-			this._staticPaths = null;
-			this._templatePath = null;
-		}
-
-		withContainer(container) {
-			assert.argumentIsRequired(container, 'container', Container, 'Container');
-
-			this._containers.push(container);
-
-			return this;
-		}
-
-		withStaticPath(staticFilePath, staticServerPath, s3Configuration) {
-			assert.argumentIsRequired(staticFilePath, 'staticFilePath', String);
-			assert.argumentIsRequired(staticServerPath, 'staticServerPath', String);
-			assert.argumentIsOptional(s3Configuration, 's3Configuration', Object);
-
-			this._staticPaths = this._staticPaths || {};
-
-			if (this._staticPaths.hasOwnProperty(staticServerPath)) {
-				throw new Error('The path for serving static files has already been defined.');
-			}
-
-			let configuration;
-
-			if (is.object(s3Configuration)) {
-				configuration = {
-					type: staticPathTypes.s3,
-					keyPrefix: staticFilePath,
-					s3: s3Configuration
-				};
-			} else {
-				configuration = {
-					type: staticPathTypes.local,
-					filePath: staticFilePath
-				};
-			}
-
-			this._staticPaths[staticServerPath] = configuration;
-
-			return this;
-		}
-
-		withTemplatePath(templatePath) {
-			assert.argumentIsRequired(templatePath, 'templatePath', String);
-
-			this._templatePath = templatePath;
-
-			return this;
-		}
-
-		getContainers() {
-			return this._containers;
-		}
-
-		getStaticPaths() {
-			return this._staticPaths;
-		}
-
-		getTemplatePath() {
-			return this._templatePath;
-		}
-
-		static withContainer(container) {
-			const serverDefinition = new ServerDefinition();
-
-			return serverDefinition.withContainer(container);
-		}
-
-		toString() {
-			return '[ServerDefinition]';
-		}
+		this._staticPaths = null;
+		this._templatePath = null;
 	}
 
-	return ServerDefinition;
-})();
+	withContainer(container) {
+		assert.argumentIsRequired(container, 'container', Container, 'Container');
+
+		this._containers.push(container);
+
+		return this;
+	}
+
+	withStaticPath(staticFilePath, staticServerPath, s3Configuration) {
+		assert.argumentIsRequired(staticFilePath, 'staticFilePath', String);
+		assert.argumentIsRequired(staticServerPath, 'staticServerPath', String);
+		assert.argumentIsOptional(s3Configuration, 's3Configuration', Object);
+
+		this._staticPaths = this._staticPaths || {};
+
+		if (this._staticPaths.hasOwnProperty(staticServerPath)) {
+			throw new Error('The path for serving static files has already been defined.');
+		}
+
+		let configuration;
+
+		if (is.object(s3Configuration)) {
+			configuration = {
+				type: staticPathTypes.s3,
+				keyPrefix: staticFilePath,
+				s3: s3Configuration
+			};
+		} else {
+			configuration = {
+				type: staticPathTypes.local,
+				filePath: staticFilePath
+			};
+		}
+
+		this._staticPaths[staticServerPath] = configuration;
+
+		return this;
+	}
+
+	withTemplatePath(templatePath) {
+		assert.argumentIsRequired(templatePath, 'templatePath', String);
+
+		this._templatePath = templatePath;
+
+		return this;
+	}
+
+	getContainers() {
+		return this._containers;
+	}
+
+	getStaticPaths() {
+		return this._staticPaths;
+	}
+
+	getTemplatePath() {
+		return this._templatePath;
+	}
+
+	static withContainer(container) {
+		const serverDefinition = new ServerDefinition();
+
+		return serverDefinition.withContainer(container);
+	}
+
+	toString() {
+		return '[ServerDefinition]';
+	}
+}

@@ -1,4 +1,4 @@
-const BooleanSerializer = require('./../../../../../../../aws/dynamo/schema/serialization/attributes/BooleanSerializer');
+import BooleanSerializer from './../../../../../../../aws/dynamo/schema/serialization/attributes/BooleanSerializer.js';
 
 describe('When a BooleanSerializer is instantiated', () => {
 	'use strict';

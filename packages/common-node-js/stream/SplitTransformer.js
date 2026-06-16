@@ -1,70 +1,64 @@
-const log4js = require('log4js'),
-	Stream = require('stream');
+import * as assert from '@barchart/common-js/lang/assert.js';
+import * as is from '@barchart/common-js/lang/is.js';
+import * as object from '@barchart/common-js/lang/object.js';
 
-const assert = require('@barchart/common-js/lang/assert'),
-	is = require('@barchart/common-js/lang/is'),
-	object = require('@barchart/common-js/lang/object');
+import log4js from 'log4js';
+import Stream from 'stream';
 
-module.exports = (() => {
-	'use strict';
+const logger = log4js.getLogger('common-node/stream/SplitTransformer');
 
-	const logger = log4js.getLogger('common-node/stream/SplitTransformer');
+/**
+ * Splits arrays into items.
+ *
+ * @public
+ * @extends {Stream.Transform}
+ * @param {String=} description
+ * @param {Boolean=} silent
+ * @param {Object=} options
+ */
+export default class SplitTransformer extends Stream.Transform {
+	constructor(description, silent, options) {
+		super(object.merge({ objectMode: true }, (options || { })));
 
-	/**
-	 * Splits arrays into items.
-	 *
-	 * @public
-	 * @extends {Steam.Transform}
-	 * @param {String=} description
-	 * @param {Boolean=} silent
-	 * @param {Object=} options
-	 */
-	class SplitTransformer extends Stream.Transform {
-		constructor(description, silent, options) {
-			super(object.merge({ objectMode: true }, (options || { })));
+		assert.argumentIsOptional(description, 'description', String);
+		assert.argumentIsOptional(silent, 'silent', Boolean);
+		assert.argumentIsOptional(options, 'options', Object);
 
-			assert.argumentIsOptional(description, 'description', String);
-			assert.argumentIsOptional(silent, 'silent', Boolean);
-			assert.argumentIsOptional(options, 'options', Object);
+		this._description = description || 'Split Transformer';
+		this._silent = is.boolean(silent) && silent;
 
-			this._description = description || 'Split Transformer';
-			this._silent = is.boolean(silent) && silent;
+		this._counter = 0;
+	}
 
-			this._counter = 0;
+	_transform(chunk, encoding, callback) {
+		this._counter = this._counter + 1;
+
+		let error = null;
+
+		if (is.array(chunk)) {
+			chunk.forEach(item => this.push(item));
+		} else {
+			error = new Error(`Transformation [ ${this._counter} ] for [ ${this._description} ] failed, unexpected input type.`);
 		}
 
-		_transform(chunk, encoding, callback) {
-			this._counter = this._counter + 1;
+		if (error === null) {
+			callback();
+		} else {
+			if (this._silent) {
+				logger.warn(`Transformation [ ${this._counter} ] for [ ${this._description} ] failed.`);
 
-			let error = null;
-
-			if (is.array(chunk)) {
-				chunk.forEach(item => this.push(item));
-			} else {
-				error = new Error(`Transformation [ ${this._counter} ] for [ ${this._description} ] failed, unexpected input type.`);
-			}
-
-			if (error === null) {
-				callback();
-			} else {
-				if (this._silent) {
-					logger.warn(`Transformation [ ${this._counter} ] for [ ${this._description} ] failed.`);
-
-					if (logger.isTraceEnabled() && chunk) {
-						logger.trace(chunk);
-					}
-
-					error = null;
+				if (logger.isTraceEnabled() && chunk) {
+					logger.trace(chunk);
 				}
 
-				callback(error, null);
+				error = null;
 			}
-		}
 
-		toString() {
-			return '[SplitTransformer]';
+			callback(error, null);
 		}
 	}
 
-	return SplitTransformer;
-})();
+	toString() {
+		return '[SplitTransformer]';
+	}
+}

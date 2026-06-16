@@ -1,8 +1,7 @@
-const SesProvider = require('./../../../aws/SesProvider');
-
-const DelegateTransformation = require('./../../../stream/transformations/DelegateTransformation'),
-	DelegateWriteStream = require('./../../../stream/DelegateWriteStream'),
-	ObjectTransformer = require('./../../../stream/ObjectTransformer');
+import SesProvider from './../../../aws/SesProvider.js';
+import DelegateTransformation from './../../../stream/transformations/DelegateTransformation.js';
+import DelegateWriteStream from './../../../stream/DelegateWriteStream.js';
+import ObjectTransformer from './../../../stream/ObjectTransformer.js';
 
 async function main() {
 	const configuration = {

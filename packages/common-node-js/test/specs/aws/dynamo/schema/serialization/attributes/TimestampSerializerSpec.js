@@ -1,6 +1,6 @@
-const Timestamp = require('@barchart/common-js/lang/Timestamp');
+import Timestamp from '@barchart/common-js/lang/Timestamp.js';
 
-const TimestampSerializer = require('./../../../../../../../aws/dynamo/schema/serialization/attributes/TimestampSerializer');
+import TimestampSerializer from './../../../../../../../aws/dynamo/schema/serialization/attributes/TimestampSerializer.js';
 
 describe('When a TimestampSerializer is instantiated', () => {
 	'use strict';

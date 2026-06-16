@@ -1,7 +1,8 @@
-const { Readable } = require('stream');
+import * as utils from '../utils/ManualTestUtils.js';
 
-const S3Provider = require('../../../aws/S3Provider');
-const utils = require('../utils/ManualTestUtils');
+import S3Provider from '../../../aws/S3Provider.js';
+
+import { Readable } from 'stream';
 
 utils.run('S3Provider manual test', async () => {
 	const bucket = utils.requireEnv('S3_TEST_BUCKET');

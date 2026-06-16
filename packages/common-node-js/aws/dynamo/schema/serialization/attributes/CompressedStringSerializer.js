@@ -1,38 +1,32 @@
-const assert = require('@barchart/common-js/lang/assert');
+import * as assert from '@barchart/common-js/lang/assert.js';
 
-const CompressedBinarySerializer = require('./CompressedBinarySerializer'),
-	DelegateSerializer = require('./DelegateSerializer');
+import CompressedBinarySerializer from './CompressedBinarySerializer.js';
+import DelegateSerializer from './DelegateSerializer.js';
 
-module.exports = (() => {
-	'use strict';
-
-	/**
-	 * Converts a string into (and back from) the compressed representation
-	 * used on a DynamoDB record.
-	 *
-	 * @public
-	 * @param {Attribute} attribute
-	 * @extends {DelegateSerializer}
-	 */
-	class CompressedStringSerializer extends DelegateSerializer {
-		constructor(attribute) {
-			super(new CompressedBinarySerializer(attribute), serializeBuffer, deserializeBuffer);
-		}
-
-		toString() {
-			return '[CompressedStringSerializer]';
-		}
+/**
+ * Converts a string into (and back from) the compressed representation
+ * used on a DynamoDB record.
+ *
+ * @public
+ * @param {Attribute} attribute
+ * @extends {DelegateSerializer}
+ */
+export default class CompressedStringSerializer extends DelegateSerializer {
+	constructor(attribute) {
+		super(new CompressedBinarySerializer(attribute), serializeBuffer, deserializeBuffer);
 	}
 
-	function serializeBuffer(value) {
-		assert.argumentIsRequired(value, 'value', String);
-
-		return Buffer.from(value);
+	toString() {
+		return '[CompressedStringSerializer]';
 	}
+}
 
-	function deserializeBuffer(value) {
-		return value.toString();
-	}
+function serializeBuffer(value) {
+	assert.argumentIsRequired(value, 'value', String);
 
-	return CompressedStringSerializer;
-})();
+	return Buffer.from(value);
+}
+
+function deserializeBuffer(value) {
+	return value.toString();
+}

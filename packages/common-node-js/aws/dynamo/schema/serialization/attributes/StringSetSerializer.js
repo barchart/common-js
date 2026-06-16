@@ -1,59 +1,53 @@
-const array = require('@barchart/common-js/lang/array'),
-	assert = require('@barchart/common-js/lang/assert');
+import * as array from '@barchart/common-js/lang/array.js';
+import * as assert from '@barchart/common-js/lang/assert.js';
 
-const AttributeSerializer = require('./AttributeSerializer'),
-	DataType = require('./../../definitions/DataType');
+import AttributeSerializer from './AttributeSerializer.js';
+import DataType from './../../definitions/DataType.js';
 
-module.exports = (() => {
-	'use strict';
-
-	/**
-	 * Converts a string set into (and back from) the representation used
-	 * on a DynamoDB record.
-	 *
-	 * @public
-	 * @extends {AttributeSerializer}
-	 */
-	class StringSetSerializer extends AttributeSerializer {
-		constructor() {
-			super();
-		}
-
-		serialize(items) {
-			assert.argumentIsArray(items, 'items', String);
-
-			if (items.length !== array.unique(items).length) {
-				throw new Error('Could not serialize set of strings. Items must be unique.');
-			}
-
-			const wrapper = { };
-
-			wrapper[DataType.STRING_SET.code] = items;
-
-			return wrapper;
-		}
-
-		deserialize(wrapper) {
-			return wrapper[DataType.STRING_SET.code];
-		}
-
-		/**
-		 * A singleton.
-		 *
-		 * @public
-		 * @static
-		 * @returns {StringSetSerializer}
-		 */
-		static get INSTANCE() {
-			return instance;
-		}
-
-		toString() {
-			return '[StringSetSerializer]';
-		}
+/**
+ * Converts a string set into (and back from) the representation used
+ * on a DynamoDB record.
+ *
+ * @public
+ * @extends {AttributeSerializer}
+ */
+export default class StringSetSerializer extends AttributeSerializer {
+	constructor() {
+		super();
 	}
 
-	const instance = new StringSetSerializer();
+	serialize(items) {
+		assert.argumentIsArray(items, 'items', String);
 
-	return StringSetSerializer;
-})();
+		if (items.length !== array.unique(items).length) {
+			throw new Error('Could not serialize set of strings. Items must be unique.');
+		}
+
+		const wrapper = { };
+
+		wrapper[DataType.STRING_SET.code] = items;
+
+		return wrapper;
+	}
+
+	deserialize(wrapper) {
+		return wrapper[DataType.STRING_SET.code];
+	}
+
+	/**
+	 * A singleton.
+	 *
+	 * @public
+	 * @static
+	 * @returns {StringSetSerializer}
+	 */
+	static get INSTANCE() {
+		return instance;
+	}
+
+	toString() {
+		return '[StringSetSerializer]';
+	}
+}
+
+const instance = new StringSetSerializer();

@@ -1,39 +1,33 @@
-const assert = require('@barchart/common-js/lang/assert');
+import * as assert from '@barchart/common-js/lang/assert.js';
 
-const Writer = require('./Writer');
+import Writer from './Writer.js';
 
-module.exports = (() => {
-	'use strict';
+/**
+ * An implementation of {@link Writer} that delegates to an array
+ * of {@link Writer} instances.
+ *
+ * @public
+ * @extends {Writer}
+ * @param {Writer[]} writers
+ */
+export default class CompositeWriter extends Writer {
+	constructor(writers) {
+		super();
 
-	/**
-	 * An implementation of {@link Writer} that delegates to an array
-	 * of {@link Writer} instances.
-	 *
-	 * @public
-	 * @extends {Writer}
-	 * @param {Writer[]} writers
-	 */
-	class CompositeWriter extends Writer {
-		constructor(writers) {
-			super();
+		assert.argumentIsArray(writers, 'writers', Writer, 'Writer');
 
-			assert.argumentIsArray(writers, 'writers', Writer, 'Writer');
-
-			this._writers = writers;
-		}
-
-		_write(source, target) {
-			return this._writers.reduce((targetToUse, writer) => writer.write(source, targetToUse), target);
-		}
-
-		_canWrite(source, target) {
-			return true;
-		}
-
-		toString() {
-			return '[CompositeWriter]';
-		}
+		this._writers = writers;
 	}
 
-	return CompositeWriter;
-})();
+	_write(source, target) {
+		return this._writers.reduce((targetToUse, writer) => writer.write(source, targetToUse), target);
+	}
+
+	_canWrite(source, target) {
+		return true;
+	}
+
+	toString() {
+		return '[CompositeWriter]';
+	}
+}

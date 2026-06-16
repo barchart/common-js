@@ -1,8 +1,7 @@
-const Serializer = require('./../../../../../../aws/dynamo/schema/serialization/Serializer');
-
-const TableBuilder = require('./../../../../../../aws/dynamo/schema/builders/TableBuilder'),
-	DataType = require('./../../../../../../aws/dynamo/schema/definitions/DataType'),
-	KeyType = require('./../../../../../../aws/dynamo/schema/definitions/KeyType');
+import Serializer from './../../../../../../aws/dynamo/schema/serialization/Serializer.js';
+import TableBuilder from './../../../../../../aws/dynamo/schema/builders/TableBuilder.js';
+import DataType from './../../../../../../aws/dynamo/schema/definitions/DataType.js';
+import KeyType from './../../../../../../aws/dynamo/schema/definitions/KeyType.js';
 
 describe('When a Serializer with a table that has "firstName" and "age" attributes', () => {
 	'use strict';

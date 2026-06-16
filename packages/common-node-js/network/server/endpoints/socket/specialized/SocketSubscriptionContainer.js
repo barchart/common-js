@@ -1,22 +1,16 @@
-const Container = require('./../../Container'),
-	SocketSubscriptionEndpoint = require('./SocketSubscriptionEndpoint');
+import Container from './../../Container.js';
+import SocketSubscriptionEndpoint from './SocketSubscriptionEndpoint.js';
 
-module.exports = (() => {
-	'use strict';
-
-	class SocketSubscriptionContainer extends Container {
-		constructor(port, path, secure) {
-			super(port, path, secure);
-		}
-
-		_getEndpointType() {
-			return SocketSubscriptionEndpoint;
-		}
-
-		toString() {
-			return '[SocketSubscriptionContainer]';
-		}
+export default class SocketSubscriptionContainer extends Container {
+	constructor(port, path, secure) {
+		super(port, path, secure);
 	}
 
-	return SocketSubscriptionContainer;
-})();
+	_getEndpointType() {
+		return SocketSubscriptionEndpoint;
+	}
+
+	toString() {
+		return '[SocketSubscriptionContainer]';
+	}
+}

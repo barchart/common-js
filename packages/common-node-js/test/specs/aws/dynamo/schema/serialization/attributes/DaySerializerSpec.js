@@ -1,6 +1,6 @@
-const Day = require('@barchart/common-js/lang/Day');
+import Day from '@barchart/common-js/lang/Day.js';
 
-const DaySerializer = require('./../../../../../../../aws/dynamo/schema/serialization/attributes/DaySerializer');
+import DaySerializer from './../../../../../../../aws/dynamo/schema/serialization/attributes/DaySerializer.js';
 
 describe('When a DaySerializer is instantiated', () => {
 	'use strict';

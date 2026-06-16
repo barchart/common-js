@@ -1,6 +1,6 @@
-const Decimal = require('@barchart/common-js/lang/Decimal');
+import Decimal from '@barchart/common-js/lang/Decimal.js';
 
-const DecimalSerializer = require('./../../../../../../../aws/dynamo/schema/serialization/attributes/DecimalSerializer');
+import DecimalSerializer from './../../../../../../../aws/dynamo/schema/serialization/attributes/DecimalSerializer.js';
 
 describe('When a DecimalSerializer is instantiated', () => {
 	'use strict';

@@ -1,5 +1,6 @@
-const SecretsManagerProvider = require('../../../aws/SecretsManagerProvider');
-const utils = require('../utils/ManualTestUtils');
+import * as utils from '../utils/ManualTestUtils.js';
+
+import SecretsManagerProvider from '../../../aws/SecretsManagerProvider.js';
 
 utils.run('SecretsManagerProvider manual test', async () => {
 	const secretId = utils.requireEnv('SECRETS_MANAGER_TEST_SECRET_ID');

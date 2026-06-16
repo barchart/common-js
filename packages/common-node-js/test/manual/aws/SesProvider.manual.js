@@ -1,5 +1,6 @@
-const SesProvider = require('../../../aws/SesProvider');
-const utils = require('../utils/ManualTestUtils');
+import * as utils from '../utils/ManualTestUtils.js';
+
+import SesProvider from '../../../aws/SesProvider.js';
 
 utils.run('SesProvider manual test', async () => {
 	const senderAddress = utils.requireEnv('SES_TEST_SENDER');

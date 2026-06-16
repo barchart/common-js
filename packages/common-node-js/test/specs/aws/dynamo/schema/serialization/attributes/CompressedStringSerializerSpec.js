@@ -1,8 +1,7 @@
-const Attribute = require('./../../../../../../../aws/dynamo/schema/definitions/Attribute'),
-	CompressionType = require('./../../../../../../../aws/dynamo/schema/definitions/CompressionType'),
-	DataType = require('./../../../../../../../aws/dynamo/schema/definitions/DataType');
-
-const CompressedStringSerializer = require('./../../../../../../../aws/dynamo/schema/serialization/attributes/CompressedStringSerializer');
+import Attribute from './../../../../../../../aws/dynamo/schema/definitions/Attribute.js';
+import CompressionType from './../../../../../../../aws/dynamo/schema/definitions/CompressionType.js';
+import DataType from './../../../../../../../aws/dynamo/schema/definitions/DataType.js';
+import CompressedStringSerializer from './../../../../../../../aws/dynamo/schema/serialization/attributes/CompressedStringSerializer.js';
 
 describe('When a CompressedStringSerializer is instantiated using the Deflate algorithm', () => {
 	'use strict';

@@ -1,7 +1,3 @@
-const ExpressServerFactory = require('./express/ExpressServerFactory');
+import ExpressServerFactory from './express/ExpressServerFactory.js';
 
-module.exports = (() => {
-	'use strict';
-
-	return new ExpressServerFactory();
-})();
+export default new ExpressServerFactory();

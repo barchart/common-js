@@ -1,10 +1,10 @@
-const TableBuilder = require('./../../../../../../aws/dynamo/schema/builders/TableBuilder'),
-	DataType = require('./../../../../../../aws/dynamo/schema/definitions/DataType'),
-	OperatorType = require('./../../../../../../aws/dynamo/query/definitions/OperatorType'),
-	KeyType = require('./../../../../../../aws/dynamo/schema/definitions/KeyType'),
-	UpdateActionType = require('./../../../../../../aws/dynamo/query/definitions/UpdateActionType'),
-	UpdateBuilder = require('./../../../../../../aws/dynamo/query/builders/UpdateBuilder'),
-	UpdateOperatorType = require('./../../../../../../aws/dynamo/query/definitions/UpdateOperatorType');
+import TableBuilder from './../../../../../../aws/dynamo/schema/builders/TableBuilder.js';
+import DataType from './../../../../../../aws/dynamo/schema/definitions/DataType.js';
+import OperatorType from './../../../../../../aws/dynamo/query/definitions/OperatorType.js';
+import KeyType from './../../../../../../aws/dynamo/schema/definitions/KeyType.js';
+import UpdateActionType from './../../../../../../aws/dynamo/query/definitions/UpdateActionType.js';
+import UpdateBuilder from './../../../../../../aws/dynamo/query/builders/UpdateBuilder.js';
+import UpdateOperatorType from './../../../../../../aws/dynamo/query/definitions/UpdateOperatorType.js';
 
 describe('When creating an update query', () => {
 	'use strict';

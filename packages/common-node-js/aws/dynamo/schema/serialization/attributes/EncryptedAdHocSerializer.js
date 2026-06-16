@@ -1,24 +1,18 @@
-const CompressedAdHocSerializer = require('./CompressedAdHocSerializer');
+import CompressedAdHocSerializer from './CompressedAdHocSerializer.js';
 
-module.exports = (() => {
-	'use strict';
-
-	/**
-	 * Converts an {@link AdHoc} instance into (and back from) the compressed
-	 * and encrypted representation used on a DynamoDB record.
-	 *
-	 * @public
-	 * @extends {CompressedAdHocSerializer}
-	 */
-	class EncryptedAdHocSerializer extends CompressedAdHocSerializer {
-		constructor(attribute) {
-			super(attribute);
-		}
-
-		toString() {
-			return '[EncryptedAdHocSerializer]';
-		}
+/**
+ * Converts an {@link AdHoc} instance into (and back from) the compressed
+ * and encrypted representation used on a DynamoDB record.
+ *
+ * @public
+ * @extends {CompressedAdHocSerializer}
+ */
+export default class EncryptedAdHocSerializer extends CompressedAdHocSerializer {
+	constructor(attribute) {
+		super(attribute);
 	}
 
-	return EncryptedAdHocSerializer;
-})();
+	toString() {
+		return '[EncryptedAdHocSerializer]';
+	}
+}

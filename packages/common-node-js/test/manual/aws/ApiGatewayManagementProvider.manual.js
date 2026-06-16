@@ -1,5 +1,6 @@
-const ApiGatewayManagementProvider = require('../../../aws/ApiGatewayManagementProvider');
-const utils = require('../utils/ManualTestUtils');
+import * as utils from '../utils/ManualTestUtils.js';
+
+import ApiGatewayManagementProvider from '../../../aws/ApiGatewayManagementProvider.js';
 
 utils.run('ApiGatewayManagementProvider manual test', async () => {
 	const endpoint = utils.requireEnv('APIGW_MANAGEMENT_ENDPOINT');

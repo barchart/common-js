@@ -1,4 +1,4 @@
-const ListSerializer = require('./../../../../../../../aws/dynamo/schema/serialization/attributes/NestedSerializers').ListSerializer;
+import { ListSerializer } from './../../../../../../../aws/dynamo/schema/serialization/attributes/NestedSerializers.js';
 
 describe('When a ListSerializer is instantiated', () => {
 	'use strict';

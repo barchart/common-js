@@ -1,22 +1,16 @@
-const Container = require('./../../Container'),
-	SocketEmitterEndpoint = require('./SocketEmitterEndpoint');
+import Container from './../../Container.js';
+import SocketEmitterEndpoint from './SocketEmitterEndpoint.js';
 
-module.exports = (() => {
-	'use strict';
-
-	class SocketEmitterContainer extends Container {
-		constructor(port, path, secure) {
-			super(port, path, secure);
-		}
-
-		_getEndpointType() {
-			return SocketEmitterEndpoint;
-		}
-
-		toString() {
-			return '[SocketEmitterContainer]';
-		}
+export default class SocketEmitterContainer extends Container {
+	constructor(port, path, secure) {
+		super(port, path, secure);
 	}
 
-	return SocketEmitterContainer;
-})();
+	_getEndpointType() {
+		return SocketEmitterEndpoint;
+	}
+
+	toString() {
+		return '[SocketEmitterContainer]';
+	}
+}

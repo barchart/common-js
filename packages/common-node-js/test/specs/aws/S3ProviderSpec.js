@@ -1,4 +1,4 @@
-const S3Provider = require('./../../../aws/S3Provider');
+import S3Provider from './../../../aws/S3Provider.js';
 
 describe('When creating a qualified filename for s3', () => {
 	'use strict';

@@ -1,6 +1,7 @@
-const SnsProvider = require('../../../aws/SnsProvider');
-const SqsProvider = require('../../../aws/SqsProvider');
-const utils = require('../utils/ManualTestUtils');
+import * as utils from '../utils/ManualTestUtils.js';
+
+import SnsProvider from '../../../aws/SnsProvider.js';
+import SqsProvider from '../../../aws/SqsProvider.js';
 
 utils.run('SnsProvider manual test', async () => {
 	const region = utils.region();

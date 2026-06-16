@@ -1,60 +1,54 @@
-const is = require('@barchart/common-js/lang/is');
+import * as is from '@barchart/common-js/lang/is.js';
 
-const ComponentType = require('./ComponentType');
+import ComponentType from './ComponentType.js';
 
-module.exports = (() => {
-	'use strict';
+/**
+ * A group of {@link Attribute} instances that are logically related.
+ *
+ * @public
+ */
+export default class Component {
+	constructor(name, componentType) {
+		this._name = name;
+		this._componentType = componentType;
+	}
 
 	/**
-	 * A group of {@link Attribute} instances that are logically related.
+	 * Name of the component.
+	 *
+	 * @public
+	 * @returns {String}
+	 */
+	get name() {
+		return this._name;
+	}
+
+	/**
+	 * Type of the component.
+	 *
+	 * @public
+	 * @returns {ComponentType}
+	 */
+	get componentType() {
+		return this._componentType;
+	}
+
+	/**
+	 * Throws an {@link Error} if the instance is invalid.
 	 *
 	 * @public
 	 */
-	class Component {
-		constructor(name, componentType) {
-			this._name = name;
-			this._componentType = componentType;
+	validate() {
+		if (!is.string(this._name) || this._name.length < 1) {
+			throw new Error('Component name is invalid.');
 		}
 
-		/**
-		 * Name of the component.
-		 *
-		 * @public
-		 * @returns {String}
-		 */
-		get name() {
-			return this._name;
-		}
-
-		/**
-		 * Type of the component.
-		 *
-		 * @public
-		 * @returns {ComponentType}
-		 */
-		get componentType() {
-			return this._componentType;
-		}
-
-		/**
-		 * Throws an {@link Error} if the instance is invalid.
-		 *
-		 * @public
-		 */
-		validate() {
-			if (!is.string(this._name) || this._name.length < 1) {
-				throw new Error('Component name is invalid.');
-			}
-
-			if (!(this._componentType instanceof ComponentType)) {
-				throw new Error('Component type is invalid.');
-			}
-		}
-
-		toString() {
-			return `[Component (name=${this._name})]`;
+		if (!(this._componentType instanceof ComponentType)) {
+			throw new Error('Component type is invalid.');
 		}
 	}
 
-	return Component;
-})();
+	toString() {
+		return `[Component (name=${this._name})]`;
+	}
+}

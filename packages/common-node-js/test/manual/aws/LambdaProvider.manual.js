@@ -1,5 +1,6 @@
-const LambdaProvider = require('../../../aws/LambdaProvider');
-const utils = require('../utils/ManualTestUtils');
+import * as utils from '../utils/ManualTestUtils.js';
+
+import LambdaProvider from '../../../aws/LambdaProvider.js';
 
 utils.run('LambdaProvider manual test', async () => {
 	const functionName = utils.requireEnv('LAMBDA_TEST_FUNCTION_NAME');

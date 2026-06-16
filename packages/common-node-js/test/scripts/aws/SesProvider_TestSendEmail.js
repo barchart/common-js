@@ -1,4 +1,4 @@
-const SesProvider = require('./../../../aws/SesProvider');
+import SesProvider from './../../../aws/SesProvider.js';
 
 async function sesProvider_TestSendEmail() {
 	const configuration = {

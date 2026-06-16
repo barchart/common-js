@@ -1,4 +1,4 @@
-const ServerDefinition = require('./../../../../network/server/ServerDefinition');
+import ServerDefinition from './../../../../network/server/ServerDefinition.js';
 
 describe('When a ServerDefinition is created', () => {
 	'use strict';

@@ -1,50 +1,44 @@
-const assert = require('@barchart/common-js/lang/assert');
+import * as assert from '@barchart/common-js/lang/assert.js';
 
-const DelegateSerializer = require('./DelegateSerializer'),
-	StringSerializer = require('./StringSerializer');
+import DelegateSerializer from './DelegateSerializer.js';
+import StringSerializer from './StringSerializer.js';
 
-module.exports = (() => {
-	'use strict';
+/**
+ * Converts an object into (and back from) the representation used
+ * on a DynamoDB record using JSON strings.
+ *
+ * @public
+ * @extends {DelegateSerializer}
+ */
+export default class JsonSerializer extends DelegateSerializer {
+	constructor() {
+		super(StringSerializer.INSTANCE, serializeJson, deserializeJson);
+	}
 
 	/**
-	 * Converts an object into (and back from) the representation used
-	 * on a DynamoDB record using JSON strings.
+	 * A singleton.
 	 *
 	 * @public
-	 * @extends {DelegateSerializer}
+	 * @static
+	 * @returns {JsonSerializer}
 	 */
-	class JsonSerializer extends DelegateSerializer {
-		constructor() {
-			super(StringSerializer.INSTANCE, serializeJson, deserializeJson);
-		}
-
-		/**
-		 * A singleton.
-		 *
-		 * @public
-		 * @static
-		 * @returns {JsonSerializer}
-		 */
-		static get INSTANCE() {
-			return instance;
-		}
-
-		toString() {
-			return '[JsonSerializer]';
-		}
+	static get INSTANCE() {
+		return instance;
 	}
 
-	function serializeJson(value) {
-		assert.argumentIsRequired(value, 'value', Object);
-
-		return JSON.stringify(value);
+	toString() {
+		return '[JsonSerializer]';
 	}
+}
 
-	function deserializeJson(value) {
-		return JSON.parse(value);
-	}
+function serializeJson(value) {
+	assert.argumentIsRequired(value, 'value', Object);
 
-	const instance = new JsonSerializer();
+	return JSON.stringify(value);
+}
 
-	return JsonSerializer;
-})();
+function deserializeJson(value) {
+	return JSON.parse(value);
+}
+
+const instance = new JsonSerializer();

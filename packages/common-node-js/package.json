@@ -2,6 +2,7 @@
   "name": "@barchart/common-node-js",
   "version": "4.73.0",
   "description": "Common classes, utilities, and functions for building Node.js servers",
+  "type": "module",
   "author": {
     "name": "Bryan Ingle",
     "email": "bryan.ingle@barchart.com",

@@ -1,7 +1,7 @@
-const crypto = require('crypto');
-const readline = require('readline');
+import crypto from 'crypto';
+import readline from 'readline';
 
-function env(name, defaultValue) {
+export function env(name, defaultValue) {
 	const value = process.env[name];
 
 	if (value === undefined || value === null || value.length === 0) {
@@ -11,7 +11,7 @@ function env(name, defaultValue) {
 	return value;
 }
 
-function requireEnv(name) {
+export function requireEnv(name) {
 	const value = env(name, null);
 
 	if (value === null) {
@@ -21,51 +21,51 @@ function requireEnv(name) {
 	return value;
 }
 
-function region() {
+export function region() {
 	return env('AWS_REGION', env('AWS_DEFAULT_REGION', 'us-east-1'));
 }
 
-function prefix() {
+export function prefix() {
 	return env('AWS_TEST_PREFIX', `common-node-js-manual-${Date.now()}-${crypto.randomBytes(4).toString('hex')}`);
 }
 
-function value(name, defaultValue) {
+export function value(name, defaultValue) {
 	return env(name, defaultValue);
 }
 
-function section(name) {
+export function section(name) {
 	console.log(`\n--- ${name} ---`);
 }
 
-function assert(condition, message) {
+export function assert(condition, message) {
 	if (!condition) {
 		throw new Error(`Manual test assertion failed: ${message}`);
 	}
 }
 
-function assertArray(value, message) {
+export function assertArray(value, message) {
 	assert(Array.isArray(value), message);
 }
 
-function assertObject(value, message) {
+export function assertObject(value, message) {
 	assert(value !== null && typeof value === 'object' && !Array.isArray(value), message);
 }
 
-function assertString(value, message) {
+export function assertString(value, message) {
 	assert(typeof value === 'string' && value.length > 0, message);
 }
 
-function assertEqual(actual, expected, message) {
+export function assertEqual(actual, expected, message) {
 	assert(actual === expected, `${message}. Expected [ ${expected} ], got [ ${actual} ]`);
 }
 
-function assertIncludes(values, expected, message) {
+export function assertIncludes(values, expected, message) {
 	assertArray(values, message);
 
 	assert(values.includes(expected), `${message}. Expected array to include [ ${expected} ]`);
 }
 
-async function step(name, callback) {
+export async function step(name, callback) {
 	section(name);
 
 	const result = await callback();
@@ -77,7 +77,7 @@ async function step(name, callback) {
 	return result;
 }
 
-function pauseBeforeCleanup(message) {
+export function pauseBeforeCleanup(message) {
 	if (env('PAUSE_BEFORE_CLEANUP', 'false') !== 'true') {
 		return Promise.resolve();
 	}
@@ -97,7 +97,7 @@ function pauseBeforeCleanup(message) {
 	});
 }
 
-async function cleanup(name, callback) {
+export async function cleanup(name, callback) {
 	try {
 		await callback();
 
@@ -108,11 +108,11 @@ async function cleanup(name, callback) {
 	}
 }
 
-function sleep(milliseconds) {
+export function sleep(milliseconds) {
 	return new Promise(resolve => setTimeout(resolve, milliseconds));
 }
 
-async function run(name, callback) {
+export async function run(name, callback) {
 	try {
 		section(name);
 
@@ -127,21 +127,3 @@ async function run(name, callback) {
 	}
 }
 
-module.exports = {
-	assert,
-	assertArray,
-	assertEqual,
-	assertIncludes,
-	assertObject,
-	assertString,
-	cleanup,
-	env: value,
-	pauseBeforeCleanup,
-	prefix,
-	region,
-	requireEnv,
-	run,
-	section,
-	sleep,
-	step
-};

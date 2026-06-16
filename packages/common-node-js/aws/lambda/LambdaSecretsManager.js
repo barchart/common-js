@@ -1,84 +1,78 @@
-const assert = require('@barchart/common-js/lang/assert');
+import * as assert from '@barchart/common-js/lang/assert.js';
 
-const SecretsManagerProvider = require('./../SecretsManagerProvider');
+import SecretsManagerProvider from './../SecretsManagerProvider.js';
 
-module.exports = (() => {
-	'use strict';
+/**
+ * Manages secrets from AWS Secrets Manager.
+ *
+ * @public
+ */
+export default class LambdaSecretsManager {
+	constructor() {
+		this._cache = new Map();
+	}
 
 	/**
-	 * Manages secrets from AWS Secrets Manager.
+	 * A singleton.
 	 *
 	 * @public
+	 * @static
+	 * @returns {LambdaSecretsManager}
 	 */
-	class LambdaSecretsManager {
-		constructor() {
-			this._cache = new Map();
-		}
-
-		/**
-		 * A singleton.
-		 *
-		 * @public
-		 * @static
-		 * @returns {LambdaSecretsManager}
-		 */
-		static get INSTANCE() {
-			return instance;
-		}
-
-		/**
-		 * Gets value from AWS Secrets Manager.
-		 *
-		 * @public
-		 * @async
-		 * @param {String} secretId
-		 * @return {Promise<String>}
-		 */
-		async getValue(secretId) {
-			return Promise.resolve()
-				.then(() => {
-					assert.argumentIsRequired(secretId, 'secretId', String);
-
-					if (this._cache.has(secretId)) {
-						return Promise.resolve(this._cache.get(secretId));
-					}
-
-					return getSecretsManagerProvider()
-						.then((provider) => {
-							return provider.getSecretValue(secretId)
-								.then((data) => {
-									this._cache.set(secretId, data);
-
-									return data;
-								});
-						});
-				});
-		}
+	static get INSTANCE() {
+		return instance;
 	}
 
-	let secretsManagerProviderPromise = null;
+	/**
+	 * Gets value from AWS Secrets Manager.
+	 *
+	 * @public
+	 * @async
+	 * @param {String} secretId
+	 * @return {Promise<String>}
+	 */
+	async getValue(secretId) {
+		return Promise.resolve()
+			.then(() => {
+				assert.argumentIsRequired(secretId, 'secretId', String);
 
-	function getSecretsManagerProvider() {
-		if (secretsManagerProviderPromise === null) {
-			secretsManagerProviderPromise = Promise.resolve()
-				.then(() => {
-					const configuration = { };
+				if (this._cache.has(secretId)) {
+					return Promise.resolve(this._cache.get(secretId));
+				}
 
-					configuration.region = process.env.SECRETS_MANAGER_REGION || 'us-east-1';
+				return getSecretsManagerProvider()
+					.then((provider) => {
+						return provider.getSecretValue(secretId)
+							.then((data) => {
+								this._cache.set(secretId, data);
 
-					const provider = new SecretsManagerProvider(configuration);
+								return data;
+							});
+					});
+			});
+	}
+}
 
-					return provider.start()
-						.then(() => {
-							return provider;
-						});
-				});
-		}
+let secretsManagerProviderPromise = null;
 
-		return secretsManagerProviderPromise;
+function getSecretsManagerProvider() {
+	if (secretsManagerProviderPromise === null) {
+		secretsManagerProviderPromise = Promise.resolve()
+			.then(() => {
+				const configuration = { };
+
+				configuration.region = process.env.SECRETS_MANAGER_REGION || 'us-east-1';
+
+				const provider = new SecretsManagerProvider(configuration);
+
+				return provider.start()
+					.then(() => {
+						return provider;
+					});
+			});
 	}
 
-	const instance = new LambdaSecretsManager();
+	return secretsManagerProviderPromise;
+}
 
-	return LambdaSecretsManager;
-})();
+const instance = new LambdaSecretsManager();

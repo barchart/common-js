@@ -1,208 +1,203 @@
-const log4js = require('log4js'),
-	uuid = require('uuid');
+import * as assert from '@barchart/common-js/lang/assert.js';
+import * as is from '@barchart/common-js/lang/is.js';
+import * as promise from '@barchart/common-js/lang/promise.js';
 
-const assert = require('@barchart/common-js/lang/assert'),
-	Disposable = require('@barchart/common-js/lang/Disposable'),
-	DisposableStack = require('@barchart/common-js/collections/specialized/DisposableStack'),
-	is = require('@barchart/common-js/lang/is'),
-	promise = require('@barchart/common-js/lang/promise');
+import Disposable from '@barchart/common-js/lang/Disposable.js';
+import DisposableStack from '@barchart/common-js/collections/specialized/DisposableStack.js';
 
-const Router = require('./Router'),
-	SqsProvider = require('./../../aws/SqsProvider');
+import Router from './Router.js';
+import SqsProvider from './../../aws/SqsProvider.js';
 
-module.exports = (() => {
-	'use strict';
+import log4js from 'log4js';
+import * as uuid from 'uuid';
 
-	const logger = log4js.getLogger('common-node/messaging/routers/AwsRouter');
+const logger = log4js.getLogger('common-node/messaging/routers/AwsRouter');
 
-	/**
-	 * A {@link Router} that provides request-response messaging via AWS SQS.
-	 *
-	 * @public
-	 * @extends {Router}
-	 * @param {SqsProvider} sqsProvider
-	 * @param {RexExp[]=} suppressExpressions
-	 * @param {Object=} tags
-	 * @param {String=} identifier
-	 */
-	class AwsRouter extends Router {
-		constructor(sqsProvider, suppressExpressions, tags, identifier) {
-			super(suppressExpressions);
+/**
+ * A {@link Router} that provides request-response messaging via AWS SQS.
+ *
+ * @public
+ * @extends {Router}
+ * @param {SqsProvider} sqsProvider
+ * @param {RegExp[]=} suppressExpressions
+ * @param {Object=} tags
+ * @param {String=} identifier
+ */
+export default class AwsRouter extends Router {
+	constructor(sqsProvider, suppressExpressions, tags, identifier) {
+		super(suppressExpressions);
 
-			assert.argumentIsRequired(sqsProvider, 'sqsProvider', SqsProvider, 'SqsProvider');
-			assert.argumentIsOptional(tags, 'tags', Object);
-			assert.argumentIsOptional(identifier, 'identifier', String);
+		assert.argumentIsRequired(sqsProvider, 'sqsProvider', SqsProvider, 'SqsProvider');
+		assert.argumentIsOptional(tags, 'tags', Object);
+		assert.argumentIsOptional(identifier, 'identifier', String);
 
-			this._sqsProvider = sqsProvider;
+		this._sqsProvider = sqsProvider;
 
-			this._pendingRequests = { };
-			this._routerId = identifier || uuid.v4();
+		this._pendingRequests = { };
+		this._routerId = identifier || uuid.v4();
 
-			this._requestHandlers = { };
+		this._requestHandlers = { };
 
-			this._createOptions = null;
+		this._createOptions = null;
 
-			if (tags) {
-				this._createOptions = { };
-				this._createOptions.tags = tags;
-			}
-
-			this._disposeStack = new DisposableStack();
+		if (tags) {
+			this._createOptions = { };
+			this._createOptions.tags = tags;
 		}
 
-		_start() {
-			logger.debug('AWS router starting');
+		this._disposeStack = new DisposableStack();
+	}
 
-			return Promise.resolve()
-				.then(() => {
-					return this._sqsProvider.start();
-				}).then(() => {
-					const responseQueueName = getResponseChannel(this._routerId);
+	_start() {
+		logger.debug('AWS router starting');
 
-					const responseObserver = this._sqsProvider.observe(responseQueueName, (message) => {
-						if (is.string(message.id) && this._pendingRequests.hasOwnProperty(message.id)) {
-							const callbacks = this._pendingRequests[message.id];
+		return Promise.resolve()
+			.then(() => {
+				return this._sqsProvider.start();
+			}).then(() => {
+				const responseQueueName = getResponseChannel(this._routerId);
 
-							if (is.boolean(message.success) && !message.success) {
-								callbacks.reject('Request failed');
-							} else if (is.object(message.payload)) {
-								callbacks.resolve(message.payload);
-							}
+				const responseObserver = this._sqsProvider.observe(responseQueueName, (message) => {
+					if (is.string(message.id) && this._pendingRequests.hasOwnProperty(message.id)) {
+						const callbacks = this._pendingRequests[message.id];
+
+						if (is.boolean(message.success) && !message.success) {
+							callbacks.reject('Request failed');
+						} else if (is.object(message.payload)) {
+							callbacks.resolve(message.payload);
 						}
-					}, 100, 20000, 10, this._createOptions);
+					}
+				}, 100, 20000, 10, this._createOptions);
 
-					const responseQueueBinding = Disposable.fromAction(() => {
-						this._sqsProvider.deleteQueue(responseQueueName);
-					});
-
-					this._disposeStack.push(responseQueueBinding);
-					this._disposeStack.push(responseObserver);
-
-					logger.debug('AWS router started');
+				const responseQueueBinding = Disposable.fromAction(() => {
+					this._sqsProvider.deleteQueue(responseQueueName);
 				});
+
+				this._disposeStack.push(responseQueueBinding);
+				this._disposeStack.push(responseObserver);
+
+				logger.debug('AWS router started');
+			});
+	}
+
+	_canRoute(messageType) {
+		return true;
+	}
+
+	_route(messageType, payload, timeout, forget) {
+		logger.debug('Routing message to AWS [', messageType, ']');
+		logger.trace(payload);
+
+		const messageId = uuid.v4();
+
+		let senderToUse;
+
+		if (forget) {
+			senderToUse = null;
+		} else {
+			senderToUse = this._routerId;
 		}
 
-		_canRoute(messageType) {
-			return true;
-		}
+		const envelope = {
+			id: messageId,
+			sender: senderToUse,
+			payload: payload
+		};
 
-		_route(messageType, payload, timeout, forget) {
-			logger.debug('Routing message to AWS [', messageType, ']');
-			logger.trace(payload);
-
-			const messageId = uuid.v4();
-
-			let senderToUse;
-
+		const routePromise = promise.build((resolveCallback, rejectCallback) => {
 			if (forget) {
-				senderToUse = null;
-			} else {
-				senderToUse = this._routerId;
+				resolveCallback(null);
+
+				return;
 			}
 
-			const envelope = {
-				id: messageId,
-				sender: senderToUse,
-				payload: payload
+			this._pendingRequests[messageId] = {
+				resolve: resolveCallback,
+				reject: rejectCallback
 			};
+		});
 
-			const routePromise = promise.build((resolveCallback, rejectCallback) => {
-				if (forget) {
-					resolveCallback(null);
+		const sendPromise = this._sqsProvider.send(messageType, envelope, null, this._createOptions)
+			.catch((e) => {
+				logger.error('Request routing failed. Unable to enqueue request message.', e);
 
-					return;
-				}
-
-				this._pendingRequests[messageId] = {
-					resolve: resolveCallback,
-					reject: rejectCallback
-				};
+				throw e;
+			}).then(() => {
+				return routePromise;
 			});
 
-			const sendPromise = this._sqsProvider.send(messageType, envelope, null, this._createOptions)
-				.catch((e) => {
-					logger.error('Request routing failed. Unable to enqueue request message.', e);
+		return promise.timeout(sendPromise, timeout)
+			.then((response) => {
+				delete this._pendingRequests[messageId];
 
-					throw e;
-				}).then(() => {
-					return routePromise;
+				return response;
+			}).catch((e) => {
+				delete this._pendingRequests[messageId];
+
+				throw e;
+			});
+	}
+
+	_register(messageType, handler) {
+		logger.debug('Registering AWS handler for [', messageType, ']');
+
+		const registerObserver = this._sqsProvider.observe(messageType, (message) => {
+			if (!is.string(message.id) || !is.object(message.payload) || !(is.string(message.sender) || message.sender === null)) {
+				logger.warn(`Dropping malformed request received from SQS queue [ ${messageType} ]`);
+
+				return;
+			}
+
+			let handlerPromise = Promise.resolve()
+				.then(() => {
+					return handler(message.payload);
 				});
 
-			return promise.timeout(sendPromise, timeout)
-				.then((response) => {
-					delete this._pendingRequests[messageId];
+			if (message.sender !== null) {
+				const respond = (success, response) => {
+					const responseQueueName = getResponseChannel(message.sender);
 
-					return response;
-				}).catch((e) => {
-					delete this._pendingRequests[messageId];
-
-					throw e;
-				});
-		}
-
-		_register(messageType, handler) {
-			logger.debug('Registering AWS handler for [', messageType, ']');
-
-			const registerObserver = this._sqsProvider.observe(messageType, (message) => {
-				if (!is.string(message.id) || !is.object(message.payload) || !(is.string(message.sender) || message.sender === null)) {
-					logger.warn(`Dropping malformed request received from SQS queue [ ${messageType} ]`);
-
-					return;
-				}
-
-				let handlerPromise = Promise.resolve()
-					.then(() => {
-						return handler(message.payload);
-					});
-
-				if (message.sender !== null) {
-					const respond = (success, response) => {
-						const responseQueueName = getResponseChannel(message.sender);
-
-						const envelope = {
-							id: message.id,
-							success: success,
-							payload: response || {}
-						};
-
-						return this._sqsProvider.send(responseQueueName, envelope, null, this._createOptions);
+					const envelope = {
+						id: message.id,
+						success: success,
+						payload: response || {}
 					};
 
-					handlerPromise = handlerPromise.then((response) => {
-						return respond(true, response);
-					}).catch((e) => {
-						logger.error('Request processing failed. Responding with failure message.', e);
+					return this._sqsProvider.send(responseQueueName, envelope, null, this._createOptions);
+				};
 
-						return respond(false);
-					});
-				} else {
-					handlerPromise = handlerPromise.catch((e) => {
-						logger.error('Request processing failed.', e);
-					});
-				}
+				handlerPromise = handlerPromise.then((response) => {
+					return respond(true, response);
+				}).catch((e) => {
+					logger.error('Request processing failed. Responding with failure message.', e);
 
-				return handlerPromise;
-			}, 100, 20000, 10, this._createOptions);
+					return respond(false);
+				});
+			} else {
+				handlerPromise = handlerPromise.catch((e) => {
+					logger.error('Request processing failed.', e);
+				});
+			}
 
-			this._requestHandlers[messageType] = registerObserver;
+			return handlerPromise;
+		}, 100, 20000, 10, this._createOptions);
 
-			return registerObserver;
-		}
+		this._requestHandlers[messageType] = registerObserver;
 
-		_onDispose() {
-			this._disposeStack.dispose();
-
-			logger.debug('AWS router disposed');
-		}
-
-		toString() {
-			return '[AwsRouter]';
-		}
+		return registerObserver;
 	}
 
-	function getResponseChannel(routerId) {
-		return `response-${routerId}`;
+	_onDispose() {
+		this._disposeStack.dispose();
+
+		logger.debug('AWS router disposed');
 	}
 
-	return AwsRouter;
-})();
+	toString() {
+		return '[AwsRouter]';
+	}
+}
+
+function getResponseChannel(routerId) {
+	return `response-${routerId}`;
+}

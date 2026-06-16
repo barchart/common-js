@@ -1,22 +1,16 @@
-const Container = require('./../Container'),
-	RestEndpoint = require('./RestEndpoint');
+import Container from './../Container.js';
+import RestEndpoint from './RestEndpoint.js';
 
-module.exports = (() => {
-	'use strict';
-
-	class RestContainer extends Container {
-		constructor(port, path, secure) {
-			super(port, path, secure);
-		}
-
-		_getEndpointType() {
-			return RestEndpoint;
-		}
-
-		toString() {
-			return '[RestContainer]';
-		}
+export default class RestContainer extends Container {
+	constructor(port, path, secure) {
+		super(port, path, secure);
 	}
 
-	return RestContainer;
-})();
+	_getEndpointType() {
+		return RestEndpoint;
+	}
+
+	toString() {
+		return '[RestContainer]';
+	}
+}

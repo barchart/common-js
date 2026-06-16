@@ -1,4 +1,4 @@
-const PropertyDefaultTransformation = require('./../../../../stream/transformations/PropertyDefaultTransformation');
+import PropertyDefaultTransformation from './../../../../stream/transformations/PropertyDefaultTransformation.js';
 
 describe('When a PropertyDefaultTransformation is created', () => {
 	'use strict';

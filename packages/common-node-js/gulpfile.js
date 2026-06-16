@@ -1,13 +1,10 @@
-const exec = require('child_process').exec;
-
-const gulp = require('gulp');
-
-const git = require('gulp-git'),
-    gitStatus = require('git-get-status'),
-    jshint = require('gulp-jshint'),
-	prompt = require('gulp-prompt');
-
-const fs = require('fs');
+import { exec } from 'child_process';
+import gulp from 'gulp';
+import git from 'gulp-git';
+import gitStatus from 'git-get-status';
+import jshint from 'gulp-jshint';
+import prompt from 'gulp-prompt';
+import fs from 'fs';
 
 function getVersionFromPackage() {
     return JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;

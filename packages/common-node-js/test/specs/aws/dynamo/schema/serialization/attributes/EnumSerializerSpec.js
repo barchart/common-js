@@ -1,6 +1,6 @@
-const Enum = require('@barchart/common-js/lang/Enum');
+import Enum from '@barchart/common-js/lang/Enum.js';
 
-const EnumSerializer = require('./../../../../../../../aws/dynamo/schema/serialization/attributes/EnumSerializer');
+import EnumSerializer from './../../../../../../../aws/dynamo/schema/serialization/attributes/EnumSerializer.js';
 
 describe('When a EnumSerializer is instantiated (for a MotorcycleType enum)', () => {
 	'use strict';

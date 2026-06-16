@@ -1,82 +1,76 @@
-const log4js = require('log4js'),
-	pg = require('pg');
+import * as promise from '@barchart/common-js/lang/promise.js';
 
-const promise = require('@barchart/common-js/lang/promise');
+import Client from './Client.js';
+import ClientProvider from './ClientProvider.js';
 
-const Client = require('./Client'),
-	ClientProvider = require('./ClientProvider');
+import log4js from 'log4js';
+import pg from 'pg';
 
-module.exports = (() => {
-	'use strict';
+const logger = log4js.getLogger('common-node/database/postgres/DirectClientProvider');
 
-	const logger = log4js.getLogger('common-node/database/postgres/DirectClientProvider');
+/**
+ * A Postgres {@link ClientProvider} which uses a dedicated, individual connections.
+ *
+ * @public
+ * @extends {ClientProvider}
+ * @param {String} host
+ * @param {String} database
+ * @param {String} username
+ * @param {String} password
+ * @param {Number=} port
+ * @param {String=} applicationName
+ * @param {*=} ssl
+ */
+export default class DirectClientProvider extends ClientProvider {
+	constructor(host, database, username, password, port, applicationName, ssl) {
+		super(host, database, username, password, port, applicationName, ssl);
+	}
 
-	/**
-	 * A Postgres {@link ClientProvider} which uses a dedicated, individual connections.
-	 *
-	 * @public
-	 * @extends {ClientProvider}
-	 * @param {String} host
-	 * @param {String} database
-	 * @param {String} username
-	 * @param {String} password
-	 * @param {Number=} port
-	 * @param {String=} applicationName
-	 * @param {*=} ssl
-	 */
-	class DirectClientProvider extends ClientProvider {
-		constructor(host, database, username, password, port, applicationName, ssl) {
-			super(host, database, username, password, port, applicationName, ssl);
-		}
+	_getClient() {
+		return promise.build((resolveCallback, rejectCallback) => {
+			const configuration = this.getConfiguration();
+			const pgClient = new pg.Client(configuration);
 
-		_getClient() {
-			return promise.build((resolveCallback, rejectCallback) => {
-				const configuration = this.getConfiguration();
-				const pgClient = new pg.Client(configuration);
+			logger.debug('Connecting new [DirectClient] to [', configuration.host, '] [', configuration.database, ']');
 
-				logger.debug('Connecting new [DirectClient] to [', configuration.host, '] [', configuration.database, ']');
+			pgClient.connect((e) => {
+				if (e) {
+					logger.error('Failed to connect [DirectClient] to [', configuration.host, '] [', configuration.database, ']', e);
 
-				pgClient.connect((e) => {
-					if (e) {
-						logger.error('Failed to connect [DirectClient] to [', configuration.host, '] [', configuration.database, ']', e);
+					rejectCallback(e);
+				} else {
+					const client = new DirectClient(pgClient);
 
-						rejectCallback(e);
-					} else {
-						const client = new DirectClient(pgClient);
+					logger.info('Connected new [DirectClient] [', client.id, '] to [', configuration.host, '] [', configuration.database, ']');
 
-						logger.info('Connected new [DirectClient] [', client.id, '] to [', configuration.host, '] [', configuration.database, ']');
-
-						resolveCallback(client);
-					}
-				});
+					resolveCallback(client);
+				}
 			});
-		}
-
-		_onDispose() {
-			return;
-		}
-
-		toString() {
-			return '[DirectClientProvider]';
-		}
+		});
 	}
 
-	class DirectClient extends Client {
-		constructor(pgClient) {
-			super(pgClient, {});
-		}
-
-		_onDispose() {
-			this._pgClient.end();
-			this._pgClient = null;
-
-			logger.info('Disposed [DirectClient] [', this.id, ']');
-		}
-
-		toString() {
-			return '[DirectClient]';
-		}
+	_onDispose() {
+		return;
 	}
 
-	return DirectClientProvider;
-})();
+	toString() {
+		return '[DirectClientProvider]';
+	}
+}
+
+class DirectClient extends Client {
+	constructor(pgClient) {
+		super(pgClient, {});
+	}
+
+	_onDispose() {
+		this._pgClient.end();
+		this._pgClient = null;
+
+		logger.info('Disposed [DirectClient] [', this.id, ']');
+	}
+
+	toString() {
+		return '[DirectClient]';
+	}
+}

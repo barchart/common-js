@@ -1,4 +1,4 @@
-const StringSerializer = require('./../../../../../../../aws/dynamo/schema/serialization/attributes/StringSerializer');
+import StringSerializer from './../../../../../../../aws/dynamo/schema/serialization/attributes/StringSerializer.js';
 
 describe('When a StringSerializer is instantiated', () => {
 	'use strict';

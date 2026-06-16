@@ -1,51 +1,46 @@
-const assert = require('@barchart/common-js/lang/assert'),
-	Day = require('@barchart/common-js/lang/Day');
+import * as assert from '@barchart/common-js/lang/assert.js';
 
-const DelegateSerializer = require('./DelegateSerializer'),
-	StringSerializer = require('./StringSerializer');
+import Day from '@barchart/common-js/lang/Day.js';
 
-module.exports = (() => {
-	'use strict';
+import DelegateSerializer from './DelegateSerializer.js';
+import StringSerializer from './StringSerializer.js';
+
+/**
+ * Converts a {@link Day} instance into (and back from) the
+ * representation used on a DynamoDB record.
+ *
+ * @public
+ * @extends {DelegateSerializer}
+ */
+export default class DaySerializer extends DelegateSerializer {
+	constructor() {
+		super(StringSerializer.INSTANCE, serializeDay, deserializeDay);
+	}
 
 	/**
-	 * Converts a {@link Day} instance into (and back from) the
-	 * representation used on a DynamoDB record.
+	 * A singleton.
 	 *
 	 * @public
-	 * @extends {DelegateSerializer}
+	 * @static
+	 * @returns {DaySerializer}
 	 */
-	class DaySerializer extends DelegateSerializer {
-		constructor() {
-			super(StringSerializer.INSTANCE, serializeDay, deserializeDay);
-		}
-
-		/**
-		 * A singleton.
-		 *
-		 * @public
-		 * @static
-		 * @returns {DaySerializer}
-		 */
-		static get INSTANCE() {
-			return instance;
-		}
-
-		toString() {
-			return '[DaySerializer]';
-		}
+	static get INSTANCE() {
+		return instance;
 	}
 
-	function serializeDay(value) {
-		assert.argumentIsRequired(value, 'value', Day, 'Day');
-
-		return value.format();
+	toString() {
+		return '[DaySerializer]';
 	}
+}
 
-	function deserializeDay(value) {
-		return Day.parse(value);
-	}
+function serializeDay(value) {
+	assert.argumentIsRequired(value, 'value', Day, 'Day');
 
-	const instance = new DaySerializer();
+	return value.format();
+}
 
-	return DaySerializer;
-})();
+function deserializeDay(value) {
+	return Day.parse(value);
+}
+
+const instance = new DaySerializer();

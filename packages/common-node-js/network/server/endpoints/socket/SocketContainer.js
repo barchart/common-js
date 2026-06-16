@@ -1,7 +1,3 @@
-const SocketRequestContainer = require('./specialized/SocketRequestContainer');
+import SocketRequestContainer from './specialized/SocketRequestContainer.js';
 
-module.exports = (() => {
-	'use strict';
-
-	return SocketRequestContainer;
-})();
+export default SocketRequestContainer;

@@ -1,268 +1,263 @@
-const log4js = require('log4js'),
-	uuid = require('uuid');
+import * as assert from '@barchart/common-js/lang/assert.js';
+import * as is from '@barchart/common-js/lang/is.js';
+import * as array from '@barchart/common-js/lang/array.js';
 
-const assert = require('@barchart/common-js/lang/assert'),
-	is = require('@barchart/common-js/lang/is'),
-	array = require('@barchart/common-js/lang/array'),
-	PriorityQueue = require('@barchart/common-js/collections/specialized/PriorityQueue');
+import PriorityQueue from '@barchart/common-js/collections/specialized/PriorityQueue.js';
 
-const DataProvider = require('./DataProvider'),
-	DataOperation = require('./DataOperation'),
-	DataOperationContainer = require('./DataOperationContainer'),
-	DataOperationComparators = require('./DataOperationComparators'),
-	DataOperationResult = require('./DataOperationResult');
+import DataProvider from './DataProvider.js';
+import DataOperation from './DataOperation.js';
+import DataOperationContainer from './DataOperationContainer.js';
+import DataOperationComparators from './DataOperationComparators.js';
+import DataOperationResult from './DataOperationResult.js';
 
-module.exports = (() => {
-	'use strict';
+import log4js from 'log4js';
+import * as uuid from 'uuid';
 
-	const logger = log4js.getLogger('common-node/engine/DataSession');
+const logger = log4js.getLogger('common-node/engine/DataSession');
 
-	let instance = 0;
+let instance = 0;
+
+/**
+ * The manager for {@link DataOperation} execution. This should be a very short-lived
+ * object -- quickly adding operations, then flushing, then discarding.
+ *
+ * @public
+ * @param {Function=} comparator - The comparator used to sort {@link DataOperation} instances in a {@link PriorityQueue}.
+ */
+export default class DataSession {
+	constructor(comparator) {
+		assert.argumentIsOptional(comparator, 'comparator', Function);
+
+		this._name = null;
+
+		this._instanceCounter = ++instance;
+		this._instanceId = uuid.v4();
+
+		this._enqueueCounter = 0;
+
+		this._pending = new PriorityQueue(comparator || DataOperationComparators.DEFAULT);
+		this._processed = [ ];
+		this._userEnqueued = [ ];
+
+		this._resultTypes = [ ];
+
+		this._flushed = false;
+	}
 
 	/**
-	 * The manager for {@link DataOperation} execution. This should be a very short-lived
-	 * object -- quickly adding operations, then flushing, then discarding.
+	 * Returns a description of the session.
 	 *
 	 * @public
-	 * @param {Function=} comparator - The comparator used to sort {@link DataOperation} instances in a {@link PriorityQueue}.
+	 * @returns {String|null}
 	 */
-	class DataSession {
-		constructor(comparator) {
-			assert.argumentIsOptional(comparator, 'comparator', Function);
+	get name() {
+		return this._name;
+	}
 
-			this._name = null;
+	/**
+	 * Sets a name for the session.
+	 *
+	 * @public
+	 * @param {String} name
+	 * @returns {DataSession}
+	 */
+	withName(name) {
+		assert.argumentIsRequired(name, 'name', String);
 
-			this._instanceCounter = ++instance;
-			this._instanceId = uuid.v4();
+		this._name = name;
 
-			this._enqueueCounter = 0;
+		return this;
+	}
 
-			this._pending = new PriorityQueue(comparator || DataOperationComparators.DEFAULT);
-			this._processed = [ ];
-			this._userEnqueued = [ ];
+	/**
+	 * Overrides default behavior for flush results. If supplied, the result of
+	 * any {@link DataOperation} with the matching type will be returned when
+	 * the session flushes.
+	 *
+	 * @public
+	 * @param {Function} type
+	 * @returns {DataSession}
+	 */
+	withResultType(type) {
+		assert.argumentIsValid(type, 'type', x => is.extension(DataOperation, type), 'inherits DataOperation');
 
-			this._resultTypes = [ ];
+		this._resultTypes.push(type);
+		this._resultTypes = array.unique(this._resultTypes);
 
-			this._flushed = false;
+		return this;
+	}
+
+	/**
+	 * Adds a new {@link DataOperation} and returns the current instance.
+	 *
+	 * @public
+	 * @param {@DataOperation} operation
+	 * @returns {DataSession}
+	 */
+	withOperation(operation) {
+		assert.argumentIsRequired(operation, 'operation', DataOperation, 'DataOperation');
+
+		if (this._flushed) {
+			throw new Error('Unable to add operation to session, it has been flushed.');
 		}
 
-		/**
-		 * Returns a description of the session.
-		 *
-		 * @public
-		 * @returns {String|null}
-		 */
-		get name() {
-			return this._name;
-		}
+		enqueue.call(this, new DataOperationContainer(operation, operation.stage, operation.adjustment));
 
-		/**
-		 * Sets a name for the session.
-		 *
-		 * @public
-		 * @param {String} name
-		 * @returns {DataSession}
-		 */
-		withName(name) {
-			assert.argumentIsRequired(name, 'name', String);
+		return this;
+	}
 
-			this._name = name;
+	/**
+	 * Processes all the {@link DataOperation} instances held within the session.
+	 *
+	 * @public
+	 * @async
+	 * @param {DataProvider} dataProvider
+	 * @returns {Promise}
+	 */
+	async flush(dataProvider) {
+		return Promise.resolve()
+			.then(() => {
+				assert.argumentIsRequired(dataProvider, 'dataProvider', DataProvider, 'DataProvider');
 
-			return this;
-		}
+				if (this._flushed) {
+					throw new Error(`Session [ ${this._instanceCounter}  has already been flushed.`);
+				}
 
-		/**
-		 * Overrides default behavior for flush results. If supplied, the result of
-		 * any {@link DataOperation} with the matching type will be returned when
-		 * the session flushes.
-		 *
-		 * @public
-		 * @param {Function} type
-		 * @returns {DataSession}
-		 */
-		withResultType(type) {
-			assert.argumentIsValid(type, 'type', x => is.extension(DataOperation, type), 'inherits DataOperation');
+				this._flushed = true;
 
-			this._resultTypes.push(type);
-			this._resultTypes = array.unique(this._resultTypes);
+				logger.info('Session [', this._instanceCounter, '] flush starting [', this._instanceId, ']');
 
-			return this;
-		}
+				if (this._pending.empty()) {
+					logger.warn('Session [', this._instanceCounter, '] has no operations');
+				}
 
-		/**
-		 * Adds a new {@link DataOperation} and returns the current instance.
-		 *
-		 * @public
-		 * @param {@DataOperation} operation
-		 * @returns {DataSession}
-		 */
-		withOperation(operation) {
-			assert.argumentIsRequired(operation, 'operation', DataOperation, 'DataOperation');
+				let operationCounter = 0;
 
-			if (this._flushed) {
-				throw new Error('Unable to add operation to session, it has been flushed.');
-			}
+				const results = [ ];
 
-			enqueue.call(this, new DataOperationContainer(operation, operation.stage, operation.adjustment));
+				let outputIndicies;
 
-			return this;
-		}
+				if (this._resultTypes.length === 0) {
+					outputIndicies = [ ];
+				} else {
+					outputIndicies = this._resultTypes.map(() => [ ]);
+				}
 
-		/**
-		 * Processes all the {@link DataOperation} instances held within the session.
-		 *
-		 * @public
-		 * @async
-		 * @param {DataProvider} dataProvider
-		 * @returns {Promise}
-		 */
-		async flush(dataProvider) {
-			return Promise.resolve()
-				.then(() => {
-					assert.argumentIsRequired(dataProvider, 'dataProvider', DataProvider, 'DataProvider');
+				const flushRecursive = (previousResult) => {
+					return Promise.resolve()
+						.then(() => {
+							let processPromise;
 
-					if (this._flushed) {
-						throw new Error(`Session [ ${this._instanceCounter}  has already been flushed.`);
-					}
+							if (this._pending.empty()) {
+								processPromise = Promise.resolve(previousResult);
+							} else {
+								let operation = null;
+								let operationCount;
 
-					this._flushed = true;
+								while (operation === null && !this._pending.empty()) {
+									const candidate = this._pending.dequeue().operation;
 
-					logger.info('Session [', this._instanceCounter, '] flush starting [', this._instanceId, ']');
+									operationCount = ++operationCounter;
 
-					if (this._pending.empty()) {
-						logger.warn('Session [', this._instanceCounter, '] has no operations');
-					}
+									if (candidate.equals(previousResult.operation)) {
+										logger.debug('Session [', this._instanceCounter, '] operation [', operationCount, '][', candidate.toString() ,'] discarded as duplicate');
+									} else {
+										operation = candidate;
+									}
+								}
 
-					let operationCounter = 0;
-
-					const results = [ ];
-
-					let outputIndicies;
-
-					if (this._resultTypes.length === 0) {
-						outputIndicies = [ ];
-					} else {
-						outputIndicies = this._resultTypes.map(() => [ ]);
-					}
-
-					const flushRecursive = (previousResult) => {
-						return Promise.resolve()
-							.then(() => {
-								let processPromise;
-
-								if (this._pending.empty()) {
+								if (operation === null) {
 									processPromise = Promise.resolve(previousResult);
 								} else {
-									let operation = null;
-									let operationCount;
+									this._processed.push(operation);
 
-									while (operation === null && !this._pending.empty()) {
-										const candidate = this._pending.dequeue().operation;
+									logger.debug('Session [', this._instanceCounter, '] operation [', operationCount, '][', operation.toString() ,'] starting');
 
-										operationCount = ++operationCounter;
+									processPromise = operation.process(dataProvider, this._instanceId, this._name)
+										.then((result) => {
+											logger.debug('Session [', this._instanceCounter, '] operation [', operationCount, '][', operation.toString() ,'] complete');
 
-										if (candidate.equals(previousResult.operation)) {
-											logger.debug('Session [', this._instanceCounter, '] operation [', operationCount, '][', candidate.toString() ,'] discarded as duplicate');
-										} else {
-											operation = candidate;
-										}
-									}
+											results.push(result);
 
-									if (operation === null) {
-										processPromise = Promise.resolve(previousResult);
-									} else {
-										this._processed.push(operation);
+											const operationIndex = results.length - 1;
 
-										logger.debug('Session [', this._instanceCounter, '] operation [', operationCount, '][', operation.toString() ,'] starting');
+											if (this._resultTypes.length === 0) {
+												const resultIndex = this._userEnqueued.findIndex(o => o === result.operation);
 
-										processPromise = operation.process(dataProvider, this._instanceId, this._name)
-											.then((result) => {
-												logger.debug('Session [', this._instanceCounter, '] operation [', operationCount, '][', operation.toString() ,'] complete');
-
-												results.push(result);
-
-												const operationIndex = results.length - 1;
-
-												if (this._resultTypes.length === 0) {
-													const resultIndex = this._userEnqueued.findIndex(o => o === result.operation);
-
-													if (!(resultIndex < 0)) {
-														outputIndicies[resultIndex] = operationIndex;
-													}
-												} else {
-													const resultIndex = this._resultTypes.findIndex(t => operation instanceof t);
-
-													if (!(resultIndex < 0)) {
-														outputIndicies[resultIndex].push(operationIndex);
-													}
+												if (!(resultIndex < 0)) {
+													outputIndicies[resultIndex] = operationIndex;
 												}
+											} else {
+												const resultIndex = this._resultTypes.findIndex(t => operation instanceof t);
 
-												result.children.forEach(container => enqueue.call(this, container));
+												if (!(resultIndex < 0)) {
+													outputIndicies[resultIndex].push(operationIndex);
+												}
+											}
 
-												return result;
-											});
-									}
+											result.children.forEach(container => enqueue.call(this, container));
 
-									processPromise = processPromise.then((result) => {
-										return flushRecursive(result);
-									});
+											return result;
+										});
 								}
 
-								return processPromise;
-							});
-					};
-
-					return flushRecursive(DataOperationResult.getInitial())
-						.then(() => {
-							const transformedResults = results.reduceRight((resolvedResults, result) => {
-								const spawnResults = result.children.map((spawnContainer) => {
-									return resolvedResults.find((previousResult) => previousResult.operation === spawnContainer.operation);
+								processPromise = processPromise.then((result) => {
+									return flushRecursive(result);
 								});
+							}
 
-								resolvedResults.push(result.operation.transformResult(result, spawnResults));
+							return processPromise;
+						});
+				};
 
-								return resolvedResults;
-							}, [ ]);
-
-							const resolveOutput = (outputIndex) => {
-								const reversedIndex = results.length - outputIndex - 1;
-
-								return transformedResults[reversedIndex].result;
-							};
-
-							const output = outputIndicies.map((i) => {
-								if (is.array(i)) {
-									return i.map(j => resolveOutput(j));
-								} else {
-									return resolveOutput(i);
-								}
+				return flushRecursive(DataOperationResult.getInitial())
+					.then(() => {
+						const transformedResults = results.reduceRight((resolvedResults, result) => {
+							const spawnResults = result.children.map((spawnContainer) => {
+								return resolvedResults.find((previousResult) => previousResult.operation === spawnContainer.operation);
 							});
 
-							logger.info('Session [', this._instanceCounter, '] flush finished [', this._instanceId, ']');
+							resolvedResults.push(result.operation.transformResult(result, spawnResults));
 
-							if (output.length === 1) {
-								return output[0];
+							return resolvedResults;
+						}, [ ]);
+
+						const resolveOutput = (outputIndex) => {
+							const reversedIndex = results.length - outputIndex - 1;
+
+							return transformedResults[reversedIndex].result;
+						};
+
+						const output = outputIndicies.map((i) => {
+							if (is.array(i)) {
+								return i.map(j => resolveOutput(j));
 							} else {
-								return output;
+								return resolveOutput(i);
 							}
 						});
-				});
-		}
 
-		toString() {
-			return '[DataSession]';
-		}
+						logger.info('Session [', this._instanceCounter, '] flush finished [', this._instanceId, ']');
+
+						if (output.length === 1) {
+							return output[0];
+						} else {
+							return output;
+						}
+					});
+			});
 	}
 
-	function enqueue(container) {
-		container.order = ++this._enqueueCounter;
-
-		this._pending.enqueue(container);
-
-		if (!this._flushed) {
-			this._userEnqueued.push(container.operation);
-		}
+	toString() {
+		return '[DataSession]';
 	}
+}
 
-	return DataSession;
-})();
+function enqueue(container) {
+	container.order = ++this._enqueueCounter;
+
+	this._pending.enqueue(container);
+
+	if (!this._flushed) {
+		this._userEnqueued.push(container.operation);
+	}
+}

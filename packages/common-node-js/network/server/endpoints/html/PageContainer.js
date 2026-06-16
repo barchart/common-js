@@ -1,38 +1,32 @@
-const assert = require('@barchart/common-js/lang/assert');
+import * as assert from '@barchart/common-js/lang/assert.js';
 
-const Container = require('./../Container'),
-	PageEndpoint = require('./PageEndpoint');
+import Container from './../Container.js';
+import PageEndpoint from './PageEndpoint.js';
 
-module.exports = (() => {
-	'use strict';
+export default class PageContainer extends Container {
+	constructor(port, path, secure, useSession, secureRedirect) {
+		super(port, path, secure);
 
-	class PageContainer extends Container {
-		constructor(port, path, secure, useSession, secureRedirect) {
-			super(port, path, secure);
+		assert.argumentIsOptional(useSession, 'useSession', Boolean);
+		assert.argumentIsOptional(secureRedirect, 'secureRedirect', Boolean);
 
-			assert.argumentIsOptional(useSession, 'useSession', Boolean);
-			assert.argumentIsOptional(secureRedirect, 'secureRedirect', Boolean);
-
-			this._useSession = useSession || false;
-			this._secureRedirect = secureRedirect || false;
-		}
-
-		_getEndpointType() {
-			return PageEndpoint;
-		}
-
-		getUsesSession() {
-			return this._useSession;
-		}
-
-		getSecureRedirect() {
-			return this._secureRedirect;
-		}
-
-		toString() {
-			return '[PageContainer]';
-		}
+		this._useSession = useSession || false;
+		this._secureRedirect = secureRedirect || false;
 	}
 
-	return PageContainer;
-})();
+	_getEndpointType() {
+		return PageEndpoint;
+	}
+
+	getUsesSession() {
+		return this._useSession;
+	}
+
+	getSecureRedirect() {
+		return this._secureRedirect;
+	}
+
+	toString() {
+		return '[PageContainer]';
+	}
+}

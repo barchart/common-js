@@ -1,120 +1,116 @@
-const { GetSecretValueCommand, SecretsManagerClient } = require('@aws-sdk/client-secrets-manager'),
-	log4js = require('log4js');
+import * as assert from '@barchart/common-js/lang/assert.js';
 
-const assert = require('@barchart/common-js/lang/assert'),
-	Disposable = require('@barchart/common-js/lang/Disposable');
+import Disposable from '@barchart/common-js/lang/Disposable.js';
 
-module.exports = (() => {
-	'use strict';
+import { GetSecretValueCommand, SecretsManagerClient } from '@aws-sdk/client-secrets-manager';
 
-	const logger = log4js.getLogger('common-node/aws/SecretsManagerProvider');
+import log4js from 'log4js';
+
+const logger = log4js.getLogger('common-node/aws/SecretsManagerProvider');
+
+/**
+ * A facade for Amazon's Secrets Manager. The constructor accepts configuration
+ * options. The promise-based instance functions abstract knowledge of the AWS API.
+ *
+ * @public
+ * @extends {Disposable}
+ * @param {object} configuration
+ * @param {string} configuration.region - The AWS region (e.g. "us-east-1").
+ * @param {string=} configuration.apiVersion - The Secrets Manager version (defaults to "2017-10-17").
+ */
+export default class SecretsManagerProvider extends Disposable {
+	constructor(configuration) {
+		super(configuration);
+
+		assert.argumentIsRequired(configuration, 'configuration', Object);
+		assert.argumentIsRequired(configuration.region, 'configuration.region', String);
+		assert.argumentIsOptional(configuration.apiVersion, 'configuration.apiVersion', String);
+
+		this._configuration = configuration;
+
+		this._secretsManager = null;
+
+		this._startPromise = null;
+		this._started = false;
+	}
 
 	/**
-	 * A facade for Amazon's Secrets Manager. The constructor accepts configuration
-	 * options. The promise-based instance functions abstract knowledge of the AWS API.
+	 * Connects to Amazon. Must be called once before using other instance
+	 * functions.
 	 *
 	 * @public
-	 * @extends {Disposable}
-	 * @param {object} configuration
-	 * @param {string} configuration.region - The AWS region (e.g. "us-east-1").
-	 * @param {string=} configuration.apiVersion - The Secrets Manager version (defaults to "2017-10-17").
+	 * @async
+	 * @returns {Promise<Boolean>}
 	 */
-	class SecretsManagerProvider extends Disposable {
-		constructor(configuration) {
-			super(configuration);
-
-			assert.argumentIsRequired(configuration, 'configuration', Object);
-			assert.argumentIsRequired(configuration.region, 'configuration.region', String);
-			assert.argumentIsOptional(configuration.apiVersion, 'configuration.apiVersion', String);
-
-			this._configuration = configuration;
-
-			this._secretsManager = null;
-
-			this._startPromise = null;
-			this._started = false;
-		}
-
-		/**
-		 * Connects to Amazon. Must be called once before using other instance
-		 * functions.
-		 *
-		 * @public
-		 * @async
-		 * @returns {Promise<Boolean>}
-		 */
-		async start() {
-			if (this.disposed) {
-				return Promise.reject('Unable to start, the Secrets Manager provider has been disposed');
-			}
-
-			if (this._startPromise === null) {
-				this._startPromise = (async () => {
-					try {
-						this._secretsManager = new SecretsManagerClient({ apiVersion: this._configuration.apiVersion || '2017-10-17', region: this._configuration.region });
-
-						logger.info('The Secrets Manager provider has started');
-
-						this._started = true;
-
-						return this._started;
-					} catch (e) {
-						logger.error('The Secrets Manager provider failed to start', e);
-
-						throw e;
-					}
-				})();
-			}
-
-			return this._startPromise;
-		}
-
-		/**
-		 * Gets a secret's value.
-		 *
-		 * @public
-		 * @async
-		 * @param {String} secretId
-		 * @returns {Promise<String>}
-		 */
-		async getSecretValue(secretId) {
-			assert.argumentIsRequired(secretId, 'secretId', String);
-
-			if (secretId.length === 0) {
-				throw new Error('The "secretId" argument cannot be a zero-length string');
-			}
-
-			checkReady.call(this);
-
-			logger.debug(`Attempting to retrieve secret [ ${secretId} ]`);
-
-			try {
-				const response = await this._secretsManager.send(new GetSecretValueCommand({ SecretId: secretId }));
-
-				logger.info(`Retrieved secret [ ${secretId} ]`);
-
-				return response.SecretString;
-			} catch (err) {
-				logger.error(`Failed to retrieve secret [ ${secretId} ]`);
-
-				throw err;
-			}
-		}
-
-		toString() {
-			return '[SecretsManagerProvider]';
-		}
-	}
-
-	function checkReady() {
+	async start() {
 		if (this.disposed) {
-			throw new Error('The Secrets Manager provider has been disposed');
+			return Promise.reject('Unable to start, the Secrets Manager provider has been disposed');
 		}
 
-		if (!this._started) {
-			throw new Error('The Secrets Manager provider has not been started');
+		if (this._startPromise === null) {
+			this._startPromise = (async () => {
+				try {
+					this._secretsManager = new SecretsManagerClient({ apiVersion: this._configuration.apiVersion || '2017-10-17', region: this._configuration.region });
+
+					logger.info('The Secrets Manager provider has started');
+
+					this._started = true;
+
+					return this._started;
+				} catch (e) {
+					logger.error('The Secrets Manager provider failed to start', e);
+
+					throw e;
+				}
+			})();
+		}
+
+		return this._startPromise;
+	}
+
+	/**
+	 * Gets a secret's value.
+	 *
+	 * @public
+	 * @async
+	 * @param {String} secretId
+	 * @returns {Promise<String>}
+	 */
+	async getSecretValue(secretId) {
+		assert.argumentIsRequired(secretId, 'secretId', String);
+
+		if (secretId.length === 0) {
+			throw new Error('The "secretId" argument cannot be a zero-length string');
+		}
+
+		checkReady.call(this);
+
+		logger.debug(`Attempting to retrieve secret [ ${secretId} ]`);
+
+		try {
+			const response = await this._secretsManager.send(new GetSecretValueCommand({ SecretId: secretId }));
+
+			logger.info(`Retrieved secret [ ${secretId} ]`);
+
+			return response.SecretString;
+		} catch (err) {
+			logger.error(`Failed to retrieve secret [ ${secretId} ]`);
+
+			throw err;
 		}
 	}
 
-	return SecretsManagerProvider;
-})();
+	toString() {
+		return '[SecretsManagerProvider]';
+	}
+}
+
+function checkReady() {
+	if (this.disposed) {
+		throw new Error('The Secrets Manager provider has been disposed');
+	}
+
+	if (!this._started) {
+		throw new Error('The Secrets Manager provider has not been started');
+	}
+}

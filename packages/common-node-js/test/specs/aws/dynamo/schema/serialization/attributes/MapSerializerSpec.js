@@ -1,4 +1,4 @@
-const MapSerializer = require('./../../../../../../../aws/dynamo/schema/serialization/attributes/NestedSerializers').MapSerializer;
+import { MapSerializer } from './../../../../../../../aws/dynamo/schema/serialization/attributes/NestedSerializers.js';
 
 describe('When a MapSerializer is instantiated', () => {
 	'use strict';

@@ -1,45 +1,39 @@
-const object = require('@barchart/common-js/lang/object');
+import * as object from '@barchart/common-js/lang/object.js';
 
-const Stream = require('stream');
+import Stream from 'stream';
 
-module.exports = (() => {
-	'use strict';
+/**
+ * A Node.js {@link Stream.Writable} that does nothing. By Default,
+ * the "objectMode" option is set to true.
+ *
+ * @public
+ * @extends {Stream.Writable}
+ * @param {Object=} options
+ */
+export default class EmptyWriteStream extends Stream.Writable {
+	constructor(options) {
+		super(object.merge({ objectMode: true }, (options || { })));
 
-	/**
-	 * A Node.js {@link Stream.Writable} that does nothing. By Default,
-	 * the "objectMode" option is set to true.
-	 *
-	 * @public
-	 * @extends {Steam.Writable}
-	 * @param {Object=} options
-	 */
-	class EmptyWriteStream extends Stream.Writable {
-		constructor(options) {
-			super(object.merge({ objectMode: true }, (options || { })));
-
-			this._counter = 0;
-		}
-
-		/**
-		 * The number of empty "writes" which have been made.
-		 *
-		 * @public
-		 * @returns {Number}
-		 */
-		get count() {
-			return this._counter;
-		}
-
-		_write(chunk, encoding, callback) {
-			this._counter = this._counter + 1;
-
-			callback(null);
-		}
-
-		toString() {
-			return '[EmptyWriteStream]';
-		}
+		this._counter = 0;
 	}
 
-	return EmptyWriteStream;
-})();
+	/**
+	 * The number of empty "writes" which have been made.
+	 *
+	 * @public
+	 * @returns {Number}
+	 */
+	get count() {
+		return this._counter;
+	}
+
+	_write(chunk, encoding, callback) {
+		this._counter = this._counter + 1;
+
+		callback(null);
+	}
+
+	toString() {
+		return '[EmptyWriteStream]';
+	}
+}

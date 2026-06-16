@@ -1,35 +1,30 @@
-const assert = require('@barchart/common-js/lang/assert'),
-	Disposable = require('@barchart/common-js/lang/Disposable');
+import * as assert from '@barchart/common-js/lang/assert.js';
 
-const ServerDefinition = require('./ServerDefinition');
+import Disposable from '@barchart/common-js/lang/Disposable.js';
 
-module.exports = (() => {
-	'use strict';
+import ServerDefinition from './ServerDefinition.js';
 
-	class ServerFactory {
-		constructor() {
+export default class ServerFactory {
+	constructor() {
 
-		}
-
-		build(serverDefinition) {
-			assert.argumentIsRequired(serverDefinition, 'serverDefinition', ServerDefinition, 'ServerDefinition');
-
-			return Promise.resolve()
-				.then(() => {
-					return this._build(serverDefinition.getContainers(), serverDefinition.getStaticPaths(), serverDefinition.getTemplatePath());
-				});
-		}
-
-		_build(containers, staticPath, templatePath) {
-			return Disposable.fromAction(() => {
-				return;
-			});
-		}
-
-		toString() {
-			return '[ServerFactory]';
-		}
 	}
 
-	return ServerFactory;
-})();
+	build(serverDefinition) {
+		assert.argumentIsRequired(serverDefinition, 'serverDefinition', ServerDefinition, 'ServerDefinition');
+
+		return Promise.resolve()
+			.then(() => {
+				return this._build(serverDefinition.getContainers(), serverDefinition.getStaticPaths(), serverDefinition.getTemplatePath());
+			});
+	}
+
+	_build(containers, staticPath, templatePath) {
+		return Disposable.fromAction(() => {
+			return;
+		});
+	}
+
+	toString() {
+		return '[ServerFactory]';
+	}
+}

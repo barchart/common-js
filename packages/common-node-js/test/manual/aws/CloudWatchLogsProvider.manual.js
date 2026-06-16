@@ -1,7 +1,8 @@
-const { CloudWatchLogsClient, CreateLogGroupCommand, CreateLogStreamCommand, ListTagsForResourceCommand, PutLogEventsCommand } = require('@aws-sdk/client-cloudwatch-logs');
+import * as utils from '../utils/ManualTestUtils.js';
 
-const CloudWatchLogsProvider = require('../../../aws/CloudWatchLogsProvider');
-const utils = require('../utils/ManualTestUtils');
+import CloudWatchLogsProvider from '../../../aws/CloudWatchLogsProvider.js';
+
+import { CloudWatchLogsClient, CreateLogGroupCommand, CreateLogStreamCommand, ListTagsForResourceCommand, PutLogEventsCommand } from '@aws-sdk/client-cloudwatch-logs';
 
 utils.run('CloudWatchLogsProvider manual test', async () => {
 	const region = utils.region();

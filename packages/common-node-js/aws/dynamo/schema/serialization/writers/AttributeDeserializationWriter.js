@@ -1,59 +1,52 @@
-const assert = require('@barchart/common-js/lang/assert'),
-	attributes = require('@barchart/common-js/lang/attributes'),
-	is = require('@barchart/common-js/lang/is');
+import * as assert from '@barchart/common-js/lang/assert.js';
+import * as attributes from '@barchart/common-js/lang/attributes.js';
+import * as is from '@barchart/common-js/lang/is.js';
 
-const Attribute = require('./../../definitions/Attribute'),
-	Serializers = require('./../Serializers');
+import Attribute from './../../definitions/Attribute.js';
+import Serializers from './../Serializers.js';
+import Writer from './Writer.js';
 
-const Writer = require('./Writer');
+/**
+ * Reads an attribute value from a source object, serialized for
+ * DynamoDB, and writes it to the target object.
+ *
+ * @public
+ * @extends {Writer}
+ * @param {Attribute} attribute
+ */
+export default class AttributeDeserializationWriter extends Writer {
+	constructor(attribute) {
+		super();
 
-module.exports = (() => {
-	'use strict';
+		assert.argumentIsRequired(attribute, 'attribute', Attribute, 'Attribute');
 
-	/**
-	 * Reads an attribute value from a source object, serialized for
-	 * DynamoDB, and writes it to the target object.
-	 *
-	 * @public
-	 * @extends {Writer}
-	 * @param {Attribute} attribute
-	 */
-	class AttributeDeserializationWriter extends Writer {
-		constructor(attribute) {
-			super();
+		this._attribute = attribute;
+		this._serializer = Serializers.forAttribute(attribute);
 
-			assert.argumentIsRequired(attribute, 'attribute', Attribute, 'Attribute');
+		let writeDelegate;
 
-			this._attribute = attribute;
-			this._serializer = Serializers.forAttribute(attribute);
+		if (this._attribute.name.includes(Writer.SEPARATOR)) {
+			const names = this._attribute.name.split(Writer.SEPARATOR);
 
-			let writeDelegate;
+			writeDelegate = (target, value) => attributes.write(target, names, value);
+		} else {
+			const name = this._attribute.name;
 
-			if (this._attribute.name.includes(Writer.SEPARATOR)) {
-				const names = this._attribute.name.split(Writer.SEPARATOR);
-
-				writeDelegate = (target, value) => attributes.write(target, names, value);
-			} else {
-				const name = this._attribute.name;
-
-				writeDelegate = (target, value) => target[name] = value;
-			}
-
-			this._writeDelegate = writeDelegate;
+			writeDelegate = (target, value) => target[name] = value;
 		}
 
-		_write(source, target) {
-			this._writeDelegate(target, this._serializer.deserialize(source[this._attribute.name]));
-		}
-
-		_canWrite(source, target) {
-			return this._serializer !== null && is.object(source) && source.hasOwnProperty(this._attribute.name);
-		}
-
-		toString() {
-			return '[AttributeDeserializationWriter]';
-		}
+		this._writeDelegate = writeDelegate;
 	}
 
-	return AttributeDeserializationWriter;
-})();
+	_write(source, target) {
+		this._writeDelegate(target, this._serializer.deserialize(source[this._attribute.name]));
+	}
+
+	_canWrite(source, target) {
+		return this._serializer !== null && is.object(source) && source.hasOwnProperty(this._attribute.name);
+	}
+
+	toString() {
+		return '[AttributeDeserializationWriter]';
+	}
+}

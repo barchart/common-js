@@ -1,24 +1,18 @@
-const CompressedJsonSerializer = require('./CompressedJsonSerializer');
+import CompressedJsonSerializer from './CompressedJsonSerializer.js';
 
-module.exports = (() => {
-	'use strict';
-
-	/**
-	 * Converts an object into (and back from) the compressed and encrypted
-	 * representation used on a DynamoDB record.
-	 *
-	 * @public
-	 * @extends {CompressedJsonSerializer}
-	 */
-	class EncryptedJsonSerializer extends CompressedJsonSerializer {
-		constructor(attribute) {
-			super(attribute);
-		}
-
-		toString() {
-			return '[EncryptedJsonSerializer]';
-		}
+/**
+ * Converts an object into (and back from) the compressed and encrypted
+ * representation used on a DynamoDB record.
+ *
+ * @public
+ * @extends {CompressedJsonSerializer}
+ */
+export default class EncryptedJsonSerializer extends CompressedJsonSerializer {
+	constructor(attribute) {
+		super(attribute);
 	}
 
-	return EncryptedJsonSerializer;
-})();
+	toString() {
+		return '[EncryptedJsonSerializer]';
+	}
+}

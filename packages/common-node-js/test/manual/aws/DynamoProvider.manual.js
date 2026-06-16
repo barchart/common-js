@@ -1,18 +1,15 @@
-const DynamoProvider = require('../../../aws/DynamoProvider');
+import * as utils from '../utils/ManualTestUtils.js';
 
-const DataType = require('../../../aws/dynamo/schema/definitions/DataType'),
-	KeyType = require('../../../aws/dynamo/schema/definitions/KeyType');
-
-const OperatorType = require('../../../aws/dynamo/query/definitions/OperatorType'),
-	ReturnValueType = require('../../../aws/dynamo/query/definitions/ReturnValueType'),
-	UpdateActionType = require('../../../aws/dynamo/query/definitions/UpdateActionType'),
-	UpdateOperatorType = require('../../../aws/dynamo/query/definitions/UpdateOperatorType');
-
-const QueryBuilder = require('../../../aws/dynamo/query/builders/QueryBuilder'),
-	ScanBuilder = require('../../../aws/dynamo/query/builders/ScanBuilder'),
-	UpdateBuilder = require('../../../aws/dynamo/query/builders/UpdateBuilder');
-
-const utils = require('../utils/ManualTestUtils');
+import DynamoProvider from '../../../aws/DynamoProvider.js';
+import DataType from '../../../aws/dynamo/schema/definitions/DataType.js';
+import KeyType from '../../../aws/dynamo/schema/definitions/KeyType.js';
+import OperatorType from '../../../aws/dynamo/query/definitions/OperatorType.js';
+import ReturnValueType from '../../../aws/dynamo/query/definitions/ReturnValueType.js';
+import UpdateActionType from '../../../aws/dynamo/query/definitions/UpdateActionType.js';
+import UpdateOperatorType from '../../../aws/dynamo/query/definitions/UpdateOperatorType.js';
+import QueryBuilder from '../../../aws/dynamo/query/builders/QueryBuilder.js';
+import ScanBuilder from '../../../aws/dynamo/query/builders/ScanBuilder.js';
+import UpdateBuilder from '../../../aws/dynamo/query/builders/UpdateBuilder.js';
 
 utils.run('DynamoProvider manual test', async () => {
 	const prefix = utils.prefix();

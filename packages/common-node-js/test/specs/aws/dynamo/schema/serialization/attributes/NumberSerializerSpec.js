@@ -1,4 +1,4 @@
-const NumberSerializer = require('./../../../../../../../aws/dynamo/schema/serialization/attributes/NumberSerializer');
+import NumberSerializer from './../../../../../../../aws/dynamo/schema/serialization/attributes/NumberSerializer.js';
 
 describe('When a NumberSerializer is instantiated', () => {
 	'use strict';

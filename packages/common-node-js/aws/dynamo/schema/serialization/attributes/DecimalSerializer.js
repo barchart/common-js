@@ -1,51 +1,46 @@
-const assert = require('@barchart/common-js/lang/assert'),
-	Decimal = require('@barchart/common-js/lang/Decimal');
+import * as assert from '@barchart/common-js/lang/assert.js';
 
-const DelegateSerializer = require('./DelegateSerializer'),
-	StringSerializer = require('./StringSerializer');
+import Decimal from '@barchart/common-js/lang/Decimal.js';
 
-module.exports = (() => {
-	'use strict';
+import DelegateSerializer from './DelegateSerializer.js';
+import StringSerializer from './StringSerializer.js';
+
+/**
+ * Converts a {@link Decimal} into (and back from) the representation used
+ * on a DynamoDB record.
+ *
+ * @public
+ * @extends {DelegateSerializer}
+ */
+export default class DecimalSerializer extends DelegateSerializer {
+	constructor() {
+		super(StringSerializer.INSTANCE, serializeDecimal, deserializeDecimal);
+	}
 
 	/**
-	 * Converts a {@link Decimal} into (and back from) the representation used
-	 * on a DynamoDB record.
+	 * A singleton.
 	 *
 	 * @public
-	 * @extends {DelegateSerializer}
+	 * @static
+	 * @returns {DecimalSerializer}
 	 */
-	class DecimalSerializer extends DelegateSerializer {
-		constructor() {
-			super(StringSerializer.INSTANCE, serializeDecimal, deserializeDecimal);
-		}
-
-		/**
-		 * A singleton.
-		 *
-		 * @public
-		 * @static
-		 * @returns {DecimalSerializer}
-		 */
-		static get INSTANCE() {
-			return instance;
-		}
-
-		toString() {
-			return '[DecimalSerializer]';
-		}
+	static get INSTANCE() {
+		return instance;
 	}
 
-	function serializeDecimal(value) {
-		assert.argumentIsRequired(value, 'value', Decimal);
-
-		return value.toFixed();
+	toString() {
+		return '[DecimalSerializer]';
 	}
+}
 
-	function deserializeDecimal(value) {
-		return new Decimal(value);
-	}
+function serializeDecimal(value) {
+	assert.argumentIsRequired(value, 'value', Decimal);
 
-	const instance = new DecimalSerializer();
+	return value.toFixed();
+}
 
-	return DecimalSerializer;
-})();
+function deserializeDecimal(value) {
+	return new Decimal(value);
+}
+
+const instance = new DecimalSerializer();

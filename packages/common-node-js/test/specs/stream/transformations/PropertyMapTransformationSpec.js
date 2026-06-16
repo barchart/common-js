@@ -1,4 +1,4 @@
-const PropertyMapTransformation = require('./../../../../stream/transformations/PropertyMapTransformation');
+import PropertyMapTransformation from './../../../../stream/transformations/PropertyMapTransformation.js';
 
 describe('When a PropertyMapTransformation is created', () => {
 	'use strict';

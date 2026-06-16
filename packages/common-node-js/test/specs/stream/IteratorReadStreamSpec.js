@@ -1,6 +1,6 @@
-const Stream = require('stream');
+import IteratorReadStream from './../../../stream/IteratorReadStream.js';
 
-const IteratorReadStream = require('./../../../stream/IteratorReadStream');
+import Stream from 'stream';
 
 class SpyWriteStream extends Stream.Writable {
 	constructor(spy) {

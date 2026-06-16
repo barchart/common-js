@@ -1,4 +1,4 @@
-const JsonSerializer = require('./../../../../../../../aws/dynamo/schema/serialization/attributes/JsonSerializer');
+import JsonSerializer from './../../../../../../../aws/dynamo/schema/serialization/attributes/JsonSerializer.js';
 
 describe('When a JsonSerializer is instantiated', () => {
 	'use strict';

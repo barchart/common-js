@@ -1,57 +1,51 @@
-const log4js = require('log4js');
+import Event from '@barchart/common-js/messaging/Event.js';
 
-const Event = require('@barchart/common-js/messaging/Event');
+import Publisher from './Publisher.js';
 
-const Publisher = require('./Publisher');
+import log4js from 'log4js';
 
-module.exports = (() => {
-	'use strict';
+const logger = log4js.getLogger('common-node/messaging/publishers/LocalPublisher');
 
-	const logger = log4js.getLogger('common-node/messaging/publishers/LocalPublisher');
+export default class LocalPublisher extends Publisher {
+	constructor(suppressExpressions) {
+		super(suppressExpressions);
 
-	class LocalPublisher extends Publisher {
-		constructor(suppressExpressions) {
-			super(suppressExpressions);
+		this._subscriptions = {};
+	}
 
-			this._subscriptions = {};
-		}
-
-		_publish(messageType, payload) {
-			if (this._subscriptions.hasOwnProperty(messageType)) {
-				this._subscriptions[messageType].fire(payload);
-			}
-		}
-
-		_subscribe(messageType, handler) {
-			if (!this._subscriptions.hasOwnProperty(messageType)) {
-				this._subscriptions[messageType] = new Event(this);
-			}
-
-			return this._subscriptions[messageType].register(getEventHandlerForSubscription(handler));
-		}
-
-		_onDispose() {
-			Object.keys(this._subscriptions).forEach((key) => {
-				const event = this._subscriptions[key];
-
-				event.dispose();
-			});
-
-			this._subscriptions = null;
-
-			logger.debug('Local publisher disposed');
-		}
-
-		toString() {
-			return '[LocalPublisher]';
+	_publish(messageType, payload) {
+		if (this._subscriptions.hasOwnProperty(messageType)) {
+			this._subscriptions[messageType].fire(payload);
 		}
 	}
 
-	function getEventHandlerForSubscription(handler) {
-		return (data, ignored) => {
-			handler(data);
-		};
+	_subscribe(messageType, handler) {
+		if (!this._subscriptions.hasOwnProperty(messageType)) {
+			this._subscriptions[messageType] = new Event(this);
+		}
+
+		return this._subscriptions[messageType].register(getEventHandlerForSubscription(handler));
 	}
 
-	return LocalPublisher;
-})();
+	_onDispose() {
+		Object.keys(this._subscriptions).forEach((key) => {
+			const event = this._subscriptions[key];
+
+			event.dispose();
+		});
+
+		this._subscriptions = null;
+
+		logger.debug('Local publisher disposed');
+	}
+
+	toString() {
+		return '[LocalPublisher]';
+	}
+}
+
+function getEventHandlerForSubscription(handler) {
+	return (data, ignored) => {
+		handler(data);
+	};
+}

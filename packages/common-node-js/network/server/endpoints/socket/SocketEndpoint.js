@@ -1,7 +1,3 @@
-const SocketRequestEndpoint = require('./specialized/SocketRequestEndpoint');
+import SocketRequestEndpoint from './specialized/SocketRequestEndpoint.js';
 
-module.exports = (() => {
-	'use strict';
-
-	return SocketRequestEndpoint;
-})();
+export default SocketRequestEndpoint;

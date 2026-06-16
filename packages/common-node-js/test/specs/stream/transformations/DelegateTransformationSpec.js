@@ -1,4 +1,4 @@
-const DelegateTransformation = require('./../../../../stream/transformations/DelegateTransformation');
+import DelegateTransformation from './../../../../stream/transformations/DelegateTransformation.js';
 
 describe('When a DelegateTransformation is created', () => {
 	'use strict';

@@ -1,4 +1,4 @@
-const SqsProvider = require('./../../../aws/SqsProvider');
+import SqsProvider from './../../../aws/SqsProvider.js';
 
 describe('When an SQS Provider created', () => {
 	'use strict';
