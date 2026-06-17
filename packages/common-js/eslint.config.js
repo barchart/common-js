@@ -37,6 +37,12 @@ export default [
 				...globals.node,
 				...globals.jasmine
 			}
+		},
+		rules: {
+			'no-empty': 'off',
+			'no-prototype-builtins': 'off',
+			'no-useless-escape': 'off',
+			'no-unused-vars': 'off'
 		}
 	}
 ];
