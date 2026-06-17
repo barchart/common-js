@@ -8,7 +8,6 @@ import git from 'gulp-git';
 import gitStatus from 'git-get-status';
 import gulp from 'gulp';
 import { globSync } from 'glob';
-import jshint from 'gulp-jshint';
 import prompt from 'gulp-prompt';
 import source from 'vinyl-source-stream';
 
@@ -122,11 +121,14 @@ gulp.task('release', gulp.series(
 	'create-tag')
 );
 
-gulp.task('lint', () => {
-	return gulp.src([ './**/*.js', './test/specs/**/*.js', '!./node_modules/**', '!./test/SpecRunner.js' ])
-		.pipe(jshint({ esversion: 11, module: true, node: true, browser: true, jasmine: true, '-W079': true, '-W117': true }))
-		.pipe(jshint.reporter('default'))
-		.pipe(jshint.reporter('fail'));
+gulp.task('lint', (cb) => {
+	exec('eslint .', { cwd: './' }, (error) => {
+		if (error) {
+			return cb(error);
+		}
+
+		cb();
+	});
 });
 
 gulp.task('test', gulp.series('execute-tests'));

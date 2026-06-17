@@ -25,7 +25,7 @@
     "node": ">=20.0.0"
   },
   "scripts": {
-    "lint": "gulp lint",
+    "lint": "eslint .",
     "prepack": "npm run types",
     "publish:npm": "npm publish",
     "test": "jasmine --config=jasmine.json",
@@ -57,10 +57,8 @@
     "glob": "^13.0.6",
     "gulp": "^5.0.1",
     "gulp-git": "^2.11.0",
-    "gulp-jshint": "^2.1.0",
     "gulp-prompt": "^1.2.0",
     "jasmine": "^6.2.0",
-    "jshint": "^2.13.6",
     "typescript": "^5.9.3",
     "vinyl-buffer": "^1.0.1",
     "vinyl-source-stream": "^2.0.0"

@@ -26,7 +26,8 @@
     "release": "lerna version -m 'Release. Bump version number %v' --tag-version-prefix='' --force-publish --sign-git-tag --sign-git-commit"
   },
   "devDependencies": {
-    "jshint": "^2.13.6",
+    "@eslint/js": "^9.39.1",
+    "eslint": "^9.39.1",
     "lerna": "^9.0.7"
   }
 }
