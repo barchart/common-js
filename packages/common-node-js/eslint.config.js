@@ -1,28 +1,5 @@
 import js from '@eslint/js';
-
-const globals = {
-	Buffer: 'readonly',
-	clearInterval: 'readonly',
-	clearTimeout: 'readonly',
-	console: 'readonly',
-	document: 'readonly',
-	global: 'readonly',
-	process: 'readonly',
-	setInterval: 'readonly',
-	setTimeout: 'readonly',
-	window: 'readonly',
-
-	afterAll: 'readonly',
-	afterEach: 'readonly',
-	beforeAll: 'readonly',
-	beforeEach: 'readonly',
-	describe: 'readonly',
-	expect: 'readonly',
-	fail: 'readonly',
-	it: 'readonly',
-	jasmine: 'readonly',
-	spyOn: 'readonly'
-};
+import globals from 'globals';
 
 export default [
 	{
@@ -34,18 +11,29 @@ export default [
 	},
 	js.configs.recommended,
 	{
-		files: [ '**/*.js' ],
+		files: ['**/*.js'],
+		ignores: ['test/specs/**'],
 		languageOptions: {
 			ecmaVersion: 'latest',
 			sourceType: 'module',
-			globals
+			globals: globals.node
 		},
 		rules: {
 			'no-empty': 'off',
 			'no-prototype-builtins': 'off',
-			'no-undef': 'off',
-			'no-unused-vars': 'off',
-			'no-useless-escape': 'off'
+			'no-useless-escape': 'off',
+			'no-unused-vars': 'off'
+		}
+	},
+	{
+		files: ['test/specs/**/*.js'],
+		languageOptions: {
+			ecmaVersion: 'latest',
+			sourceType: 'module',
+			globals: {
+				...globals.node,
+				...globals.jasmine
+			}
 		}
 	}
 ];

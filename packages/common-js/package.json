@@ -26,7 +26,7 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "prepack": "npm run types",
+    "prepack": "yarn types",
     "publish:npm": "npm publish",
     "test": "jasmine --config=jasmine.json",
     "types": "tsc -p tsconfig.types.json"
@@ -55,6 +55,7 @@
     "date-fns": "^3.6.0",
     "git-get-status": "^1.0.2",
     "glob": "^13.0.6",
+    "globals": "^14.0.0",
     "gulp": "^5.0.1",
     "gulp-git": "^2.11.0",
     "gulp-prompt": "^1.2.0",

@@ -9,7 +9,6 @@
     }
   },
   "description": "Common classes, utilities, and functions for building Node.js servers",
-  "type": "module",
   "author": {
     "name": "Bryan Ingle",
     "email": "bryan.ingle@barchart.com",
@@ -43,8 +42,6 @@
     "Node.js"
   ],
   "dependencies": {
-    "@barchart/common-js": "^4.73.0",
-    "@barchart/marketdata-api-js": "^6.3.2",
     "@aws-sdk/client-apigatewaymanagementapi": "^3.1065.0",
     "@aws-sdk/client-cloudwatch-logs": "^3.1065.0",
     "@aws-sdk/client-dynamodb": "^3.1065.0",
@@ -56,6 +53,8 @@
     "@aws-sdk/client-sqs": "^3.1065.0",
     "@aws-sdk/lib-storage": "^3.1065.0",
     "@aws-sdk/s3-request-presigner": "^3.1065.0",
+    "@barchart/common-js": "^4.73.0",
+    "@barchart/marketdata-api-js": "^6.3.2",
     "body-parser": "^2.2.2",
     "client-sessions": "^0.8.0",
     "express": "^5.2.1",
@@ -74,6 +73,7 @@
   },
   "devDependencies": {
     "git-get-status": "^1.0.2",
+    "globals": "^14.0.0",
     "gulp": "^5.0.1",
     "gulp-git": "^2.11.0",
     "gulp-prompt": "^1.2.0",
