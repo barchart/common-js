@@ -9,10 +9,10 @@ A *public* library of JavaScript utilities — suitable for use in both Node.js 
 
 #### Features
 
-* Simple utilities (type checking, assertions, bit masking, etc)
-* Data structures (decimals, days, enumerations, etc)
-* Simple collections (queues, stacks, trees, etc)
-* Specialized collections (priority queues, evicting lists, evicting maps, etc)
+* Simple utilities (type checking, assertions, a bit masking, etc.)
+* Data structures (decimals, days, enumerations, etc.)
+* Simple collections (queues, stacks, trees, etc.)
+* Specialized collections (priority queues, evicting lists, evicting maps, etc.)
 * Browse the code...
 
 #### Companion Library
