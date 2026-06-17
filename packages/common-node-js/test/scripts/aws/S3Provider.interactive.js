@@ -1,4 +1,4 @@
-import * as utils from '../utils/ManualTestUtils.js';
+import * as utils from '../utils/InteractiveTestUtils.js';
 
 import S3Provider from '../../../aws/S3Provider.js';
 

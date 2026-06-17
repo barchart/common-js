@@ -1,4 +1,4 @@
-import * as utils from '../utils/ManualTestUtils.js';
+import * as utils from '../utils/InteractiveTestUtils.js';
 
 import DynamoProvider from '../../../aws/DynamoProvider.js';
 import DataType from '../../../aws/dynamo/schema/definitions/DataType.js';

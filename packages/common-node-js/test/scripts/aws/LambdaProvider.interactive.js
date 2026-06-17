@@ -1,4 +1,4 @@
-import * as utils from '../utils/ManualTestUtils.js';
+import * as utils from '../utils/InteractiveTestUtils.js';
 
 import LambdaProvider from '../../../aws/LambdaProvider.js';
 
