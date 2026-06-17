@@ -22,10 +22,10 @@ export default [
 			}
 		},
 		rules: {
-			'no-empty': 'off',
-			'no-prototype-builtins': 'off',
-			'no-useless-escape': 'off',
-			'no-unused-vars': 'off'
+			'no-empty': 'warn',
+			'no-prototype-builtins': 'warn',
+			'no-useless-escape': 'warn',
+			'no-unused-vars': 'warn'
 		}
 	},
 	{
