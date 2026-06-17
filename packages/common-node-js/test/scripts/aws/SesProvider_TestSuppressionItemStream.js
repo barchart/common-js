@@ -41,7 +41,6 @@ async function main() {
 
 		reader
 			.pipe(counter)
-			.pipe(processor)
 			.pipe(writer);
 	});
 }
