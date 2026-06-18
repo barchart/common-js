@@ -130,7 +130,7 @@ export default class EventMap extends Disposable {
 		const keys = [];
 
 		for (let key in this.#events) {
-			if (this.#events.hasOwnProperty(key)) {
+			if (Object.prototype.hasOwnProperty.call(this.#events, key)) {
 				keys.push(key);
 			}
 		}
@@ -146,7 +146,7 @@ export default class EventMap extends Disposable {
 	 * @returns {boolean}
 	 */
 	hasKey(key) {
-		return this.#events.hasOwnProperty(key);
+		return Object.prototype.hasOwnProperty.call(this.#events, key);
 	}
 
 	/**

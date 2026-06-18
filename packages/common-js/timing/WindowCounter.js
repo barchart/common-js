@@ -63,7 +63,6 @@ export default class WindowCounter {
 	 * @returns {number}
 	 */
 	getAverage() {
-		const current = this.#advance();
 		const previousWindows = this.#windows.length - 1;
 
 		let returnVal;

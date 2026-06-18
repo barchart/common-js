@@ -37,7 +37,7 @@ export default class EvictingMap {
 	 * @returns {boolean}
 	 */
 	has(key) {
-		return this.#map.hasOwnProperty(key);
+		return Object.prototype.hasOwnProperty.call(this.#map, key);
 	}
 
 	/**

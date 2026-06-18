@@ -129,7 +129,7 @@ export function keys(target) {
 	const keys = [];
 
 	for (let k in target) {
-		if (target.hasOwnProperty(k)) {
+		if (Object.prototype.hasOwnProperty.call(target, k)) {
 			keys.push(k);
 		}
 	}
@@ -149,7 +149,7 @@ export function empty(target) {
 	let empty = true;
 
 	for (let k in target) {
-		if (target.hasOwnProperty(k)) {
+		if (Object.prototype.hasOwnProperty.call(target, k)) {
 			empty = false;
 
 			break;

@@ -14,14 +14,12 @@ function getPropertyNameArray(propertyNames, separator = '.') {
 }
 
 function getPropertyTarget(target, propertyNameArray, create) {
-	let returnRef;
-
 	let propertyTarget = target;
 
 	for (let i = 0; i < (propertyNameArray.length - 1); i++) {
 		let propertyName = propertyNameArray[i];
 
-		if (propertyTarget.hasOwnProperty(propertyName) && !is.nil(propertyTarget[propertyName]) && !is.undef(propertyTarget[propertyName])) {
+		if (Object.prototype.hasOwnProperty.call(propertyTarget, propertyName) && !is.nil(propertyTarget[propertyName]) && !is.undef(propertyTarget[propertyName])) {
 			propertyTarget = propertyTarget[propertyName];
 		} else if (create) {
 			propertyTarget = propertyTarget[propertyName] = {};
@@ -74,7 +72,7 @@ export function has(target, propertyNames, separator) {
 	const propertyNameArray = getPropertyNameArray(propertyNames, separator);
 	const propertyTarget = getPropertyTarget(target, propertyNameArray, false);
 
-	return propertyTarget !== null && propertyTarget.hasOwnProperty(last(propertyNameArray));
+	return propertyTarget !== null && Object.prototype.hasOwnProperty.call(propertyTarget, last(propertyNameArray));
 }
 
 /**

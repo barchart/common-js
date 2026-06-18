@@ -31,7 +31,7 @@ export default class TimeMap {
 	has(key) {
 		assert.argumentIsRequired(key, 'key', String);
 
-		let exists = this.#map.hasOwnProperty(key);
+		let exists = Object.prototype.hasOwnProperty.call(this.#map, key);
 
 		if (exists) {
 			const item = this.#map[key];

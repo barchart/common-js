@@ -36,7 +36,7 @@ export default class CompoundMap {
 		let target = this.#map;
 
 		return keys.every((k) => {
-			const returnVal = target.hasOwnProperty(k);
+			const returnVal = Object.prototype.hasOwnProperty.call(target, k);
 
 			if (returnVal) {
 				target = target[k];
@@ -63,7 +63,7 @@ export default class CompoundMap {
 			if (i === final) {
 				target[k] = value;
 			} else {
-				if (!target.hasOwnProperty(k)) {
+				if (!Object.prototype.hasOwnProperty.call(target, k)) {
 					target[k] = { };
 				}
 
@@ -85,7 +85,7 @@ export default class CompoundMap {
 		return keys.reduce((target, k) => {
 			let next;
 
-			if (is.object(target) && target.hasOwnProperty(k)) {
+			if (is.object(target) && Object.prototype.hasOwnProperty.call(target, k)) {
 				next = target[k];
 			} else {
 				next = null;

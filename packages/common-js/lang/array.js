@@ -58,7 +58,7 @@ export function groupBy(a, keySelector) {
 	return a.reduce((groups, item) => {
 		const key = keySelector(item);
 
-		if (!groups.hasOwnProperty(key)) {
+		if (!Object.prototype.hasOwnProperty.call(groups, key)) {
 			groups[key] = [ ];
 		}
 
@@ -117,7 +117,7 @@ export function indexBy(a, keySelector) {
 	return a.reduce((map, item) => {
 		const key = keySelector(item);
 
-		if (map.hasOwnProperty(key)) {
+		if (Object.prototype.hasOwnProperty.call(map, key)) {
 			throw new Error('Unable to index array. A duplicate key exists.');
 		}
 

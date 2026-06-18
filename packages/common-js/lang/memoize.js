@@ -19,7 +19,7 @@ export function simple(fn) {
 	const cache = { };
 
 	return (x) => {
-		if (!cache.hasOwnProperty(x)) {
+		if (!Object.prototype.hasOwnProperty.call(cache, x)) {
 			cache[x] = fn(x);
 		}
 

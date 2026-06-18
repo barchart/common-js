@@ -33,7 +33,7 @@ export default class MappedCommandHandler extends CommandHandler {
 		assert.argumentIsRequired(commandHandler, 'commandHandler', CommandHandler, 'CommandHandler');
 
 
-		if (this.#handlerMap.hasOwnProperty(name)) {
+		if (Object.prototype.hasOwnProperty.call(this.#handlerMap, name)) {
 			throw new Error('A handler with the same name already exists in the map');
 		}
 
