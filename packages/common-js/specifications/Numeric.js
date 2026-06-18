@@ -8,17 +8,28 @@ import Specification from './Specification.js';
  *
  * @public
  * @extends {Specification}
- * @param {*} value
  */
 export default class Numeric extends Specification {
 	constructor() {
 		super();
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 * @param {*} data
+	 * @returns {boolean}
+	 */
 	_evaluate(data) {
 		return is.number(data);
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Numeric]';
 	}

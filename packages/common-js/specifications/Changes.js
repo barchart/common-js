@@ -13,27 +13,41 @@ import Specification from './Specification.js';
  * @extends {Specification}
  */
 export default class Changes extends Specification {
+	#previous;
+
 	constructor() {
 		super();
 
-		this._previous = null;
+		this.#previous = null;
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 * @param {*} data
+	 * @returns {boolean}
+	 */
 	_evaluate(data) {
-		if (is.null(data) || is.undefined(data)) {
+		if (is.nil(data) || is.undef(data)) {
 			return false;
 		}
 
 		const current = data;
-		const previous = this._previous;
+		const previous = this.#previous;
 
-		const changed = !is.null(previous) && previous !== current;
+		const changed = !is.nil(previous) && previous !== current;
 
-		this._previous = current;
+		this.#previous = current;
 
 		return changed;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Changes]';
 	}

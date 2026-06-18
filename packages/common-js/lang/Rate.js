@@ -11,11 +11,18 @@ import Decimal from './Decimal.js';
  * base (i.e. denominator) currency.
  *
  * @public
- * @param {Number|String|Decimal} value - The rate
- * @param {Currency} numerator - The quote currency
- * @param {Currency} denominator - The base currency
  */
 export default class Rate {
+	#decimal;
+	#float;
+	#numerator;
+	#denominator;
+
+	/**
+	 * @param {number|string|Decimal} value - The rate
+	 * @param {Currency} numerator - The quote currency
+	 * @param {Currency} denominator - The base currency
+	 */
 	constructor(value, numerator, denominator) {
 		assert.argumentIsRequired(numerator, 'numerator', Currency, 'Currency');
 		assert.argumentIsRequired(denominator, 'denominator', Currency, 'Currency');
@@ -25,50 +32,50 @@ export default class Rate {
 		}
 
 		if (is.number(value)) {
-			this._decimal = null;
-			this._float = value;
+			this.#decimal = null;
+			this.#float = value;
 		} else if (value instanceof Decimal) {
-			this._decimal = value;
-			this._float = null;
+			this.#decimal = value;
+			this.#float = null;
 		} else {
-			this._decimal = new Decimal(value);
-			this._float = null;
+			this.#decimal = new Decimal(value);
+			this.#float = null;
 		}
 
-		if ((this._float !== null && !(this._float > 0)) || (this._decimal !== null && !this._decimal.getIsPositive())) {
+		if ((this.#float !== null && !(this.#float > 0)) || (this.#decimal !== null && !this.#decimal.getIsPositive())) {
 			throw new Error('Rate value must be positive.');
 		}
 
-		this._numerator = numerator;
-		this._denominator = denominator;
+		this.#numerator = numerator;
+		this.#denominator = denominator;
 	}
 
 	/**
-	 * The rate (as a {@link Decimal} instance.
+	 * The rate (as a {@link Decimal}) instance.
 	 *
 	 * @public
 	 * @returns {Decimal}
 	 */
 	get decimal() {
-		if (this._decimal === null) {
-			this._decimal = new Decimal(this.float);
+		if (this.#decimal === null) {
+			this.#decimal = new Decimal(this.float);
 		}
 
-		return this._decimal;
+		return this.#decimal;
 	}
 
 	/**
 	 * The rate (as a floating point number).
 	 *
 	 * @public
-	 * @returns {Number}
+	 * @returns {number}
 	 */
 	get float() {
-		if (this._float === null) {
-			this._float = this._decimal.toNumber();
+		if (this.#float === null) {
+			this.#float = this.#decimal.toNumber();
 		}
 
-		return this._float;
+		return this.#float;
 	}
 
 	/**
@@ -79,7 +86,7 @@ export default class Rate {
 	 * @returns {Currency}
 	 */
 	get numerator() {
-		return this._numerator;
+		return this.#numerator;
 	}
 
 	/**
@@ -90,7 +97,7 @@ export default class Rate {
 	 * @returns {Currency}
 	 */
 	get quote() {
-		return this._numerator;
+		return this.#numerator;
 	}
 
 	/**
@@ -101,7 +108,7 @@ export default class Rate {
 	 * @returns {Currency}
 	 */
 	get denominator() {
-		return this._denominator;
+		return this.#denominator;
 	}
 
 	/**
@@ -112,11 +119,11 @@ export default class Rate {
 	 * @returns {Currency}
 	 */
 	get base() {
-		return this._denominator;
+		return this.#denominator;
 	}
 
 	/**
-	 * Returns the equivalent rate with the numerator and denominator (i.e. the qoute and base)
+	 * Returns the equivalent rate with the numerator and denominator (i.e. the quote and base)
 	 * currencies.
 	 *
 	 * @public
@@ -125,26 +132,26 @@ export default class Rate {
 	invert() {
 		let inverted;
 
-		if (this._decimal === null) {
-			inverted = 1 / this._float;
+		if (this.#decimal === null) {
+			inverted = 1 / this.#float;
 		} else {
 			inverted = Decimal.ONE.divide(this.decimal);
 		}
 
-		return new Rate(inverted, this._denominator, this._numerator);
+		return new Rate(inverted, this.#denominator, this.#numerator);
 	}
 
 	/**
 	 * Formats the currency pair as a string (e.g. "EURUSD" or "^EURUSD").
 	 *
 	 * @public
-	 * @param {Boolean=} useCarat - If true, a carat is used as a prefix to the resulting string.
+	 * @param {boolean=} useCarat - If true, a carat is used as a prefix to the resulting string.
 	 * @returns {string}
 	 */
 	formatPair(useCarat) {
 		assert.argumentIsOptional(useCarat, 'useCarat', Boolean);
 
-		return `${(useCarat ? '^' : '')}${this._numerator.code}${this._denominator.code}`;
+		return `${(useCarat ? '^' : '')}${this.#numerator.code}${this.#denominator.code}`;
 	}
 
 	/**
@@ -162,8 +169,8 @@ export default class Rate {
 	 *
 	 * @public
 	 * @static
-	 * @param {Number|String|Decimal} value - The rate.
-	 * @param {String} symbol - A string that can be parsed as a currency pair.
+	 * @param {number|string|Decimal} value - The rate.
+	 * @param {string} symbol - A string that can be parsed as a currency pair.
 	 * @returns {Rate}
 	 */
 	static fromPair(value, symbol) {
@@ -221,6 +228,12 @@ export default class Rate {
 		return [ new Rate(GBXGBP.float, GBXGBP.numerator, GBXGBP.denominator) ];
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return `[Rate]`;
 	}

@@ -15,9 +15,9 @@ import * as is from './is.js';
  * "primitive" values are checked using strict equality rules.
  *
  * @static
- * @param {Object} a
- * @param {Object} b
- * @returns {Boolean}
+ * @param {object} a
+ * @param {object} b
+ * @returns {boolean}
  */
 export function equals(a, b) {
 	let returnVal;
@@ -55,10 +55,10 @@ export function equals(a, b) {
  * Performs a "deep" copy.
  *
  * @static
- * @param {Object} source - The object to copy.
+ * @param {object} source - The object to copy.
  * @param {Function=} canExtract - An optional function which indicates if the "extractor" can be used.
  * @param {Function=} extractor - An optional function which returns a cloned value for a property for assignment to the cloned
- * @returns {Object}
+ * @returns {object}
  */
 export function clone(source, canExtract, extractor) {
 	let c;
@@ -91,9 +91,9 @@ export function clone(source, canExtract, extractor) {
  * second object ("b") is preferred.
  *
  * @static
- * @param {Object} a
- * @param {Object} b
- * @returns {Object}
+ * @param {object} a
+ * @param {object} b
+ * @returns {object}
  */
 export function merge(a, b) {
 	let m;
@@ -109,7 +109,7 @@ export function merge(a, b) {
 
 			return accumulator;
 		}, { });
-	} else if (is.undefined(b)) {
+	} else if (is.undef(b)) {
 		m = clone(a);
 	} else {
 		m = clone(b);
@@ -122,7 +122,7 @@ export function merge(a, b) {
  * Given an object, returns an array of "own" properties.
  *
  * @static
- * @param {Object} target - The object to interrogate.
+ * @param {object} target - The object to interrogate.
  * @returns {Array<string>}
  */
 export function keys(target) {
@@ -138,12 +138,12 @@ export function keys(target) {
 }
 
 /**
- * Given an object, returns a Boolean value, indicating if the
+ * Given an object, returns a boolean value, indicating if the
  * object has any "own" properties.
  *
  * @static
- * @param {Object} target - The object to interrogate.
- * @returns {Boolean}
+ * @param {object} target - The object to interrogate.
+ * @returns {boolean}
  */
 export function empty(target) {
 	let empty = true;

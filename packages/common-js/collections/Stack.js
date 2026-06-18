@@ -6,8 +6,10 @@ import * as assert from './../lang/assert.js';
  * @public
  */
 export default class Stack {
+	#array;
+
 	constructor() {
-		this._array = [ ];
+		this.#array = [ ];
 	}
 
 	/**
@@ -18,7 +20,7 @@ export default class Stack {
 	 * @returns {object} - The item added to the stack.
 	 */
 	push(item) {
-		this._array.push(item);
+		this.#array.push(item);
 
 		return item;
 	}
@@ -34,7 +36,7 @@ export default class Stack {
 			throw new Error('Stack is empty');
 		}
 
-		return this._array.pop();
+		return this.#array.pop();
 	}
 
 	/**
@@ -48,7 +50,7 @@ export default class Stack {
 			throw new Error('Stack is empty');
 		}
 
-		return this._array[this._array.length - 1];
+		return this.#array[this.#array.length - 1];
 	}
 
 	/**
@@ -58,7 +60,7 @@ export default class Stack {
 	 * @returns {boolean}
 	 */
 	empty() {
-		return this._array.length === 0;
+		return this.#array.length === 0;
 	}
 
 	/**
@@ -70,8 +72,8 @@ export default class Stack {
 	scan(action) {
 		assert.argumentIsRequired(action, 'action', Function);
 
-		for (let i = this._array.length - 1; i >= 0; i--) {
-			action(this._array[i]);
+		for (let i = this.#array.length - 1; i >= 0; i--) {
+			action(this.#array[i]);
 		}
 	}
 
@@ -83,9 +85,15 @@ export default class Stack {
 	 * @returns {Array}
 	 */
 	toArray() {
-		return this._array.slice(0).reverse();
+		return this.#array.slice(0).reverse();
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Stack]';
 	}

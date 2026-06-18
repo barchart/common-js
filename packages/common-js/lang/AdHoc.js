@@ -5,37 +5,47 @@ import * as assert from './assert.js';
  * as an escaped JSON string.
  *
  * @public
- * @param {Object} data
  */
 export default class AdHoc {
+	#data;
+
+	/**
+	 * @param {object} data
+	 */
 	constructor(data) {
-		this._data = data || { };
+		this.#data = data || { };
 	}
 
 	/**
 	 * The data.
 	 * 
 	 * @public
-	 * @returns {Object}
+	 * @returns {object}
 	 */
 	get data() {
-		return this._data;
+		return this.#data;
 	}
 
 	/**
 	 * The data.
 	 *
 	 * @public
-	 * @param {Object} data
+	 * @param {object} data
 	 */
 	set data(data) {
 		assert.argumentIsRequired(data, 'data', Object);
 		
-		this._data = data;
+		this.#data = data;
 	}
 
+	/**
+	 * Returns the JSON representation.
+	 *
+	 * @public
+	 * @returns {*}
+	 */
 	toJSON() {
-		return JSON.stringify(this._data);
+		return JSON.stringify(this.#data);
 	}
 	
 	/**
@@ -43,13 +53,19 @@ export default class AdHoc {
 	 *
 	 * @public
 	 * @static
-	 * @param {String} serialized
+	 * @param {string} serialized
 	 * @returns {AdHoc}
 	 */
 	static parse(serialized) {
 		return new AdHoc(JSON.parse(serialized));
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[AdHoc]';
 	}

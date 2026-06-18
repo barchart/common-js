@@ -7,17 +7,24 @@ import * as comparators from './comparators.js';
  * interface.
  *
  * @public
- * @param {Function} comparator - The initial comparator.
- * @param {Boolean=} invert - Indicates if the comparator should sort in descending order.
  */
 export default class ComparatorBuilder {
+	#comparator;
+	#invert;
+	#previous;
+
+	/**
+	 * @param {Function} comparator - The initial comparator.
+	 * @param {boolean=} invert - Indicates if the comparator should sort in descending order.
+	 * @param {ComparatorBuilder=} previous - The previous comparator builder in the chain.
+	 */
 	constructor(comparator, invert, previous) {
 		assert.argumentIsRequired(comparator, 'comparator', Function);
 		assert.argumentIsOptional(invert, 'invert', Boolean);
 
-		this._comparator = comparator;
-		this._invert = invert || false;
-		this._previous = previous || null;
+		this.#comparator = comparator;
+		this.#invert = invert || false;
+		this.#previous = previous || null;
 	}
 
 	/**
@@ -25,7 +32,7 @@ export default class ComparatorBuilder {
 	 *
 	 * @public
 	 * @param {Function} comparator - The next comparator function.
-	 * @param {Boolean=} invert - Indicates if the comparator should sort in descending order.
+	 * @param {boolean=} invert - Indicates if the comparator should sort in descending order.
 	 * @returns {ComparatorBuilder}
 	 */
 	thenBy(comparator, invert) {
@@ -44,13 +51,13 @@ export default class ComparatorBuilder {
 	invert() {
 		let previous;
 
-		if (this._previous) {
-			previous = this._previous.invert();
+		if (this.#previous) {
+			previous = this.#previous.invert();
 		} else {
 			previous = null;
 		}
 
-		return new ComparatorBuilder(this._comparator, !this._invert, previous);
+		return new ComparatorBuilder(this.#comparator, !this.#invert, previous);
 	}
 
 	/**
@@ -62,8 +69,8 @@ export default class ComparatorBuilder {
 	toComparator() {
 		let previousComparator;
 
-		if (this._previous) {
-			previousComparator = this._previous.toComparator();
+		if (this.#previous) {
+			previousComparator = this.#previous.toComparator();
 		} else {
 			previousComparator = comparators.empty;
 		}
@@ -75,7 +82,7 @@ export default class ComparatorBuilder {
 				let sortA;
 				let sortB;
 
-				if (this._invert) {
+				if (this.#invert) {
 					sortA = b;
 					sortB = a;
 				} else {
@@ -83,13 +90,19 @@ export default class ComparatorBuilder {
 					sortB = b;
 				}
 
-				result = this._comparator(sortA, sortB);
+				result = this.#comparator(sortA, sortB);
 			}
 
 			return result;
 		};
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[ComparatorBuilder]';
 	}
@@ -98,8 +111,9 @@ export default class ComparatorBuilder {
 	 * Creates a {@link ComparatorBuilder}, given an initial comparator function.
 	 *
 	 * @public
+	 * @static
 	 * @param {Function} comparator - The initial comparator.
-	 * @param {Boolean=} invert - Indicates if the comparator should sort in descending order.
+	 * @param {boolean=} invert - Indicates if the comparator should sort in descending order.
 	 * @returns {ComparatorBuilder}
 	 */
 	static startWith(comparator, invert) {

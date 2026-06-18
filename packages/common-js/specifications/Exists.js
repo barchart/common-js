@@ -10,19 +10,33 @@ import Undefined from './Undefined.js';
  * @extends {Specification}
  */
 export default class Exists extends Specification {
+	#wrapped;
+
 	constructor() {
 		super();
 
 		const n = new Null();
 		const u = new Undefined();
 
-		this._wrapped = n.or(u).not();
+		this.#wrapped = n.or(u).not();
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 * @param {*} data
+	 * @returns {boolean}
+	 */
 	_evaluate(data) {
-		return this._wrapped.evaluate(data);
+		return this.#wrapped.evaluate(data);
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Exists]';
 	}

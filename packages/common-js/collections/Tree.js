@@ -6,15 +6,21 @@ import * as is from './../lang/is.js';
  * children nodes. Children are stored in insertion order.
  *
  * @public
- * @param {*} value - The value of the node.
- * @param {Tree=} parent - The parent node. If not supplied, this will be the root node.
  */
 export default class Tree {
-	constructor(value, parent) {
-		this._value = value;
+	#value;
+	#parent;
+	#children;
 
-		this._parent = parent || null;
-		this._children = [ ];
+	/**
+	 * @param {*} value - The value of the node.
+	 * @param {Tree=} parent - The parent node. If not supplied, this will be the root node.
+	 */
+	constructor(value, parent) {
+		this.#value = value;
+
+		this.#parent = parent || null;
+		this.#children = [ ];
 	}
 
 	/**
@@ -27,7 +33,7 @@ export default class Tree {
 		if (this.getIsRoot()) {
 			return this;
 		} else {
-			return this._parent.getRoot();
+			return this.#parent.getRoot();
 		}
 	}
 
@@ -38,7 +44,7 @@ export default class Tree {
 	 * @returns {Tree|null}
 	 */
 	getParent() {
-		return this._parent;
+		return this.#parent;
 	}
 
 	/**
@@ -48,7 +54,7 @@ export default class Tree {
 	 * @returns {Array<Tree>}
 	 */
 	getChildren() {
-		return this._children;
+		return this.#children;
 	}
 
 	/**
@@ -58,7 +64,7 @@ export default class Tree {
 	 * @returns {*}
 	 */
 	getValue() {
-		return this._value;
+		return this.#value;
 	}
 
 	/**
@@ -68,7 +74,7 @@ export default class Tree {
 	 * @returns {boolean}
 	 */
 	getIsLeaf() {
-		return this._children.length === 0;
+		return this.#children.length === 0;
 	}
 
 	/**
@@ -78,7 +84,7 @@ export default class Tree {
 	 * @returns {boolean}
 	 */
 	getIsInner() {
-		return this._children.length !== 0;
+		return this.#children.length !== 0;
 	}
 
 	/**
@@ -88,7 +94,7 @@ export default class Tree {
 	 * @returns {boolean}
 	 */
 	getIsRoot() {
-		return this._parent === null;
+		return this.#parent === null;
 	}
 
 	/**
@@ -102,7 +108,7 @@ export default class Tree {
 	addChild(value) {
 		const returnRef = new Tree(value, this);
 
-		this._children.push(returnRef);
+		this.#children.push(returnRef);
 
 		return returnRef;
 	}
@@ -114,14 +120,14 @@ export default class Tree {
 	 * @param {Tree} node - The child to remove.
 	 */
 	removeChild(node) {
-		for (let i = this._children.length - 1; !(i < 0); i--) {
-			const child = this._children[i];
+		for (let i = this.#children.length - 1; !(i < 0); i--) {
+			const child = this.#children[i];
 
 			if (child === node) {
-				this._children.splice(i, 1);
+				this.#children.splice(i, 1);
 
-				child._parent = null;
-				child._children = [ ];
+				child.#parent = null;
+				child.#children = [ ];
 
 				break;
 			}
@@ -147,14 +153,14 @@ export default class Tree {
 	 * predicate.
 	 *
 	 * @public
-	 * @param {Tree~nodePredicate} predicate - A predicate that tests each child node. The predicate takes two arguments -- the node's value, and the node itself.
+	 * @param {nodePredicate} predicate - A predicate that tests each child node. The predicate takes two arguments -- the node's value, and the node itself.
 	 * @returns {Tree|null}
 	 */
 	findChild(predicate) {
 		let returnRef = null;
 
-		for (let i = 0; i < this._children.length; i++) {
-			let child = this._children[i];
+		for (let i = 0; i < this.#children.length; i++) {
+			let child = this.#children[i];
 
 			if (predicate(child.getValue(), child)) {
 				returnRef = child;
@@ -170,7 +176,7 @@ export default class Tree {
 	 * Searches the tree recursively, starting with the current node.
 	 *
 	 * @public
-	 * @param {Tree~nodePredicate} predicate - A predicate that tests each child node. The predicate takes two arguments -- the node's value, and the node itself.
+	 * @param {nodePredicate} predicate - A predicate that tests each child node. The predicate takes two arguments -- the node's value, and the node itself.
 	 * @param {boolean=} parentFirst - If true, the tree will be searched from parent-to-child (breadth first). Otherwise, child-to-parent (depth first).
 	 * @param {boolean=} includeCurrentNode - True, if the current node should be checked against the predicate.
 	 * @returns {Tree|null}
@@ -178,13 +184,13 @@ export default class Tree {
 	search(predicate, parentFirst, includeCurrentNode) {
 		let returnRef = null;
 
-		if (returnRef === null && parentFirst && includeCurrentNode && predicate(this.getValue(), this)) {
+		if (parentFirst && includeCurrentNode && predicate(this.getValue(), this)) {
 			returnRef = this;
 		}
 
 		if (returnRef === null) {
-			for (let i = 0; i < this._children.length; i++) {
-				const child = this._children[i];
+			for (let i = 0; i < this.#children.length; i++) {
+				const child = this.#children[i];
 
 				returnRef = child.search(predicate, parentFirst, true);
 
@@ -205,7 +211,7 @@ export default class Tree {
 	 * Walks the children of the current node, running an action on each node.
 	 *
 	 * @public
-	 * @param {Tree~nodeAction} walkAction - A action to apply to each node. The action takes two arguments -- the node's value, and the node itself.
+	 * @param {nodeAction} walkAction - A action to apply to each node. The action takes two arguments -- the node's value, and the node itself.
 	 * @param {boolean=} parentFirst - If true, the tree will be searched from parent-to-child (breadth first). Otherwise, child-to-parent (depth first).
 	 * @param {boolean=} includeCurrentNode - True if the current node should be applied to the action.
 	 */
@@ -224,7 +230,7 @@ export default class Tree {
 	 * function is not efficient.
 	 *
 	 * @public
-	 * @returns {Number}
+	 * @returns {number}
 	 */
 	count() {
 		let count = 0;
@@ -238,7 +244,7 @@ export default class Tree {
 	 * Climbs the parents of the current node -- current node up to the root node, running an action on each node.
 	 *
 	 * @public
-	 * @param {Tree~nodeAction} climbAction - A action to apply to each node. The action takes two arguments -- the node's value, and the node itself.
+	 * @param {nodeAction} climbAction - A action to apply to each node. The action takes two arguments -- the node's value, and the node itself.
 	 * @param {boolean=} includeCurrentNode - True if the current node should be applied to the action.
 	 */
 	climb(climbAction, includeCurrentNode) {
@@ -246,8 +252,8 @@ export default class Tree {
 			climbAction(this.getValue(), this);
 		}
 
-		if (this._parent !== null) {
-			this._parent.climb(climbAction, true);
+		if (this.#parent !== null) {
+			this.#parent.climb(climbAction, true);
 		}
 	}
 
@@ -257,7 +263,7 @@ export default class Tree {
 	 * a null value is returned.
 	 *
 	 * @public
-	 * @param {Tree~nodePredicate} predicate - A predicate that tests each child node. The predicate takes two arguments -- the node's value, and the node itself.
+	 * @param {nodePredicate} predicate - A predicate that tests each child node. The predicate takes two arguments -- the node's value, and the node itself.
 	 * @param {boolean=} includeCurrentNode - If true, the predicate will be applied to the current node.
 	 * @returns {Tree|null}
 	 */
@@ -266,8 +272,8 @@ export default class Tree {
 
 		if (is.boolean(includeCurrentNode) && includeCurrentNode && predicate(this.getValue(), this)) {
 			returnRef = this;
-		} else if (this._parent !== null) {
-			returnRef = this._parent.findParent(predicate, true);
+		} else if (this.#parent !== null) {
+			returnRef = this.#parent.findParent(predicate, true);
 		} else {
 			returnRef = null;
 		}
@@ -280,8 +286,8 @@ export default class Tree {
 	 *
 	 * @public
 	 * @param {Function=} valueConverter - An optional function for converting the value of each node.
-	 * @param {Boolean=} valueConverter - If true, empty children arrays will be excluded from output.
-	 * @returns {Object}
+	 * @param {boolean=} omitEmptyChildren - If true, empty children arrays will be excluded from output.
+	 * @returns {object}
 	 */
 	toJSObj(valueConverter, omitEmptyChildren) {
 		let valueConverterToUse;
@@ -293,16 +299,26 @@ export default class Tree {
 		}
 
 		const converted = {
-			value: valueConverterToUse(this._value)
+			value: valueConverterToUse(this.#value)
 		};
 
-		if (!(is.boolean(omitEmptyChildren) && omitEmptyChildren && this._children.length === 0)) {
-			converted.children = this._children.map((child) => child.toJSObj(valueConverter, omitEmptyChildren));
+		if (!(is.boolean(omitEmptyChildren) && omitEmptyChildren && this.#children.length === 0)) {
+			converted.children = this.#children.map((child) => child.toJSObj(valueConverter, omitEmptyChildren));
 		}
 
 		return converted;
 	}
 
+	_getChildren() {
+		return this.#children;
+	}
+
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Tree]';
 	}
@@ -311,17 +327,16 @@ export default class Tree {
 /**
  * A predicate that is used to check a node (i.e. {@link Tree}).
  *
- * @callback Tree~nodePredicate
+ * @callback nodePredicate
  * @param {*} item - The candidate node's item
  * @param {Tree} node - The candidate node.
- * @returns {Boolean}
+ * @returns {boolean}
  */
 
 /**
  * An action that is run on a node (i.e. {@link Tree}).
  *
- * @callback Tree~nodeAction
+ * @callback nodeAction
  * @param {*} item - The candidate node's item
  * @param {Tree} node - The candidate node.
  */
-

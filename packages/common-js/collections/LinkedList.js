@@ -3,13 +3,18 @@
  * holding both an item, a reference to the next node.
  *
  * @public
- * @param {*} value - The value of current node.
  */
 export default class LinkedList {
-	constructor(value) {
-		this._value = value;
+	#value;
+	#next;
 
-		this._next = null;
+	/**
+	 * @param {*} value - The value of current node.
+	 */
+	constructor(value) {
+		this.#value = value;
+
+		this.#next = null;
 	}
 
 	/**
@@ -19,17 +24,17 @@ export default class LinkedList {
 	 * @returns {*}
 	 */
 	getValue() {
-		return this._value;
+		return this.#value;
 	}
 
 	/**
 	 * Returns the next node, if it exists; otherwise a null value is returned.
 	 *
 	 * @public
-	 * @returns {Tree|null}
+	 * @returns {LinkedList|null}
 	 */
 	getNext() {
-		return this._next;
+		return this.#next;
 	}
 
 	/**
@@ -39,7 +44,7 @@ export default class LinkedList {
 	 * @returns {boolean}
 	 */
 	getIsTail() {
-		return this._next === null;
+		return this.#next === null;
 	}
 
 	/**
@@ -53,15 +58,21 @@ export default class LinkedList {
 	insert(value) {
 		const next = new LinkedList(value);
 
-		if (this._next) {
-			next._next = this._next;
+		if (this.#next) {
+			next.#next = this.#next;
 		}
 
-		this._next = next;
+		this.#next = next;
 
 		return next;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[LinkedList]';
 	}

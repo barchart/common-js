@@ -6,19 +6,35 @@ import Specification from './Specification.js';
  *
  * @public
  * @extends {Specification}
- * @param {*} value
  */
 export default class Contains extends Specification {
+	#value;
+
+	/**
+	 * @param {*} value
+	 */
 	constructor(value) {
 		super();
 
-		this._value = value;
+		this.#value = value;
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 * @param {*} data
+	 * @returns {boolean}
+	 */
 	_evaluate(data) {
-		return Array.isArray(data) && data.some((candidate) => candidate === this._value);
+		return Array.isArray(data) && data.some((candidate) => candidate === this.#value);
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Contains]';
 	}

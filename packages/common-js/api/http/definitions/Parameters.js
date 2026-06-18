@@ -6,11 +6,15 @@ import Parameter from './Parameter.js';
  * An ordered collection of {@link Parameter} items.
  *
  * @public
- * @param {Parameter[]|undefined} parameters
  */
 export default class Parameters {
+	#parameters;
+
+	/**
+	 * @param {Parameter[]=} parameters
+	 */
 	constructor(parameters) {
-		this._parameters = parameters || [ ];
+		this.#parameters = parameters || [ ];
 	}
 
 	/**
@@ -20,7 +24,7 @@ export default class Parameters {
 	 * @returns {Parameter[]}
 	 */
 	get parameters() {
-		return this._parameters;
+		return this.#parameters;
 	}
 
 	/**
@@ -29,17 +33,23 @@ export default class Parameters {
 	 * @public
 	 */
 	validate() {
-		if (!is.array(this._parameters)) {
+		if (!is.array(this.#parameters)) {
 			throw new Error('Parameters must be an array.');
 		}
 
-		if (this._parameters.some(p => !(p instanceof Parameter))) {
+		if (this.#parameters.some(p => !(p instanceof Parameter))) {
 			throw new Error('All parameter items must be instances of Parameters.');
 		}
 
-		this._parameters.forEach(p => p.validate());
+		this.#parameters.forEach(p => p.validate());
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return `[Parameters]`;
 	}

@@ -11,10 +11,22 @@ export default class Fail extends Specification {
 		super();
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 * @param {*} data
+	 * @returns {boolean}
+	 */
 	_evaluate(data) {
 		return false;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Fail]';
 	}

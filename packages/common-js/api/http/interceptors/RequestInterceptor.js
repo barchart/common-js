@@ -1,10 +1,13 @@
 import * as assert from './../../../lang/assert.js';
 
 /**
+ * @typedef {import('./../definitions/Endpoint.js').default} Endpoint
+ */
+
+/**
  * A processor that transforms a web service request before it is transmitted.
  *
  * @public
- * @interface
  */
 export default class RequestInterceptor {
 	constructor() {
@@ -15,7 +18,7 @@ export default class RequestInterceptor {
 	 * Adjusts outgoing requests data before the request is transmitted.
 	 *
 	 * @public
-	 * @param {Object} request
+	 * @param {object} request
 	 * @param {Endpoint} endpoint - The endpoint which is originating the request.
 	 * @returns {Promise<*>}
 	 */
@@ -26,6 +29,12 @@ export default class RequestInterceptor {
 			});
 	}
 
+	/**
+	 * @protected
+	 * @param {object} request
+	 * @param {Endpoint} endpoint
+	 * @returns {*}
+	 */
 	_onProcess(request, endpoint) {
 		return request;
 	}
@@ -65,22 +74,40 @@ export default class RequestInterceptor {
 		return requestInterceptorPlain;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[RequestInterceptor]';
 	}
 }
 
 class DelegateRequestInterceptor extends RequestInterceptor {
+	#delegate;
+
+	/**
+	 * @param {Function} delegate
+	 */
 	constructor(delegate) {
 		super();
 
 		assert.argumentIsRequired(delegate, 'delegate', Function);
 
-		this._delegate = delegate;
+		this.#delegate = delegate;
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 * @param {object} request
+	 * @param {Endpoint} endpoint
+	 * @returns {*}
+	 */
 	_onProcess(request, endpoint) {
-		return this._delegate(request, endpoint);
+		return this.#delegate(request, endpoint);
 	}
 
 	toString() {

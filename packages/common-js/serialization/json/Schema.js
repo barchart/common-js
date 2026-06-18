@@ -4,28 +4,39 @@ import * as is from './../../lang/is.js';
 
 import LinkedList from './../../collections/LinkedList.js';
 import Tree from './../../collections/Tree.js';
-import Component from './Component.js';
-import Field from './Field.js';
+
+/**
+ * @typedef {import('./Component.js').default} Component
+ * @typedef {import('./Field.js').default} Field
+ */
 
 /**
  * A schema definition, can be used for serialization and deserialization.
  *
  * @public
- * @param {String} name - The name of the schema
- * @param {Field[]} fields
- * @param {Component[]} components
- * @param {Boolean=} strict
  */
 export default class Schema {
+	#name;
+	#fields;
+	#components;
+	#strict;
+	#revivers;
+
+	/**
+	 * @param {string} name - The name of the schema
+	 * @param {Field[]=} fields
+	 * @param {Component[]=} components
+	 * @param {boolean=} strict
+	 */
 	constructor(name, fields, components, strict) {
-		this._name = name;
+		this.#name = name;
 
-		this._fields = fields || [ ];
-		this._components = components || [ ];
+		this.#fields = fields || [ ];
+		this.#components = components || [ ];
 
-		this._strict = is.boolean(strict) && strict;
+		this.#strict = is.boolean(strict) && strict;
 
-		this._revivers = getReviverItems(this._fields, this._components);
+		this.#revivers = getReviverItems(this.#fields, this.#components);
 	}
 
 	/**
@@ -33,17 +44,17 @@ export default class Schema {
 	 * the schema.
 	 *
 	 * @public
-	 * @param {Object} data
-	 * @returns {Object}
+	 * @param {object} data
+	 * @returns {object}
 	 */
 	format(data) {
 		const returnRef = { };
 
-		this._fields.forEach((field) => {
+		this.#fields.forEach((field) => {
 			formatField(returnRef, field, data);
 		});
 
-		this._components.forEach((component) => {
+		this.#components.forEach((component) => {
 			component.fields.forEach((field) => {
 				formatField(returnRef, field, data);
 			});
@@ -56,10 +67,10 @@ export default class Schema {
 	 * Name of the table.
 	 *
 	 * @public
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	get name() {
-		return this._name;
+		return this.#name;
 	}
 
 	/**
@@ -69,7 +80,7 @@ export default class Schema {
 	 * @returns {Array<Field>}
 	 */
 	get fields() {
-		return [...this._fields];
+		return [...this.#fields];
 	}
 
 	/**
@@ -79,7 +90,7 @@ export default class Schema {
 	 * @returns {Array<Component>}
 	 */
 	get components() {
-		return [...this._components];
+		return [...this.#components];
 	}
 
 	/**
@@ -90,7 +101,7 @@ export default class Schema {
 	 * @returns {boolean}
 	 */
 	get strict() {
-		return this._strict;
+		return this.#strict;
 	}
 
 	/**
@@ -98,7 +109,7 @@ export default class Schema {
 	 *
 	 * @public
 	 * @param {*} candidate
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	validate(candidate) {
 		return !getCandidateIsInvalid(candidate) && this.getInvalidFields(candidate).length === 0;
@@ -139,7 +150,7 @@ export default class Schema {
 	 * @returns {Function}
 	 */
 	getReviver() {
-		let head = this._revivers;
+		let head = this.#revivers;
 		let node = null;
 
 		const advance = (key) => {
@@ -183,7 +194,7 @@ export default class Schema {
 
 	/**
 	 * Returns a function that will generate a *new* reviver function
-	 * (see {@link Schema#getReviver}.
+	 * (see {@link Schema#getReviver}).
 	 *
 	 * @public
 	 * @returns {Function}
@@ -192,8 +203,14 @@ export default class Schema {
 		return () => this.getReviver();
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
-		return `[Schema (name=${this._name})]`;
+		return `[Schema (name=${this.#name})]`;
 	}
 }
 
@@ -211,32 +228,38 @@ class SchemaError extends Error {
 }
 
 class ReviverItem {
+	#name;
+	#reviver;
+	#optional;
+	#reset;
+	#array;
+
 	constructor(name, reviver, optional, reset, array) {
-		this._name = name;
-		this._reviver = reviver || functions.getTautology();
-		this._optional = is.boolean(optional) && optional;
-		this._reset = is.boolean(reset) && reset;
-		this._array = is.boolean(array) && array;
+		this.#name = name;
+		this.#reviver = reviver || functions.getTautology();
+		this.#optional = is.boolean(optional) && optional;
+		this.#reset = is.boolean(reset) && reset;
+		this.#array = is.boolean(array) && array;
 	}
 
 	get name() {
-		return this._name;
+		return this.#name;
 	}
 
 	get reviver() {
-		return this._reviver;
+		return this.#reviver;
 	}
 
 	get optional() {
-		return this._optional;
+		return this.#optional;
 	}
 
 	get reset() {
-		return this._reset;
+		return this.#reset;
 	}
 
 	get array() {
-		return this._array;
+		return this.#array;
 	}
 }
 
@@ -323,5 +346,5 @@ function formatField(target, field, data) {
 }
 
 function getCandidateIsInvalid(candidate) {
-	return is.undefined(candidate) || is.null(candidate) || !is.object(candidate);
+	return is.undef(candidate) || is.nil(candidate) || !is.object(candidate);
 }

@@ -6,8 +6,11 @@ import * as assert from './assert.js';
  * @public
  */
 export default class Disposable {
+
+	#disposed;
+
 	constructor() {
-		this._disposed = false;
+		this.#disposed = false;
 	}
 
 	/**
@@ -17,7 +20,7 @@ export default class Disposable {
 	 * @returns {boolean}
 	 */
 	get disposed() {
-		return this._disposed;
+		return this.#disposed;
 	}
 
 	/**
@@ -28,11 +31,11 @@ export default class Disposable {
 	 * @public
 	 */
 	dispose() {
-		if (this._disposed) {
+		if (this.#disposed) {
 			return;
 		}
 
-		this._disposed = true;
+		this.#disposed = true;
 
 		this._onDispose();
 	}
@@ -54,9 +57,15 @@ export default class Disposable {
 	 * @returns {boolean}
 	 */
 	getIsDisposed() {
-		return this._disposed;
+		return this.#disposed;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Disposable]';
 	}
@@ -92,15 +101,24 @@ export default class Disposable {
 }
 
 class DisposableAction extends Disposable {
-	constructor(disposeAction) {
-		super(disposeAction);
+	#disposeAction;
 
-		this._disposeAction = disposeAction;
+	/**
+     * @param {Function} disposeAction
+     */
+	constructor(disposeAction) {
+		super();
+
+		this.#disposeAction = disposeAction;
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 */
 	_onDispose() {
-		this._disposeAction();
-		this._disposeAction = null;
+		this.#disposeAction();
+		this.#disposeAction = null;
 	}
 
 	toString() {

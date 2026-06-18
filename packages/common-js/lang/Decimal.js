@@ -8,11 +8,15 @@ import Big from 'big.js';
  * An immutable object that allows for arbitrary-precision calculations.
  *
  * @public
- * @param {Decimal|Number|String} value - The value.
  */
 export default class Decimal {
+	#big;
+
+	/**
+	 * @param {Decimal|number|string} value - The value.
+	 */
 	constructor(value) {
-		this._big = getBig(value);
+		this.#big = Decimal.#getBig(value);
 	}
 
 	/**
@@ -20,11 +24,11 @@ export default class Decimal {
 	 * current instance's value and the value supplied.
 	 *
 	 * @public
-	 * @param {Decimal|Number|String} other - The value to add.
+	 * @param {Decimal|number|string} other - The value to add.
 	 * @returns {Decimal}
 	 */
 	add(other) {
-		return new Decimal(this._big.plus(getBig(other)));
+		return new Decimal(this.#big.plus(Decimal.#getBig(other)));
 	}
 
 	/**
@@ -33,11 +37,11 @@ export default class Decimal {
 	 * value.
 	 *
 	 * @public
-	 * @param {Decimal|Number|String} other - The value to subtract.
+	 * @param {Decimal|number|string} other - The value to subtract.
 	 * @returns {Decimal}
 	 */
 	subtract(other) {
-		return new Decimal(this._big.minus(getBig(other)));
+		return new Decimal(this.#big.minus(Decimal.#getBig(other)));
 	}
 
 	/**
@@ -45,11 +49,11 @@ export default class Decimal {
 	 * current instance's value and the value supplied.
 	 *
 	 * @public
-	 * @param {Decimal|Number|String} other - The value to multiply the current instance by.
+	 * @param {Decimal|number|string} other - The value to multiply the current instance by.
 	 * @returns {Decimal}
 	 */
 	multiply(other) {
-		return new Decimal(this._big.times(getBig(other)));
+		return new Decimal(this.#big.times(Decimal.#getBig(other)));
 	}
 
 	/**
@@ -58,11 +62,11 @@ export default class Decimal {
 	 * supplied.
 	 *
 	 * @public
-	 * @param {Decimal|Number|String} other - The value to divide the current instance by.
+	 * @param {Decimal|number|string} other - The value to divide the current instance by.
 	 * @returns {Decimal}
 	 */
 	divide(other) {
-		return new Decimal(this._big.div(getBig(other)));
+		return new Decimal(this.#big.div(Decimal.#getBig(other)));
 	}
 
 	/**
@@ -71,13 +75,13 @@ export default class Decimal {
 	 * provided.
 	 *
 	 * @public
-	 * @param {Number} exponent
+	 * @param {number} exponent
 	 * @returns {Decimal}
 	 */
 	raise(exponent) {
 		assert.argumentIsRequired(exponent, 'exponent', Number);
 
-		return new Decimal(this._big.pow(exponent));
+		return new Decimal(this.#big.pow(exponent));
 	}
 
 	/**
@@ -85,7 +89,7 @@ export default class Decimal {
 	 * operation on the current value.
 	 *
 	 * @public
-	 * @param {Number} places - The number of decimal places to retain.
+	 * @param {number} places - The number of decimal places to retain.
 	 * @param {RoundingMode=} mode - The strategy to use for rounding.
 	 * @returns {Decimal}
 	 */
@@ -95,7 +99,7 @@ export default class Decimal {
 
 		const modeToUse = mode || RoundingMode.NORMAL;
 
-		return new Decimal(this._big.round(places, modeToUse.value));
+		return new Decimal(this.#big.round(places, modeToUse.value));
 	}
 
 	/**
@@ -103,11 +107,11 @@ export default class Decimal {
 	 * dividing the current instance by the value supplied.
 	 *
 	 * @public
-	 * @param {Decimal|Number|String} other
+	 * @param {Decimal|number|string} other
 	 * @returns {Decimal}
 	 */
 	mod(other) {
-		return new Decimal(this._big.mod(getBig(other)));
+		return new Decimal(this.#big.mod(Decimal.#getBig(other)));
 	}
 
 	/**
@@ -118,7 +122,7 @@ export default class Decimal {
 	 * @returns {Decimal}
 	 */
 	absolute() {
-		return new Decimal(this._big.abs());
+		return new Decimal(this.#big.abs());
 	}
 
 	/**
@@ -133,83 +137,83 @@ export default class Decimal {
 	}
 
 	/**
-	 * Returns a Boolean value, indicating if the current instance's value is
+	 * Returns a boolean value, indicating if the current instance's value is
 	 * equal to zero (or approximately equal to zero).
 	 *
 	 * @public
-	 * @param {Boolean=} approximate
-	 * @param {Number=} places
-	 * @returns {Boolean}
+	 * @param {boolean=} approximate
+	 * @param {number=} places
+	 * @returns {boolean}
 	 */
 	getIsZero(approximate, places) {
 		assert.argumentIsOptional(approximate, 'approximate', Boolean);
 		assert.argumentIsOptional(places, 'places', Number);
 
-		return this._big.eq(zero) || (is.boolean(approximate) && approximate && this.round(places || Big.DP, RoundingMode.NORMAL).getIsZero());
+		return this.#big.eq(zero) || (is.boolean(approximate) && approximate && this.round(places || Big.DP, RoundingMode.NORMAL).getIsZero());
 	}
 
 	/**
 	 * Returns true if the current instance is positive; otherwise false.
 	 *
 	 * @public
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	getIsPositive() {
-		return this._big.gt(zero);
+		return this.#big.gt(zero);
 	}
 
 	/**
 	 * Returns true if the current instance is negative; otherwise false.
 	 *
 	 * @public
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	getIsNegative() {
-		return this._big.lt(zero);
+		return this.#big.lt(zero);
 	}
 
 	/**
 	 * Returns true if the current instance is greater than the value.
 	 *
 	 * @public
-	 * @param {Decimal|Number|String} other - The value to compare.
-	 * @returns {Boolean}
+	 * @param {Decimal|number|string} other - The value to compare.
+	 * @returns {boolean}
 	 */
 	getIsGreaterThan(other) {
-		return this._big.gt(getBig(other));
+		return this.#big.gt(Decimal.#getBig(other));
 	}
 
 	/**
 	 * Returns true if the current instance is greater than or equal to the value.
 	 *
 	 * @public
-	 * @param {Decimal|Number|String} other - The value to compare.
-	 * @returns {Boolean}
+	 * @param {Decimal|number|string} other - The value to compare.
+	 * @returns {boolean}
 	 */
 	getIsGreaterThanOrEqual(other) {
-		return this._big.gte(getBig(other));
+		return this.#big.gte(Decimal.#getBig(other));
 	}
 
 	/**
 	 * Returns true if the current instance is less than the value.
 	 *
 	 * @public
-	 * @param {Decimal|Number|String} other - The value to compare.
-	 * @returns {Boolean}
+	 * @param {Decimal|number|string} other - The value to compare.
+	 * @returns {boolean}
 	 */
 	getIsLessThan(other) {
-		return this._big.lt(getBig(other));
+		return this.#big.lt(Decimal.#getBig(other));
 	}
 
 	/**
 	 * Returns true if the current instance is less than or equal to the value.
 	 *
 	 * @public
-	 * @param {Decimal|Number|String} other - The value to compare.
-	 * @returns {Boolean}
+	 * @param {Decimal|number|string} other - The value to compare.
+	 * @returns {boolean}
 	 */
 	getIsLessThanOrEqual(other) {
-		return this._big.lte(getBig(other));
+		return this.#big.lte(Decimal.#getBig(other));
 	}
 
 	/**
@@ -217,10 +221,10 @@ export default class Decimal {
 	 * test is inclusive, by default.
 	 *
 	 * @public
-	 * @param {Decimal|Number|String} minimum - The minimum value.
-	 * @param {Decimal|Number|String} minimum - The maximum value.
-	 * @param {Boolean=} exclusive - If true, the value cannot equal the minimum or maximum value and still be considered "between" the other values.
-	 * @returns {Boolean}
+	 * @param {Decimal|number|string} minimum - The minimum value.
+	 * @param {Decimal|number|string} maximum - The maximum value.
+	 * @param {boolean=} exclusive - If true, the value cannot equal the minimum or maximum value and still be considered "between" the other values.
+	 * @returns {boolean}
 	 */
 	getIsBetween(minimum, maximum, exclusive) {
 		assert.argumentIsOptional(exclusive, 'exclusive', Boolean);
@@ -236,20 +240,20 @@ export default class Decimal {
 	 * Returns true if the current instance is equal to the value.
 	 *
 	 * @public
-	 * @param {Decimal|Number|String} other - The value to compare.
-	 * @returns {Boolean}
+	 * @param {Decimal|number|string} other - The value to compare.
+	 * @returns {boolean}
 	 */
 	getIsEqual(other) {
-		return this._big.eq(getBig(other));
+		return this.#big.eq(Decimal.#getBig(other));
 	}
 
 	/**
 	 * Returns true is close to another value.
 	 *
 	 * @public
-	 * @param {Decimal|Number|String} other - The value to compare.
-	 * @param {Number} places - The significant digits.
-	 * @returns {Boolean}
+	 * @param {Decimal|number|string} other - The value to compare.
+	 * @param {number} places - The significant digits.
+	 * @returns {boolean}
 	 */
 	getIsApproximate(other, places) {
 		if (places === 0) {
@@ -267,7 +271,7 @@ export default class Decimal {
 	 * component).
 	 *
 	 * @public
-	 * @return {Boolean}
+	 * @return {boolean}
 	 */
 	getIsInteger() {
 		return this.getIsEqual(this.round(0));
@@ -277,7 +281,7 @@ export default class Decimal {
 	 * Returns the number of decimal places used.
 	 *
 	 * @public
-	 * @returns {Number}
+	 * @returns {number}
 	 */
 	getDecimalPlaces() {
 		const matches = this.toFixed().match(/-?\d*\.(\d*)/);
@@ -298,8 +302,8 @@ export default class Decimal {
 	 * instance.
 	 *
 	 * @public
-	 * @param {Number=} places
-	 * @returns {Number}
+	 * @param {number=} places
+	 * @returns {number}
 	 */
 	toFloat(places) {
 		assert.argumentIsOptional(places, 'places', Number);
@@ -308,35 +312,35 @@ export default class Decimal {
 		// the consumer should be forced to use the round
 		// function.
 
-		return parseFloat(this._big.toFixed(places || 16));
+		return parseFloat(this.#big.toFixed(places || 16));
 	}
 
 	/**
 	 * Returns a string-based representation of the instance's value.
 	 *
 	 * @public
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	toFixed() {
-		return this._big.toFixed();
+		return this.#big.toFixed();
 	}
 
 	/**
-	 * Returns a {@link Number} that is approximately equal to the value of
+	 * Returns a {@link number} that is approximately equal to the value of
 	 * this {@link Decimal} instance.
 	 *
 	 * @public
-	 * @returns {Number}
+	 * @returns {number}
 	 */
 	toNumber() {
-		return this._big.toNumber();
+		return this.#big.toNumber();
 	}
 
 	/**
 	 * Returns the JSON representation.
 	 *
 	 * @public
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	toJSON() {
 		return this.toFixed();
@@ -353,7 +357,7 @@ export default class Decimal {
 	static clone(value) {
 		assert.argumentIsRequired(value, 'value', Decimal, 'Decimal');
 
-		return new Decimal(value._big);
+		return new Decimal(value.#big);
 	}
 
 	/**
@@ -362,7 +366,7 @@ export default class Decimal {
 	 *
 	 * @public
 	 * @static
-	 * @param {Decimal|Number|String} value
+	 * @param {Decimal|number|string} value
 	 * @returns {Decimal}
 	 */
 	static parse(value) {
@@ -403,11 +407,11 @@ export default class Decimal {
 	}
 
 	/**
-	 * Return the {@link RoundingMode} enumeration.
+	 * Returns the {@link RoundingMode} enumeration type.
 	 *
 	 * @public
 	 * @static
-	 * @returns {RoundingMode}
+	 * @returns {typeof RoundingMode}
 	 */
 	static get ROUNDING_MODE() {
 		return RoundingMode;
@@ -419,7 +423,7 @@ export default class Decimal {
 	 * @public
 	 * @static
 	 * @param {Decimal} instance
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	static getIsZero(instance) {
 		assert.argumentIsRequired(instance, 'instance', Decimal, 'Decimal');
@@ -433,7 +437,7 @@ export default class Decimal {
 	 * @public
 	 * @static
 	 * @param {Decimal} instance
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	static getIsNotZero(instance) {
 		assert.argumentIsRequired(instance, 'instance', Decimal, 'Decimal');
@@ -447,7 +451,7 @@ export default class Decimal {
 	 * @public
 	 * @static
 	 * @param {Decimal} instance
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	static getIsPositive(instance) {
 		assert.argumentIsRequired(instance, 'instance', Decimal, 'Decimal');
@@ -461,7 +465,7 @@ export default class Decimal {
 	 * @public
 	 * @static
 	 * @param {Decimal} instance
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	static getIsNotPositive(instance) {
 		assert.argumentIsRequired(instance, 'instance', Decimal, 'Decimal');
@@ -475,7 +479,7 @@ export default class Decimal {
 	 * @public
 	 * @static
 	 * @param {Decimal} instance
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	static getIsNegative(instance) {
 		assert.argumentIsRequired(instance, 'instance', Decimal, 'Decimal');
@@ -489,7 +493,7 @@ export default class Decimal {
 	 * @public
 	 * @static
 	 * @param {Decimal} instance
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	static getIsNotNegative(instance) {
 		assert.argumentIsRequired(instance, 'instance', Decimal, 'Decimal');
@@ -504,21 +508,37 @@ export default class Decimal {
 	 * @static
 	 * @param {Decimal} a
 	 * @param {Decimal} b
-	 * @returns {Number}
+	 * @returns {number}
 	 */
 	static compareDecimals(a, b) {
 		assert.argumentIsRequired(a, 'a', Decimal, 'Decimal');
 		assert.argumentIsRequired(b, 'b', Decimal, 'Decimal');
 
-		if (a._big.gt(b._big)) {
+		if (a.#big.gt(b.#big)) {
 			return 1;
-		} else if (a._big.lt(b._big)) {
+		} else if (a.#big.lt(b.#big)) {
 			return -1;
 		} else {
 			return 0;
 		}
 	}
 
+	static #getBig(value) {
+		if (value instanceof Big) {
+			return value;
+		} else if (value instanceof Decimal) {
+			return value.#big;
+		} else {
+			return new Big(value);
+		}
+	}
+
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Decimal]';
 	}
@@ -532,16 +552,6 @@ const decimalZero = new Decimal(zero);
 const decimalOne = new Decimal(positiveOne);
 const decimalNegativeOne = new Decimal(negativeOne);
 
-function getBig(value) {
-	if (value instanceof Big) {
-		return value;
-	} else if (value instanceof Decimal) {
-		return value._big;
-	} else {
-		return new Big(value);
-	}
-}
-
 /**
  * An enumeration of strategies for rounding a {@link Decimal} instance.
  *
@@ -550,20 +560,26 @@ function getBig(value) {
  * @extends {Enum}
  */
 class RoundingMode extends Enum {
+	#value;
+
+	/**
+     * @param {number} value
+     * @param {string} description
+     */
 	constructor(value, description) {
 		super(value.toString(), description);
 
-		this._value = value;
+		this.#value = value;
 	}
 
 	/**
 	 * The code used by the Big.js library.
 	 *
 	 * @ignore
-	 * @returns {Number}
+	 * @returns {number}
 	 */
 	get value() {
-		return this._value;
+		return this.#value;
 	}
 
 	/**

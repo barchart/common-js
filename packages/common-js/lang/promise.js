@@ -15,8 +15,8 @@ import * as assert from './assert.js';
  * @static
  * @async
  * @param {Promise} promise
- * @param {Number} milliseconds
- * @param {String=} description
+ * @param {number} milliseconds
+ * @param {string=} description
  * @returns {Promise<*>}
  */
 export async function timeout(promise, milliseconds, description) {
@@ -69,7 +69,7 @@ export async function timeout(promise, milliseconds, description) {
  * @async
  * @param {Array} items - The items to map
  * @param {Function} mapper - The mapping function (e.g. given an item, return a promise).
- * @param {Number=} concurrency - The maximum number of promises that are allowed to run at once.
+ * @param {number=} concurrency - The maximum number of promises that are allowed to run at once.
  * @returns {Promise<Array>}
  */
 export async function map(items, mapper, concurrency) {

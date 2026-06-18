@@ -13,10 +13,22 @@ export default class Undefined extends Specification {
 		super();
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 * @param {*} data
+	 * @returns {boolean}
+	 */
 	_evaluate(data) {
-		return is.undefined(data);
+		return is.undef(data);
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Undefined]';
 	}

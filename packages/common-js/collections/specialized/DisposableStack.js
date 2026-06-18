@@ -13,10 +13,12 @@ import Disposable from './../../lang/Disposable.js';
  * @extends {Disposable}
  */
 export default class DisposableStack extends Disposable {
+	#stack;
+
 	constructor() {
 		super();
 
-		this._stack = new Stack();
+		this.#stack = new Stack();
 	}
 
 	/**
@@ -32,16 +34,25 @@ export default class DisposableStack extends Disposable {
 			throw new Error('Unable to push item onto DisposableStack because it has been disposed.');
 		}
 
-		this._stack.push(disposable);
+		this.#stack.push(disposable);
 	}
 
-	/** @protected */
+	/**
+	 * @protected
+	 * @override
+	 */
 	_onDispose() {
-		while (!this._stack.empty()) {
-			this._stack.pop().dispose();
+		while (!this.#stack.empty()) {
+			this.#stack.pop().dispose();
 		}
 	}
 
+	/**
+	 * @public
+	 * @static
+	 * @param {*} bindings
+	 * @returns {DisposableStack}
+	 */
 	static fromArray(bindings) {
 		assert.argumentIsArray(bindings, 'bindings', Disposable, 'Disposable');
 
@@ -54,6 +65,13 @@ export default class DisposableStack extends Disposable {
 		return returnRef;
 	}
 
+	/**
+	 * @public
+	 * @static
+	 * @param {*} stack
+	 * @param {*} promise
+	 * @returns {Promise}
+	 */
 	static pushPromise(stack, promise) {
 		assert.argumentIsRequired(stack, 'stack', DisposableStack, 'DisposableStack');
 		assert.argumentIsRequired(promise, 'promise');

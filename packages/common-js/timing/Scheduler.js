@@ -12,11 +12,14 @@ import Disposable from './../lang/Disposable.js';
  * @extends {Disposable}
  */
 export default class Scheduler extends Disposable {
+	#timeoutBindings;
+	#intervalBindings;
+
 	constructor() {
 		super();
 
-		this._timeoutBindings = {};
-		this._intervalBindings = {};
+		this.#timeoutBindings = {};
+		this.#intervalBindings = {};
 	}
 
 	/**
@@ -42,7 +45,7 @@ export default class Scheduler extends Disposable {
 
 		const schedulePromise = promise.build((resolveCallback, rejectCallback) => {
 			const wrappedAction = () => {
-				const disposable = this._timeoutBindings[token];
+				const disposable = this.#timeoutBindings[token];
 
 				// 2021/05/18, BRI. Invoking dispose cases the clearTimeout function to run.
 				// Running clearTimeout should not be necessary because the timer has elapsed
@@ -67,16 +70,23 @@ export default class Scheduler extends Disposable {
 
 			token = setTimeout(wrappedAction, millisecondDelay);
 
-			this._timeoutBindings[token] = Disposable.fromAction(() => {
+			this.#timeoutBindings[token] = Disposable.fromAction(() => {
 				clearTimeout(token);
 
-				delete this._timeoutBindings[token];
+				delete this.#timeoutBindings[token];
 			});
 		});
 
 		return schedulePromise;
 	}
 
+	/**
+	 * @public
+	 * @param {Function} actionToRepeat
+	 * @param {number} millisecondInterval
+	 * @param {string=} actionDescription
+	 * @returns {Disposable}
+	 */
 	repeat(actionToRepeat, millisecondInterval, actionDescription) {
 		assert.argumentIsRequired(actionToRepeat, 'actionToRepeat', Function);
 		assert.argumentIsRequired(millisecondInterval, 'millisecondInterval', Number);
@@ -96,13 +106,13 @@ export default class Scheduler extends Disposable {
 
 		const token = setInterval(wrappedAction, millisecondInterval);
 
-		this._intervalBindings[token] = Disposable.fromAction(() => {
+		this.#intervalBindings[token] = Disposable.fromAction(() => {
 			clearInterval(token);
 
-			delete this._intervalBindings[token];
+			delete this.#intervalBindings[token];
 		});
 
-		return this._intervalBindings[token];
+		return this.#intervalBindings[token];
 	}
 
 	/**
@@ -115,7 +125,7 @@ export default class Scheduler extends Disposable {
 	 * @param {string=} actionDescription - Description of the action to attempt, used for logging purposes.
 	 * @param {number=} maximumAttempts - The number of attempts to before giving up.
 	 * @param {Function=} failureCallback - If provided, will be invoked if a function is considered to be failing.
-	 * @param {Object=} failureValue - If provided, will consider the result to have failed, if this value is returned (a deep equality check is used). If not provided, an undefined value will trigger a retry.
+	 * @param {object=} failureValue - If provided, will consider the result to have failed, if this value is returned (a deep equality check is used). If not provided, an undefined value will trigger a retry.
 	 * @param {number=} maximumDelay - The maximum delay that can be used for the backoff. If not provided, the delay will continue to double until the maximum number of attempts is reached.
 	 * @returns {Promise}
 	 */
@@ -156,7 +166,7 @@ export default class Scheduler extends Disposable {
 				}).then((result) => {
 					let resultPromise;
 
-					if (!is.undefined(failureValue) && object.equals(result, failureValue)) {
+					if (!is.undef(failureValue) && object.equals(result, failureValue)) {
 						resultPromise = Promise.reject(`Attempt [ ${attempts} ] for [ ${(actionDescription || 'unnamed action')} ] failed due to invalid result`);
 					} else {
 						resultPromise = Promise.resolve(result);
@@ -200,19 +210,32 @@ export default class Scheduler extends Disposable {
 		return processActionRecursive();
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 */
 	_onDispose() {
-		object.keys(this._timeoutBindings).forEach((key) => {
-			this._timeoutBindings[key].dispose();
+		object.keys(this.#timeoutBindings).forEach((key) => {
+			this.#timeoutBindings[key].dispose();
 		});
 
-		object.keys(this._intervalBindings).forEach((key) => {
-			this._intervalBindings[key].dispose();
+		object.keys(this.#intervalBindings).forEach((key) => {
+			this.#intervalBindings[key].dispose();
 		});
 
-		this._timeoutBindings = null;
-		this._intervalBindings = null;
+		this.#timeoutBindings = null;
+		this.#intervalBindings = null;
 	}
 
+	/**
+	 * @public
+	 * @static
+	 * @async
+	 * @param {Function} actionToSchedule
+	 * @param {number} millisecondDelay
+	 * @param {string=} actionDescription
+	 * @returns {Promise}
+	 */
 	static async schedule(actionToSchedule, millisecondDelay, actionDescription) {
 		const scheduler = new Scheduler();
 
@@ -227,6 +250,19 @@ export default class Scheduler extends Disposable {
 		return result;
 	}
 
+	/**
+	 * @public
+	 * @static
+	 * @async
+	 * @param {Function} actionToBackoff
+	 * @param {number} millisecondDelay
+	 * @param {string=} actionDescription
+	 * @param {number=} maximumAttempts
+	 * @param {Function=} failureCallback
+	 * @param {object=} failureValue
+	 * @param {number=} maximumDelay
+	 * @returns {Promise}
+	 */
 	static async backoff(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts, failureCallback, failureValue, maximumDelay) {
 		const scheduler = new Scheduler();
 
@@ -241,6 +277,12 @@ export default class Scheduler extends Disposable {
 		return result;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Scheduler]';
 	}

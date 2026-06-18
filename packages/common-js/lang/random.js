@@ -4,9 +4,9 @@ import * as assert from './assert.js';
  * Returns a random integer within a given range.
  *
  * @public
- * @param {Number} minimum - The minimum value (inclusive).
- * @param {Number} maximum - The maximum value (exclusive).
- * @returns {Number}
+ * @param {number} minimum - The minimum value (inclusive).
+ * @param {number} maximum - The maximum value (exclusive).
+ * @returns {number}
  */
 export function range(minimum, maximum) {
 	assert.argumentIsRequired(minimum, 'minimum', Number);

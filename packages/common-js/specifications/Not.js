@@ -1,3 +1,1 @@
-import Specification from './Specification.js';
-
-export default Specification.Not;
+export { Not as default } from './Specification.js';

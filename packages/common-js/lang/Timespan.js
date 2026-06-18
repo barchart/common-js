@@ -14,10 +14,15 @@ const MAX_SECONDS = 59;
  * A data structure that represents the time between two dates.
  *
  * @public
- * @param {Number} start
- * @param {Number} end
  */
 export default class Timespan {
+	#start;
+	#end;
+
+	/**
+	 * @param {number} start
+	 * @param {number} end
+	 */
 	constructor(start, end) {
 		assert.argumentIsValid(start, 'start', is.large, 'is an integer');
 		assert.argumentIsValid(end, 'end', is.large, 'is an integer');
@@ -26,28 +31,28 @@ export default class Timespan {
 			throw new Error('The "start" parameter cannot be after the "end" parameter');
 		}
 
-		this._start = start;
-		this._end = end;
+		this.#start = start;
+		this.#end = end;
 	}
 
 	/**
 	 * The start time (as milliseconds since epoch).
 	 *
 	 * @public
-	 * @returns {Number}
+	 * @returns {number}
 	 */
 	get start() {
-		return this._start;
+		return this.#start;
 	}
 
 	/**
 	 * The start time (as milliseconds since epoch).
 	 *
 	 * @public
-	 * @returns {Number}
+	 * @returns {number}
 	 */
 	get end() {
-		return this._end;
+		return this.#end;
 	}
 
 	/**
@@ -97,7 +102,7 @@ export default class Timespan {
 	 * @returns {number}
 	 */
 	get milliseconds() {
-		return this._end - this._start;
+		return this.#end - this.#start;
 	}
 
 	/**
@@ -105,10 +110,10 @@ export default class Timespan {
 	 * milliseconds.
 	 *
 	 * @public
-	 * @param {Boolean} days
-	 * @param {Boolean} hours
-	 * @param {Boolean} minutes
-	 * @param {Boolean} seconds
+	 * @param {boolean} days
+	 * @param {boolean} hours
+	 * @param {boolean} minutes
+	 * @param {boolean} seconds
 	 * @returns {{days: number, hours: number, minutes: *, seconds: number, milliseconds: number}}
 	 */
 	getDuration(days, hours, minutes, seconds) {
@@ -188,15 +193,21 @@ export default class Timespan {
 	 * Returns the JSON representation.
 	 *
 	 * @public
-	 * @returns {Object}
+	 * @returns {object}
 	 */
 	toJSON() {
-		const start = this._start;
-		const end = this._end;
+		const start = this.#start;
+		const end = this.#end;
 
 		return { start, end };
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Timespan]';
 	}

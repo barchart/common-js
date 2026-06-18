@@ -1,5 +1,13 @@
 import * as is from './is.js';
 
+/**
+ * Indicates whether two numbers are approximately equal within floating-point precision.
+ *
+ * @public
+ * @param {*} a
+ * @param {*} b
+ * @returns {boolean}
+ */
 export function approximate(a, b) {
 	if (!is.number(a) || !is.number(b)) {
 		return false;

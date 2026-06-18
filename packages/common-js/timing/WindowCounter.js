@@ -1,35 +1,56 @@
 import * as assert from './../lang/assert.js';
 
 export default class WindowCounter {
+	#duration;
+	#windows;
+	#maximum;
+	#previousCount;
+
+	/**
+	 * @param {number} duration
+	 * @param {number} windows
+	 */
 	constructor(duration, windows) {
 		assert.argumentIsRequired(duration, 'duration', Number);
 		assert.argumentIsRequired(windows, 'windows', Number);
 
-		this._duration = duration;
+		this.#duration = duration;
 
-		this._windows = [ new Window(getTime(), this._duration) ];
-		this._maximum = Math.max(windows, 2);
+		this.#windows = [ new Window(getTime(), this.#duration) ];
+		this.#maximum = Math.max(windows, 2);
 
-		this._previousCount = 0;
+		this.#previousCount = 0;
 	}
 
+	/**
+	 * @public
+	 * @param {number} count
+	 */
 	increment(count) {
 		assert.argumentIsRequired(count, 'count', Number);
 
-		advance.call(this).increment(count);
+		this.#advance().increment(count);
 	}
 
+	/**
+	 * @public
+	 * @returns {number}
+	 */
 	getCurrent() {
-		return advance.call(this).getCount();
+		return this.#advance().getCount();
 	}
 
+	/**
+	 * @public
+	 * @returns {number}
+	 */
 	getPrevious() {
-		advance.call(this);
+		this.#advance();
 
 		let returnVal;
 
-		if (this._windows.length > 1) {
-			returnVal = this._windows[1].getCount();
+		if (this.#windows.length > 1) {
+			returnVal = this.#windows[1].getCount();
 		} else {
 			returnVal = 0;
 		}
@@ -37,14 +58,18 @@ export default class WindowCounter {
 		return returnVal;
 	}
 
+	/**
+	 * @public
+	 * @returns {number}
+	 */
 	getAverage() {
-		const current = advance.call(this);
-		const previousWindows = this._windows.length - 1;
+		const current = this.#advance();
+		const previousWindows = this.#windows.length - 1;
 
 		let returnVal;
 
 		if (previousWindows > 0) {
-			returnVal = this._previousCount / previousWindows;
+			returnVal = this.#previousCount / previousWindows;
 		} else {
 			returnVal = 0;
 		}
@@ -52,30 +77,36 @@ export default class WindowCounter {
 		return returnVal;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[WindowCounter]';
 	}
-}
 
-function advance() {
-	const now = getTime();
+	#advance() {
+		const now = getTime();
 
-	while (!this._windows[0].contains(now)) {
-		const previous = this._windows[0];
-		const current = new Window(previous.getEnd(), this._duration);
+		while (!this.#windows[0].contains(now)) {
+			const previous = this.#windows[0];
+			const current = new Window(previous.getEnd(), this.#duration);
 
-		this._windows.unshift(current);
+			this.#windows.unshift(current);
 
-		this._previousCount = this._previousCount + previous.getCount();
+			this.#previousCount = this.#previousCount + previous.getCount();
 
-		if (this._windows.length > this._maximum) {
-			const removed = this._windows.pop();
+			if (this.#windows.length > this.#maximum) {
+				const removed = this.#windows.pop();
 
-			this._previousCount = this._previousCount - removed.getCount();
+				this.#previousCount = this.#previousCount - removed.getCount();
+			}
 		}
-	}
 
-	return this._windows[0];
+		return this.#windows[0];
+	}
 }
 
 function getTime() {
@@ -83,30 +114,34 @@ function getTime() {
 }
 
 class Window {
-	constructor(start, duration) {
-		this._start = start;
-		this._end = start + duration;
+	#start;
+	#end;
+	#count;
 
-		this._count = 0;
+	constructor(start, duration) {
+		this.#start = start;
+		this.#end = start + duration;
+
+		this.#count = 0;
 	}
 
 	contains(now) {
-		return !(now < this._start || now > this._end);
+		return !(now < this.#start || now > this.#end);
 	}
 
 	increment(count) {
-		this._count = this._count + count;
+		this.#count = this.#count + count;
 	}
 
 	getStart() {
-		return this._start;
+		return this.#start;
 	}
 
 	getEnd() {
-		return this._end;
+		return this.#end;
 	}
 
 	getCount() {
-		return this._count;
+		return this.#count;
 	}
 }

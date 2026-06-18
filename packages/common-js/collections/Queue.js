@@ -6,8 +6,10 @@ import * as assert from './../lang/assert.js';
  * @public
  */
 export default class Queue {
+	#array;
+
 	constructor() {
-		this._array = [];
+		this.#array = [ ];
 	}
 
 	/**
@@ -18,7 +20,7 @@ export default class Queue {
 	 * @returns {object} - The item added to the queue.
 	 */
 	enqueue(item) {
-		this._array.push(item);
+		this.#array.push(item);
 
 		return item;
 	}
@@ -34,7 +36,7 @@ export default class Queue {
 			throw new Error('Queue is empty');
 		}
 
-		return this._array.shift();
+		return this.#array.shift();
 	}
 
 	/**
@@ -48,7 +50,7 @@ export default class Queue {
 			throw new Error('Queue is empty');
 		}
 
-		return this._array[0];
+		return this.#array[0];
 	}
 
 	/**
@@ -58,7 +60,7 @@ export default class Queue {
 	 * @returns {boolean}
 	 */
 	empty() {
-		return this._array.length === 0;
+		return this.#array.length === 0;
 	}
 
 	/**
@@ -70,7 +72,7 @@ export default class Queue {
 	scan(action) {
 		assert.argumentIsRequired(action, 'action', Function);
 
-		this._array.forEach(x => action(x));
+		this.#array.forEach(x => action(x));
 	}
 
 	/**
@@ -81,9 +83,19 @@ export default class Queue {
 	 * @returns {Array}
 	 */
 	toArray() {
-		return this._array.slice(0);
+		return this.#array.slice(0);
 	}
 
+	_getArray() {
+		return this.#array;
+	}
+
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Queue]';
 	}

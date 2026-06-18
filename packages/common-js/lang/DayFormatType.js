@@ -5,19 +5,27 @@ import Enum from './Enum.js';
  *
  * @public
  * @extends {Enum}
- * @param {String} description
  */
 export default class DayFormatType extends Enum {
+	#regex;
+	#yearIndex;
+	#monthIndex;
+	#dayIndex;
+	#yearShift;
+
+	/**
+	 * @param {string} description
+	 */
 	constructor(description, regex, yearIndex, monthIndex, dayIndex, yearShift) {
 		super(description, description);
 
-		this._regex = regex;
+		this.#regex = regex;
 
-		this._yearIndex = yearIndex;
-		this._monthIndex = monthIndex;
-		this._dayIndex = dayIndex;
+		this.#yearIndex = yearIndex;
+		this.#monthIndex = monthIndex;
+		this.#dayIndex = dayIndex;
 
-		this._yearShift = yearShift;
+		this.#yearShift = yearShift;
 	}
 
 	/**
@@ -27,7 +35,7 @@ export default class DayFormatType extends Enum {
 	 * @returns {RegExp}
 	 */
 	get regex() {
-		return this._regex;
+		return this.#regex;
 	}
 
 	/**
@@ -37,7 +45,7 @@ export default class DayFormatType extends Enum {
 	 * @returns {number}
 	 */
 	get yearIndex() {
-		return this._yearIndex;
+		return this.#yearIndex;
 	}
 
 	/**
@@ -47,7 +55,7 @@ export default class DayFormatType extends Enum {
 	 * @returns {number}
 	 */
 	get monthIndex() {
-		return this._monthIndex;
+		return this.#monthIndex;
 	}
 
 	/**
@@ -57,7 +65,7 @@ export default class DayFormatType extends Enum {
 	 * @returns {number}
 	 */
 	get dayIndex() {
-		return this._dayIndex;
+		return this.#dayIndex;
 	}
 
 	/**
@@ -68,7 +76,7 @@ export default class DayFormatType extends Enum {
 	 * @returns {number}
 	 */
 	get yearShift() {
-		return this._yearShift;
+		return this.#yearShift;
 	}
 
 	/**
@@ -104,6 +112,12 @@ export default class DayFormatType extends Enum {
 		return mmddyy;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return `[DayFormatType (description=${this.description})]`;
 	}

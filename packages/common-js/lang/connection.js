@@ -11,8 +11,8 @@ import * as is from './is.js';
 /**
  * Returns true, if the input is a true boolean value; otherwise false.
  *
- * @param {Boolean=} secure
- * @returns {Boolean}
+ * @param {boolean=} secure
+ * @returns {boolean}
  */
 export function getIsSecure(secure) {
 	return is.boolean(secure) && secure;

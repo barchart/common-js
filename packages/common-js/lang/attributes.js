@@ -21,7 +21,7 @@ function getPropertyTarget(target, propertyNameArray, create) {
 	for (let i = 0; i < (propertyNameArray.length - 1); i++) {
 		let propertyName = propertyNameArray[i];
 
-		if (propertyTarget.hasOwnProperty(propertyName) && !is.null(propertyTarget[propertyName]) && !is.undefined(propertyTarget[propertyName])) {
+		if (propertyTarget.hasOwnProperty(propertyName) && !is.nil(propertyTarget[propertyName]) && !is.undef(propertyTarget[propertyName])) {
 			propertyTarget = propertyTarget[propertyName];
 		} else if (create) {
 			propertyTarget = propertyTarget[propertyName] = {};
@@ -57,9 +57,9 @@ function last(array) {
  *
  * @public
  * @static
- * @param {Object} target - The object to check for existence of the property.
- * @param {String|String[]} propertyNames - The property to check -- either a string with separators, or an array of strings (already split by separator).
- * @param {String=} separator - The separator (defaults to a period character).
+ * @param {object} target - The object to check for existence of the property.
+ * @param {string|string[]} propertyNames - The property to check -- either a string with separators, or an array of strings (already split by separator).
+ * @param {string=} separator - The separator (defaults to a period character).
  * @returns {boolean}
  */
 export function has(target, propertyNames, separator) {
@@ -83,9 +83,9 @@ export function has(target, propertyNames, separator) {
  *
  * @public
  * @static
- * @param {Object} target - The object to read from.
- * @param {String|String[]} propertyNames - The property to read -- either a string with separators, or an array of strings (already split by separator).
- * @param {String=} separator - The separator (defaults to a period character).
+ * @param {object} target - The object to read from.
+ * @param {string|string[]} propertyNames - The property to read -- either a string with separators, or an array of strings (already split by separator).
+ * @param {string=} separator - The separator (defaults to a period character).
  * @returns {*}
  */
 export function read(target, propertyNames, separator) {
@@ -118,10 +118,10 @@ export function read(target, propertyNames, separator) {
  *
  * @public
  * @static
- * @param {Object} target - The object to write to.
- * @param {String|String[]} propertyNames - The property to write -- either a string with separators, or an array of strings (already split by separator).
+ * @param {object} target - The object to write to.
+ * @param {string|string[]} propertyNames - The property to write -- either a string with separators, or an array of strings (already split by separator).
  * @param {*} value - The value to assign.
- * @param {String=} separator - The separator (defaults to a period character).
+ * @param {string=} separator - The separator (defaults to a period character).
  */
 export function write(target, propertyNames, value, separator) {
 	assert.argumentIsRequired(target, 'target', Object);
@@ -145,9 +145,9 @@ export function write(target, propertyNames, value, separator) {
  *
  * @public
  * @static
- * @param {Object} target - The object to erase a property from.
- * @param {String|String} propertyNames - The property to write -- either a string with separators, or an array of strings (already split by separator).
- * @param {String=} separator - The separator (defaults to a period character).
+ * @param {object} target - The object to erase a property from.
+ * @param {string|string} propertyNames - The property to write -- either a string with separators, or an array of strings (already split by separator).
+ * @param {string=} separator - The separator (defaults to a period character).
  */
 export function erase(target, propertyNames, separator) {
 	if (!has(target, propertyNames)) {

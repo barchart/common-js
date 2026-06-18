@@ -9,60 +9,81 @@ import RequestInterceptor from './../interceptors/RequestInterceptor.js';
 import ResponseInterceptor from './../interceptors/ResponseInterceptor.js';
 
 /**
+ * @typedef {import('./Credentials.js').default} Credentials
+ */
+
+/**
  * The definition of a web service endpoint.
  *
  * @public
- * @param {String=} name
- * @param {String=} description
- * @param {VerbType=} verb
- * @param {ProtocolType=} protocol
- * @param {String=} host
- * @param {Number=} port
- * @param {Parameters=} path
- * @param {Parameters=} query
- * @param {Parameters=} headers
- * @param {Parameters=} body
- * @param {Credentials=} credentials
- * @param {RequestInterceptor=} requestInterceptor
- * @param {ResponseInterceptor=} responseInterceptor
- * @param {ErrorInterceptor=} errorInterceptor
  */
 export default class Endpoint {
+	#name;
+	#description;
+	#verb;
+	#protocol;
+	#host;
+	#port;
+	#path;
+	#query;
+	#headers;
+	#body;
+	#credentials;
+	#requestInterceptor;
+	#responseInterceptor;
+	#errorInterceptor;
+
+	/**
+	 * @param {string=} name
+	 * @param {string=} description
+	 * @param {VerbType=} verb
+	 * @param {ProtocolType=} protocol
+	 * @param {string=} host
+	 * @param {number=} port
+	 * @param {Parameters=} path
+	 * @param {Parameters=} query
+	 * @param {Parameters=} headers
+	 * @param {Parameters=} body
+	 * @param {Credentials=} credentials
+	 * @param {RequestInterceptor=} requestInterceptor
+	 * @param {ResponseInterceptor=} responseInterceptor
+	 * @param {ErrorInterceptor=} errorInterceptor
+	 */
 	constructor(name, description, verb, protocol, host, port, path, query, headers, body, credentials, requestInterceptor, responseInterceptor, errorInterceptor) {
-		this._name = name || null;
-		this._description = description || null;
-		this._verb = verb || VerbType.GET;
-		this._protocol = protocol || ProtocolType.HTTPS;
-		this._host = host || null;
-		this._port = port || this._protocol.defaultPort;
-		this._path = path || new Parameters();
-		this._query = query || new Parameters();
-		this._headers = headers || new Parameters();
-		this._body = body || new Parameters();
-		this._credentials = credentials || null;
-		this._requestInterceptor = requestInterceptor || RequestInterceptor.EMPTY;
-		this._responseInterceptor = responseInterceptor || ResponseInterceptor.EMPTY;
-		this._errorInterceptor = errorInterceptor || ErrorInterceptor.EMPTY;
+		this.#name = name || null;
+		this.#description = description || null;
+		this.#verb = verb || VerbType.GET;
+		this.#protocol = protocol || ProtocolType.HTTPS;
+		this.#host = host || null;
+		this.#port = port || this.#protocol.defaultPort;
+		this.#path = path || new Parameters();
+		this.#query = query || new Parameters();
+		this.#headers = headers || new Parameters();
+		this.#body = body || new Parameters();
+		this.#credentials = credentials || null;
+		this.#requestInterceptor = requestInterceptor || RequestInterceptor.EMPTY;
+		this.#responseInterceptor = responseInterceptor || ResponseInterceptor.EMPTY;
+		this.#errorInterceptor = errorInterceptor || ErrorInterceptor.EMPTY;
 	}
 
 	/**
 	 * The name of the endpoint (used for internal purposes only).
 	 *
 	 * @public
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	get name() {
-		return this._name;
+		return this.#name;
 	}
 
 	/**
 	 * A description of the action performed by the endpoint, suitable for display to users.
 	 *
 	 * @public
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	get description() {
-		return this._description;
+		return this.#description;
 	}
 
 	/**
@@ -72,7 +93,7 @@ export default class Endpoint {
 	 * @returns {VerbType}
 	 */
 	get verb() {
-		return this._verb;
+		return this.#verb;
 	}
 
 	/**
@@ -82,27 +103,27 @@ export default class Endpoint {
 	 * @returns {ProtocolType}
 	 */
 	get protocol() {
-		return this._protocol;
+		return this.#protocol;
 	}
 
 	/**
 	 * The host of the endpoint.
 	 *
 	 * @public
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	get host() {
-		return this._host;
+		return this.#host;
 	}
 
 	/**
 	 * The host of the endpoint.
 	 *
 	 * @public
-	 * @returns {Number}
+	 * @returns {number}
 	 */
 	get port() {
-		return this._port;
+		return this.#port;
 	}
 
 	/**
@@ -112,7 +133,7 @@ export default class Endpoint {
 	 * @returns {Parameters}
 	 */
 	get path() {
-		return this._path;
+		return this.#path;
 	}
 
 	/**
@@ -122,7 +143,7 @@ export default class Endpoint {
 	 * @returns {Parameters}
 	 */
 	get query() {
-		return this._query;
+		return this.#query;
 	}
 
 	/**
@@ -132,7 +153,7 @@ export default class Endpoint {
 	 * @returns {Parameters}
 	 */
 	get headers() {
-		return this._headers;
+		return this.#headers;
 	}
 
 	/**
@@ -142,17 +163,17 @@ export default class Endpoint {
 	 * @returns {Parameters}
 	 */
 	get body() {
-		return this._body;
+		return this.#body;
 	}
 
 	/**
 	 * Credentials for the request.
 	 *
-	 * public
+	 * @public
 	 * @return {Credentials}
 	 */
 	get credentials() {
-		return this._credentials;
+		return this.#credentials;
 	}
 
 	/**
@@ -162,7 +183,7 @@ export default class Endpoint {
 	 * @returns {RequestInterceptor|null}
 	 */
 	get requestInterceptor() {
-		return this._requestInterceptor;
+		return this.#requestInterceptor;
 	}
 
 	/**
@@ -172,7 +193,7 @@ export default class Endpoint {
 	 * @returns {ResponseInterceptor|null}
 	 */
 	get responseInterceptor() {
-		return this._responseInterceptor;
+		return this.#responseInterceptor;
 	}
 
 	/**
@@ -182,7 +203,7 @@ export default class Endpoint {
 	 * @returns {ErrorInterceptor|null}
 	 */
 	get errorInterceptor() {
-		return this._errorInterceptor;
+		return this.#errorInterceptor;
 	}
 
 	/**
@@ -195,11 +216,11 @@ export default class Endpoint {
 			throw new Error('Endpoint protocol must be an instance of ProtocolType.');
 		}
 
-		if (!is.string(this._host) || this._host.length === 0) {
+		if (!is.string(this.#host) || this.#host.length === 0) {
 			throw new Error('Endpoint host is invalid.');
 		}
 
-		if (!is.integer(this._port) || this._port < 0 || this._port > 65535) {
+		if (!is.integer(this.#port) || this.#port < 0 || this.#port > 65535) {
 			throw new Error('Endpoint port range is invalid.');
 		}
 
@@ -244,7 +265,13 @@ export default class Endpoint {
 		}
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
-		return `[Endpoint (name=${this._name})]`;
+		return `[Endpoint (name=${this.#name})]`;
 	}
 }

@@ -11,13 +11,21 @@ import Timestamp from './../../lang/Timestamp.js';
  * The formal definition of a data type which is used by an {@link Field}.
  *
  * @public
- * @param {String} description
- * @param {Function=} enumerationType
- * @param {Function=} reviver
- * @param {Function=} validator
- * @param {Function=} builder
  */
 export default class DataType {
+	#description;
+	#enumerationType;
+	#reviver;
+	#validator;
+	#builder;
+
+	/**
+	 * @param {string} description
+	 * @param {Function=} enumerationType
+	 * @param {Function=} reviver
+	 * @param {Function=} validator
+	 * @param {Function=} builder
+	 */
 	constructor(description, enumerationType, reviver, validator, builder) {
 		assert.argumentIsRequired(description, 'description', String);
 		assert.argumentIsOptional(enumerationType, 'enumerationType', Function);
@@ -30,8 +38,8 @@ export default class DataType {
 			assert.argumentIsValid(enumerationType, 'enumerationType', extendsEnumeration, 'is an enumeration');
 		}
 
-		this._description = description;
-		this._enumerationType = enumerationType || null;
+		this.#description = description;
+		this.#enumerationType = enumerationType || null;
 
 		let reviverToUse;
 
@@ -43,7 +51,7 @@ export default class DataType {
 			reviverToUse = x => x;
 		}
 
-		this._reviver = reviverToUse;
+		this.#reviver = reviverToUse;
 
 		let validatorToUse;
 
@@ -53,7 +61,7 @@ export default class DataType {
 			validatorToUse = (candidate) => true;
 		}
 
-		this._validator = validatorToUse;
+		this.#validator = validatorToUse;
 
 		let builderToUse;
 
@@ -63,7 +71,7 @@ export default class DataType {
 			builderToUse = (data) => data;
 		}
 
-		this._builder = builderToUse;
+		this.#builder = builderToUse;
 	}
 
 	/**
@@ -74,17 +82,17 @@ export default class DataType {
 	 * @returns {*}
 	 */
 	convert(data) {
-		return this._builder(data);
+		return this.#builder(data);
 	}
 
 	/**
 	 * Description of the data type.
 	 *
 	 * @public
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	get description() {
-		return this._description;
+		return this.#description;
 	}
 
 	/**
@@ -94,7 +102,7 @@ export default class DataType {
 	 * @returns {Function|null}
 	 */
 	get enumerationType() {
-		return this._enumerationType;
+		return this.#enumerationType;
 	}
 
 	/**
@@ -104,7 +112,7 @@ export default class DataType {
 	 * @returns {Function}
 	 */
 	get reviver() {
-		return this._reviver;
+		return this.#reviver;
 	}
 
 	/**
@@ -114,13 +122,14 @@ export default class DataType {
 	 * @returns {Function}
 	 */
 	get validator() {
-		return this._validator;
+		return this.#validator;
 	}
 
 	/**
 	 * Return a {@link DataType} instance for use with an {@link @Enum}.
 	 *
 	 * @public
+	 * @static
 	 * @param {Function} enumerationType - A class that extends {@link Enum}
 	 * @param description - The description
 	 * @returns {DataType}
@@ -152,7 +161,7 @@ export default class DataType {
 	}
 
 	/**
-	 * References a Boolean value.
+	 * References a boolean value.
 	 *
 	 * @public
 	 * @static
@@ -230,8 +239,14 @@ export default class DataType {
 	}
 
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
-		return `[DataType (description=${this._description})]`;
+		return `[DataType (description=${this.#description})]`;
 	}
 }
 

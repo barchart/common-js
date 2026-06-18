@@ -9,7 +9,7 @@
  * @param {boolean=} useParenthesis
  */
 export function numberToString(value, digits, thousandsSeparator, useParenthesis) {
-	if (value === '' || value === undefined || value === null || isNaN(value)) {
+	if (value === undefined || value === null || Number.isNaN(value)) {
 		return '';
 	}
 

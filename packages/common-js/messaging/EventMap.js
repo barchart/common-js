@@ -11,10 +11,12 @@ import Event from './Event.js';
  * @extends {Disposable}
  */
 export default class EventMap extends Disposable {
+	#events;
+
 	constructor() {
 		super();
 
-		this._events = {};
+		this.#events = {};
 	}
 
 	/**
@@ -22,11 +24,11 @@ export default class EventMap extends Disposable {
 	 * See {@link Event#fire} for more information.
 	 *
 	 * @public
-	 * @param {String} eventName - The event's name.
+	 * @param {string} eventName - The event's name.
 	 * @param {*} data - The data to provide to observers.
 	 */
 	fire(eventName, data) {
-		const event = this._events[eventName];
+		const event = this.#events[eventName];
 
 		if (event) {
 			event.fire(data);
@@ -37,7 +39,7 @@ export default class EventMap extends Disposable {
 	 * Registers a handler. See {@link Event#register} for more information.
 	 *
 	 * @public
-	 * @param {String} eventName - The event's name.
+	 * @param {string} eventName - The event's name.
 	 * @param {Function} handler
 	 * @returns {Disposable}
 	 */
@@ -48,10 +50,10 @@ export default class EventMap extends Disposable {
 			throw new Error('The event has been disposed.');
 		}
 
-		let event = this._events[eventName];
+		let event = this.#events[eventName];
 
 		if (!event) {
-			event = this._events[eventName] = new Event(this);
+			event = this.#events[eventName] = new Event(this);
 		}
 
 		return event.register(handler);
@@ -61,19 +63,19 @@ export default class EventMap extends Disposable {
 	 * Removes a handler. See {@link Event#unregister} for more information.
 	 *
 	 * @public
-	 * @param {String} eventName - The event's name.
+	 * @param {string} eventName - The event's name.
 	 * @param {Function} handler
 	 */
 	unregister(eventName, handler) {
 		assert.argumentIsRequired(eventName, 'eventName', String);
 
-		const event = this._events[eventName];
+		const event = this.#events[eventName];
 
 		if (event) {
 			event.unregister(handler);
 
 			if (event.getIsEmpty()) {
-				delete this._events[eventName];
+				delete this.#events[eventName];
 			}
 		}
 	}
@@ -82,17 +84,17 @@ export default class EventMap extends Disposable {
 	 * Clears an event's handlers. See {@link Event#clear} for more information.
 	 *
 	 * @public
-	 * @param {String} eventName - The event's name.
+	 * @param {string} eventName - The event's name.
 	 */
 	clear(eventName) {
 		assert.argumentIsRequired(eventName, 'eventName', String);
 
-		const event = this._events[eventName];
+		const event = this.#events[eventName];
 
 		if (event) {
 			event.clear();
 
-			delete this._events[eventName];
+			delete this.#events[eventName];
 		}
 	}
 
@@ -101,11 +103,11 @@ export default class EventMap extends Disposable {
 	 * specified event. See {@link Event#getIsEmpty} for more information.
 	 *
 	 * @public
-	 * @param {String} eventName
+	 * @param {string} eventName
 	 * @returns {boolean}
 	 */
 	getIsEmpty(eventName) {
-		const event = this._events[eventName];
+		const event = this.#events[eventName];
 
 		let returnVal;
 
@@ -122,13 +124,13 @@ export default class EventMap extends Disposable {
 	 * Returns an array of all the event names.
 	 *
 	 * @public
-	 * @returns {Array<String>}
+	 * @returns {Array<string>}
 	 */
 	getKeys() {
 		const keys = [];
 
-		for (let key in this._events) {
-			if (this._events.hasOwnProperty(key)) {
+		for (let key in this.#events) {
+			if (this.#events.hasOwnProperty(key)) {
 				keys.push(key);
 			}
 		}
@@ -140,25 +142,35 @@ export default class EventMap extends Disposable {
 	 * Returns true, if an event with the given name exists.
 	 *
 	 * @public
-	 * @param {String} key
+	 * @param {string} key
 	 * @returns {boolean}
 	 */
 	hasKey(key) {
-		return this._events.hasOwnProperty(key);
+		return this.#events.hasOwnProperty(key);
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 */
 	_onDispose() {
 		let keys = this.getKeys();
 
 		for (let i = 0; i < keys.length; i++) {
 			let key = keys[i];
 
-			this._events[key].dispose();
+			this.#events[key].dispose();
 		}
 
-		this._events = { };
+		this.#events = { };
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[EventMap]';
 	}

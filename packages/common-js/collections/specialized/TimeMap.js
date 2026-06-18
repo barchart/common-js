@@ -5,31 +5,36 @@ import * as is from './../../lang/is.js';
  * A map that which only holds objects for a specified duration.
  *
  * @public
- * @param {Number} duration - The time to live, in milliseconds.
  */
 export default class TimeMap {
+	#duration;
+	#map;
+
+	/**
+	 * @param {number} duration - The time to live, in milliseconds.
+	 */
 	constructor(duration) {
 		assert.argumentIsValid(duration, 'duration', x => is.positive(x), 'is positive');
 
-		this._duration = duration;
+		this.#duration = duration;
 
-		this._map = { };
+		this.#map = { };
 	}
 
 	/**
 	 * Returns true, if the map contains the item; otherwise false.
 	 *
 	 * @public
-	 * @param {String} key
+	 * @param {string} key
 	 * @returns {boolean}
 	 */
 	has(key) {
 		assert.argumentIsRequired(key, 'key', String);
 
-		let exists = this._map.hasOwnProperty(key);
+		let exists = this.#map.hasOwnProperty(key);
 
 		if (exists) {
-			const item = this._map[key];
+			const item = this.#map[key];
 
 			if (!item.valid) {
 				this.remove(key);
@@ -45,20 +50,20 @@ export default class TimeMap {
 	 * Puts an item into the map.
 	 *
 	 * @public
-	 * @param {String} key
+	 * @param {string} key
 	 * @param {*} value
 	 */
 	put(key, value) {
 		assert.argumentIsRequired(key, 'key', String);
 
-		this._map[key] = new Item(key, value, (new Date().getTime()) + this._duration);
+		this.#map[key] = new Item(key, value, (new Date().getTime()) + this.#duration);
 	}
 
 	/**
 	 * Puts an item into the map.
 	 *
 	 * @public
-	 * @param {String} key
+	 * @param {string} key
 	 * @param {*} value
 	 */
 	set(key, value) {
@@ -70,7 +75,7 @@ export default class TimeMap {
 	 * for the given key exists.
 	 *
 	 * @public
-	 * @param {String} key
+	 * @param {string} key
 	 * @returns {*|null}
 	 */
 	get(key) {
@@ -79,7 +84,7 @@ export default class TimeMap {
 		let returnRef = null;
 
 		if (this.has(key)) {
-			returnRef = this._map[key].value;
+			returnRef = this.#map[key].value;
 		}
 
 		return returnRef;
@@ -89,45 +94,55 @@ export default class TimeMap {
 	 * Removes an item from the map.
 	 *
 	 * @public
-	 * @param {String} key
+	 * @param {string} key
 	 */
 	remove(key) {
 		assert.argumentIsRequired(key, 'key', String);
 
-		delete this._map[key];
+		delete this.#map[key];
 	}
 
 	/**
 	 * Removes an item from the map.
 	 *
 	 * @public
-	 * @param {String} key
+	 * @param {string} key
 	 */
 	delete(key) {
 		this.remove(key);
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[TimeMap]';
 	}
 }
 
 class Item {
+	#key;
+	#value;
+	#expiration;
+
 	constructor(key, value, expiration) {
-		this._key = key;
-		this._value = value;
-		this._expiration = expiration;
+		this.#key = key;
+		this.#value = value;
+		this.#expiration = expiration;
 	}
 
 	get key() {
-		return this._key;
+		return this.#key;
 	}
 
 	get value() {
-		return this._value;
+		return this.#value;
 	}
 
 	get valid() {
-		return this._expiration > (new Date().getTime());
+		return this.#expiration > (new Date().getTime());
 	}
 }

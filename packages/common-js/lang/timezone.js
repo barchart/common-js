@@ -13,7 +13,7 @@ import * as assert from './assert.js';
  *
  * @public
  * @static
- * @returns {String[]}
+ * @returns {string[]}
  */
 export function getTimezones() {
 	return timezoneNames;
@@ -24,8 +24,8 @@ export function getTimezones() {
  *
  * @public
  * @static
- * @param {String} name - The timezone name to find.
- * @returns {Boolean}
+ * @param {string} name - The timezone name to find.
+ * @returns {boolean}
  */
 export function hasTimezone(name) {
 	assert.argumentIsRequired(name, 'name', String);
@@ -40,7 +40,7 @@ export function hasTimezone(name) {
  *
  * @public
  * @static
- * @returns {String|null}
+ * @returns {string|null}
  */
 export function guessTimezone() {
 	let guess;

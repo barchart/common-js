@@ -8,39 +8,44 @@ import Enum from './../../../lang/Enum.js';
  *
  * @public
  * @extends {Enum}
- * @param {String} code
- * @param {Number} defaultPort
- * @param {String} prefix
  */
 export default class ProtocolType extends Enum {
+	#defaultPort;
+	#prefix;
+
+	/**
+	 * @param {string} code
+	 * @param {number} defaultPort
+	 * @param {string} prefix
+	 */
 	constructor(code, defaultPort, prefix) {
 		super(code, code);
 
 		assert.argumentIsRequired(prefix, 'prefix', String);
 		assert.argumentIsValid(defaultPort, 'defaultPort', p => is.integer(p) && !(p < 0 || p > 65535));
 
-		this._defaultPort = defaultPort;
-		this._prefix = prefix;
+		this.#defaultPort = defaultPort;
+		this.#prefix = prefix;
 	}
 
 	/**
 	 * Returns the default TCP port used by the protocol.
 	 *
 	 * @public
-	 * @returns {Number}
+	 * @returns {number}
 	 */
 	get defaultPort() {
-		return this._defaultPort;
+		return this.#defaultPort;
 	}
 
 	/**
 	 * Returns the prefix used to compose a URL.
 	 *
 	 * @public
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	get prefix() {
-		return this._prefix;
+		return this.#prefix;
 	}
 
 	/**
@@ -48,11 +53,13 @@ export default class ProtocolType extends Enum {
 	 *
 	 * @public
 	 * @static
-	 * @param {String} code
+	 * @param {string} code
 	 * @returns {ProtocolType|null}
 	 */
 	static parse(code) {
-		return Enum.fromCode(ProtocolType, code);
+		const value = Enum.fromCode(ProtocolType, code);
+
+		return value instanceof ProtocolType ? value : null;
 	}
 
 	/**
@@ -75,6 +82,12 @@ export default class ProtocolType extends Enum {
 		return protocolTypeHttps;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return `[ProtocolType (description=${this.description})]`;
 	}

@@ -13,20 +13,22 @@ import { getTimezoneOffset } from 'date-fns-tz';
  * article lists them: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
  *
  * @public
- * @param {String} code - The timezone name
  * @extends {Enum}
  */
 export default class Timezones extends Enum {
+	/**
+	 * @param {string} code - The timezone name.
+	 */
 	constructor(code) {
 		super(code, code);
 	}
 
 	/**
-	 * Attempts to determine if daylight savings time is in effect.
+	 * Attempts to determine whether daylight saving time is in effect.
 	 *
 	 * @public
-	 * @param {Number=} timestamp - The moment at which the daylight savings time is checked, otherwise now.
-	 * @returns {Boolean}
+	 * @param {number=} timestamp - The moment at which daylight saving time is checked; otherwise, the current time is used.
+	 * @returns {boolean}
 	 */
 	getIsDaylightSavingsTime(timestamp) {
 		assert.argumentIsOptional(timestamp, 'timestamp', Number);
@@ -52,13 +54,13 @@ export default class Timezones extends Enum {
 	 * Calculates and returns the offset of a timezone from UTC.
 	 *
 	 * @public
-	 * @param {Number=} timestamp - The moment at which the offset is calculated, otherwise now.
-	 * @param {Boolean=} milliseconds - If true, the offset is returned in milliseconds; otherwise minutes.
-	 * @returns {Number}
+	 * @param {number=} timestamp - The moment at which the offset is calculated; otherwise, the current time is used.
+	 * @param {boolean=} milliseconds - Whether the offset should be returned in milliseconds instead of minutes.
+	 * @returns {number}
 	 */
 	getUtcOffset(timestamp, milliseconds) {
 		assert.argumentIsOptional(timestamp, 'timestamp', Number);
-		assert.argumentIsOptional(milliseconds, milliseconds, Boolean);
+		assert.argumentIsOptional(milliseconds, 'milliseconds', Boolean);
 
 		let timestampToUse;
 
@@ -80,20 +82,21 @@ export default class Timezones extends Enum {
 	}
 
 	/**
-	 *
-	 * Given a code, returns the enumeration item.
+	 * Given a code, returns the corresponding enumeration item.
 	 *
 	 * @public
 	 * @static
-	 * @param {String} code
+	 * @param {string} code
 	 * @returns {Timezones|null}
 	 */
 	static parse(code) {
-		return Enum.fromCode(Timezones, code);
+		const value = Enum.fromCode(Timezones, code);
+
+		return value instanceof Timezones ? value : null;
 	}
 
 	/**
-	 * UTC
+	 * UTC.
 	 *
 	 * @public
 	 * @static
@@ -104,7 +107,7 @@ export default class Timezones extends Enum {
 	}
 
 	/**
-	 * America/Chicago
+	 * America/Chicago.
 	 *
 	 * @public
 	 * @static
@@ -115,7 +118,7 @@ export default class Timezones extends Enum {
 	}
 
 	/**
-	 * America/New_York
+	 * America/New_York.
 	 *
 	 * @public
 	 * @static
@@ -125,25 +128,47 @@ export default class Timezones extends Enum {
 		return america_new_york;
 	}
 
-        /**
-         * America/Denver
-         *
-         * @public
-         * @static
-         * @returns {Timezones}
-         */
-        static get AMERICA_DENVER() {
-            return america_denver;
-        }
+	/**
+	 * America/Denver.
+	 *
+	 * @public
+	 * @static
+	 * @returns {Timezones}
+	 */
+	static get AMERICA_DENVER() {
+		return america_denver;
+	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return `[Timezone (name=${this.code})]`;
 	}
 }
 
-timezone.getTimezones().forEach(name => new Timezones(name));
+timezone.getTimezones().forEach((name) => { new Timezones(name); });
 
-const utc = Enum.fromCode(Timezones, 'UTC');
-const america_chicago = Enum.fromCode(Timezones, 'America/Chicago');
-const america_new_york = Enum.fromCode(Timezones, 'America/New_York');
-const america_denver = Enum.fromCode(Timezones, 'America/Denver');
+const utc = getRequiredTimezone('UTC');
+const america_chicago = getRequiredTimezone('America/Chicago');
+const america_new_york = getRequiredTimezone('America/New_York');
+const america_denver = getRequiredTimezone('America/Denver');
+
+/**
+ * Returns a registered timezone or throws if it cannot be found.
+ *
+ * @param {string} code
+ * @returns {Timezones}
+ */
+function getRequiredTimezone(code) {
+	const value = Timezones.parse(code);
+
+	if (value === null) {
+		throw new Error(`Timezone "${code}" is not registered.`);
+	}
+
+	return value;
+}

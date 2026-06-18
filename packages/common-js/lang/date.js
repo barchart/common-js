@@ -1,17 +1,44 @@
+/**
+ * Returns the current Unix timestamp in milliseconds.
+ *
+ * @public
+ * @returns {number}
+ */
 export function getTimestamp() {
 	return (new Date()).getTime();
 }
 
+/**
+ * Returns the abbreviated weekday name for a date.
+ *
+ * @public
+ * @param {Date} date
+ * @returns {string}
+ */
 export function getShortDay(date) {
 	const day = date.getDay();
 
 	return days[day].short;
 }
 
+/**
+ * Returns the day of the month for a date.
+ *
+ * @public
+ * @param {Date} date
+ * @returns {number}
+ */
 export function getDate(date) {
 	return date.getDate();
 }
 
+/**
+ * Returns the ordinal suffix for a date's day of the month.
+ *
+ * @public
+ * @param {Date} date
+ * @returns {string}
+ */
 export function getDateOrdinal(date) {
 	const d = getDate(date);
 	const remainder = d % 10;
@@ -31,12 +58,26 @@ export function getDateOrdinal(date) {
 	return returnRef;
 }
 
+/**
+ * Returns the abbreviated month name for a date.
+ *
+ * @public
+ * @param {Date} date
+ * @returns {string}
+ */
 export function getShortMonth(date) {
 	const month = date.getMonth();
 
 	return months[month].short;
 }
 
+/**
+ * Returns the full year for a date.
+ *
+ * @public
+ * @param {Date} date
+ * @returns {number}
+ */
 export function getYear(date) {
 	return date.getFullYear();
 }

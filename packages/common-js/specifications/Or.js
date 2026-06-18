@@ -1,3 +1,1 @@
-import Specification from './Specification.js';
-
-export default Specification.Or;
+export { Or as default } from './Specification.js';

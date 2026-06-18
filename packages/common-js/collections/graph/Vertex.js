@@ -6,13 +6,18 @@ import Edge from './Edge.js';
  * One node (vertex) of a directed graph data structure.
  *
  * @public
- * @param {*=} data
  */
 export default class Vertex {
-	constructor(data) {
-		this._data = data || null;
+	#data;
+	#edges;
 
-		this._edges = [ ];
+	/**
+	 * @param {*=} data
+	 */
+	constructor(data) {
+		this.#data = data || null;
+
+		this.#edges = [ ];
 	}
 
 	/**
@@ -23,7 +28,7 @@ export default class Vertex {
 	 * @returns {*}
 	 */
 	get data() {
-		return this._data;
+		return this.#data;
 	}
 
 	/**
@@ -33,7 +38,7 @@ export default class Vertex {
 	 * @returns {Edge[]}
 	 */
 	getEdges() {
-		return this._edges;
+		return this.#edges;
 	}
 
 	/**
@@ -57,7 +62,7 @@ export default class Vertex {
 
 		const edge = new Edge(this, other, data);
 
-		this._edges.push(edge);
+		this.#edges.push(edge);
 
 		return edge;
 	}
@@ -70,7 +75,7 @@ export default class Vertex {
 	 * @returns {Edge|null}
 	 */
 	getEdge(other) {
-		return this._edges.find(e => e.to === other) || null;
+		return this.#edges.find(e => e.to === other) || null;
 	}
 
 	/**
@@ -103,7 +108,7 @@ export default class Vertex {
 
 		let paths = [ ];
 
-		this._edges.forEach((edge) => {
+		this.#edges.forEach((edge) => {
 			let current;
 
 			if (walk) {
@@ -120,6 +125,12 @@ export default class Vertex {
 		return paths;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return `[Vertex (data=${this.data.toString()})]`;
 	}

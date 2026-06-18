@@ -10,11 +10,17 @@ const types = new Map();
  *
  * @public
  * @interface
- * @param {String} code - The unique code of the enumeration item.
- * @param {String} description - A description of the enumeration item.
- * @param {Number=} mapping - An alternate key value (used when external systems identify enumeration items using integer values).
  */
 export default class Enum {
+	#code;
+	#description;
+	#mapping;
+
+	/**
+	 * @param {string} code - The unique code of the enumeration item.
+	 * @param {string} description - A description of the enumeration item.
+	 * @param {number=} mapping - An alternate key value (used when external systems identify enumeration items using integer values).
+	 */
 	constructor(code, description, mapping) {
 		assert.argumentIsRequired(code, 'code', String);
 		assert.argumentIsRequired(description, 'description', String);
@@ -24,13 +30,13 @@ export default class Enum {
 			assert.argumentIsValid(mapping, 'mapping', is.integer, 'must be an integer');
 		}
 
-		this._code = code;
-		this._description = description;
+		this.#code = code;
+		this.#description = description;
 
 		if (is.number(mapping)) {
-			this._mapping = mapping;
+			this.#mapping = mapping;
 		} else {
-			this._mapping = null;
+			this.#mapping = null;
 		}
 
 		const c = this.constructor;
@@ -39,7 +45,7 @@ export default class Enum {
 			types.set(c, [ ]);
 		}
 
-		const valid = Enum.fromCode(c, this._code) === null && (this._mapping === null || Enum.fromMapping(c, this._mapping) === null);
+		const valid = Enum.fromCode(c, this.#code) === null && (this.#mapping === null || Enum.fromMapping(c, this.#mapping) === null);
 
 		if (valid) {
 			types.get(c).push(this);
@@ -50,20 +56,20 @@ export default class Enum {
 	 * The unique code.
 	 *
 	 * @public
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	get code() {
-		return this._code;
+		return this.#code;
 	}
 
 	/**
 	 * The description.
 	 *
 	 * @public
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	get description() {
-		return this._description;
+		return this.#description;
 	}
 
 	/**
@@ -71,10 +77,10 @@ export default class Enum {
 	 * using numeric values). This value will not be present for all enumerations.
 	 *
 	 * @public
-	 * @returns {Number|null}
+	 * @returns {number|null}
 	 */
 	get mapping() {
-		return this._mapping;
+		return this.#mapping;
 	}
 
 	/**
@@ -93,20 +99,20 @@ export default class Enum {
 	 * Returns the JSON representation.
 	 *
 	 * @public
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	toJSON() {
 		return this.code;
 	}
 
 	/**
-	 * Looks up a enumeration item; given the enumeration type and the enumeration
+	 * Looks up an enumeration item; given the enumeration type and the enumeration
 	 * item's value. If no matching item can be found, a null value is returned.
 	 *
 	 * @public
 	 * @static
 	 * @param {Function} type - The enumeration type.
-	 * @param {String} code - The enumeration item's code.
+	 * @param {string} code - The enumeration item's code.
 	 * @returns {Enum|null}
 	 */
 	static fromCode(type, code) {
@@ -114,13 +120,13 @@ export default class Enum {
 	}
 
 	/**
-	 * Looks up a enumeration item; given the enumeration type and the enumeration
+	 * Looks up an enumeration item; given the enumeration type and the enumeration
 	 * item's value. If no matching item can be found, a null value is returned.
 	 *
 	 * @public
 	 * @static
 	 * @param {Function} type - The enumeration type.
-	 * @param {String} mapping - The enumeration item's mapping value.
+	 * @param {number} mapping - The enumeration item's mapping value.
 	 * @returns {Enum|null}
 	 */
 	static fromMapping(type, mapping) {
@@ -143,6 +149,12 @@ export default class Enum {
 		return types.get(type) || [ ];
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Enum]';
 	}

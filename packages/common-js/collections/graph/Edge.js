@@ -1,18 +1,28 @@
 /**
+ * @typedef {import('./Vertex.js').default} Vertex
+ */
+
+/**
  * One edge of a directed graph, describing the connection between
  * two vertices; where the edge has a direction.
  *
  * @public
- * @param {Vertex} from
- * @param {Vertex} to
- * @param {*=} data
  */
 export default class Edge {
-	constructor(from, to, data) {
-		this._from = from;
-		this._to = to;
+	#from;
+	#to;
+	#data;
 
-		this._data = data || null;
+	/**
+	 * @param {Vertex} from
+	 * @param {Vertex} to
+	 * @param {*=} data
+	 */
+	constructor(from, to, data) {
+		this.#from = from;
+		this.#to = to;
+
+		this.#data = data || null;
 	}
 
 	/**
@@ -22,7 +32,7 @@ export default class Edge {
 	 * @returns {Vertex}
 	 */
 	get from() {
-		return this._from;
+		return this.#from;
 	}
 
 	/**
@@ -32,7 +42,7 @@ export default class Edge {
 	 * @returns {Vertex}
 	 */
 	get to() {
-		return this._to;
+		return this.#to;
 	}
 
 	/**
@@ -43,9 +53,15 @@ export default class Edge {
 	 * @returns {*|null}
 	 */
 	get data() {
-		return this._data;
+		return this.#data;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return `[Edge (from=${this.from.data.toString()}, to=${this.to.data.toString()}})]`;
 	}

@@ -9,13 +9,18 @@ import Parameters from './../definitions/Parameters.js';
  * Fluent interface for building a {@link Parameters} collection.
  *
  * @public
- * @param {Boolean} required - If true, all parameters will be marked as required.
  */
 export default class ParametersBuilder {
-	constructor(required) {
-		this._parameters = new Parameters();
+	#parameters;
+	#required;
 
-		this._required = is.boolean(required) && required;
+	/**
+	 * @param {boolean=} required - If true, all parameters will be marked as required.
+	 */
+	constructor(required) {
+		this.#parameters = new Parameters();
+
+		this.#required = is.boolean(required) && required;
 	}
 
 	/**
@@ -25,21 +30,21 @@ export default class ParametersBuilder {
 	 * @returns {Parameters}
 	 */
 	get parameters() {
-		return this._parameters;
+		return this.#parameters;
 	}
 
 	/**
 	 * Adds a new parameter that extracts its value from a delegate.
 	 *
-	 * @param {String} description
-	 * @param {String} key
+	 * @param {string} description
+	 * @param {string} key
 	 * @param {Function} delegate
-	 * @param {Boolean=} optional
+	 * @param {boolean=} optional
 	 * @param {Function=} serializer
 	 * @returns {ParametersBuilder}
 	 */
 	withDelegateParameter(description, key, delegate, optional, serializer) {
-		addParameter.call(this, new Parameter(description, key, buildDelegateExtractor(delegate, buildSerializer(serializer)), optional || this._required));
+		this.#addParameter(new Parameter(description, key, buildDelegateExtractor(delegate, buildSerializer(serializer)), optional || this.#required));
 
 		return this;
 	}
@@ -47,46 +52,52 @@ export default class ParametersBuilder {
 	/**
 	 * Adds a new parameter with a literal value.
 	 *
-	 * @param {String} description
-	 * @param {String} key
+	 * @param {string} description
+	 * @param {string} key
 	 * @param {*=} value
-	 * @param {Boolean=} optional
+	 * @param {boolean=} optional
 	 * @returns {ParametersBuilder}
 	 */
 	withLiteralParameter(description, key, value, optional) {
-		addParameter.call(this, new Parameter(description, key, buildLiteralExtractor(value || key), optional || this._required));
+		this.#addParameter(new Parameter(description, key, buildLiteralExtractor(value || key), optional || this.#required));
 
 		return this;
 	}
 
 	/**
-	 * Adds a new parameter that reads its value from the a variable
+	 * Adds a new parameter that reads its value from the variable
 	 * on the request payload.
 	 *
-	 * @param {String} description
-	 * @param {String} key
-	 * @param {String} variable
-	 * @param {Boolean=} optional
+	 * @param {string} description
+	 * @param {string} key
+	 * @param {string} variable
+	 * @param {boolean=} optional
 	 * @param {Function=} serializer
 	 * @returns {ParametersBuilder}
 	 */
 	withVariableParameter(description, key, variable, optional, serializer) {
-		addParameter.call(this, new Parameter(description, key, buildVariableExtractor(variable, buildSerializer(serializer)), optional || this._required));
+		this.#addParameter(new Parameter(description, key, buildVariableExtractor(variable, buildSerializer(serializer)), optional || this.#required));
 
 		return this;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[ParametersBuilder]';
 	}
-}
 
-function addParameter(parameter) {
-	const items = this._parameters.parameters.slice(0);
+	#addParameter(parameter) {
+		const items = this.#parameters.parameters.slice(0);
 
-	items.push(parameter);
+		items.push(parameter);
 
-	this._parameters = new Parameters(items);
+		this.#parameters = new Parameters(items);
+	}
 }
 
 function buildSerializer(serializer) {

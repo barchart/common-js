@@ -4,13 +4,18 @@ import * as is from './../../../lang/is.js';
  * Encapsulates credential detection logic.
  *
  * @public
- * @param {Function} usernameExtractor
- * @param {Function=} passwordExtractor
  */
 export default class Credentials {
+	#usernameExtractor;
+	#passwordExtractor;
+
+	/**
+	 * @param {Function=} usernameExtractor
+	 * @param {Function=} passwordExtractor
+	 */
 	constructor(usernameExtractor, passwordExtractor) {
-		this._usernameExtractor = usernameExtractor;
-		this._passwordExtractor = passwordExtractor;
+		this.#usernameExtractor = usernameExtractor;
+		this.#passwordExtractor = passwordExtractor;
 	}
 
 	/**
@@ -20,7 +25,7 @@ export default class Credentials {
 	 * @returns {Function}
 	 */
 	get usernameExtractor() {
-		return this._usernameExtractor;
+		return this.#usernameExtractor;
 	}
 
 	/**
@@ -30,7 +35,7 @@ export default class Credentials {
 	 * @returns {Function}
 	 */
 	get passwordExtractor() {
-		return this._passwordExtractor;
+		return this.#passwordExtractor;
 	}
 
 	/**
@@ -48,6 +53,12 @@ export default class Credentials {
 		}
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return `[Credentials]`;
 	}

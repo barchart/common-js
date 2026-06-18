@@ -14,13 +14,13 @@ import * as assert from './../../lang/assert.js';
  * @static
  * @param {Date} a
  * @param {Date} b
- * @returns {Number}
+ * @returns {number}
  */
 export function compareDates(a, b) {
 	assert.argumentIsRequired(a, 'a', Date);
 	assert.argumentIsRequired(b, 'b', Date);
 
-	return a - b;
+	return a.getTime() - b.getTime();
 }
 
 /**
@@ -28,9 +28,9 @@ export function compareDates(a, b) {
  *
  * @public
  * @static
- * @param {Number} a
- * @param {Number} b
- * @returns {Number}
+ * @param {number} a
+ * @param {number} b
+ * @returns {number}
  */
 export function compareNumbers(a, b) {
 	assert.argumentIsRequired(a, 'a', Number);
@@ -40,13 +40,13 @@ export function compareNumbers(a, b) {
 }
 
 /**
- * Compares two strings (in ascending order), using {@link String#localeCompare}.
+ * Compares two strings (in ascending order), using {@link string#localeCompare}.
  *
  * @public
  * @static
- * @param {String} a
- * @param {String} b
- * @returns {Number}
+ * @param {string} a
+ * @param {string} b
+ * @returns {number}
  */
 export function compareStrings(a, b) {
 	assert.argumentIsRequired(a, 'a', String);
@@ -60,9 +60,9 @@ export function compareStrings(a, b) {
  *
  * @public
  * @static
- * @param {Boolean} a
- * @param {Boolean} b
- * @returns {Number}
+ * @param {boolean} a
+ * @param {boolean} b
+ * @returns {number}
  */
 export function compareBooleans(a, b) {
 	assert.argumentIsRequired(a, 'a', Boolean);
@@ -84,7 +84,7 @@ export function compareBooleans(a, b) {
  * @static
  * @param {*|null} a
  * @param {*|null} b
- * @returns {Number}
+ * @returns {number}
  */
 export function compareNull(a, b) {
 	if (a === null && b !== null) {
@@ -103,7 +103,7 @@ export function compareNull(a, b) {
  * @static
  * @param {*} a
  * @param {*} b
- * @returns {Number}
+ * @returns {number}
  */
 export function empty(a, b) {
 	return 0;

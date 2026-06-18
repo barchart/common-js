@@ -6,19 +6,35 @@ import Specification from './Specification.js';
  *
  * @public
  * @extends {Specification}
- * @param {*} value
  */
 export default class Equals extends Specification {
+	#value;
+
+	/**
+	 * @param {*} value
+	 */
 	constructor(value) {
 		super();
 
-		this._value = value;
+		this.#value = value;
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 * @param {*} data
+	 * @returns {boolean}
+	 */
 	_evaluate(data) {
-		return data === this._value;
+		return data === this.#value;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Equals]';
 	}

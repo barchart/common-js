@@ -5,31 +5,39 @@ import * as assert from './../../lang/assert.js';
  * item would exceed the capacity; the oldest item is removed.
  *
  * @public
- * @param {Number=} capacity - The maximum number of items the map can contain (defaults to ten).
  */
 export default class EvictingMap {
+	#capacity;
+	#map;
+	#head;
+	#tail;
+	#size;
+
+	/**
+	 * @param {number=} capacity - The maximum number of items the map can contain (defaults to ten).
+	 */
 	constructor(capacity) {
 		assert.argumentIsOptional(capacity, 'capacity', Number);
 
-		this._capacity = Math.max((capacity || 0), 0) || 10;
+		this.#capacity = Math.max((capacity || 0), 0) || 10;
 
-		this._map = { };
+		this.#map = { };
 
-		this._head = null;
-		this._tail = null;
+		this.#head = null;
+		this.#tail = null;
 
-		this._size = 0;
+		this.#size = 0;
 	}
 
 	/**
 	 * Returns true, if the map contains the item; otherwise false.
 	 *
 	 * @public
-	 * @param {String} key
+	 * @param {string} key
 	 * @returns {boolean}
 	 */
 	has(key) {
-		return this._map.hasOwnProperty(key);
+		return this.#map.hasOwnProperty(key);
 	}
 
 	/**
@@ -37,7 +45,7 @@ export default class EvictingMap {
 	 * list exceeds the capacity).
 	 *
 	 * @public
-	 * @param {String} key
+	 * @param {string} key
 	 * @param {*} value
 	 */
 	put(key, value) {
@@ -45,23 +53,23 @@ export default class EvictingMap {
 
 		let node;
 
-		if (this._head !== null) {
-			node = this._head.insertBefore(key);
+		if (this.#head !== null) {
+			node = this.#head.insertBefore(key);
 
-			this._head = node;
+			this.#head = node;
 		} else {
 			node = new Node(key);
 
-			this._head = node;
-			this._tail = node;
+			this.#head = node;
+			this.#tail = node;
 		}
 
-		this._map[key] = new Item(node, key, value);
+		this.#map[key] = new Item(node, key, value);
 
-		this._size++;
+		this.#size++;
 
-		while (this._size > this._capacity) {
-			this.remove(this._tail.getItem());
+		while (this.#size > this.#capacity) {
+			this.remove(this.#tail.getItem());
 		}
 	}
 
@@ -70,7 +78,7 @@ export default class EvictingMap {
 	 * list exceeds the capacity).
 	 *
 	 * @public
-	 * @param {String} key
+	 * @param {string} key
 	 * @param {*} value
 	 */
 	set(key, value) {
@@ -82,29 +90,29 @@ export default class EvictingMap {
 	 * for the given key exists.
 	 *
 	 * @public
-	 * @param {String} key
+	 * @param {string} key
 	 * @returns {*|null}
 	 */
 	get(key) {
 		let returnRef;
 
-		const item = this._map[key];
+		const item = this.#map[key];
 
 		if (item) {
 			returnRef = item.getValue();
 
 			const node = item.getNode();
 
-			if (node !== this._head) {
-				if (node === this._tail) {
-					this._tail = node._previous;
+			if (node !== this.#head) {
+				if (node === this.#tail) {
+					this.#tail = node.getPrevious();
 				}
 
 				node.remove();
 
-				this._head = this._head.insertBefore(key);
+				this.#head = this.#head.insertBefore(key);
 
-				item.setNode(this._head);
+				item.setNode(this.#head);
 			}
 		} else {
 			returnRef = null;
@@ -117,10 +125,10 @@ export default class EvictingMap {
 	 * Removes an item from the map.
 	 *
 	 * @public
-	 * @param {String} key
+	 * @param {string} key
 	 */
 	remove(key) {
-		const item = this._map[key];
+		const item = this.#map[key];
 
 		if (item) {
 			const node = item.getNode();
@@ -130,17 +138,17 @@ export default class EvictingMap {
 
 			node.remove();
 
-			if (this._head === node) {
-				this._head = next;
+			if (this.#head === node) {
+				this.#head = next;
 			}
 
-			if (this._tail === node) {
-				this._tail = previous;
+			if (this.#tail === node) {
+				this.#tail = previous;
 			}
 
-			delete this._map[key];
+			delete this.#map[key];
 
-			this._size--;
+			this.#size--;
 		}
 	}
 
@@ -148,7 +156,7 @@ export default class EvictingMap {
 	 * Removes an item from the map.
 	 *
 	 * @public
-	 * @param {String} key
+	 * @param {string} key
 	 */
 	delete(key) {
 		this.remove(key);
@@ -161,78 +169,92 @@ export default class EvictingMap {
 	 * @returns {boolean}
 	 */
 	empty() {
-		return this._size === 0;
+		return this.#size === 0;
 	}
 
 	/**
 	 * Returns the number of items stored in the map.
 	 *
 	 * @public
-	 * @returns {Number}
+	 * @returns {number}
 	 */
 	getSize() {
-		return this._size;
+		return this.#size;
 	}
 
 	/**
 	 * The capacity of the map.
 	 *
 	 * @public
-	 * @returns {Number}
+	 * @returns {number}
 	 */
 	getCapacity() {
-		return this._capacity;
+		return this.#capacity;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[EvictingMap]';
 	}
 }
 
 class Item {
-	constructor(node, key, value) {
-		this._node = node;
+	#node;
+	#key;
+	#value;
 
-		this._key = key;
-		this._value = value;
+	constructor(node, key, value) {
+		this.#node = node;
+
+		this.#key = key;
+		this.#value = value;
 	}
 
 	getKey() {
-		return this._key;
+		return this.#key;
 	}
 
 	getValue() {
-		return this._value;
+		return this.#value;
 	}
 
 	getNode() {
-		return this._node;
+		return this.#node;
 	}
 
 	setNode(node) {
-		this._node = node;
+		this.#node = node;
 	}
 }
 
 class Node {
-	constructor(item) {
-		this._item = item;
+	#item;
+	#previous;
+	#next;
 
-		this._previous = null;
-		this._next = null;
+	constructor(item) {
+		this.#item = item;
+
+		this.#previous = null;
+		this.#next = null;
 	}
 
 	insertBefore(item) {
 		const node = new Node(item);
 
-		node._next = this;
+		node.#next = this;
 
-		if (this._previous !== null) {
-			node._previous = this._previous;
-			this._previous._next = node;
+		if (this.#previous !== null) {
+			node.#previous = this.#previous;
+			this.#previous.#next = node;
 		}
 
-		this._previous = node;
+		this.#previous = node;
 
 		return node;
 	}
@@ -240,54 +262,54 @@ class Node {
 	insertAfter(item) {
 		const node = new Node(item);
 
-		node._previous = this;
+		node.#previous = this;
 
-		if (this._next !== null) {
-			node._next = this._next;
-			this._next._previous = node;
+		if (this.#next !== null) {
+			node.#next = this.#next;
+			this.#next.#previous = node;
 		}
 
-		this._next = node;
+		this.#next = node;
 
 		return node;
 	}
 
 	remove() {
-		const next = this._next;
-		const previous = this._previous;
+		const next = this.#next;
+		const previous = this.#previous;
 
-		this._next = null;
-		this._previous = null;
+		this.#next = null;
+		this.#previous = null;
 
 		if (next && previous) {
-			previous._next = next;
-			next._previous = previous;
+			previous.#next = next;
+			next.#previous = previous;
 		} else if (next) {
-			next._previous = null;
+			next.#previous = null;
 		} else if (previous) {
-			previous._next = null;
+			previous.#next = null;
 		}
 
 		return this;
 	}
 
 	getItem() {
-		return this._item;
+		return this.#item;
 	}
 
 	hasNext() {
-		return this._next !== null;
+		return this.#next !== null;
 	}
 
 	getNext() {
-		return this._next;
+		return this.#next;
 	}
 
 	hasPrevious() {
-		return this._previous !== null;
+		return this.#previous !== null;
 	}
 
 	getPrevious() {
-		return this._previous;
+		return this.#previous;
 	}
 }

@@ -18,47 +18,52 @@ import Vertex from './../collections/graph/Vertex.js';
  * desired currency).
  *
  * @public
- * @param {String[]} symbols - Forex symbols which will be used for translations.
  */
 export default class CurrencyTranslator {
+	#translators;
+	#maps;
+
+	/**
+	 * @param {string[]} symbols - Forex symbols which will be used for translations.
+	 */
 	constructor(symbols) {
 		assert.argumentIsArray(symbols, 'symbols', String);
 
-		this._translators = solve(symbols);
+		this.#translators = solve(symbols);
 
-		this._maps = { };
+		this.#maps = { };
 
-		this._maps.rates = new Map();
-		this._maps.translation = new Map();
+		this.#maps.rates = new Map();
+		this.#maps.translation = new Map();
 
-		this._translators.forEach((translator) => {
+		this.#translators.forEach((translator) => {
 			const path = translator.path;
 
 			path.forEach((edge) => {
 				const from = edge.from.data;
 				const to = edge.to.data;
 
-				if (!this._maps.rates.has(from)) {
-					this._maps.rates.set(from, new Map());
+				if (!this.#maps.rates.has(from)) {
+					this.#maps.rates.set(from, new Map());
 				}
 
-				if (!this._maps.rates.get(from).has(to)) {
-					this._maps.rates.get(from).set(to, { edge: edge, translators: [ ] });
+				if (!this.#maps.rates.get(from).has(to)) {
+					this.#maps.rates.get(from).set(to, { edge: edge, translators: [ ] });
 				}
 
-				this._maps.rates.get(from).get(to).translators.push(translator);
+				this.#maps.rates.get(from).get(to).translators.push(translator);
 			});
 		});
 
-		this._translators.forEach((translator) => {
+		this.#translators.forEach((translator) => {
 			const from = translator.from;
 			const to = translator.to;
 
-			if (!this._maps.translation.has(from)) {
-				this._maps.translation.set(from, new Map());
+			if (!this.#maps.translation.has(from)) {
+				this.#maps.translation.set(from, new Map());
 			}
 
-			this._maps.translation.get(from).set(to, translator);
+			this.#maps.translation.get(from).set(to, translator);
 		});
 	}
 
@@ -83,8 +88,8 @@ export default class CurrencyTranslator {
 	setRate(rate) {
 		assert.argumentIsRequired(rate, 'rate', Rate, 'Rate');
 
-		updateRate.call(this, rate);
-		updateRate.call(this, rate.invert());
+		this.#updateRate(rate);
+		this.#updateRate(rate.invert());
 	}
 
 	/**
@@ -92,10 +97,10 @@ export default class CurrencyTranslator {
 	 * the calculator.
 	 *
 	 * @public
-	 * @param {Number|Decimal} amount
+	 * @param {number|Decimal} amount
 	 * @param {Currency} current
 	 * @param {Currency} desired
-	 * @returns {Number|Decimal}
+	 * @returns {number|Decimal}
 	 */
 	translate(amount, current, desired) {
 		assert.argumentIsRequired(current, 'current', Currency, 'Currency');
@@ -105,11 +110,34 @@ export default class CurrencyTranslator {
 			return amount;
 		}
 
-		return this._maps.translation.get(current).get(desired).translate(amount);
+		return this.#maps.translation.get(current).get(desired).translate(amount);
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return `[CurrencyTranslator]`;
+	}
+
+	#updateRate(rate) {
+		const from = rate.base;
+		const to = rate.quote;
+
+		const data = this.#maps.rates.get(from).get(to);
+
+		const current = data.edge.data.rate;
+
+		if (current !== null && current === rate.float) {
+			return;
+		}
+
+		data.edge.data.rate = rate.float;
+
+		data.translators.forEach(t => t.clear());
 	}
 }
 
@@ -188,23 +216,6 @@ const solve = (symbols) => {
 	return translators;
 };
 
-function updateRate(rate) {
-	const from = rate.base;
-	const to = rate.quote;
-
-	const data = this._maps.rates.get(from).get(to);
-
-	const current = data.edge.data.rate;
-
-	if (current !== null && current === rate.float) {
-		return;
-	}
-
-	data.edge.data.rate = rate.float;
-
-	data.translators.forEach(t => t.clear());
-}
-
 /**
  * Translates values from a source currency to values in another currency.
  *
@@ -212,15 +223,18 @@ function updateRate(rate) {
  * @param {Edge[]} path
  */
 class Translator {
+	#path;
+	#factors;
+
 	constructor(path) {
 		assert.argumentIsArray(path, 'path', Edge, 'Edge');
 
-		this._path = path;
+		this.#path = path;
 
-		this._factors = { };
+		this.#factors = { };
 
-		this._factors.float = null;
-		this._factors.decimal = null;
+		this.#factors.float = null;
+		this.#factors.decimal = null;
 	}
 
 	/**
@@ -230,7 +244,7 @@ class Translator {
 	 * @returns {Currency}
 	 */
 	get from() {
-		return array.first(this._path).from.data;
+		return array.first(this.#path).from.data;
 	}
 
 	/**
@@ -240,7 +254,7 @@ class Translator {
 	 * @returns {Currency}
 	 */
 	get to() {
-		return array.last(this._path).to.data;
+		return array.last(this.#path).to.data;
 	}
 
 	/**
@@ -251,7 +265,7 @@ class Translator {
 	 * @returns {Edge[]}
 	 */
 	get path() {
-		return this._path.slice(0);
+		return this.#path.slice(0);
 	}
 
 	/**
@@ -260,57 +274,57 @@ class Translator {
 	 * @public
 	 */
 	clear() {
-		this._factors.float = null;
-		this._factors.decimal = null;
+		this.#factors.float = null;
+		this.#factors.decimal = null;
 	}
 
 	/**
 	 * Translates an amount in the source currency to the desired currency.
 	 *
 	 * @public
-	 * @param {Number|Decimal} amount
-	 * @returns {Number|Decimal}
+	 * @param {number|Decimal} amount
+	 * @returns {number|Decimal}
 	 */
 	translate(amount) {
-		const ready = checkFactors.call(this);
+		const ready = this.#checkFactors();
 
 		if (!ready) {
 			throw new Error(`Unable to translate from [ ${this.from.code} ] to [ ${this.to.code} ], exchange rate is unknown.`);
 		}
 
 		if (amount instanceof Decimal) {
-			return amount.multiply(this._factors.decimal);
+			return amount.multiply(this.#factors.decimal);
 		} else {
-			return amount * this._factors.float;
+			return amount * this.#factors.float;
 		}
 	}
 
 	toString() {
-		return `[Translator (path=${this._path.map(edge => `${edge.from.code} > ${edge.to.code}`).join()})]`;
-	}
-}
-
-function checkFactors() {
-	if (this._factors.float !== null) {
-		return true;
+		return `[Translator (path=${this.#path.map(edge => `${edge.from.code} > ${edge.to.code}`).join()})]`;
 	}
 
-	let factor = 1;
-
-	for (let i = 0; i < this._path.length; i++) {
-		const edge = this._path[i];
-
-		if (edge.data.rate === null) {
-			return false;
+	#checkFactors() {
+		if (this.#factors.float !== null) {
+			return true;
 		}
 
-		factor = factor * edge.data.rate;
+		let factor = 1;
+
+		for (let i = 0; i < this.#path.length; i++) {
+			const edge = this.#path[i];
+
+			if (edge.data.rate === null) {
+				return false;
+			}
+
+			factor = factor * edge.data.rate;
+		}
+
+		this.#factors.float = factor;
+		this.#factors.decimal = Decimal.parse(factor);
+
+		return true;
 	}
-
-	this._factors.float = factor;
-	this._factors.decimal = Decimal.parse(factor);
-
-	return true;
 }
 
 const pathComparator = ComparatorBuilder.startWith((a, b) => comparators.compareNumbers(a.length, b.length))

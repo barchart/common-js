@@ -8,23 +8,27 @@ const MILLISECONDS_PER_SECOND = 1000;
  * milliseconds).
  *
  * @public
- * @param {Number} timestamp
  */
 export default class Timestamp {
+	#timestamp;
+
+	/**
+	 * @param {number} timestamp
+	 */
 	constructor(timestamp) {
 		assert.argumentIsValid(timestamp, 'timestamp', is.large, 'is an integer');
 
-		this._timestamp = timestamp;
+		this.#timestamp = timestamp;
 	}
 
 	/**
 	 * The timestamp (milliseconds since epoch).
 	 *
 	 * @public
-	 * @returns {Number}
+	 * @returns {number}
 	 */
 	get timestamp() {
-		return this._timestamp;
+		return this.#timestamp;
 	}
 
 	/**
@@ -32,13 +36,13 @@ export default class Timestamp {
 	 * number of milliseconds.
 	 *
 	 * @public
-	 * @param {Number} milliseconds
+	 * @param {number} milliseconds
 	 * @returns {Timestamp}
 	 */
 	add(milliseconds) {
 		assert.argumentIsRequired(milliseconds, 'milliseconds', Number);
 
-		return new Timestamp(this._timestamp + milliseconds);
+		return new Timestamp(this.#timestamp + milliseconds);
 	}
 
 	/**
@@ -46,13 +50,13 @@ export default class Timestamp {
 	 * number of milliseconds.
 	 *
 	 * @public
-	 * @param {Number} milliseconds
+	 * @param {number} milliseconds
 	 * @returns {Timestamp}
 	 */
 	subtract(milliseconds) {
 		assert.argumentIsRequired(milliseconds, 'milliseconds', Number);
 
-		return new Timestamp(this._timestamp - milliseconds);
+		return new Timestamp(this.#timestamp - milliseconds);
 	}
 
 	/**
@@ -60,7 +64,7 @@ export default class Timestamp {
 	 * number of seconds.
 	 *
 	 * @public
-	 * @param {Number} seconds
+	 * @param {number} seconds
 	 * @returns {Timestamp}
 	 */
 	addSeconds(seconds) {
@@ -74,7 +78,7 @@ export default class Timestamp {
 	 * number of seconds.
 	 *
 	 * @public
-	 * @param {Number} seconds
+	 * @param {number} seconds
 	 * @returns {Timestamp}
 	 */
 	subtractSeconds(seconds) {
@@ -120,7 +124,7 @@ export default class Timestamp {
 	 * Returns the JSON representation.
 	 *
 	 * @public
-	 * @returns {Number}
+	 * @returns {number}
 	 */
 	toJSON() {
 		return this.timestamp;
@@ -137,7 +141,7 @@ export default class Timestamp {
 	static clone(other) {
 		assert.argumentIsRequired(other, 'other', Timestamp, 'Timestamp');
 
-		return new Timestamp(other._timestamp);
+		return new Timestamp(other.#timestamp);
 	}
 
 	/**
@@ -145,7 +149,7 @@ export default class Timestamp {
 	 *
 	 * @public
 	 * @static
-	 * @param {Number} value
+	 * @param {number} value
 	 * @returns {Timestamp}
 	 */
 	static parse(value) {
@@ -167,9 +171,10 @@ export default class Timestamp {
 	 * A comparator function for {@link Timestamp} instances.
 	 *
 	 * @public
+	 * @static
 	 * @param {Timestamp} a
 	 * @param {Timestamp} b
-	 * @returns {Number}
+	 * @returns {number}
 	 */
 	static compareTimestamps(a, b) {
 		assert.argumentIsRequired(a, 'a', Timestamp, 'Timestamp');
@@ -178,6 +183,12 @@ export default class Timestamp {
 		return a.timestamp - b.timestamp;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Timestamp]';
 	}

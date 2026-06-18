@@ -8,8 +8,10 @@ import Credentials from './../definitions/Credentials.js';
  * @public
  */
 export default class CredentialsBuilder {
+	#credentials;
+
 	constructor() {
-		this._credentials = new Credentials();
+		this.#credentials = new Credentials();
 	}
 
 	/**
@@ -19,14 +21,14 @@ export default class CredentialsBuilder {
 	 * @returns {Credentials}
 	 */
 	get credentials() {
-		return this._credentials;
+		return this.#credentials;
 	}
 
 	/**
 	 * Sets a literal username.
 	 *
 	 * @public
-	 * @param {String} username
+	 * @param {string} username
 	 * @returns {CredentialsBuilder}
 	 */
 	withLiteralUsername(username) {
@@ -43,7 +45,7 @@ export default class CredentialsBuilder {
 	 * @returns {CredentialsBuilder}
 	 */
 	withDelegateUsername(delegate) {
-		this._credentials = new Credentials(delegate, this._credentials.passwordExtractor);
+		this.#credentials = new Credentials(delegate, this.#credentials.passwordExtractor);
 
 		return this;
 	}
@@ -52,7 +54,7 @@ export default class CredentialsBuilder {
 	 * Sets a literal password.
 	 *
 	 * @public
-	 * @param {String} password
+	 * @param {string} password
 	 * @returns {CredentialsBuilder}
 	 */
 	withLiteralPassword(password) {
@@ -69,11 +71,17 @@ export default class CredentialsBuilder {
 	 * @returns {CredentialsBuilder}
 	 */
 	withDelegatePassword(delegate) {
-		this._credentials = new Credentials(this._credentials.usernameExtractor, delegate);
+		this.#credentials = new Credentials(this.#credentials.usernameExtractor, delegate);
 
 		return this;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[CredentialsBuilder]';
 	}

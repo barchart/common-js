@@ -7,37 +7,53 @@ import Schema from './../../serialization/json/Schema.js';
 import Tree from './../../collections/Tree.js';
 
 /**
+ * @typedef {import('./../../lang/Enum.js').default} Enum
+ */
+
+/**
+ * An Enum instance that contains a serialization schema.
+ *
+ * @typedef {Enum & {schema: Schema}} EnumWithSchema
+ */
+
+/**
  * Describes all the reasons for API failure. Since there can be multiple
  * reasons, the reasons are stored in a tree structure.
  *
  * @public
- * @param {Object=} data - Data regarding the API request itself, likely independent of the failure data (which is maintained in the tree structure).
  */
 export default class FailureReason {
-	constructor(data) {
-		this._data = data || null;
+	#data;
+	#root;
+	#current;
 
-		this._root = new Tree();
-		this._current = this._root;
+	/**
+	 * @param {object=} data - Data regarding the API request itself, likely independent of the failure data maintained in the tree structure.
+	 */
+	constructor(data) {
+		this.#data = data || null;
+
+		this.#root = new Tree(null);
+		this.#current = this.#root;
 	}
 
 	/**
-	 * Adds a {@link FailureReasonItem} to the tree of reason(s) at the current node.
+	 * Adds a {@link FailureReasonItem} to the tree of reasons at the current node.
 	 *
 	 * @public
 	 * @param {FailureType} type - The failure type.
-	 * @param {Object=} data - The data associated with the failure type.
-	 * @param {Boolean=} group - The reason is expected to have children; therefore, the current tree node is shifted to the newly added {@link FailureReasonItem}.
-	 * @returns {FailureReason} - The current instance, allowing for method chaining.
+	 * @param {object=} data - The data associated with the failure type.
+	 * @param {boolean=} group - Whether the newly added item is expected to have children.
+	 * @returns {FailureReason} The current instance, allowing for method chaining.
 	 */
 	addItem(type, data, group) {
 		assert.argumentIsRequired(type, 'type', FailureType, 'FailureType');
 		assert.argumentIsOptional(group, 'group', Boolean);
 
-		const node = this._current.addChild(new FailureReasonItem(type, data));
+		const node = this.#current.addChild(new FailureReasonItem(type, data));
 
 		if (is.boolean(group) && group) {
-			this._current = node;
+			this.#current = node;
 		}
 
 		return this;
@@ -47,37 +63,37 @@ export default class FailureReason {
 	 * Resets the current node to the head of the tree.
 	 *
 	 * @public
-	 * @param {Boolean=} previous
-	 * @returns {FailureReason} - The current instance, allowing for method chaining.
+	 * @param {boolean=} previous
+	 * @returns {FailureReason} The current instance, allowing for method chaining.
 	 */
 	reset(previous) {
 		assert.argumentIsOptional(previous, 'previous', Boolean);
 
 		let node;
 
-		if (previous && this._current.getIsInner()) {
-			node = this._current.getParent();
+		if (previous && this.#current.getIsInner()) {
+			node = this.#current.getParent();
 		} else {
-			node = this._root;
+			node = this.#root;
 		}
 
-		this._current = node;
+		this.#current = node;
 
 		return this;
 	}
 
 	/**
-	 * Returns a tree of strings, describing the reason(s) for API failure.
+	 * Returns a tree of strings describing the reasons for API failure.
 	 *
 	 * @public
 	 * @returns {Array}
 	 */
 	format() {
-		const reasons = this._root.toJSObj((item) => {
+		const reasons = this.#root.toJSObj((item) => {
 			const formatted = { };
 
 			formatted.code = item ? item.type.code : null;
-			formatted.message = item ? item.format(this._data) : null;
+			formatted.message = item ? item.format(this.#data) : null;
 
 			if (item && item.type.verbose) {
 				formatted.data = item.data;
@@ -90,55 +106,55 @@ export default class FailureReason {
 	}
 
 	/**
-	 * Indicates if the tree of {@link FailureReasonItem} instances contains
-	 * at least one item with a matching {@link FailureType}.
+	 * Indicates whether the tree of {@link FailureReasonItem} instances
+	 * contains at least one item with a matching {@link FailureType}.
 	 *
 	 * @public
 	 * @param {FailureType} type
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	hasFailureType(type) {
 		assert.argumentIsRequired(type, 'type', FailureType, 'FailureType');
 
-		return this._root.search(item => item.type === type, false, false) !== null;
+		return this.#root.search(item => item.type === type, false, false) !== null;
 	}
 
 	/**
-	 * Indicates if the tree of {@link FailureReasonItem} instances contains
-	 * at least one item that is considered to be severe.
+	 * Indicates whether the tree of {@link FailureReasonItem} instances
+	 * contains at least one item considered severe.
 	 *
 	 * @public
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	getIsSevere() {
-		return this._root.search(item => item.type.severe, false, false) !== null;
+		return this.#root.search(item => item.type.severe, false, false) !== null;
 	}
 
 	/**
-	 * Searches the tree of {@link FailureReasonItem} instances for a non-standard
-	 * http error code.
+	 * Searches the tree of {@link FailureReasonItem} instances for a
+	 * non-standard HTTP error code.
 	 *
 	 * @public
-	 * @returns {Number|null}
+	 * @returns {number|null}
 	 */
 	getErrorCode() {
-		const node = this._root.search(item => item.type.error !== null, true, false);
+		const node = this.#root.search(item => item.type.error !== null, true, false);
 
-		if (node !== null) {
-			return node.getValue().type.error;
-		} else {
+		if (node === null) {
 			return null;
 		}
+
+		return node.getValue().type.error;
 	}
 
 	/**
-	 * A convenience function for creating a new {@link FailureReason} with a
-	 * single {@link FailureType}.
+	 * A convenience function for creating a new {@link FailureReason}
+	 * with a single {@link FailureType}.
 	 *
 	 * @public
 	 * @static
 	 * @param {FailureType} type
-	 * @param {Object=} data
+	 * @param {object=} data
 	 * @returns {FailureReason}
 	 */
 	static from(type, data) {
@@ -152,7 +168,7 @@ export default class FailureReason {
 	 *
 	 * @public
 	 * @static
-	 * @param {Object=} data
+	 * @param {object=} data
 	 * @returns {FailureReason}
 	 */
 	static forRequest(data) {
@@ -170,40 +186,42 @@ export default class FailureReason {
 	}
 
 	/**
-	 * Returns an HTTP status code that would be suitable for use with the
-	 * failure reason.
+	 * Returns an HTTP status code suitable for use with the failure reason.
 	 *
 	 * @public
 	 * @static
 	 * @param {FailureReason} reason
-	 * @returns {Number}
+	 * @returns {number|null}
 	 */
 	static getHttpStatusCode(reason) {
 		assert.argumentIsRequired(reason, 'reason', FailureReason, 'FailureReason');
 
-		let returnVal = null;
+		let returnValue = null;
 
-		reason._root.walk((item) => {
-			let code = FailureType.getHttpStatusCode(item.type);
+		reason.#root.walk((item) => {
+			const code = FailureType.getHttpStatusCode(item.type);
 
-			if (returnVal === null || returnVal !== 400) {
-				returnVal = code;
+			if (returnValue === null || returnValue !== 400) {
+				returnValue = code;
 			}
 		}, false, false);
 
-		return returnVal;
+		return returnValue;
 	}
 
 	/**
 	 * Validates that a candidate conforms to a schema, returning a rejected
-	 * promise (with a serialized FailureReason) if a problem exists.
+	 * promise with a serialized {@link FailureReason} if a problem exists.
+	 *
+	 * The schema argument can be either a {@link Schema} instance or an
+	 * {@link Enum} instance that exposes a Schema through its schema property.
 	 *
 	 * @public
 	 * @static
-	 * @param {Schema|Enum} schema
-	 * @param {Object} candidate
-	 * @param {String=} description
-	 * @returns {Promise}
+	 * @param {Schema|EnumWithSchema} schema
+	 * @param {object} candidate
+	 * @param {string=} description
+	 * @returns {Promise<null>}
 	 */
 	static validateSchema(schema, candidate, description) {
 		return Promise.resolve()
@@ -215,34 +233,34 @@ export default class FailureReason {
 				} else if (schema.schema && schema.schema instanceof Schema) {
 					schemaToUse = schema.schema;
 				} else {
-					schemaToUse = null;
+					throw new TypeError('The schema argument must be a Schema instance or an Enum instance containing a Schema.');
 				}
 
 				const fields = schemaToUse.getInvalidFields(candidate);
 
-				let failure;
-
-				if (fields.length !== 0) {
-					failure = FailureReason.forRequest({endpoint: { description: (description || `serialize data into ${schema.name}`) }})
-						.addItem(FailureType.REQUEST_INPUT_MALFORMED, { }, true);
-
-					failure = fields.reduce((accumulator, field) => {
-						accumulator.addItem(FailureType.REQUEST_PARAMETER_MALFORMED, { name: field.name });
-
-						return accumulator;
-					}, failure);
-				} else {
-					failure = null;
+				if (fields.length === 0) {
+					return null;
 				}
 
-				if (failure !== null) {
-					return Promise.reject(failure.format());
-				} else {
-					return Promise.resolve(null);
-				}
+				let failure = FailureReason.forRequest({ endpoint: { description: description || `serialize data into ${schemaToUse.name}`}})
+					.addItem(FailureType.REQUEST_INPUT_MALFORMED, { }, true);
+
+				failure = fields.reduce((accumulator, field) => {
+					accumulator.addItem(FailureType.REQUEST_PARAMETER_MALFORMED, { name: field.name });
+
+					return accumulator;
+				}, failure);
+
+				return Promise.reject(failure.format());
 			});
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[FailureReason]';
 	}

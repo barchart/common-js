@@ -8,23 +8,39 @@ import Specification from './Specification.js';
  *
  * @public
  * @extends {Specification}
- * @param {Number[]} values
  */
 export default class Between extends Specification {
+	#values;
+
+	/**
+	 * @param {number[]} values
+	 */
 	constructor(values) {
 		super();
 
 		assert.argumentIsArray(values, 'values', Number);
 
-		this._values = values;
+		this.#values = values;
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 * @param {*} data
+	 * @returns {boolean}
+	 */
 	_evaluate(data) {
 		assert.argumentIsRequired(data, 'data', Number);
 
-		return data > this._values[0] && data < this._values[1];
+		return data > this.#values[0] && data < this.#values[1];
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Between]';
 	}

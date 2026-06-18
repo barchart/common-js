@@ -12,10 +12,22 @@ export default class Day extends Specification {
 		super();
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 * @param {*} data
+	 * @returns {boolean}
+	 */
 	_evaluate(data) {
 		return is.array(data) && data.every(item => item instanceof DayClazz);
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Day]';
 	}

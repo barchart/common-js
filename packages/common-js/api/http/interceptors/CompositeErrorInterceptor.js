@@ -7,27 +7,38 @@ import ErrorInterceptor from './ErrorInterceptor.js';
  *
  * @public
  * @extends {ErrorInterceptor}
- * @param {ErrorInterceptor} a - The first interceptor to process.
- * @param {ErrorInterceptor} b - The second interceptor to process.
  */
 export default class CompositeErrorInterceptor extends ErrorInterceptor {
+	#a;
+	#b;
+
+	/**
+	 * @param {ErrorInterceptor} a - The first interceptor to process.
+	 * @param {ErrorInterceptor} b - The second interceptor to process.
+	 */
 	constructor(a, b) {
 		super();
 
 		assert.argumentIsRequired(a, 'a', ErrorInterceptor, 'ErrorInterceptor');
 		assert.argumentIsRequired(b, 'b', ErrorInterceptor, 'ErrorInterceptor');
 
-		this._a = a;
-		this._b = b;
+		this.#a = a;
+		this.#b = b;
 	}
 
 	_onProcess(error, endpoint) {
-		return this._a.process(error, endpoint)
+		return this.#a.process(error, endpoint)
 			.catch((adjusted) => {
-				return this._b.process(adjusted, endpoint);
+				return this.#b.process(adjusted, endpoint);
 			});
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[CompositeErrorInterceptor]';
 	}

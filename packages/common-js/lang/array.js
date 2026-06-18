@@ -49,7 +49,7 @@ export function uniqueBy(a, keySelector) {
  * @static
  * @param {Array} a
  * @param {Function} keySelector - A function that returns a unique key for an item.
- * @returns {Object}
+ * @returns {object}
  */
 export function groupBy(a, keySelector) {
 	assert.argumentIsArray(a, 'a');
@@ -108,7 +108,7 @@ export function batchBy(a, keySelector) {
  * @static
  * @param {Array} a
  * @param {Function} keySelector - A function that returns a unique key for an item.
- * @returns {Object}
+ * @returns {object}
  */
 export function indexBy(a, keySelector) {
 	assert.argumentIsArray(a, 'a');
@@ -215,7 +215,7 @@ export function last(a) {
  *
  * @static
  * @param {Array} a
- * @param {Boolean=} recursive - If true, all nested arrays will be flattened.
+ * @param {boolean=} recursive - If true, all nested arrays will be flattened.
  * @returns {Array}
  */
 export function flatten(a, recursive) {
@@ -238,8 +238,8 @@ export function flatten(a, recursive) {
  *
  * @static
  * @param {Array} a
- * @param {Number} size - The maximum number of items per partition.
- * @param {Array<Array>}
+ * @param {number} size - The maximum number of items per partition.
+ * @returns {Array<Array>}
  */
 export function partition(a, size) {
 	assert.argumentIsArray(a, 'a');
@@ -411,9 +411,10 @@ export function intersectionBy(a, b, keySelector) {
  *
  * @static
  * @public
- * @param {Array} a
- * @param {Function} predicate
- * @returns {Boolean}
+ * @template T
+ * @param {T[]} a
+ * @param {(value: T, index: number, array: T[]) => boolean} predicate
+ * @returns {boolean}
  */
 export function remove(a, predicate) {
 	assert.argumentIsArray(a, 'a');
@@ -437,7 +438,7 @@ export function remove(a, predicate) {
  * @public
  * @param {Array} a
  * @param {*} item
- * @param {Function} comparator
+ * @param {(a: any, b: any) => number} comparator
  * @returns {Array}
  */
 export function insert(a, item, comparator) {
@@ -461,8 +462,8 @@ export function insert(a, item, comparator) {
  * @param {*[]} a
  * @param {*} key
  * @param {Function} comparator
- * @param {Number=} start
- * @param {Number=} end
+ * @param {number=} start
+ * @param {number=} end
  * @returns {*|null}
  */
 export function binarySearch(a, key, comparator, start, end) {
@@ -509,25 +510,27 @@ function binarySearchForInsert(a, item, comparator, start, end) {
 	const size = end - start;
 
 	const midpointIndex = start + Math.floor(size / 2);
-	const midpointItem = a[ midpointIndex ];
+	const midpointItem = a[midpointIndex];
 
-	const comparison = (comparator(item, midpointItem) > 0);
+	const comparison = comparator(item, midpointItem);
 
 	if (size < 2) {
 		if (comparison > 0) {
 			const finalIndex = a.length - 1;
 
-			if (end === finalIndex && comparator(item, a[ finalIndex ]) > 0) {
+			if (end === finalIndex && comparator(item, a[finalIndex]) > 0) {
 				return end + 1;
-			} else {
-				return end;
 			}
-		} else {
-			return start;
+
+			return end;
 		}
-	} else if (comparison > 0) {
-		return binarySearchForInsert(a, item, comparator, midpointIndex, end);
-	} else {
-		return binarySearchForInsert(a, item, comparator, start, midpointIndex);
+
+		return start;
 	}
+
+	if (comparison > 0) {
+		return binarySearchForInsert(a, item, comparator, midpointIndex, end);
+	}
+
+	return binarySearchForInsert(a, item, comparator, start, midpointIndex);
 }

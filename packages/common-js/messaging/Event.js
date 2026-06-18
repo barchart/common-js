@@ -6,16 +6,21 @@ import Disposable from './../lang/Disposable.js';
  * An implementation of the observer pattern.
  *
  * @public
- * @param {*} sender - The object which owns the event.
  * @extends {Disposable}
  */
 export default class Event extends Disposable {
+	#sender;
+	#observers;
+
+	/**
+	 * @param {*} sender - The object which owns the event.
+	 */
 	constructor(sender) {
 		super();
 
-		this._sender = sender || null;
+		this.#sender = sender || null;
 
-		this._observers = [];
+		this.#observers = [ ];
 	}
 
 	/**
@@ -29,14 +34,14 @@ export default class Event extends Disposable {
 	register(handler) {
 		assert.argumentIsRequired(handler, 'handler', Function);
 
-		addRegistration.call(this, handler);
+		this.#addRegistration(handler);
 
 		return Disposable.fromAction(() => {
 			if (this.disposed) {
 				return;
 			}
 
-			removeRegistration.call(this, handler);
+			this.#removeRegistration(handler);
 		});
 	}
 
@@ -50,7 +55,7 @@ export default class Event extends Disposable {
 	unregister(handler) {
 		assert.argumentIsRequired(handler, 'handler', Function);
 
-		removeRegistration.call(this, handler);
+		this.#removeRegistration(handler);
 	}
 
 	/**
@@ -59,7 +64,7 @@ export default class Event extends Disposable {
 	 * @public
 	 */
 	clear() {
-		this._observers = [];
+		this.#observers = [];
 	}
 
 	/**
@@ -69,12 +74,12 @@ export default class Event extends Disposable {
 	 * @param {*} data - The data to pass each handler.
 	 */
 	fire(data) {
-		let observers = this._observers;
+		let observers = this.#observers;
 
 		for (let i = 0; i < observers.length; i++) {
 			let observer = observers[i];
 
-			observer(data, this._sender);
+			observer(data, this.#sender);
 		}
 	}
 
@@ -85,44 +90,54 @@ export default class Event extends Disposable {
 	 * @returns {boolean}
 	 */
 	getIsEmpty() {
-		return this._observers.length === 0;
+		return this.#observers.length === 0;
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 */
 	_onDispose() {
-		this._observers = null;
+		this.#observers = null;
 	}
 
+	#addRegistration(handler) {
+		let copiedObservers = this.#observers.slice();
+
+		copiedObservers.push(handler);
+
+		this.#observers = copiedObservers;
+	}
+
+	#removeRegistration(handler) {
+		const indicesToRemove = [];
+
+		for (let i = 0; i < this.#observers.length; i++) {
+			let candidate = this.#observers[i];
+
+			if (candidate === handler) {
+				indicesToRemove.push(i);
+			}
+		}
+
+		if (indicesToRemove.length > 0) {
+			const copiedObservers = this.#observers.slice();
+
+			for (let j = indicesToRemove.length - 1; !(j < 0); j--) {
+				copiedObservers.splice(indicesToRemove[j], 1);
+			}
+
+			this.#observers = copiedObservers;
+		}
+	}
+
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Event]';
-	}
-}
-
-function addRegistration(handler) {
-	let copiedObservers = this._observers.slice();
-
-	copiedObservers.push(handler);
-
-	this._observers = copiedObservers;
-}
-
-function removeRegistration(handler) {
-	const indicesToRemove = [];
-
-	for (let i = 0; i < this._observers.length; i++) {
-		let candidate = this._observers[i];
-
-		if (candidate === handler) {
-			indicesToRemove.push(i);
-		}
-	}
-
-	if (indicesToRemove.length > 0) {
-		const copiedObservers = this._observers.slice();
-
-		for (let j = indicesToRemove.length - 1; !(j < 0); j--) {
-			copiedObservers.splice(indicesToRemove[j], 1);
-		}
-
-		this._observers = copiedObservers;
 	}
 }

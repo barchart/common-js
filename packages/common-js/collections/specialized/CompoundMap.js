@@ -6,15 +6,20 @@ import * as is from './../../lang/is.js';
  * to implement objects needing to implement equals and hashcode.
  *
  * @public
- * @param {Number} depth - The number of keys.
  */
 export default class CompoundMap {
+	#depth;
+	#map;
+
+	/**
+	 * @param {number} depth - The number of keys.
+	 */
 	constructor(depth) {
 		assert.argumentIsRequired(depth, 'depth', Number);
 
-		this._depth = depth;
+		this.#depth = depth;
 
-		this._map = { };
+		this.#map = { };
 	}
 
 	/**
@@ -22,13 +27,13 @@ export default class CompoundMap {
 	 * given key.
 	 *
 	 * @public
-	 * @param {...String} keys
-	 * @returns {Boolean}
+	 * @param {...string} keys
+	 * @returns {boolean}
 	 */
 	has(...keys) {
-		validateKeys(keys, this._depth, false);
+		validateKeys(keys, this.#depth, false);
 
-		let target = this._map;
+		let target = this.#map;
 
 		return keys.every((k) => {
 			const returnVal = target.hasOwnProperty(k);
@@ -46,12 +51,12 @@ export default class CompoundMap {
 	 *
 	 * @public
 	 * @param {*} value
-	 * @param {...String} keys
+	 * @param {...string} keys
 	 */
 	put(value, ...keys) {
-		validateKeys(keys, this._depth, true);
+		validateKeys(keys, this.#depth, true);
 
-		let target = this._map;
+		let target = this.#map;
 		let final = keys.length - 1;
 
 		keys.forEach((k, i) => {
@@ -71,11 +76,11 @@ export default class CompoundMap {
 	 * Gets a value from the map, returning null if the value does not exist.
 	 *
 	 * @public
-	 * @param {...String} keys
+	 * @param {...string} keys
 	 * @returns {*}
 	 */
 	get(...keys) {
-		validateKeys(keys, this._depth, true);
+		validateKeys(keys, this.#depth, true);
 
 		return keys.reduce((target, k) => {
 			let next;
@@ -87,18 +92,18 @@ export default class CompoundMap {
 			}
 
 			return next;
-		}, this._map);
+		}, this.#map);
 	}
 
 	/**
 	 * Deletes a value (or a group of values) from the tree.
 	 *
 	 * @public
-	 * @param {...String} keys
-	 * @returns {Boolean}
+	 * @param {...string} keys
+	 * @returns {boolean}
 	 */
 	remove(...keys) {
-		validateKeys(keys, this._depth, false);
+		validateKeys(keys, this.#depth, false);
 
 		let returnVal = this.has(...keys);
 
@@ -113,12 +118,18 @@ export default class CompoundMap {
 				}
 
 				return next;
-			}, this._map);
+			}, this.#map);
 		}
 
 		return returnVal;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[CompoundMap]';
 	}

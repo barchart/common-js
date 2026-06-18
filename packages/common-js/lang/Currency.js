@@ -7,12 +7,17 @@ import Enum from './Enum.js';
  * An enumeration for currency types.
  *
  * @public
- * @param {String} code - Currency code (e.g. "USD")
- * @param {String} description - The description (e.g. "US Dollar")
- * @param {Number} precision - The number of decimal places possible for by a real world transaction.
  * @extends {Enum}
  */
 export default class Currency extends Enum {
+	#precision;
+	#alternateDescription;
+
+	/**
+	 * @param {string} code - Currency code (e.g. "USD")
+	 * @param {string} description - The description (e.g. "US Dollar")
+	 * @param {number} precision - The number of decimal places possible for by a real world transaction.
+	 */
 	constructor(code, description, precision, alternateDescription) {
 		super(code, description);
 
@@ -21,29 +26,29 @@ export default class Currency extends Enum {
 
 		assert.argumentIsOptional(alternateDescription, 'alternateDescription', String);
 
-		this._precision = precision;
+		this.#precision = precision;
 
-		this._alternateDescription = alternateDescription || description;
+		this.#alternateDescription = alternateDescription || description;
 	}
 
 	/**
 	 * The maximum number of decimal places supported by a real world transaction.
 	 *
 	 * @public
-	 * @returns {Number}
+	 * @returns {number}
 	 */
 	get precision() {
-		return this._precision;
+		return this.#precision;
 	}
 
 	/**
 	 * An alternate human-readable description.
 	 *
 	 * @public
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	get alternateDescription() {
-		return this._alternateDescription;
+		return this.#alternateDescription;
 	}
 
 	/**
@@ -51,13 +56,14 @@ export default class Currency extends Enum {
 	 *
 	 * @public
 	 * @static
-	 * @param {String} code
+	 * @param {string} code
 	 * @returns {Currency|null}
 	 */
 	static parse(code) {
-		return Enum.fromCode(Currency, code);
-	}
+		const value = Enum.fromCode(Currency, code);
 
+		return value instanceof Currency ? value : null;
+	}z
 	/**
 	 * The Argentine Peso.
 	 *
@@ -542,6 +548,12 @@ export default class Currency extends Enum {
 		return zmw;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return `[Currency (code=${this.code})]`;
 	}

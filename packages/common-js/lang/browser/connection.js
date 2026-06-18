@@ -1,5 +1,12 @@
 import * as is from './../is.js';
 
+/**
+ * Determines whether the current browser context is using a secure protocol.
+ *
+ * @public
+ * @param {boolean=} secure
+ * @returns {boolean}
+ */
 export function getIsSecure(secure) {
 	let returnVal;
 

@@ -11,26 +11,35 @@ import Scheduler from './Scheduler.js';
  * processed.
  *
  * @public
- * @param {number} - windowMaximumCount - The maximum number of items which can be processed during a timeframe (positive integer).
- * @param {number} - windowDurationMilliseconds - The number of milliseconds in the timeframe (positive integer).
  * @extends {Disposable}
  */
 export default class RateLimiter extends Disposable {
+	#windowMaximumCount;
+	#windowDurationMilliseconds;
+	#scheduler;
+	#workQueue;
+	#windowStart;
+	#windowCounter;
+
+	/**
+	 * @param {number} windowMaximumCount - The maximum number of items which can be processed during a timeframe (positive integer).
+	 * @param {number} windowDurationMilliseconds - The number of milliseconds in the timeframe (positive integer).
+	 */
 	constructor(windowMaximumCount, windowDurationMilliseconds) {
 		super();
 
 		assert.argumentIsValid(windowMaximumCount, 'windowMaximumCount', x => is.integer(x) && is.positive(x));
 		assert.argumentIsValid(windowDurationMilliseconds, 'windowDurationMilliseconds', x => is.integer(x) && is.positive(x));
 
-		this._windowMaximumCount = windowMaximumCount;
-		this._windowDurationMilliseconds = windowDurationMilliseconds;
+		this.#windowMaximumCount = windowMaximumCount;
+		this.#windowDurationMilliseconds = windowDurationMilliseconds;
 
-		this._scheduler = new Scheduler();
+		this.#scheduler = new Scheduler();
 
-		this._workQueue = new Queue();
+		this.#workQueue = new Queue();
 
-		this._windowStart = null;
-		this._windowCounter = 0;
+		this.#windowStart = null;
+		this.#windowCounter = 0;
 	}
 
 	/**
@@ -49,7 +58,7 @@ export default class RateLimiter extends Disposable {
 				throw new Error('Unable to enqueue action, the rate limiter has been disposed.');
 			}
 
-			this._workQueue.enqueue(() => {
+			this.#workQueue.enqueue(() => {
 				Promise.resolve()
 					.then(() => {
 						return actionToEnqueue();
@@ -58,55 +67,65 @@ export default class RateLimiter extends Disposable {
 					}).catch((error) => {
 						rejectCallback(error);
 					}).then(() => {
-						checkStart.call(this);
+						this.#checkStart();
 					});
 			});
 
-			checkStart.call(this);
+			this.#checkStart();
 		});
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 */
 	_onDispose() {
-		this._scheduler.dispose();
+		this.#scheduler.dispose();
 
-		this._workQueue = null;
+		this.#workQueue = null;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[RateLimiter]';
 	}
-}
 
-function checkStart() {
-	if (this.disposed) {
-		return;
-	}
+	#checkStart() {
+		if (this.disposed) {
+			return;
+		}
 
-	if (this._workQueue.empty()) {
-		return;
-	}
+		if (this.#workQueue.empty()) {
+			return;
+		}
 
-	if (this._windowStart === null) {
-		const timestamp = new Date();
+		if (this.#windowStart === null) {
+			const timestamp = new Date();
 
-		this._windowStart = timestamp.getTime();
-		this._windowCounter = 0;
+			this.#windowStart = timestamp.getTime();
+			this.#windowCounter = 0;
 
-		const resetWindow = () => {
-			this._windowStart = null;
-			this._windowCounter = 0;
+			const resetWindow = () => {
+				this.#windowStart = null;
+				this.#windowCounter = 0;
 
-			checkStart.call(this);
-		};
+				this.#checkStart();
+			};
 
-		this._scheduler.schedule(resetWindow, this._windowDurationMilliseconds, 'Rate Limiter Window Reset');
-	}
+			this.#scheduler.schedule(resetWindow, this.#windowDurationMilliseconds, 'Rate Limiter Window Reset');
+		}
 
-	if (this._windowCounter < this._windowMaximumCount) {
-		this._windowCounter = this._windowCounter + 1;
+		if (this.#windowCounter < this.#windowMaximumCount) {
+			this.#windowCounter = this.#windowCounter + 1;
 
-		const actionToExecute = this._workQueue.dequeue();
+			const actionToExecute = this.#workQueue.dequeue();
 
-		actionToExecute();
+			actionToExecute();
+		}
 	}
 }

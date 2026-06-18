@@ -8,21 +8,37 @@ import Specification from './Specification.js';
  *
  * @public
  * @extends {Specification}
- * @param {Array} value
  */
 export default class Contained extends Specification {
+	#value;
+
+	/**
+	 * @param {Array} value
+	 */
 	constructor(value) {
 		super();
 
 		assert.argumentIsArray(value, 'value');
 
-		this._value = value;
+		this.#value = value;
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 * @param {*} data
+	 * @returns {boolean}
+	 */
 	_evaluate(data) {
-		return this._value.some((candidate) => candidate === data);
+		return this.#value.some((candidate) => candidate === data);
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Contained]';
 	}

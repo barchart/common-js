@@ -22993,6 +22993,7 @@ class ComparatorBuilder {
    * Creates a {@link ComparatorBuilder}, given an initial comparator function.
    *
    * @public
+   * @static
    * @param {Function} comparator - The initial comparator.
    * @param {Boolean=} invert - Indicates if the comparator should sort in descending order.
    * @returns {ComparatorBuilder}
@@ -23899,6 +23900,7 @@ class CommandHandler {
    * Returns a function which executes the command.
    *
    * @public
+   * @static
    * @param {CommandHandler} commandHandler
    * @returns {function(*=)}
    */
@@ -23913,6 +23915,7 @@ class CommandHandler {
    * Returns a {@link CommandHandler} that delegates execution to a function.
    *
    * @public
+   * @static
    * @param {Function} handler - The function which the command delegates to.
    * @returns {CommandHandler}
    */
@@ -27441,6 +27444,7 @@ class Timestamp {
    * A comparator function for {@link Timestamp} instances.
    *
    * @public
+   * @static
    * @param {Timestamp} a
    * @param {Timestamp} b
    * @returns {Number}
@@ -30191,6 +30195,7 @@ class Component {
    * The builds a {@link Component} for {@link Money}.
    *
    * @public
+   * @static
    * @returns {Component}
    */
   static forMoney(name) {
@@ -30320,6 +30325,7 @@ class DataType {
    * Return a {@link DataType} instance for use with an {@link @Enum}.
    *
    * @public
+   * @static
    * @param {Function} enumerationType - A class that extends {@link Enum}
    * @param description - The description
    * @returns {DataType}
@@ -31029,6 +31035,7 @@ class SchemaBuilder {
    * Creates a new {@link SchemaBuilder}.
    *
    * @public
+   * @static
    * @param {String} name
    * @returns {SchemaBuilder}
    */

@@ -7,21 +7,27 @@ const empty = { };
  * item would exceed the capacity; the oldest item is removed.
  *
  * @public
- * @param {Number=} capacity - The maximum number of items the list can contain (defaults to ten).
  */
 export default class EvictingList {
+	#capacity;
+	#array;
+	#head;
+
+	/**
+	 * @param {number=} capacity - The maximum number of items the list can contain (defaults to ten).
+	 */
 	constructor(capacity) {
 		assert.argumentIsOptional(capacity, 'capacity', Number);
 
-		this._capacity = Math.max((capacity || 0), 0) || 10;
+		this.#capacity = Math.max((capacity || 0), 0) || 10;
 
-		this._array = [ ];
+		this.#array = [ ];
 
-		for (let i = 0; i < this._capacity; i++) {
-			this._array[i] = empty;
+		for (let i = 0; i < this.#capacity; i++) {
+			this.#array[i] = empty;
 		}
 
-		this._head = null;
+		this.#head = null;
 	}
 
 	/**
@@ -32,7 +38,7 @@ export default class EvictingList {
 	 * @param {*} item
 	 */
 	add(item) {
-		this._array[this._head = getNextIndex(this._head, this._capacity)] = item;
+		this.#array[this.#head = getNextIndex(this.#head, this.#capacity)] = item;
 	}
 
 	/**
@@ -46,27 +52,27 @@ export default class EvictingList {
 			throw new Error('EvictingList is empty');
 		}
 
-		return this._array[this._head];
+		return this.#array[this.#head];
 	}
 
 	/**
 	 * Returns true, if the list is empty; otherwise false.
 	 *
 	 * @public
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	empty() {
-		return this._head === null;
+		return this.#head === null;
 	}
 
 	/**
 	 * The capacity of the list.
 	 *
 	 * @public
-	 * @returns {Number}
+	 * @returns {number}
 	 */
 	getCapacity() {
-		return this._capacity;
+		return this.#capacity;
 	}
 
 	/**
@@ -78,10 +84,10 @@ export default class EvictingList {
 		let returnRef = [ ];
 
 		if (!this.empty()) {
-			let current = this._head;
+			let current = this.#head;
 
-			for (let i = 0; i < this._capacity; i++) {
-				const item = this._array[current];
+			for (let i = 0; i < this.#capacity; i++) {
+				const item = this.#array[current];
 
 				if (item === empty) {
 					break;
@@ -89,13 +95,19 @@ export default class EvictingList {
 
 				returnRef.push(item);
 
-				current = getPreviousIndex(current, this._capacity);
+				current = getPreviousIndex(current, this.#capacity);
 			}
 		}
 
 		return returnRef;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[EvictingList]';
 	}

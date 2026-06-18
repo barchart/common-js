@@ -5,11 +5,14 @@ import FailureReason from './../../failures/FailureReason.js';
 import FailureType from './../../failures/FailureType.js';
 
 /**
+ * @typedef {import('./../definitions/Endpoint.js').default} Endpoint
+ */
+
+/**
  * A processor that transforms web service error before passing
  * it on to the original requestor.
  *
  * @public
- * @interface
  */
 export default class ErrorInterceptor {
 	constructor() {
@@ -21,7 +24,7 @@ export default class ErrorInterceptor {
 	 * back to the original caller.
 	 *
 	 * @public
-	 * @param {Object} error
+	 * @param {object} error
 	 * @param {Endpoint} endpoint - The endpoint which is originating the request.
 	 * @returns {Promise<*>}
 	 */
@@ -32,6 +35,12 @@ export default class ErrorInterceptor {
 			});
 	}
 
+	/**
+	 * @protected
+	 * @param {object} error
+	 * @param {Endpoint} endpoint
+	 * @returns {Promise<*>}
+	 */
 	_onProcess(error, endpoint) {
 		return Promise.reject(error);
 	}
@@ -49,7 +58,7 @@ export default class ErrorInterceptor {
 
 	/**
 	 * An error interceptor that handles most server-side issues and rejects
-	 * using formatted {@link FailureReasons} when an error is detected.
+	 * using formatted {@link FailureReason} when an error is detected.
 	 *
 	 * @public
 	 * @static
@@ -71,22 +80,40 @@ export default class ErrorInterceptor {
 		return new DelegateErrorInterceptor(delegate);
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[ErrorInterceptor]';
 	}
 }
 
 class DelegateErrorInterceptor extends ErrorInterceptor {
+	#delegate;
+
+	/**
+	 * @param {Function} delegate
+	 */
 	constructor(delegate) {
 		super();
 
 		assert.argumentIsRequired(delegate, 'delegate', Function);
 
-		this._delegate = delegate;
+		this.#delegate = delegate;
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 * @param {object} error
+	 * @param {Endpoint} endpoint
+	 * @returns {*}
+	 */
 	_onProcess(error, endpoint) {
-		return this._delegate(error, endpoint);
+		return this.#delegate(error, endpoint);
 	}
 
 	toString() {
@@ -101,7 +128,7 @@ const errorInterceptorGeneral = new DelegateErrorInterceptor((error, endpoint) =
 
 	let rejectPromise = null;
 
-	if (rejectPromise === null && is.object(response) && is.object(response.headers) && response.headers['content-type'] === 'application/json') {
+	if (is.object(response) && is.object(response.headers) && response.headers['content-type'] === 'application/json') {
 		let deserialized = null;
 
 		if (is.object(response.data)) {
@@ -119,7 +146,7 @@ const errorInterceptorGeneral = new DelegateErrorInterceptor((error, endpoint) =
 		}
 	}
 
-	if (rejectPromise === null && is.undefined(response) && error.message === 'Network Error') {
+	if (rejectPromise === null && is.undef(response) && error.message === 'Network Error') {
 		rejectPromise = Promise.reject(
 			FailureReason.forRequest({endpoint: endpoint})
 				.addItem(FailureType.REQUEST_AUTHORIZATION_FAILURE)

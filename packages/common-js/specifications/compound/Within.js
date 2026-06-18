@@ -9,19 +9,35 @@ import Specification from './../Specification.js';
  *
  * @public
  * @extends {Specification}
- * @param {Number} tolerance
  */
 export default class Within extends Specification {
+	#tolerance;
+
+	/**
+	 * @param {number} tolerance
+	 */
 	constructor(tolerance) {
 		super();
 
-		this._tolerance = tolerance;
+		this.#tolerance = tolerance;
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 * @param {*} data
+	 * @returns {boolean}
+	 */
 	_evaluate(data) {
-		return is.array(data) && data.length === 2 && Math.abs(data[0] - data[1]) <= this._tolerance;
+		return is.array(data) && data.length === 2 && Math.abs(data[0] - data[1]) <= this.#tolerance;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Within]';
 	}

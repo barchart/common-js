@@ -25,9 +25,9 @@ for (let c = 65; c < 91; c++) {
  * and Z=51).
  *
  * @public
- * @param {Number} value
- * @param {Number=} places
- * @returns {String}
+ * @param {number} value
+ * @param {number=} places
+ * @returns {string}
  */
 export function fromBaseTen(value, places) {
 	assert.argumentIsValid(value, 'value', is.large, 'must be an integer');

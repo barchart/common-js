@@ -14,10 +14,22 @@ export default class After extends Specification {
 		super();
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 * @param {*} data
+	 * @returns {boolean}
+	 */
 	_evaluate(data) {
 		return is.array(data) && data.length === 2 && data[0].getIsAfter(data[1]);
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[After]';
 	}

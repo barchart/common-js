@@ -8,13 +8,20 @@ import Enum from './../../lang/Enum.js';
  *
  * @public
  * @extends {Enum}
- * @param {String} code - The enumeration code (and description).
- * @param {String} template - The template string for formatting human-readable messages.
- * @param {Boolean=} severe - Indicates if the failure is severe (default is true).
- * @param {Number=} error - The HTTP error code which should be used as part of an HTTP response.
- * @param {Boolean=} verbose - Indicates if data object should be included when serialized.
  */
 export default class FailureType extends Enum {
+	#template;
+	#severe;
+	#error;
+	#verbose;
+
+	/**
+	 * @param {string} code - The enumeration code (and description).
+	 * @param {string} template - The template string for formatting human-readable messages.
+	 * @param {boolean=} severe - Indicates if the failure is severe (default is true).
+	 * @param {number=} error - The HTTP error code which should be used as part of an HTTP response.
+	 * @param {boolean=} verbose - Indicates if data object should be included when serialized.
+	 */
 	constructor(code, template, severe, error, verbose) {
 		super(code, code);
 
@@ -23,46 +30,46 @@ export default class FailureType extends Enum {
 		assert.argumentIsOptional(error, 'error', Number);
 		assert.argumentIsOptional(verbose, 'verbose', Boolean);
 
-		this._template = template;
+		this.#template = template;
 
 		if (is.boolean(severe)) {
-			this._severe = severe;
+			this.#severe = severe;
 		} else {
-			this._severe = true;
+			this.#severe = true;
 		}
 
-		this._error = error || null;
-		this._verbose = verbose || false;
+		this.#error = error || null;
+		this.#verbose = verbose || false;
 	}
 
 	/**
 	 * The template string for formatting human-readable messages.
 	 *
 	 * @public
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	get template() {
-		return this._template;
+		return this.#template;
 	}
 
 	/**
 	 * Indicates if the failure is serious.
 	 *
 	 * @public
-	 * @return {Boolean}
+	 * @return {boolean}
 	 */
 	get severe() {
-		return this._severe;
+		return this.#severe;
 	}
 
 	/**
 	 * The HTTP error code which should be used as part of an HTTP response.
 	 *
 	 * @public
-	 * @return {Number|null}
+	 * @return {number|null}
 	 */
 	get error() {
-		return this._error;
+		return this.#error;
 	}
 
 	/**
@@ -72,7 +79,7 @@ export default class FailureType extends Enum {
 	 * @return {boolean}
 	 */
 	get verbose() {
-		return this._verbose;
+		return this.#verbose;
 	}
 
 	/**
@@ -181,7 +188,7 @@ export default class FailureType extends Enum {
 	 * @public
 	 * @static
 	 * @param {FailureType} type
-	 * @returns {Number}
+	 * @returns {number}
 	 */
 	static getHttpStatusCode(type) {
 		assert.argumentIsRequired(type, 'type', FailureType, 'FailureType');
@@ -199,6 +206,12 @@ export default class FailureType extends Enum {
 		return returnVal;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return `[FailureType (code=${this.code})]`;
 	}

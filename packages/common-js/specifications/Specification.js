@@ -16,7 +16,7 @@ export default class Specification {
 	 *
 	 * @public
 	 * @param {*=} data
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	evaluate(data) {
 		return this._evaluate(data);
@@ -24,6 +24,8 @@ export default class Specification {
 
 	/**
 	 * @protected
+	 * @param {*=} data
+	 * @returns {boolean}
 	 */
 	_evaluate(data) {
 		return false;
@@ -64,71 +66,149 @@ export default class Specification {
 	 * to the inverse result of the wrapped specification.
 	 *
 	 * @public
-	 * @param {Specification} other
 	 * @returns {Not}
 	 */
 	not() {
 		return new Not(this);
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Specification]';
 	}
 }
 
-class And extends Specification {
+/**
+ * A {@link Specification} that combines two specifications with AND logic.
+ *
+ * @public
+ * @extends {Specification}
+ */
+export class And extends Specification {
+	#specificationOne;
+	#specificationTwo;
+
+	/**
+	 * @param {Specification} specificationOne
+	 * @param {Specification} specificationTwo
+	 */
 	constructor(specificationOne, specificationTwo) {
 		super();
 
 		assert.argumentIsRequired(specificationOne, 'specificationOne', Specification, 'Specification');
 		assert.argumentIsRequired(specificationTwo, 'specificationTwo', Specification, 'Specification');
 
-		this._specificationOne = specificationOne;
-		this._specificationTwo = specificationTwo;
+		this.#specificationOne = specificationOne;
+		this.#specificationTwo = specificationTwo;
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 * @param {*=} data
+	 * @returns {boolean}
+	 */
 	_evaluate(data) {
-		return this._specificationOne.evaluate(data) && this._specificationTwo.evaluate(data);
+		return this.#specificationOne.evaluate(data) && this.#specificationTwo.evaluate(data);
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[And]';
 	}
 }
 
-class Or extends Specification {
+/**
+ * A {@link Specification} that combines two specifications with OR logic.
+ *
+ * @public
+ * @extends {Specification}
+ */
+export class Or extends Specification {
+	#specificationOne;
+	#specificationTwo;
+
+	/**
+	 * @param {Specification} specificationOne
+	 * @param {Specification} specificationTwo
+	 */
 	constructor(specificationOne, specificationTwo) {
 		super();
 
 		assert.argumentIsRequired(specificationOne, 'specificationOne', Specification, 'Specification');
 		assert.argumentIsRequired(specificationTwo, 'specificationTwo', Specification, 'Specification');
 
-		this._specificationOne = specificationOne;
-		this._specificationTwo = specificationTwo;
+		this.#specificationOne = specificationOne;
+		this.#specificationTwo = specificationTwo;
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 * @param {*=} data
+	 * @returns {boolean}
+	 */
 	_evaluate(data) {
-		return this._specificationOne.evaluate(data) || this._specificationTwo.evaluate(data);
+		return this.#specificationOne.evaluate(data) || this.#specificationTwo.evaluate(data);
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Or]';
 	}
 }
 
-class Not extends Specification {
+/**
+ * A {@link Specification} that negates another specification.
+ *
+ * @public
+ * @extends {Specification}
+ */
+export class Not extends Specification {
+	#otherSpecification;
+
+	/**
+	 * @param {Specification} otherSpecification
+	 */
 	constructor(otherSpecification) {
 		super();
 
 		assert.argumentIsRequired(otherSpecification, 'otherSpecification', Specification, 'Specification');
 
-		this._otherSpecification = otherSpecification;
+		this.#otherSpecification = otherSpecification;
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 * @param {*=} data
+	 * @returns {boolean}
+	 */
 	_evaluate(data) {
-		return !this._otherSpecification.evaluate(data);
+		return !this.#otherSpecification.evaluate(data);
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Not]';
 	}

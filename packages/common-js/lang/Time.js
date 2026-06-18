@@ -10,51 +10,62 @@ const HOURS_PER_DAY = 24;
  * without consideration for date or timezone.
  *
  * @public
- * @param {Number} hours
- * @param {Number} minutes
- * @param {Number} seconds
  */
 export default class Time {
+    #hours;
+    #minutes;
+    #seconds;
+
+    /**
+     * @param {number} hours
+     * @param {number} minutes
+     * @param {number} seconds
+     */
     constructor(hours, minutes, seconds) {
         if (!Time.validate(hours, minutes, seconds)) {
             throw new Error(`Unable to instantiate [ Time ], input is invalid [ ${hours} ], [ ${minutes} ], [ ${seconds} ]`);
         }
 
-        this._hours = hours;
-        this._minutes = minutes;
-        this._seconds = seconds;
+        this.#hours = hours;
+        this.#minutes = minutes;
+        this.#seconds = seconds;
     }
 
     /**
      * The hours (0–23).
      *
      * @public
-     * @returns {Number}
+     * @returns {number}
      */
     get hours() {
-        return this._hours;
+        return this.#hours;
     }
 
     /**
      * The minutes (0–59).
      *
      * @public
-     * @returns {Number}
+     * @returns {number}
      */
     get minutes() {
-        return this._minutes;
+        return this.#minutes;
     }
 
     /**
      * The seconds (0–59).
      *
      * @public
-     * @returns {Number}
+     * @returns {number}
      */
     get seconds() {
-        return this._seconds;
+        return this.#seconds;
     }
 
+    /**
+     * @public
+     * @param {*} seconds
+     * @returns {Time}
+     */
     addSeconds(seconds) {
         assert.argumentIsValid(seconds, 'seconds', is.integer, 'must be an integer');
 
@@ -72,7 +83,7 @@ export default class Time {
             hoursToAdd = Math.floor(hoursToAdd);
         }
 
-        let secondsShifted = this._seconds + secondsToAdd;
+        let secondsShifted = this.#seconds + secondsToAdd;
 
         if (negative && secondsShifted < 0) {
             secondsShifted += SECONDS_PER_MINUTE;
@@ -86,7 +97,7 @@ export default class Time {
             minutesToAdd++;
         }
 
-        let minutesShifted = this._minutes + minutesToAdd;
+        let minutesShifted = this.#minutes + minutesToAdd;
 
         if (negative && minutesShifted < 0) {
             minutesShifted += MINUTES_PER_HOUR;
@@ -100,7 +111,7 @@ export default class Time {
             hoursToAdd++;
         }
 
-        let hoursShifted = (this._hours + hoursToAdd) % HOURS_PER_DAY;
+        let hoursShifted = (this.#hours + hoursToAdd) % HOURS_PER_DAY;
 
         if (hoursShifted < 0) {
             hoursShifted += HOURS_PER_DAY;
@@ -113,7 +124,7 @@ export default class Time {
      * Returns a new {@link Time} instance with some number of seconds subtracted.
      *
      * @public
-     * @param {Number} seconds
+     * @param {number} seconds
      * @returns {Time}
      */
     subtractSeconds(seconds) {
@@ -124,7 +135,7 @@ export default class Time {
      * Returns a new {@link Time} instance with some number of minutes added.
      *
      * @public
-     * @param {Number} minutes
+     * @param {number} minutes
      * @returns {Time}
      */
     addMinutes(minutes) {
@@ -135,7 +146,7 @@ export default class Time {
      * Returns a new {@link Time} instance with some number of minutes subtracted.
      *
      * @public
-     * @param {Number} minutes
+     * @param {number} minutes
      * @returns {Time}
      */
     subtractMinutes(minutes) {
@@ -146,7 +157,7 @@ export default class Time {
      * Returns a new {@link Time} instance with some number of minutes added.
      *
      * @public
-     * @param {Number} hours
+     * @param {number} hours
      * @returns {Time}
      */
     addHours(hours) {
@@ -157,7 +168,7 @@ export default class Time {
      * Returns a new {@link Time} instance with some number of minutes subtracted.
      *
      * @public
-     * @param {Number} hours
+     * @param {number} hours
      * @returns {Time}
      */
     subtractHours(hours) {
@@ -200,24 +211,24 @@ export default class Time {
     getIsEqual(other) {
         assert.argumentIsRequired(other, 'other', Time, 'Time');
 
-        return this._hours === other.hours && this._minutes === other.minutes && this._seconds === other.seconds;
+        return this.#hours === other.hours && this.#minutes === other.minutes && this.#seconds === other.seconds;
     }
 
     /**
      * Outputs the time as the formatted string: {hh}:{mm}:{ss}.
      *
      * @public
-     * @returns {String}
+     * @returns {string}
      */
     format() {
-        return `${leftPad(this._hours, 2, '0')}:${leftPad(this._minutes, 2, '0')}:${leftPad(this._seconds, 2, '0')}`;
+        return `${leftPad(this.#hours, 2, '0')}:${leftPad(this.#minutes, 2, '0')}:${leftPad(this.#seconds, 2, '0')}`;
     }
 
     /**
      * Returns the JSON representation.
      *
      * @public
-     * @returns {String}
+     * @returns {string}
      */
     toJSON() {
         return this.format();
@@ -228,10 +239,10 @@ export default class Time {
      *
      * @public
      * @static
-     * @param {Number} hours
-     * @param {Number} minutes
-     * @param {Number} seconds
-     * @returns {Boolean}
+     * @param {number} hours
+     * @param {number} minutes
+     * @param {number} seconds
+     * @returns {boolean}
      */
     static validate(hours, minutes, seconds) {
         return Number.isInteger(hours) &&
@@ -247,7 +258,7 @@ export default class Time {
      *
      * @public
      * @static
-     * @param {String} time
+     * @param {string} time
      * @returns {Time}
      */
     static parse(time) {
@@ -296,6 +307,12 @@ export default class Time {
         return new Time(date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
     }
 
+    /**
+     * Returns a string representation.
+     *
+     * @public
+     * @returns {string}
+     */
     toString() {
         return '[Time]';
     }

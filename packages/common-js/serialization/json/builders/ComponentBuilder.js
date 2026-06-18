@@ -8,11 +8,16 @@ import Field from './../Field.js';
  * A fluent interface for building a {@link Component} instance.
  *
  * @public
- * @param {String} name - The name of the schema
  */
 export default class ComponentBuilder {
+	#component;
+	#name;
+
+	/**
+	 * @param {string} name - The name of the schema
+	 */
 	constructor(name) {
-		this._component = new Component(name);
+		this.#component = new Component(name);
 	}
 
 	/**
@@ -22,14 +27,14 @@ export default class ComponentBuilder {
 	 * @returns {Component}
 	 */
 	get component() {
-		return this._component;
+		return this.#component;
 	}
 
 	/**
 	 * Adds a new {@link Field} to the schema and returns the current instance.
 	 *
 	 * @public
-	 * @param {String} name
+	 * @param {string} name
 	 * @param {DataType} dataType
 	 * @returns {ComponentBuilder}
 	 */
@@ -37,9 +42,9 @@ export default class ComponentBuilder {
 		assert.argumentIsRequired(name, 'name', String);
 		assert.argumentIsRequired(dataType, 'dataType', DataType, 'DataType');
 
-		const fields = this._component.fields.concat([ new Field(name, dataType) ]);
+		const fields = this.#component.fields.concat([ new Field(name, dataType) ]);
 
-		this._component = new Component(this._component.name, fields, this._component.reviver);
+		this.#component = new Component(this.#component.name, fields, this.#component.reviver);
 
 		return this;
 	}
@@ -54,12 +59,18 @@ export default class ComponentBuilder {
 	withReviver(reviver) {
 		assert.argumentIsRequired(reviver, 'reviver', Function);
 
-		this._component = new Component(this._component.name, this._component.fields, reviver);
+		this.#component = new Component(this.#component.name, this.#component.fields, reviver);
 
 		return this;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
-		return `[ComponentBuilder (name=${this._name})]`;
+		return `[ComponentBuilder (name=${this.#name})]`;
 	}
 }

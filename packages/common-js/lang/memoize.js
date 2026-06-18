@@ -35,7 +35,7 @@ export function simple(fn) {
  *
  * @public
  * @param {Function} fn
- * @param {Number} duration
+ * @param {number} duration
  * @returns {Function}
  */
 export function cache(fn, duration) {

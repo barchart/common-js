@@ -18,14 +18,19 @@ import RequestInterceptor from './../interceptors/RequestInterceptor.js';
  * Fluent interface for building a {@link Endpoint}.
  *
  * @public
- * @param {string} name
  */
 export default class EndpointBuilder {
+	#endpoint;
+
+	/**
+	 * @param {string} name
+	 * @param {string=} description
+	 */
 	constructor(name, description) {
 		assert.argumentIsRequired(name, 'name', String);
 		assert.argumentIsOptional(description, 'description', String);
 
-		this._endpoint = new Endpoint(name, description);
+		this.#endpoint = new Endpoint(name, description);
 	}
 
 	/**
@@ -35,7 +40,7 @@ export default class EndpointBuilder {
 	 * @returns {Endpoint}
 	 */
 	get endpoint() {
-		return this._endpoint;
+		return this.#endpoint;
 	}
 
 	/**
@@ -48,7 +53,7 @@ export default class EndpointBuilder {
 	withVerb(verb) {
 		assert.argumentIsRequired(verb, 'verb', VerbType, 'VerbType');
 
-		this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.credentials, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
+		this.#endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.credentials, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
 
 		return this;
 	}
@@ -63,7 +68,7 @@ export default class EndpointBuilder {
 	withProtocol(protocol) {
 		assert.argumentIsRequired(protocol, 'protocol', ProtocolType, 'ProtocolType');
 
-		this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.credentials, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
+		this.#endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.credentials, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
 
 		return this;
 	}
@@ -72,13 +77,13 @@ export default class EndpointBuilder {
 	 * Sets the host.
 	 *
 	 * @public
-	 * @param {String} host
+	 * @param {string} host
 	 * @returns {EndpointBuilder}
 	 */
 	withHost(host) {
 		assert.argumentIsRequired(host, 'host', String);
 
-		this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.credentials, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
+		this.#endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.credentials, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
 
 		return this;
 	}
@@ -87,13 +92,13 @@ export default class EndpointBuilder {
 	 * Sets the port.
 	 *
 	 * @public
-	 * @param {Number} port
+	 * @param {number} port
 	 * @returns {EndpointBuilder}
 	 */
 	withPort(port) {
 		assert.argumentIsRequired(port, 'port', Number);
 
-		this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.credentials, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
+		this.#endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.credentials, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
 
 		return this;
 	}
@@ -114,7 +119,7 @@ export default class EndpointBuilder {
 
 		const headers = builder.parameters;
 
-		this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, headers, this.endpoint.body, this.endpoint.credentials, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
+		this.#endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, headers, this.endpoint.body, this.endpoint.credentials, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
 
 		return this;
 	}
@@ -135,7 +140,7 @@ export default class EndpointBuilder {
 
 		const path = builder.parameters;
 
-		this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.credentials, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
+		this.#endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.credentials, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
 
 		return this;
 	}
@@ -156,7 +161,7 @@ export default class EndpointBuilder {
 
 		const query = builder.parameters;
 
-		this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, query, this.endpoint.headers, this.endpoint.body, this.endpoint.credentials, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
+		this.#endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, query, this.endpoint.headers, this.endpoint.body, this.endpoint.credentials, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
 
 		return this;
 	}
@@ -177,7 +182,7 @@ export default class EndpointBuilder {
 
 		const body = builder.parameters;
 
-		this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, body, this.endpoint.credentials, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
+		this.#endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, body, this.endpoint.credentials, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
 
 		return this;
 	}
@@ -186,7 +191,7 @@ export default class EndpointBuilder {
 	 * Adds a body to the request.
 	 *
 	 * @public
-	 * @param {String=} description - The human-readable description of the request body.
+	 * @param {string=} description - The human-readable description of the request body.
 	 * @returns {EndpointBuilder}
 	 */
 	withBody(description) {
@@ -201,8 +206,8 @@ export default class EndpointBuilder {
 	 * Adds basic authentication to the request.
 	 *
 	 * @public
-	 * @param {String} username
-	 * @param {String} password
+	 * @param {string} username
+	 * @param {string} password
 	 * @returns {EndpointBuilder}
 	 */
 	withBasicAuthentication(username, password) {
@@ -231,7 +236,7 @@ export default class EndpointBuilder {
 
 		const credentials = builder.credentials;
 
-		this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, credentials, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
+		this.#endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, credentials, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
 
 		return this;
 	}
@@ -255,7 +260,7 @@ export default class EndpointBuilder {
 			updatedRequestInterceptor = requestInterceptor;
 		}
 
-		this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.credentials, updatedRequestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
+		this.#endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.credentials, updatedRequestInterceptor, this.endpoint.responseInterceptor, this.endpoint.errorInterceptor);
 
 		return this;
 	}
@@ -279,7 +284,7 @@ export default class EndpointBuilder {
 			updatedResponseInterceptor = responseInterceptor;
 		}
 
-		this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.credentials, this.endpoint.requestInterceptor, updatedResponseInterceptor, this.endpoint.errorInterceptor);
+		this.#endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.credentials, this.endpoint.requestInterceptor, updatedResponseInterceptor, this.endpoint.errorInterceptor);
 
 		return this;
 	}
@@ -303,7 +308,7 @@ export default class EndpointBuilder {
 			updatedErrorInterceptor = errorInterceptor;
 		}
 
-		this._endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.credentials, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, updatedErrorInterceptor);
+		this.#endpoint = new Endpoint(this.endpoint.name, this.endpoint.description, this.endpoint.verb, this.endpoint.protocol, this.endpoint.host, this.endpoint.port, this.endpoint.path, this.endpoint.query, this.endpoint.headers, this.endpoint.body, this.endpoint.credentials, this.endpoint.requestInterceptor, this.endpoint.responseInterceptor, updatedErrorInterceptor);
 
 		return this;
 	}
@@ -311,16 +316,22 @@ export default class EndpointBuilder {
 	/**
 	 * Factory function for creating an {@link EndpointBuilder} instance.
 	 *
-	 * @static
 	 * @public
-	 * @param {String} name
-	 * @param {String=} description
+	 * @static
+	 * @param {string} name
+	 * @param {string=} description
 	 * @returns {EndpointBuilder}
 	 */
 	static for(name, description) {
 		return new EndpointBuilder(name, description);
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[EndpointBuilder]';
 	}

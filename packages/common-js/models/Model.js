@@ -5,41 +5,61 @@ import Disposable from './../lang/Disposable.js';
 import Event from './../messaging/Event.js';
 
 export default class Model extends Disposable {
+
+	#propertyNames;
+	#transactionCommit;
+	#transactionOpen;
+	#transactionData;
+	#trackerOpen;
+	#trackerData;
+	#sequence;
+
+	/**
+	 * @param {string[]} propertyNames
+	 * @param {object=} propertyObservers
+	 * @param {object=} equalityPredicates
+	 */
 	constructor(propertyNames, propertyObservers, equalityPredicates) {
 		super();
 
-		this._propertyNames = propertyNames;
+		this.#propertyNames = propertyNames;
 
-		this._transactionCommit = new Event(this);
+		this.#transactionCommit = new Event(this);
 
-		this._transactionOpen = false;
-		this._transactionData = null;
+		this.#transactionOpen = false;
+		this.#transactionData = null;
 
-		this._trackerOpen = false;
-		this._trackerData = null;
+		this.#trackerOpen = false;
+		this.#trackerData = null;
 
-		this._sequence = 0;
+		this.#sequence = 0;
 
 		const observers = propertyObservers || { };
 		const predicates = equalityPredicates || { };
 
-		for (let i = 0; i < this._propertyNames.length; i++) {
+		for (let i = 0; i < this.#propertyNames.length; i++) {
 			const propertyName = propertyNames[i];
 
-			createProperty.call(this, propertyName, observers[propertyName] || emptyFunction, predicates[propertyName] || checkEquals);
+			this.#createProperty(propertyName, observers[propertyName] || emptyFunction, predicates[propertyName] || checkEquals);
 		}
 	}
 
+	/**
+	 * @public
+	 */
 	beginTransaction() {
-		if (this._transactionOpen) {
+		if (this.#transactionOpen) {
 			return;
 		}
 
-		this._transactionOpen = true;
+		this.#transactionOpen = true;
 	}
 
+	/**
+	 * @public
+	 */
 	endTransaction() {
-		if (!this._transactionOpen) {
+		if (!this.#transactionOpen) {
 			return;
 		}
 
@@ -47,31 +67,39 @@ export default class Model extends Disposable {
 			return;
 		}
 
-		this._transactionOpen = false;
+		this.#transactionOpen = false;
 
-		if (this._transactionData !== null) {
-			this._formatTransactionData(this._transactionData);
+		if (this.#transactionData !== null) {
+			this._formatTransactionData(this.#transactionData);
 
-			this._transactionData.sequence = this._sequence++;
+			this.#transactionData.sequence = this.#sequence++;
 
-			if (this._trackerOpen) {
-				this._trackerData = this._trackerData || { };
+			if (this.#trackerOpen) {
+				this.#trackerData = this.#trackerData || { };
 
-				for (let propertyName in this._transactionData) {
-					this._trackerData[propertyName] = this._transactionData[propertyName];
+				for (let propertyName in this.#transactionData) {
+					this.#trackerData[propertyName] = this.#transactionData[propertyName];
 				}
 			}
 
-			this._transactionCommit.fire(this._transactionData);
+			this.#transactionCommit.fire(this.#transactionData);
 
-			this._transactionData = null;
+			this.#transactionData = null;
 		}
 	}
 
+	/**
+	 * @protected
+	 * @param {object} transactionData
+	 */
 	_formatTransactionData(transactionData) {
 		return;
 	}
 
+	/**
+	 * @public
+	 * @param {Function} processor
+	 */
 	executeTransaction(processor) {
 		assert.argumentIsRequired(processor, 'processor', Function);
 
@@ -80,24 +108,36 @@ export default class Model extends Disposable {
 		this.endTransaction();
 	}
 
+	/**
+	 * @public
+	 * @param {Function} observer
+	 * @returns {*}
+	 */
 	onTransactionCommitted(observer) {
 		if (this.disposed) {
 			return;
 		}
 
-		return this._transactionCommit.register(observer);
+		return this.#transactionCommit.register(observer);
 	}
 
+	/**
+	 * @public
+	 */
 	startTracker() {
-		if (this._trackerOpen) {
+		if (this.#trackerOpen) {
 			return;
 		}
 
-		this._trackerOpen = true;
+		this.#trackerOpen = true;
 	}
 
+	/**
+	 * @public
+	 * @returns {object|null}
+	 */
 	resetTracker() {
-		if (!this._trackerOpen) {
+		if (!this.#trackerOpen) {
 			return null;
 		}
 
@@ -105,15 +145,18 @@ export default class Model extends Disposable {
 			return null;
 		}
 
-		const returnRef = this._trackerData;
+		const returnRef = this.#trackerData;
 
-		this._trackerData = null;
+		this.#trackerData = null;
 
 		return returnRef;
 	}
 
+	/**
+	 * @public
+	 */
 	stopTracking() {
-		if (!this._trackerOpen) {
+		if (!this.#trackerOpen) {
 			return;
 		}
 
@@ -121,29 +164,77 @@ export default class Model extends Disposable {
 			return;
 		}
 
-		this._trackerOpen = false;
-		this._trackerData = null;
+		this.#trackerOpen = false;
+		this.#trackerData = null;
 	}
 
+	/**
+	 * @public
+	 * @returns {object}
+	 */
 	getSnapshot() {
 		const snapshot = {};
 
-		for (let i = 0; i < this._propertyNames.length; i++) {
-			const propertyName = this._propertyNames[i];
+		for (let i = 0; i < this.#propertyNames.length; i++) {
+			const propertyName = this.#propertyNames[i];
 
 			snapshot[propertyName] = this[propertyName];
 		}
 
-		snapshot.sequence = this._sequence;
+		snapshot.sequence = this.#sequence;
 
 		return snapshot;
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 */
 	_onDispose() {
-		this._transactionCommit.dispose();
-		this._transactionCommit = null;
+		this.#transactionCommit.dispose();
+		this.#transactionCommit = null;
 	}
 
+	#createProperty(propertyName, propertyObserver, equalityPredicate) {
+		let propertyValue = null;
+
+		Object.defineProperty(this, propertyName, {
+			get: () => {
+				return propertyValue;
+			},
+			set: (value) => {
+				const valueToAssign = is.undef(value) ? null : value;
+
+				if (equalityPredicate(propertyValue, valueToAssign)) {
+					return;
+				}
+
+				propertyValue = valueToAssign;
+
+				const implicit = !this.#transactionOpen;
+
+				if (implicit) {
+					this.beginTransaction();
+				}
+
+				this.#transactionData = this.#transactionData || {};
+				this.#transactionData[propertyName] = propertyValue;
+
+				propertyObserver(this);
+
+				if (implicit) {
+					this.endTransaction();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Model]';
 	}
@@ -155,38 +246,4 @@ function emptyFunction() {
 
 function checkEquals(a, b) {
 	return a === b;
-}
-
-function createProperty(propertyName, propertyObserver, equalityPredicate) {
-	let propertyValue = null;
-
-	Object.defineProperty(this, propertyName, {
-		get: () => {
-			return propertyValue;
-		},
-		set: (value) => {
-			const valueToAssign = is.undefined(value) ? null : value;
-
-			if (equalityPredicate(propertyValue, valueToAssign)) {
-				return;
-			}
-
-			propertyValue = valueToAssign;
-
-			const implicit = !this._transactionOpen;
-
-			if (implicit) {
-				this.beginTransaction();
-			}
-
-			this._transactionData = this._transactionData || {};
-			this._transactionData[propertyName] = propertyValue;
-
-			propertyObserver(this);
-
-			if (implicit) {
-				this.endTransaction();
-			}
-		}
-	});
 }

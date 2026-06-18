@@ -11,55 +11,60 @@ import Queue from './../collections/Queue.js';
  * @extends {Disposable}
  */
 export default class Serializer extends Disposable {
+	#workQueue;
+	#enqueued;
+	#processed;
+	#running;
+
 	constructor() {
 		super();
 
-		this._workQueue = new Queue();
+		this.#workQueue = new Queue();
 
-		this._enqueued = 0;
-		this._processed = 0;
+		this.#enqueued = 0;
+		this.#processed = 0;
 
-		this._running = false;
+		this.#running = false;
 	}
 
 	/**
 	 * Gets the sequence of the item that was last processed.
 	 *
 	 * @public
-	 * @returns {Number}
+	 * @returns {number}
 	 */
 	getCurrent() {
-		return this._processed;
+		return this.#processed;
 	}
 
 	/**
 	 * The the total number of items that have been added to the queue.
 	 *
 	 * @public
-	 * @returns {Number}
+	 * @returns {number}
 	 */
 	getTotal() {
-		return this._enqueued;
+		return this.#enqueued;
 	}
 
 	/**
 	 * The number of items that are currently pending.
 	 *
 	 * @public
-	 * @returns {Number}
+	 * @returns {number}
 	 */
 	getPending() {
-		return this._enqueued - this._processed;
+		return this.#enqueued - this.#processed;
 	}
 
 	/**
 	 * Indicates if a work item is currently being processed.
 	 * 
 	 * @public
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	getRunning() {
-		return this._running;
+		return this.#running;
 	}
 
 	/**
@@ -78,7 +83,7 @@ export default class Serializer extends Disposable {
 				throw new Error('Unable to add action to the Serializer, it has been disposed.');
 			}
 
-			this._enqueued = this._enqueued + 1;
+			this.#enqueued = this.#enqueued + 1;
 
 			this._getWorkQueue().enqueue(() => {
 				return Promise.resolve()
@@ -87,7 +92,7 @@ export default class Serializer extends Disposable {
 							throw new Error('Unable to process Serializer action, the serializer has been disposed.');
 						}
 
-						this._processed = this._processed + 1;
+						this.#processed = this.#processed + 1;
 
 						return actionToEnqueue();
 					}).then((result) => {
@@ -97,7 +102,7 @@ export default class Serializer extends Disposable {
 					});
 			});
 
-			checkStart.call(this);
+			this.#checkStart();
 		});
 	}
 
@@ -108,29 +113,35 @@ export default class Serializer extends Disposable {
 	 * @returns {Queue|*}
 	 */
 	_getWorkQueue() {
-		return this._workQueue;
+		return this.#workQueue;
 	}
-	
+
+	#checkStart() {
+		const workQueue = this._getWorkQueue();
+
+		if (workQueue.empty() || this.#running) {
+			return;
+		}
+
+		this.#running = true;
+
+		const actionToExecute = workQueue.dequeue();
+
+		actionToExecute()
+			.then(() => {
+				this.#running = false;
+
+				this.#checkStart();
+			});
+	}
+
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Serializer]';
 	}
-}
-
-function checkStart() {
-	const workQueue = this._getWorkQueue();
-
-	if (workQueue.empty() || this._running) {
-		return;
-	}
-
-	this._running = true;
-
-	const actionToExecute = workQueue.dequeue();
-
-	actionToExecute()
-		.then(() => {
-			this._running = false;
-
-			checkStart.call(this);
-		});
 }

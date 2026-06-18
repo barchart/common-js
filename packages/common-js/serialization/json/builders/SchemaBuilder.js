@@ -10,11 +10,18 @@ import ComponentBuilder from './ComponentBuilder.js';
  * A fluent interface for building a {@link Schema} instance.
  *
  * @public
- * @param {String} name - The name of the schema
  */
 export default class SchemaBuilder {
+	#schema;
+	#name;
+
+	/**
+	 * @param {string} name - The name of the schema
+	 */
 	constructor(name) {
-		this._schema = new Schema(name);
+		this.#name = name;
+
+		this.#schema = new Schema(name);
 	}
 
 	/**
@@ -24,16 +31,16 @@ export default class SchemaBuilder {
 	 * @returns {Schema}
 	 */
 	get schema() {
-		return this._schema;
+		return this.#schema;
 	}
 
 	/**
 	 * Adds a new {@link Field} to the schema and returns the current instance.
 	 *
 	 * @public
-	 * @param {String} name - The name of the new field.
+	 * @param {string} name - The name of the new field.
 	 * @param {DataType} dataType - The type of the new field.
-	 * @param {Boolean=} optional - If true, the field is not required and may be omitted.
+	 * @param {boolean=} optional - If true, the field is not required and may be omitted.
 	 * @returns {SchemaBuilder}
 	 */
 	withField(name, dataType, optional) {
@@ -41,9 +48,9 @@ export default class SchemaBuilder {
 		assert.argumentIsRequired(dataType, 'dataType', DataType, 'DataType');
 		assert.argumentIsOptional(optional, 'optional', Boolean);
 
-		const fields = this._schema.fields.concat([ new Field(name, dataType, optional, false) ]);
+		const fields = this.#schema.fields.concat([ new Field(name, dataType, optional, false) ]);
 
-		this._schema = new Schema(this._schema.name, fields, this._schema.components, this._schema.strict);
+		this.#schema = new Schema(this.#schema.name, fields, this.#schema.components, this.#schema.strict);
 
 		return this;
 	}
@@ -52,9 +59,9 @@ export default class SchemaBuilder {
 	 * Adds a new {@link Field} to the schema (where the field is an array) and returns the current instance.
 	 *
 	 * @public
-	 * @param {String} name - The name of the new field.
+	 * @param {string} name - The name of the new field.
 	 * @param {DataType} dataType - The type of the new field.
-	 * @param {Boolean=} optional - If true, the field is not required and may be omitted.
+	 * @param {boolean=} optional - If true, the field is not required and may be omitted.
 	 * @returns {SchemaBuilder}
 	 */
 	withArray(name, dataType, optional) {
@@ -62,9 +69,9 @@ export default class SchemaBuilder {
 		assert.argumentIsRequired(dataType, 'dataType', DataType, 'DataType');
 		assert.argumentIsOptional(optional, 'optional', Boolean);
 
-		const fields = this._schema.fields.concat([ new Field(name, dataType, optional, true) ]);
+		const fields = this.#schema.fields.concat([ new Field(name, dataType, optional, true) ]);
 
-		this._schema = new Schema(this._schema.name, fields, this._schema.components, this._schema.strict);
+		this.#schema = new Schema(this.#schema.name, fields, this.#schema.components, this.#schema.strict);
 
 		return this;
 	}
@@ -79,9 +86,9 @@ export default class SchemaBuilder {
 	withComponent(component) {
 		assert.argumentIsRequired(component, 'component', Component, 'Component');
 
-		const components = this._schema.components.concat([ component ]);
+		const components = this.#schema.components.concat([ component ]);
 
-		this._schema = new Schema(this._schema.name, this._schema.fields, components, this._schema.strict);
+		this.#schema = new Schema(this.#schema.name, this.#schema.fields, components, this.#schema.strict);
 
 		return this;
 	}
@@ -91,7 +98,7 @@ export default class SchemaBuilder {
 	 * and returns the current instance.
 	 *
 	 * @public
-	 * @param {String} name - The name of the new component.
+	 * @param {string} name - The name of the new component.
 	 * @param {Function} callback - A callback to which the {@link ComponentBuilder} is passed synchronously.
 	 * @returns {SchemaBuilder}
 	 */
@@ -109,7 +116,8 @@ export default class SchemaBuilder {
 	 * Creates a new {@link SchemaBuilder}.
 	 *
 	 * @public
-	 * @param {String} name
+	 * @static
+	 * @param {string} name
 	 * @returns {SchemaBuilder}
 	 */
 	static withName(name) {
@@ -118,7 +126,13 @@ export default class SchemaBuilder {
 		return new SchemaBuilder(name);
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
-		return `[SchemaBuilder (name=${this._name})]`;
+		return `[SchemaBuilder (name=${this.#name})]`;
 	}
 }

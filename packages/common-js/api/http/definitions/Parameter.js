@@ -6,57 +6,64 @@ import * as is from './../../../lang/is.js';
  * querystrings, and as request headers.
  *
  * @public
- * @param {String=} description
- * @param {String=} key
- * @param {Parameter~parameterValueCallback} extractor
- * @param {Boolean=} optional
  */
 export default class Parameter {
+	#description;
+	#key;
+	#extractor;
+	#optional;
+
+	/**
+	 * @param {string} description
+	 * @param {string} key
+	 * @param {parameterValueCallback} extractor
+	 * @param {boolean=} optional
+	 */
 	constructor(description, key, extractor, optional) {
-		this._description = description || null;
-		this._key = key || null;
-		this._extractor = extractor || null;
-		this._optional = is.boolean(optional) && optional;
+		this.#description = description || null;
+		this.#key = key || null;
+		this.#extractor = extractor || null;
+		this.#optional = is.boolean(optional) && optional;
 	}
 
 	/**
 	 * The human-readable description of the parameter.
 	 *
 	 * @public
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	get description() {
-		return this._description;
+		return this.#description;
 	}
 
 	/**
 	 * The name of the parameter.
 	 *
 	 * @public
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	get key() {
-		return this._key;
+		return this.#key;
 	}
 
 	/**
 	 * A function for extracting the parameter's value.
 	 *
 	 * @public
-	 * @returns {Parameter~parameterValueCallback}
+	 * @returns {parameterValueCallback}
 	 */
 	get extractor() {
-		return this._extractor;
+		return this.#extractor;
 	}
 
 	/**
 	 * Indicates if the parameter is required.
 	 *
 	 * @public
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	get optional() {
-		return this._optional;
+		return this.#optional;
 	}
 
 	/**
@@ -69,11 +76,17 @@ export default class Parameter {
 			throw new Error('Parameter key must be a non-zero length string');
 		}
 
-		if (!is.fn(this._extractor)) {
+		if (!is.fn(this.#extractor)) {
 			throw new Error('Parameter extractor must be a function.');
 		}
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return `[Parameter]`;
 	}
@@ -82,7 +95,7 @@ export default class Parameter {
 /**
  * A function that, when passed the request's payload, returns a parameter's value.
  *
- * @callback Parameter~parameterValueCallback
- * @param {Object} payload
- * @returns {Promise<String>}
+ * @callback parameterValueCallback
+ * @param {object} payload
+ * @returns {Promise<string>}
  */

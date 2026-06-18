@@ -4,10 +4,10 @@ import * as assert from './../lang/assert.js';
  * An object that can perform an action.
  *
  * @public
- * @interface
  */
 export default class CommandHandler {
 	constructor() {
+
 	}
 
 	/**
@@ -30,6 +30,12 @@ export default class CommandHandler {
 		return true;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[CommandHandler]';
 	}
@@ -38,8 +44,9 @@ export default class CommandHandler {
 	 * Returns a function which executes the command.
 	 *
 	 * @public
+	 * @static
 	 * @param {CommandHandler} commandHandler
-	 * @returns {function(*=)}
+	 * @returns {Function}
 	 */
 	static toFunction(commandHandler) {
 		assert.argumentIsRequired(commandHandler, 'commandHandler', CommandHandler, 'CommandHandler');
@@ -53,6 +60,7 @@ export default class CommandHandler {
 	 * Returns a {@link CommandHandler} that delegates execution to a function.
 	 *
 	 * @public
+	 * @static
 	 * @param {Function} handler - The function which the command delegates to.
 	 * @returns {CommandHandler}
 	 */
@@ -64,13 +72,24 @@ export default class CommandHandler {
 }
 
 class DelegateCommandHandler extends CommandHandler {
+	#handler;
+
+	/**
+     * @param {Function} handler
+     */
 	constructor(handler) {
 		super();
 
-		this._handler = handler;
+		this.#handler = handler;
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 * @param {*} data
+	 * @returns {*}
+	 */
 	_process(data) {
-		return this._handler(data);
+		return this.#handler(data);
 	}
 }

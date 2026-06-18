@@ -13,38 +13,55 @@ import Specification from './Specification.js';
  *
  * @public
  * @extends {Specification}
- * @param {Number} threshold
  */
 export default class CrossesSpecification extends Specification {
+	#threshold;
+	#previous;
+
+	/**
+	 * @param {number} threshold
+	 */
 	constructor(threshold) {
 		super();
 
 		assert.argumentIsRequired(threshold, 'threshold', Number);
 
-		this._threshold = threshold;
+		this.#threshold = threshold;
 
-		this._previous = null;
+		this.#previous = null;
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 * @param {*} data
+	 * @returns {boolean}
+	 */
 	_evaluate(data) {
 		if (!is.number(data)) {
 			return false;
 		}
 
 		const current = data;
-		const previous = this._previous;
+		const previous = this.#previous;
 
 		const crossed = previous !== null &&
 			(
-				(previous > this._threshold && !(current > this._threshold)) ||
-				(previous < this._threshold && !(current < this._threshold))
+				(previous > this.#threshold && !(current > this.#threshold)) ||
+				(previous < this.#threshold && !(current < this.#threshold))
 			);
 
-		this._previous = current;
+		this.#previous = current;
 
 		return crossed;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[CrossesSpecification]';
 	}

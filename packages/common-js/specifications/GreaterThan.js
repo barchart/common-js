@@ -8,23 +8,39 @@ import Specification from './Specification.js';
  *
  * @public
  * @extends {Specification}
- * @param {Number} value
  */
 export default class GreaterThan extends Specification {
+	#value;
+
+	/**
+	 * @param {number} value
+	 */
 	constructor(value) {
 		super();
 
 		assert.argumentIsRequired(value, 'value', Number);
 
-		this._value = value;
+		this.#value = value;
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 * @param {*} data
+	 * @returns {boolean}
+	 */
 	_evaluate(data) {
 		assert.argumentIsRequired(data, 'data', Number);
 
-		return data > this._value;
+		return data > this.#value;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[GreaterThan]';
 	}

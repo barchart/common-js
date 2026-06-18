@@ -19,8 +19,8 @@ regex.camel.violations = /\b[A-Z]/g;
  *
  * @public
  * @static
- * @param {String} s
- * @returns {String}
+ * @param {string} s
+ * @returns {string}
  */
 export function startCase(s) {
 	return s.split(' ').reduce((phrase, word) => {
@@ -38,8 +38,8 @@ export function startCase(s) {
  *
  * @public
  * @static
- * @param {String} s
- * @returns {String}
+ * @param {string} s
+ * @returns {string}
  */
 export function camelCase(s) {
 	assert.argumentIsRequired(s, 's', String);
@@ -54,9 +54,9 @@ export function camelCase(s) {
  *
  * @public
  * @static
- * @param {String} s
- * @param {Number} length
- * @returns {String}
+ * @param {string} s
+ * @param {number} length
+ * @returns {string}
  */
 export function truncate(s, length) {
 	if (is.string(s) && s.length > length) {
@@ -71,10 +71,10 @@ export function truncate(s, length) {
  *
  * @public
  * @static
- * @param {String} s - The string to pad.
- * @param {Number} length - The desired overall length of the string.
- * @param {String} character - The character to use for padding.
- * @returns {String}
+ * @param {string} s - The string to pad.
+ * @param {number} length - The desired overall length of the string.
+ * @param {string} character - The character to use for padding.
+ * @returns {string}
  */
 export function padLeft(s, length, character) {
 	assert.argumentIsRequired(s, 's', String);
@@ -94,10 +94,10 @@ export function padLeft(s, length, character) {
  *
  * @public
  * @static
- * @param {String} s - The string to format.
- * @param {String} mask - The character to use for masking.
- * @param {Number} show - The number of characters to preserve (of the left).
- * @param {Number=} length - The final length of the string (truncating characters of the right).
+ * @param {string} s - The string to format.
+ * @param {string} mask - The character to use for masking.
+ * @param {number} show - The number of characters to preserve (of the left).
+ * @param {number=} length - The final length of the string (truncating characters of the right).
  */
 export function mask(s, mask, show, length) {
 	assert.argumentIsRequired(s, 's', String);
@@ -127,9 +127,9 @@ export function mask(s, mask, show, length) {
  *
  * @public
  * @static
- * @param {String} s - The string to format (e.g. 'my first name is {0} and my last name is {1}')
- * @param {Array<String>} data - The replacement data
- * @returns {String}
+ * @param {string} s - The string to format (e.g. 'my first name is {0} and my last name is {1}')
+ * @param {Array<string>} data - The replacement data
+ * @returns {string}
  */
 export function format(s, ...data) {
 	assert.argumentIsRequired(s, 's', String);
@@ -140,7 +140,7 @@ export function format(s, ...data) {
 		if (i < data.length) {
 			const item = data[i];
 
-			if (!is.undefined(item) && !is.null(item)) {
+			if (!is.undef(item) && !is.nil(item)) {
 				replacement = item.toString();
 			} else {
 				replacement = match;

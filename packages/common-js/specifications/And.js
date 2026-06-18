@@ -1,3 +1,1 @@
-import Specification from './Specification.js';
-
-export default Specification.And;
+export { And as default } from './Specification.js';

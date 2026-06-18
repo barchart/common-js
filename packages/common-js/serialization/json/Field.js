@@ -7,32 +7,39 @@ import DataType from './DataType.js';
  * A simple field.
  *
  * @public
- * @param {String} name
- * @param {DataType} dataType
- * @param {Boolean=} optional
- * @param {Boolean=} array
  */
 export default class Field {
+	#name;
+	#dataType;
+	#optional;
+	#array;
+
+	/**
+	 * @param {string} name
+	 * @param {DataType} dataType
+	 * @param {boolean=} optional
+	 * @param {boolean=} array
+	 */
 	constructor(name, dataType, optional, array) {
 		assert.argumentIsRequired(name, 'name', String);
 		assert.argumentIsRequired(dataType, 'dataType', DataType, 'DataType');
 		assert.argumentIsOptional(optional, 'optional', Boolean);
 		assert.argumentIsOptional(array, 'array', Boolean);
 
-		this._name = name;
-		this._dataType = dataType;
-		this._optional = is.boolean(optional) && optional;
-		this._array = is.boolean(array) && array;
+		this.#name = name;
+		this.#dataType = dataType;
+		this.#optional = is.boolean(optional) && optional;
+		this.#array = is.boolean(array) && array;
 	}
 
 	/**
 	 * Name of the field.
 	 *
 	 * @public
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	get name() {
-		return this._name;
+		return this.#name;
 	}
 
 	/**
@@ -42,30 +49,36 @@ export default class Field {
 	 * @returns {DataType}
 	 */
 	get dataType() {
-		return this._dataType;
+		return this.#dataType;
 	}
 
 	/**
 	 * Indicates if the field can be omitted without violating the schema.
 	 *
 	 * @public
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	get optional() {
-		return this._optional;
+		return this.#optional;
 	}
 
 	/**
 	 * Indicates if the field is an array.
 	 *
 	 * @public
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	get array() {
-		return this._array;
+		return this.#array;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
-		return `[Field (name=${this._name})]`;
+		return `[Field (name=${this.#name})]`;
 	}
 }

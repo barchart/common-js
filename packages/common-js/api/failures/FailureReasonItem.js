@@ -8,15 +8,20 @@ import FailureType from './FailureType.js';
  * allows a human-readable message to be generated.
  *
  * @public
- * @param {FailureType} type
- * @param {Object=} data
  */
 export default class FailureReasonItem {
+	#type;
+	#data;
+
+	/**
+	 * @param {FailureType} type
+	 * @param {object=} data
+	 */
 	constructor(type, data) {
 		assert.argumentIsRequired(type, 'type', FailureType, 'FailureType');
 
-		this._type = type;
-		this._data = data || null;
+		this.#type = type;
+		this.#data = data || null;
 	}
 
 	/**
@@ -26,28 +31,28 @@ export default class FailureReasonItem {
 	 * @returns {FailureType}
 	 */
 	get type() {
-		return this._type;
+		return this.#type;
 	}
 
 	/**
 	 * The data.
 	 *
 	 * @public
-	 * @return {Object}
+	 * @return {object}
 	 */
 	get data() {
-		return this._data;
+		return this.#data;
 	}
 
 	/**
 	 * Formats a human-readable message, describing the failure.
 	 *
 	 * @public
-	 * @param {Object=} root - Root data from the {@link FailureReason}.
-	 * @returns {String}
+	 * @param {object=} root - Root data from the {@link FailureReason}.
+	 * @returns {string}
 	 */
 	format(root) {
-		return this._type.template.replace(tokenRegex, (full, ignored, casing, token) => {
+		return this.#type.template.replace(tokenRegex, (full, ignored, casing, token) => {
 			let tokenToUse;
 			let dataToRead;
 
@@ -56,7 +61,7 @@ export default class FailureReasonItem {
 				dataToRead = root;
 			} else {
 				tokenToUse = token;
-				dataToRead = this._data;
+				dataToRead = this.#data;
 			}
 
 			let replacement = attributes.read(dataToRead, tokenToUse);
@@ -77,6 +82,12 @@ export default class FailureReasonItem {
 		});
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[FailureReasonItem]';
 	}

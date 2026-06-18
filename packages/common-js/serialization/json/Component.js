@@ -7,34 +7,41 @@ import Field from './Field.js';
  * A complex object built from many {@link Field} instances.
  *
  * @public
- * @param {String} name
- * @param {Array<Field>} componentType
  */
 export default class Component {
+	#name;
+	#fields;
+	#reviver;
+
+	/**
+	 * @param {string} name
+	 * @param {Array<Field>=} fields
+	 * @param {Function=} reviver
+	 */
 	constructor(name, fields, reviver) {
-		this._name = name;
-		this._fields = fields || [ ];
-		this._reviver = reviver;
+		this.#name = name;
+		this.#fields = fields || [ ];
+		this.#reviver = reviver;
 	}
 
 	/**
 	 * Name of the component.
 	 *
 	 * @public
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	get name() {
-		return this._name;
+		return this.#name;
 	}
 
 	/**
 	 * Type of the component.
 	 *
 	 * @public
-	 * @returns {ComponentType}
+	 * @returns {Array<Field>}
 	 */
 	get fields() {
-		return this._fields;
+		return this.#fields;
 	}
 
 	/**
@@ -43,23 +50,28 @@ export default class Component {
 	 * @returns {Function}
 	 */
 	get reviver() {
-		return this._reviver;
+		return this.#reviver;
 	}
 
 	/**
 	 * The builds a {@link Component} for {@link Money}.
 	 *
 	 * @public
+	 * @static
+	 * @param {string} name
 	 * @returns {Component}
 	 */
 	static forMoney(name) {
-		return new Component(name, [
-			new Field('decimal', DataType.DECIMAL),
-			new Field('currency', DataType.forEnum(Currency, 'Currency'))
-		], x => Money.parse(x));
+		return new Component(name, [ new Field('decimal', DataType.DECIMAL), new Field('currency', DataType.forEnum(Currency, 'Currency')) ], x => Money.parse(x));
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
-		return `[Component (name=${this._name})]`;
+		return `[Component (name=${this.#name})]`;
 	}
 }

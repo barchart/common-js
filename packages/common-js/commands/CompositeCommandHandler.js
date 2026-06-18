@@ -3,6 +3,13 @@ import * as assert from './../lang/assert.js';
 import CommandHandler from './CommandHandler.js';
 
 export default class CompositeCommandHandler extends CommandHandler {
+	#commandHandlerA;
+	#commandHandlerB;
+
+	/**
+	 * @param {*} commandHandlerA
+	 * @param {*} commandHandlerB
+	 */
 	constructor(commandHandlerA, commandHandlerB) {
 		super();
 
@@ -10,14 +17,26 @@ export default class CompositeCommandHandler extends CommandHandler {
 		assert.argumentIsRequired(commandHandlerB, 'commandHandlerB', CommandHandler, 'CommandHandler');
 		assert.areNotEqual(commandHandlerA, commandHandlerB, 'commandHandlerA', 'commandHandlerB');
 
-		this._commandHandlerA = commandHandlerA;
-		this._commandHandlerB = commandHandlerB;
+		this.#commandHandlerA = commandHandlerA;
+		this.#commandHandlerB = commandHandlerB;
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 * @param {*} data
+	 * @returns {*}
+	 */
 	_process(data) {
-		return this._commandHandlerA.process(data) && this._commandHandlerB.process(data);
+		return this.#commandHandlerA.process(data) && this.#commandHandlerB.process(data);
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[CompositeCommandHandler]';
 	}

@@ -30,7 +30,7 @@ export default class Gateway {
 	 * @async
 	 * @param {Endpoint} endpoint
 	 * @param {*=} payload
-	 * @returns {Promise<Object>}
+	 * @returns {Promise<object>}
 	 */
 	static async invoke(endpoint, payload) {
 		return Promise.resolve()
@@ -44,7 +44,7 @@ export default class Gateway {
 
 				const extractParameter = (parameter) => {
 					return parameter.extractor(payload)
-						.catch((e) => {
+						.catch(() => {
 							return null;
 						});
 				};
@@ -63,28 +63,30 @@ export default class Gateway {
 					const parameters = array.flatten([ pathParameters, headerParameters, queryParameters, bodyParameters ]);
 					const values = array.flatten([ pathValues, headerValues, queryValues, bodyValues ]);
 
-					const failure = values.reduce((accumulator, value, i) => {
-						let failure = accumulator;
+					const failure = values.reduce((accumulator, value, index) => {
+						let updatedFailure = accumulator;
 
-						const parameter = parameters[i];
+						const parameter = parameters[index];
 
 						if (value === null && !parameter.optional) {
 							if (accumulator === null) {
-								failure = FailureReason.forRequest({ endpoint: endpoint })
+								updatedFailure = FailureReason.forRequest({ endpoint })
 									.addItem(FailureType.REQUEST_CONSTRUCTION_FAILURE, null, true);
 							}
 
-							failure.addItem(FailureType.REQUEST_PARAMETER_MISSING, { name: parameter.description });
+							updatedFailure.addItem(FailureType.REQUEST_PARAMETER_MISSING, { name: parameter.description });
 						}
 
-						return failure;
+						return updatedFailure;
 					}, null);
 
 					if (failure !== null) {
 						throw failure.format();
 					}
 
-					return Promise.resolve({ })
+					const options = { };
+
+					return Promise.resolve(options)
 						.then((options) => {
 							const url = [ ];
 
@@ -101,7 +103,7 @@ export default class Gateway {
 							return promise.pipeline(pathValues.map((value) => (previous) => {
 								let encodedValue;
 
-								if (is.null(value) || is.undefined(value)) {
+								if (is.nil(value) || is.undef(value)) {
 									encodedValue = value;
 								} else {
 									encodedValue = value.toString().replace(/\//g, '%2F');
@@ -111,16 +113,18 @@ export default class Gateway {
 
 								return previous;
 							}), [ ]).then((paths) => {
-								url.push(paths.join('/'));
+									url.push(paths.join('/'));
 
-								return url.join('');
-							}).then((url) => {
-								options.method = verbs.get(endpoint.verb);
-								options.url = url;
+									return url.join('');
+								})
+								.then((url) => {
+									options.method = verbs.get(endpoint.verb);
+									options.url = url;
 
-								return options;
-							});
-						}).then((options) => {
+									return options;
+								});
+						})
+						.then((options) => {
 							if (headerParameters.length === 0) {
 								return options;
 							}
@@ -138,7 +142,8 @@ export default class Gateway {
 
 								return options;
 							});
-						}).then((options) => {
+						})
+						.then((options) => {
 							if (queryParameters.length === 0) {
 								return options;
 							}
@@ -156,7 +161,8 @@ export default class Gateway {
 
 								return options;
 							});
-						}).then((options) => {
+						})
+						.then((options) => {
 							if (bodyParameters.length === 0) {
 								return options;
 							}
@@ -172,54 +178,61 @@ export default class Gateway {
 
 								return options;
 							});
-						}).then((options) => {
-							if (endpoint.credentials) {
-								return Promise.all([
-									Promise.resolve(endpoint.credentials.usernameExtractor(payload)),
-									Promise.resolve(endpoint.credentials.passwordExtractor(payload))
-								]).then((credentials) => {
-									options.auth = { };
-
-									options.auth.username = credentials[0];
-									options.auth.password = credentials[1];
-
-									return options;
-								});
-							} else {
+						})
+						.then((options) => {
+							if (!endpoint.credentials) {
 								return options;
 							}
-						}).then((options) => {
+
+							return Promise.all([
+								Promise.resolve(endpoint.credentials.usernameExtractor(payload)),
+								Promise.resolve(endpoint.credentials.passwordExtractor(payload))
+							]).then((credentials) => {
+								options.auth = {
+									username: credentials[0],
+									password: credentials[1]
+								};
+
+								return options;
+							});
+						})
+						.then((options) => {
 							if (endpoint.requestInterceptor) {
 								return endpoint.requestInterceptor.process(options, endpoint);
-							} else {
-								return options;
 							}
-						}).then((options) => {
+
+							return options;
+						})
+						.then((options) => {
 							return axios.request(options)
 								.then((response) => {
-									let responsePromise;
-
 									if (endpoint.responseInterceptor) {
-										responsePromise = endpoint.responseInterceptor.process(response, endpoint);
-									} else {
-										responsePromise = Promise.resolve(response);
+										return endpoint.responseInterceptor.process(response, endpoint);
 									}
 
-									return Promise.resolve(responsePromise);
-								}).catch((e) => {
+									return response;
+								})
+								.catch((error) => {
 									if (endpoint.errorInterceptor) {
-										return endpoint.errorInterceptor.process(e, endpoint);
-									} else {
-										throw e;
+										return endpoint.errorInterceptor.process(error, endpoint);
 									}
+
+									throw error;
 								});
 						});
 				});
 			});
-	}
 
+		}
+
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
-		return `[Gateway]`;
+		return '[Gateway]';
 	}
 }
 

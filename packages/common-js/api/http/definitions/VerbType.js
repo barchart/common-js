@@ -5,9 +5,11 @@ import Enum from './../../../lang/Enum.js';
  *
  * @public
  * @extends {Enum}
- * @param {String} description
  */
 export default class VerbType extends Enum {
+	/**
+	 * @param {string} description
+	 */
 	constructor(description) {
 		super(description, description);
 	}
@@ -62,6 +64,12 @@ export default class VerbType extends Enum {
 		return verbTypePatch;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return `[VerbType (description=${this.description})]`;
 	}

@@ -10,32 +10,38 @@ import DayFormatType from './DayFormatType.js';
  * without consideration for time or timezone.
  *
  * @public
- * @param {Number} year
- * @param {Number} month
- * @param {Number} day
  */
 export default class Day {
+	#year;
+	#month;
+	#day;
+
+	/**
+	 * @param {number} year
+	 * @param {number} month
+	 * @param {number} day
+	 */
 	constructor(year, month, day) {
 		if (!Day.validate(year, month, day)) {
 			throw new Error(`Unable to instantiate [ Day ], input is invalid [ ${year} ], [ ${month} ], [ ${day} ]`);
 		}
 
-		this._year = year;
-		this._month = month;
-		this._day = day;
+		this.#year = year;
+		this.#month = month;
+		this.#day = day;
 	}
 
 	/**
 	 * Calculates a new {@link Day} in the future (or past).
 	 *
 	 * @public
-	 * @param {Number} days - The number of days to add (negative numbers can be used for subtraction).
-	 * @param {Boolean=} inverse - If true, the sign of the "days" value will be flipped.
+	 * @param {number} days - The number of days to add (negative numbers can be used for subtraction).
+	 * @param {boolean=} inverse - If true, the sign of the "days" value will be flipped.
 	 * @returns {Day}
 	 */
 	addDays(days, inverse) {
 		assert.argumentIsRequired(days, 'days', Number);
-		assert.argumentIsOptional(inverse, inverse, Boolean);
+		assert.argumentIsOptional(inverse, 'inverse', Boolean);
 		assert.argumentIsValid(days, 'days', is.large, 'is an integer');
 
 		let totalDaysToShift;
@@ -48,9 +54,9 @@ export default class Day {
 
 		const positive = is.positive(totalDaysToShift);
 
-		let shiftedDay = this._day;
-		let shiftedMonth = this._month;
-		let shiftedYear = this._year;
+		let shiftedDay = this.#day;
+		let shiftedMonth = this.#month;
+		let shiftedYear = this.#year;
 
 		while (totalDaysToShift !== 0) {
 			let monthDaysAvailable;
@@ -96,7 +102,7 @@ export default class Day {
 	 * Calculates a new {@link Day} in the past (or future).
 	 *
 	 * @public
-	 * @param {Number} days - The number of days to subtract (negative numbers can be used for addition).
+	 * @param {number} days - The number of days to subtract (negative numbers can be used for addition).
 	 * @returns {Day}
 	 */
 	subtractDays(days) {
@@ -109,13 +115,13 @@ export default class Day {
 	 * as necessary (e.g. adding one month to March 31 will return April 30).
 	 *
 	 * @public
-	 * @param {Number} months - The number of months to add (negative numbers can be used for subtraction).
-	 * @param {Boolean=} inverse - If true, the sign of the "days" value will be flipped.
+	 * @param {number} months - The number of months to add (negative numbers can be used for subtraction).
+	 * @param {boolean=} inverse - If true, the sign of the "days" value will be flipped.
 	 * @returns {Day}
 	 */
 	addMonths(months, inverse) {
 		assert.argumentIsRequired(months, 'months', Number);
-		assert.argumentIsOptional(inverse, inverse, Boolean);
+		assert.argumentIsOptional(inverse, 'inverse', Boolean);
 		assert.argumentIsValid(months, 'months', is.large, 'is an integer');
 
 		let totalMonthsToShift;
@@ -154,7 +160,7 @@ export default class Day {
 	 * Calculates a new {@link Day} in the past (or future).
 	 *
 	 * @public
-	 * @param {Number} months - The number of months to subtract (negative numbers can be used for addition).
+	 * @param {number} months - The number of months to subtract (negative numbers can be used for addition).
 	 * @returns {Day}
 	 */
 	subtractMonths(months) {
@@ -167,13 +173,13 @@ export default class Day {
 	 * as necessary (e.g. adding one year to February 29 will return February 28).
 	 *
 	 * @public
-	 * @param {Number} years - The number of years to add (negative numbers can be used for subtraction).
-	 * @param {Boolean=} inverse - If true, the sign of the "days" value will be flipped.
+	 * @param {number} years - The number of years to add (negative numbers can be used for subtraction).
+	 * @param {boolean=} inverse - If true, the sign of the "days" value will be flipped.
 	 * @returns {Day}
 	 */
 	addYears(years, inverse) {
 		assert.argumentIsRequired(years, 'years', Number);
-		assert.argumentIsOptional(inverse, inverse, Boolean);
+		assert.argumentIsOptional(inverse, 'inverse', Boolean);
 		assert.argumentIsValid(years, 'years', is.large, 'is an integer');
 
 		let yearsToShift;
@@ -199,7 +205,7 @@ export default class Day {
 	 * Calculates a new {@link Day} in the past (or future).
 	 *
 	 * @public
-	 * @param {Number} years - The number of years to subtract (negative numbers can be used for addition).
+	 * @param {number} years - The number of years to subtract (negative numbers can be used for addition).
 	 * @returns {Day}
 	 */
 	subtractYears(years) {
@@ -287,10 +293,10 @@ export default class Day {
 	}
 
 	/**
-	 * Calculates and returns name of the day of the week (e.g. Monday, Tuesday, Wednesday, etc).
+	 * Calculates and returns name of the day of the week (e.g. Monday, Tuesday, Wednesday, etc.).
 	 *
 	 * @public
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	getName() {
 		const count = Day.countDaysBetween(REFERENCE_MONDAY, this);
@@ -308,47 +314,47 @@ export default class Day {
 	 * The year.
 	 *
 	 * @public
-	 * @returns {Number}
+	 * @returns {number}
 	 */
 	get year() {
-		return this._year;
+		return this.#year;
 	}
 
 	/**
 	 * The month of the year (January is one, December is twelve).
 	 *
 	 * @public
-	 * @returns {Number}
+	 * @returns {number}
 	 */
 	get month() {
-		return this._month;
+		return this.#month;
 	}
 
 	/**
 	 * The day of the month.
 	 *
 	 * @public
-	 * @returns {Number}
+	 * @returns {number}
 	 */
 	get day() {
-		return this._day;
+		return this.#day;
 	}
 
 	/**
 	 * Outputs the date as the formatted string: {year}-{month}-{day}.
 	 *
 	 * @public
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	format() {
-		return `${leftPad(this._year, 4, '0')}-${leftPad(this._month, 2, '0')}-${leftPad(this._day, 2, '0')}`;
+		return `${leftPad(this.#year, 4, '0')}-${leftPad(this.#month, 2, '0')}-${leftPad(this.#day, 2, '0')}`;
 	}
 
 	/**
 	 * Returns the JSON representation.
 	 *
 	 * @public
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	toJSON() {
 		return this.format();
@@ -374,7 +380,7 @@ export default class Day {
 	 *
 	 * @public
 	 * @static
-	 * @param {String} value
+	 * @param {string} value
 	 * @param {DayFormatType=} type
 	 * @returns {Day}
 	 */
@@ -444,10 +450,10 @@ export default class Day {
 	 *
 	 * @public
 	 * @static
-	 * @param {Number} year
-	 * @param {Number} month
-	 * @param {Number} day
-	 * @returns {Boolean}
+	 * @param {number} year
+	 * @param {number} month
+	 * @param {number} day
+	 * @returns {boolean}
 	 */
 	static validate(year, month, day) {
 		return is.integer(year) && is.integer(month) && is.integer(day) && !(month  < 1) && !(month > 12) && !(day  < 1) && !(day > Day.getDaysInMonth(year, month));
@@ -496,7 +502,7 @@ export default class Day {
 	 * @static
 	 * @param {Day} a
 	 * @param {Day} b
-	 * @returns {Number}
+	 * @returns {number}
 	 */
 	static compareDays(a, b) {
 		assert.argumentIsRequired(a, 'a', Day, 'Day');
@@ -513,7 +519,7 @@ export default class Day {
 	 * @static
 	 * @param {Day} a
 	 * @param {Day} b
-	 * @returns {Number}
+	 * @returns {number}
 	 */
 	static countDaysBetween(a, b) {
 		assert.argumentIsRequired(a, 'a', Day, 'Day');
@@ -561,6 +567,12 @@ export default class Day {
 		return counter;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Day]';
 	}

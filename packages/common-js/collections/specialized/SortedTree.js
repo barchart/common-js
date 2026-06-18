@@ -8,11 +8,15 @@ import Tree from './../Tree.js';
  *
  * @public
  * @extends {Tree}
- * @param {*} value - The value of the node.
- * @param {Tree=} parent - The parent node. If not supplied, this will be the root node.
- * @param {Function=} comparator - The comparator function used to sort nodes.
  */
 export default class SortedTree extends Tree {
+	#comparator;
+
+	/**
+	 * @param {*} value - The value of the node.
+	 * @param {Tree=} parent - The parent node. If not supplied, this will be the root node.
+	 * @param {(a: any, b: any) => number=} comparator - The comparator function used to sort nodes.
+	 */
 	constructor(value, parent, comparator) {
 		super(value, parent);
 
@@ -22,7 +26,7 @@ export default class SortedTree extends Tree {
 			assert.argumentIsRequired(comparator, 'comparator', Function);
 		}
 
-		this._comparator = comparator || null;
+		this.#comparator = comparator || null;
 	}
 
 	/**
@@ -34,15 +38,25 @@ export default class SortedTree extends Tree {
 	 * @returns {Tree}
 	 */
 	addChild(value) {
-		const returnRef = new SortedTree(value, this);
+		const child = new SortedTree(value, this);
 
-		const comparatorNode = this.findParent((t, n) => n._comparator !== null, true);
+		const comparatorNode = this.findParent((value, node) => node instanceof SortedTree && node.#comparator !== null, true);
 
-		array.insert(this._children, returnRef, comparatorNode._comparator);
+		if (!(comparatorNode instanceof SortedTree) || comparatorNode.#comparator === null) {
+			throw new Error('Unable to find a comparator for the sorted tree.');
+		}
 
-		return returnRef;
+		array.insert(this._getChildren(), child, comparatorNode.#comparator);
+
+		return child;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[SortedTree]';
 	}

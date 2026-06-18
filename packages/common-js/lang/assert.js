@@ -65,9 +65,9 @@ function throwCustomValidationError(variableName, predicateDescription) {
  *
  * @static
  * @param {*} variable - The value to check.
- * @param {String=} variableName - The name of the value (used for formatting an error message).
+ * @param {string=} variableName - The name of the value (used for formatting an error message).
  * @param {*=} type - The expected type of the argument.
- * @param {String=} typeDescription - The description of the expected type (used for formatting an error message).
+ * @param {string=} typeDescription - The description of the expected type (used for formatting an error message).
  */
 export function argumentIsRequired(variable, variableName, type, typeDescription) {
 	checkArgumentType(variable, variableName, type, typeDescription);
@@ -79,9 +79,11 @@ export function argumentIsRequired(variable, variableName, type, typeDescription
  *
  * @static
  * @param {*} variable - The value to check.
- * @param {String=} variableName - The name of the value (used for formatting an error message).
+ * @param {string=} variableName - The name of the value (used for formatting an error message).
  * @param {*=} type - The expected type of the argument.
- * @param {String=} typeDescription - The description of the expected type (used for formatting an error message).
+ * @param {string=} typeDescription - The description of the expected type (used for formatting an error message).
+ * @param {Function=} predicate - A function used to validate the item (beyond type checking).
+ * @param {string=} predicateDescription - A description of the assertion made by the predicate (e.g. "is an integer") that is used for formatting an error message.
  */
 export function argumentIsOptional(variable, variableName, type, typeDescription, predicate, predicateDescription) {
 	if (variable === null || variable === undefined) {
@@ -95,6 +97,15 @@ export function argumentIsOptional(variable, variableName, type, typeDescription
 	}
 }
 
+/**
+ * Throws an error when a value is not an array or its items do not satisfy the supplied constraint.
+ *
+ * @public
+ * @param {*} variable
+ * @param {*} variableName
+ * @param {*} itemConstraint
+ * @param {*} itemConstraintDescription
+ */
 export function argumentIsArray(variable, variableName, itemConstraint, itemConstraintDescription) {
 	argumentIsRequired(variable, variableName, Array);
 
@@ -125,9 +136,9 @@ export function argumentIsArray(variable, variableName, itemConstraint, itemCons
  *
  * @static
  * @param {*} variable - The value to check.
- * @param {String=} variableName - The name of the value (used for formatting an error message).
+ * @param {string=} variableName - The name of the value (used for formatting an error message).
  * @param {Function=} predicate - A function used to validate the item (beyond type checking).
- * @param {String=} predicateDescription - A description of the assertion made by the predicate (e.g. "is an integer") that is used for formatting an error message.
+ * @param {string=} predicateDescription - A description of the assertion made by the predicate (e.g. "is an integer") that is used for formatting an error message.
  */
 export function argumentIsValid(variable, variableName, predicate, predicateDescription) {
 	if (!predicate(variable)) {
@@ -135,12 +146,30 @@ export function argumentIsValid(variable, variableName, predicate, predicateDesc
 	}
 }
 
+/**
+ * Throws an error when two values are not strictly equal.
+ *
+ * @public
+ * @param {*} a
+ * @param {*} b
+ * @param {*} descriptionA
+ * @param {*} descriptionB
+ */
 export function areEqual(a, b, descriptionA, descriptionB) {
 	if (a !== b) {
 		throw new Error(`The objects must be equal [${(descriptionA || a.toString())}] and [${(descriptionB || b.toString())}]`);
 	}
 }
 
+/**
+ * Throws an error when two values are strictly equal.
+ *
+ * @public
+ * @param {*} a
+ * @param {*} b
+ * @param {*} descriptionA
+ * @param {*} descriptionB
+ */
 export function areNotEqual(a, b, descriptionA, descriptionB) {
 	if (a === b) {
 		throw new Error(`The objects cannot be equal [${(descriptionA || a.toString())}] and [${(descriptionB || b.toString())}]`);
