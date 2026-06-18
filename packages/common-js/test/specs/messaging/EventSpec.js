@@ -55,13 +55,17 @@ describe('When an Event is constructed', () => {
 				});
 
 				it('should notify both observers', () => {
-					expect(spyOne).toHaveBeenCalledWith(context, data);
-					expect(spyTwo).toHaveBeenCalledWith(context, data);
+					expect({
+						spyOne: spyOne.calls.allArgs(),
+						spyTwo: spyTwo.calls.allArgs()
+					}).toEqual({
+						spyOne: [ [ context, data ] ],
+						spyTwo: [ [ context, data ] ]
+					});
 				});
 			});
 
 			describe('and the first observer is disposed ', () => {
-				let data;
 
 				beforeEach(() => {
 					bindingOne.dispose();
@@ -109,8 +113,11 @@ describe('When an Event is constructed', () => {
 				event.fire(data = {});
 			});
 
-			it('should notify both observer', () => {
+			it('should notify the first observer', () => {
 				expect(spyOne).toHaveBeenCalledWith(context, data);
+			});
+
+			it('should notify the second observer', () => {
 				expect(spyTwo).toHaveBeenCalledWith(context, data);
 			});
 
@@ -124,8 +131,11 @@ describe('When an Event is constructed', () => {
 					event.fire(data = {});
 				});
 
-				it('should not notify either observer', () => {
+				it('should not notify the first observer', () => {
 					expect(spyOne).not.toHaveBeenCalledWith(context, data);
+				});
+
+				it('should not notify the second observer', () => {
 					expect(spyTwo).not.toHaveBeenCalledWith(context, data);
 				});
 			});
@@ -155,8 +165,11 @@ describe('When an Event is constructed', () => {
 				event.fire(data = {});
 			});
 
-			it('should notify both observer', () => {
+			it('should notify the first observer', () => {
 				expect(spyOne).toHaveBeenCalledWith(context, data);
+			});
+
+			it('should notify the second observer', () => {
 				expect(spyTwo).toHaveBeenCalledWith(context, data);
 			});
 
@@ -170,8 +183,11 @@ describe('When an Event is constructed', () => {
 					event.fire(data = {});
 				});
 
-				it('should not notify either observer', () => {
+				it('should not notify the first observer', () => {
 					expect(spyOne).not.toHaveBeenCalledWith(context, data);
+				});
+
+				it('should not notify the second observer', () => {
 					expect(spyTwo).not.toHaveBeenCalledWith(context, data);
 				});
 			});

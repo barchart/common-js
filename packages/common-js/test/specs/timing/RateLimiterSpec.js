@@ -142,18 +142,17 @@ describe('When a RateLimiter is constructed (1 execution per 25 milliseconds)', 
 			}
 		});
 
-		it('each task should be executed', (done) => {
+		it('each task should be executed with correct timing', (done) => {
 			let promise = null;
 
 			let getValidatedPromise = (promise, index) => {
-				return promise.catch((error) => {
+				return promise.catch(() => {
 					let end = new Date();
 					let duration = end.getTime() - start.getTime();
 
 					let shortestPossibleDuration = Math.floor(index / windowMaximumCount) * windowDurationMilliseconds;
 
 					expect(duration + 1).not.toBeLessThan(shortestPossibleDuration);
-					expect(error).toBe(error);
 				});
 			};
 

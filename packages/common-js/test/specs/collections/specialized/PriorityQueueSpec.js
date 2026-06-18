@@ -206,9 +206,7 @@ describe('When a Queue is constructed, using a simple (ascending) numeric compar
 			});
 
 			it('the dequeued items should be ordered property', () => {
-				expect(a).toEqual(1);
-				expect(b).toEqual(2);
-				expect(c).toEqual(3);
+				expect([ a, b, c ]).toEqual([ 1, 2, 3 ]);
 			});
 		});
 	});
@@ -230,9 +228,7 @@ describe('When a Queue is constructed, using a simple (ascending) numeric compar
 			});
 
 			it('the dequeued items should be ordered property', () => {
-				expect(a).toEqual(1);
-				expect(b).toEqual(2);
-				expect(c).toEqual(3);
+				expect([ a, b, c ]).toEqual([ 1, 2, 3 ]);
 			});
 		});
 	});
@@ -254,9 +250,7 @@ describe('When a Queue is constructed, using a simple (ascending) numeric compar
 			});
 
 			it('the dequeued items should be ordered property', () => {
-				expect(a).toEqual(1);
-				expect(b).toEqual(2);
-				expect(c).toEqual(3);
+				expect([ a, b, c ]).toEqual([ 1, 2, 3 ]);
 			});
 		});
 	});
@@ -278,9 +272,7 @@ describe('When a Queue is constructed, using a simple (ascending) numeric compar
 			});
 
 			it('the dequeued items should be ordered property', () => {
-				expect(a).toEqual(1);
-				expect(b).toEqual(2);
-				expect(c).toEqual(3);
+				expect([ a, b, c ]).toEqual([ 1, 2, 3 ]);
 			});
 		});
 	});
@@ -314,15 +306,7 @@ describe('When a Queue is constructed, using a simple (ascending) numeric compar
 			});
 
 			it('the dequeued items should be ordered property', () => {
-				expect(a).toEqual(1);
-				expect(b).toEqual(2);
-				expect(c).toEqual(3);
-				expect(d).toEqual(4);
-				expect(e).toEqual(5);
-				expect(f).toEqual(6);
-				expect(g).toEqual(7);
-				expect(h).toEqual(8);
-				expect(i).toEqual(9);
+				expect([ a, b, c, d, e, f, g, h, i ]).toEqual([ 1, 2, 3, 4, 5, 6, 7, 8, 9 ]);
 			});
 		});
 	});

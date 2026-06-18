@@ -544,8 +544,13 @@ describe('When "attributes.erase" is used to remove a second-level property', ()
 		});
 
 		it("the property value not exist", () => {
-			expect(target.hasOwnProperty("nested")).toEqual(true);
-			expect(target.nested.hasOwnProperty("test")).toEqual(false);
+			expect({
+				nested: target.hasOwnProperty("nested"),
+				test: target.nested.hasOwnProperty("test")
+			}).toEqual({
+				nested: true,
+				test: false
+			});
 		});
 	});
 
@@ -555,8 +560,13 @@ describe('When "attributes.erase" is used to remove a second-level property', ()
 		});
 
 		it("the target should be unaffected", () => {
-			expect(target.hasOwnProperty("nested")).toEqual(true);
-			expect(target.nested.hasOwnProperty("test")).toEqual(true);
+			expect({
+				nested: target.hasOwnProperty("nested"),
+				test: target.nested.hasOwnProperty("test")
+			}).toEqual({
+				nested: true,
+				test: true
+			});
 		});
 	});
 
@@ -566,8 +576,13 @@ describe('When "attributes.erase" is used to remove a second-level property', ()
 		});
 
 		it("the target should be unaffected", () => {
-			expect(target.hasOwnProperty("nested")).toEqual(true);
-			expect(target.nested.hasOwnProperty("test")).toEqual(true);
+			expect({
+				nested: target.hasOwnProperty("nested"),
+				test: target.nested.hasOwnProperty("test")
+			}).toEqual({
+				nested: true,
+				test: true
+			});
 		});
 	});
 });
@@ -592,8 +607,13 @@ describe('When "attributes.erase" is used to remove a second-level property (usi
 		});
 
 		it("the property value not exist", () => {
-			expect(target.hasOwnProperty("nested")).toEqual(true);
-			expect(target.nested.hasOwnProperty("test")).toEqual(false);
+			expect({
+				nested: target.hasOwnProperty("nested"),
+				test: target.nested.hasOwnProperty("test")
+			}).toEqual({
+				nested: true,
+				test: false
+			});
 		});
 	});
 
@@ -603,8 +623,13 @@ describe('When "attributes.erase" is used to remove a second-level property (usi
 		});
 
 		it("the target should be unaffected", () => {
-			expect(target.hasOwnProperty("nested")).toEqual(true);
-			expect(target.nested.hasOwnProperty("test")).toEqual(true);
+			expect({
+				nested: target.hasOwnProperty("nested"),
+				test: target.nested.hasOwnProperty("test")
+			}).toEqual({
+				nested: true,
+				test: true
+			});
 		});
 	});
 
@@ -614,8 +639,13 @@ describe('When "attributes.erase" is used to remove a second-level property (usi
 		});
 
 		it("the target should be unaffected", () => {
-			expect(target.hasOwnProperty("nested")).toEqual(true);
-			expect(target.nested.hasOwnProperty("test")).toEqual(true);
+			expect({
+				nested: target.hasOwnProperty("nested"),
+				test: target.nested.hasOwnProperty("test")
+			}).toEqual({
+				nested: true,
+				test: true
+			});
 		});
 	});
 });

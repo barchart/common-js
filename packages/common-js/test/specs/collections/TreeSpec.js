@@ -194,3 +194,63 @@ describe('When a binary tree, having three levels, is constructed', () => {
 		});
 	});
 });
+
+describe('When Tree traversal helpers are used directly', () => {
+	'use strict';
+
+	let root;
+	let left;
+	let right;
+	let leftLeft;
+
+	beforeEach(() => {
+		root = new Tree('root');
+		left = root.addChild('left');
+		right = root.addChild('right');
+		leftLeft = left.addChild('left-left');
+	});
+
+	it('should find a direct child', () => {
+		expect(root.findChild(value => value === 'right')).toBe(right);
+	});
+
+	it('should return null when child is not found', () => {
+		expect(root.findChild(value => value === 'missing')).toBeNull();
+	});
+
+	it('should walk the tree', () => {
+		const visited = [ ];
+
+		root.walk(value => visited.push(value), true, true);
+
+		expect(visited).toEqual([ 'root', 'left', 'left-left', 'right' ]);
+	});
+
+	it('should climb parent nodes', () => {
+		const visited = [ ];
+
+		leftLeft.climb(value => visited.push(value), true);
+
+		expect(visited).toEqual([ 'left-left', 'left', 'root' ]);
+	});
+
+	it('should find parent nodes', () => {
+		expect(leftLeft.findParent(value => value === 'left', true)).toBe(left);
+	});
+
+	it('should return null when parent is not found', () => {
+		expect(leftLeft.findParent(value => value === 'missing', true)).toBeNull();
+	});
+
+	it('should remove a child directly', () => {
+		root.removeChild(right);
+
+		expect(root.getChildren()).toEqual([ left ]);
+	});
+
+	it('should clear parent reference when child is removed', () => {
+		root.removeChild(right);
+
+		expect(right.getParent()).toBeNull();
+	});
+});

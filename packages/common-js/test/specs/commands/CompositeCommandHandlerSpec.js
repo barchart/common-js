@@ -20,6 +20,7 @@ describe('When a CompositeCommandHandler is created', () => {
 			CommandHandler.fromFunction(spyOne = jasmine.createSpy('spyOne').and.callFake(() => {
 				return resultOne;
 			})),
+
 			CommandHandler.fromFunction(spyTwo = jasmine.createSpy('spyTwo').and.callFake(() => {
 				return resultTwo;
 			}))
@@ -35,8 +36,13 @@ describe('When a CompositeCommandHandler is created', () => {
 		});
 
 		it('should invoke the wrapped functions', () => {
-			expect(spyOne).toHaveBeenCalledWith(commandData);
-			expect(spyTwo).toHaveBeenCalledWith(commandData);
+			expect({
+				spyOne: spyOne.calls.allArgs(),
+				spyTwo: spyTwo.calls.allArgs()
+			}).toEqual({
+				spyOne: [ [ commandData ] ],
+				spyTwo: [ [ commandData ] ]
+			});
 		});
 	});
 

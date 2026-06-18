@@ -134,10 +134,7 @@ describe('When a schema is validated', () => {
 	let schema;
 
 	beforeEach(() => {
-		schema = new Schema('person', [
-			new Field('first', DataType.STRING),
-			new Field('last', DataType.STRING)
-		]);
+		schema = new Schema('person', [ new Field('first', DataType.STRING), new Field('last', DataType.STRING) ]);
 	});
 
 	describe('and a valid schema is processed', () => {
@@ -207,5 +204,53 @@ describe('When a schema is validated', () => {
 		it('should fail with a formatted failure reason, having two children', () => {
 			expect(failureResult[0].children.length).toEqual(2);
 		});
+	});
+});
+
+describe('When FailureReason public helpers are used', () => {
+	'use strict';
+
+	let reason;
+
+	beforeEach(() => {
+		reason = new FailureReason({ endpoint: { description: 'request' } })
+			.addItem(FailureType.REQUEST_CONSTRUCTION_FAILURE, null, true)
+			.addItem(FailureType.REQUEST_PARAMETER_MISSING, { name: 'first' });
+	});
+
+	it('should report that an existing failure type exists', () => {
+		expect(reason.hasFailureType(FailureType.REQUEST_PARAMETER_MISSING)).toEqual(true);
+	});
+
+	it('should report that a non-existing failure type does not exist', () => {
+		expect(reason.hasFailureType(FailureType.REQUEST_AUTHORIZATION_FAILURE)).toEqual(false);
+	});
+
+	it('should reset to the previous node when requested', () => {
+		reason
+			.addItem(FailureType.REQUEST_INPUT_MALFORMED, null, true)
+			.reset(true)
+			.addItem(FailureType.REQUEST_PARAMETER_MISSING, { name: 'second' });
+
+		expect(reason.format()[0].children.length).toEqual(2);
+	});
+
+	it('should reset to the root node by default', () => {
+		reason.reset()
+			.addItem(FailureType.REQUEST_GENERAL_FAILURE);
+
+		expect(reason.format().length).toEqual(2);
+	});
+
+	it('should serialize to JSON using the formatted reason', () => {
+		expect(reason.toJSON()).toEqual(reason.format());
+	});
+
+	it('should return HTTP status code 400 for the current failure reason', () => {
+		expect(FailureReason.getHttpStatusCode(reason)).toEqual(400);
+	});
+
+	it('should return HTTP status code 403 for authorization failure', () => {
+		expect(FailureReason.getHttpStatusCode(FailureReason.from(FailureType.REQUEST_AUTHORIZATION_FAILURE))).toEqual(403);
 	});
 });

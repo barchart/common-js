@@ -404,9 +404,15 @@ describe('When a person schema is created (grouped first and last names with a b
 				});
 
 				it('should have a "birthday" property with the expected value', () => {
-					expect(deserialized.birthday.year).toEqual(1974);
-					expect(deserialized.birthday.month).toEqual(10);
-					expect(deserialized.birthday.day).toEqual(20);
+					expect({
+						year: deserialized.birthday.year,
+						month: deserialized.birthday.month,
+						day: deserialized.birthday.day
+					}).toEqual({
+						year: 1974,
+						month: 10,
+						day: 20
+					});
 				});
 			});
 		});
@@ -462,9 +468,15 @@ describe('When an account schema is created (using the AdHoc field)', () => {
 				});
 
 				it('should have a "junk" property with the expected value', () => {
-					expect(deserialized.junk.data.address).toEqual('209 W. Jackson');
-					expect(deserialized.junk.data.city).toEqual('Chicago');
-					expect(deserialized.junk.data.zip).toEqual('60603');
+					expect({
+						address: deserialized.junk.data.address,
+						city: deserialized.junk.data.city,
+						zip: deserialized.junk.data.zip
+					}).toEqual({
+						address: '209 W. Jackson',
+						city: 'Chicago',
+						zip: '60603'
+					});
 				});
 			});
 		});
@@ -517,8 +529,13 @@ describe('When an account schema is created (using the Money component)', () => 
 				});
 
 				it('should have a "balance" property with the expected value', () => {
-					expect(deserialized.balance.currency).toEqual(Currency.USD);
-					expect(deserialized.balance.decimal.getIsEqual(314.15)).toEqual(true);
+					expect({
+						currency: deserialized.balance.currency,
+						decimal: deserialized.balance.decimal.getIsEqual(314.15)
+					}).toEqual({
+						currency: Currency.USD,
+						decimal: true
+					});
 				});
 			});
 		});
@@ -575,13 +592,23 @@ describe('When an account schema is created (using the Money component with nest
 				});
 
 				it('should have a "balances.yesterday" property with the expected value', () => {
-					expect(deserialized.balances.yesterday.currency).toEqual(Currency.USD);
-					expect(deserialized.balances.yesterday.decimal.getIsEqual(314.15)).toEqual(true);
+					expect({
+						currency: deserialized.balances.yesterday.currency,
+						decimal: deserialized.balances.yesterday.decimal.getIsEqual(314.15)
+					}).toEqual({
+						currency: Currency.USD,
+						decimal: true
+					});
 				});
 
 				it('should have a "balances.today" property with the expected value', () => {
-					expect(deserialized.balances.today.currency).toEqual(Currency.USD);
-					expect(deserialized.balances.today.decimal.getIsEqual(271.83)).toEqual(true);
+					expect({
+						currency: deserialized.balances.today.currency,
+						decimal: deserialized.balances.today.decimal.getIsEqual(271.83)
+					}).toEqual({
+						currency: Currency.USD,
+						decimal: true
+					});
 				});
 			});
 		});
@@ -633,13 +660,23 @@ describe('When an account schema is created (using the Money component with nest
 				});
 
 				it('the first item should have a "balances.yesterday" property with the expected value', () => {
-					expect(deserialized[0].balances.yesterday.currency).toEqual(Currency.USD);
-					expect(deserialized[0].balances.yesterday.decimal.getIsEqual(314.15)).toEqual(true);
+					expect({
+						currency: deserialized[0].balances.yesterday.currency,
+						decimal: deserialized[0].balances.yesterday.decimal.getIsEqual(314.15)
+					}).toEqual({
+						currency: Currency.USD,
+						decimal: true
+					});
 				});
 
 				it('the first item should have a "balances.today" property with the expected value', () => {
-					expect(deserialized[0].balances.today.currency).toEqual(Currency.USD);
-					expect(deserialized[0].balances.today.decimal.getIsEqual(271.83)).toEqual(true);
+					expect({
+						currency: deserialized[0].balances.today.currency,
+						decimal: deserialized[0].balances.today.decimal.getIsEqual(271.83)
+					}).toEqual({
+						currency: Currency.USD,
+						decimal: true
+					});
 				});
 
 				it('the second item should have a "number" property with the expected value', () => {
@@ -647,13 +684,23 @@ describe('When an account schema is created (using the Money component with nest
 				});
 
 				it('the second item should have a "balances.yesterday" property with the expected value', () => {
-					expect(deserialized[1].balances.yesterday.currency).toEqual(Currency.USD);
-					expect(deserialized[1].balances.yesterday.decimal.getIsEqual(141.42)).toEqual(true);
+					expect({
+						currency: deserialized[1].balances.yesterday.currency,
+						decimal: deserialized[1].balances.yesterday.decimal.getIsEqual(141.42)
+					}).toEqual({
+						currency: Currency.USD,
+						decimal: true
+					});
 				});
 
 				it('the second item should have a "balances.today" property with the expected value', () => {
-					expect(deserialized[1].balances.today.currency).toEqual(Currency.USD);
-					expect(deserialized[1].balances.today.decimal.getIsEqual(173.20)).toEqual(true);
+					expect({
+						currency: deserialized[1].balances.today.currency,
+						decimal: deserialized[1].balances.today.decimal.getIsEqual(173.20)
+					}).toEqual({
+						currency: Currency.USD,
+						decimal: true
+					});
 				});
 			});
 		});
@@ -826,18 +873,33 @@ describe('When a complex schema is created (using custom data types)', () => {
 		});
 
 		it('the conversion should have converted the day value into an Day instance', () => {
-			expect(conversion.day instanceof Day).toEqual(true);
-			expect(conversion.day.format()).toEqual(original.day);
+			expect({
+				instance: conversion.day instanceof Day,
+				value: conversion.day.format()
+			}).toEqual({
+				instance: true,
+				value: original.day
+			});
 		});
 
 		it('the conversion should have converted the decimal value into an Decimal instance', () => {
-			expect(conversion.decimal instanceof Decimal).toEqual(true);
-			expect(conversion.decimal.getIsEqual(original.decimal)).toEqual(true);
+			expect({
+				instance: conversion.decimal instanceof Decimal,
+				value: conversion.decimal.getIsEqual(original.decimal)
+			}).toEqual({
+				instance: true,
+				value: true
+			});
 		});
 
 		it('the conversion should have converted the miscellany value into an AdHoc instance', () => {
-			expect(conversion.miscellany instanceof AdHoc).toEqual(true);
-			expect(conversion.miscellany.data.stuff).toEqual(original.miscellany.stuff);
+			expect({
+				instance: conversion.miscellany instanceof AdHoc,
+				stuff: conversion.miscellany.data.stuff
+			}).toEqual({
+				instance: true,
+				stuff: original.miscellany.stuff
+			});
 		});
 
 		describe('and the converted object is serialized', () => {
@@ -1156,5 +1218,38 @@ describe('When a schema is created with two nested arrays', () => {
 				});
 			});
 		});
+	});
+});
+
+describe('When Schema accessors and factories are used', () => {
+	'use strict';
+
+	let schema;
+
+	beforeEach(() => {
+		schema = new Schema('person', [ new Field('name', DataType.STRING) ], [ Component.forMoney('wallet') ]);
+	});
+
+	it('should expose components without allowing array mutation', () => {
+		const components = schema.components;
+
+		components.pop();
+
+		expect(schema.components.length).toEqual(1);
+	});
+
+	it('should expose the correct component name', () => {
+		expect(schema.components[0].name).toEqual('wallet');
+	});
+
+	it('should create reviver functions from the reviver factory', () => {
+		const simpleSchema = new Schema('person', [
+			new Field('name', DataType.STRING)
+		]);
+
+		const reviver = simpleSchema.getReviverFactory()();
+		const deserialized = JSON.parse('{"name":"Luka"}', reviver);
+
+		expect(deserialized.name).toEqual('Luka');
 	});
 });

@@ -27,12 +27,9 @@ describe('When generating a random number with a range of values', () => {
 	});
 
 	it('should generate a value within the range', () => {
-		for (let i = 0; i < 100; i++) {
-			const result = random.range(minimum, maximum);
+		const results = Array.from({ length: 100 }, () => random.range(minimum, maximum));
 
-			expect(result < minimum).toEqual(false);
-			expect(result < maximum).toEqual(true);
-		}
+		expect(results.every(result => result >= minimum && result < maximum)).toEqual(true);
 	});
 
 	it('should generate an integer', () => {
@@ -56,12 +53,9 @@ describe('When generating a random number using an invalid range, the range is a
 	});
 
 	it('should generate a value within the range', () => {
-		for (let i = 0; i < 100; i++) {
-			const result = random.range(minimum, maximum);
+		const results = Array.from({ length: 100 }, () => random.range(minimum, maximum));
 
-			expect(result < maximum).toEqual(false);
-			expect(result < minimum).toEqual(true);
-		}
+		expect(results.every(result => result >= maximum && result < minimum)).toEqual(true);
 	});
 
 	it('should generate an integer', () => {

@@ -23,8 +23,13 @@ describe('When an Model is constructed with "firstName" and "lastName" propertie
 		});
 
 		it('should return null values for each property', () => {
-			expect(model.firstName).toBe(null);
-			expect(model.lastName).toBe(null);
+			expect({
+				firstName: model.firstName,
+				lastName: model.lastName
+			}).toEqual({
+				firstName: null,
+				lastName: null
+			});
 		});
 
 		describe('and both properties are updated', () => {
@@ -42,19 +47,29 @@ describe('When an Model is constructed with "firstName" and "lastName" propertie
 			it('the first transaction should have updated the "first name" property', () => {
 				let argsOne = spy.calls.argsFor(0);
 
-				expect(argsOne[0].firstName).toEqual('Bryan');
-				expect(argsOne[0].sequence).toEqual(0);
-
-				expect(argsOne[1]).toBe(model);
+				expect({
+					firstName: argsOne[0].firstName,
+					sequence: argsOne[0].sequence,
+					model: argsOne[1]
+				}).toEqual({
+					firstName: 'Bryan',
+					sequence: 0,
+					model
+				});
 			});
 
 			it('the second transaction should have updated the "last name" property', () => {
 				let argsOne = spy.calls.argsFor(1);
 
-				expect(argsOne[0].lastName).toEqual('Ingle');
-				expect(argsOne[0].sequence).toEqual(1);
-
-				expect(argsOne[1]).toBe(model);
+				expect({
+					lastName: argsOne[0].lastName,
+					sequence: argsOne[0].sequence,
+					model: argsOne[1]
+				}).toEqual({
+					lastName: 'Ingle',
+					sequence: 1,
+					model
+				});
 			});
 		});
 
@@ -75,11 +90,17 @@ describe('When an Model is constructed with "firstName" and "lastName" propertie
 			it('the first transaction should have updated the "first name" property', () => {
 				let argsOne = spy.calls.argsFor(0);
 
-				expect(argsOne[0].firstName).toEqual('Bryan');
-				expect(argsOne[0].lastName).toEqual('Ingle');
-				expect(argsOne[0].sequence).toEqual(0);
-
-				expect(argsOne[1]).toBe(model);
+				expect({
+					firstName: argsOne[0].firstName,
+					lastName: argsOne[0].lastName,
+					sequence: argsOne[0].sequence,
+					model: argsOne[1]
+				}).toEqual({
+					firstName: 'Bryan',
+					lastName: 'Ingle',
+					sequence: 0,
+					model
+				});
 			});
 		});
 
@@ -96,8 +117,13 @@ describe('When an Model is constructed with "firstName" and "lastName" propertie
 			});
 
 			it('the properties should return null values', () => {
-				expect(model.firstName).toBe(null);
-				expect(model.lastName).toBe(null);
+				expect({
+					firstName: model.firstName,
+					lastName: model.lastName
+				}).toEqual({
+					firstName: null,
+					lastName: null
+				});
 			});
 
 			describe('and both are updated to non-null values', () => {
@@ -113,19 +139,29 @@ describe('When an Model is constructed with "firstName" and "lastName" propertie
 				it('the first transaction should have updated the "first name" property to zero', () => {
 					let argsOne = spy.calls.argsFor(0);
 
-					expect(argsOne[0].firstName).toBe(0);
-					expect(argsOne[0].sequence).toEqual(0);
-
-					expect(argsOne[1]).toBe(model);
+					expect({
+						firstName: argsOne[0].firstName,
+						sequence: argsOne[0].sequence,
+						model: argsOne[1]
+					}).toEqual({
+						firstName: 0,
+						sequence: 0,
+						model
+					});
 				});
 
 				it('the second transaction should have updated the "last name" property to a zero-length string', () => {
 					let argsOne = spy.calls.argsFor(1);
 
-					expect(argsOne[0].lastName).toBe('');
-					expect(argsOne[0].sequence).toEqual(1);
-
-					expect(argsOne[1]).toBe(model);
+					expect({
+						lastName: argsOne[0].lastName,
+						sequence: argsOne[0].sequence,
+						model: argsOne[1]
+					}).toEqual({
+						lastName: '',
+						sequence: 1,
+						model
+					});
 				});
 			});
 		});

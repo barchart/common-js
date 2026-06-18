@@ -344,8 +344,13 @@ describe('When cloning a complex object (using a custom value extractor)', () =>
 	});
 
 	it("the clone object's child objects should not be the same", () => {
-		expect(clone.examples).not.toBe(source.examples);
-		expect(clone.game).not.toBe(source.game);
+		expect({
+			examples: clone.examples === source.examples,
+			game: clone.game === source.game
+		}).toEqual({
+			examples: false,
+			game: false
+		});
 	});
 
 	it("the clone object's child arrays should not be the same", () => {
@@ -353,17 +358,24 @@ describe('When cloning a complex object (using a custom value extractor)', () =>
 	});
 
 	it('the numbers divisible by three should be replaced with "fizz" (for object properties)', () => {
-		expect(clone.examples.three).toEqual('fizz');
-		expect(clone.numbers[3]).toEqual('fizz');
+		expect({
+			example: clone.examples.three,
+			array: clone.numbers[3]
+		}).toEqual({
+			example: 'fizz',
+			array: 'fizz'
+		});
 	});
 
 	it('the numbers not divisible should be the same value (for object properties)', () => {
-		expect(clone.examples.one).toEqual(1);
-		expect(clone.examples.two).toEqual(2);
-
-		expect(clone.numbers[0]).toEqual(0);
-		expect(clone.numbers[1]).toEqual(1);
-		expect(clone.numbers[2]).toEqual(2);
-		expect(clone.numbers[4]).toEqual(4);
+		expect({
+			one: clone.examples.one,
+			two: clone.examples.two,
+			numbers: [ clone.numbers[0], clone.numbers[1], clone.numbers[2], clone.numbers[4] ]
+		}).toEqual({
+			one: 1,
+			two: 2,
+			numbers: [ 0, 1, 2, 4 ]
+		});
 	});
 });

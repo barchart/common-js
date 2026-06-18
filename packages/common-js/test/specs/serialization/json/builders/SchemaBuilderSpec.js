@@ -32,13 +32,19 @@ describe('When using the schema builder to create a "Person" schema', () => {
 				expect(schema.fields.length).toEqual(2);
 			});
 
-			it('the first field should be string-typed and called "name"', () => {
+			it('the first field should be called "name"', () => {
 				expect(schema.fields[0].name).toEqual('name');
+			});
+
+			it('the first field should be string-typed', () => {
 				expect(schema.fields[0].dataType).toEqual(DataType.STRING);
 			});
 
-			it('the second field should be number-typed and called "age"', () => {
+			it('the second field should be called "age"', () => {
 				expect(schema.fields[1].name).toEqual('age');
+			});
+
+			it('the second field should be number-typed', () => {
 				expect(schema.fields[1].dataType).toEqual(DataType.NUMBER);
 			});
 
@@ -67,13 +73,19 @@ describe('When using the schema builder to create a "Person" schema', () => {
 					expect(schema.fields.length).toEqual(2);
 				});
 
-				it('the first field should be string-typed and called "name"', () => {
+				it('the first field should be called "name"', () => {
 					expect(schema.fields[0].name).toEqual('name');
+				});
+
+				it('the first field should be string-typed', () => {
 					expect(schema.fields[0].dataType).toEqual(DataType.STRING);
 				});
 
-				it('the second field should be number-typed and called "age"', () => {
+				it('the second field should be called "age"', () => {
 					expect(schema.fields[1].name).toEqual('age');
+				});
+
+				it('the second field should be number-typed', () => {
 					expect(schema.fields[1].dataType).toEqual(DataType.NUMBER);
 				});
 
@@ -84,6 +96,40 @@ describe('When using the schema builder to create a "Person" schema', () => {
 				it('the component should be named "wallet"', () => {
 					expect(schema.components[0].name).toEqual('wallet');
 				});
+			});
+		});
+
+		describe('and an array field is added to the schema', () => {
+			beforeEach(() => {
+				schemaBuilder = schemaBuilder.withArray('tags', DataType.STRING, true);
+			});
+
+			it('the array field should have correct name', () => {
+				const schema = schemaBuilder.schema;
+				const field = schema.fields[schema.fields.length - 1];
+
+				expect(field.name).toEqual('tags');
+			});
+
+			it('the array field should have correct dataType', () => {
+				const schema = schemaBuilder.schema;
+				const field = schema.fields[schema.fields.length - 1];
+
+				expect(field.dataType).toBe(DataType.STRING);
+			});
+
+			it('the array field should be optional', () => {
+				const schema = schemaBuilder.schema;
+				const field = schema.fields[schema.fields.length - 1];
+
+				expect(field.optional).toEqual(true);
+			});
+
+			it('the array field should be marked as array', () => {
+				const schema = schemaBuilder.schema;
+				const field = schema.fields[schema.fields.length - 1];
+
+				expect(field.array).toEqual(true);
 			});
 		});
 
@@ -114,13 +160,19 @@ describe('When using the schema builder to create a "Person" schema', () => {
 					expect(schema.fields.length).toEqual(2);
 				});
 
-				it('the first field should be string-typed and called "name"', () => {
+				it('the first field should be called "name"', () => {
 					expect(schema.fields[0].name).toEqual('name');
+				});
+
+				it('the first field should be string-typed', () => {
 					expect(schema.fields[0].dataType).toEqual(DataType.STRING);
 				});
 
-				it('the second field should be number-typed and called "age"', () => {
+				it('the second field should be called "age"', () => {
 					expect(schema.fields[1].name).toEqual('age');
+				});
+
+				it('the second field should be number-typed', () => {
 					expect(schema.fields[1].dataType).toEqual(DataType.NUMBER);
 				});
 
@@ -136,13 +188,19 @@ describe('When using the schema builder to create a "Person" schema', () => {
 					expect(schema.components[0].fields.length).toEqual(2);
 				});
 
-				it('the component\'s first field should be string-typed and called "b"', () => {
+				it('the component\'s first field should be called "b"', () => {
 					expect(schema.components[0].fields[0].name).toEqual('b');
+				});
+
+				it('the component\'s first field should be string-typed', () => {
 					expect(schema.components[0].fields[0].dataType).toEqual(DataType.STRING);
 				});
 
-				it('the component\'s second field should be number-typed and called "a"', () => {
+				it('the component\'s second field should be called "a"', () => {
 					expect(schema.components[0].fields[1].name).toEqual('a');
+				});
+
+				it('the component\'s second field should be number-typed', () => {
 					expect(schema.components[0].fields[1].dataType).toEqual(DataType.NUMBER);
 				});
 

@@ -43,9 +43,7 @@ describe('When a ComparatorBuilder is composed with two comparators', () => {
         });
 
         it('the sorted array should be in the correct order', () => {
-            expect(arrayToSort[0]).toBe(first);
-            expect(arrayToSort[1]).toBe(second);
-            expect(arrayToSort[2]).toBe(third);
+            expect(arrayToSort).toEqual([ first, second, third ]);
         });
     });
 
@@ -72,9 +70,7 @@ describe('When a ComparatorBuilder is composed with two comparators', () => {
             });
 
             it('the sorted array should be in the correct order', () => {
-                expect(arrayToSort[0]).toBe(third);
-                expect(arrayToSort[1]).toBe(second);
-                expect(arrayToSort[2]).toBe(first);
+                expect(arrayToSort).toEqual([ third, second, first ]);
             });
         });
     });

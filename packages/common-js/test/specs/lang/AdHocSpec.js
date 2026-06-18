@@ -36,8 +36,11 @@ describe('When wrapping an object in an ad hoc serialization container', () => {
 				expect(deserialized instanceof AdHoc).toEqual(true);
 			});
 
-			it('should contain a clone of the original data', () => {
+			it('should contain a clone of the original data property "a"', () => {
 				expect(deserialized.data.a).toEqual(data.a);
+			});
+
+			it('should contain a clone of the original data property "b"', () => {
 				expect(deserialized.data.b).toEqual(data.b);
 			});
 		});

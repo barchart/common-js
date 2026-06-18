@@ -873,9 +873,9 @@ describe('When processing a "pipeline" of promises', () => {
 
 		beforeEach(() => {
 			let synchronousException = (x) => {
-				throw new Exception('oops');
+				throw new Error('oops');
 			};
-			
+
 			let synchronousSquare = (x) => {
 				return x * x;
 			};

@@ -31,9 +31,7 @@ describe('When using the "compareDates" comparator', () => {
 		});
 
 		it('the array should be in the correct order', () => {
-			expect(arrayToSort[0]).toBe(first);
-			expect(arrayToSort[1]).toBe(second);
-			expect(arrayToSort[2]).toBe(third);
+			expect(arrayToSort).toEqual([ first, second, third ]);
 		});
 	});
 
@@ -79,9 +77,7 @@ describe('When using the "compareNumbers" comparator', () => {
 		});
 
 		it('the array should be in the correct order', () => {
-			expect(arrayToSort[0]).toBe(first);
-			expect(arrayToSort[1]).toBe(second);
-			expect(arrayToSort[2]).toBe(third);
+			expect(arrayToSort).toEqual([ first, second, third ]);
 		});
 	});
 
@@ -127,16 +123,14 @@ describe('When using the "compareStrings" comparator', () => {
 		});
 
 		it('the array should be in the correct order', () => {
-			expect(arrayToSort[0]).toBe(first);
-			expect(arrayToSort[1]).toBe(second);
-			expect(arrayToSort[2]).toBe(third);
+			expect(arrayToSort).toEqual([ first, second, third ]);
 		});
 	});
 
 	describe('to sort an array that contains something other than strings', () => {
 		it('an error should be thrown', () => {
 			expect(() => {
-				let arrayToSort = [second, first, third, 7];
+				let arrayToSort = [ second, first, third, 7 ];
 
 				arrayToSort.sort(comparators.compareStrings);
 			}).toThrow();
@@ -176,9 +170,7 @@ describe('When using the "compareBoolean" comparator', () => {
 
 
 		it('the array should be in the correct order', () => {
-			expect(arrayToSort[0]).toEqual(b);
-			expect(arrayToSort[1]).toEqual(a);
-			expect(arrayToSort[2]).toEqual(c);
+			expect(arrayToSort).toEqual([ b, a, c ]);
 		});
 	});
 });
@@ -222,9 +214,7 @@ describe('When using the "compareNull" comparator', () => {
 		});
 
 		it('the array should be in the correct order', () => {
-			expect(arrayToSort[0]).toEqual(b);
-			expect(arrayToSort[1]).toEqual(a);
-			expect(arrayToSort[2]).toEqual(c);
+			expect(arrayToSort).toEqual([ b, a, c ]);
 		});
 	});
 });

@@ -62,11 +62,11 @@ describe('When checking the number 3', () => {
 	});
 
 	it("it should not be null", () => {
-		expect(is.null(candidate)).toEqual(false);
+		expect(is.nil(candidate)).toEqual(false);
 	});
 
 	it("it should not be undefined", () => {
-		expect(is.undefined(candidate)).toEqual(false);
+		expect(is.undef(candidate)).toEqual(false);
 	});
 
 	it("it should not be a zero-length string", () => {
@@ -136,11 +136,11 @@ describe('When checking the Math.PI', () => {
 	});
 
 	it("it should not be null", () => {
-		expect(is.null(candidate)).toEqual(false);
+		expect(is.nil(candidate)).toEqual(false);
 	});
 
 	it("it should not be undefined", () => {
-		expect(is.undefined(candidate)).toEqual(false);
+		expect(is.undef(candidate)).toEqual(false);
 	});
 
 	it("it should not be a zero-length string", () => {
@@ -210,11 +210,11 @@ describe('When checking the Number.NaN', () => {
 	});
 
 	it("it should not be null", () => {
-		expect(is.null(candidate)).toEqual(false);
+		expect(is.nil(candidate)).toEqual(false);
 	});
 
 	it("it should not be undefined", () => {
-		expect(is.undefined(candidate)).toEqual(false);
+		expect(is.undef(candidate)).toEqual(false);
 	});
 
 	it("it should not be a zero-length string", () => {
@@ -284,11 +284,11 @@ describe('When checking the string "3"', () => {
 	});
 
 	it("it should not be null", () => {
-		expect(is.null(candidate)).toEqual(false);
+		expect(is.nil(candidate)).toEqual(false);
 	});
 
 	it("it should not be undefined", () => {
-		expect(is.undefined(candidate)).toEqual(false);
+		expect(is.undef(candidate)).toEqual(false);
 	});
 
 	it("it should not be a zero-length string", () => {
@@ -358,11 +358,11 @@ describe('When checking the date 08/29/2016', () => {
 	});
 
 	it("it should not be null", () => {
-		expect(is.null(candidate)).toEqual(false);
+		expect(is.nil(candidate)).toEqual(false);
 	});
 
 	it("it should not be undefined", () => {
-		expect(is.undefined(candidate)).toEqual(false);
+		expect(is.undef(candidate)).toEqual(false);
 	});
 
 	it("it should not be a zero-length string", () => {
@@ -432,11 +432,11 @@ describe('When checking the "expect" function', () => {
 	});
 
 	it("it should not be null", () => {
-		expect(is.null(candidate)).toEqual(false);
+		expect(is.nil(candidate)).toEqual(false);
 	});
 
 	it("it should not be undefined", () => {
-		expect(is.undefined(candidate)).toEqual(false);
+		expect(is.undef(candidate)).toEqual(false);
 	});
 
 	it("it should not be a zero-length string", () => {
@@ -506,11 +506,11 @@ describe('When checking an empty object', () => {
 	});
 
 	it("it should not be null", () => {
-		expect(is.null(candidate)).toEqual(false);
+		expect(is.nil(candidate)).toEqual(false);
 	});
 
 	it("it should not be undefined", () => {
-		expect(is.undefined(candidate)).toEqual(false);
+		expect(is.undef(candidate)).toEqual(false);
 	});
 
 	it("it should not be a zero-length string", () => {
@@ -580,11 +580,11 @@ describe('When checking an empty array', () => {
 	});
 
 	it("it should not be null", () => {
-		expect(is.null(candidate)).toEqual(false);
+		expect(is.nil(candidate)).toEqual(false);
 	});
 
 	it("it should not be undefined", () => {
-		expect(is.undefined(candidate)).toEqual(false);
+		expect(is.undef(candidate)).toEqual(false);
 	});
 
 	it("it should not be a zero-length string", () => {
@@ -654,11 +654,11 @@ describe('When checking a null value', () => {
 	});
 
 	it("it should be null", () => {
-		expect(is.null(candidate)).toEqual(true);
+		expect(is.nil(candidate)).toEqual(true);
 	});
 
 	it("it should not be undefined", () => {
-		expect(is.undefined(candidate)).toEqual(false);
+		expect(is.undef(candidate)).toEqual(false);
 	});
 
 	it("it should not be a zero-length string", () => {
@@ -728,11 +728,11 @@ describe('When checking an undefined value', () => {
 	});
 
 	it("it should not be null", () => {
-		expect(is.null(candidate)).toEqual(false);
+		expect(is.nil(candidate)).toEqual(false);
 	});
 
 	it("it should be undefined", () => {
-		expect(is.undefined(candidate)).toEqual(true);
+		expect(is.undef(candidate)).toEqual(true);
 	});
 
 	it("it should not be a zero-length string", () => {
@@ -802,11 +802,11 @@ describe('When checking a large integer (exceeding 32-bits)', () => {
 	});
 
 	it("it should not be null", () => {
-		expect(is.null(candidate)).toEqual(false);
+		expect(is.nil(candidate)).toEqual(false);
 	});
 
 	it("it should not be undefined", () => {
-		expect(is.undefined(candidate)).toEqual(false);
+		expect(is.undef(candidate)).toEqual(false);
 	});
 
 	it("it should not be a zero-length string", () => {
@@ -876,11 +876,11 @@ describe('When checking a zero-length string', () => {
 	});
 
 	it("it should not be null", () => {
-		expect(is.null(candidate)).toEqual(false);
+		expect(is.nil(candidate)).toEqual(false);
 	});
 
 	it("it should not be undefined", () => {
-		expect(is.undefined(candidate)).toEqual(false);
+		expect(is.undef(candidate)).toEqual(false);
 	});
 
 	it("it should be a zero-length string", () => {

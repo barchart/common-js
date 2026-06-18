@@ -57,36 +57,36 @@ describe('When "07:05:09" is parsed as a Time', () => {
 });
 
 describe('When an invalid string is parsed as a Time', () => {
-    function expectError(value) {
-        expect(() => { Time.parse(value); }).toThrow();
+    function parseTime(value) {
+        return () => { Time.parse(value); };
     }
 
     it('should throw on null', () => {
-        expectError(null);
+        expect(parseTime(null)).toThrow();
     });
 
     it('should throw on undefined', () => {
-        expectError(undefined);
+        expect(parseTime(undefined)).toThrow();
     });
 
     it('should throw on object', () => {
-        expectError({});
+        expect(parseTime({})).toThrow();
     });
 
     it('should throw on number', () => {
-        expectError(12345);
+        expect(parseTime(12345)).toThrow();
     });
 
     it('should throw on "25:00:00" (invalid hour)', () => {
-        expectError('25:00:00');
+        expect(parseTime('25:00:00')).toThrow();
     });
 
     it('should throw on "12:60:00" (invalid minute)', () => {
-        expectError('12:60:00');
+        expect(parseTime('12:60:00')).toThrow();
     });
 
     it('should throw on "12:30:60" (invalid second)', () => {
-        expectError('12:30:60');
+        expect(parseTime('12:30:60')).toThrow();
     });
 });
 
@@ -147,22 +147,46 @@ describe('When comparing two Time instances', () => {
 });
 
 describe('When creating Time from Date', () => {
-    it('should take local time into account', () => {
-        const date = new Date(2020, 0, 1, 15, 45, 20);
-        const time = Time.fromDate(date);
+    describe('from local time', () => {
+        let time;
 
-        expect(time.hours).toEqual(15);
-        expect(time.minutes).toEqual(45);
-        expect(time.seconds).toEqual(20);
+        beforeEach(() => {
+            const date = new Date(2020, 0, 1, 15, 45, 20);
+            time = Time.fromDate(date);
+        });
+
+        it('should have the correct hours', () => {
+            expect(time.hours).toEqual(15);
+        });
+
+        it('should have the correct minutes', () => {
+            expect(time.minutes).toEqual(45);
+        });
+
+        it('should have the correct seconds', () => {
+            expect(time.seconds).toEqual(20);
+        });
     });
 
-    it('should take UTC time into account', () => {
-        const date = new Date(Date.UTC(2020, 0, 1, 8, 30, 50));
-        const time = Time.fromDateUtc(date);
+    describe('from UTC time', () => {
+        let time;
 
-        expect(time.hours).toEqual(8);
-        expect(time.minutes).toEqual(30);
-        expect(time.seconds).toEqual(50);
+        beforeEach(() => {
+            const date = new Date(Date.UTC(2020, 0, 1, 8, 30, 50));
+            time = Time.fromDateUtc(date);
+        });
+
+        it('should have the correct hours', () => {
+            expect(time.hours).toEqual(8);
+        });
+
+        it('should have the correct minutes', () => {
+            expect(time.minutes).toEqual(30);
+        });
+
+        it('should have the correct seconds', () => {
+            expect(time.seconds).toEqual(50);
+        });
     });
 });
 
