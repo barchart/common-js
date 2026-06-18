@@ -54,8 +54,8 @@ module.exports = (() => {
 
 					child._parent = null;
 
-					child._children = [ ];
-					child._children = [ ];
+					child._children.splice(0, child._children.length);
+					child._children2.splice(0, child._children2.length);
 
 					break;
 				}
