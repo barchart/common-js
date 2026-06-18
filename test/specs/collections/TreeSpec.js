@@ -1,4 +1,4 @@
-const Tree = require('./../../../collections/Tree');
+const Tree = require('./../../../collections/BindingTree');
 
 describe('When a Tree is constructed', () => {
 	'use strict';
