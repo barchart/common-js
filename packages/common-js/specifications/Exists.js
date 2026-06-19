@@ -4,7 +4,7 @@ import Undefined from './Undefined.js';
 
 /**
  * A {@link Specification} that passes when the value of the item passed to
- * the constructor is neither null or undefined.
+ * the constructor is neither null nor undefined.
  *
  * @public
  * @extends {Specification}

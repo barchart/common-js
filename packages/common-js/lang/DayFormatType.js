@@ -14,8 +14,13 @@ export default class DayFormatType extends Enum {
 	#yearShift;
 
 	/**
-	 * @param {string} description
-	 */
+     * @param {string} description
+     * @param {RegExp} regex
+     * @param {number} yearIndex
+     * @param {number} monthIndex
+     * @param {number} dayIndex
+     * @param {number} yearShift
+     */
 	constructor(description, regex, yearIndex, monthIndex, dayIndex, yearShift) {
 		super(description, description);
 
@@ -70,7 +75,7 @@ export default class DayFormatType extends Enum {
 
 	/**
 	 * The amount to add to the year (extracted from a formatted string) to get the
-	 * full year (e.g. for "11-31-25" of a MM-DD-YY string, the value will be 2000).
+	 * full year (e.g. for "11-31-25" of an MM-DD-YY string, the value will be 2000).
 	 *
 	 * @public
 	 * @returns {number}

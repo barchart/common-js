@@ -14,10 +14,11 @@ export default class Currency extends Enum {
 	#alternateDescription;
 
 	/**
-	 * @param {string} code - Currency code (e.g. "USD")
-	 * @param {string} description - The description (e.g. "US Dollar")
-	 * @param {number} precision - The number of decimal places possible for by a real world transaction.
-	 */
+     * @param {string} code - Currency code (e.g. "USD")
+     * @param {string} description - The description (e.g. "US Dollar")
+     * @param {number} precision - The number of decimal places possible for by a real world transaction.
+     * @param {string=} alternateDescription
+     */
 	constructor(code, description, precision, alternateDescription) {
 		super(code, description);
 
@@ -64,7 +65,7 @@ export default class Currency extends Enum {
 
 		return value instanceof Currency ? value : null;
 	}
-	
+
 	/**
 	 * The Argentine Peso.
 	 *

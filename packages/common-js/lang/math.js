@@ -13,7 +13,7 @@ export function approximate(a, b) {
 		return false;
 	}
 
-	if (a == b) {
+	if (a === b) {
 		return true;
 	}
 

@@ -38,7 +38,7 @@ export default class Serializer extends Disposable {
 	}
 
 	/**
-	 * The the total number of items that have been added to the queue.
+	 * The total number of items that have been added to the queue.
 	 *
 	 * @public
 	 * @returns {number}
