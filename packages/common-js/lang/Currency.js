@@ -63,7 +63,8 @@ export default class Currency extends Enum {
 		const value = Enum.fromCode(Currency, code);
 
 		return value instanceof Currency ? value : null;
-	}z
+	}
+	
 	/**
 	 * The Argentine Peso.
 	 *
