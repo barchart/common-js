@@ -1,3 +1,11 @@
+
+/**
+ * @typedef {import('./LambdaEventParser.js').default} LambdaEventParser
+ */
+
+/**
+ * @typedef {import('./LambdaResponder.js').default} LambdaResponder
+ */
 /**
  * A meta namespace containing signatures of anonymous functions.
  *

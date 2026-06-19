@@ -14,6 +14,17 @@ const broadcastCommand = CommandHandler.fromFunction(() => {
 });
 
 export default class SocketEmitterEndpoint extends Endpoint {
+	#channel;
+	#event;
+	#eventType;
+	#roomCommand;
+
+	/**
+	 * @param {*} channel
+	 * @param {object} event
+	 * @param {*} eventType
+	 * @param {*} roomCommand
+	 */
 	constructor(channel, event, eventType, roomCommand) {
 		super(emptyCommand);
 
@@ -22,28 +33,58 @@ export default class SocketEmitterEndpoint extends Endpoint {
 		assert.argumentIsRequired(eventType, 'eventType', String);
 		assert.argumentIsOptional(roomCommand, 'roomCommand', CommandHandler, 'CommandHandler');
 
-		this._channel = channel;
-		this._event = event;
-		this._eventType = eventType || null;
-		this._roomCommand = roomCommand || broadcastCommand;
+		this.#channel = channel;
+		this.#event = event;
+		this.#eventType = eventType || null;
+		this.#roomCommand = roomCommand || broadcastCommand;
 	}
 
+	/**
+	 * Returns the channel.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	getChannel() {
-		return this._channel;
+		return this.#channel;
 	}
 
+	/**
+	 * Returns the event.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	getEvent() {
-		return this._event;
+		return this.#event;
 	}
 
+	/**
+	 * Returns the event type.
+	 *
+	 * @public
+	 * @returns {*}
+	 */
 	getEventType() {
-		return this._eventType;
+		return this.#eventType;
 	}
 
+	/**
+	 * Returns the room command.
+	 *
+	 * @public
+	 * @returns {Function}
+	 */
 	getRoomCommand() {
-		return this._roomCommand;
+		return this.#roomCommand;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[SocketEmitterEndpoint]';
 	}

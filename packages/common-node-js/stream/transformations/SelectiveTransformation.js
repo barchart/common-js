@@ -1,4 +1,5 @@
 import * as assert from '@barchart/common-js/lang/assert.js';
+import * as is from '@barchart/common-js/lang/is.js';
 
 import Transformation from './Transformation.js';
 
@@ -13,6 +14,17 @@ import Transformation from './Transformation.js';
  * @extends {Transformation}
  */
 export default class SelectiveTransformation extends Transformation {
+	#first;
+	#silent;
+	#synchronous;
+	#transformations;
+
+	/**
+	 * @param {*} transformations
+	 * @param {*} first
+	 * @param {*} silent
+	 * @param {string} description
+	 */
 	constructor(transformations, first, silent, description) {
 		super((description || 'Selector Transformation'));
 
@@ -20,34 +32,52 @@ export default class SelectiveTransformation extends Transformation {
 		assert.argumentIsOptional(first, 'first', Boolean);
 		assert.argumentIsOptional(silent, 'silent', Boolean);
 
-		this._transformations = transformations;
+		this.#transformations = transformations;
 
-		this._first = is.boolean(first) && boolean;
-		this._silent = is.boolean(silent) && silent;
+		this.#first = is.boolean(first) && first;
+		this.#silent = is.boolean(silent) && silent;
 
-		this._synchronous = this._transformations.every(t => t.synchronous);
+		this.#synchronous = this.#transformations.every(t => t.synchronous);
 	}
 
+	/**
+	 * Returns the synchronous.
+	 *
+	 * @public
+	 * @returns {boolean}
+	 */
 	get synchronous() {
-		return this._synchronous;
+		return this.#synchronous;
 	}
 
 	_canTransform(input) {
-		return this._silent || this._transformations.some(t => t.canTransform(input));
+		return this.#silent || this.#transformations.some(t => t.canTransform(input));
 	}
 
 	_transform(input) {
-		if (this._first) {
-			const transformation = this._transformations.find(t => t.canTransform(input));
+		let output = input;
+
+		if (this.#first) {
+			const transformation = this.#transformations.find(t => t.canTransform(input));
 
 			if (transformation) {
-				transformation.transform(input);
+				output = transformation.transform(input);
 			}
 		} else {
-			this._transformations.filter(t => t.canTransform(input)).forEach(t => t.transform(input));
+			this.#transformations.filter(t => t.canTransform(input)).forEach((transformation) => {
+				output = transformation.transform(output);
+			});
 		}
+
+		return output;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[SelectiveTransformation]';
 	}

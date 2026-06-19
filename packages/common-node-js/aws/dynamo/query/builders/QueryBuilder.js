@@ -12,17 +12,25 @@ import Filter from './../definitions/Filter.js';
 import OperatorType from './../definitions/OperatorType.js';
 
 /**
+ * @typedef {import('../definitions/Action.js').default} Action
+ */
+
+/**
  * Fluent interface for building a {@link Query}.
  *
  * @public
  * @extends {ActionBuilder}
- * @param {Table} table - The table targeted.
  */
 export default class QueryBuilder extends ActionBuilder {
+	#query;
+
+	/**
+	 * @param {Table} table - The table targeted.
+	 */
 	constructor(table) {
 		super();
 
-		this._query = new Query(table);
+		this.#query = new Query(table);
 	}
 
 	/**
@@ -32,7 +40,7 @@ export default class QueryBuilder extends ActionBuilder {
 	 * @returns {Action}
 	 */
 	get action() {
-		return this._query;
+		return this.#query;
 	}
 
 	/**
@@ -42,7 +50,7 @@ export default class QueryBuilder extends ActionBuilder {
 	 * @returns {Query}
 	 */
 	get query() {
-		return this._query;
+		return this.#query;
 	}
 
 	/**
@@ -50,13 +58,13 @@ export default class QueryBuilder extends ActionBuilder {
 	 * table itself) and returns the current instance.
 	 *
 	 * @public
-	 * @param {String} indexName - The {@link Index} to target.
+	 * @param {string} indexName - The {@link Index} to target.
 	 * @returns {QueryBuilder}
 	 */
 	withIndex(indexName) {
 		assert.argumentIsRequired(indexName, 'indexName', String);
 
-		this._query = new Query(this._query.table, getIndex(indexName, this._query.table), this._query.keyFilter, this._query.resultsFilter, this._query.parallelFilter, this._query.attributes, this._query.limit, this._query.orderingType, this._query.consistentRead, this._query.skipDeserialization, this._query.countOnly, this._query.description, this._query.monitorCapacityConsumed, this._query.exclusiveStartKey);
+		this.#query = new Query(this.#query.table, getIndex(indexName, this.#query.table), this.#query.keyFilter, this.#query.resultsFilter, this.#query.parallelFilter, this.#query.attributes, this.#query.limit, this.#query.orderingType, this.#query.consistentRead, this.#query.skipDeserialization, this.#query.countOnly, this.#query.description, this.#query.monitorCapacityConsumed, this.#query.exclusiveStartKey);
 
 		return this;
 	}
@@ -76,7 +84,7 @@ export default class QueryBuilder extends ActionBuilder {
 
 		callback(filterBuilder);
 
-		this._query = new Query(this._query.table, this._query.index, filterBuilder.filter, this._query.resultsFilter, this._query.parallelFilter, this._query.attributes, this._query.limit, this._query.orderingType, this._query.consistentRead, this._query.skipDeserialization, this._query.countOnly, this._query.description, this._query.monitorCapacityConsumed, this._query.exclusiveStartKey);
+		this.#query = new Query(this.#query.table, this.#query.index, filterBuilder.filter, this.#query.resultsFilter, this.#query.parallelFilter, this.#query.attributes, this.#query.limit, this.#query.orderingType, this.#query.consistentRead, this.#query.skipDeserialization, this.#query.countOnly, this.#query.description, this.#query.monitorCapacityConsumed, this.#query.exclusiveStartKey);
 
 		return this;
 	}
@@ -96,7 +104,7 @@ export default class QueryBuilder extends ActionBuilder {
 
 		callback(filterBuilder);
 
-		this._query = new Query(this._query.table, this._query.index, this._query.keyFilter, filterBuilder.filter, this._query.parallelFilter, this._query.attributes, this._query.limit, this._query.orderingType, this._query.consistentRead, this._query.skipDeserialization, this._query.countOnly, this._query.description, this._query.monitorCapacityConsumed, this._query.exclusiveStartKey);
+		this.#query = new Query(this.#query.table, this.#query.index, this.#query.keyFilter, filterBuilder.filter, this.#query.parallelFilter, this.#query.attributes, this.#query.limit, this.#query.orderingType, this.#query.consistentRead, this.#query.skipDeserialization, this.#query.countOnly, this.#query.description, this.#query.monitorCapacityConsumed, this.#query.exclusiveStartKey);
 
 		return this;
 	}
@@ -105,21 +113,21 @@ export default class QueryBuilder extends ActionBuilder {
 	 * The name of an attribute to select.
 	 *
 	 * @public
-	 * @param {String} attributeName
+	 * @param {string} attributeName
 	 * @returns {QueryBuilder}
 	 */
 	withAttribute(attributeName) {
 		assert.argumentIsRequired(attributeName, 'attributeName', String);
 
-		const attribute = getAttribute(attributeName, this._query.table);
+		const attribute = getAttribute(attributeName, this.#query.table);
 
 		if (attribute !== null) {
-			const attributes = this._query.attributes;
+			const attributes = this.#query.attributes;
 
 			if (!attributes.some(a => a.name === attribute.name)) {
 				attributes.push(attribute);
 
-				this._query = new Query(this._query.table, this._query.index, this._query.keyFilter, this._query.resultsFilter, this._query.parallelFilter, attributes, this._query.limit, this._query.orderingType, this._query.consistentRead, this._query.skipDeserialization, this._query.countOnly, this._query.description, this._query.monitorCapacityConsumed, this._query.exclusiveStartKey);
+				this.#query = new Query(this.#query.table, this.#query.index, this.#query.keyFilter, this.#query.resultsFilter, this.#query.parallelFilter, attributes, this.#query.limit, this.#query.orderingType, this.#query.consistentRead, this.#query.skipDeserialization, this.#query.countOnly, this.#query.description, this.#query.monitorCapacityConsumed, this.#query.exclusiveStartKey);
 			}
 		}
 
@@ -130,13 +138,13 @@ export default class QueryBuilder extends ActionBuilder {
 	 * Sets a hard limit to the number of results returned from the query.
 	 *
 	 * @public
-	 * @param {Number} limit
+	 * @param {number} limit
 	 * @returns {QueryBuilder}
 	 */
 	withLimit(limit) {
 		assert.argumentIsRequired(limit, 'limit', Number);
 
-		this._query = new Query(this._query.table, this._query.index, this._query.keyFilter, this._query.resultsFilter, this._query.parallelFilter, this._query.attributes, limit, this._query.orderingType, this._query.consistentRead, this._query.skipDeserialization, this._query.countOnly, this._query.description, this._query.monitorCapacityConsumed, this._query.exclusiveStartKey);
+		this.#query = new Query(this.#query.table, this.#query.index, this.#query.keyFilter, this.#query.resultsFilter, this.#query.parallelFilter, this.#query.attributes, limit, this.#query.orderingType, this.#query.consistentRead, this.#query.skipDeserialization, this.#query.countOnly, this.#query.description, this.#query.monitorCapacityConsumed, this.#query.exclusiveStartKey);
 
 		return this;
 	}
@@ -145,13 +153,13 @@ export default class QueryBuilder extends ActionBuilder {
 	 * Adds a description to the query and returns the current instance.
 	 *
 	 * @public
-	 * @param {String} description
+	 * @param {string} description
 	 * @returns {QueryBuilder}
 	 */
 	withDescription(description) {
 		assert.argumentIsRequired(description, 'description', String);
 
-		this._query = new Query(this._query.table, this._query.index, this._query.keyFilter, this._query.resultsFilter, this._query.parallelFilter, this._query.attributes, this._query.limit, this._query.orderingType, this._query.consistentRead, this._query.skipDeserialization, this._query.countOnly, description, this._query.monitorCapacityConsumed, this._query.exclusiveStartKey);
+		this.#query = new Query(this.#query.table, this.#query.index, this.#query.keyFilter, this.#query.resultsFilter, this.#query.parallelFilter, this.#query.attributes, this.#query.limit, this.#query.orderingType, this.#query.consistentRead, this.#query.skipDeserialization, this.#query.countOnly, description, this.#query.monitorCapacityConsumed, this.#query.exclusiveStartKey);
 
 		return this;
 	}
@@ -166,7 +174,7 @@ export default class QueryBuilder extends ActionBuilder {
 	withOrderingType(orderingType) {
 		assert.argumentIsRequired(orderingType, 'orderingType', OrderingType, 'OrderingType');
 
-		this._query = new Query(this._query.table, this._query.index, this._query.keyFilter, this._query.resultsFilter, this._query.parallelFilter, this._query.attributes, this._query.limit, orderingType, this._query.consistentRead, this._query.skipDeserialization, this._query.countOnly, this._query.description, this._query.monitorCapacityConsumed, this._query.exclusiveStartKey);
+		this.#query = new Query(this.#query.table, this.#query.index, this.#query.keyFilter, this.#query.resultsFilter, this.#query.parallelFilter, this.#query.attributes, this.#query.limit, orderingType, this.#query.consistentRead, this.#query.skipDeserialization, this.#query.countOnly, this.#query.description, this.#query.monitorCapacityConsumed, this.#query.exclusiveStartKey);
 
 		return this;
 	}
@@ -178,7 +186,7 @@ export default class QueryBuilder extends ActionBuilder {
 	 * @returns {QueryBuilder}
 	 */
 	withConsistentRead() {
-		this._query = new Query(this._query.table, this._query.index, this._query.keyFilter, this._query.resultsFilter, this._query.parallelFilter, this._query.attributes, this._query.limit, this._query.orderingType, true, this._query.skipDeserialization, this._query.countOnly, this._query.description, this._query.monitorCapacityConsumed, this._query.exclusiveStartKey);
+		this.#query = new Query(this.#query.table, this.#query.index, this.#query.keyFilter, this.#query.resultsFilter, this.#query.parallelFilter, this.#query.attributes, this.#query.limit, this.#query.orderingType, true, this.#query.skipDeserialization, this.#query.countOnly, this.#query.description, this.#query.monitorCapacityConsumed, this.#query.exclusiveStartKey);
 
 		return this;
 	}
@@ -191,7 +199,7 @@ export default class QueryBuilder extends ActionBuilder {
 	 * @returns {QueryBuilder}
 	 */
 	withDeserializationSkipped() {
-		this._query = new Query(this._query.table, this._query.index, this._query.keyFilter, this._query.resultsFilter, this._query.parallelFilter, this._query.attributes, this._query.limit, this._query.orderingType, this._query.consistentRead, true, this._query.countOnly, this._query.description, this._query.monitorCapacityConsumed, this._query.exclusiveStartKey);
+		this.#query = new Query(this.#query.table, this.#query.index, this.#query.keyFilter, this.#query.resultsFilter, this.#query.parallelFilter, this.#query.attributes, this.#query.limit, this.#query.orderingType, this.#query.consistentRead, true, this.#query.countOnly, this.#query.description, this.#query.monitorCapacityConsumed, this.#query.exclusiveStartKey);
 
 		return this;
 	}
@@ -203,7 +211,7 @@ export default class QueryBuilder extends ActionBuilder {
 	 * @returns {QueryBuilder}
 	 */
 	withCount() {
-		this._query = new Query(this._query.table, this._query.index, this._query.keyFilter, this._query.resultsFilter, this._query.parallelFilter, this._query.attributes, this._query.limit, this._query.orderingType, this._query.consistentRead, this._query.skipDeserialization, true, this._query.description, this._query.monitorCapacityConsumed, this._query.exclusiveStartKey);
+		this.#query = new Query(this.#query.table, this.#query.index, this.#query.keyFilter, this.#query.resultsFilter, this.#query.parallelFilter, this.#query.attributes, this.#query.limit, this.#query.orderingType, this.#query.consistentRead, this.#query.skipDeserialization, true, this.#query.description, this.#query.monitorCapacityConsumed, this.#query.exclusiveStartKey);
 
 		return this;
 	}
@@ -215,7 +223,7 @@ export default class QueryBuilder extends ActionBuilder {
 	 * @returns {QueryBuilder}
 	 */
 	withCapacityMonitored() {
-		this._query = new Query(this._query.table, this._query.index, this._query.keyFilter, this._query.resultsFilter, this._query.parallelFilter, this._query.attributes, this._query.limit, this._query.orderingType, this._query.consistentRead, this._query.skipDeserialization, this._query.countOnly, this._query.description, true, this._query.exclusiveStartKey);
+		this.#query = new Query(this.#query.table, this.#query.index, this.#query.keyFilter, this.#query.resultsFilter, this.#query.parallelFilter, this.#query.attributes, this.#query.limit, this.#query.orderingType, this.#query.consistentRead, this.#query.skipDeserialization, this.#query.countOnly, this.#query.description, true, this.#query.exclusiveStartKey);
 
 		return this;
 	}
@@ -230,7 +238,7 @@ export default class QueryBuilder extends ActionBuilder {
     withExclusiveStartKey(exclusiveStartKey){
         assert.argumentIsRequired(exclusiveStartKey, 'exclusiveStartKey', Object);
 
-        this._query = new Query(this._query.table, this._query.index, this._query.keyFilter, this._query.resultsFilter, this._query.parallelFilter, this._query.attributes, this._query.limit, this._query.orderingType, this._query.consistentRead, this._query.skipDeserialization, this._query.countOnly, this._query.description, this._query.monitorCapacityConsumed, exclusiveStartKey);
+        this.#query = new Query(this.#query.table, this.#query.index, this.#query.keyFilter, this.#query.resultsFilter, this.#query.parallelFilter, this.#query.attributes, this.#query.limit, this.#query.orderingType, this.#query.consistentRead, this.#query.skipDeserialization, this.#query.countOnly, this.#query.description, this.#query.monitorCapacityConsumed, exclusiveStartKey);
 
         return this;
     }
@@ -242,7 +250,7 @@ export default class QueryBuilder extends ActionBuilder {
 	 * to instructions provided by the range extractor function.
 	 *
 	 * @public
-	 * @param {QueryBuilder~rangeExtractor} rangeExtractor
+	 * @param {RangeExtractor} rangeExtractor
 	 * @returns {Query[]}
 	 */
 	toParallelQueries(rangeExtractor) {
@@ -252,14 +260,14 @@ export default class QueryBuilder extends ActionBuilder {
 			throw new Error('Count queries cannot be run in parallel.');
 		}
 
-		const table = this._query.table;
+		const table = this.#query.table;
 
 		let rangeKey;
 
-		if (this._query.index === null) {
+		if (this.#query.index === null) {
 			rangeKey = table.rangeKey;
 		} else {
-			const keys = this._query.index.keys;
+			const keys = this.#query.index.keys;
 
 			rangeKey = keys.find(k => k.keyType === KeyType.RANGE) || null;
 		}
@@ -270,7 +278,7 @@ export default class QueryBuilder extends ActionBuilder {
 
 		const ranges = rangeExtractor(table);
 
-		if (this._query.orderingType === OrderingType.DESCENDING) {
+		if (this.#query.orderingType === OrderingType.DESCENDING) {
 			ranges.reverse();
 		}
 
@@ -280,7 +288,7 @@ export default class QueryBuilder extends ActionBuilder {
 
 			let expression;
 
-			if (!is.null(end) && !is.undefined(end)) {
+			if (!is.nil(end) && !is.undef(end)) {
 				expression = new Expression(rangeKey.attribute, OperatorType.BETWEEN, [ start, end ]);
 			} else {
 				expression = new Expression(rangeKey.attribute, OperatorType.GREATER_THAN_OR_EQUAL_TO, start);
@@ -288,7 +296,7 @@ export default class QueryBuilder extends ActionBuilder {
 
 			const parallelFilter = new Filter([ expression ]);
 
-			return new Query(this._query.table, this._query.index, this._query.keyFilter, this._query.resultsFilter, parallelFilter, this._query.attributes, this._query.limit, this._query.orderingType, this._query.consistentRead, this._query.skipDeserialization, false, `${this._query.description} [ ${i} ]`, this._query.monitorCapacityConsumed);
+			return new Query(this.#query.table, this.#query.index, this.#query.keyFilter, this.#query.resultsFilter, parallelFilter, this.#query.attributes, this.#query.limit, this.#query.orderingType, this.#query.consistentRead, this.#query.skipDeserialization, false, `${this.#query.description} [ ${i} ]`, this.#query.monitorCapacityConsumed);
 		});
 	}
 
@@ -306,6 +314,12 @@ export default class QueryBuilder extends ActionBuilder {
 		return new QueryBuilder(table);
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[QueryBuilder]';
 	}
@@ -320,10 +334,9 @@ function getAttribute(name, table) {
 }
 
 /**
- * Data regarding a single Lambda function invocation
+ * Describes a range boundary used to partition a query.
  *
- * @typedef Range
- * @type {Object}
+ * @typedef {object} Range
  * @property {*} start
  * @property {*|null|undefined} end
  */
@@ -332,7 +345,7 @@ function getAttribute(name, table) {
  * A callback that provides the consumer with an {@link AttributeBuilder}
  *
  * @public
- * @callback QueryBuilder~rangeExtractor
+ * @callback RangeExtractor
  * @param {Table} table
  * @returns {Range[]}
  */

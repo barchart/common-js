@@ -12,23 +12,33 @@ import Stream from 'stream';
  *
  * @public
  * @extends {Stream.Readable}
- * @param {Object=} options
  */
 export default class StringReadStream extends Stream.Readable {
+	#data;
+
+	/**
+     * @param {string} data
+     * @param {object=} options
+     */
 	constructor(data, options) {
 		super(object.merge({ objectMode: true }, (options || { })));
 
 		assert.argumentIsRequired(data, 'data', String);
 
-		this._data = data;
-		this._index = 0;
+		this.#data = data;
 	}
 
 	_read(size) {
-		this.push(this._data);
+		this.push(this.#data);
 		this.push(null);
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[StringReadStream]';
 	}

@@ -10,17 +10,25 @@ import ActionBuilder from './ActionBuilder.js';
 import FilterBuilder from './FilterBuilder.js';
 
 /**
+ * @typedef {import('../definitions/Action.js').default} Action
+ */
+
+/**
  * Fluent interface for building an {@link Update}.
  *
  * @public
  * @extends {ActionBuilder}
- * @param {Table} table - The table targeted.
  */
 export default class UpdateBuilder extends ActionBuilder {
+	#update;
+
+	/**
+	 * @param {Table} table - The table targeted.
+	 */
 	constructor(table) {
 		super();
 
-		this._update = new Update(table);
+		this.#update = new Update(table);
 	}
 
 	/**
@@ -30,7 +38,7 @@ export default class UpdateBuilder extends ActionBuilder {
 	 * @returns {Action}
 	 */
 	get action() {
-		return this._update;
+		return this.#update;
 	}
 
 	/**
@@ -40,7 +48,7 @@ export default class UpdateBuilder extends ActionBuilder {
 	 * @returns {Update}
 	 */
 	get update() {
-		return this._update;
+		return this.#update;
 	}
 
 	/**
@@ -58,7 +66,7 @@ export default class UpdateBuilder extends ActionBuilder {
 
 		callback(filterBuilder);
 
-		this._update = new Update(this._update.table, filterBuilder.filter, this._update.conditionFilter, this._update.expressions, this._update.returnType, this._update.description);
+		this.#update = new Update(this.#update.table, filterBuilder.filter, this.#update.conditionFilter, this.#update.expressions, this.#update.returnType, this.#update.description);
 
 		return this;
 	}
@@ -78,7 +86,7 @@ export default class UpdateBuilder extends ActionBuilder {
 
 		callback(filterBuilder);
 
-		this._update = new Update(this._update.table, this._update.keyFilter, filterBuilder.filter, this._update.expressions, this._update.returnType, this._update.description);
+		this.#update = new Update(this.#update.table, this.#update.keyFilter, filterBuilder.filter, this.#update.expressions, this.#update.returnType, this.#update.description);
 
 		return this;
 	}
@@ -88,9 +96,9 @@ export default class UpdateBuilder extends ActionBuilder {
 	 *
 	 * @public
 	 * @param {UpdateActionType} actionType
-	 * @param {String} attributeName
+	 * @param {string} attributeName
 	 * @param {UpdateOperatorType=} operatorType
-	 * @param operand
+	 * @param {*=} operand
 	 * @returns {UpdateBuilder}
 	 */
 	withUpdateExpression(actionType, attributeName, operatorType, operand) {
@@ -98,12 +106,12 @@ export default class UpdateBuilder extends ActionBuilder {
 		assert.argumentIsRequired(attributeName, 'attributeName', String);
 		assert.argumentIsOptional(operatorType, 'operatorType', UpdateOperatorType, 'UpdateOperatorType');
 
-		const attribute = this._update.table.attributes.find(a => a.name === attributeName) || null;
+		const attribute = this.#update.table.attributes.find(a => a.name === attributeName) || null;
 		const expression = new UpdateExpression(actionType, attribute, operatorType, operand);
 
-		const expressions = this._update.expressions.concat(expression);
+		const expressions = this.#update.expressions.concat(expression);
 
-		this._update = new Update(this._update.table, this._update.keyFilter, this._update.conditionFilter, expressions, this._update.returnType, this._update.description);
+		this.#update = new Update(this.#update.table, this.#update.keyFilter, this.#update.conditionFilter, expressions, this.#update.returnType, this.#update.description);
 
 		return this;
 	}
@@ -118,7 +126,7 @@ export default class UpdateBuilder extends ActionBuilder {
 	withReturnValueType(returnValueType) {
 		assert.argumentIsRequired(returnValueType, 'returnValueType', ReturnValueType, 'ReturnValueType');
 
-		this._update = new Update(this._update.table, this._update.keyFilter, this._update.conditionFilter, this._update.expressions, returnValueType, this._update.description);
+		this.#update = new Update(this.#update.table, this.#update.keyFilter, this.#update.conditionFilter, this.#update.expressions, returnValueType, this.#update.description);
 
 		return this;
 	}
@@ -127,13 +135,13 @@ export default class UpdateBuilder extends ActionBuilder {
 	 * Adds a description to the update and returns the current instance.
 	 *
 	 * @public
-	 * @param {String} description
+	 * @param {string} description
 	 * @returns {UpdateBuilder}
 	 */
 	withDescription(description) {
 		assert.argumentIsRequired(description, 'description', String);
 
-		this._update = new Update(this._update.table, this._update.keyFilter, this._update.conditionFilter, this._update.expressions, this._update.returnType, description);
+		this.#update = new Update(this.#update.table, this.#update.keyFilter, this.#update.conditionFilter, this.#update.expressions, this.#update.returnType, description);
 
 		return this;
 	}
@@ -152,6 +160,12 @@ export default class UpdateBuilder extends ActionBuilder {
 		return new UpdateBuilder(table);
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[UpdateBuilder]';
 	}

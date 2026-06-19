@@ -19,12 +19,12 @@ export default class LambdaMessageValidator {
 	 *
 	 * @public
 	 * @async
-	 * @param {String} name
-	 * @param {Object} message
-	 * @param {Object} event
+	 * @param {string} name
+	 * @param {object} message
+	 * @param {object} event
 	 * @param {LambdaTriggerType=} trigger
-	 * @param {String=} messageId
-	 * @returns {Promise<Boolean>}
+	 * @param {string=} messageId
+	 * @returns {Promise<boolean>}
 	 */
 	async validate(name, message, event, trigger, messageId) {
 		return Promise.resolve()
@@ -39,17 +39,23 @@ export default class LambdaMessageValidator {
 	/**
 	 * @protected
 	 * @abstract
-	 * @param {String} name
-	 * @param {Object} message
-	 * @param {Object} event
+	 * @param {string} name
+	 * @param {object} message
+	 * @param {object} event
 	 * @param {LambdaTriggerType=} trigger
-	 * @param {String=} messageId
-	 * @returns {Promise<Boolean>|Boolean}
+	 * @param {string=} messageId
+	 * @returns {Promise<boolean>|boolean}
 	 */
 	_validate(name, message, event, trigger, messageId) {
 		return true;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[LambdaMessageValidator]';
 	}

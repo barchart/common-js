@@ -28,8 +28,8 @@ export default class LambdaHelper {
 	 *
 	 * @public
 	 * @static
-	 * @param {Object|String=} configuration - Configuration path (as string) or configuration data (as an object).
-	 * @returns {Object}
+	 * @param {object|string=} configuration - Configuration path (as string) or configuration data (as an object).
+	 * @returns {object}
 	 */
 	static getLogger(configuration) {
 		if (lambdaLogger === null) {
@@ -49,8 +49,8 @@ export default class LambdaHelper {
 	 * @public
 	 * @static
 	 * @async
-	 * @param {String} secretId
-	 * @return {Promise<String>}
+	 * @param {string} secretId
+	 * @return {Promise<string>}
 	 */
 	static async getSecretValue(secretId) {
 		return LambdaSecretsManager.INSTANCE.getValue(secretId);
@@ -61,7 +61,7 @@ export default class LambdaHelper {
 	 *
 	 * @public
 	 * @static
-	 * @param {Object} event
+	 * @param {object} event
 	 * @returns {LambdaEventParser}
 	 */
 	static getEventParser(event) {
@@ -96,7 +96,7 @@ export default class LambdaHelper {
 	 *
 	 * @public
 	 * @static
-	 * @param {String} stage
+	 * @param {string} stage
 	 * @returns {LambdaStage}
 	 */
 	static getStage(stage) {
@@ -112,8 +112,8 @@ export default class LambdaHelper {
 	 * @public
 	 * @static
 	 * @async
-	 * @param {String} description - Human-readable description of the Lambda Function.
-	 * @param {Object} event - The actual "event" object passed to the Lambda Function by the AWS framework.
+	 * @param {string} description - Human-readable description of the Lambda Function.
+	 * @param {object} event - The actual "event" object passed to the Lambda Function by the AWS framework.
 	 * @param {Function} callback - The actual "callback" function passed to the Lambda Function by the AWS framework.
 	 * @param {Callbacks.LambdaProcessorCallback} processor - The processor that is invoked to perform the work.
 	 * @returns {Promise<*>}
@@ -183,8 +183,8 @@ export default class LambdaHelper {
 	 * @public
 	 * @static
 	 * @async
-	 * @param {String} description - Human-readable description of the Lambda Function.
-	 * @param {Object} event - The actual "event" object passed to the Lambda Function by the AWS framework.
+	 * @param {string} description - Human-readable description of the Lambda Function.
+	 * @param {object} event - The actual "event" object passed to the Lambda Function by the AWS framework.
 	 * @param {Callbacks.LambdaProcessorCallback} processor - The processor that is invoked to perform the work.
 	 * @returns {Promise<*>}
 	 */
@@ -192,6 +192,12 @@ export default class LambdaHelper {
 		return LambdaHelper.process(description, event, () => { }, processor);
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[ LambdaHelper ]';
 	}

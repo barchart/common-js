@@ -3,24 +3,49 @@ import * as assert from '@barchart/common-js/lang/assert.js';
 import Verb from './../../../http/Verb.js';
 
 export default class RestAction {
+	#description;
+	#verb;
+
+	/**
+	 * @param {string} description
+	 * @param {*} verb
+	 */
 	constructor(description, verb) {
 		assert.argumentIsRequired(description, 'description', String);
 		assert.argumentIsRequired(verb, 'verb', Verb, 'Verb');
 
-		this._description = description;
-		this._verb = verb;
+		this.#description = description;
+		this.#verb = verb;
 	}
 
+	/**
+	 * Returns the description.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	getDescription() {
-		return this._description;
+		return this.#description;
 	}
 
+	/**
+	 * Returns the verb.
+	 *
+	 * @public
+	 * @returns {*}
+	 */
 	getVerb() {
-		return this._verb;
+		return this.#verb;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
-		return `[RestAction (verb=${this._verb})]`;
+		return `[RestAction (verb=${this.#verb})]`;
 	}
 }
 

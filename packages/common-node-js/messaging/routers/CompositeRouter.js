@@ -8,39 +8,79 @@ import log4js from 'log4js';
 
 const logger = log4js.getLogger('common-node/messaging/routers/CompositeRouter');
 
+/**
+ * @typedef {import('@barchart/common-js/lang/Disposable.js').default} Disposable
+ */
+
 export default class CompositeRouter extends Router {
+	#routers;
+
+	/**
+	 * @param {*} routers
+	 * @param {*} suppressExpressions
+	 */
 	constructor(routers, suppressExpressions) {
 		super(suppressExpressions);
 
 		assert.argumentIsArray(routers, 'routers', Router, 'Router');
 
-		this._routers = routers;
+		this.#routers = routers;
 	}
 
-	_start() {
-		return Promise.all(this._routers.map((router) => {
+	/**
+	 * @protected
+	 * @override
+	 * @async
+	 * @returns {Promise<boolean>}
+	 */
+	async _start() {
+		return Promise.all(this.#routers.map((router) => {
 			return router.start();
 		})).then(() => {
 			return true;
 		});
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 * @param {string} messageType
+	 * @returns {boolean}
+	 */
 	_canRoute(messageType) {
-		return this._routers.some((router) => {
+		return this.#routers.some((router) => {
 			return router.canRoute(messageType);
 		});
 	}
 
-	_route(messageType, payload, timeout, forget) {
-		const router = this._routers.find((router) => {
+	/**
+	 * @protected
+	 * @override
+	 * @async
+	 * @param {string} messageType
+	 * @param {*} payload
+	 * @param {number} timeout
+	 * @param {boolean} forget
+	 * @returns {Promise<*>}
+	 */
+	async _route(messageType, payload, timeout, forget) {
+		const router = this.#routers.find((router) => {
 			return router.canRoute(messageType);
 		});
 
 		return router.route(messageType, payload, timeout, forget);
 	}
 
-	_register(messageType, handler) {
-		const registerPromises = this._routers.map((router) => {
+	/**
+	 * @protected
+	 * @override
+	 * @async
+	 * @param {string} messageType
+	 * @param {Function} handler
+	 * @returns {Promise<Disposable>}
+	 */
+	async _register(messageType, handler) {
+		const registerPromises = this.#routers.map((router) => {
 			return router.register(messageType, handler);
 		});
 
@@ -56,16 +96,26 @@ export default class CompositeRouter extends Router {
 			});
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 */
 	_onDispose() {
-		this._routers.forEach((router) => {
+		this.#routers.forEach((router) => {
 			router.dispose();
 		});
 
-		this._routers = null;
+		this.#routers = null;
 
 		logger.debug('Composite router disposed');
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[CompositeRouter]';
 	}

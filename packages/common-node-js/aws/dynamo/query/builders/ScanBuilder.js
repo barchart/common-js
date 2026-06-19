@@ -6,17 +6,25 @@ import ActionBuilder from './ActionBuilder.js';
 import FilterBuilder from './FilterBuilder.js';
 
 /**
+ * @typedef {import('../definitions/Action.js').default} Action
+ */
+
+/**
  * Fluent interface for building a {@link Scan}.
  *
  * @public
  * @extends {ActionBuilder}
- * @param {Table} table - The table targeted.
  */
 export default class ScanBuilder extends ActionBuilder {
+	#scan;
+
+	/**
+	 * @param {Table} table - The table targeted.
+	 */
 	constructor(table) {
 		super();
 
-		this._scan = new Scan(table);
+		this.#scan = new Scan(table);
 	}
 
 	/**
@@ -26,7 +34,7 @@ export default class ScanBuilder extends ActionBuilder {
 	 * @returns {Action}
 	 */
 	get action() {
-		return this._scan;
+		return this.#scan;
 	}
 
 	/**
@@ -36,7 +44,7 @@ export default class ScanBuilder extends ActionBuilder {
 	 * @returns {Scan}
 	 */
 	get scan() {
-		return this._scan;
+		return this.#scan;
 	}
 
 	/**
@@ -55,7 +63,7 @@ export default class ScanBuilder extends ActionBuilder {
 
 		callback(filterBuilder);
 
-		this._scan = new Scan(this._scan.table, this._scan.index, filterBuilder.filter, this._scan.attributes, this._scan.limit, this._scan.segment, this._scan.totalSegments, this._scan.consistentRead, this._scan.skipDeserialization, this._scan.countOnly, this._scan.description, this._scan.monitorCapacityConsumed, this._scan.exclusiveStartKey);
+		this.#scan = new Scan(this.#scan.table, this.#scan.index, filterBuilder.filter, this.#scan.attributes, this.#scan.limit, this.#scan.segment, this.#scan.totalSegments, this.#scan.consistentRead, this.#scan.skipDeserialization, this.#scan.countOnly, this.#scan.description, this.#scan.monitorCapacityConsumed, this.#scan.exclusiveStartKey);
 
 		return this;
 	}
@@ -65,13 +73,13 @@ export default class ScanBuilder extends ActionBuilder {
 	 * table itself) and returns the current instance.
 	 *
 	 * @public
-	 * @param {String} indexName - The {@link Index} to target.
+	 * @param {string} indexName - The {@link Index} to target.
 	 * @returns {ScanBuilder}
 	 */
 	withIndex(indexName) {
 		assert.argumentIsRequired(indexName, 'indexName', String);
 
-		this._scan = new Scan(this._scan.table, getIndex(indexName, this._scan.table), this._scan.filter, this._scan.attributes, this._scan.limit, this._scan.segment, this._scan.totalSegments, this._scan.consistentRead, this._scan.skipDeserialization, this._scan.countOnly, this._scan.description, this._scan.monitorCapacityConsumed, this._scan.exclusiveStartKey);
+		this.#scan = new Scan(this.#scan.table, getIndex(indexName, this.#scan.table), this.#scan.filter, this.#scan.attributes, this.#scan.limit, this.#scan.segment, this.#scan.totalSegments, this.#scan.consistentRead, this.#scan.skipDeserialization, this.#scan.countOnly, this.#scan.description, this.#scan.monitorCapacityConsumed, this.#scan.exclusiveStartKey);
 
 		return this;
 	}
@@ -80,21 +88,21 @@ export default class ScanBuilder extends ActionBuilder {
 	 * The name of an attribute to select.
 	 *
 	 * @public
-	 * @param {String} attributeName
+	 * @param {string} attributeName
 	 * @returns {ScanBuilder}
 	 */
 	withAttribute(attributeName) {
 		assert.argumentIsRequired(attributeName, 'attributeName', String);
 
-		const attribute = getAttribute(attributeName, this._scan.table);
+		const attribute = getAttribute(attributeName, this.#scan.table);
 
 		if (attribute !== null) {
-			const attributes = this._scan.attributes;
+			const attributes = this.#scan.attributes;
 
 			if (!attributes.some(a => a.name === attribute.name)) {
 				attributes.push(attribute);
 
-				this._scan = new Scan(this._scan.table, this._scan.index, this._scan.filter, attributes, this._scan.limit, this._scan.segment, this._scan.totalSegments, this._scan.consistentRead, this._scan.skipDeserialization, this._scan.countOnly, this._scan.description, this._scan.monitorCapacityConsumed, this._scan.exclusiveStartKey);
+				this.#scan = new Scan(this.#scan.table, this.#scan.index, this.#scan.filter, attributes, this.#scan.limit, this.#scan.segment, this.#scan.totalSegments, this.#scan.consistentRead, this.#scan.skipDeserialization, this.#scan.countOnly, this.#scan.description, this.#scan.monitorCapacityConsumed, this.#scan.exclusiveStartKey);
 			}
 		}
 
@@ -105,13 +113,13 @@ export default class ScanBuilder extends ActionBuilder {
 	 * Sets a hard limit to the number of results returned from the scan.
 	 *
 	 * @public
-	 * @param {Number} limit
+	 * @param {number} limit
 	 * @returns {ScanBuilder}
 	 */
 	withLimit(limit) {
 		assert.argumentIsRequired(limit, 'limit', Number);
 
-		this._scan = new Scan(this._scan.table, this._scan.index, this._scan.filter, this._scan.attributes, limit, this._scan.segment, this._scan.totalSegments, this._scan.consistentRead, this._scan.skipDeserialization, this._scan.countOnly, this._scan.description, this._scan.monitorCapacityConsumed, this._scan.exclusiveStartKey);
+		this.#scan = new Scan(this.#scan.table, this.#scan.index, this.#scan.filter, this.#scan.attributes, limit, this.#scan.segment, this.#scan.totalSegments, this.#scan.consistentRead, this.#scan.skipDeserialization, this.#scan.countOnly, this.#scan.description, this.#scan.monitorCapacityConsumed, this.#scan.exclusiveStartKey);
 
 		return this;
 	}
@@ -120,12 +128,12 @@ export default class ScanBuilder extends ActionBuilder {
 	 * Sets a segmentation for parallel scan.
 	 *
 	 * @public
-	 * @param {Number} segment
-	 * @param {Number} totalSegments
+	 * @param {number} segment
+	 * @param {number} totalSegments
 	 * @returns {ScanBuilder}
 	 */
 	withConcurrency(segment, totalSegments) {
-		this._scan = new Scan(this._scan.table, this._scan.index, this._scan.filter, this._scan.attributes, this._scan.limit, segment, totalSegments, this._scan.consistentRead, this._scan.skipDeserialization, this._scan.countOnly, this._scan.description, this._scan.monitorCapacityConsumed, this._scan.exclusiveStartKey);
+		this.#scan = new Scan(this.#scan.table, this.#scan.index, this.#scan.filter, this.#scan.attributes, this.#scan.limit, segment, totalSegments, this.#scan.consistentRead, this.#scan.skipDeserialization, this.#scan.countOnly, this.#scan.description, this.#scan.monitorCapacityConsumed, this.#scan.exclusiveStartKey);
 
 		return this;
 	}
@@ -134,13 +142,13 @@ export default class ScanBuilder extends ActionBuilder {
 	 * Adds a description to the scan and returns the current instance.
 	 *
 	 * @public
-	 * @param {String} description
+	 * @param {string} description
 	 * @returns {ScanBuilder}
 	 */
 	withDescription(description) {
 		assert.argumentIsRequired(description, 'description', String);
 
-		this._scan = new Scan(this._scan.table, this._scan.index, this._scan.filter, this._scan.attributes, this._scan.limit, this._scan.segment, this._scan.totalSegments, this._scan.consistentRead, this._scan.skipDeserialization, this._scan.countOnly, description, this._scan.monitorCapacityConsumed, this._scan.exclusiveStartKey);
+		this.#scan = new Scan(this.#scan.table, this.#scan.index, this.#scan.filter, this.#scan.attributes, this.#scan.limit, this.#scan.segment, this.#scan.totalSegments, this.#scan.consistentRead, this.#scan.skipDeserialization, this.#scan.countOnly, description, this.#scan.monitorCapacityConsumed, this.#scan.exclusiveStartKey);
 
 		return this;
 	}
@@ -152,7 +160,7 @@ export default class ScanBuilder extends ActionBuilder {
 	 * @returns {ScanBuilder}
 	 */
 	withConsistentRead() {
-		this._scan = new Scan(this._scan.table, this._scan.index, this._scan.filter, this._scan.attributes, this._scan.limit, this._scan.segment, this._scan.totalSegments, true, this._scan.skipDeserialization, this._scan.countOnly, this._scan.description, this._scan.monitorCapacityConsumed, this._scan.exclusiveStartKey);
+		this.#scan = new Scan(this.#scan.table, this.#scan.index, this.#scan.filter, this.#scan.attributes, this.#scan.limit, this.#scan.segment, this.#scan.totalSegments, true, this.#scan.skipDeserialization, this.#scan.countOnly, this.#scan.description, this.#scan.monitorCapacityConsumed, this.#scan.exclusiveStartKey);
 
 		return this;
 	}
@@ -165,7 +173,7 @@ export default class ScanBuilder extends ActionBuilder {
 	 * @returns {ScanBuilder}
 	 */
 	withDeserializationSkipped() {
-		this._scan = new Scan(this._scan.table, this._scan.index, this._scan.filter, this._scan.attributes, this._scan.limit, this._scan.segment, this._scan.totalSegments, this._scan.consistentRead, true, this._scan.countOnly, this._scan.description, this._scan.monitorCapacityConsumed, this._scan.exclusiveStartKey);
+		this.#scan = new Scan(this.#scan.table, this.#scan.index, this.#scan.filter, this.#scan.attributes, this.#scan.limit, this.#scan.segment, this.#scan.totalSegments, this.#scan.consistentRead, true, this.#scan.countOnly, this.#scan.description, this.#scan.monitorCapacityConsumed, this.#scan.exclusiveStartKey);
 
 		return this;
 	}
@@ -177,7 +185,7 @@ export default class ScanBuilder extends ActionBuilder {
 	 * @returns {ScanBuilder}
 	 */
 	withCount() {
-		this._scan = new Scan(this._scan.table, this._scan.index, this._scan.filter, this._scan.attributes, this._scan.limit, this._scan.segment, this._scan.totalSegments, this._scan.consistentRead, this._scan.skipDeserialization, true, this._scan.description, this._scan.monitorCapacityConsumed, this._scan.exclusiveStartKey);
+		this.#scan = new Scan(this.#scan.table, this.#scan.index, this.#scan.filter, this.#scan.attributes, this.#scan.limit, this.#scan.segment, this.#scan.totalSegments, this.#scan.consistentRead, this.#scan.skipDeserialization, true, this.#scan.description, this.#scan.monitorCapacityConsumed, this.#scan.exclusiveStartKey);
 
 		return this;
 	}
@@ -189,7 +197,7 @@ export default class ScanBuilder extends ActionBuilder {
 	 * @returns {ScanBuilder}
 	 */
 	withCapacityMonitored() {
-		this._scan = new Scan(this._scan.table, this._scan.index, this._scan.filter, this._scan.attributes, this._scan.limit, this._scan.segment, this._scan.totalSegments, this._scan.consistentRead, this._scan.skipDeserialization, this._scan.countOnly, this._scan.description, true, this._scan.exclusiveStartKey);
+		this.#scan = new Scan(this.#scan.table, this.#scan.index, this.#scan.filter, this.#scan.attributes, this.#scan.limit, this.#scan.segment, this.#scan.totalSegments, this.#scan.consistentRead, this.#scan.skipDeserialization, this.#scan.countOnly, this.#scan.description, true, this.#scan.exclusiveStartKey);
 
 		return this;
 	}
@@ -204,7 +212,7 @@ export default class ScanBuilder extends ActionBuilder {
     withExclusiveStartKey(exclusiveStartKey){
         assert.argumentIsRequired(exclusiveStartKey, 'exclusiveStartKey', Object);
 
-        this._scan = new Scan(this._scan.table, this._scan.index, this._scan.filter, this._scan.attributes, this._scan.limit, this._scan.segment, this._scan.totalSegments, this._scan.consistentRead, this._scan.skipDeserialization, this._scan.countOnly, this._scan.description, this._scan.monitorCapacityConsumed, exclusiveStartKey);
+        this.#scan = new Scan(this.#scan.table, this.#scan.index, this.#scan.filter, this.#scan.attributes, this.#scan.limit, this.#scan.segment, this.#scan.totalSegments, this.#scan.consistentRead, this.#scan.skipDeserialization, this.#scan.countOnly, this.#scan.description, this.#scan.monitorCapacityConsumed, exclusiveStartKey);
 
         return this;
     }
@@ -223,6 +231,12 @@ export default class ScanBuilder extends ActionBuilder {
 		return new ScanBuilder(table);
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[ScanBuilder]';
 	}

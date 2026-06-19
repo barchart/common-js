@@ -7,27 +7,31 @@ import Enum from '@barchart/common-js/lang/Enum.js';
  *
  * @public
  * @extends {Enum}
- * @param {String} code
- * @param {String} description
- * @param {String} keyword
  */
 export default class ReturnValueType extends Enum {
+	#keyword;
+
+	/**
+	 * @param {string} code
+	 * @param {string} description
+	 * @param {string} keyword
+	 */
 	constructor(code, description, keyword) {
 		super(code, description);
 
 		assert.argumentIsRequired(keyword, 'keyword', String);
 
-		this._keyword = keyword;
+		this.#keyword = keyword;
 	}
 
 	/**
 	 * Keyword to be used in DynamoDB query language.
 	 *
 	 * @public
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	get keyword() {
-		return this._keyword;
+		return this.#keyword;
 	}
 
 	/**
@@ -42,7 +46,7 @@ export default class ReturnValueType extends Enum {
 	}
 
 	/**
-	 * Returns all of the attributes of the item, as they appeared before the update operation.
+	 * Returns all the attributes of the item, as they appeared before the update operation.
 	 *
 	 * @public
 	 * @static
@@ -64,7 +68,7 @@ export default class ReturnValueType extends Enum {
 	}
 
 	/**
-	 * Returns all of the attributes of the item, as they appear after the update operation.
+	 * Returns all the attributes of the item, as they appear after the update operation.
 	 *
 	 * @public
 	 * @static
@@ -85,6 +89,12 @@ export default class ReturnValueType extends Enum {
 		return returnTypeUpdatedNew;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return `[ReturnValueType (code=${this.code}, description=${this.description})]`;
 	}

@@ -8,25 +8,35 @@ import Writer from './Writer.js';
  *
  * @public
  * @extends {Writer}
- * @param {Writer[]} writers
  */
 export default class CompositeWriter extends Writer {
+	#writers;
+
+	/**
+	 * @param {Writer[]} writers
+	 */
 	constructor(writers) {
 		super();
 
 		assert.argumentIsArray(writers, 'writers', Writer, 'Writer');
 
-		this._writers = writers;
+		this.#writers = writers;
 	}
 
 	_write(source, target) {
-		return this._writers.reduce((targetToUse, writer) => writer.write(source, targetToUse), target);
+		return this.#writers.reduce((targetToUse, writer) => writer.write(source, targetToUse), target);
 	}
 
 	_canWrite(source, target) {
 		return true;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[CompositeWriter]';
 	}

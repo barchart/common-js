@@ -23,6 +23,12 @@ export default class DataOperationComparators {
 		return instance;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[DataOperationComparators]';
 	}

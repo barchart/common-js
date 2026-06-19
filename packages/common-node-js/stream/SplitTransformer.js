@@ -12,11 +12,17 @@ const logger = log4js.getLogger('common-node/stream/SplitTransformer');
  *
  * @public
  * @extends {Stream.Transform}
- * @param {String=} description
- * @param {Boolean=} silent
- * @param {Object=} options
  */
 export default class SplitTransformer extends Stream.Transform {
+	#counter;
+	#description;
+	#silent;
+
+	/**
+	 * @param {string=} description
+	 * @param {boolean=} silent
+	 * @param {object=} options
+	 */
 	constructor(description, silent, options) {
 		super(object.merge({ objectMode: true }, (options || { })));
 
@@ -24,28 +30,28 @@ export default class SplitTransformer extends Stream.Transform {
 		assert.argumentIsOptional(silent, 'silent', Boolean);
 		assert.argumentIsOptional(options, 'options', Object);
 
-		this._description = description || 'Split Transformer';
-		this._silent = is.boolean(silent) && silent;
+		this.#description = description || 'Split Transformer';
+		this.#silent = is.boolean(silent) && silent;
 
-		this._counter = 0;
+		this.#counter = 0;
 	}
 
 	_transform(chunk, encoding, callback) {
-		this._counter = this._counter + 1;
+		this.#counter = this.#counter + 1;
 
 		let error = null;
 
 		if (is.array(chunk)) {
 			chunk.forEach(item => this.push(item));
 		} else {
-			error = new Error(`Transformation [ ${this._counter} ] for [ ${this._description} ] failed, unexpected input type.`);
+			error = new Error(`Transformation [ ${this.#counter} ] for [ ${this.#description} ] failed, unexpected input type.`);
 		}
 
 		if (error === null) {
 			callback();
 		} else {
-			if (this._silent) {
-				logger.warn(`Transformation [ ${this._counter} ] for [ ${this._description} ] failed.`);
+			if (this.#silent) {
+				logger.warn(`Transformation [ ${this.#counter} ] for [ ${this.#description} ] failed.`);
 
 				if (logger.isTraceEnabled() && chunk) {
 					logger.trace(chunk);
@@ -58,6 +64,12 @@ export default class SplitTransformer extends Stream.Transform {
 		}
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[SplitTransformer]';
 	}

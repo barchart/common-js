@@ -7,75 +7,82 @@ import KeyType from './../../schema/definitions/KeyType.js';
  * part of a {@link Scan} or {@link Query}.
  *
  * @public
- * @param {String} description
- * @param {Function} formatter
- * @param {Number} operandCount
- * @param {Array<KeyType>} keyTypes
  */
 export default class OperatorType {
+	#description;
+	#formatter;
+	#keyTypes;
+	#operandCount;
+
+	/**
+	 * @param {string} description
+	 * @param {Function} formatter
+	 * @param {number} operandCount
+	 * @param {Array<KeyType>} keyTypes
+	 */
 	constructor(description, formatter, operandCount, keyTypes) {
 		assert.argumentIsRequired(description, 'description', String);
 		assert.argumentIsRequired(formatter, 'formatter', Function);
 		assert.argumentIsRequired(operandCount, 'operandCount', Number);
 		assert.argumentIsArray(keyTypes, 'keyTypes', KeyType, 'KeyType');
 
-		this._description = description;
-		this._formatter = formatter;
-		this._operandCount = operandCount;
-		this._keyTypes = keyTypes;
+		this.#description = description;
+		this.#formatter = formatter;
+		this.#operandCount = operandCount;
+		this.#keyTypes = keyTypes;
 	}
 
 	/**
 	 * Description of the operator.
 	 *
 	 * @public
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	get description() {
-		return this._description;
+		return this.#description;
 	}
 
 	/**
 	 * The number of expected operands (will be zero, one, or two).
 	 *
 	 * @public
-	 * @returns {Number}
+	 * @returns {number}
 	 */
 	get operandCount() {
-		return this._operandCount;
+		return this.#operandCount;
 	}
 
 	/**
-	 * Returns true, if the operator an be used with the {@link KeyType}.
+	 * Returns true, if the operator can be used with the {@link KeyType}.
 	 *
 	 * @public
 	 * @param {KeyType} keyType - The type of key to check.
-	 * @returns {Boolean|*}
+	 * @returns {boolean|*}
 	 */
 	validFor(keyType) {
 		assert.argumentIsRequired(keyType, 'keyType', KeyType, 'KeyType');
 
-		return this._keyTypes.some(kt => kt === keyType);
+		return this.#keyTypes.some(kt => kt === keyType);
 	}
 
 	/**
 	 * Returns a string suitable for use in an AWS SDK expression.
 	 *
 	 * @public
-	 * @param {String} field
-	 * @param {String|Array<String>} operand
-	 * @returns {String}
+	 * @param {string} field
+	 * @param {string|Array<string>} operand
+	 * @returns {string}
 	 */
 	format(field, operand) {
 		assert.argumentIsRequired(field, 'field', String);
 
-		if (this._operandCount === 2) {
+		if (this.#operandCount === 2) {
 			assert.argumentIsArray(operand, 'operand', String);
-		} else if (this._operandCount === 1) {
+		} else if (this.#operandCount === 1) {
 			assert.argumentIsRequired(operand, 'operand', String);
 		}
 
-		return this._formatter(field, operand);
+		return this.#formatter(field, operand);
 	}
 
 	/**
@@ -211,7 +218,7 @@ export default class OperatorType {
 	}
 
 	/**
-	 * Attribute doesn't exist (for use with {@link Conditional} instances only}).
+	 * Attribute doesn't exist (for use with {@link Conditional} instances only).
 	 *
 	 * @public
 	 * @static
@@ -221,8 +228,14 @@ export default class OperatorType {
 		return operatorTypeAttributeNotExists;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
-		return `[OperatorType (description=${this._description})]`;
+		return `[OperatorType (description=${this.#description})]`;
 	}
 }
 

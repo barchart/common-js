@@ -6,17 +6,25 @@ import ActionBuilder from './ActionBuilder.js';
 import FilterBuilder from './FilterBuilder.js';
 
 /**
+ * @typedef {import('../definitions/Action.js').default} Action
+ */
+
+/**
  * Fluent interface for building a {@link Conditional}.
  *
  * @public
  * @extends {ActionBuilder}
- * @param {Table} table - The table targeted.
  */
 export default class ConditionalBuilder extends ActionBuilder {
+	#conditional;
+
+	/**
+	 * @param {Table} table - The table targeted.
+	 */
 	constructor(table) {
 		super();
 
-		this._conditional = new Conditional(table);
+		this.#conditional = new Conditional(table);
 	}
 
 	/**
@@ -26,7 +34,7 @@ export default class ConditionalBuilder extends ActionBuilder {
 	 * @returns {Action}
 	 */
 	get action() {
-		return this._conditional;
+		return this.#conditional;
 	}
 
 	/**
@@ -36,7 +44,7 @@ export default class ConditionalBuilder extends ActionBuilder {
 	 * @returns {Conditional}
 	 */
 	get conditional() {
-		return this._conditional;
+		return this.#conditional;
 	}
 
 	/**
@@ -55,7 +63,7 @@ export default class ConditionalBuilder extends ActionBuilder {
 
 		callback(filterBuilder);
 
-		this._conditional = new Conditional(this._conditional.table, filterBuilder.filter, this._conditional.description);
+		this.#conditional = new Conditional(this.#conditional.table, filterBuilder.filter, this.#conditional.description);
 
 		return this;
 	}
@@ -64,13 +72,13 @@ export default class ConditionalBuilder extends ActionBuilder {
 	 * Adds a description to the scan and returns the current instance.
 	 *
 	 * @public
-	 * @param {String} description
+	 * @param {string} description
 	 * @returns {ConditionalBuilder}
 	 */
 	withDescription(description) {
 		assert.argumentIsRequired(description, 'description', String);
 
-		this._conditional = new Conditional(this._conditional.table, this._conditional.filter, description);
+		this.#conditional = new Conditional(this.#conditional.table, this.#conditional.filter, description);
 
 		return this;
 	}
@@ -89,6 +97,12 @@ export default class ConditionalBuilder extends ActionBuilder {
 		return new ConditionalBuilder(table);
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[ConditionalBuilder]';
 	}

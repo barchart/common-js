@@ -4,26 +4,31 @@ import * as assert from '@barchart/common-js/lang/assert.js';
  * Defines the ordering of results of a {@link Query}.
  *
  * @public
- * @param {String} description
- * @param {Boolean} forward
  */
 export default class OrderingType {
+	#description;
+	#forward;
+
+	/**
+	 * @param {string} description
+	 * @param {boolean} forward
+	 */
 	constructor(description, forward) {
 		assert.argumentIsRequired(description, 'description', String);
 		assert.argumentIsRequired(forward, 'forward', Boolean);
 
-		this._description = description;
-		this._forward = forward;
+		this.#description = description;
+		this.#forward = forward;
 	}
 
 	/**
 	 * Description of the operator.
 	 *
 	 * @public
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	get description() {
-		return this._description;
+		return this.#description;
 	}
 
 	/**
@@ -32,10 +37,10 @@ export default class OrderingType {
 	 * descending order.
 	 *
 	 * @public
-	 * @returns {Number}
+	 * @returns {boolean}
 	 */
 	get forward() {
-		return this._forward;
+		return this.#forward;
 	}
 
 	/**
@@ -60,8 +65,14 @@ export default class OrderingType {
 		return orderingTypeDescending;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
-		return `[OrderingType (description=${this._description})]`;
+		return `[OrderingType (description=${this.#description})]`;
 	}
 }
 

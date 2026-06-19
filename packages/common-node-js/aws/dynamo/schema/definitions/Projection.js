@@ -11,9 +11,16 @@ import ProjectionType from './ProjectionType.js';
  * @public
  */
 export default class Projection {
+	#attributes;
+	#type;
+
+	/**
+	 * @param {ProjectionType} type
+	 * @param {*} attributes
+	 */
 	constructor(type, attributes) {
-		this._type = type;
-		this._attributes = attributes || [ ];
+		this.#type = type;
+		this.#attributes = attributes || [ ];
 	}
 
 	/**
@@ -23,7 +30,7 @@ export default class Projection {
 	 * @returns {ProjectionType}
 	 */
 	get type() {
-		return this._type;
+		return this.#type;
 	}
 
 	/**
@@ -33,7 +40,7 @@ export default class Projection {
 	 * @returns {Array<Attribute>}
 	 */
 	get attributes() {
-		return [...this._attributes];
+		return [...this.#attributes];
 	}
 
 	/**
@@ -42,52 +49,52 @@ export default class Projection {
 	 * @public
 	 */
 	validate() {
-		if (!(this._type instanceof ProjectionType)) {
+		if (!(this.#type instanceof ProjectionType)) {
 			throw new Error('Projection type is invalid.');
 		}
 
-		if (!is.array(this._attributes)) {
+		if (!is.array(this.#attributes)) {
 			throw new Error('Projection must have an array of attributes.');
 		}
 
-		if (!this._attributes.every(a => a instanceof Attribute)) {
+		if (!this.#attributes.every(a => a instanceof Attribute)) {
 			throw new Error('Projection attributes array can only contain attribute instances).');
 		}
 
-		if (array.uniqueBy(this._attributes, a => a.name).length !== this._attributes.length) {
+		if (array.uniqueBy(this.#attributes, a => a.name).length !== this.#attributes.length) {
 			throw new Error('Projection attributes must be unique.');
 		}
 
-		if (this._type === ProjectionType.CUSTOM && this._attributes.length === 0) {
+		if (this.#type === ProjectionType.CUSTOM && this.#attributes.length === 0) {
 			throw new Error('Projection (custom) must have at least one attribute.');
 		}
 
-		if (this._type === ProjectionType.KEYS && this._attributes.length !== 0) {
+		if (this.#type === ProjectionType.KEYS && this.#attributes.length !== 0) {
 			throw new Error('Projection (keys) cannot define any attributes.');
 		}
 
-		if (this._type === ProjectionType.ALL && this._attributes.length !== 0) {
+		if (this.#type === ProjectionType.ALL && this.#attributes.length !== 0) {
 			throw new Error('Projection (all) cannot define any attributes.');
 		}
 
-		this._attributes.forEach(a => a.validate());
+		this.#attributes.forEach(a => a.validate());
 	}
 
 	/**
 	 * Generates an object which is suitable for use by the AWS SDK.
 	 *
 	 * @public
-	 * @returns {Object}
+	 * @returns {object}
 	 */
 	toProjectionSchema() {
 		this.validate();
 
 		const schema = {
-			ProjectionType: this._type.code
+			ProjectionType: this.#type.code
 		};
 
-		if (this._attributes.length > 0) {
-			schema.NonKeyAttributes = this._attributes.map(a => a.name);
+		if (this.#attributes.length > 0) {
+			schema.NonKeyAttributes = this.#attributes.map(a => a.name);
 		}
 
 		return schema;
@@ -99,8 +106,8 @@ export default class Projection {
 	 *
 	 * @public
 	 * @param {Projection} other - The index to compare.
-	 * @param {Boolean=} relaxed - If true, the attributes are compared in "relaxed" mode.
-	 * @returns {Boolean}
+	 * @param {boolean=} relaxed - If true, the attributes are compared in "relaxed" mode.
+	 * @returns {boolean}
 	 */
 	equals(other, relaxed) {
 		if (other === this) {
@@ -110,15 +117,21 @@ export default class Projection {
 		let returnVal = other instanceof Projection;
 
 		if (returnVal) {
-			returnVal = returnVal = this._type === other.type;
+			returnVal = returnVal = this.#type === other.type;
 
-			returnVal = returnVal && this._attributes.length === other.attributes.length;
-			returnVal = returnVal && this._attributes.every(a => other.attributes.some(oa => oa.equals(a, relaxed)));
+			returnVal = returnVal && this.#attributes.length === other.attributes.length;
+			returnVal = returnVal && this.#attributes.every(a => other.attributes.some(oa => oa.equals(a, relaxed)));
 		}
 
 		return returnVal;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Projection]';
 	}

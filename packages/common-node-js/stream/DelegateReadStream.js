@@ -12,43 +12,56 @@ const logger = log4js.getLogger('common-node/aws/dynamo/stream/DelegateReadStrea
  *
  * @public
  * @extends {Stream.Readable}
- * @param {DelegateReadStream~dataProvider} delegate
- * @param {Number=} highWaterMark
- * @param {Boolean=} discrete
  */
 export default class DelegateReadStream extends Stream.Readable {
+	#batch;
+	#completed;
+	#delegate;
+	#discrete;
+	#error;
+	#readPromise;
+	#reading;
+	#scanned;
+	#started;
+	#stopping;
+
+	/**
+	 * @param {DataProvider} delegate
+	 * @param {number=} highWaterMark
+	 * @param {boolean=} discrete
+	 */
 	constructor(delegate, highWaterMark, discrete) {
 		super({ objectMode: true, highWaterMark: highWaterMark || 10 });
 
 		assert.argumentIsRequired(delegate, 'delegate', Function);
 		assert.argumentIsOptional(highWaterMark, 'highWaterMark', Number);
 		assert.argumentIsOptional(discrete, 'discrete', Boolean);
-		
-		this._delegate = delegate;
 
-		this._discrete = discrete || false;
-		
-		this._scanned = 0;
-		this._batch = 0;
+		this.#delegate = delegate;
 
-		this._started = false;
-		this._stopping = false;
-		this._reading = false;
-		this._completed = false;
+		this.#discrete = discrete || false;
 
-		this._error = false;
+		this.#scanned = 0;
+		this.#batch = 0;
 
-		this._readPromise = null;
+		this.#started = false;
+		this.#stopping = false;
+		this.#reading = false;
+		this.#completed = false;
+
+		this.#error = false;
+
+		this.#readPromise = null;
 	}
 
 	/**
 	 * Returns the number of items generated (so far).
 	 *
 	 * @public
-	 * @returns {Number}
+	 * @returns {number}
 	 */
 	get scanned() {
-		return this._scanned;
+		return this.#scanned;
 	}
 
 	/**
@@ -57,10 +70,10 @@ export default class DelegateReadStream extends Stream.Readable {
 	 * stop producing data soon.
 	 *
 	 * @public
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	get stopping() {
-		return this._stopping;
+		return this.#stopping;
 	}
 
 	/**
@@ -68,82 +81,82 @@ export default class DelegateReadStream extends Stream.Readable {
 	 * and all possible items have been enqueued.
 	 *
 	 * @public
-	 * @return {Boolean}
+	 * @return {boolean}
 	 */
 	get completed() {
-		return this._completed;
+		return this.#completed;
 	}
 
 	_read(size) {
-		if (this._reading) {
+		if (this.#reading) {
 			return;
 		}
 
-		if (this._error) {
+		if (this.#error) {
 			logger.error('Unable to continue reading, an error was encountered.');
 			return;
 		}
 
-		if (this._started) {
+		if (this.#started) {
 			logger.debug('Delegate stream resumed');
 		} else {
 			logger.debug('Delegate stream started');
 
-			this._started = true;
+			this.#started = true;
 		}
 
-		this._reading = true;
+		this.#reading = true;
 
 		const generateChunkRecursive = async () => {
-			if (this._stopping || this.completed) {
-				this._reading = false;
+			if (this.#stopping || this.completed) {
+				this.#reading = false;
 
-				if (this._stopping) {
+				if (this.#stopping) {
 					logger.debug('Scan stream stopping, stream stopped');
 				} else {
 					logger.debug('Scan stream stopping, no more items');
 				}
 
 				this.push(null);
-				
+
 				return;
 			}
 
-			const currentBatch = this._batch = this._batch + 1;
+			const currentBatch = this.#batch = this.#batch + 1;
 
 			logger.debug(`Starting batch [ ${currentBatch} ]`);
-			
+
 			try {
-				const items = await this._delegate();
+				const items = await this.#delegate();
 
 				if (items === null) {
-					this._completed = true;
+					this.#completed = true;
 				}
-				
-				if (items !== null && items.length !== 0) {
-					this._scanned = this._scanned + items.length;
 
-					if (this._discrete) {
-						this._reading = items.reduce((accumulator, item) => {
+				if (items !== null && items.length !== 0) {
+					this.#scanned = this.#scanned + items.length;
+
+					if (this.#discrete) {
+						this.#reading = items.reduce((accumulator, item) => {
 							return this.push(item);
-						}, this._reading);
+						}, this.#reading);
 					} else {
-						this._reading = this.push(items);
+						this.#reading = this.push(items);
 					}
 				}
 
 				logger.debug(`Completed batch [ ${currentBatch} ]`);
 
-				if (this._reading) {
+				if (this.#reading) {
 					generateChunkRecursive();
 				} else {
 					logger.debug('Scan stream paused');
 				}
 			} catch (e) {
-				this._readPromise = null;
+				this.#readPromise = null;
 
-				this._reading = false;
-				this._error = true;
+				this.#reading = false;
+				this.#error = true;
 
 				this.push(null);
 
@@ -163,17 +176,17 @@ export default class DelegateReadStream extends Stream.Readable {
 	 * stopped, and no more data will be produced, the returned promise resolves.
 	 *
 	 * @public
-	 * @return {Promise<Object|null>}
+	 * @return {Promise<object|null>}
 	 */
 	stop() {
-		this._stopping = true;
+		this.#stopping = true;
 
 		let readPromise;
 
-		if (this._readPromise === null) {
+		if (this.#readPromise === null) {
 			readPromise = Promise.resolve();
 		} else {
-			readPromise = this._readPromise;
+			readPromise = this.#readPromise;
 		}
 
 		return readPromise.then(() => {
@@ -181,6 +194,12 @@ export default class DelegateReadStream extends Stream.Readable {
 		});
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[DelegateReadStream]';
 	}
@@ -192,6 +211,6 @@ export default class DelegateReadStream extends Stream.Readable {
  *
  * @public
  * @async
- * @callback DelegateReadStream~dataProvider
+ * @callback DataProvider
  * @returns {Promise<Array|null>}
  */

@@ -15,8 +15,10 @@ const logger = log4js.getLogger('common-node/aws/lambda/responses/LambdaResponse
  * @public
  */
 export default class LambdaResponseProcessor {
+	#generators;
+
 	constructor() {
-		this._generators = [ ];
+		this.#generators = [ ];
 	}
 
 	/**
@@ -31,7 +33,7 @@ export default class LambdaResponseProcessor {
 	addResponseGenerator(generator) {
 		assert.argumentIsRequired(generator, 'generator', LambdaResponseGenerator, 'LambdaResponseGenerator');
 
-		this._generators.push(generator);
+		this.#generators.push(generator);
 	}
 
 	/**
@@ -39,16 +41,16 @@ export default class LambdaResponseProcessor {
 	 *
 	 * @public
 	 * @async
-	 * @param {Number} responseCode
-	 * @param {Object} responseHeaders
-	 * @param {Buffer|String} responseData
-	 * @returns {Promise<Object>}
+	 * @param {number} responseCode
+	 * @param {object} responseHeaders
+	 * @param {Buffer|string} responseData
+	 * @returns {Promise<object>}
 	 */
 	async process(responseCode, responseHeaders, responseData) {
 		assert.argumentIsRequired(responseCode, 'responseCode', Number);
 		assert.argumentIsRequired(responseHeaders, 'responseHeaders', Object);
 
-		const generators = this._generators.slice(0);
+		const generators = this.#generators.slice(0);
 		generators.push(LambdaResponseGenerator.DEFAULT);
 
 		const responseSize = Buffer.byteLength(responseData);
@@ -70,6 +72,12 @@ export default class LambdaResponseProcessor {
 		}));
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[LambdaResponseProcessor]';
 	}

@@ -14,13 +14,20 @@ const logger = log4js.getLogger('common-node/aws/LambdaProvider');
  *
  * @public
  * @extends Disposable
- * @param {object} configuration
- * @param {string} configuration.region
- * @param {string=} configuration.apiVersion
- * @param {string=} configuration.bucket
- * @param {string=} configuration.folder
  */
 export default class LambdaProvider extends Disposable {
+	#configuration;
+	#lambda;
+	#startPromise;
+	#started;
+
+	/**
+	 * @param {object} configuration
+	 * @param {string} configuration.region
+	 * @param {string=} configuration.apiVersion
+	 * @param {string=} configuration.bucket
+	 * @param {string=} configuration.folder
+	 */
 	constructor(configuration) {
 		super();
 
@@ -28,12 +35,12 @@ export default class LambdaProvider extends Disposable {
 		assert.argumentIsRequired(configuration.region, 'configuration.region', String);
 		assert.argumentIsOptional(configuration.apiVersion, 'configuration.apiVersion', String);
 
-		this._configuration = configuration;
+		this.#configuration = configuration;
 
-		this._lambda = null;
+		this.#lambda = null;
 
-		this._startPromise = null;
-		this._started = false;
+		this.#startPromise = null;
+		this.#started = false;
 	}
 
 	/**
@@ -42,23 +49,23 @@ export default class LambdaProvider extends Disposable {
 	 *
 	 * @public
 	 * @async
-	 * @returns {Promise<Boolean>}
+	 * @returns {Promise<boolean>}
 	 */
 	async start() {
 		if (this.disposed) {
 			return Promise.reject('Unable to start, the Lambda provider has been disposed.');
 		}
 
-		if (this._startPromise === null) {
-			this._startPromise = (async () => {
+		if (this.#startPromise === null) {
+			this.#startPromise = (async () => {
 				try {
-					this._lambda = new LambdaClient({ apiVersion: this._configuration.apiVersion || '2015-03-31', region: this._configuration.region });
+					this.#lambda = new LambdaClient({ apiVersion: this.#configuration.apiVersion || '2015-03-31', region: this.#configuration.region });
 
 					logger.info('The Lambda provider has started');
 
-					this._started = true;
+					this.#started = true;
 
-					return this._started;
+					return this.#started;
 				} catch (e) {
 					logger.error('The Lambda provider failed to start', e);
 
@@ -67,7 +74,7 @@ export default class LambdaProvider extends Disposable {
 			})();
 		}
 
-		return this._startPromise;
+		return this.#startPromise;
 	}
 
 	/**
@@ -75,17 +82,17 @@ export default class LambdaProvider extends Disposable {
 	 *
 	 * @public
 	 * @async
-	 * @param {String} functionName
-	 * @param {Object} event
-	 * @param {Boolean=} synchronous
-	 * @return {Promise<Object>}
+	 * @param {string} functionName
+	 * @param {object} event
+	 * @param {boolean=} synchronous
+	 * @return {Promise<object>}
 	 */
 	async invoke(functionName, event, synchronous) {
 		assert.argumentIsRequired(functionName, 'functionName', String);
 		assert.argumentIsRequired(event, 'event');
 		assert.argumentIsOptional(synchronous, 'synchronous', Boolean);
 
-		checkReady.call(this);
+		this.#checkReady();
 
 		const data = { };
 
@@ -96,20 +103,27 @@ export default class LambdaProvider extends Disposable {
 			data.InvocationType = 'Event';
 		}
 
-		return this._lambda.send(new InvokeCommand(data));
+		return this.#lambda.send(new InvokeCommand(data));
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[LambdaProvider]';
 	}
-}
 
-function checkReady() {
-	if (this.disposed) {
-		throw new Error('The Lambda provider has been disposed.');
-	}
 
-	if (!this._started) {
-		throw new Error('The Lambda provider has not been started.');
-	}
+	#checkReady() {
+		if (this.disposed) {
+			throw new Error('The Lambda provider has been disposed.');
+			}
+
+			if (!this.#started) {
+				throw new Error('The Lambda provider has not been started.');
+			}
+		}
 }

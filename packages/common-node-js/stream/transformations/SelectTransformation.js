@@ -9,11 +9,17 @@ import Transformation from './Transformation.js';
  * properties from the input object.
  *
  * @public
- * @param {Array<String>} inputPropertyNames - The property names to select from input object.
- * @param {Array<String>=} outputPropertyNames - The property names write to the output object. If omitted, the "input" property names are used.
  * @extends {Transformation}
  */
 export default class SelectTransformation extends Transformation {
+	#inputPropertyNames;
+	#outputPropertyNames;
+
+	/**
+     * @param {Array<string>} inputPropertyNames - The property names to select from input object.
+     * @param {Array<string>} outputPropertyNames - The property names write to the output object. If omitted, the "input" property names are used.
+     * @param {string} description - The description
+     */
 	constructor(inputPropertyNames, outputPropertyNames, description) {
 		super((description || 'Selection Transformation'));
 
@@ -24,8 +30,8 @@ export default class SelectTransformation extends Transformation {
 			assert.argumentIsValid(outputPropertyNames, 'outputPropertyNames', x => outputPropertyNames.length === inputPropertyNames.length, 'input and output sizes must match');
 		}
 
-		this._inputPropertyNames = inputPropertyNames;
-		this._outputPropertyNames = outputPropertyNames || inputPropertyNames;
+		this.#inputPropertyNames = inputPropertyNames;
+		this.#outputPropertyNames = outputPropertyNames || inputPropertyNames;
 	}
 
 	_canTransform(input) {
@@ -33,15 +39,21 @@ export default class SelectTransformation extends Transformation {
 	}
 
 	_transform(input) {
-		return this._inputPropertyNames.reduce((output, inputPropertyName, i) => {
+		return this.#inputPropertyNames.reduce((output, inputPropertyName, i) => {
 			if (attributes.has(input, inputPropertyName)) {
-				attributes.write(output, this._outputPropertyNames[i], attributes.read(input, inputPropertyName));
+				attributes.write(output, this.#outputPropertyNames[i], attributes.read(input, inputPropertyName));
 			}
 
 			return output;
 		}, { });
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[SelectTransformation]';
 	}

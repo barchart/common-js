@@ -10,75 +10,124 @@ import process from 'process';
 const logger = log4js.getLogger('common-node/cluster/MessageProvider');
 
 export default class MessageProvider {
+	#startPromise;
+	#started;
+
 	constructor() {
-		this._started = false;
-		this._startPromise = null;
+		this.#started = false;
+		this.#startPromise = null;
 	}
 
+	/**
+	 * Starts the component.
+	 *
+	 * @public
+	 * @returns {Promise<*>}
+	 */
 	start() {
-		if (this._startPromise === null) {
-			this._startPromise = Promise.all([ sender.start(), receiver.start() ])
+		if (this.#startPromise === null) {
+			this.#startPromise = Promise.all([ sender.start(), receiver.start() ])
 				.then(() => {
 
 				}).then(() => {
-					this._started = true;
+					this.#started = true;
 
 					return this;
 				});
 		}
 
-		return this._startPromise;
+		return this.#startPromise;
 	}
 
+	/**
+	 * Sends a message.
+	 *
+	 * @public
+	 * @param {string} type
+	 * @param {object} payload
+	 * @param {object} target
+	 */
 	send(type, payload, target) {
-		if (!this._started) {
+		if (!this.#started) {
 			throw new Error('The message provider has not been started.');
 		}
 
 		sender.send(type, payload, target);
 	}
 
+	/**
+	 * Broadcasts a message.
+	 *
+	 * @public
+	 * @param {string} type
+	 * @param {object} payload
+	 */
 	broadcast(type, payload) {
-		if (!this._started) {
+		if (!this.#started) {
 			throw new Error('The message provider has not been started.');
 		}
 
 		sender.broadcast(type, payload);
 	}
 
+	/**
+	 * Registers a message handler.
+	 *
+	 * @public
+	 * @param {string} type
+	 * @param {Function} handler
+	 * @returns {Disposable}
+	 */
 	handle(type, handler) {
-		if (!this._started) {
+		if (!this.#started) {
 			throw new Error('The message provider has not been started.');
 		}
 
 		return receiver.handle(type, handler);
 	}
 
+	/**
+	 * Runs the register peer connected observer operation.
+	 *
+	 * @public
+	 * @param {Function} handler
+	 * @returns {*}
+	 */
 	registerPeerConnectedObserver(handler) {
-		if (!this._started) {
+		if (!this.#started) {
 			throw new Error('The message provider has not been started.');
 		}
 
 		return receiver.registerPeerConnectedObserver(handler);
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[MessageProvider]';
 	}
 }
 
 class Receiver {
+	#handlers;
+	#peerConnected;
+	#startPromise;
+
 	constructor() {
-		this._handlers = { };
+		this.#handlers = { };
 
-		this._peerConnected = new Event(this);
+		this.#peerConnected = new Event(this);
 
-		this._startPromise = null;
+		this.#startPromise = null;
 	}
 
 	start() {
-		if (this._startPromise === null) {
-			this._startPromise = Promise.resolve()
+		if (this.#startPromise === null) {
+			this.#startPromise = Promise.resolve()
 				.then(() => {
 					return this._start();
 				}).then(() => {
@@ -86,7 +135,7 @@ class Receiver {
 				});
 		}
 
-		return this._startPromise;
+		return this.#startPromise;
 	}
 
 	_start() {
@@ -97,19 +146,27 @@ class Receiver {
 		assert.argumentIsRequired(type, 'type', String);
 		assert.argumentIsRequired(handler, 'handler', Function);
 
-		if (this._handlers.hasOwnProperty(type)) {
+		if (this.#handlers.hasOwnProperty(type)) {
 			throw new Error('Unable to add new handler for ' + type + ' to cluster receiver, a handler for that type already exists.');
 		}
 
-		this._handlers[type] = handler;
+		this.#handlers[type] = handler;
 
 		return Disposable.fromAction(() => {
-			delete this._handlers[type];
+			delete this.#handlers[type];
 		});
 	}
 
 	registerPeerConnectedObserver(handler) {
-		return this._peerConnected.register(handler);
+		return this.#peerConnected.register(handler);
+	}
+
+	_getHandler(type) {
+		return this.#handlers[type];
+	}
+
+	_firePeerConnected(peer) {
+		this.#peerConnected.fire(peer);
 	}
 
 	toString() {
@@ -130,7 +187,7 @@ class MasterReceiver extends Receiver {
 				logger.trace('Master received message from worker process', worker.id, message);
 
 				const envelope = message;
-				const handler = this._handlers[envelope.t];
+				const handler = this._getHandler(envelope.t);
 
 				if (handler) {
 					handler(envelope.s, envelope.t, envelope.p);
@@ -149,7 +206,7 @@ class MasterReceiver extends Receiver {
 		const readyBinding = this.handle('ready', (s, t, p) => {
 			logger.info('Peer', s, 'signaled ready');
 
-			this._peerConnected.fire(s);
+			this._firePeerConnected(s);
 		});
 	}
 }
@@ -164,27 +221,30 @@ class WorkerReceiver extends Receiver {
 			logger.trace('Worker process', cluster.worker.id, 'received message from master process', message);
 
 			const envelope = message;
-			const handler = this._handlers[envelope.t];
+			const handler = this._getHandler(envelope.t);
 
 			if (handler) {
 				handler(envelope.s, envelope.t, envelope.p);
 			}
 		});
 
-		this._peerConnected.fire(0);
+		this._firePeerConnected(0);
 	}
 }
 
 class Sender {
-	constructor(id) {
-		this._id = id;
+	#id;
+	#startPromise;
 
-		this._startPromise = null;
+	constructor(id) {
+		this.#id = id;
+
+		this.#startPromise = null;
 	}
 
 	start() {
-		if (this._startPromise === null) {
-			this._startPromise = Promise.resolve()
+		if (this.#startPromise === null) {
+			this.#startPromise = Promise.resolve()
 				.then(() => {
 					return this._start();
 				}).then(() => {
@@ -192,7 +252,7 @@ class Sender {
 				});
 		}
 
-		return this._startPromise;
+		return this.#startPromise;
 	}
 
 	_start() {
@@ -205,6 +265,10 @@ class Sender {
 
 	broadcast(type, payload) {
 		return;
+	}
+
+	_getId() {
+		return this.#id;
 	}
 
 	toString() {
@@ -226,11 +290,11 @@ class MasterSender extends Sender {
 	}
 
 	send(type, payload, target) {
-		cluster.workers[target].send(Sender.getMessage(this._id, type, payload));
+		cluster.workers[target].send(Sender.getMessage(this._getId(), type, payload));
 	}
 
 	broadcast(type, payload) {
-		const message = Sender.getMessage(this._id, type, payload);
+		const message = Sender.getMessage(this._getId(), type, payload);
 
 		Object.keys(cluster.workers).forEach((id) => {
 			cluster.workers[id].send(message);
@@ -252,11 +316,11 @@ class WorkerSender extends Sender {
 	}
 
 	send(type, payload, target) {
-		if (this._id === null) {
+		if (this._getId() === null) {
 			throw new Error('Unable to send message without worker identifier.');
 		}
 
-		process.send(Sender.getMessage(this._id, type, payload));
+		process.send(Sender.getMessage(this._getId(), type, payload));
 	}
 
 	broadcast(type, payload) {

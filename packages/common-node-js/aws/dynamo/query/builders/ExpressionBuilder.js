@@ -4,17 +4,29 @@ import Expression from './../definitions/Expression.js';
 import OperatorType from './../definitions/OperatorType.js';
 
 /**
+ * @typedef {import('./ActionBuilder.js').default} ActionBuilder
+ */
+
+/**
+ * @typedef {import('../../schema/definitions/Attribute.js').default} Attribute
+ */
+
+/**
  * Fluent interface for building an {@link Expression}.
  *
  * @public
- * @param {string} attributeName
- * @param {ActionBuilder} parent
  */
 export default class ExpressionBuilder {
+	#expression;
+
+	/**
+	 * @param {string} attributeName
+	 * @param {ActionBuilder} parent
+	 */
 	constructor(attributeName, parent) {
 		assert.argumentIsRequired(attributeName, 'attributeName', String);
 
-		this._expression = new Expression(getAttribute(attributeName, parent), null, null);
+		this.#expression = new Expression(getAttribute(attributeName, parent), null, null);
 	}
 
 	/**
@@ -24,7 +36,7 @@ export default class ExpressionBuilder {
 	 * @returns {Expression}
 	 */
 	get expression() {
-		return this._expression;
+		return this.#expression;
 	}
 
 	/**
@@ -37,7 +49,7 @@ export default class ExpressionBuilder {
 	withOperatorType(operatorType) {
 		assert.argumentIsRequired(operatorType, 'operatorType', OperatorType, 'OperatorType');
 
-		this._expression = new Expression(this._expression.attribute, operatorType, this._expression.operand);
+		this.#expression = new Expression(this.#expression.attribute, operatorType, this.#expression.operand);
 
 		return this;
 	}
@@ -50,23 +62,17 @@ export default class ExpressionBuilder {
 	 * @returns {ExpressionBuilder}
 	 */
 	withOperand(operand) {
-		this._expression = new Expression(this._expression.attribute, this._expression.operatorType, operand);
+		this.#expression = new Expression(this.#expression.attribute, this.#expression.operatorType, operand);
 
 		return this;
 	}
 
 	/**
-	 * Constructs a new, and incomplete, {@link ExpressionBuilder}.
+	 * Returns a string representation.
 	 *
 	 * @public
-	 * @static
-	 * @param {Attribute} attribute
-	 * @returns {ExpressionBuilder}
+	 * @returns {string}
 	 */
-	static withAttribute(attribute) {
-		return new ExpressionBuilder(attribute);
-	}
-
 	toString() {
 		return '[ExpressionBuilder]';
 	}

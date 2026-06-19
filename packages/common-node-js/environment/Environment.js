@@ -12,19 +12,25 @@ let instance = null;
  *
  * @public
  * @deprecated
- * @param {string} environmentName - The name of the environment mode (e.g. "development" or "production").
- * @param {Object} configuration - The application's configuration data.
- * @param {string} version - The version of the application.
  */
 export default class Environment {
+	#configuration;
+	#name;
+	#version;
+
+	/**
+	 * @param {string} environmentName - The name of the environment mode (e.g. "development" or "production").
+	 * @param {object} configuration - The application's configuration data.
+	 * @param {string} version - The version of the application.
+	 */
 	constructor(environmentName, configuration, version) {
 		assert.argumentIsRequired(environmentName, 'environmentName', String);
 		assert.argumentIsRequired(configuration, 'configuration', Object);
 		assert.argumentIsRequired(version, 'version', String);
 
-		this._name = environmentName;
-		this._configuration = configuration;
-		this._version = version;
+		this.#name = environmentName;
+		this.#configuration = configuration;
+		this.#version = version;
 	}
 
 	/**
@@ -34,17 +40,17 @@ export default class Environment {
 	 * @returns {string}
 	 */
 	getName() {
-		return this._name;
+		return this.#name;
 	}
 
 	/**
 	 * The application's configuration data.
 	 *
 	 * @public
-	 * @returns {Object}
+	 * @returns {object}
 	 */
 	getConfiguration() {
-		return object.clone(this._configuration);
+		return object.clone(this.#configuration);
 	}
 
 	/**
@@ -54,7 +60,7 @@ export default class Environment {
 	 * @returns {string}
 	 */
 	getVersion() {
-		return this._version;
+		return this.#version;
 	}
 
 	/**
@@ -64,15 +70,22 @@ export default class Environment {
 	 * @returns {boolean}
 	 */
 	getIsProduction() {
-		return this._name === 'production' || this._name === 'prod';
-	}
-
-	readConfigurationFile(filePath) {
-		return readConfigurationFile(this._configuration.server.path, filePath, this._name);
+		return this.#name === 'production' || this.#name === 'prod';
 	}
 
 	/**
-	 * Builds the a singleton instance of the {@link Environment} class; accessible
+	 * Runs the read configuration file operation.
+	 *
+	 * @public
+	 * @param {*} filePath
+	 * @returns {object}
+	 */
+	readConfigurationFile(filePath) {
+		return readConfigurationFile(this.#configuration.server.path, filePath, this.#name);
+	}
+
+	/**
+	 * Builds the singleton instance of the {@link Environment} class; accessible
 	 * from the {@link Environment.getInstance} function.
 	 *
 	 * @public
@@ -124,7 +137,7 @@ export default class Environment {
 
 	/**
 	 * Parses the process arguments, looking for key/value pairs. Each
-	 * key must be have a dash prefix, and each value cannot use a dash
+	 * key must have a dash prefix, and each value cannot use a dash
 	 * prefix. For the following invocation -- "node app.js -a 1 -b 2" --
 	 * a map with keys, "a" and "b" would be returned having values 1 and 2,
 	 * respectively.

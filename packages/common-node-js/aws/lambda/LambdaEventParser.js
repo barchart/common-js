@@ -14,26 +14,30 @@ import LambdaTriggerType from './LambdaTriggerType.js';
  * A utility for working with the data passed to a Lambda Function.
  *
  * @public
- * @param {Object} event - The actual "event" object passed to the Lambda Function by the AWS framework.
  */
 export default class LambdaEventParser {
+	#event;
+
+	/**
+	 * @param {object} event - The actual "event" object passed to the Lambda Function by the AWS framework.
+	 */
 	constructor(event) {
 		assert.argumentIsRequired(event, 'event', Object);
 
-		this._event = event;
+		this.#event = event;
 	}
 
 	/**
 	 * Reads the Lambda's event object directly.
 	 *
 	 * @public
-	 * @param {String} key
+	 * @param {string} key
 	 * @returns {*}
 	 */
 	read(key) {
 		assert.argumentIsRequired(key, 'key', String);
 
-		return read(this._event, key);
+		return read(this.#event, key);
 	}
 
 	/**
@@ -41,7 +45,7 @@ export default class LambdaEventParser {
 	 * by a "mode=text" query string value.
 	 *
 	 * @public
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	get plainText() {
 		return this.getQueryString('mode') === 'text';
@@ -51,16 +55,16 @@ export default class LambdaEventParser {
 	 * Reads the context data (from custom authorizer).
 	 *
 	 * @public
-	 * @param {String} key
+	 * @param {string} key
 	 * @returns {*|undefined}
 	 */
 	getContext(key) {
 		assert.argumentIsRequired(key, 'key', String);
 
-		if (this._event.version && this._event.version === '2.0') {
-			return read(this._event, `requestContext.authorizer.lambda.${key}`);
+		if (this.#event.version && this.#event.version === '2.0') {
+			return read(this.#event, `requestContext.authorizer.lambda.${key}`);
 		} else {
-			return read(this._event, `requestContext.authorizer.${key}`);
+			return read(this.#event, `requestContext.authorizer.${key}`);
 		}
 	}
 
@@ -68,13 +72,13 @@ export default class LambdaEventParser {
 	 * Reads a request header.
 	 *
 	 * @public
-	 * @param {String} key
+	 * @param {string} key
 	 * @returns {*|undefined}
 	 */
 	getHeader(key) {
 		assert.argumentIsRequired(key, 'key', String);
 
-		return read(this._event, `headers.${key}`);
+		return read(this.#event, `headers.${key}`);
 	}
 
 	/**
@@ -82,7 +86,7 @@ export default class LambdaEventParser {
 	 * as an array.
 	 *
 	 * @public
-	 * @returns {String[]}
+	 * @returns {string[]}
 	 */
 	getPaths() {
 		const proxy = this.getPath('proxy', null, true);
@@ -98,19 +102,19 @@ export default class LambdaEventParser {
 	 * Retrieves a value from path parameters.
 	 *
 	 * @public
-	 * @param {String} key
+	 * @param {string} key
 	 * @param {Function=} parser
-	 * @param {Boolean=} raw
-	 * @returns {String|null|undefined}
+	 * @param {boolean=} raw
+	 * @returns {string|null|undefined}
 	 */
 	getPath(key, parser, raw) {
 		assert.argumentIsRequired(key, 'key', String);
 		assert.argumentIsOptional(parser, 'parser', Function);
 		assert.argumentIsOptional(raw, 'raw', Boolean);
 
-		const value = read(this._event, `pathParameters.${key}`);
+		const value = read(this.#event, `pathParameters.${key}`);
 
-		if (is.undefined(value) || is.null(value)) {
+		if (is.undef(value) || is.nil(value)) {
 			return value;
 		}
 
@@ -138,8 +142,8 @@ export default class LambdaEventParser {
 	 *
 	 * @public
 	 * @deprecated
-	 * @param {String} key
-	 * @returns {String|undefined}
+	 * @param {string} key
+	 * @returns {string|undefined}
 	 */
 	getQuerystring(key) {
 		return this.getQueryString(key);
@@ -149,7 +153,7 @@ export default class LambdaEventParser {
 	 * Retrieves a value from querystring parameters.
 	 *
 	 * @public
-	 * @param {String} key
+	 * @param {string} key
 	 * @param {Function=} parser
 	 * @returns {*}
 	 */
@@ -157,7 +161,7 @@ export default class LambdaEventParser {
 		assert.argumentIsRequired(key, 'key', String);
 		assert.argumentIsOptional(parser, 'parser', Function);
 
-		const value = read(this._event.queryStringParameters, key);
+		const value = read(this.#event.queryStringParameters, key);
 
 		let parsed;
 
@@ -178,11 +182,11 @@ export default class LambdaEventParser {
 	 * Retrieves the body (or a property from the body).
 	 *
 	 * @public
-	 * @param {String=} key
+	 * @param {string=} key
 	 * @returns {*}
 	 */
 	getBody(key) {
-		let body = this._event.body;
+		let body = this.#event.body;
 
 		if (is.string(key)) {
 			let source;
@@ -231,10 +235,10 @@ export default class LambdaEventParser {
 	 *
 	 * @public
 	 * @async
-	 * @param {String} jsonString
-	 * @param {Object} schema
-	 * @param {String} description
-	 * @returns {Promise<Object>}
+	 * @param {string} jsonString
+	 * @param {object} schema
+	 * @param {string} description
+	 * @returns {Promise<object>}
 	 */
 	async parseSchema(jsonString, schema, description) {
 		return Promise.resolve()
@@ -265,16 +269,16 @@ export default class LambdaEventParser {
 	 * Returns an array of all messages included within the event.
 	 *
 	 * @public
-	 * @param {Boolean=} text
-	 * @return {Array<Object>}
+	 * @param {boolean=} text
+	 * @return {Array<object>}
 	 */
 	getMessages(text) {
 		let messages;
 
-		if (is.array(this._event.Records)) {
-			messages = this._event.Records;
+		if (is.array(this.#event.Records)) {
+			messages = this.#event.Records;
 		} else {
-			messages = [ this._event ];
+			messages = [ this.#event ];
 		}
 
 		return messages.map((message) => {
@@ -299,9 +303,9 @@ export default class LambdaEventParser {
 
 /**
  * @private
- * @param {Object} object
- * @param {String} key
- * @returns {String|null|undefined}
+ * @param {object} object
+ * @param {string} key
+ * @returns {string|null|undefined}
  */
 function read(object, key) {
 	if (is.object(object)) {

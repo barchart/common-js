@@ -14,9 +14,15 @@ const logger = log4js.getLogger('common-node/messaging/publishers/Publisher');
  * @public
  * @abstract
  * @extends {Disposable}
- * @param {RegExp[]=} suppressExpressions
  */
 export default class Publisher extends Disposable {
+	#startPromise;
+	#started;
+	#suppressExpressions;
+
+	/**
+	 * @param {RegExp[]=} suppressExpressions
+	 */
 	constructor(suppressExpressions) {
 		super();
 
@@ -24,10 +30,10 @@ export default class Publisher extends Disposable {
 			assert.argumentIsArray(suppressExpressions, 'suppressExpressions', RegExp, 'RegExp');
 		}
 
-		this._suppressExpressions = suppressExpressions || [ ];
-		
-		this._startPromise = null;
-		this._started = false;
+		this.#suppressExpressions = suppressExpressions || [ ];
+
+		this.#startPromise = null;
+		this.#started = false;
 	}
 
 	/**
@@ -42,21 +48,26 @@ export default class Publisher extends Disposable {
 			throw new Error('The message publisher has been disposed');
 		}
 
-		if (this._startPromise === null) {
-			this._startPromise = Promise.resolve()
+		if (this.#startPromise === null) {
+			this.#startPromise = Promise.resolve()
 				.then(() => {
 					return this._start();
 				}).then(() => {
-					this._started = true;
+					this.#started = true;
 
-					return this._started;
+					return this.#started;
 				});
 		}
 
-		return this._startPromise;
+		return this.#startPromise;
 	}
 
-	_start() {
+	/**
+	 * @protected
+	 * @async
+	 * @returns {Promise<boolean>}
+	 */
+	async _start() {
 		return;
 	}
 
@@ -65,14 +76,14 @@ export default class Publisher extends Disposable {
 	 *
 	 * @public
 	 * @async
-	 * @param {String} messageType
+	 * @param {string} messageType
 	 * @param {*} payload
 	 * @returns {Promise}
 	 */
 	async publish(messageType, payload) {
 		assert.argumentIsRequired(messageType, 'messageType', String);
 
-		if (!this._started) {
+		if (!this.#started) {
 			throw new Error('The publisher has not started.');
 		}
 
@@ -82,7 +93,7 @@ export default class Publisher extends Disposable {
 
 		let publishPromise;
 
-		if (checkSuppression(messageType, this._suppressExpressions)) {
+		if (checkSuppression(messageType, this.#suppressExpressions)) {
 			logger.trace('Suppressing publish for [', messageType, ']');
 
 			publishPromise = Promise.resolve();
@@ -96,7 +107,14 @@ export default class Publisher extends Disposable {
 		return publishPromise;
 	}
 
-	_publish(messageType, payload) {
+	/**
+	 * @protected
+	 * @async
+	 * @param {string} messageType
+	 * @param {*} payload
+	 * @returns {Promise}
+	 */
+	async _publish(messageType, payload) {
 		return;
 	}
 
@@ -106,7 +124,7 @@ export default class Publisher extends Disposable {
 	 *
 	 * @public
 	 * @async
-	 * @param {String} messageType
+	 * @param {string} messageType
 	 * @param {Function} handler
 	 * @returns {Promise<Disposable>}
 	 */
@@ -114,7 +132,7 @@ export default class Publisher extends Disposable {
 		assert.argumentIsRequired(messageType, 'messageType', String);
 		assert.argumentIsRequired(handler, 'handler', Function);
 
-		if (!this._started) {
+		if (!this.#started) {
 			throw new Error('The publisher has not started.');
 		}
 
@@ -124,7 +142,7 @@ export default class Publisher extends Disposable {
 
 		let subscribePromise;
 
-		if (checkSuppression(messageType, this._suppressExpressions)) {
+		if (checkSuppression(messageType, this.#suppressExpressions)) {
 			logger.debug('Suppressing subscription to [', messageType, ']');
 
 			subscribePromise = Promise.resolve(Disposable.getEmpty());
@@ -138,14 +156,31 @@ export default class Publisher extends Disposable {
 		return subscribePromise;
 	}
 
-	_subscribe(messageType, handler) {
+	/**
+	 * @protected
+	 * @async
+	 * @param {string} messageType
+	 * @param {Function} handler
+	 * @returns {Promise<Disposable>}
+	 */
+	async _subscribe(messageType, handler) {
 		return Disposable.getEmpty();
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 */
 	_onDispose() {
 		return;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Publisher]';
 	}

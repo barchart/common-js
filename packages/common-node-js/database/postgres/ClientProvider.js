@@ -3,19 +3,27 @@ import * as assert from '@barchart/common-js/lang/assert.js';
 import Disposable from '@barchart/common-js/lang/Disposable.js';
 
 /**
+ * @typedef {import('./Client.js').default} Client
+ */
+
+/**
  * An abstract contract for generating Postgres {@link Client} instances.
  *
  * @public
  * @abstract
- * @param {String} host
- * @param {String} database
- * @param {String} username
- * @param {String} password
- * @param {Number=} port
- * @param {String=} applicationName
- * @param {*=} ssl
  */
 export default class ClientProvider extends Disposable {
+	#configuration;
+
+	/**
+	 * @param {string} host
+	 * @param {string} database
+	 * @param {string} username
+	 * @param {string} password
+	 * @param {number=} port
+	 * @param {string=} applicationName
+	 * @param {*=} ssl
+	 */
 	constructor(host, database, username, password, port, applicationName, ssl) {
 		super();
 
@@ -27,7 +35,7 @@ export default class ClientProvider extends Disposable {
 		assert.argumentIsOptional(applicationName, 'applicationName', String);
 		assert.argumentIsOptional(ssl, 'ssl');
 
-		this._configuration = {
+		this.#configuration = {
 			host: host,
 			port: port || 5432,
 			database: database,
@@ -37,7 +45,7 @@ export default class ClientProvider extends Disposable {
 		};
 
 		if (ssl) {
-			this._configuration.ssl = ssl;
+			this.#configuration.ssl = ssl;
 		}
 	}
 
@@ -59,20 +67,30 @@ export default class ClientProvider extends Disposable {
 			});
 	}
 
+	/**
+	 * @protected
+	 * @returns {Client|Promise<Client>}
+	 */
 	_getClient() {
 		return null;
 	}
 
 	/**
-	 * Returns the database configuration (e.g. host, port, etc).
+	 * Returns the database configuration (e.g. host, port, etc.).
 	 *
 	 * @public
-	 * @returns {Object}
+	 * @returns {object}
 	 */
 	getConfiguration() {
-		return Object.assign({ }, this._configuration);
+		return Object.assign({ }, this.#configuration);
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[ClientProvider]';
 	}

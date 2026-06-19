@@ -1,37 +1,47 @@
 import * as array from '@barchart/common-js/lang/array.js';
 import * as object from '@barchart/common-js/lang/object.js';
 
-import Enum from '@barchart/common-js/lang/Enum.js';
-
 import Action from './Action.js';
 import Filter from './Filter.js';
 import KeyType from './../../schema/definitions/KeyType.js';
 import OperatorType from './OperatorType.js';
-import ReturnValueType from './ReturnValueType.js';
 import Serializers from './../../../dynamo/schema/serialization/Serializers.js';
 import Table from './../../schema/definitions/Table.js';
 import UpdateActionType from './UpdateActionType.js';
+
+/**
+ * @typedef {import('@barchart/common-js/lang/Enum.js').default} Enum
+ * @typedef {import('./UpdateExpression.js').default} UpdateExpression
+ * @typedef {import('./ReturnValueType.js').default} ReturnValueType
+ */
 
 /**
  * The definition of an update action.
  *
  * @public
  * @extends {Action}
- * @param {Table} table
- * @param {Filter} keyFilter
- * @param {Filter} conditionFilter
- * @param {UpdateExpression[]} expressions
- * @param {ReturnValueType} returnType
- * @param {String=} description
  */
 export default class Update extends Action {
+	#conditionFilter;
+	#expressions;
+	#keyFilter;
+	#returnType;
+
+	/**
+	 * @param {Table} table
+	 * @param {Filter=} keyFilter
+	 * @param {Filter=} conditionFilter
+	 * @param {UpdateExpression[]=} expressions
+	 * @param {ReturnValueType=} returnType
+	 * @param {string=} description
+	 */
 	constructor(table, keyFilter, conditionFilter, expressions, returnType, description) {
 		super(table, null, (description || '[Unnamed Update]'));
 
-		this._keyFilter = keyFilter || null;
-		this._conditionFilter = conditionFilter || null;
-		this._expressions = expressions || [ ];
-		this._returnType = returnType || null;
+		this.#keyFilter = keyFilter || null;
+		this.#conditionFilter = conditionFilter || null;
+		this.#expressions = expressions || [ ];
+		this.#returnType = returnType || null;
 	}
 
 	/**
@@ -41,18 +51,18 @@ export default class Update extends Action {
 	 * @returns {Filter}
 	 */
 	get keyFilter() {
-		return this._keyFilter;
+		return this.#keyFilter;
 	}
 
 	/**
-	 * An optional {@link Filter} to apply condition expression. This allows write
+	 * An optional {@link Filter} to apply condition expression. This allows to write
 	 * to proceed only if the condition expressions succeed.
 	 *
 	 * @public
 	 * @returns {Filter|null}
 	 */
 	get conditionFilter() {
-		return this._conditionFilter;
+		return this.#conditionFilter;
 	}
 
 	/**
@@ -62,7 +72,7 @@ export default class Update extends Action {
 	 * @returns {Array<UpdateExpression>}
 	 */
 	get expressions() {
-		return this._expressions;
+		return this.#expressions;
 	}
 
 	/**
@@ -72,7 +82,7 @@ export default class Update extends Action {
 	 * @returns {ReturnValueType}
 	 */
 	get returnType() {
-		return this._returnType;
+		return this.#returnType;
 	}
 
 	/**
@@ -85,33 +95,33 @@ export default class Update extends Action {
 			throw new Error('Table data type is invalid.');
 		}
 
-		if (!(this._keyFilter instanceof Filter)) {
+		if (!(this.#keyFilter instanceof Filter)) {
 			throw new Error('The key filter data type is invalid.');
 		}
 
-		this._keyFilter.validate();
+		this.#keyFilter.validate();
 
-		if (this._keyFilter.expressions.filter(e => e.attribute.name === (this.table.keys.find(k => k.keyType === KeyType.HASH)).attribute.name).length !== 1) {
+		if (this.#keyFilter.expressions.filter(e => e.attribute.name === (this.table.keys.find(k => k.keyType === KeyType.HASH)).attribute.name).length !== 1) {
 			throw new Error('The key filter must reference the hash key.');
 		}
 
 		const rangeKey = this.table.keys.find(k => k.keyType === KeyType.RANGE);
 
 		if (rangeKey) {
-			if (this._keyFilter.expressions.filter(e => e.attribute.name === rangeKey.attribute.name).length !== 1) {
+			if (this.#keyFilter.expressions.filter(e => e.attribute.name === rangeKey.attribute.name).length !== 1) {
 				throw new Error('The key filter must reference the range key.');
 			}
 		}
 
-		if (this._keyFilter.expressions.filter(e => e.operatorType !== OperatorType.EQUALS).length > 0) {
+		if (this.#keyFilter.expressions.filter(e => e.operatorType !== OperatorType.EQUALS).length > 0) {
 			throw new Error('The key filter must have only equals operators.');
 		}
 
-		if (this._expressions.length === 0) {
+		if (this.#expressions.length === 0) {
 			throw new Error('Must have at least one update expression.');
 		}
 
-		this._expressions.forEach(e => e.validate());
+		this.#expressions.forEach(e => e.validate());
 	}
 
 	/**
@@ -119,16 +129,16 @@ export default class Update extends Action {
 	 * the DynamoDB SDK.
 	 *
 	 * @public
-	 * @returns {Object}
+	 * @returns {object}
 	 */
 	toUpdateSchema() {
 		this.validate();
 
 		const schema = {
-			TableName: this._table.name
+			TableName: this.table.name
 		};
 
-		schema.Key = this._keyFilter.expressions.reduce((acc, e) => {
+		schema.Key = this.#keyFilter.expressions.reduce((acc, e) => {
 			acc[e.attribute.name] = Serializers.forDataType(e.attribute.dataType).serialize(e.operand);
 
 			return acc;
@@ -140,23 +150,23 @@ export default class Update extends Action {
 		expression.filter = new Filter([ ]);
 		expression.offset = 0;
 
-		if (this._conditionFilter !== null) {
-			const conditionExpressionData = Action.getConditionExpressionData(this._table, this._conditionFilter, expression.offset);
+		if (this.#conditionFilter !== null) {
+			const conditionExpressionData = Action.getConditionExpressionData(this.table, this.#conditionFilter, expression.offset);
 
 			expression.attributeAliases = object.merge(expression.attributeAliases, conditionExpressionData.valueAliases);
-			expression.filter = Filter.merge(expression.filter, this._conditionFilter);
+			expression.filter = Filter.merge(expression.filter, this.#conditionFilter);
 			expression.offset = conditionExpressionData.offset;
 
 			schema.ConditionExpression = conditionExpressionData.expression;
 		}
 
-		const expressionsByAction = array.groupBy(this._expressions, e => e.actionType.code);
+		const expressionsByAction = array.groupBy(this.#expressions, e => e.actionType.code);
 
 		const updateExpressions = Object.keys(expressionsByAction).map((key) => {
-			const actionType = Enum.fromCode(UpdateActionType, key);
+			const actionType = UpdateActionType.parse(key);
 
 			const expressions = expressionsByAction[key];
-			const updateExpressionData = Action.getConditionExpressionData(this._table, new Filter(expressions), expression.offset);
+			const updateExpressionData = Action.getConditionExpressionData(this.table, new Filter(expressions), expression.offset);
 
 			expression.attributeAliases = object.merge(expression.attributeAliases, updateExpressionData.valueAliases);
 			expression.filter = Filter.merge(expression.filter, new Filter(expressions));
@@ -166,16 +176,22 @@ export default class Update extends Action {
 		});
 
 		schema.ExpressionAttributeValues = expression.attributeAliases;
-		schema.ExpressionAttributeNames = Action.getExpressionAttributeNames(this._table, expression.filter.expressions.map(e => e.attribute));
+		schema.ExpressionAttributeNames = Action.getExpressionAttributeNames(this.table, expression.filter.expressions.map(e => e.attribute));
 		schema.UpdateExpression = updateExpressions.join(' ');
 
-		if (this._returnType) {
-			schema.ReturnValues = this._returnType.keyword;
+		if (this.#returnType) {
+			schema.ReturnValues = this.#returnType.keyword;
 		}
 
 		return schema;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Update]';
 	}

@@ -7,24 +7,30 @@ import OperatorType from './OperatorType.js';
  * An expression that can be used as part of a {@link Filter}.
  *
  * @public
- * @param {Attribute} attribute
- * @param {OperatorType} operatorType
- * @param {*} operand
  */
 export default class Expression {
+	#attribute;
+	#operand;
+	#operatorType;
+
+	/**
+	 * @param {Attribute} attribute
+	 * @param {OperatorType=} operatorType
+	 * @param {*=} operand
+	 */
 	constructor(attribute, operatorType, operand) {
-		this._attribute = attribute;
-		this._operatorType = operatorType || null;
+		this.#attribute = attribute;
+		this.#operatorType = operatorType || null;
 
 		let operandToUse;
 
-		if (is.undefined(operand)) {
+		if (is.undef(operand)) {
 			operandToUse = null;
 		} else {
 			operandToUse = operand;
 		}
 
-		this._operand = operandToUse;
+		this.#operand = operandToUse;
 	}
 
 	/**
@@ -34,7 +40,7 @@ export default class Expression {
 	 * @returns {Attribute}
 	 */
 	get attribute() {
-		return this._attribute;
+		return this.#attribute;
 	}
 
 	/**
@@ -44,7 +50,7 @@ export default class Expression {
 	 * @returns {OperatorType}
 	 */
 	get operatorType() {
-		return this._operatorType;
+		return this.#operatorType;
 	}
 
 	/**
@@ -54,7 +60,7 @@ export default class Expression {
 	 * @returns {*}
 	 */
 	get operand() {
-		return this._operand;
+		return this.#operand;
 	}
 
 	/**
@@ -63,15 +69,21 @@ export default class Expression {
 	 * @public
 	 */
 	validate() {
-		if (!(this._attribute instanceof Attribute)) {
+		if (!(this.#attribute instanceof Attribute)) {
 			throw new Error('Expression data type is invalid.');
 		}
 
-		if (!(this._operatorType instanceof OperatorType)) {
+		if (!(this.#operatorType instanceof OperatorType)) {
 			throw new Error('Expression data type is invalid.');
 		}
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return `[Expression]`;
 	}

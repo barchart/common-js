@@ -17,16 +17,21 @@ const logger = log4js.getLogger('common-node/aws/lambda/responses/LambdaResponse
  * @extends {LambdaResponseGenerator}
  */
 export default class LambdaResponseGeneratorGzip extends LambdaResponseGenerator {
+	#parser;
+
+	/**
+	 * @param {*} parser
+	 */
 	constructor(parser) {
 		super();
 
 		assert.argumentIsRequired(parser, 'parser', LambdaEventParser, 'LambdaEventParser');
 
-		this._parser = parser;
+		this.#parser = parser;
 	}
 
 	_generate(responseCode, responseHeaders, responseData, responseSize) {
-		const acceptEncoding = this._parser.getHeader('Accept-Encoding') || this._parser.getHeader('accept-encoding');
+		const acceptEncoding = this.#parser.getHeader('Accept-Encoding') || this.#parser.getHeader('accept-encoding');
 
 		if (!(is.string(acceptEncoding) && acceptEncoding.includes('gzip'))) {
 			logger.debug('Unable to compress response, the request header [ Accept-Encoding ] does not include the [ gzip ] option');
@@ -66,6 +71,12 @@ export default class LambdaResponseGeneratorGzip extends LambdaResponseGenerator
 		});
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[LambdaResponseGeneratorGzip]';
 	}

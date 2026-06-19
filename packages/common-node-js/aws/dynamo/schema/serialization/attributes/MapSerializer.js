@@ -20,6 +20,13 @@ export default class MapSerializer extends AttributeSerializer {
 		super();
 	}
 
+	/**
+	 * Serializes a value.
+	 *
+	 * @public
+	 * @param {*} map
+	 * @returns {object}
+	 */
 	serialize(map) {
 		assert.argumentIsRequired(map, 'map', Object);
 
@@ -41,13 +48,20 @@ export default class MapSerializer extends AttributeSerializer {
 		return wrapper;
 	}
 
+	/**
+	 * Deserializes a value.
+	 *
+	 * @public
+	 * @param {*} wrapper
+	 * @returns {*}
+	 */
 	deserialize(wrapper) {
 		const deserialized = { };
 
 		const map = wrapper[DataType.MAP.code];
 
 		Object.keys(map).forEach((key) => {
-			const dt = getSupportedDataTypes().find((sdt) => !is.undefined(map[key][sdt.type.code]));
+			const dt = getSupportedDataTypes().find((sdt) => !is.undef(map[key][sdt.type.code]));
 
 			if (!dt) {
 				throw new Error(`Failed to deserialize list item. Provided type for [ ${map[key]} ] is not supported.`);
@@ -59,10 +73,23 @@ export default class MapSerializer extends AttributeSerializer {
 		return deserialized;
 	}
 
+	/**
+	 * Returns the instance.
+	 *
+	 * @public
+	 * @static
+	 * @returns {MapSerializer}
+	 */
 	static get INSTANCE() {
 		return instance;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[MapSerializer]';
 	}

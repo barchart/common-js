@@ -40,6 +40,12 @@ export default class MoneySerializer extends ComponentSerializer {
 		return instance;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[MoneySerializer]';
 	}

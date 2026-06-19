@@ -22,49 +22,61 @@ let instance = 0;
  * object -- quickly adding operations, then flushing, then discarding.
  *
  * @public
- * @param {Function=} comparator - The comparator used to sort {@link DataOperation} instances in a {@link PriorityQueue}.
  */
 export default class DataSession {
+	#enqueueCounter;
+	#flushed;
+	#instanceCounter;
+	#instanceId;
+	#name;
+	#pending;
+	#processed;
+	#resultTypes;
+	#userEnqueued;
+
+	/**
+	 * @param {Function=} comparator - The comparator used to sort {@link DataOperation} instances in a {@link PriorityQueue}.
+	 */
 	constructor(comparator) {
 		assert.argumentIsOptional(comparator, 'comparator', Function);
 
-		this._name = null;
+		this.#name = null;
 
-		this._instanceCounter = ++instance;
-		this._instanceId = uuid.v4();
+		this.#instanceCounter = ++instance;
+		this.#instanceId = uuid.v4();
 
-		this._enqueueCounter = 0;
+		this.#enqueueCounter = 0;
 
-		this._pending = new PriorityQueue(comparator || DataOperationComparators.DEFAULT);
-		this._processed = [ ];
-		this._userEnqueued = [ ];
+		this.#pending = new PriorityQueue(comparator || DataOperationComparators.DEFAULT);
+		this.#processed = [ ];
+		this.#userEnqueued = [ ];
 
-		this._resultTypes = [ ];
+		this.#resultTypes = [ ];
 
-		this._flushed = false;
+		this.#flushed = false;
 	}
 
 	/**
 	 * Returns a description of the session.
 	 *
 	 * @public
-	 * @returns {String|null}
+	 * @returns {string|null}
 	 */
 	get name() {
-		return this._name;
+		return this.#name;
 	}
 
 	/**
 	 * Sets a name for the session.
 	 *
 	 * @public
-	 * @param {String} name
+	 * @param {string} name
 	 * @returns {DataSession}
 	 */
 	withName(name) {
 		assert.argumentIsRequired(name, 'name', String);
 
-		this._name = name;
+		this.#name = name;
 
 		return this;
 	}
@@ -81,8 +93,8 @@ export default class DataSession {
 	withResultType(type) {
 		assert.argumentIsValid(type, 'type', x => is.extension(DataOperation, type), 'inherits DataOperation');
 
-		this._resultTypes.push(type);
-		this._resultTypes = array.unique(this._resultTypes);
+		this.#resultTypes.push(type);
+		this.#resultTypes = array.unique(this.#resultTypes);
 
 		return this;
 	}
@@ -91,17 +103,17 @@ export default class DataSession {
 	 * Adds a new {@link DataOperation} and returns the current instance.
 	 *
 	 * @public
-	 * @param {@DataOperation} operation
+	 * @param {DataOperation} operation
 	 * @returns {DataSession}
 	 */
 	withOperation(operation) {
 		assert.argumentIsRequired(operation, 'operation', DataOperation, 'DataOperation');
 
-		if (this._flushed) {
+		if (this.#flushed) {
 			throw new Error('Unable to add operation to session, it has been flushed.');
 		}
 
-		enqueue.call(this, new DataOperationContainer(operation, operation.stage, operation.adjustment));
+		this.#enqueue(new DataOperationContainer(operation, operation.stage, operation.adjustment));
 
 		return this;
 	}
@@ -119,16 +131,16 @@ export default class DataSession {
 			.then(() => {
 				assert.argumentIsRequired(dataProvider, 'dataProvider', DataProvider, 'DataProvider');
 
-				if (this._flushed) {
-					throw new Error(`Session [ ${this._instanceCounter}  has already been flushed.`);
+				if (this.#flushed) {
+					throw new Error(`Session [ ${this.#instanceCounter}  has already been flushed.`);
 				}
 
-				this._flushed = true;
+				this.#flushed = true;
 
-				logger.info('Session [', this._instanceCounter, '] flush starting [', this._instanceId, ']');
+				logger.info('Session [', this.#instanceCounter, '] flush starting [', this.#instanceId, ']');
 
-				if (this._pending.empty()) {
-					logger.warn('Session [', this._instanceCounter, '] has no operations');
+				if (this.#pending.empty()) {
+					logger.warn('Session [', this.#instanceCounter, '] has no operations');
 				}
 
 				let operationCounter = 0;
@@ -137,10 +149,10 @@ export default class DataSession {
 
 				let outputIndicies;
 
-				if (this._resultTypes.length === 0) {
+				if (this.#resultTypes.length === 0) {
 					outputIndicies = [ ];
 				} else {
-					outputIndicies = this._resultTypes.map(() => [ ]);
+					outputIndicies = this.#resultTypes.map(() => [ ]);
 				}
 
 				const flushRecursive = (previousResult) => {
@@ -148,19 +160,19 @@ export default class DataSession {
 						.then(() => {
 							let processPromise;
 
-							if (this._pending.empty()) {
+							if (this.#pending.empty()) {
 								processPromise = Promise.resolve(previousResult);
 							} else {
 								let operation = null;
 								let operationCount;
 
-								while (operation === null && !this._pending.empty()) {
-									const candidate = this._pending.dequeue().operation;
+								while (operation === null && !this.#pending.empty()) {
+									const candidate = this.#pending.dequeue().operation;
 
 									operationCount = ++operationCounter;
 
 									if (candidate.equals(previousResult.operation)) {
-										logger.debug('Session [', this._instanceCounter, '] operation [', operationCount, '][', candidate.toString() ,'] discarded as duplicate');
+										logger.debug('Session [', this.#instanceCounter, '] operation [', operationCount, '][', candidate.toString() ,'] discarded as duplicate');
 									} else {
 										operation = candidate;
 									}
@@ -169,33 +181,33 @@ export default class DataSession {
 								if (operation === null) {
 									processPromise = Promise.resolve(previousResult);
 								} else {
-									this._processed.push(operation);
+									this.#processed.push(operation);
 
-									logger.debug('Session [', this._instanceCounter, '] operation [', operationCount, '][', operation.toString() ,'] starting');
+									logger.debug('Session [', this.#instanceCounter, '] operation [', operationCount, '][', operation.toString() ,'] starting');
 
-									processPromise = operation.process(dataProvider, this._instanceId, this._name)
+									processPromise = operation.process(dataProvider, this.#instanceId, this.#name)
 										.then((result) => {
-											logger.debug('Session [', this._instanceCounter, '] operation [', operationCount, '][', operation.toString() ,'] complete');
+											logger.debug('Session [', this.#instanceCounter, '] operation [', operationCount, '][', operation.toString() ,'] complete');
 
 											results.push(result);
 
 											const operationIndex = results.length - 1;
 
-											if (this._resultTypes.length === 0) {
-												const resultIndex = this._userEnqueued.findIndex(o => o === result.operation);
+											if (this.#resultTypes.length === 0) {
+												const resultIndex = this.#userEnqueued.findIndex(o => o === result.operation);
 
 												if (!(resultIndex < 0)) {
 													outputIndicies[resultIndex] = operationIndex;
 												}
 											} else {
-												const resultIndex = this._resultTypes.findIndex(t => operation instanceof t);
+												const resultIndex = this.#resultTypes.findIndex(t => operation instanceof t);
 
 												if (!(resultIndex < 0)) {
 													outputIndicies[resultIndex].push(operationIndex);
 												}
 											}
 
-											result.children.forEach(container => enqueue.call(this, container));
+											result.children.forEach(container => this.#enqueue(container));
 
 											return result;
 										});
@@ -236,7 +248,7 @@ export default class DataSession {
 							}
 						});
 
-						logger.info('Session [', this._instanceCounter, '] flush finished [', this._instanceId, ']');
+						logger.info('Session [', this.#instanceCounter, '] flush finished [', this.#instanceId, ']');
 
 						if (output.length === 1) {
 							return output[0];
@@ -247,17 +259,24 @@ export default class DataSession {
 			});
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[DataSession]';
 	}
-}
 
-function enqueue(container) {
-	container.order = ++this._enqueueCounter;
 
-	this._pending.enqueue(container);
+	#enqueue(container) {
+		container.order = ++this.#enqueueCounter;
 
-	if (!this._flushed) {
-		this._userEnqueued.push(container.operation);
-	}
+		this.#pending.enqueue(container);
+
+		if (!this.#flushed) {
+			this.#userEnqueued.push(container.operation);
+			}
+		}
 }

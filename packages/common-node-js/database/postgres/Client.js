@@ -18,25 +18,33 @@ let queryCounter = 0;
  * @abstract
  */
 export default class Client extends Disposable {
+	#id;
+	#pgClient;
+	#preparedStatementMap;
+
+	/**
+	 * @param {*} pgClient
+	 * @param {*} preparedStatementMap
+	 */
 	constructor(pgClient, preparedStatementMap) {
 		super();
 
 		assert.argumentIsRequired(pgClient, 'pgClient');
 		assert.argumentIsRequired(preparedStatementMap, 'preparedStatementMap');
 
-		this._id = uuid.v4();
-		this._pgClient = pgClient;
-		this._preparedStatementMap = preparedStatementMap;
+		this.#id = uuid.v4();
+		this.#pgClient = pgClient;
+		this.#preparedStatementMap = preparedStatementMap;
 	}
 
 	/**
 	 * A unique identifier to identify the client.
 	 *
 	 * @public
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	get id() {
-		return this._id;
+		return this.#id;
 	}
 
 	/**
@@ -44,10 +52,10 @@ export default class Client extends Disposable {
 	 *
 	 * @public
 	 * @async
-	 * @param {String} query
+	 * @param {string} query
 	 * @param {Array=} parameters
-	 * @param {String=} name
-	 * @returns {Promise<Object[]>}
+	 * @param {string=} name
+	 * @returns {Promise<object[]>}
 	 */
 	async query(query, parameters, name) {
 		if (this.disposed) {
@@ -65,11 +73,11 @@ export default class Client extends Disposable {
 			if (is.string(name)) {
 				queryObject.name = name;
 
-				if (!this._preparedStatementMap.hasOwnProperty(name)) {
-					this._preparedStatementMap[name] = query;
+				if (!this.#preparedStatementMap.hasOwnProperty(name)) {
+					this.#preparedStatementMap[name] = query;
 				}
 
-				queryObject.text = this._preparedStatementMap[name];
+				queryObject.text = this.#preparedStatementMap[name];
 			} else {
 				queryObject.text = query;
 			}
@@ -78,16 +86,16 @@ export default class Client extends Disposable {
 
 			const queryCount = queryCounter;
 
-			logger.debug('Executing query [', queryCount, '] from client [', this._id, ']');
-			logger.trace('Executing query [', queryCount, '] from client [', this._id, ']', queryObject);
+			logger.debug('Executing query [', queryCount, '] from client [', this.#id, ']');
+			logger.trace('Executing query [', queryCount, '] from client [', this.#id, ']', queryObject);
 
-			this._pgClient.query(queryObject, (err, result) => {
+			this.#pgClient.query(queryObject, (err, result) => {
 				if (err) {
-					logger.debug('Query [', queryCount, '] from client [', this._id, '] failed ');
+					logger.debug('Query [', queryCount, '] from client [', this.#id, '] failed ');
 
 					rejectCallback(err);
 				} else {
-					logger.debug('Query [', queryCount, '] from client [', this._id, '] finished');
+					logger.debug('Query [', queryCount, '] from client [', this.#id, '] finished');
 
 					resolveCallback(result);
 				}
@@ -95,6 +103,12 @@ export default class Client extends Disposable {
 		});
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Client]';
 	}

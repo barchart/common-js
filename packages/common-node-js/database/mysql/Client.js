@@ -17,23 +17,29 @@ let queryCounter = 0;
  * @abstract
  */
 export default class Client extends Disposable {
+	#connection;
+	#id;
+
+	/**
+	 * @param {object} connection
+	 */
 	constructor(connection) {
 		super();
 
 		assert.argumentIsRequired(connection, 'connection', Object);
 
-		this._id = uuid.v4();
-		this._connection = connection;
+		this.#id = uuid.v4();
+		this.#connection = connection;
 	}
 
 	/**
 	 * A unique identifier to identify the client.
 	 *
 	 * @public
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	get id() {
-		return this._id;
+		return this.#id;
 	}
 
 	/**
@@ -41,10 +47,10 @@ export default class Client extends Disposable {
 	 *
 	 * @public
 	 * @async
-	 * @param {String} query
+	 * @param {string} query
 	 * @param {Array=} parameters
-	 * @param {String=} name
-	 * @returns {Promise<Object[]>}
+	 * @param {string=} name
+	 * @returns {Promise<object[]>}
 	 */
 	async query(query, parameters, name) {
 		if (this.disposed) {
@@ -59,15 +65,15 @@ export default class Client extends Disposable {
 
 			const queryCount = queryCounter;
 
-			logger.debug('Executing query [', queryCount, '] from client [', this._id, ']');
+			logger.debug('Executing query [', queryCount, '] from client [', this.#id, ']');
 
-			this._connection.query(query, parameters || [ ], (e, result) => {
+			this.#connection.query(query, parameters || [ ], (e, result) => {
 				if (e) {
-					logger.debug('Query [', queryCount, '] from client [', this._id, '] failed');
+					logger.debug('Query [', queryCount, '] from client [', this.#id, '] failed');
 
 					rejectCallback(e);
 				} else {
-					logger.debug('Query [', queryCount, '] from client [', this._id, '] finished');
+					logger.debug('Query [', queryCount, '] from client [', this.#id, '] finished');
 
 					resolveCallback(result);
 				}
@@ -81,7 +87,7 @@ export default class Client extends Disposable {
 	 *
 	 * @public
 	 * @async
-	 * @param {Boolean} graceful
+	 * @param {boolean} graceful
 	 * @returns {Promise<void>}
 	 */
 	async shutdown(graceful) {
@@ -89,14 +95,14 @@ export default class Client extends Disposable {
 			throw new Error(`Unable to shutdown, the [ ${this.toString()} ] has been disposed`);
 		}
 
-		if (this._connection === null) {
+		if (this.#connection === null) {
 			throw new Error(`Unable to shutdown, the [ ${this.toString()} ] has been shutdown`);
 		}
 
 		assert.argumentIsRequired(graceful, 'graceful', Boolean);
 
-		const connection = this._connection;
-		this._connection = null;
+		const connection = this.#connection;
+		this.#connection = null;
 
 		this.dispose();
 
@@ -127,16 +133,26 @@ export default class Client extends Disposable {
 		return shutdownPromise;
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 */
 	_onDispose() {
-		if (this._connection !== null) {
-			this._connection.destroy();
+		if (this.#connection !== null) {
+			this.#connection.destroy();
 
-			this._connection = null;
+			this.#connection = null;
 		}
 
 		logger.info(`Disposed [ ${this.toString()} ] [ ${this.id} ]`);
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Client]';
 	}

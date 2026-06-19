@@ -17,12 +17,21 @@ const logger = log4js.getLogger('common-node/aws/SnsProvider');
  *
  * @public
  * @extends Disposable
- * @param {object} configuration
- * @param {string} configuration.region - The AWS region (e.g. "us-east-1").
- * @param {string} configuration.prefix - The prefix that is prepended to any topic name.
- * @param {string=} configuration.apiVersion - The SES version (defaults to "2010-03-31").
  */
 export default class SnsProvider extends Disposable {
+	#configuration;
+	#sns;
+	#startPromise;
+	#started;
+	#subscriptionPromises;
+	#topicPromises;
+
+	/**
+	 * @param {object} configuration
+	 * @param {string} configuration.region - The AWS region (e.g. "us-east-1").
+	 * @param {string} configuration.prefix - The prefix that is prepended to any topic name.
+	 * @param {string=} configuration.apiVersion - The SES version (defaults to "2010-03-31").
+	 */
 	constructor(configuration) {
 		super();
 
@@ -31,15 +40,15 @@ export default class SnsProvider extends Disposable {
 		assert.argumentIsRequired(configuration.prefix, 'configuration.prefix', String);
 		assert.argumentIsOptional(configuration.apiVersion, 'configuration.apiVersion', String);
 
-		this._configuration = configuration;
+		this.#configuration = configuration;
 
-		this._sns = null;
+		this.#sns = null;
 
-		this._startPromise = null;
-		this._started = false;
+		this.#startPromise = null;
+		this.#started = false;
 
-		this._topicPromises = {};
-		this._subscriptionPromises = {};
+		this.#topicPromises = {};
+		this.#subscriptionPromises = {};
 	}
 
 	/**
@@ -48,23 +57,23 @@ export default class SnsProvider extends Disposable {
 	 *
 	 * @public
 	 * @async
-	 * @returns {Promise<Boolean>}
+	 * @returns {Promise<boolean>}
 	 */
 	async start() {
 		if (this.disposed) {
 			return Promise.reject('Unable to start, the SNS provider has been disposed.');
 		}
 
-		if (this._startPromise === null) {
-			this._startPromise = (async () => {
+		if (this.#startPromise === null) {
+			this.#startPromise = (async () => {
 				try {
-					this._sns = new SNSClient({apiVersion: this._configuration.apiVersion || '2010-03-31', region: this._configuration.region});
+					this.#sns = new SNSClient({apiVersion: this.#configuration.apiVersion || '2010-03-31', region: this.#configuration.region});
 
 					logger.info('The SNS provider has started');
 
-					this._started = true;
+					this.#started = true;
 
-					return this._started;
+					return this.#started;
 				} catch (e) {
 					logger.error('The SNS provider failed to start', e);
 
@@ -73,7 +82,7 @@ export default class SnsProvider extends Disposable {
 			})();
 		}
 
-		return this._startPromise;
+		return this.#startPromise;
 	}
 
 	/**
@@ -81,14 +90,14 @@ export default class SnsProvider extends Disposable {
 	 * to the constructor.
 	 *
 	 * @public
-	 * @returns {Object}
+	 * @returns {object}
 	 */
 	getConfiguration() {
 		if (this.disposed) {
 			throw new Error('The SNS provider has been disposed.');
 		}
 
-		return object.clone(this._configuration);
+		return object.clone(this.#configuration);
 	}
 
 	/**
@@ -98,17 +107,17 @@ export default class SnsProvider extends Disposable {
 	 * @public
 	 * @async
 	 * @param {string} topicName - The name of the topic to find (or create).
-	 * @param {Object=} createOptions - Options to use when topic does not exist and must be created.
-	 * @returns {Promise<String>}
+	 * @param {object=} createOptions - Options to use when topic does not exist and must be created.
+	 * @returns {Promise<string>}
 	 */
 	async getTopicArn(topicName, createOptions) {
 		assert.argumentIsRequired(topicName, 'topicName', String);
 
-		checkReady.call(this);
+		this.#checkReady();
 
-		const qualifiedTopicName = getQualifiedTopicName(this._configuration.prefix, topicName);
+		const qualifiedTopicName = getQualifiedTopicName(this.#configuration.prefix, topicName);
 
-		if (!this._topicPromises.hasOwnProperty(qualifiedTopicName)) {
+		if (!this.#topicPromises.hasOwnProperty(qualifiedTopicName)) {
 			logger.debug('The SNS provider has not cached the topic. Issuing request to create topic.');
 
 			let tags = null;
@@ -117,10 +126,10 @@ export default class SnsProvider extends Disposable {
 				tags = createOptions.tags;
 			}
 
-			this._topicPromises[qualifiedTopicName] = this.createTopic(topicName, tags);
+			this.#topicPromises[qualifiedTopicName] = this.createTopic(topicName, tags);
 		}
 
-		return this._topicPromises[qualifiedTopicName];
+		return this.#topicPromises[qualifiedTopicName];
 	}
 
 	/**
@@ -130,16 +139,16 @@ export default class SnsProvider extends Disposable {
 	 * @public
 	 * @async
 	 * @param {string} topicName - The name of the topic to create.
-	 * @param {Object=} tags - Tags to assign to the topic.
-	 * @returns {Promise<String>}
+	 * @param {object=} tags - Tags to assign to the topic.
+	 * @returns {Promise<string>}
 	 */
 	async createTopic(topicName, tags) {
 		assert.argumentIsRequired(topicName, 'topicName', String);
 		assert.argumentIsOptional(tags, 'tags', Object);
 
-		checkReady.call(this);
+		this.#checkReady();
 
-		const qualifiedTopicName = getQualifiedTopicName(this._configuration.prefix, topicName);
+		const qualifiedTopicName = getQualifiedTopicName(this.#configuration.prefix, topicName);
 
 		logger.debug('Creating SNS topic [', qualifiedTopicName, ']');
 
@@ -167,7 +176,7 @@ export default class SnsProvider extends Disposable {
 		}
 
 		try {
-			const data = await this._sns.send(new CreateTopicCommand(payload));
+			const data = await this.#sns.send(new CreateTopicCommand(payload));
 
 			logger.info('SNS topic created [', qualifiedTopicName, ']');
 
@@ -191,10 +200,10 @@ export default class SnsProvider extends Disposable {
 	async deleteTopic(topicName) {
 		assert.argumentIsRequired(topicName, 'topicName', String);
 
-		checkReady.call(this);
+		this.#checkReady();
 
 		const topicArn = await this.getTopicArn(topicName);
-		const qualifiedTopicName = getQualifiedTopicName(this._configuration.prefix, topicName);
+		const qualifiedTopicName = getQualifiedTopicName(this.#configuration.prefix, topicName);
 
 		logger.info('Deleting SNS topic [', qualifiedTopicName, '] at topic ARN [', topicArn, ']');
 
@@ -212,12 +221,12 @@ export default class SnsProvider extends Disposable {
 	async deleteTopicArn(topicArn) {
 		assert.argumentIsRequired(topicArn, 'topicArn', String);
 
-		checkReady.call(this);
+		this.#checkReady();
 
 		logger.debug('Deleting SNS topic at ARN [', topicArn, ']');
 
 		try {
-			await this._sns.send(new DeleteTopicCommand({
+			await this.#sns.send(new DeleteTopicCommand({
 				TopicArn: topicArn
 			}));
 
@@ -236,24 +245,24 @@ export default class SnsProvider extends Disposable {
 	 * @public
 	 * @async
 	 * @param {string} topicName - The name of the topic to publish to.
-	 * @param {Object} payload - The message to publish (which will be serialized as JSON).
-	 * @param {Object=} createOptions - Options to use when topic does not exist and must be created.
+	 * @param {object} payload - The message to publish (which will be serialized as JSON).
+	 * @param {object=} createOptions - Options to use when topic does not exist and must be created.
 	 * @returns {Promise}
 	 */
 	async publish(topicName, payload, createOptions) {
 		assert.argumentIsRequired(topicName, 'topicName', String);
 		assert.argumentIsRequired(payload, 'payload', Object);
 
-		checkReady.call(this);
+		this.#checkReady();
 
 		const topicArn = await this.getTopicArn(topicName, createOptions);
-		const qualifiedTopicName = getQualifiedTopicName(this._configuration.prefix, topicName);
+		const qualifiedTopicName = getQualifiedTopicName(this.#configuration.prefix, topicName);
 
 		logger.debug('Publishing to SNS topic [', qualifiedTopicName, ']');
 		logger.trace(payload);
 
 		try {
-			await this._sns.send(new PublishCommand({
+			await this.#sns.send(new PublishCommand({
 				TopicArn: topicArn,
 				Message: JSON.stringify(payload)
 			}));
@@ -277,19 +286,19 @@ export default class SnsProvider extends Disposable {
 	 * @public
 	 * @async
 	 * @param {string} topicName - The name of the topic to subscribe to.
-	 * @param {Object} queueArn - The ARN of the queue to receive notifications (see {@link SqsProvider#getQueueArn}).
+	 * @param {object} queueArn - The ARN of the queue to receive notifications (see {@link SqsProvider#getQueueArn}).
 	 * @returns {Promise<Disposable>}
 	 */
 	async subscribe(topicName, queueArn) {
 		assert.argumentIsRequired(topicName, 'topicName', String);
 		assert.argumentIsRequired(queueArn, 'queueArn', String);
 
-		checkReady.call(this);
+		this.#checkReady();
 
-		const qualifiedTopicName = getQualifiedTopicName(this._configuration.prefix, topicName);
+		const qualifiedTopicName = getQualifiedTopicName(this.#configuration.prefix, topicName);
 
-		if (!this._subscriptionPromises.hasOwnProperty(qualifiedTopicName)) {
-			this._subscriptionPromises[qualifiedTopicName] = (async () => {
+		if (!this.#subscriptionPromises.hasOwnProperty(qualifiedTopicName)) {
+			this.#subscriptionPromises[qualifiedTopicName] = (async () => {
 				const topicArn = await this.getTopicArn(topicName);
 
 				logger.debug('Subscribing SQS queue to SNS topic [', qualifiedTopicName, ']');
@@ -297,7 +306,7 @@ export default class SnsProvider extends Disposable {
 				let data;
 
 				try {
-					data = await this._sns.send(new SubscribeCommand({
+					data = await this.#sns.send(new SubscribeCommand({
 						'TopicArn': topicArn,
 						'Endpoint': queueArn,
 						'Protocol': 'sqs'
@@ -318,11 +327,11 @@ export default class SnsProvider extends Disposable {
 
 					logger.debug('Unsubscribing SQS queue from SNS topic [', qualifiedTopicName, ']');
 
-					delete this._subscriptionPromises[qualifiedTopicName];
+					delete this.#subscriptionPromises[qualifiedTopicName];
 
 					(async () => {
 						try {
-							await this._sns.send(new UnsubscribeCommand({
+							await this.#sns.send(new UnsubscribeCommand({
 								SubscriptionArn: data.SubscriptionArn
 							}));
 
@@ -336,7 +345,7 @@ export default class SnsProvider extends Disposable {
 			})();
 		}
 
-		return this._subscriptionPromises[qualifiedTopicName];
+		return this.#subscriptionPromises[qualifiedTopicName];
 	}
 
 	/**
@@ -345,10 +354,10 @@ export default class SnsProvider extends Disposable {
 	 *
 	 * @public
 	 * @async
-	 * @returns {Promise<Object>}
+	 * @returns {Promise<object>}
 	 */
 	async getSubscriptions() {
-		checkReady.call(this);
+		this.#checkReady();
 
 		let counts = { };
 
@@ -356,7 +365,7 @@ export default class SnsProvider extends Disposable {
 		counts.total = 0;
 		counts.matches = 0;
 
-		const topicArnRegex = new RegExp(`^(arn:aws:sns):(${this._configuration.region}):(.*):(${this._configuration.prefix})-(.*)$`);
+		const topicArnRegex = new RegExp(`^(arn:aws:sns):(${this.#configuration.region}):(.*):(${this.#configuration.prefix})-(.*)$`);
 
 		const listSubscriptionsRecursive = async (nextToken) => {
 			const payload = { };
@@ -367,19 +376,19 @@ export default class SnsProvider extends Disposable {
 
 			const query = ++counts.queries;
 
-			logger.debug('Executing subscription query [', query, '] for prefix [', this._configuration.prefix, ']');
+			logger.debug('Executing subscription query [', query, '] for prefix [', this.#configuration.prefix, ']');
 
 			let data;
 
 			try {
-				data = await this._sns.send(new ListSubscriptionsCommand(payload));
+				data = await this.#sns.send(new ListSubscriptionsCommand(payload));
 			} catch (error) {
 				logger.warn('Encountered error [', error.name, '] while executing subscription query [', query, ']');
 
 				throw { error };
 			}
 
-			logger.debug('Finished subscription query [', query, '] for prefix [', this._configuration.prefix, '] with [', data.Subscriptions.length, '] results');
+			logger.debug('Finished subscription query [', query, '] for prefix [', this.#configuration.prefix, '] with [', data.Subscriptions.length, '] results');
 
 			const matches = data.Subscriptions.filter(s => s.Protocol === 'sqs')
 				.filter(s => topicArnRegex.test(s.TopicArn));
@@ -410,7 +419,7 @@ export default class SnsProvider extends Disposable {
 
 		const results = await listSubscriptionsRecursive();
 
-		logger.debug('Completed [', counts.queries, '] queries for subscriptions to SNS topics with prefix [', this._configuration.prefix, '] yielding [', counts.matches, '] matching subscriptions out of [', counts.total, '] total subscriptions');
+		logger.debug('Completed [', counts.queries, '] queries for subscriptions to SNS topics with prefix [', this.#configuration.prefix, '] yielding [', counts.matches, '] matching subscriptions out of [', counts.total, '] total subscriptions');
 
 		return results;
 	}
@@ -420,18 +429,18 @@ export default class SnsProvider extends Disposable {
 	 *
 	 * @public
 	 * @async
-	 * @param {String} subscriptionArn
+	 * @param {string} subscriptionArn
 	 * @returns {Promise}
 	 */
 	async unsubscribe(subscriptionArn) {
 		assert.argumentIsRequired(subscriptionArn, 'subscriptionArn', String);
 
-		checkReady.call(this);
+		this.#checkReady();
 
 		logger.debug('Deleting SNS subscription at ARN [', subscriptionArn, ']');
 
 		try {
-			await this._sns.send(new UnsubscribeCommand({
+			await this.#sns.send(new UnsubscribeCommand({
 				SubscriptionArn: subscriptionArn
 			}));
 
@@ -450,12 +459,12 @@ export default class SnsProvider extends Disposable {
 	 * @public
 	 * @async
 	 * @param {string=} topicNamePrefix - The prefix a topic name must have to be returned.
-	 * @returns {Promise<String[]>}
+	 * @returns {Promise<string[]>}
 	 */
 	async getTopics(topicNamePrefix) {
 		assert.argumentIsOptional(topicNamePrefix, 'topicNamePrefix', String);
 
-		checkReady.call(this);
+		this.#checkReady();
 
 		let batchCount = 0;
 
@@ -469,7 +478,7 @@ export default class SnsProvider extends Disposable {
 			}
 
 			try {
-				const data = await this._sns.send(new ListTopicsCommand(params));
+				const data = await this.#sns.send(new ListTopicsCommand(params));
 
 				logger.info('SNS topic list batch [', ++batchCount, '] received');
 
@@ -497,7 +506,7 @@ export default class SnsProvider extends Disposable {
 		};
 
 		const topics = await getTopicBatches();
-		const topicArnRegex = new RegExp(`^arn:aws:sns:.*:[0-9]*:${this._configuration.prefix}${(topicNamePrefix || '')}`);
+		const topicArnRegex = new RegExp(`^arn:aws:sns:.*:[0-9]*:${this.#configuration.prefix}${(topicNamePrefix || '')}`);
 
 		return topics.reduce((accumulator, topic) => {
 			if (topicArnRegex.test(topic.TopicArn)) {
@@ -508,24 +517,35 @@ export default class SnsProvider extends Disposable {
 		}, [ ]);
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 */
 	_onDispose() {
-		this._topicPromises = null;
-		this._subscriptionPromises = null;
+		this.#topicPromises = null;
+		this.#subscriptionPromises = null;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[SnsProvider]';
 	}
-}
 
-function checkReady() {
-	if (this.disposed) {
-		throw new Error('The SNS provider has been disposed.');
-	}
 
-	if (!this._started) {
-		throw new Error('The SNS provider has not been started.');
-	}
+	#checkReady() {
+		if (this.disposed) {
+			throw new Error('The SNS provider has been disposed.');
+			}
+
+			if (!this.#started) {
+				throw new Error('The SNS provider has not been started.');
+			}
+		}
 }
 
 function getQualifiedTopicName(prefix, topicName) {

@@ -19,48 +19,64 @@ const REQUEST = 'r.q';
 const RESPONSE = 'r.s';
 
 export default class ClusterRouter extends Router {
+	#disposeStack;
+	#messageProvider;
+	#pendingCallbacks;
+	#requestHandlers;
+	#requestRegistrations;
+
+	/**
+	 * @param {*} messageProvider
+	 * @param {*} suppressExpressions
+	 */
 	constructor(messageProvider, suppressExpressions) {
 		super(suppressExpressions);
 
 		assert.argumentIsRequired(messageProvider, 'messageProvider', MessageProvider);
 
-		this._requestHandlers = { };
-		this._requestRegistrations = { };
-		this._pendingCallbacks = { };
+		this.#requestHandlers = { };
+		this.#requestRegistrations = { };
+		this.#pendingCallbacks = { };
 
-		this._messageProvider = messageProvider;
+		this.#messageProvider = messageProvider;
 
-		this._disposeStack = new DisposableStack();
+		this.#disposeStack = new DisposableStack();
 	}
 
-	_start() {
-		return this._messageProvider.start()
+	/**
+	 * @protected
+	 * @override
+	 * @async
+	 * @returns {Promise<boolean>}
+	 */
+	async _start() {
+		return this.#messageProvider.start()
 			.then(() => {
-				this._disposeStack.push(
-					this._messageProvider.registerPeerConnectedObserver((source) => {
-						const messageTypes = Object.keys(this._requestHandlers);
+				this.#disposeStack.push(
+					this.#messageProvider.registerPeerConnectedObserver((source) => {
+						const messageTypes = Object.keys(this.#requestHandlers);
 
 						if (messageTypes.length !== 0) {
 							logger.debug('Sending registrations to newly connected IPC peer', source);
 
 							messageTypes.forEach((messageTypes) => {
-								this._messageProvider.send(REGISTER, getRegistrationEnvelope(messageTypes), source);
+								this.#messageProvider.send(REGISTER, getRegistrationEnvelope(messageTypes), source);
 							});
 						}
 					})
 				);
 			}).then(() => {
-				this._disposeStack.push(
-					this._messageProvider.handle(REGISTER, (source, type, payload) => {
+				this.#disposeStack.push(
+					this.#messageProvider.handle(REGISTER, (source, type, payload) => {
 						const messageType = payload.t;
 
 						logger.debug('Processing registration to', messageType, 'from IPC peer', source);
 
-						if (!this._requestRegistrations.hasOwnProperty(messageType)) {
-							this._requestRegistrations[messageType] = [ ];
+						if (!this.#requestRegistrations.hasOwnProperty(messageType)) {
+							this.#requestRegistrations[messageType] = [ ];
 						}
 
-						const registrations = this._requestRegistrations[messageType];
+						const registrations = this.#requestRegistrations[messageType];
 
 						if (!registrations.some((registration) => registration === source)) {
 							registrations.push(source);
@@ -70,33 +86,33 @@ export default class ClusterRouter extends Router {
 					})
 				);
 
-				this._disposeStack.push(
-					this._messageProvider.handle(UNREGISTER, (source, type, payload) => {
+				this.#disposeStack.push(
+					this.#messageProvider.handle(UNREGISTER, (source, type, payload) => {
 						const messageType = payload.t;
 
 						logger.debug('Processing registration cancel to', messageType, 'from IPC peer', source);
 
-						if (this._requestRegistrations.hasOwnProperty(messageType)) {
-							this._requestRegistrations[messageType] = this._requestRegistrations[messageType].filter((item) => {
+						if (this.#requestRegistrations.hasOwnProperty(messageType)) {
+							this.#requestRegistrations[messageType] = this.#requestRegistrations[messageType].filter((item) => {
 								return item !== source;
 							});
 
-							if (this._requestRegistrations[messageType].length === 0) {
-								delete this._requestRegistrations[messageType];
+							if (this.#requestRegistrations[messageType].length === 0) {
+								delete this.#requestRegistrations[messageType];
 							}
 						}
 					})
 				);
 
-				this._disposeStack.push(
-					this._messageProvider.handle(REQUEST, (source, type, payload) => {
+				this.#disposeStack.push(
+					this.#messageProvider.handle(REQUEST, (source, type, payload) => {
 						const messageId = payload.id;
 						const messageType = payload.t;
 						const messagePayload = payload.p;
 
 						Promise.resolve()
 							.then(() => {
-								const handler = this._requestHandlers[messageType];
+								const handler = this.#requestHandlers[messageType];
 
 								return handler(messagePayload);
 							}).then((result) => {
@@ -106,15 +122,15 @@ export default class ClusterRouter extends Router {
 
 								return getResponseEnvelope(payload, false, null);
 							}).then((envelope) => {
-								this._messageProvider.send(RESPONSE, envelope, source);
+								this.#messageProvider.send(RESPONSE, envelope, source);
 							});
 					})
 				);
 
-				this._disposeStack.push(
-					this._messageProvider.handle(RESPONSE, (source, type, payload) => {
+				this.#disposeStack.push(
+					this.#messageProvider.handle(RESPONSE, (source, type, payload) => {
 						const requestId = payload.id;
-						const callbacks = this._pendingCallbacks[requestId];
+						const callbacks = this.#pendingCallbacks[requestId];
 
 						if (callbacks) {
 							const responseSuccess = payload.s;
@@ -126,29 +142,47 @@ export default class ClusterRouter extends Router {
 								callbacks.reject();
 							}
 
-							delete this._pendingCallbacks[requestId];
+							delete this.#pendingCallbacks[requestId];
 						}
 					})
 				);
+			}).then(() => {
+				return true;
 			});
 
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 * @param {string} messageType
+	 * @returns {boolean}
+	 */
 	_canRoute(messageType) {
-		return this._requestRegistrations.hasOwnProperty(messageType);
+		return this.#requestRegistrations.hasOwnProperty(messageType);
 	}
 
-	_route(messageType, payload, timeout, forget) {
+	/**
+	 * @protected
+	 * @override
+	 * @async
+	 * @param {string} messageType
+	 * @param {*} payload
+	 * @param {number} timeout
+	 * @param {boolean} forget
+	 * @returns {Promise<*>}
+	 */
+	async _route(messageType, payload, timeout, forget) {
 		return promise.build((resolveCallback, rejectCallback) => {
 			const envelope = getRequestEnvelope(messageType, payload);
 			const messageId = envelope.id;
 
-			this._pendingCallbacks[messageId] = {
+			this.#pendingCallbacks[messageId] = {
 				resolve: resolveCallback,
 				reject: rejectCallback
 			};
 
-			const registrations = this._requestRegistrations[messageType];
+			const registrations = this.#requestRegistrations[messageType];
 
 			let index;
 
@@ -158,35 +192,53 @@ export default class ClusterRouter extends Router {
 				index = random.range(0, registrations.length);
 			}
 
-			this._messageProvider.send(REQUEST, envelope, registrations[index]);
+			this.#messageProvider.send(REQUEST, envelope, registrations[index]);
 		});
 	}
 
-	_register(messageType, handler) {
+	/**
+	 * @protected
+	 * @override
+	 * @async
+	 * @param {string} messageType
+	 * @param {Function} handler
+	 * @returns {Promise<Disposable>}
+	 */
+	async _register(messageType, handler) {
 		logger.debug('Registering', messageType,'request handler over cluster IPC');
 
-		this._requestHandlers[messageType] = handler;
+		this.#requestHandlers[messageType] = handler;
 
-		this._messageProvider.broadcast(REGISTER, getRegistrationEnvelope(messageType));
+		this.#messageProvider.broadcast(REGISTER, getRegistrationEnvelope(messageType));
 
 		return Disposable.fromAction(() => {
-			this._messageProvider.broadcast(UNREGISTER, getRegistrationEnvelope(messageType));
+			this.#messageProvider.broadcast(UNREGISTER, getRegistrationEnvelope(messageType));
 
-			delete this._requestHandlers[messageType];
+			delete this.#requestHandlers[messageType];
 		});
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 */
 	_onDispose() {
-		this._disposeStack.dispose();
-		this._disposeStack = null;
+		this.#disposeStack.dispose();
+		this.#disposeStack = null;
 
-		this._requestHandlers = null;
-		this._requestRegistrations = null;
-		this._pendingCallbacks = null;
+		this.#requestHandlers = null;
+		this.#requestRegistrations = null;
+		this.#pendingCallbacks = null;
 
 		logger.debug('Cluster router disposed');
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[ClusterRouter]';
 	}

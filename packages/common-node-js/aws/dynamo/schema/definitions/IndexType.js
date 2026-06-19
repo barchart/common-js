@@ -10,6 +10,17 @@ import Enum from '@barchart/common-js/lang/Enum.js';
  * @extends {Enum}
  */
 export default class IndexType extends Enum {
+	#allowsConsistentReads;
+	#schemaName;
+	#separateProvisioning;
+
+	/**
+	 * @param {string} code
+	 * @param {string} description
+	 * @param {*} schemaName
+	 * @param {*} separateProvisioning
+	 * @param {*} allowsConsistentReads
+	 */
 	constructor(code, description, schemaName, separateProvisioning, allowsConsistentReads) {
 		super(code, description);
 
@@ -17,37 +28,67 @@ export default class IndexType extends Enum {
 		assert.argumentIsRequired(separateProvisioning, 'separateProvisioning', Boolean);
 		assert.argumentIsRequired(allowsConsistentReads, 'allowsConsistentReads', Boolean);
 
-		this._schemaName = schemaName;
-		this._separateProvisioning = separateProvisioning;
-		this._allowsConsistentReads = allowsConsistentReads;
+		this.#schemaName = schemaName;
+		this.#separateProvisioning = separateProvisioning;
+		this.#allowsConsistentReads = allowsConsistentReads;
 	}
 
+	/**
+	 * Returns the schema name.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	get schemaName() {
-		return this._schemaName;
+		return this.#schemaName;
 	}
 
+	/**
+	 * Returns the separate provisioning.
+	 *
+	 * @public
+	 * @returns {boolean}
+	 */
 	get separateProvisioning() {
-		return this._separateProvisioning;
+		return this.#separateProvisioning;
 	}
 
 	/**
 	 * Indicates is a query or scan on the index supports consistent reads.
 	 *
 	 * @public
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	get allowsConsistentReads() {
-		return this._allowsConsistentReads;
+		return this.#allowsConsistentReads;
 	}
 
+	/**
+	 * Returns the global secondary.
+	 *
+	 * @public
+	 * @static
+	 */
 	static get GLOBAL_SECONDARY() {
 		return indexTypeGlobal;
 	}
 
+	/**
+	 * Returns the local secondary.
+	 *
+	 * @public
+	 * @static
+	 */
 	static get LOCAL_SECONDARY() {
 		return indexTypeLocal;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return `[IndexType (description=${this.code})]`;
 	}

@@ -6,11 +6,15 @@ import Expression from './Expression.js';
  * The collection of {@link Expression} objects that compose a filter.
  *
  * @public
- * @param {Expression[]} expressions
  */
 export default class Filter {
+	#expressions;
+
+	/**
+	 * @param {Expression[]} expressions
+	 */
 	constructor(expressions) {
-		this._expressions = expressions;
+		this.#expressions = expressions;
 	}
 
 	/**
@@ -20,7 +24,7 @@ export default class Filter {
 	 * @returns {Expression[]}
 	 */
 	get expressions() {
-		return [...this._expressions];
+		return [...this.#expressions];
 	}
 
 	/**
@@ -29,15 +33,15 @@ export default class Filter {
 	 * @public
 	 */
 	validate() {
-		if (this._expressions.length === 0) {
+		if (this.#expressions.length === 0) {
 			throw new Error('Filter must contain at least one Expression.');
 		}
 
-		if (!this._expressions.every((e => e instanceof Expression))) {
+		if (!this.#expressions.every((e => e instanceof Expression))) {
 			throw new Error('Filter expression array can only contain Expression instances.');
 		}
 
-		this._expressions.forEach(e => e.validate());
+		this.#expressions.forEach(e => e.validate());
 	}
 
 	/**
@@ -60,6 +64,12 @@ export default class Filter {
 		}
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Filter]';
 	}

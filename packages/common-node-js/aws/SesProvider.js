@@ -14,19 +14,30 @@ import log4js from 'log4js';
 const logger = log4js.getLogger('common-node/aws/SesProvider');
 
 /**
+* @typedef {import('stream').Readable} Readable
+*/
+
+/**
  * A facade for Amazon's Simple Email Service (SES). The constructor
  * accepts configuration options. The promise-based instance functions
  * abstract knowledge of the AWS API.
  *
  * @public
  * @extends Disposable
- * @param {object} configuration
- * @param {string} configuration.region - The AWS region (e.g. "us-east-1").
- * @param {string=} configuration.apiVersion - The SES version (defaults to "2010-12-01").
- * @param {string=} configuration.recipientOverride - If specified, all emails sent will be redirected to this email address, ignoring the specified recipient.
- * @param {number=} configuration.rateLimitPerSecond - The number of emails which will be sent to the AWS SDK within one second (defaults to 10).
  */
 export default class SesProvider extends Disposable {
+	#configuration;
+	#rateLimiters;
+	#sesv2;
+	#started;
+
+	/**
+	 * @param {object} configuration
+	 * @param {string} configuration.region - The AWS region (e.g. "us-east-1").
+	 * @param {string=} configuration.apiVersion - The SES version (defaults to "2010-12-01").
+	 * @param {string=} configuration.recipientOverride - If specified, all emails sent will be redirected to this email address, ignoring the specified recipient.
+	 * @param {number=} configuration.rateLimitPerSecond - The number of emails which will be sent to the AWS SDK within one second (defaults to 10).
+	 */
 	constructor(configuration) {
 		super();
 
@@ -42,16 +53,16 @@ export default class SesProvider extends Disposable {
 
 		assert.argumentIsOptional(configuration.rateLimitPerSecond, 'configuration.rateLimitPerSecond', Number);
 
-		this._configuration = configuration;
+		this.#configuration = configuration;
 
-		this._sesv2 = null;
+		this.#sesv2 = null;
 
-		this._started = false;
+		this.#started = false;
 
-		this._rateLimiters = { };
+		this.#rateLimiters = { };
 
-		this._rateLimiters.send = new RateLimiter(configuration.rateLimitPerSecond || 10, 1000);
-		this._rateLimiters.suppressed = new RateLimiter(configuration.rateLimitPerSecond || 1, 4000);
+		this.#rateLimiters.send = new RateLimiter(configuration.rateLimitPerSecond || 10, 1000);
+		this.#rateLimiters.suppressed = new RateLimiter(configuration.rateLimitPerSecond || 1, 4000);
 	}
 
 	/**
@@ -67,21 +78,21 @@ export default class SesProvider extends Disposable {
 			throw new Error('Unable to start, the SES provider has been disposed.');
 		}
 
-		if (!this._started) {
+		if (!this.#started) {
 			try {
 				const clientConfiguration = {
-					region: this._configuration.region
+					region: this.#configuration.region
 				};
 
-				if (this._configuration.apiVersion) {
-					clientConfiguration.apiVersion = this._configuration.apiVersion;
+				if (this.#configuration.apiVersion) {
+					clientConfiguration.apiVersion = this.#configuration.apiVersion;
 				}
 
-				this._sesv2 = new SESv2Client(clientConfiguration);
+				this.#sesv2 = new SESv2Client(clientConfiguration);
 
 				logger.info('The SES provider has started');
 
-				this._started = true;
+				this.#started = true;
 			} catch (e) {
 				logger.error('The SES provider failed to start', e);
 
@@ -94,18 +105,25 @@ export default class SesProvider extends Disposable {
 	 * Returns a clone of the configuration object originally passed
 	 * to the constructor.
 	 *
-	 * @returns {Object}
+	 * @returns {object}
 	 */
 	getConfiguration() {
 		if (this.disposed) {
 			throw new Error('The SES provider has been disposed.');
 		}
 
-		return object.clone(this._configuration);
+		return object.clone(this.#configuration);
 	}
 
+	/**
+	 * Sends a message.
+	 *
+	 * @public
+	 * @param {object=} options
+	 * @returns {Promise<*>}
+	 */
 	async send(options) {
-		checkReady.call(this);
+		this.#checkReady();
 
 		assert.argumentIsRequired(options, 'options', Object);
 
@@ -122,12 +140,12 @@ export default class SesProvider extends Disposable {
 	 * @param {string=} subject - The email's subject.
 	 * @param {string=} htmlBody - The email's HTML body.
 	 * @param {string=} textBody - The email's text body.
-	 * @param {Object[]=} attachments - Attachment descriptors.
-	 * @param {Object=} headers - Email headers.
+	 * @param {object[]=} attachments - Attachment descriptors.
+	 * @param {object=} headers - Email headers.
 	 * @returns {Promise<void>}
 	 */
 	async sendEmail(senderAddress, recipientAddress, subject, htmlBody, textBody, attachments, headers) {
-		checkReady.call(this);
+		this.#checkReady();
 
 		assert.argumentIsRequired(senderAddress, 'senderAddress', String);
 
@@ -162,21 +180,21 @@ export default class SesProvider extends Disposable {
 			});
 		}
 
-		if (this._configuration.recipientOverride) {
-			logger.warn('Overriding email recipient for testing purposes, using [', this._configuration.recipientOverride, ']');
+		if (this.#configuration.recipientOverride) {
+			logger.warn('Overriding email recipient for testing purposes, using [', this.#configuration.recipientOverride, ']');
 
-			recipientAddress = this._configuration.recipientOverride;
+			recipientAddress = this.#configuration.recipientOverride;
 		}
 
 		const recipientAddressesToUse = is.array(recipientAddress) ? recipientAddress : [ recipientAddress ];
 
 		const message = buildEmailMessage(subject, htmlBody, textBody, attachments, headers);
 
-		await this._rateLimiters.send.enqueue(async () => {
+		await this.#rateLimiters.send.enqueue(async () => {
 			try {
 				logger.debug('Sending email to [', recipientAddress, ']');
 
-				await this._sesv2.send(new SendEmailCommand({
+				await this.#sesv2.send(new SendEmailCommand({
 					FromEmailAddress: senderAddress,
 					Destination: {
 						ToAddresses: recipientAddressesToUse
@@ -202,17 +220,17 @@ export default class SesProvider extends Disposable {
 	 * @public
 	 * @async
 	 * @param {string} email
-	 * @returns {Promise<Object|null>}
+	 * @returns {Promise<object|null>}
 	 */
 	async getSuppressedItem(email) {
-		checkReady.call(this);
+		this.#checkReady();
 
 		assert.argumentIsRequired(email, 'email', String);
 
 		let item;
 
 		try {
-			const response = await this._sesv2.send(new GetSuppressedDestinationCommand({ EmailAddress: email }));
+			const response = await this.#sesv2.send(new GetSuppressedDestinationCommand({ EmailAddress: email }));
 
 			item = transformSuppressionListItem(response.SuppressedDestination);
 		} catch (e) {
@@ -234,7 +252,7 @@ export default class SesProvider extends Disposable {
 	 * @returns {Promise<*[]>}
 	 */
 	async getSuppressedItems() {
-		checkReady.call(this);
+		this.#checkReady();
 
 		const items = [];
 
@@ -247,7 +265,7 @@ export default class SesProvider extends Disposable {
 				params.NextToken = token;
 			}
 
-			const response = await this._sesv2.send(new ListSuppressedDestinationsCommand(params));
+			const response = await this.#sesv2.send(new ListSuppressedDestinationsCommand(params));
 			const batch = response.SuppressedDestinationSummaries;
 
 			for (let i = 0; i < batch.length; i++) {
@@ -268,11 +286,11 @@ export default class SesProvider extends Disposable {
 	 * Creates a readable stream for suppressed items.
 	 *
 	 * @public
-	 * @param {Boolean} discrete
-	 * @returns {Stream.Readable}
+	 * @param {boolean} discrete
+	 * @returns {Readable}
 	 */
 	getSuppressedItemStream(discrete) {
-		checkReady.call(this);
+		this.#checkReady();
 
 		let done = false;
 		let token = null;
@@ -282,14 +300,14 @@ export default class SesProvider extends Disposable {
 				return null;
 			}
 
-			const response = await this._rateLimiters.suppressed.enqueue(async () => {
+			const response = await this.#rateLimiters.suppressed.enqueue(async () => {
 				const params = { };
 
 				if (token !== null) {
 					params.NextToken = token;
 				}
 
-				return this._sesv2.send(new ListSuppressedDestinationsCommand(params));
+				return this.#sesv2.send(new ListSuppressedDestinationsCommand(params));
 			});
 
 			const items = response.SuppressedDestinationSummaries.reduce((accumulator, raw) => {
@@ -317,17 +335,17 @@ export default class SesProvider extends Disposable {
 	 * @async
 	 * @param {string} email - The email address to suppress.
 	 * @param {string=} reason - The reason for suppression (valid values: "BOUNCE", "COMPLAINT"). Defaults to "COMPLAINT".
-	 * @returns {Promise<Object>}
+	 * @returns {Promise<object>}
 	 */
 	async addSuppressedItem(email, reason = 'COMPLAINT') {
-		checkReady.call(this);
+		this.#checkReady();
 
 		assert.argumentIsRequired(email, 'email', String);
 		assert.argumentIsOptional(reason, 'reason', String);
 
 		assert.argumentIsValid(reason, 'reason', r => r.toUpperCase() === 'BOUNCE' || r.toUpperCase() === 'COMPLAINT', 'must be one of [ BOUNCE, COMPLIANT ]');
 
-		await this._sesv2.send(new PutSuppressedDestinationCommand({ EmailAddress: email, Reason: reason.toUpperCase() }));
+		await this.#sesv2.send(new PutSuppressedDestinationCommand({ EmailAddress: email, Reason: reason.toUpperCase() }));
 
 		return this.getSuppressedItem(email);
 	}
@@ -341,33 +359,44 @@ export default class SesProvider extends Disposable {
 	 * @returns {Promise<void>}
 	 */
 	async removeSuppressedItem(email) {
-		checkReady.call(this);
+		this.#checkReady();
 
 		assert.argumentIsRequired(email, 'email', String);
 
-		await this._sesv2.send(new DeleteSuppressedDestinationCommand({ EmailAddress: email }));
+		await this.#sesv2.send(new DeleteSuppressedDestinationCommand({ EmailAddress: email }));
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 */
 	_onDispose() {
-		this._rateLimiters.send.dispose();
-		this._rateLimiters.suppressed.dispose();
+		this.#rateLimiters.send.dispose();
+		this.#rateLimiters.suppressed.dispose();
 
-		this._rateLimiters = null;
+		this.#rateLimiters = null;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[SesProvider]';
 	}
-}
 
-function checkReady() {
-	if (this.disposed) {
-		throw new Error('The SES provider has been disposed.');
-	}
 
-	if (!this._started) {
-		throw new Error('The SES provider has not been started.');
-	}
+	#checkReady() {
+		if (this.disposed) {
+			throw new Error('The SES provider has been disposed.');
+			}
+
+			if (!this.#started) {
+				throw new Error('The SES provider has not been started.');
+			}
+		}
 }
 
 function transformSuppressionListItem(data) {

@@ -5,36 +5,41 @@ import Enum from '@barchart/common-js/lang/Enum.js';
  *
  * @public
  * @extends {Enum}
- * @param {String} code
- * @param {Number} keyLength
- * @param {Number} initializationVectorLength
  */
 export default class EncryptionType extends Enum {
+	#initializationVectorLength;
+	#keyLength;
+
+	/**
+	 * @param {string} code
+	 * @param {number} keyLength
+	 * @param {number} initializationVectorLength
+	 */
 	constructor(code, keyLength, initializationVectorLength) {
 		super(code, code);
 
-		this._keyLength = keyLength;
-		this._initializationVectorLength = initializationVectorLength;
+		this.#keyLength = keyLength;
+		this.#initializationVectorLength = initializationVectorLength;
 	}
 
 	/**
 	 * The byte length of the algorithm's key.
 	 *
 	 * @public
-	 * @returns {Number}
+	 * @returns {number}
 	 */
 	get keyLength() {
-		return this._keyLength;
+		return this.#keyLength;
 	}
 
 	/**
 	 * The byte length of the algorithm's initialization vector.
 	 *
 	 * @public
-	 * @returns {Number}
+	 * @returns {number}
 	 */
 	get initializationVectorLength() {
-		return this._initializationVectorLength;
+		return this.#initializationVectorLength;
 	}
 
 	/**
@@ -59,6 +64,12 @@ export default class EncryptionType extends Enum {
 		return encryptionTypeAes256;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return `[EncryptionType (code=${this.code})]`;
 	}

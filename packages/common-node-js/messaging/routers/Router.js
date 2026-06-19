@@ -15,9 +15,15 @@ const logger = log4js.getLogger('common-node/messaging/routers/Router');
  * @public
  * @extends Disposable
  * @abstract
- * @param {RegExp[]=} suppressExpressions
  */
 export default class Router extends Disposable {
+	#startPromise;
+	#started;
+	#suppressExpressions;
+
+	/**
+	 * @param {RegExp[]=} suppressExpressions
+	 */
 	constructor(suppressExpressions) {
 		super();
 
@@ -25,10 +31,10 @@ export default class Router extends Disposable {
 			assert.argumentIsArray(suppressExpressions, 'suppressExpressions', RegExp, 'RegExp');
 		}
 
-		this._suppressExpressions = suppressExpressions || [ ];
+		this.#suppressExpressions = suppressExpressions || [ ];
 
-		this._startPromise = null;
-		this._started = false;
+		this.#startPromise = null;
+		this.#started = false;
 	}
 
 	/**
@@ -43,21 +49,26 @@ export default class Router extends Disposable {
 			throw new Error('The message publisher has been disposed');
 		}
 
-		if (this._startPromise === null) {
-			this._startPromise = Promise.resolve()
+		if (this.#startPromise === null) {
+			this.#startPromise = Promise.resolve()
 				.then(() => {
 					return this._start();
 				}).then(() => {
-					this._started = true;
+					this.#started = true;
 
-					return this._started;
+					return this.#started;
 				});
 		}
 
-		return this._startPromise;
+		return this.#startPromise;
 	}
 
-	_start() {
+	/**
+	 * @protected
+	 * @async
+	 * @returns {Promise<boolean>}
+	 */
+	async _start() {
 		return;
 	}
 
@@ -65,13 +76,13 @@ export default class Router extends Disposable {
 	 * Determines if this router can handle a request (of a certain type).
 	 *
 	 * @public
-	 * @param {String} messageType
+	 * @param {string} messageType
 	 * @returns {boolean}
 	 */
 	canRoute(messageType) {
 		assert.argumentIsRequired(messageType, 'messageType', String);
 
-		if (!this._started) {
+		if (!this.#started) {
 			throw new Error('The router has not started.');
 		}
 
@@ -79,9 +90,14 @@ export default class Router extends Disposable {
 			throw new Error('The message router has been disposed');
 		}
 
-		return !checkSuppression(messageType, this._suppressExpressions) && this._canRoute(messageType);
+		return !checkSuppression(messageType, this.#suppressExpressions) && this._canRoute(messageType);
 	}
 
+	/**
+	 * @protected
+	 * @param messageType
+	 * @return {boolean}
+	 */
 	_canRoute(messageType) {
 		return false;
 	}
@@ -91,10 +107,10 @@ export default class Router extends Disposable {
 	 *
 	 * @public
 	 * @async
-	 * @param {String} messageType
+	 * @param {string} messageType
 	 * @param {*} payload
-	 * @param {Number} timeout
-	 * @param {Boolean} forget
+	 * @param {number} timeout
+	 * @param {boolean} forget
 	 * @returns {Promise<*>}
 	 */
 	async route(messageType, payload, timeout, forget) {
@@ -102,7 +118,7 @@ export default class Router extends Disposable {
 		assert.argumentIsValid(timeout, 'timeout', x => is.positive(x), 'is positive');
 		assert.argumentIsRequired(forget, 'forget', Boolean);
 
-		if (!this._started) {
+		if (!this.#started) {
 			throw new Error('The router has not started.');
 		}
 
@@ -120,7 +136,15 @@ export default class Router extends Disposable {
 			});
 	}
 
-	_route(messageType, payload, timeout, forget) {
+	/**
+	 * @protected
+	 * @async
+	 * @param messageType
+	 * @param payload
+	 * @param timeout
+	 * @param forget
+	 */
+	async _route(messageType, payload, timeout, forget) {
 		return;
 	}
 
@@ -130,7 +154,7 @@ export default class Router extends Disposable {
 	 *
 	 * @public
 	 * @async
-	 * @param {String} messageType
+	 * @param {string} messageType
 	 * @param {Function} handler
 	 * @returns {Promise<Disposable>}
 	 */
@@ -138,7 +162,7 @@ export default class Router extends Disposable {
 		assert.argumentIsRequired(messageType, 'messageType', String);
 		assert.argumentIsRequired(handler, 'handler', Function);
 
-		if (!this._started) {
+		if (!this.#started) {
 			throw new Error('The router has not started.');
 		}
 
@@ -148,7 +172,7 @@ export default class Router extends Disposable {
 
 		let registerPromise;
 
-		if (checkSuppression(messageType, this._suppressExpressions)) {
+		if (checkSuppression(messageType, this.#suppressExpressions)) {
 			logger.debug('Suppressing registration for to', messageType);
 
 			registerPromise = Promise.resolve(Disposable.getEmpty());
@@ -162,14 +186,31 @@ export default class Router extends Disposable {
 		return registerPromise;
 	}
 
-	_register(messageType, handler) {
+	/**
+	 * @protected
+	 * @async
+	 * @param {string} messageType
+	 * @param {Function} handler
+	 * @returns {Promise<Disposable>}
+	 */
+	async _register(messageType, handler) {
 		return Disposable.getEmpty();
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 */
 	_onDispose() {
 		return;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Router]';
 	}

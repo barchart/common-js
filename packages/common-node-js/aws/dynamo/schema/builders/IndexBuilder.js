@@ -2,27 +2,35 @@ import * as assert from '@barchart/common-js/lang/assert.js';
 
 import Index from './../definitions/Index.js';
 import IndexType from './../definitions/IndexType.js';
-import Projection from './../definitions/Projection.js';
-import ProjectionType from './../definitions/ProjectionType.js';
 import KeyBuilder from './KeyBuilder.js';
 import ProjectionBuilder from './ProjectionBuilder.js';
 import ProvisionedThroughputBuilder from './ProvisionedThroughputBuilder.js';
 import LambdaStage from '../../../lambda/LambdaStage.js';
-import Table from '../definitions/Table.js';
+
+/**
+ * @typedef {import('./TableBuilder.js').default} TableBuilder
+ * @typedef {import('../definitions/KeyType.js').default} KeyType
+ * @typedef {import('./../definitions/ProjectionType.js').default} ProjectionType
+ */
 
 /**
  * Fluent interface for building an {@link Index}.
  *
  * @public
- * @param {string} name
- * @param {TableBuilder} parent
  */
 export default class IndexBuilder {
+	#index;
+	#parent;
+
+	/**
+	 * @param {string} name
+	 * @param {TableBuilder} parent
+	 */
 	constructor(name, parent) {
 		assert.argumentIsRequired(name, 'name', String);
 
-		this._index = new Index(name, null, [ ], null, null);
-		this._parent = parent;
+		this.#index = new Index(name, null, [ ], null, null);
+		this.#parent = parent;
 	}
 
 	/**
@@ -32,7 +40,7 @@ export default class IndexBuilder {
 	 * @returns {Index}
 	 */
 	get index() {
-		return this._index;
+		return this.#index;
 	}
 
 	/**
@@ -41,14 +49,14 @@ export default class IndexBuilder {
 	 *
 	 * @public
 	 * @param {LambdaStage} stage
-	 * @param {IndexBuilder~stageCallback} callback
+	 * @param {StageCallback} callback
 	 * @return {IndexBuilder}
 	 */
 	forStage(stage, callback) {
 		assert.argumentIsRequired(stage, 'stage', LambdaStage, 'LambdaStage');
 		assert.argumentIsRequired(callback, 'callback', Function);
 
-		if (LambdaStage.getStageFromName(this._parent.table.name) === stage) {
+		if (LambdaStage.getStageFromName(this.#parent.table.name) === stage) {
 			callback(this);
 		}
 
@@ -65,13 +73,13 @@ export default class IndexBuilder {
 	withType(type) {
 		assert.argumentIsRequired(type, 'type', IndexType, 'IndexType');
 
-		this._index = new Index(this._index.name, type, this._index.keys, this._index.projection, this._index.provisionedThroughput);
+		this.#index = new Index(this.#index.name, type, this.#index.keys, this.#index.projection, this.#index.provisionedThroughput);
 
 		return this;
 	}
 
 	/**
-	 * Adds a {@link Key} to the index, given all the components of an
+	 * Adds a {@link Key} to the index, given all the components of a
 	 * key, then returns the current instance.
 	 *
 	 * @public
@@ -96,14 +104,14 @@ export default class IndexBuilder {
 	withKeyBuilder(name, callback) {
 		assert.argumentIsRequired(callback, 'callback', Function);
 
-		const keyBuilder = new KeyBuilder(name, this._parent);
+		const keyBuilder = new KeyBuilder(name, this.#parent);
 
 		callback(keyBuilder);
 
 		const key = keyBuilder.key;
-		const keys = this._index.keys.filter(k => k.attribute.name !== key.attribute.name).concat(key);
+		const keys = this.#index.keys.filter(k => k.attribute.name !== key.attribute.name).concat(key);
 
-		this._index = new Index(this._index.name, this._index.type, keys, this._index.projection, this._index.provisionedThroughput);
+		this.#index = new Index(this.#index.name, this.#index.type, keys, this.#index.projection, this.#index.provisionedThroughput);
 
 		return this;
 	}
@@ -114,7 +122,7 @@ export default class IndexBuilder {
 	 *
 	 * @public
 	 * @param {ProjectionType} projectionType
-	 * @param {Array<String>=} attributeNames
+	 * @param {Array<string>=} attributeNames
 	 * @returns {IndexBuilder}
 	 */
 	withProjection(projectionType, attributeNames) {
@@ -136,11 +144,11 @@ export default class IndexBuilder {
 	withProjectionBuilder(projectionType, callback) {
 		assert.argumentIsRequired(callback, 'callback', Function);
 
-		const projectionBuilder = new ProjectionBuilder(projectionType, this._parent);
+		const projectionBuilder = new ProjectionBuilder(projectionType, this.#parent);
 
 		callback(projectionBuilder);
 
-		this._index = new Index(this._index.name, this._index.type, this._index.keys, projectionBuilder.projection, this._index.provisionedThroughput);
+		this.#index = new Index(this.#index.name, this.#index.type, this.#index.keys, projectionBuilder.projection, this.#index.provisionedThroughput);
 
 		return this;
 	}
@@ -150,8 +158,8 @@ export default class IndexBuilder {
 	 * then returns the current instance.
 	 *
 	 * @public
-	 * @param {Number} readUnits
-	 * @param {Number} writeUnits
+	 * @param {number} readUnits
+	 * @param {number} writeUnits
 	 * @returns {IndexBuilder}
 	 */
 	withProvisionedThroughput(readUnits, writeUnits) {
@@ -172,7 +180,7 @@ export default class IndexBuilder {
 	withProvisionedThroughputBuilder(provisionedThroughputBuilder) {
 		assert.argumentIsRequired(provisionedThroughputBuilder, 'provisionedThroughputBuilder', ProvisionedThroughputBuilder, 'ProvisionedThroughputBuilder');
 
-		this._index = new Index(this._index.name, this._index.type, this._index.keys, this._index.projection, provisionedThroughputBuilder.provisionedThroughput);
+		this.#index = new Index(this.#index.name, this.#index.type, this.#index.keys, this.#index.projection, provisionedThroughputBuilder.provisionedThroughput);
 
 		return this;
 	}
@@ -185,11 +193,17 @@ export default class IndexBuilder {
 	 * @returns {IndexBuilder}
 	 */
 	withOnDemandThroughput() {
-		this._index = new Index(this._index.name, this._index.type, this._index.keys, this._index.projection, null);
+		this.#index = new Index(this.#index.name, this.#index.type, this.#index.keys, this.#index.projection, null);
 
 		return this;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[IndexBuilder]';
 	}
@@ -200,6 +214,6 @@ export default class IndexBuilder {
  * the configuration applies to the correct environment (i.e. {@link LambdaStage}).
  *
  * @public
- * @callback IndexBuilder~stageCallback
+ * @callback StageCallback
  * @param {IndexBuilder} indexBuilder
  */

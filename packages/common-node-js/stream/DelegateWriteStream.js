@@ -10,29 +10,40 @@ import Stream from 'stream';
  *
  * @public
  * @extends {Stream.Writable}
- * @param {Function} delegate
- * @param {Object=} options
- * @param {Boolean=} asynchronous
  */
 export default class DelegateWriteStream extends Stream.Writable {
+	#asynchronous;
+	#delegate;
+
+	/**
+	 * @param {Function} delegate
+	 * @param {object=} options
+	 * @param {boolean=} asynchronous
+	 */
 	constructor(delegate, options, asynchronous) {
 		super(object.merge({ objectMode: true }, (options || { })));
 
 		assert.argumentIsRequired(delegate, 'delegate', Function);
 		assert.argumentIsOptional(asynchronous, 'asynchronous', Boolean);
 
-		this._delegate = delegate;
-		this._asynchronous = is.boolean(asynchronous) && asynchronous;
+		this.#delegate = delegate;
+		this.#asynchronous = is.boolean(asynchronous) && asynchronous;
 	}
 
 	_write(chunk, encoding, callback) {
-		if (this._asynchronous) {
-			processAsynchronous(this._delegate, chunk, callback);
+		if (this.#asynchronous) {
+			processAsynchronous(this.#delegate, chunk, callback);
 		} else {
-			processSynchronous(this._delegate, chunk, callback);
+			processSynchronous(this.#delegate, chunk, callback);
 		}
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[DelegateWriteStream]';
 	}

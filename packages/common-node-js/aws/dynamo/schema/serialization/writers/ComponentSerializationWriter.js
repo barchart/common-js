@@ -6,28 +6,33 @@ import Serializers from './../Serializers.js';
 import Writer from './Writer.js';
 
 /**
- * Reads an component value from a source object and writes it to
+ * Reads a component value from a source object and writes it to
  * a target object, in the form required for saving to DynamoDB.
  *
  * @public
  * @extends {Writer}
- * @param {Component} component
  */
 export default class ComponentSerializationWriter extends Writer {
+	#component;
+	#serializer;
+
+	/**
+	 * @param {Component} component
+	 */
 	constructor(component) {
 		super();
 
 		assert.argumentIsRequired(component, 'component', Component, 'Component');
 
-		this._component = component;
-		this._serializer = Serializers.forComponent(component);
+		this.#component = component;
+		this.#serializer = Serializers.forComponent(component);
 	}
 
 	_write(source, target) {
-		const name = this._component.name;
+		const name = this.#component.name;
 
-		const values = this._serializer.serialize(source[name]);
-		const definitions = this._component.componentType.definitions;
+		const values = this.#serializer.serialize(source[name]);
+		const definitions = this.#component.componentType.definitions;
 
 		definitions.forEach((definition, i) => {
 			const componentName = definition.getFieldName(name);
@@ -37,9 +42,15 @@ export default class ComponentSerializationWriter extends Writer {
 	}
 
 	_canWrite(source, target) {
-		return this._serializer !== null && is.object(source) && source.hasOwnProperty(this._component.name);
+		return this.#serializer !== null && is.object(source) && source.hasOwnProperty(this.#component.name);
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[ComponentSerializationWriter]';
 	}

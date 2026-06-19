@@ -7,6 +7,18 @@ import Endpoint from './../../Endpoint.js';
 const emptyCommand = CommandHandler.fromFunction(() => null);
 
 export default class SocketSubscriptionEndpoint extends Endpoint {
+	#channel;
+	#responseCommand;
+	#responseEventType;
+	#roomsCommand;
+
+	/**
+	 * @param {*} channel
+	 * @param {*} roomsCommand
+	 * @param {*} responseCommand
+	 * @param {*} responseEventType
+	 * @param {*} validationCommand
+	 */
 	constructor(channel, roomsCommand, responseCommand, responseEventType, validationCommand) {
 		super(emptyCommand, validationCommand);
 
@@ -15,29 +27,59 @@ export default class SocketSubscriptionEndpoint extends Endpoint {
 		assert.argumentIsOptional(responseCommand, 'responseCommand', CommandHandler, 'CommandHandler');
 		assert.argumentIsOptional(responseEventType, 'responseEventType', String);
 
-		this._channel = channel;
-		this._roomsCommand = roomsCommand;
+		this.#channel = channel;
+		this.#roomsCommand = roomsCommand;
 
-		this._responseCommand = responseCommand || emptyCommand;
-		this._responseEventType = responseEventType || '';
+		this.#responseCommand = responseCommand || emptyCommand;
+		this.#responseEventType = responseEventType || '';
 	}
 
+	/**
+	 * Returns the channel.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	getChannel() {
-		return this._channel;
+		return this.#channel;
 	}
 
+	/**
+	 * Returns the rooms command.
+	 *
+	 * @public
+	 * @returns {Function}
+	 */
 	getRoomsCommand() {
-		return this._roomsCommand;
+		return this.#roomsCommand;
 	}
 
+	/**
+	 * Returns the response command.
+	 *
+	 * @public
+	 * @returns {Function}
+	 */
 	getResponseCommand() {
-		return this._responseCommand;
+		return this.#responseCommand;
 	}
 
+	/**
+	 * Returns the response event type.
+	 *
+	 * @public
+	 * @returns {*}
+	 */
 	getResponseEventType() {
-		return this._responseEventType;
+		return this.#responseEventType;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[SocketSubscriptionEndpoint]';
 	}

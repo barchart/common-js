@@ -1,13 +1,15 @@
 import Enum from '@barchart/common-js/lang/Enum.js';
 
 /**
- * Defines an compression algorithm that used to compress data.
+ * Defines a compression algorithm that used to compress data.
  *
  * @public
  * @extends {Enum}
- * @param {String} code
  */
 export default class CompressionType extends Enum {
+	/**
+	 * @param {string} code
+	 */
 	constructor(code) {
 		super(code, code);
 	}
@@ -32,6 +34,12 @@ export default class CompressionType extends Enum {
 		return compressionTypeZip;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return `[CompressionType (code=${this.code})]`;
 	}

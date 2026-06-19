@@ -8,9 +8,16 @@ import KeyType from './KeyType.js';
  * @public
  */
 export default class Key {
+	#attribute;
+	#keyType;
+
+	/**
+	 * @param {*} attribute
+	 * @param {*} keyType
+	 */
 	constructor(attribute, keyType) {
-		this._attribute = attribute;
-		this._keyType = keyType;
+		this.#attribute = attribute;
+		this.#keyType = keyType;
 	}
 
 	/**
@@ -20,7 +27,7 @@ export default class Key {
 	 * @returns {Attribute}
 	 */
 	get attribute() {
-		return this._attribute;
+		return this.#attribute;
 	}
 
 	/**
@@ -30,7 +37,7 @@ export default class Key {
 	 * @returns {KeyType}
 	 */
 	get keyType() {
-		return this._keyType;
+		return this.#keyType;
 	}
 
 	/**
@@ -39,29 +46,29 @@ export default class Key {
 	 * @public
 	 */
 	validate() {
-		if (!(this._attribute instanceof Attribute)) {
+		if (!(this.#attribute instanceof Attribute)) {
 			throw new Error('Key attribute is invalid.');
 		}
 
-		if (!(this._keyType instanceof KeyType)) {
+		if (!(this.#keyType instanceof KeyType)) {
 			throw new Error('Key type is invalid.');
 		}
 
-		this._attribute.validate();
+		this.#attribute.validate();
 	}
 
 	/**
 	 * Generates an object which is suitable for use by the AWS SDK.
 	 *
 	 * @public
-	 * @returns {Object}
+	 * @returns {object}
 	 */
 	toKeySchema() {
 		this.validate();
 
 		return {
-			AttributeName: this._attribute.name,
-			KeyType: this._keyType.code
+			AttributeName: this.#attribute.name,
+			KeyType: this.#keyType.code
 		};
 	}
 
@@ -71,14 +78,20 @@ export default class Key {
 	 *
 	 * @public
 	 * @param {Key} other - The key to compare.
-	 * @param {Boolean=} relaxed - If true, the key's attribute's dataType is not compared.
-	 * @returns {Boolean}
+	 * @param {boolean=} relaxed - If true, the key's attribute's dataType is not compared.
+	 * @returns {boolean}
 	 */
 	equals(other, relaxed) {
-		return other === this || (other instanceof Key && this._attribute.equals(other.attribute, relaxed) && this._keyType === other.keyType);
+		return other === this || (other instanceof Key && this.#attribute.equals(other.attribute, relaxed) && this.#keyType === other.keyType);
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
-		return `[Key (name=${this._attribute.name}, type=${this._keyType.code})]`;
+		return `[Key (name=${this.#attribute.name}, type=${this.#keyType.code})]`;
 	}
 }

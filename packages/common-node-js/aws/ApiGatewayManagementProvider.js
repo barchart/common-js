@@ -15,13 +15,19 @@ const logger = log4js.getLogger('common-node/aws/ApiGatewayManagementProvider');
  *
  * @public
  * @extends Disposable
- * @param {object} configuration
- * @param {string} configuration.region - The AWS region (e.g. "us-east-1").
- * @param {string} configuration.endpoint - The endpoint url.
- * @param {string=} configuration.apiVersion - The Api Gateway Management Api version (defaults to "2018-11-29").
- *
  */
 export default class ApiGatewayManagementProvider extends Disposable {
+	#agm;
+	#configuration;
+	#startPromise;
+	#started;
+
+	/**
+	 * @param {object} configuration
+	 * @param {string} configuration.region - The AWS region (e.g. "us-east-1").
+	 * @param {string} configuration.endpoint - The endpoint url.
+	 * @param {string=} configuration.apiVersion - The Api Gateway Management Api version (defaults to "2018-11-29").
+	 */
 	constructor(configuration) {
 		super();
 
@@ -30,12 +36,12 @@ export default class ApiGatewayManagementProvider extends Disposable {
 		assert.argumentIsRequired(configuration.region, 'configuration.region', String);
 		assert.argumentIsOptional(configuration.apiVersion, 'configuration.apiVersion', String);
 
-		this._configuration = configuration;
+		this.#configuration = configuration;
 
-		this._agm = null;
+		this.#agm = null;
 
-		this._startPromise = null;
-		this._started = false;
+		this.#startPromise = null;
+		this.#started = false;
 	}
 
 	/**
@@ -44,27 +50,27 @@ export default class ApiGatewayManagementProvider extends Disposable {
 	 *
 	 * @public
 	 * @async
-	 * @returns {Promise<Boolean>}
+	 * @returns {Promise<boolean>}
 	 */
 	async start() {
 		if (this.disposed) {
 			return Promise.reject('Unable to start, the API Gateway provider has been disposed');
 		}
 
-		if (this._startPromise === null) {
-			this._startPromise = (async () => {
+		if (this.#startPromise === null) {
+			this.#startPromise = (async () => {
 				try {
-					this._agm = new ApiGatewayManagementApiClient({
-						apiVersion: this._configuration.apiVersion || '2018-11-29',
-						endpoint: this._configuration.endpoint,
-						region: this._configuration.region,
+					this.#agm = new ApiGatewayManagementApiClient({
+						apiVersion: this.#configuration.apiVersion || '2018-11-29',
+						endpoint: this.#configuration.endpoint,
+						region: this.#configuration.region,
 					});
 
 					logger.info('The API Gateway provider has started');
 
-					this._started = true;
+					this.#started = true;
 
-					return this._started;
+					return this.#started;
 				} catch (e) {
 					logger.error('The API Gateway provider failed to start', e);
 
@@ -73,7 +79,7 @@ export default class ApiGatewayManagementProvider extends Disposable {
 			})();
 		}
 
-		return this._startPromise;
+		return this.#startPromise;
 	}
 
 	/**
@@ -81,29 +87,36 @@ export default class ApiGatewayManagementProvider extends Disposable {
 	 *
 	 * @public
 	 * @async
-	 * @param {String} connectionId
-	 * @param {Buffer|String} data
+	 * @param {string} connectionId
+	 * @param {Buffer|string} data
 	 * @returns {Promise}
 	 */
 	async postToConnection(connectionId, data) {
 		assert.argumentIsRequired(connectionId, 'connectionId', String);
 
-		checkReady.call(this);
+		this.#checkReady();
 
-		return this._agm.send(new PostToConnectionCommand({ ConnectionId: connectionId, Data: Buffer.isBuffer(data) ? data : Buffer.from(data) }));
+		return this.#agm.send(new PostToConnectionCommand({ ConnectionId: connectionId, Data: Buffer.isBuffer(data) ? data : Buffer.from(data) }));
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[ApiGatewayManagementProvider]';
 	}
-}
 
-function checkReady() {
-	if (this.disposed) {
-		throw new Error('The API Gateway provider has been disposed.');
-	}
 
-	if (!this._started) {
-		throw new Error('The API Gateway provider has not been started.');
-	}
+	#checkReady() {
+		if (this.disposed) {
+			throw new Error('The API Gateway provider has been disposed.');
+			}
+
+			if (!this.#started) {
+				throw new Error('The API Gateway provider has not been started.');
+			}
+		}
 }

@@ -13,6 +13,7 @@ import LambdaTriggerType from './LambdaTriggerType.js';
  */
 export default class LambdaValidator {
 	constructor() {
+
 	}
 
 	/**
@@ -20,8 +21,8 @@ export default class LambdaValidator {
 	 *
 	 * @public
 	 * @async
-	 * @param {Object} event
-	 * @return {Promise<Boolean>}
+	 * @param {object} event
+	 * @return {Promise<boolean>}
 	 */
 	async validate(event) {
 		return Promise.resolve()
@@ -33,7 +34,7 @@ export default class LambdaValidator {
 				} else {
 					messages = [ event ];
 				}
-				
+
 				return Promise.all(messages.map((message) => {
 					const trigger = LambdaTriggerType.fromMessage(message);
 
@@ -44,15 +45,15 @@ export default class LambdaValidator {
 					} else {
 						messageId = null;
 					}
-					
+
 					let validatePromise;
-					
+
 					if (trigger !== null && messageId !== null) {
 						validatePromise = Promise.resolve(this._validate(process.env.AWS_LAMBDA_FUNCTION_NAME, trigger, messageId));
 					} else {
 						validatePromise = Promise.resolve(true);
 					}
-					
+
 					return validatePromise;
 				}));
 			}).then((results) => {
@@ -62,15 +63,21 @@ export default class LambdaValidator {
 
 	/**
 	 * @protected
-	 * @param {String} name
+	 * @param {string} name
 	 * @param {LambdaTriggerType} trigger
-	 * @param {String} messageId
-	 * @returns {Boolean|Promise<Boolean>}
+	 * @param {string} messageId
+	 * @returns {boolean|Promise<boolean>}
 	 */
 	_validate(name, trigger, messageId) {
 		return true;
 	}
-	
+
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[LambdaValidator]';
 	}

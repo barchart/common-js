@@ -10,16 +10,19 @@ import Table from './../../schema/definitions/Table.js';
  *
  * @public
  * @extends {Action}
- * @param {Table} table
- * @param {Filter} filter
- * @param {String=} description
- * @param {Object=} item
  */
 export default class Conditional extends Action {
+	#filter;
+
+	/**
+	 * @param {Table} table
+	 * @param {Filter=} filter
+	 * @param {string=} description
+	 */
 	constructor(table, filter, description) {
 		super(table, null, (description || '[Unnamed Conditional]'));
 
-		this._filter = filter;
+		this.#filter = filter || null;
 	}
 
 	/**
@@ -30,7 +33,7 @@ export default class Conditional extends Action {
 	 * @returns {Filter}
 	 */
 	get filter() {
-		return this._filter;
+		return this.#filter;
 	}
 
 	/**
@@ -43,11 +46,11 @@ export default class Conditional extends Action {
 			throw new Error('Table data type is invalid.');
 		}
 
-		if (!(this._filter instanceof Filter)) {
+		if (!(this.#filter instanceof Filter)) {
 			throw new Error('Filter data type is invalid.');
 		}
 
-		this._filter.validate();
+		this.#filter.validate();
 	}
 
 	/**
@@ -56,7 +59,7 @@ export default class Conditional extends Action {
 	 * (e.g. an "Item" property is needed to call the AWS "putItem" function).
 	 *
 	 * @public
-	 * @returns {Object}
+	 * @returns {object}
 	 */
 	toConditionalSchema() {
 		this.validate();
@@ -65,7 +68,7 @@ export default class Conditional extends Action {
 			TableName: this.table.name
 		};
 
-		const expressionData = Action.getConditionExpressionData(this.table, this._filter);
+		const expressionData = Action.getConditionExpressionData(this.table, this.#filter);
 
 		schema.ConditionExpression = expressionData.expression;
 
@@ -73,15 +76,21 @@ export default class Conditional extends Action {
 			schema.ExpressionAttributeValues = expressionData.valueAliases;
 		}
 
-		const attributes = this._filter.expressions.map(e => e.attribute);
+		const attributes = this.#filter.expressions.map(e => e.attribute);
 
 		if (attributes.length !== 0) {
-			schema.ExpressionAttributeNames = Action.getExpressionAttributeNames(this._table, attributes);
+			schema.ExpressionAttributeNames = Action.getExpressionAttributeNames(this.table, attributes);
 		}
 
 		return schema;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Conditional]';
 	}

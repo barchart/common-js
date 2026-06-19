@@ -25,11 +25,11 @@ export default class LambdaResponseGenerator {
 	 *
 	 * @public
 	 * @async
-	 * @param {Number} responseCode
-	 * @param {Object} responseHeaders
-	 * @param {Buffer|String} responseData
-	 * @param {Number} responseSize
-	 * @returns {Promise<Object|null>}
+	 * @param {number} responseCode
+	 * @param {object} responseHeaders
+	 * @param {Buffer|string} responseData
+	 * @param {number} responseSize
+	 * @returns {Promise<object|null>}
 	 */
 	async generate(responseCode, responseHeaders, responseData, responseSize) {
 		return Promise.resolve()
@@ -41,11 +41,11 @@ export default class LambdaResponseGenerator {
 	/**
 	 * @protected
 	 * @abstract
-	 * @param {Number} responseCode
-	 * @param {Object} responseHeaders
-	 * @param {Buffer|String} responseData
-	 * @param {Number} responseSize
-	 * @returns {Promise<Object|null>|Object|null}
+	 * @param {number} responseCode
+	 * @param {object} responseHeaders
+	 * @param {Buffer|string} responseData
+	 * @param {number} responseSize
+	 * @returns {Promise<object|null>|object|null}
 	 */
 	_generate(responseCode, responseHeaders, responseData, responseSize) {
 		return null;
@@ -57,11 +57,12 @@ export default class LambdaResponseGenerator {
 	 * be interpreted by the API Gateway as an HTTP response.
 	 *
 	 * @public
-	 * @param {Number} responseCode
-	 * @param {Object} responseHeaders
+	 * @static
+	 * @param {number} responseCode
+	 * @param {object} responseHeaders
 	 * @param {*} responseData
-	 * @param {Boolean=} isBase64Encoded
-	 * @returns {Object}
+	 * @param {boolean=} isBase64Encoded
+	 * @returns {object}
 	 */
 	static buildResponseForApiGateway(responseCode, responseHeaders, responseData, isBase64Encoded) {
 		assert.argumentIsRequired(responseCode, 'responseCode', Number);
@@ -114,7 +115,7 @@ export default class LambdaResponseGenerator {
 	 *
 	 * @public
 	 * @static
-	 * @returns {Number}
+	 * @returns {number}
 	 */
 	static get MAXIMUM_RESPONSE_LENGTH_IN_BYTES() {
 		return MAXIMUM_RESPONSE_LENGTH_IN_BYTES;
@@ -125,7 +126,7 @@ export default class LambdaResponseGenerator {
 	 *
 	 * @public
 	 * @static
-	 * @returns {Number}
+	 * @returns {number}
 	 */
 	static get MINIMUM_RESPONSE_SIZE_FOR_COMPRESSION_IN_BYTES() {
 		return MINIMUM_RESPONSE_SIZE_FOR_COMPRESSION_IN_BYTES;
@@ -136,12 +137,18 @@ export default class LambdaResponseGenerator {
 	 *
 	 * @public
 	 * @static
-	 * @returns {Number}
+	 * @returns {number}
 	 */
 	static get MAXIMUM_RESPONSE_SIZE_FOR_COMPRESSION_IN_BYTES() {
 		return MAXIMUM_RESPONSE_SIZE_FOR_COMPRESSION_IN_BYTES;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[LambdaResponseGenerator]';
 	}

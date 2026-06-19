@@ -13,9 +13,9 @@ export default class Writer {
 	 * Reads a source object and transcribes it to the target object.
 	 *
 	 * @public
-	 * @param {Object} source
-	 * @param {Object} target
-	 * @returns {Object}
+	 * @param {object} source
+	 * @param {object} target
+	 * @returns {object}
 	 */
 	write(source, target) {
 		if (this.canWrite(source, target)) {
@@ -28,9 +28,9 @@ export default class Writer {
 	/**
 	 * @protected
 	 * @abstract
-	 * @param {Object} source
-	 * @param {Object} target
-	 * @returns {Object}
+	 * @param {object} source
+	 * @param {object} target
+	 * @returns {object}
 	 */
 	_write(source, target) {
 		return;
@@ -38,9 +38,9 @@ export default class Writer {
 
 	/**
 	 * @public
-	 * @param {Object} source
-	 * @param {Object} target
-	 * @return {Boolean}
+	 * @param {object} source
+	 * @param {object} target
+	 * @return {boolean}
 	 */
 	canWrite(source, target) {
 		return this._canWrite(source, target);
@@ -49,18 +49,31 @@ export default class Writer {
 	/**
 	 * @protected
 	 * @abstract
-	 * @param {Object} source
-	 * @param {Object} target
-	 * @return {Boolean}
+	 * @param {object} source
+	 * @param {object} target
+	 * @return {boolean}
 	 */
 	_canWrite(source, target) {
 		return true;
 	}
 
+	/**
+	 * Returns the separator.
+	 *
+	 * @public
+	 * @static
+	 * @returns {string}
+	 */
 	static get SEPARATOR() {
 		return '.';
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Writer]';
 	}

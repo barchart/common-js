@@ -10,23 +10,27 @@ import Stream from 'stream';
  *
  * @public
  * @extends {Stream.Readable}
- * @param {Tree} tree
- * @param {Object=} options
  */
 export default class TreeReadStream extends Stream.Readable {
+    #generator;
+
+    /**
+     * @param {Tree} tree
+     * @param {object=} options
+     */
     constructor(tree, options) {
         super(object.merge({ objectMode: true }, (options || { })));
 
         assert.argumentIsRequired(tree, 'tree', Tree, 'Tree');
         assert.argumentIsOptional(options, 'options', Object);
 
-        this._generator = walk(tree);
+        this.#generator = walk(tree);
     }
 
     _read(size) {
         let item;
 
-        const next = this._generator.next();
+        const next = this.#generator.next();
 
         if (next.done) {
             item = null;
@@ -37,6 +41,12 @@ export default class TreeReadStream extends Stream.Readable {
         this.push(item);
     }
 
+    /**
+     * Returns a string representation.
+     *
+     * @public
+     * @returns {string}
+     */
     toString() {
         return '[TreeReadStream]';
     }

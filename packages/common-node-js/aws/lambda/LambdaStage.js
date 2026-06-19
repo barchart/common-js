@@ -8,10 +8,12 @@ import Enum from '@barchart/common-js/lang/Enum.js';
  *
  * @public
  * @extends {Enum}
- * @param {String} code
- * @param {String} description
  */
 export default class LambdaStage extends Enum {
+	/**
+	 * @param {string} code
+	 * @param {string} description
+	 */
 	constructor(code, description) {
 		super(code, description);
 	}
@@ -61,7 +63,7 @@ export default class LambdaStage extends Enum {
 	 *
 	 * @public
 	 * @static
-	 * @param {String} name
+	 * @param {string} name
 	 * @returns {LambdaStage}
 	 */
 	static getStageFromName(name) {
@@ -78,6 +80,12 @@ export default class LambdaStage extends Enum {
 		}
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return `[LambdaStage (code=${this.code})]`;
 	}

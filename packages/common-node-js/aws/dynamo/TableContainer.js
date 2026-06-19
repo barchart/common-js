@@ -9,6 +9,22 @@ import DynamoProvider from './../DynamoProvider.js';
 
 import log4js from 'log4js';
 
+/**
+ * @typedef {import('./schema/definitions/Table.js').default} Table
+ */
+
+/**
+ * @typedef {import('./query/definitions/Update.js').default} Update
+ */
+
+/**
+ * @typedef {import('./query/definitions/Scan.js').default} Scan
+ */
+
+/**
+ * @typedef {import('./query/definitions/Query.js').default} Query
+ */
+
 const logger = log4js.getLogger('common-node/aws/dynamo/TableContainer');
 
 /**
@@ -19,21 +35,28 @@ const logger = log4js.getLogger('common-node/aws/dynamo/TableContainer');
  * @public
  * @abstract
  * @extends {Disposable}
- * @param {DynamoProvider} provider
- * @param {Table} definition
  */
 export default class TableContainer extends Disposable {
+	#definition;
+	#provider;
+	#startPromise;
+	#started;
+
+	/**
+	 * @param {DynamoProvider} provider
+	 * @param {Table} definition
+	 */
 	constructor(provider, definition) {
 		super();
 
 		assert.argumentIsRequired(provider, 'provider', DynamoProvider, 'DynamoProvider');
 		assert.argumentIsRequired(definition, 'definition', Definition, 'Definition');
 
-		this._provider = provider;
-		this._definition = definition;
+		this.#provider = provider;
+		this.#definition = definition;
 
-		this._startPromise = null;
-		this._started = false;
+		this.#startPromise = null;
+		this.#started = false;
 	}
 
 	/**
@@ -43,7 +66,7 @@ export default class TableContainer extends Disposable {
 	 * @returns {Table}
 	 */
 	get definition() {
-		return this._definition;
+		return this.#definition;
 	}
 
 	/**
@@ -52,15 +75,15 @@ export default class TableContainer extends Disposable {
 	 * @public
 	 * @param {*} hash
 	 * @param {*|null|undefined} range
-	 * @returns {Object}
+	 * @returns {object}
 	 */
 	getPagingKey(hash, range) {
 		const pagingKey = { };
 
-		attributes.write(pagingKey, this._definition.hashKey.attribute.name, hash);
+		attributes.write(pagingKey, this.#definition.hashKey.attribute.name, hash);
 
-		if (this._definition.rangeKey !== null) {
-			attributes.write(pagingKey, this._definition.rangeKey.attribute.name, range);
+		if (this.#definition.rangeKey !== null) {
+			attributes.write(pagingKey, this.#definition.rangeKey.attribute.name, range);
 		}
 
 		return pagingKey;
@@ -70,26 +93,26 @@ export default class TableContainer extends Disposable {
 	 * Given a record, returns the record's hash key value.
 	 *
 	 * @public
-	 * @param {Object} record
+	 * @param {object} record
 	 * @returns {*|null}
 	 */
 	getHashKey(record) {
 		assert.argumentIsRequired(record, 'record', Object);
 
-		return attributes.read(record, this._definition.hashKey.attribute.name);
+		return attributes.read(record, this.#definition.hashKey.attribute.name);
 	}
 
 	/**
 	 * Given a record, returns the record's range key value (or a null value).
 	 *
 	 * @public
-	 * @param {Object} record
+	 * @param {object} record
 	 * @returns {*|null}
 	 */
 	getRangeKey(record) {
 		assert.argumentIsRequired(record, 'record', Object);
 
-		return attributes.read(record, this._definition.rangeKey.attribute.name);
+		return attributes.read(record, this.#definition.rangeKey.attribute.name);
 	}
 
 	/**
@@ -98,52 +121,47 @@ export default class TableContainer extends Disposable {
 	 *
 	 * @public
 	 * @async
-	 * @param {Boolean=} skipVerification - If true, verification of table's existence and schema is skipped. This could be considered unsafe, but startup will be faster.
-	 * @returns {Promise<Boolean>}
+	 * @param {boolean=} skipVerification
+	 * @returns {Promise<boolean>}
 	 */
 	async start(skipVerification) {
-		if (this._startPromise === null) {
-			this._startPromise = Promise.resolve()
-				.then(() => {
+		if (this.#startPromise === null) {
+			this.#startPromise = (async () => {
+				try {
 					if (this.disposed) {
-						return Promise.reject(`The ${this.toString()} has been disposed.`);
+						throw new Error(`The ${this.toString()} has been disposed.`);
 					}
 
 					assert.argumentIsOptional(skipVerification, 'skipVerification', Boolean);
 
-					return this._provider.start();
-				}).then(() => {
-					let createPromise;
+					await this.#provider.start();
 
-					if (is.boolean(skipVerification) && skipVerification) {
-						createPromise = Promise.resolve();
-					} else {
-						createPromise = this._provider.createTable(this.definition);
+					if (!(is.boolean(skipVerification) && skipVerification)) {
+						await this.#provider.createTable(this.definition);
 					}
 
-					return createPromise;
-				}).then(() => {
-					logger.debug('Dynamo table wrapper for', this._definition.name, 'initialized');
+					logger.debug('Dynamo table wrapper for', this.#definition.name, 'initialized');
 
-					this._started = true;
+					this.#started = true;
 
-					return this._started;
-				}).catch((e) => {
+					return this.#started;
+				} catch (e) {
 					logger.error('Dynamo table wrapper failed to start', e);
 
 					throw e;
-				});
+				}
+			})();
 		}
 
-		return this._startPromise;
+		return this.#startPromise;
 	}
 
 	/**
 	 * Returns true, if the item conforms to the table's schema; otherwise false.
 	 *
 	 * @protected
-	 * @param {Object} item
-	 * @returns {Boolean}
+	 * @param {object} item
+	 * @returns {boolean}
 	 */
 	_validate(item) {
 		return is.object(item);
@@ -154,14 +172,14 @@ export default class TableContainer extends Disposable {
 	 *
 	 * @protected
 	 * @async
-	 * @param {Object} item
-	 * @param {Boolean=} preventOverwrite
-	 * @returns {Promise<Boolean>}
+	 * @param {object} item
+	 * @param {boolean=} preventOverwrite
+	 * @returns {Promise<boolean>}
 	 */
 	async _createItem(item, preventOverwrite) {
 		return Promise.resolve()
 			.then(() => {
-				checkReady.call(this);
+				this.#checkReady();
 
 				if (!this._validate(item)) {
 					logger.trace('Failed to create item in [', this.definition.name, '] table', item);
@@ -169,22 +187,22 @@ export default class TableContainer extends Disposable {
 					throw new Error(`Unable to insert item into [ ${this.definition.name} ] table.`);
 				}
 
-				return this._provider.saveItem(item, this.definition, preventOverwrite);
+				return this.#provider.saveItem(item, this.definition, preventOverwrite);
 			});
 	}
 
 	/**
-	 * Creates multiple items, in an batch operation.
+	 * Creates multiple items, in a batch operation.
 	 *
 	 * @protected
 	 * @async
-	 * @param {Object[]} items
-	 * @returns {Promise<Boolean>}
+	 * @param {object[]} items
+	 * @returns {Promise<boolean>}
 	 */
 	async _createItems(items) {
 		return Promise.resolve()
 			.then(() => {
-				checkReady.call(this);
+				this.#checkReady();
 
 				items.forEach((item) => {
 					if (!this._validate(item)) {
@@ -194,7 +212,7 @@ export default class TableContainer extends Disposable {
 					}
 				});
 
-				return this._provider.createItems(items, this.definition);
+				return this.#provider.createItems(items, this.definition);
 			});
 	}
 
@@ -203,13 +221,13 @@ export default class TableContainer extends Disposable {
 	 *
 	 * @protected
 	 * @async
-	 * @param {Object} item
-	 * @returns {Promise<Boolean>}
+	 * @param {object} item
+	 * @returns {Promise<boolean>}
 	 */
 	async _deleteItem(item) {
 		return Promise.resolve()
 			.then(() => {
-				checkReady.call(this);
+				this.#checkReady();
 
 				if (!this._validate(item)) {
 					logger.trace('Failed to delete item from [', this.definition.name, '] table', item);
@@ -217,22 +235,22 @@ export default class TableContainer extends Disposable {
 					throw new Error(`Unable to delete item from [ ${this.definition.name} ] table.`);
 				}
 
-				return this._provider.deleteItem(item, this.definition);
+				return this.#provider.deleteItem(item, this.definition);
 			});
 	}
 
 	/**
-	 * Deletes multiple items, in an batch operation.
+	 * Deletes multiple items, in a batch operation.
 	 *
 	 * @protected
 	 * @async
-	 * @param {Object[]} items
-	 * @returns {Promise<Boolean>}
+	 * @param {object[]} items
+	 * @returns {Promise<boolean>}
 	 */
 	async _deleteItems(items) {
 		return Promise.resolve()
 			.then(() => {
-				checkReady.call(this);
+				this.#checkReady();
 
 				items.forEach((item) => {
 					if (!this._validate(item)) {
@@ -242,7 +260,7 @@ export default class TableContainer extends Disposable {
 					}
 				});
 
-				return this._provider.deleteItems(items, this.definition);
+				return this.#provider.deleteItems(items, this.definition);
 			});
 	}
 
@@ -252,14 +270,14 @@ export default class TableContainer extends Disposable {
 	 * @protected
 	 * @async
 	 * @param {Update} update
-	 * @returns {Promise<Object>}
+	 * @returns {Promise<object>}
 	 */
 	async _updateItem(update) {
 		return Promise.resolve()
 			.then(() => {
-				checkReady.call(this);
+				this.#checkReady();
 
-				return this._provider.updateItem(update);
+				return this.#provider.updateItem(update);
 			});
 	}
 
@@ -268,14 +286,14 @@ export default class TableContainer extends Disposable {
 	 *
 	 * @public
 	 * @async
-	 * @returns {Promise<Object>}
+	 * @returns {Promise<object>}
 	 */
 	async deleteTable() {
 		return Promise.resolve()
 			.then(() => {
-				checkReady.call(this);
+				this.#checkReady();
 
-				return this._provider.deleteTable(this.definition.name)
+				return this.#provider.deleteTable(this.definition.name)
 					.then((data) => {
 						this.dispose();
 
@@ -291,7 +309,7 @@ export default class TableContainer extends Disposable {
 	 * @public
 	 * @async
 	 * @param {Update} update
-	 * @returns {Promise<Object>}
+	 * @returns {Promise<object>}
 	 */
 	async updateItem(update) {
 		return this._updateItem(update);
@@ -303,15 +321,12 @@ export default class TableContainer extends Disposable {
 	 * @public
 	 * @async
 	 * @param {Scan} scan
-	 * @returns {Promise<Object[]>}
+	 * @returns {Promise<object[]|number>}
 	 */
 	async scan(scan) {
-		return Promise.resolve()
-			.then(() => {
-				checkReady.call(this);
+		this.#checkReady();
 
-				return this._provider.scan(scan);
-			});
+		return this.#provider.scan(scan);
 	}
 
 	/**
@@ -320,17 +335,18 @@ export default class TableContainer extends Disposable {
 	 * @public
 	 * @async
 	 * @param {Scan} scan
-	 * @param {Object=} startKey
+	 * @param {object=} startKey
 	 * @return {Promise}
 	 */
 	async scanChunk(scan, startKey) {
 		return Promise.resolve()
 			.then(() => {
-				checkReady.call(this);
+				this.#checkReady();
 
-				return this._provider.scanChunk(scan, startKey);
+				return this.#provider.scanChunk(scan, startKey);
 			});
 	}
+
 
 	/**
 	 * Runs a query on the table.
@@ -338,15 +354,12 @@ export default class TableContainer extends Disposable {
 	 * @public
 	 * @async
 	 * @param {Query} query
-	 * @returns {Promise<Object[]>}
+	 * @returns {Promise<object[]|number>}
 	 */
 	async query(query) {
-		return Promise.resolve()
-			.then(() => {
-				checkReady.call(this);
+		this.#checkReady();
 
-				return this._provider.query(query);
-			});
+		return this.#provider.query(query);
 	}
 
 	/**
@@ -355,14 +368,14 @@ export default class TableContainer extends Disposable {
 	 * @public
 	 * @async
 	 * @param {Query[]} queries
-	 * @returns {Promise<Object[]>}
+	 * @returns {Promise<object[]>}
 	 */
 	async queryParallel(queries) {
 		return Promise.resolve()
 			.then(() => {
-				checkReady.call(this);
+				this.#checkReady();
 
-				return this._provider.queryParallel(queries);
+				return this.#provider.queryParallel(queries);
 			});
 	}
 
@@ -372,15 +385,15 @@ export default class TableContainer extends Disposable {
 	 * @public
 	 * @async
 	 * @param {Query} query
-	 * @param {Object=} startKey
+	 * @param {object=} startKey
 	 * @return {Promise}
 	 */
 	async queryChunk(query, startKey) {
 		return Promise.resolve()
 			.then(() => {
-				checkReady.call(this);
+				this.#checkReady();
 
-				return this._provider.queryChunk(query, startKey);
+				return this.#provider.queryChunk(query, startKey);
 			});
 	}
 
@@ -388,17 +401,24 @@ export default class TableContainer extends Disposable {
 		return;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Table]';
 	}
-}
 
-function checkReady() {
-	if (this.disposed) {
-		throw new Error(`The ${this.toString()} has been disposed.`);
-	}
 
-	if (!this._started) {
-		throw new Error(`The ${this.toString()} has not been started.`);
-	}
+	#checkReady() {
+		if (this.disposed) {
+			throw new Error(`The ${this.toString()} has been disposed.`);
+			}
+
+			if (!this.#started) {
+				throw new Error(`The ${this.toString()} has not been started.`);
+			}
+		}
 }

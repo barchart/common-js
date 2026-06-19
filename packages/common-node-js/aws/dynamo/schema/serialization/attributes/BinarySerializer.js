@@ -28,6 +28,13 @@ export default class BinarySerializer extends AttributeSerializer {
 		return null;
 	}
 
+	/**
+	 * Serializes a value.
+	 *
+	 * @public
+	 * @param {*} value
+	 * @returns {object}
+	 */
 	serialize(value) {
 		assert.argumentIsValid(value, 'value', Buffer.isBuffer, 'is buffer');
 
@@ -59,6 +66,13 @@ export default class BinarySerializer extends AttributeSerializer {
 		return wrapper;
 	}
 
+	/**
+	 * Deserializes a value.
+	 *
+	 * @public
+	 * @param {*} wrapper
+	 * @returns {*}
+	 */
 	deserialize(wrapper) {
 		const value = wrapper[DataType.BINARY.code];
 
@@ -99,6 +113,12 @@ export default class BinarySerializer extends AttributeSerializer {
 		return instance;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[BinarySerializer]';
 	}

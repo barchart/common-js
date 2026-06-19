@@ -20,14 +20,23 @@ const logger = log4js.getLogger('common-node/messaging/publishers/AwsPublisher')
  *
  * @public
  * @extends {Publisher}
- * @param {SnsProvider} snsProvider
- * @param {SqsProvider} sqsProvider
- * @param {Boolean[]=} suppressEcho
- * @param {RegExp[]=} suppressExpressions
- * @param {Object=} tags
- * @param {String=} identifier
  */
 export default class AwsPublisher extends Publisher {
+	#createOptions;
+	#publisherId;
+	#snsProvider;
+	#sqsProvider;
+	#subscriptionPromises;
+	#suppressEcho;
+
+	/**
+	 * @param {SnsProvider} snsProvider
+	 * @param {SqsProvider} sqsProvider
+	 * @param {boolean[]=} suppressEcho
+	 * @param {RegExp[]=} suppressExpressions
+	 * @param {object=} tags
+	 * @param {string=} identifier
+	 */
 	constructor(snsProvider, sqsProvider, suppressEcho, suppressExpressions, tags, identifier) {
 		super(suppressExpressions);
 
@@ -37,35 +46,51 @@ export default class AwsPublisher extends Publisher {
 		assert.argumentIsOptional(tags, 'tags', Object);
 		assert.argumentIsOptional(identifier, 'identifier', String);
 
-		this._snsProvider = snsProvider;
-		this._sqsProvider = sqsProvider;
+		this.#snsProvider = snsProvider;
+		this.#sqsProvider = sqsProvider;
 
-		this._suppressEcho = suppressEcho || false;
+		this.#suppressEcho = suppressEcho || false;
 
-		this._publisherId = identifier || uuid.v4();
+		this.#publisherId = identifier || uuid.v4();
 
-		this._subscriptionPromises = {};
+		this.#subscriptionPromises = {};
 
-		this._createOptions = null;
+		this.#createOptions = null;
 
 		if (tags) {
-			this._createOptions = { };
-			this._createOptions.tags = tags;
+			this.#createOptions = { };
+			this.#createOptions.tags = tags;
 		}
 	}
 
-	_start() {
+	/**
+	 * @protected
+	 * @override
+	 * @async
+	 * @returns {Promise<boolean>}
+	 */
+	async _start() {
 		logger.debug('AWS publisher starting');
 
-		return Promise.all([ this._snsProvider.start(), this._sqsProvider.start() ])
+		return Promise.all([ this.#snsProvider.start(), this.#sqsProvider.start() ])
 			.then((ignored) => {
 				logger.debug('AWS publisher started');
+			}).then(() => {
+				return true;
 			});
 	}
 
-	_publish(messageType, payload) {
+	/**
+	 * @protected
+	 * @override
+	 * @async
+	 * @param {string} messageType
+	 * @param {*} payload
+	 * @returns {Promise}
+	 */
+	async _publish(messageType, payload) {
 		const envelope = {
-			publisher: this._publisherId,
+			publisher: this.#publisherId,
 			payload: payload
 		};
 
@@ -79,44 +104,52 @@ export default class AwsPublisher extends Publisher {
 		logger.debug('Publishing message to AWS [', topic, ']');
 		logger.trace(payload);
 
-		return this._snsProvider.publish(topic, envelope, this._createOptions);
+		return this.#snsProvider.publish(topic, envelope, this.#createOptions);
 	}
 
-	_subscribe(messageType, handler) {
+	/**
+	 * @protected
+	 * @override
+	 * @async
+	 * @param {string} messageType
+	 * @param {Function} handler
+	 * @returns {Promise<Disposable>}
+	 */
+	async _subscribe(messageType, handler) {
 		const topic = getTopic(messageType);
 		const qualifier = getQualifier(messageType);
 
 		logger.debug('Subscribing to AWS messages [', topic, ']');
 
-		if (!this._subscriptionPromises.hasOwnProperty(topic)) {
+		if (!this.#subscriptionPromises.hasOwnProperty(topic)) {
 			const subscriptionStack = new DisposableStack();
 
 			const subscriptionEvent = new Event(this);
-			const subscriptionEvents = new EventMap(this);
+			const subscriptionEvents = new EventMap();
 
-			const subscriptionQueueName = getSubscriptionQueue.call(this, topic);
+			const subscriptionQueueName = this.#getSubscriptionQueue(topic);
 
 			subscriptionStack.push(subscriptionEvent);
 
-			this._subscriptionPromises[topic] = Promise.all([
-				this._snsProvider.getTopicArn(topic, this._createOptions),
-				this._sqsProvider.getQueueArn(subscriptionQueueName, this._createOptions)
+			this.#subscriptionPromises[topic] = Promise.all([
+				this.#snsProvider.getTopicArn(topic, this.#createOptions),
+				this.#sqsProvider.getQueueArn(subscriptionQueueName, this.#createOptions)
 			]).then((resultGroup) => {
 				const topicArn = resultGroup[0];
 				const queueArn = resultGroup[1];
 
 				subscriptionStack.push(Disposable.fromAction(() => {
-					this._sqsProvider.deleteQueue(subscriptionQueueName);
+					this.#sqsProvider.deleteQueue(subscriptionQueueName);
 				}));
 
-				return this._sqsProvider.setQueuePolicy(subscriptionQueueName, SqsProvider.getPolicyForSnsDelivery(queueArn, topicArn))
+				return this.#sqsProvider.setQueuePolicy(subscriptionQueueName, SqsProvider.getPolicyForSnsDelivery(queueArn, topicArn))
 					.then(() => {
-						return this._snsProvider.subscribe(topic, queueArn);
+						return this.#snsProvider.subscribe(topic, queueArn);
 					});
 			}).then((queueBinding) => {
 				subscriptionStack.push(queueBinding);
 
-				return this._sqsProvider.observe(subscriptionQueueName, (envelope) => {
+				return this.#sqsProvider.observe(subscriptionQueueName, (envelope) => {
 					if (!is.object(envelope) || !is.string(envelope.Message)) {
 						return;
 					}
@@ -128,13 +161,13 @@ export default class AwsPublisher extends Publisher {
 
 					if (is.string(message.publisher) && is.object(message.payload)) {
 						content = message.payload;
-						echo = message.publisher === this._publisherId;
+						echo = message.publisher === this.#publisherId;
 					} else {
 						content = message;
 						echo = false;
 					}
 
-					if (!echo || !this._suppressEcho) {
+					if (!echo || !this.#suppressEcho) {
 						subscriptionEvent.fire(content);
 
 						if (is.string(message.qualifier)) {
@@ -148,7 +181,7 @@ export default class AwsPublisher extends Publisher {
 				subscriptionStack.push(queueObserver);
 
 				subscriptionStack.push(Disposable.fromAction(() => {
-					delete this._subscriptionPromises[topic];
+					delete this.#subscriptionPromises[topic];
 				}));
 
 				return {
@@ -159,7 +192,7 @@ export default class AwsPublisher extends Publisher {
 			});
 		}
 
-		return this._subscriptionPromises[topic]
+		return this.#subscriptionPromises[topic]
 			.then((subscriberData) => {
 				const h = (data, ignored) => {
 					handler(data);
@@ -177,9 +210,13 @@ export default class AwsPublisher extends Publisher {
 			});
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 */
 	_onDispose() {
-		const subscriptionPromises = Object.assign(this._subscriptionPromises);
-		this._subscriptionPromises = null;
+		const subscriptionPromises = Object.assign(this.#subscriptionPromises);
+		this.#subscriptionPromises = null;
 
 		Object.keys(subscriptionPromises).forEach((key) => {
 			const subscriptionPromise = subscriptionPromises[key];
@@ -192,20 +229,27 @@ export default class AwsPublisher extends Publisher {
 		logger.debug('AWS publisher disposed');
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[AwsPublisher]';
 	}
+
+
+	#getSubscriptionQueue(topic) {
+		if (topic.endsWith(this.#publisherId)) {
+			return topic;
+			}
+
+			return `${topic}-${this.#publisherId}`;
+		}
 }
 
 const messageTypeRegex = /(.*)#(.*)$/;
-
-function getSubscriptionQueue(topic) {
-	if (topic.endsWith(this._publisherId)) {
-		return topic;
-	}
-
-	return `${topic}-${this._publisherId}`;
-}
 
 function getTopic(messageType) {
 	const matches = messageType.match(messageTypeRegex);

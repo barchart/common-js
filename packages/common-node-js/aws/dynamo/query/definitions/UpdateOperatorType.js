@@ -1,38 +1,47 @@
 import * as assert from '@barchart/common-js/lang/assert.js';
 
 export default class UpdateOperatorType {
+	#description;
+	#formatter;
+	#operandCount;
+
+	/**
+	 * @param {string} description
+	 * @param {*} formatter
+	 * @param {*} operandCount
+	 */
 	constructor(description, formatter, operandCount) {
 		assert.argumentIsRequired(description, 'description', String);
 		assert.argumentIsRequired(formatter, 'formatter', Function);
 		assert.argumentIsRequired(operandCount, 'operandCount', Number);
 
-		this._description = description;
-		this._formatter = formatter;
-		this._operandCount = operandCount;
+		this.#description = description;
+		this.#formatter = formatter;
+		this.#operandCount = operandCount;
 	}
 
 	/**
 	 * The number of expected operands.
 	 *
 	 * @public
-	 * @returns {Number}
+	 * @returns {number}
 	 */
 	get operandCount() {
-		return this._operandCount;
+		return this.#operandCount;
 	}
 
 	/**
 	 * Returns a string suitable for use in an AWS SDK expression.
 	 *
 	 * @public
-	 * @param {String} field
+	 * @param {string} field
 	 * @param {*} operand
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	format(field, operand) {
 		assert.argumentIsRequired(field, 'field', String);
 
-		return this._formatter(field, operand);
+		return this.#formatter(field, operand);
 	}
 
 	/**
@@ -112,8 +121,14 @@ export default class UpdateOperatorType {
 		return operatorListAppend;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
-		return `[UpdateOperatorType (description=${this._description})]`;
+		return `[UpdateOperatorType (description=${this.#description})]`;
 	}
 }
 

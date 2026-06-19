@@ -38,7 +38,16 @@ export default class ExpressServerFactory extends ServerFactory {
 		super();
 	}
 
-	_build(containers, staticPaths, templatePath) {
+	/**
+	 * @protected
+	 * @override
+	 * @async
+	 * @param containers
+	 * @param staticPaths
+	 * @param templatePath
+	 * @return {Promise<*>}
+	 */
+	async _build(containers, staticPaths, templatePath) {
 		const serverContainer = new ExpressServerContainer(staticPaths, templatePath);
 		const containerBindingStrategies = ContainerBindingStrategy.getStrategies();
 
@@ -63,43 +72,62 @@ export default class ExpressServerFactory extends ServerFactory {
 		});
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[ExpressServerFactory]';
 	}
 }
 
 class ExpressServer {
+	#pageMap;
+	#port;
+	#relayMap;
+	#secure;
+	#serviceMap;
+	#socketEmitters;
+	#socketRequestMap;
+	#socketSubscriptionMap;
+	#started;
+	#staticPaths;
+	#templatePath;
+	#useSessions;
+
 	constructor(port, secure, staticPaths, templatePath) {
 		assert.argumentIsRequired(port, 'port', Number);
 		assert.argumentIsRequired(secure, 'secure', Boolean);
 		assert.argumentIsOptional(staticPaths, 'staticPaths', Object);
 		assert.argumentIsOptional(templatePath, 'templatePath', String);
 
-		this._port = port;
-		this._secure = secure;
+		this.#port = port;
+		this.#secure = secure;
 
-		this._useSessions = false;
+		this.#useSessions = false;
 
-		this._staticPaths = staticPaths;
-		this._templatePath = templatePath;
+		this.#staticPaths = staticPaths;
+		this.#templatePath = templatePath;
 
-		this._pageMap = {};
-		this._relayMap = {};
-		this._serviceMap = {};
-		this._socketRequestMap = {};
-		this._socketSubscriptionMap = {};
+		this.#pageMap = {};
+		this.#relayMap = {};
+		this.#serviceMap = {};
+		this.#socketRequestMap = {};
+		this.#socketSubscriptionMap = {};
 
-		this._socketEmitters = [ ];
+		this.#socketEmitters = [ ];
 
-		this._started = false;
+		this.#started = false;
 	}
 
 	getPort() {
-		return this._port;
+		return this.#port;
 	}
 
 	getIsSecure() {
-		return this._secure;
+		return this.#secure;
 	}
 
 	addPage(basePath, pagePath, template, verb, command, cache, useSession, acceptFile, secureRedirect) {
@@ -113,10 +141,10 @@ class ExpressServer {
 		assert.argumentIsRequired(useSession, 'acceptFile', Boolean);
 		assert.argumentIsRequired(secureRedirect, 'secureRedirect', Boolean);
 
-		this._useSessions = this._useSessions || useSession;
+		this.#useSessions = this.#useSessions || useSession;
 
-		if (!this._pageMap.hasOwnProperty(basePath)) {
-			this._pageMap[basePath] = {
+		if (!this.#pageMap.hasOwnProperty(basePath)) {
+			this.#pageMap[basePath] = {
 				path: basePath,
 				handlers: []
 			};
@@ -129,7 +157,7 @@ class ExpressServer {
 			handlers: buildPageHandlers(verb, basePath, pagePath, template, command, cache, useSession, acceptFile, secureRedirect)
 		};
 
-		this._pageMap[basePath].handlers.push(handlerData);
+		this.#pageMap[basePath].handlers.push(handlerData);
 	}
 
 	addRelay(basePath, acceptPath, forwardHost, forwardPath, verb, headerOverrides, parameterOverrides) {
@@ -141,14 +169,14 @@ class ExpressServer {
 		assert.argumentIsRequired(headerOverrides, 'headerOverrides', Object);
 		assert.argumentIsRequired(parameterOverrides, 'parameterOverrides', Object);
 
-		if (!this._relayMap.hasOwnProperty(basePath)) {
-			this._relayMap[basePath] = {
+		if (!this.#relayMap.hasOwnProperty(basePath)) {
+			this.#relayMap[basePath] = {
 				path: basePath,
 				relays: [ ]
 			};
 		}
 
-		this._relayMap[basePath].relays.push({
+		this.#relayMap[basePath].relays.push({
 			verb: verb,
 			acceptPath: acceptPath,
 			forwardHost: forwardHost,
@@ -164,12 +192,12 @@ class ExpressServer {
 		assert.argumentIsRequired(command, 'command', CommandHandler, 'CommandHandler');
 		assert.argumentIsRequired(validationCommand, 'validationCommand', CommandHandler, 'CommandHandler');
 
-		if (this._started) {
+		if (this.#started) {
 			throw new Error('Unable to add route, the server has already been started.');
 		}
 
-		if (!this._serviceMap.hasOwnProperty(basePath)) {
-			this._serviceMap[basePath] = {
+		if (!this.#serviceMap.hasOwnProperty(basePath)) {
+			this.#serviceMap[basePath] = {
 				path: basePath,
 				handlers: []
 			};
@@ -181,7 +209,7 @@ class ExpressServer {
 			handler: buildRestHandler(verb, basePath, routePath, command, validationCommand)
 		};
 
-		this._serviceMap[basePath].handlers.push(handlerData);
+		this.#serviceMap[basePath].handlers.push(handlerData);
 	}
 
 	addChannel(path, channel, executionCommand, validationCommand) {
@@ -190,17 +218,17 @@ class ExpressServer {
 		assert.argumentIsRequired(executionCommand, 'executionCommand', CommandHandler, 'CommandHandler');
 		assert.argumentIsRequired(validationCommand, 'validationCommand', CommandHandler, 'CommandHandler');
 
-		if (this._started) {
+		if (this.#started) {
 			throw new Error('Unable to add request handler for socket.io channel, the server has already been started.');
 		}
 
 		const completePath = 'request' + path + channel;
 
-		if (this._socketRequestMap.hasOwnProperty(completePath)) {
+		if (this.#socketRequestMap.hasOwnProperty(completePath)) {
 			throw new Error('Unable to add handler for socket.io channel, another handler is already using this channel.');
 		}
 
-		this._socketRequestMap[completePath] = {
+		this.#socketRequestMap[completePath] = {
 			commands: {
 				execution: executionCommand,
 				validation: validationCommand
@@ -215,11 +243,11 @@ class ExpressServer {
 		assert.argumentIsRequired(eventType, 'eventType', String);
 		assert.argumentIsRequired(roomCommand, 'roomCommand', CommandHandler, 'CommandHandler');
 
-		if (this._started) {
+		if (this.#started) {
 			throw new Error('Unable to add emitter for socket.io channel, the server has already been started.');
 		}
 
-		this._socketEmitters.push({
+		this.#socketEmitters.push({
 			room: {
 				base: path + channel,
 				command: roomCommand
@@ -237,13 +265,13 @@ class ExpressServer {
 		assert.argumentIsRequired(responseEventType, 'responseEventType', String);
 		assert.argumentIsRequired(validationCommand, 'validationCommand', CommandHandler, 'CommandHandler');
 
-		if (this._started) {
+		if (this.#started) {
 			throw new Error('Unable to add subscription handler for socket.io channel, the server has already been started.');
 		}
 
 		const completePath = 'subscribe' + path + channel;
 
-		if (this._socketSubscriptionMap.hasOwnProperty(completePath)) {
+		if (this.#socketSubscriptionMap.hasOwnProperty(completePath)) {
 			throw new Error('Unable to add subscription handler for socket.io channel, another handler is already using this channel.');
 		}
 
@@ -261,15 +289,15 @@ class ExpressServer {
 			}
 		};
 
-		this._socketSubscriptionMap[completePath] = subscriptionInfo;
+		this.#socketSubscriptionMap[completePath] = subscriptionInfo;
 	}
 
 	start() {
-		if (this._started) {
+		if (this.#started) {
 			throw new Error('Unable to start server, the has already been started.');
 		}
 
-		this._started = true;
+		this.#started = true;
 
 		let startPromise = Promise.resolve();
 
@@ -293,7 +321,7 @@ class ExpressServer {
 			next();
 		});
 
-		if (this._useSessions) {
+		if (this.#useSessions) {
 			app.use(clientSessions({
 				cookieName: 'session',
 				secret: 'barchart-session-secret-1234567890',
@@ -301,9 +329,9 @@ class ExpressServer {
 			}));
 		}
 
-		if (this._staticPaths !== null) {
-			Object.keys(this._staticPaths).forEach((serverPath) => {
-				const staticPathItem = this._staticPaths[serverPath];
+		if (this.#staticPaths !== null) {
+			Object.keys(this.#staticPaths).forEach((serverPath) => {
+				const staticPathItem = this.#staticPaths[serverPath];
 
 				if (staticPathItem.type === 'local') {
 					logger.info('Bound static path', serverPath, 'on', (secure ? 'HTTPS' : 'HTTP'), 'port', port, 'to file system at', staticPathItem.filePath);
@@ -348,15 +376,15 @@ class ExpressServer {
 
 		const routeBindingStrategies = ExpressRouteBindingStrategy.getStrategies();
 
-		const pageKeys = Object.keys(this._pageMap);
+		const pageKeys = Object.keys(this.#pageMap);
 
-		if (is.string(this._templatePath) && pageKeys.some(() => true)) {
-			app.set('views', this._templatePath);
+		if (is.string(this.#templatePath) && pageKeys.some(() => true)) {
+			app.set('views', this.#templatePath);
 			app.engine('.hbs', expressHandlebars({extname: '.hbs'}));
 			app.set('view engine', '.hbs');
 
 			pageKeys.forEach((key) => {
-				const pageData = this._pageMap[key];
+				const pageData = this.#pageMap[key];
 
 				const basePath = pageData.path;
 				const router = express.Router();
@@ -384,10 +412,10 @@ class ExpressServer {
 			});
 		}
 
-		const relayKeys = Object.keys(this._relayMap);
+		const relayKeys = Object.keys(this.#relayMap);
 
 		relayKeys.forEach((key) => {
-			const rootData = this._relayMap[key];
+			const rootData = this.#relayMap[key];
 
 			const basePath = rootData.path;
 			const router = express.Router();
@@ -415,10 +443,10 @@ class ExpressServer {
 			app.use(basePath, router);
 		});
 
-		const serviceKeys = Object.keys(this._serviceMap);
+		const serviceKeys = Object.keys(this.#serviceMap);
 
 		serviceKeys.forEach((key) => {
-			const routeData = this._serviceMap[key];
+			const routeData = this.#serviceMap[key];
 
 			const basePath = routeData.path;
 			const router = express.Router();
@@ -452,13 +480,13 @@ class ExpressServer {
 			server = http.createServer(app);
 		}
 
-		const socketRequestKeys = Object.keys(this._socketRequestMap);
-		const socketSubscriptionKeys = Object.keys(this._socketSubscriptionMap);
+		const socketRequestKeys = Object.keys(this.#socketRequestMap);
+		const socketSubscriptionKeys = Object.keys(this.#socketSubscriptionMap);
 
-		if (socketRequestKeys.some(() => true) || socketSubscriptionKeys.some(() => true) || this._socketEmitters.some(() => true)) {
+		if (socketRequestKeys.some(() => true) || socketSubscriptionKeys.some(() => true) || this.#socketEmitters.some(() => true)) {
 			const io = new SocketIOServer(server);
 
-			this._socketEmitters.forEach((emitterData) => {
+			this.#socketEmitters.forEach((emitterData) => {
 				startStack.push(
 					emitterData.event.register((data) => {
 						Promise.resolve()
@@ -503,13 +531,13 @@ class ExpressServer {
 				});
 
 				socketRequestKeys.forEach((channel) => {
-					const requestInfo = this._socketRequestMap[channel];
+					const requestInfo = this.#socketRequestMap[channel];
 
 					socket.on(channel, buildSocketRequestHandler(channel, requestInfo, socket));
 				});
 
 				socketSubscriptionKeys.forEach((channel) => {
-					const subscriptionInfo = this._socketSubscriptionMap[channel];
+					const subscriptionInfo = this.#socketSubscriptionMap[channel];
 
 					socket.on(channel, buildSocketSubscriptionHandler(channel, subscriptionInfo, socket));
 				});
@@ -531,25 +559,30 @@ class ExpressServer {
 }
 
 class ExpressServerContainer {
+	#serverMap;
+	#started;
+	#staticPaths;
+	#templatePath;
+
 	constructor(staticPaths, templatePath) {
-		this._serverMap = {};
+		this.#serverMap = {};
 
-		this._staticPaths = staticPaths || null;
-		this._templatePath = templatePath || null;
+		this.#staticPaths = staticPaths || null;
+		this.#templatePath = templatePath || null;
 
-		this._started = false;
+		this.#started = false;
 	}
 
 	getServer(port, secure) {
-		if (this._started) {
+		if (this.#started) {
 			throw new Error('Unable to manipulate servers, the server container has already started.');
 		}
 
-		if (!this._serverMap.hasOwnProperty(port)) {
-			this._serverMap[port] = new ExpressServer(port, secure, this._staticPaths, this._templatePath);
+		if (!this.#serverMap.hasOwnProperty(port)) {
+			this.#serverMap[port] = new ExpressServer(port, secure, this.#staticPaths, this.#templatePath);
 		}
 
-		const returnRef = this._serverMap[port];
+		const returnRef = this.#serverMap[port];
 
 		if (returnRef.getIsSecure() !== secure) {
 			throw new Error('Unable to bind HTTP and HTTPS protocol to the same port (' + port + ').');
@@ -559,15 +592,15 @@ class ExpressServerContainer {
 	}
 
 	start() {
-		if (this._started) {
+		if (this.#started) {
 			throw new Error('Unable to start servers, the server container has already started.');
 		}
 
-		this._started = true;
+		this.#started = true;
 
 		Promise.all(
-			Object.keys(this._serverMap).map((port) => {
-				const server = this._serverMap[port];
+			Object.keys(this.#serverMap).map((port) => {
+				const server = this.#serverMap[port];
 
 				logger.info('Starting new ' + (server.getIsSecure() ? 'secure ' : '') + 'server on port ' + server.getPort());
 
@@ -584,16 +617,19 @@ class ExpressServerContainer {
 }
 
 class ExpressRouteBindingStrategy {
+	#action;
+	#verb;
+
 	constructor(verb, action) {
 		assert.argumentIsRequired(verb, 'verb', Verb, 'Verb');
 		assert.argumentIsRequired(action, 'action', Function);
 
-		this._verb = verb;
-		this._action = action;
+		this.#verb = verb;
+		this.#action = action;
 	}
 
 	canBind(verb) {
-		return this._verb === verb;
+		return this.#verb === verb;
 	}
 
 	bind(router, verb, path, handlers) {
@@ -607,7 +643,7 @@ class ExpressRouteBindingStrategy {
 			logger.warn('Unable to bind endpoint. The strategy does not support the HTTP verb (' + verb.getCode() + ')');
 		}
 
-		return this._action(router, path, handlers);
+		return this.#action(router, path, handlers);
 	}
 }
 
@@ -629,16 +665,19 @@ ExpressRouteBindingStrategy.getStrategies = () => {
 };
 
 class ExpressArgumentExtractionStrategy {
+	#action;
+	#verb;
+
 	constructor(verb, action) {
 		assert.argumentIsRequired(verb, 'verb', Verb, 'Verb');
 		assert.argumentIsRequired(action, 'action', Function);
 
-		this._verb = verb;
-		this._action = action;
+		this.#verb = verb;
+		this.#action = action;
 	}
 
 	canProcess(verb) {
-		return this._verb === verb;
+		return this.#verb === verb;
 	}
 
 	getCommandArguments(verb, request, useSession, acceptFile) {
@@ -648,7 +687,7 @@ class ExpressArgumentExtractionStrategy {
 			logger.warn('Unable to extract arguments from HTTP request.');
 		}
 
-		const returnRef = this._action(request);
+		const returnRef = this.#action(request);
 
 		if (useSession) {
 			returnRef.session = request.session || { };
@@ -1019,7 +1058,7 @@ function buildRestHandler(verb, basePath, routePath, command, validationCommand)
 						.then((result) => {
 							if (is.object(result) || is.array(result)) {
 								response.json(result);
-							} else if (verb === Verb.GET && (is.null(result) || is.undefined(result))) {
+							} else if (verb === Verb.GET && (is.nil(result) || is.undef(result))) {
 								response.status(404);
 								response.json(generateRestResponse('no data'));
 							} else {

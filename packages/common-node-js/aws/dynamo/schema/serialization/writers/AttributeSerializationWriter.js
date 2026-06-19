@@ -12,28 +12,35 @@ import Writer from './Writer.js';
  *
  * @public
  * @extends {Writer}
- * @param {Attribute} attribute
- * @param {Boolean=} explicit - If true, derivation is suppressed.
  */
 export default class AttributeSerializationWriter extends Writer {
+	#attribute;
+	#readDelegate;
+	#serializer;
+	#validDelegate;
+
+	/**
+	 * @param {Attribute} attribute
+	 * @param {boolean=} explicit - If true, derivation is suppressed.
+	 */
 	constructor(attribute, explicit) {
 		super();
 
 		assert.argumentIsRequired(attribute, 'attribute', Attribute, 'Attribute');
 
-		this._attribute = attribute;
-		this._serializer = Serializers.forAttribute(attribute);
+		this.#attribute = attribute;
+		this.#serializer = Serializers.forAttribute(attribute);
 
 		let validDelegate;
 		let readDelegate;
 
-		if (this._attribute.derivation === null || (is.boolean(explicit) && explicit)) {
-			const attributeDelegates = getDelegatesForAttribute(this._attribute, false);
+		if (this.#attribute.derivation === null || (is.boolean(explicit) && explicit)) {
+			const attributeDelegates = getDelegatesForAttribute(this.#attribute, false);
 
 			validDelegate = attributeDelegates.valid;
 			readDelegate = attributeDelegates.read;
 		} else {
-			const derivation = this._attribute.derivation;
+			const derivation = this.#attribute.derivation;
 
 			const derivationDelegates = derivation.attributes.map((a, i) => getDelegatesForAttribute(a, derivation.optionalities[i] || false));
 
@@ -41,20 +48,26 @@ export default class AttributeSerializationWriter extends Writer {
 			readDelegate = source => derivation.generator(derivationDelegates.map(dd => dd.read(source)));
 		}
 
-		this._validDelegate = validDelegate;
-		this._readDelegate = readDelegate;
+		this.#validDelegate = validDelegate;
+		this.#readDelegate = readDelegate;
 	}
 
 	_write(source, target) {
-		const name = this._attribute.name;
+		const name = this.#attribute.name;
 
-		target[name] = this._serializer.serialize(this._readDelegate(source));
+		target[name] = this.#serializer.serialize(this.#readDelegate(source));
 	}
 
 	_canWrite(source, target) {
-		return this._serializer !== null && is.object(source) && this._validDelegate(source);
+		return this.#serializer !== null && is.object(source) && this.#validDelegate(source);
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[AttributeSerializationWriter]';
 	}

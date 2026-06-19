@@ -5,6 +5,14 @@ import FailureReason from '@barchart/common-js/api/failures/FailureReason.js';
 
 import log4js from 'log4js';
 
+/**
+ * @typedef {import('./DataSession.js').default} DataSession
+ */
+
+/**
+ * @typedef {import('./DataProvider.js').default} DataProvider
+ */
+
 const logger = log4js.getLogger('common-node/engine/DataSessionFactory');
 
 /**
@@ -13,24 +21,33 @@ const logger = log4js.getLogger('common-node/engine/DataSessionFactory');
  * @public
  */
 export default class DataSessionFactory {
+	#startPromise;
+	#started;
+
 	constructor() {
-		this._started = false;
-		this._startPromise = null;
+		this.#started = false;
+		this.#startPromise = null;
 	}
 
+	/**
+	 * Starts the component.
+	 *
+	 * @public
+	 * @returns {Promise<*>}
+	 */
 	async start() {
-		if (this._startPromise === null) {
-			this._startPromise = Promise.resolve()
+		if (this.#startPromise === null) {
+			this.#startPromise = Promise.resolve()
 				.then(() => {
 					return this._start();
 				}).then(() => {
-					this._started = true;
+					this.#started = true;
 
-					return this._started;
+					return this.#started;
 				});
 		}
 
-		return this._startPromise;
+		return this.#startPromise;
 	}
 
 	_start() {
@@ -44,14 +61,14 @@ export default class DataSessionFactory {
 	 *
 	 * @public
 	 * @async
-	 * @param {DataSessionFactory~dataSessionCallback} callback - Provides the {@link DataSession}
-	 * @param {Object=} options
+	 * @param {DataSessionCallback} callback - Provides the {@link DataSession}
+	 * @param {object=} options
 	 * @returns {Promise}
 	 */
 	async startSession(callback, options) {
 		return Promise.resolve()
 			.then(() => {
-				if (!this._started) {
+				if (!this.#started) {
 					throw new Error('Unable to create session, the data session factory must be started.');
 				}
 
@@ -127,13 +144,13 @@ export default class DataSessionFactory {
 	 *
 	 * @public
 	 * @async
-	 * @param {Object} options
+	 * @param {object} options
 	 * @return {Promise}
 	 */
 	async getDataProvider(options) {
 		return Promise.resolve()
 			.then(() => {
-				if (!this._started) {
+				if (!this.#started) {
 					throw new Error('Unable to create session, the data session factory must be started.');
 				}
 
@@ -146,13 +163,19 @@ export default class DataSessionFactory {
 	 * {@link DataProvider} used when flushing a {@link DataSession}.
 	 *
 	 * @protected
-	 * @param {Object} options
+	 * @param {object} options
 	 * @returns {Promise<DataProvider>|DataProvider}
 	 */
 	_getDataProvider(options) {
 		return null;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[DataSessionFactory]';
 	}
@@ -180,6 +203,6 @@ function handleError(e) {
  * A callback used to return a {@link DataSession}.
  *
  * @public
- * @callback DataSessionFactory~dataSessionCallback
+ * @callback DataSessionCallback
  * @param {DataSession} dataSession
  */

@@ -7,13 +7,21 @@ import Enum from '@barchart/common-js/lang/Enum.js';
  * A data type that used by DynamoDB attributes.
  *
  * @public
- * @param {String} code
- * @param {String} description
- * @param {Function=} enumerationType
- * @param {Boolean=} supportsCompression
- * @param {Boolean=} supportsEncryption
  */
 export default class DataType {
+	#code;
+	#description;
+	#enumerationType;
+	#supportsCompression;
+	#supportsEncryption;
+
+	/**
+	 * @param {string} code
+	 * @param {string} description
+	 * @param {Function=} enumerationType
+	 * @param {boolean=} supportsCompression
+	 * @param {boolean=} supportsEncryption
+	 */
 	constructor(code, description, enumerationType, supportsCompression, supportsEncryption) {
 		assert.argumentIsRequired(code, 'code', String);
 		assert.argumentIsRequired(description, 'description', String);
@@ -26,33 +34,33 @@ export default class DataType {
 		assert.argumentIsOptional(supportsCompression, 'supportsCompression', Boolean);
 		assert.argumentIsOptional(supportsEncryption, 'supportsEncryption', Boolean);
 
-		this._code = code;
-		this._description = description;
+		this.#code = code;
+		this.#description = description;
 
-		this._enumerationType = enumerationType || null;
+		this.#enumerationType = enumerationType || null;
 
-		this._supportsCompression = is.boolean(supportsCompression) && supportsCompression;
-		this._supportsEncryption = is.boolean(supportsEncryption) && supportsEncryption;
+		this.#supportsCompression = is.boolean(supportsCompression) && supportsCompression;
+		this.#supportsEncryption = is.boolean(supportsEncryption) && supportsEncryption;
 	}
 
 	/**
 	 * Unique code used by Amazon to describe the data type.
 	 *
 	 * @public
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	get code() {
-		return this._code;
+		return this.#code;
 	}
 
 	/**
 	 * Description of the data type.
 	 *
 	 * @public
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	get description() {
-		return this._description;
+		return this.#description;
 	}
 
 	/**
@@ -62,27 +70,27 @@ export default class DataType {
 	 * @returns {Function|null}
 	 */
 	get enumerationType() {
-		return this._enumerationType;
+		return this.#enumerationType;
 	}
 
 	/**
 	 * Indicates if the {@link DataType} can support compression.
 	 *
 	 * @public
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	get supportsCompression() {
-		return this._supportsCompression;
+		return this.#supportsCompression;
 	}
 
 	/**
 	 * Indicates if the {@link DataType} can support encryption.
 	 *
 	 * @public
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	get supportsEncryption() {
-		return this._supportsEncryption;
+		return this.#supportsEncryption;
 	}
 
 	/**
@@ -91,7 +99,7 @@ export default class DataType {
 	 * @public
 	 * @static
 	 * @param {Function} EnumerationType - A type that inherits {@link Enum}
-	 * @param {String} description
+	 * @param {string} description
 	 * @returns {DataType}
 	 */
 	static forEnum(EnumerationType, description) {
@@ -110,7 +118,7 @@ export default class DataType {
 	}
 
 	/**
-	 * References a Boolean value.
+	 * References a boolean value.
 	 *
 	 * @public
 	 * @static
@@ -310,8 +318,14 @@ export default class DataType {
 		return dataTypes.find(dt => dt.code === code) || null;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
-		return `[DataType (code=${this._code}, description=${this._description})]`;
+		return `[DataType (code=${this.#code}, description=${this.#description})]`;
 	}
 }
 

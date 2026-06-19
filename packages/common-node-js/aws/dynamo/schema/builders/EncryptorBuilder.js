@@ -9,8 +9,10 @@ import EncryptionType from './../definitions/EncryptionType.js';
  * @public
  */
 export default class EncryptorBuilder {
+	#encryptor;
+
 	constructor() {
-		this._encryptor = new Encryptor();
+		this.#encryptor = new Encryptor();
 	}
 
 	/**
@@ -20,7 +22,7 @@ export default class EncryptorBuilder {
 	 * @returns {Encryptor}
 	 */
 	get encryptor() {
-		return this._encryptor;
+		return this.#encryptor;
 	}
 
 	/**
@@ -33,7 +35,7 @@ export default class EncryptorBuilder {
 	withEncryptionType(type) {
 		assert.argumentIsRequired(type, 'type', EncryptionType, 'EncryptionType');
 
-		this._encryptor = new Encryptor(type, this._encryptor.key);
+		this.#encryptor = new Encryptor(type, this.#encryptor.key);
 
 		return this;
 	}
@@ -42,17 +44,23 @@ export default class EncryptorBuilder {
 	 * Sets the encryption key and returns the current instance.
 	 *
 	 * @public
-	 * @param {String} key
+	 * @param {string} key
 	 * @returns {EncryptorBuilder}
 	 */
 	withKey(key) {
 		assert.argumentIsRequired(key, 'key', String);
 
-		this._encryptor = new Encryptor(this._encryptor.type, key);
+		this.#encryptor = new Encryptor(this.#encryptor.type, key);
 
 		return this;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[EncryptorBuilder]';
 	}

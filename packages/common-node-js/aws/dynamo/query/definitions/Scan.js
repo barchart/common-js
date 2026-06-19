@@ -7,38 +7,55 @@ import Index from './../../schema/definitions/Index.js';
 import Table from './../../schema/definitions/Table.js';
 
 /**
+ * @typedef {import('../../schema/definitions/Attribute.js').default} Attribute
+ */
+
+/**
  * The definition of a table (or index) scan.
  *
  * @public
  * @extends {Action}
- * @param {Table} table
- * @param {Index} index
- * @param {Filter} filter
- * @param {Array<Attribute>} attributes
- * @param {Number=} limit
- * @param {Number=} segment
- * @param {Number=} totalSegments
- * @param {Boolean=} consistentRead
- * @param {Boolean=} skipDeserialization
- * @param {Boolean=} countOnly
- * @param {String=} description
- * @param {Boolean=} monitorCapacityConsumed
- * @param {Object=} exclusiveStartKey
  */
 export default class Scan extends Action {
+	#attributes;
+	#consistentRead;
+	#countOnly;
+	#exclusiveStartKey;
+	#filter;
+	#limit;
+	#monitorCapacityConsumed;
+	#segment;
+	#skipDeserialization;
+	#totalSegments;
+
+	/**
+	 * @param {Table} table
+	 * @param {Index=} index
+	 * @param {Filter=} filter
+	 * @param {Array<Attribute>=} attributes
+	 * @param {number=} limit
+	 * @param {number=} segment
+	 * @param {number=} totalSegments
+	 * @param {boolean=} consistentRead
+	 * @param {boolean=} skipDeserialization
+	 * @param {boolean=} countOnly
+	 * @param {string=} description
+	 * @param {boolean=} monitorCapacityConsumed
+	 * @param {object=} exclusiveStartKey
+	 */
 	constructor(table, index, filter, attributes, limit, segment, totalSegments, consistentRead, skipDeserialization, countOnly, description, monitorCapacityConsumed, exclusiveStartKey) {
 		super(table, index, (description || '[Unnamed Scan]'));
 
-		this._filter = filter || null;
-		this._attributes = attributes || [ ];
-		this._limit = limit || null;
-		this._segment = is.number(segment) ? segment : null;
-		this._totalSegments = is.number(totalSegments) ? totalSegments : null;
-		this._skipDeserialization = skipDeserialization || false;
-		this._consistentRead = consistentRead || false;
-		this._countOnly = countOnly || false;
-		this._monitorCapacityConsumed = monitorCapacityConsumed || false;
-        this._exclusiveStartKey = exclusiveStartKey || null;
+		this.#filter = filter || null;
+		this.#attributes = attributes || [ ];
+		this.#limit = limit || null;
+		this.#segment = is.number(segment) ? segment : null;
+		this.#totalSegments = is.number(totalSegments) ? totalSegments : null;
+		this.#skipDeserialization = skipDeserialization || false;
+		this.#consistentRead = consistentRead || false;
+		this.#countOnly = countOnly || false;
+		this.#monitorCapacityConsumed = monitorCapacityConsumed || false;
+        this.#exclusiveStartKey = exclusiveStartKey || null;
 	}
 
 	/**
@@ -48,7 +65,7 @@ export default class Scan extends Action {
 	 * @returns {Filter}
 	 */
 	get filter() {
-		return this._filter;
+		return this.#filter;
 	}
 
 	/**
@@ -59,7 +76,7 @@ export default class Scan extends Action {
 	 * @returns {Attribute[]}
 	 */
 	get attributes() {
-		return [...this._attributes];
+		return [...this.#attributes];
 	}
 
 	/**
@@ -67,40 +84,40 @@ export default class Scan extends Action {
 	 * will be interpreted as no limit.
 	 *
 	 * @public
-	 * @returns {Number|null}
+	 * @returns {number|null}
 	 */
 	get limit() {
-		return this._limit;
+		return this.#limit;
 	}
 
 	/**
 	 * Identifies an individual segment to be scanned by an AWS DynamoDB worker.
 	 *
 	 * @public
-	 * @return {Number|null}
+	 * @return {number|null}
 	 */
 	get segment() {
-		return this._segment;
+		return this.#segment;
 	}
 
 	/**
 	 * The total number of segments into which the Scan operation will be divided.
 	 *
 	 * @public
-	 * @return {Number|null}
+	 * @return {number|null}
 	 */
 	get totalSegments() {
-		return this._totalSegments;
+		return this.#totalSegments;
 	}
 
 	/**
 	 * If true, a consistent read will be used.
 	 *
 	 * @public
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	get consistentRead() {
-		return this._consistentRead;
+		return this.#consistentRead;
 	}
 
 	/**
@@ -108,30 +125,30 @@ export default class Scan extends Action {
 	 * the conversion to normal objects.
 	 *
 	 * @public
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	get skipDeserialization() {
-		return this._skipDeserialization;
+		return this.#skipDeserialization;
 	}
 
 	/**
 	 * If true, the query will return a record count only.
 	 *
 	 * @public
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	get countOnly() {
-		return this._countOnly;
+		return this.#countOnly;
 	}
 
 	/**
 	 * If true, the total RCU (read capacity units) consumed will be monitored.
 	 *
 	 * @public
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	get monitorCapacityConsumed() {
-		return this._monitorCapacityConsumed;
+		return this.#monitorCapacityConsumed;
 	}
 
     /**
@@ -139,10 +156,10 @@ export default class Scan extends Action {
      * If provided, the scan will begin just after this key.
      *
      * @public
-     * @returns {Object}
+     * @returns {object}
      */
     get exclusiveStartKey(){
-        return this._exclusiveStartKey;
+        return this.#exclusiveStartKey;
     }
 
 	/**
@@ -163,35 +180,35 @@ export default class Scan extends Action {
 			throw new Error('The index must belong to the table.');
 		}
 
-		if (this._index !== null && this._consistentRead && !this._index.type.allowsConsistentReads) {
+		if (this.index !== null && this.#consistentRead && !this.index.type.allowsConsistentReads) {
 			throw new Error('Unable to apply consistent read to index.');
 		}
 
-		if (this._filter !== null) {
-			if (!(this._filter instanceof Filter)) {
+		if (this.#filter !== null) {
+			if (!(this.#filter instanceof Filter)) {
 				throw new Error('Filter data type is invalid.');
 			}
 
-			this._filter.validate();
+			this.#filter.validate();
 		}
 
-		if (this._limit !== null && (!is.large(this._limit) || !(this._limit > 0))) {
+		if (this.#limit !== null && (!is.large(this.#limit) || !(this.#limit > 0))) {
 			throw new Error('The limit must be a positive integer.');
 		}
 
-		if ((this._segment !== null ^ this._totalSegments !== null) === 1) {
+		if ((this.#segment !== null) !== (this.#totalSegments !== null)) {
 			throw new Error('Parallel queries must supply both the target segment and total segments.');
 		}
 
-		if (this._totalSegments !== null && !(is.integer(this._totalSegments) && is.positive(this._totalSegments))) {
+		if (this.#totalSegments !== null && !(is.integer(this.#totalSegments) && is.positive(this.#totalSegments))) {
 			throw new Error('Parallel queries must use a positive integer value for total segments.');
 		}
 
-		if (this._segment !== null && !(is.integer(this._segment) && !is.negative(this._segment))) {
+		if (this.#segment !== null && !(is.integer(this.#segment) && !is.negative(this.#segment))) {
 			throw new Error('Parallel queries cannot have a target segment with a negative value');
 		}
 
-		if (this._segment !== null && !(this._segment < this._totalSegments)) {
+		if (this.#segment !== null && !(this.#segment < this.#totalSegments)) {
 			throw new Error('Parallel queries must use use a target segment value less than the total segments');
 		}
 	}
@@ -201,7 +218,7 @@ export default class Scan extends Action {
 	 * the DynamoDB SDK.
 	 *
 	 * @public
-	 * @returns {Object}
+	 * @returns {object}
 	 */
 	toScanSchema() {
 		this.validate();
@@ -223,8 +240,8 @@ export default class Scan extends Action {
 			schema.Select = 'COUNT';
 		}
 
-		if (this._filter !== null) {
-			const expressionData = Action.getConditionExpressionData(this.table, this._filter);
+		if (this.#filter !== null) {
+			const expressionData = Action.getConditionExpressionData(this.table, this.#filter);
 
 			schema.FilterExpression = expressionData.expression;
 
@@ -232,37 +249,43 @@ export default class Scan extends Action {
 				schema.ExpressionAttributeValues = expressionData.valueAliases;
 			}
 
-			attributes = attributes.concat(this._filter.expressions.map(e => e.attribute));
+			attributes = attributes.concat(this.#filter.expressions.map(e => e.attribute));
 		}
 
 		if (attributes.length !== 0) {
-			schema.ExpressionAttributeNames = Action.getExpressionAttributeNames(this._table, attributes);
+			schema.ExpressionAttributeNames = Action.getExpressionAttributeNames(this.table, attributes);
 		}
 
-		if (this._limit !== null) {
-			schema.Limit = this._limit;
+		if (this.#limit !== null) {
+			schema.Limit = this.#limit;
 		}
 
-		if (this._segment !== null && this._totalSegments !== null) {
-			schema.Segment = this._segment;
-			schema.TotalSegments = this._totalSegments;
+		if (this.#segment !== null && this.#totalSegments !== null) {
+			schema.Segment = this.#segment;
+			schema.TotalSegments = this.#totalSegments;
 		}
 
-		if (this._consistentRead) {
+		if (this.#consistentRead) {
 			schema.ConsistentRead = true;
 		}
 
-		if (this._monitorCapacityConsumed) {
+		if (this.#monitorCapacityConsumed) {
 			schema.ReturnConsumedCapacity = 'TOTAL';
 		}
 
-        if (this._exclusiveStartKey) {
-            schema.ExclusiveStartKey = this._exclusiveStartKey;
+        if (this.#exclusiveStartKey) {
+            schema.ExclusiveStartKey = this.#exclusiveStartKey;
         }
 
 		return schema;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Scan]';
 	}

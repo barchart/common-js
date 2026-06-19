@@ -8,10 +8,19 @@ import CompressedStringSerializer from './CompressedStringSerializer.js';
  * @extends {CompressedStringSerializer}
  */
 export default class EncryptedStringSerializer extends CompressedStringSerializer {
+	/**
+	 * @param {*} attribute
+	 */
 	constructor(attribute) {
 		super(attribute);
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[EncryptedStringSerializer]';
 	}

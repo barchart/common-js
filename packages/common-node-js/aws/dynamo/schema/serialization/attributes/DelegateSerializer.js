@@ -7,11 +7,17 @@ import AttributeSerializer from './AttributeSerializer.js';
  *
  * @public
  * @extends {AttributeSerializer}
- * @param {AttributeSerializer} - A serializer for the underlying type (e.g. string).
- * @param {Function} serializeDelegate - The delegate which extracts the underlying value.
- * @param {Function} serializeDelegate - The delegate which rehydrates the underlying value.
  */
 export default class DelegateSerializer extends AttributeSerializer {
+	#baseSerializer;
+	#serializeDelegate;
+	#deserializeDelegate;
+
+	/**
+	 * @param {AttributeSerializer} baseSerializer - A serializer for the underlying type (e.g. string).
+	 * @param {Function} serializeDelegate - The delegate which extracts the underlying value.
+	 * @param {Function} deserializeDelegate - The delegate which rehydrates the underlying value.
+	 */
 	constructor(baseSerializer, serializeDelegate, deserializeDelegate) {
 		super();
 
@@ -19,19 +25,39 @@ export default class DelegateSerializer extends AttributeSerializer {
 		assert.argumentIsRequired(serializeDelegate, 'serializeDelegate', Function);
 		assert.argumentIsRequired(deserializeDelegate, 'deserializeDelegate', Function);
 
-		this._baseSerializer = baseSerializer;
-		this._serializeDelegate = serializeDelegate;
-		this._deserializeDelegate = deserializeDelegate;
+		this.#baseSerializer = baseSerializer;
+		this.#serializeDelegate = serializeDelegate;
+		this.#deserializeDelegate = deserializeDelegate;
 	}
 
+	/**
+	 * Serializes a value.
+	 *
+	 * @public
+	 * @param {*} value
+	 * @returns {object}
+	 */
 	serialize(value) {
-		return this._baseSerializer.serialize(this._serializeDelegate.call(this, value));
+		return this.#baseSerializer.serialize(this.#serializeDelegate.call(this, value));
 	}
 
+	/**
+	 * Deserializes a value.
+	 *
+	 * @public
+	 * @param {*} wrapper
+	 * @returns {*}
+	 */
 	deserialize(wrapper) {
-		return this._deserializeDelegate.call(this, this._baseSerializer.deserialize(wrapper));
+		return this.#deserializeDelegate.call(this, this.#baseSerializer.deserialize(wrapper));
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[DelegateSerializer]';
 	}

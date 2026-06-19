@@ -13,19 +13,26 @@ const logger = log4js.getLogger('common-node/database/mysql/DirectClientProvider
  *
  * @public
  * @extends {ClientProvider}
- * @param {String} host
- * @param {String} database
- * @param {String} username
- * @param {String} password
- * @param {Number=} port
- * @param {String=} applicationName
- * @param {String=} charset
  */
 export default class DirectClientProvider extends ClientProvider {
+	/**
+	 * @param {string} host
+	 * @param {string} database
+	 * @param {string} username
+	 * @param {string} password
+	 * @param {number=} port
+	 * @param {string=} applicationName
+	 * @param {string=} charset
+	 */
 	constructor(host, database, username, password, port, applicationName, charset) {
 		super(host, database, username, password, port, applicationName, charset);
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 * @returns {Promise<Client>}
+	 */
 	_getClient() {
 		return promise.build((resolveCallback, rejectCallback) => {
 			const configuration = this.getConfiguration();
@@ -49,10 +56,20 @@ export default class DirectClientProvider extends ClientProvider {
 		});
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 */
 	_onDispose() {
 		return;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[DirectClientProvider]';
 	}

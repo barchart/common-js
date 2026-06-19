@@ -35,14 +35,24 @@ const WRITE_MILLISECOND_BACKOFF = 500;
  *
  * @public
  * @extends Disposable
- * @param {object} configuration
- * @param {string} configuration.region - The AWS region (e.g. "us-east-1").
- * @param {string} configuration.prefix - The prefix to automatically append to table names.
- * @param {string=} configuration.apiVersion - The DynamoDB API version (defaults to "2012-08-10").
- * @param {object=} options
- * @param {Boolean=} options.preferConsistentReads
  */
 export default class DynamoProvider extends Disposable {
+    #batches;
+    #configuration;
+    #dynamo;
+    #options;
+    #scheduler;
+    #startPromise;
+    #started;
+
+    /**
+     * @param {object} configuration
+     * @param {string} configuration.region - The AWS region (e.g. "us-east-1").
+     * @param {string} configuration.prefix - The prefix to automatically append to table names.
+     * @param {string=} configuration.apiVersion - The DynamoDB API version (defaults to "2012-08-10").
+     * @param {object=} options
+     * @param {boolean=} options.preferConsistentReads
+     */
     constructor(configuration, options) {
         super();
 
@@ -51,16 +61,16 @@ export default class DynamoProvider extends Disposable {
         assert.argumentIsRequired(configuration.prefix, 'configuration.prefix', String);
         assert.argumentIsOptional(configuration.apiVersion, 'configuration.apiVersion', String);
 
-        this._configuration = configuration;
+        this.#configuration = configuration;
 
-        this._options = Object.assign({ preferConsistentReads: false }, options || { });
+        this.#options = Object.assign({ preferConsistentReads: false }, options || { });
 
-        this._startPromise = null;
-        this._started = false;
+        this.#startPromise = null;
+        this.#started = false;
 
-        this._dynamo = null;
-        this._scheduler = null;
-        this._batches = new Map();
+        this.#dynamo = null;
+        this.#scheduler = null;
+        this.#batches = new Map();
     }
 
     /**
@@ -69,28 +79,28 @@ export default class DynamoProvider extends Disposable {
      *
      * @public
      * @async
-     * @returns {Promise<Boolean>}
+     * @returns {Promise<boolean>}
      */
     async start() {
         if (this.disposed) {
             return Promise.reject('Unable to start, the Dynamo provider has been disposed');
         }
 
-        if (this._startPromise === null) {
-            this._startPromise = (async () => {
+        if (this.#startPromise === null) {
+            this.#startPromise = (async () => {
                 try {
-                    this._scheduler = new Scheduler();
+                    this.#scheduler = new Scheduler();
 
-                    this._dynamo = new DynamoDBClient({
-                        apiVersion: this._configuration.apiVersion || '2012-08-10',
-                        region: this._configuration.region
+                    this.#dynamo = new DynamoDBClient({
+                        apiVersion: this.#configuration.apiVersion || '2012-08-10',
+                        region: this.#configuration.region
                     });
 
                     logger.debug('The Dynamo provider has started');
 
-                    this._started = true;
+                    this.#started = true;
 
-                    return this._started;
+                    return this.#started;
                 } catch (e) {
                     logger.error('The Dynamo provider failed to start', e);
 
@@ -99,7 +109,7 @@ export default class DynamoProvider extends Disposable {
             })();
         }
 
-        return this._startPromise;
+        return this.#startPromise;
     }
 
     /**
@@ -107,14 +117,14 @@ export default class DynamoProvider extends Disposable {
      * to the constructor.
      *
      * @public
-     * @returns {Object}
+     * @returns {object}
      */
     getConfiguration() {
         if (this.disposed) {
             throw new Error('The Dynamo provider has been disposed');
         }
 
-        return object.clone(this._configuration);
+        return object.clone(this.#configuration);
     }
 
     /**
@@ -129,11 +139,11 @@ export default class DynamoProvider extends Disposable {
     async getTable(tableName) {
         assert.argumentIsRequired(tableName, 'tableName', String);
 
-        checkReady.call(this);
+        this.#checkReady();
 
-        const qualifiedTableName = getQualifiedTableName(this._configuration.prefix, tableName);
+        const qualifiedTableName = getQualifiedTableName(this.#configuration.prefix, tableName);
 
-        const tableData = await getTable.call(this, qualifiedTableName);
+        const tableData = await this.#getTable(qualifiedTableName);
 
         logger.debug('Table definition retrieved for [', qualifiedTableName, ']');
 
@@ -147,13 +157,13 @@ export default class DynamoProvider extends Disposable {
      * @async
      * @param {string} tableName - The fully-qualified name of the table.
      * @param {string} backupName
-     * @returns {Promise<Object>}
+     * @returns {Promise<object>}
      */
     async createBackup(tableName, backupName) {
         assert.argumentIsRequired(tableName, 'tableName', String);
         assert.argumentIsRequired(backupName, 'backupName', String);
 
-        checkReady.call(this);
+        this.#checkReady();
 
         logger.info(`Creating a backup of table [ ${tableName} ]`);
 
@@ -163,7 +173,7 @@ export default class DynamoProvider extends Disposable {
         };
 
         try {
-            return await this._dynamo.send(new CreateBackupCommand(query));
+            return await this.#dynamo.send(new CreateBackupCommand(query));
         } catch (error) {
             logger.error('Failed to create backup', error);
 
@@ -179,12 +189,12 @@ export default class DynamoProvider extends Disposable {
      * @param {string} tableName - The fully-qualified name of the table.
      * @param {string=} lowerBound
      * @param {string=} upperBound
-     * @returns {Promise<Object>}
+     * @returns {Promise<object>}
      */
     async listBackups(tableName, lowerBound, upperBound) {
         assert.argumentIsRequired(tableName, 'tableName', String);
 
-        checkReady.call(this);
+        this.#checkReady();
 
         logger.info(`Listing the backups for table [ ${tableName} ]`);
 
@@ -201,7 +211,7 @@ export default class DynamoProvider extends Disposable {
         }
 
         try {
-            const data = await this._dynamo.send(new ListBackupsCommand(query));
+            const data = await this.#dynamo.send(new ListBackupsCommand(query));
 
             return data.BackupSummaries;
         } catch (error) {
@@ -217,12 +227,12 @@ export default class DynamoProvider extends Disposable {
      * @public
      * @async
      * @param {string} arn
-     * @returns {Promise<Object>}
+     * @returns {Promise<object>}
      */
     async deleteBackup(arn) {
         assert.argumentIsRequired(arn, 'arn', String);
 
-        checkReady.call(this);
+        this.#checkReady();
 
         logger.info(`Deleting a backup of ARN [ ${arn} ]`);
 
@@ -231,7 +241,7 @@ export default class DynamoProvider extends Disposable {
         };
 
         try {
-            return await this._dynamo.send(new DeleteBackupCommand(query));
+            return await this.#dynamo.send(new DeleteBackupCommand(query));
         } catch (error) {
             logger.error('Failed to delete backup', error);
 
@@ -244,10 +254,10 @@ export default class DynamoProvider extends Disposable {
      *
      * @public
      * @async
-     * @returns {Promise<String>}
+     * @returns {Promise<string>}
      */
     async getTables() {
-        checkReady.call(this);
+        this.#checkReady();
 
         const getTablesRecursive = async (previous) => {
             const options = { };
@@ -257,9 +267,9 @@ export default class DynamoProvider extends Disposable {
             }
 
             try {
-                const data = await this._dynamo.send(new ListTablesCommand(options));
+                const data = await this.#dynamo.send(new ListTablesCommand(options));
 
-                const matches = data.TableNames.filter(name => name.startsWith(this._configuration.prefix));
+                const matches = data.TableNames.filter(name => name.startsWith(this.#configuration.prefix));
 
                 logger.info('Retrieved [', matches.length, '] matching DynamoDB tables');
 
@@ -292,16 +302,16 @@ export default class DynamoProvider extends Disposable {
     async createTable(definition) {
         assert.argumentIsRequired(definition, 'definition', Table, 'Table');
 
-        checkReady.call(this);
+        this.#checkReady();
 
         const qualifiedTableName = definition.name;
 
         const getTableForCreate = async () => {
-            const tableData = await getTable.call(this, qualifiedTableName);
+            const tableData = await this.#getTable(qualifiedTableName);
 
             if (tableData.TableStatus === 'ACTIVE') {
                 try {
-                    const ttlData = await getTimeToLiveSettings.call(this, qualifiedTableName);
+                    const ttlData = await this.#getTimeToLiveSettings(qualifiedTableName);
 
                     logger.info('Table ready [', qualifiedTableName, ']');
 
@@ -325,7 +335,7 @@ export default class DynamoProvider extends Disposable {
         logger.info('Creating table [', qualifiedTableName, ']');
 
         try {
-            await this._dynamo.send(new CreateTableCommand(definition.toTableSchema()));
+            await this.#dynamo.send(new CreateTableCommand(definition.toTableSchema()));
         } catch (error) {
             if (is.string(error.message) && error.message === `Table already exists: ${qualifiedTableName}`) {
                 logger.info('Unable to create table [', qualifiedTableName, '], table already exists');
@@ -348,14 +358,14 @@ export default class DynamoProvider extends Disposable {
 
         logger.info('Created table [', qualifiedTableName, '], waiting for table to become ready');
 
-        const tableData = await this._scheduler.backoff(() => getTableForCreate.call(this, qualifiedTableName), 2000);
+        const tableData = await this.#scheduler.backoff(() => getTableForCreate.call(this, qualifiedTableName), 2000);
 
         let ttlData = null;
 
         if (definition.ttlAttribute) {
             logger.info(`Updating time-to-live configuration for table [ ${definition.name} ]`);
 
-            ttlData = await this._dynamo.send(new UpdateTimeToLiveCommand(definition.toTtlSchema()));
+            ttlData = await this.#dynamo.send(new UpdateTimeToLiveCommand(definition.toTtlSchema()));
 
             logger.info(`Updated time-to-live configuration for table [ ${definition.name} ]`);
         }
@@ -371,21 +381,21 @@ export default class DynamoProvider extends Disposable {
      * @public
      * @async
      * @param {string} tableName - The (unqualified) name of the table.
-     * @returns {Promise<Object>}
+     * @returns {Promise<object>}
      */
     async deleteTable(tableName) {
         assert.argumentIsRequired(tableName, 'tableName', String);
 
-        checkReady.call(this);
+        this.#checkReady();
 
         const params = { TableName: tableName };
 
         logger.debug(`Deleting table [ ${tableName} ]`);
 
         try {
-            await this._dynamo.send(new DeleteTableCommand(params));
+            await this.#dynamo.send(new DeleteTableCommand(params));
 
-            const data = await waitUntilTableNotExists({ client: this._dynamo, maxWaitTime: 600 }, params);
+            const data = await waitUntilTableNotExists({ client: this.#dynamo, maxWaitTime: 600 }, params);
 
             logger.info(`Table [ ${tableName} ] successfully deleted`);
 
@@ -402,16 +412,16 @@ export default class DynamoProvider extends Disposable {
      *
      * @public
      * @async
-     * @param {Object} item - The item to write.
+     * @param {object} item - The item to write.
      * @param {Table} table - Describes the schema of the table to write to.
-     * @param {Boolean=} preventOverwrite - If true, the resulting promise will reject if another item shares the same key.
-     * @returns {Promise<Boolean>}
+     * @param {boolean=} preventOverwrite - If true, the resulting promise will reject if another item shares the same key.
+     * @returns {Promise<boolean>}
      */
     async saveItem(item, table, preventOverwrite) {
         assert.argumentIsRequired(table, 'table', Table, 'Table');
         assert.argumentIsRequired(item, 'item', Object);
 
-        checkReady.call(this);
+        this.#checkReady();
 
         const qualifiedTableName = table.name;
 
@@ -437,7 +447,7 @@ export default class DynamoProvider extends Disposable {
 
         const putItem = async () => {
             try {
-                await this._dynamo.send(new PutItemCommand(payload));
+                await this.#dynamo.send(new PutItemCommand(payload));
 
                 return { code: DYNAMO_RESULT.SUCCESS };
             } catch (error) {
@@ -453,7 +463,7 @@ export default class DynamoProvider extends Disposable {
             }
         };
 
-        const result = await this._scheduler.backoff(putItem, WRITE_MILLISECOND_BACKOFF);
+        const result = await this.#scheduler.backoff(putItem, WRITE_MILLISECOND_BACKOFF);
 
         if (result.code === DYNAMO_RESULT.FAILURE) {
             throw result.error;
@@ -468,18 +478,18 @@ export default class DynamoProvider extends Disposable {
      * @public
      * @async
      * @param {Update} update
-     * @returns {Promise<Object|null>}
+     * @returns {Promise<object|null>}
      */
     async updateItem(update) {
         assert.argumentIsRequired(update, 'update', Update, 'Update');
 
-        checkReady.call(this);
+        this.#checkReady();
 
         const schema = update.toUpdateSchema();
 
         const updateItem = async () => {
             try {
-                const data = await this._dynamo.send(new UpdateItemCommand(schema));
+                const data = await this.#dynamo.send(new UpdateItemCommand(schema));
 
                 let deserialized;
 
@@ -503,7 +513,7 @@ export default class DynamoProvider extends Disposable {
             }
         };
 
-        const result = await this._scheduler.backoff(updateItem, WRITE_MILLISECOND_BACKOFF);
+        const result = await this.#scheduler.backoff(updateItem, WRITE_MILLISECOND_BACKOFF);
 
         if (result.code === DYNAMO_RESULT.FAILURE) {
             throw result.error;
@@ -519,12 +529,12 @@ export default class DynamoProvider extends Disposable {
      *
      * @public
      * @async
-     * @param {Object[]} items - The items to write.
+     * @param {object[]} items - The items to write.
      * @param {Table} table - Describes the schema of the table to write to.
-     * @returns {Promise<Boolean>}
+     * @returns {Promise<boolean>}
      */
     async createItems(items, table) {
-        return processBatch.call(this, table, DynamoBatchType.PUT, items);
+        return this.#processBatch(table, DynamoBatchType.PUT, items);
     }
 
     /**
@@ -534,13 +544,13 @@ export default class DynamoProvider extends Disposable {
      *
      * @public
      * @async
-     * @param {Object[]} items - The items to write.
+     * @param {object[]} items - The items to write.
      * @param {Table} table - Describes the schema of the table to write to.
-     * @param {Boolean=} explicit - If keys are derived, the item will be deleted as-is, without rederiving the key.
-     * @returns {Promise<Boolean>}
+     * @param {boolean=} explicit - If keys are derived, the item will be deleted as-is, without rederiving the key.
+     * @returns {Promise<boolean>}
      */
     async deleteItems(items, table, explicit) {
-        return processBatch.call(this, table, DynamoBatchType.DELETE, items, explicit);
+        return this.#processBatch(table, DynamoBatchType.DELETE, items, explicit);
     }
 
     /**
@@ -548,17 +558,17 @@ export default class DynamoProvider extends Disposable {
      *
      * @public
      * @async
-     * @param {Object} item - The item to delete.
+     * @param {object} item - The item to delete.
      * @param {Table} table - Describes the schema of the table to write to.
-     * @param {Boolean=} explicit - If keys are derived, the item will be deleted as-is, without rederiving the key.
-     * @returns {Promise<Boolean>}
+     * @param {boolean=} explicit - If keys are derived, the item will be deleted as-is, without rederiving the key.
+     * @returns {Promise<boolean>}
      */
     async deleteItem(item, table, explicit) {
         assert.argumentIsRequired(table, 'table', Table, 'Table');
         assert.argumentIsRequired(item, 'item', Object);
         assert.argumentIsOptional(explicit, 'explicit', Boolean);
 
-        checkReady.call(this);
+        this.#checkReady();
 
         const qualifiedTableName = table.name;
 
@@ -570,7 +580,7 @@ export default class DynamoProvider extends Disposable {
 
         const deleteItem = async () => {
             try {
-                await this._dynamo.send(new DeleteItemCommand(payload));
+                await this.#dynamo.send(new DeleteItemCommand(payload));
 
                 return { code: DYNAMO_RESULT.SUCCESS };
             } catch (error) {
@@ -586,7 +596,7 @@ export default class DynamoProvider extends Disposable {
             }
         };
 
-        const result = await this._scheduler.backoff(deleteItem, WRITE_MILLISECOND_BACKOFF);
+        const result = await this.#scheduler.backoff(deleteItem, WRITE_MILLISECOND_BACKOFF);
 
         if (result.code === DYNAMO_RESULT.FAILURE) {
             throw result.error;
@@ -602,16 +612,16 @@ export default class DynamoProvider extends Disposable {
      * @public
      * @async
      * @param {Scan} scan
-     * @returns {Promise<Object[]>|Promise<Number>}
+     * @returns {Promise<object[]|number>}
      */
     async scan(scan) {
         assert.argumentIsRequired(scan, 'scan', Scan, 'Scan');
 
-        checkReady.call(this);
+        this.#checkReady();
 
         const options = scan.toScanSchema();
 
-        if (!scan.consistentRead && scan.index === null && this._options.preferConsistentReads) {
+        if (!scan.consistentRead && scan.index === null && this.#options.preferConsistentReads) {
             logger.debug('Overriding scan definition, setting consistent reads to true for [', (scan.description || 'unnamed scan'), '] on [', scan.table.name, ']');
 
             options.ConsistentRead = true;
@@ -656,7 +666,7 @@ export default class DynamoProvider extends Disposable {
                 let data;
 
                 try {
-                    data = await this._dynamo.send(new ScanCommand(options));
+                    data = await this.#dynamo.send(new ScanCommand(options));
                 } catch (error) {
                     const dynamoError = Enum.fromCode(DynamoError, error.name);
 
@@ -755,7 +765,7 @@ export default class DynamoProvider extends Disposable {
                 return deserialized.concat(continuation);
             };
 
-            const results = await this._scheduler.backoff(executeScan, READ_MILLISECOND_BACKOFF);
+            const results = await this.#scheduler.backoff(executeScan, READ_MILLISECOND_BACKOFF);
 
             if (results.code === DYNAMO_RESULT.FAILURE) {
                 throw results.error;
@@ -790,18 +800,18 @@ export default class DynamoProvider extends Disposable {
      * @public
      * @async
      * @param {Scan} scan
-     * @param {Object=} startKey
+     * @param {object=} startKey
      * @return {Promise}
      */
     async scanChunk(scan, startKey) {
         assert.argumentIsRequired(scan, 'scan', Scan, 'Scan');
         assert.argumentIsOptional(startKey, 'startKey', Object);
 
-        checkReady.call(this);
+        this.#checkReady();
 
         const options = scan.toScanSchema();
 
-        if (!scan.consistentRead && scan.index === null && this._options.preferConsistentReads) {
+        if (!scan.consistentRead && scan.index === null && this.#options.preferConsistentReads) {
             logger.debug('Overriding scan definition, setting consistent reads to true for [', (scan.description || 'unnamed scan'), '] on [', scan.table.name, ']');
 
             options.ConsistentRead = true;
@@ -817,7 +827,7 @@ export default class DynamoProvider extends Disposable {
             let data;
 
             try {
-                data = await this._dynamo.send(new ScanCommand(options));
+                data = await this.#dynamo.send(new ScanCommand(options));
             } catch (error) {
                 const dynamoError = Enum.fromCode(DynamoError, error.name);
 
@@ -865,7 +875,7 @@ export default class DynamoProvider extends Disposable {
         };
 
         try {
-            const results = await this._scheduler.backoff(executeScan, READ_MILLISECOND_BACKOFF);
+            const results = await this.#scheduler.backoff(executeScan, READ_MILLISECOND_BACKOFF);
 
             if (results.code === DYNAMO_RESULT.FAILURE) {
                 throw results.error;
@@ -888,16 +898,16 @@ export default class DynamoProvider extends Disposable {
      * @public
      * @async
      * @param {Query} query
-     * @returns {Promise<Object[]>|Promise<Number>}
+     * @returns {Promise<object[]|number>}
      */
     async query(query) {
         assert.argumentIsRequired(query, 'query', Query, 'Query');
 
-        checkReady.call(this);
+        this.#checkReady();
 
         const options = query.toQuerySchema();
 
-        if (!query.consistentRead && query.index === null && this._options.preferConsistentReads) {
+        if (!query.consistentRead && query.index === null && this.#options.preferConsistentReads) {
             logger.debug('Overriding query definition, setting consistent reads to true for [', (query.description || 'unnamed query'), '] on [', query.table.name, ']');
 
             options.ConsistentRead = true;
@@ -942,7 +952,7 @@ export default class DynamoProvider extends Disposable {
                 let data;
 
                 try {
-                    data = await this._dynamo.send(new QueryCommand(options));
+                    data = await this.#dynamo.send(new QueryCommand(options));
                 } catch (error) {
                     const dynamoError = Enum.fromCode(DynamoError, error.name);
 
@@ -1040,7 +1050,7 @@ export default class DynamoProvider extends Disposable {
                 return deserialized.concat(continuation);
             };
 
-            const results = await this._scheduler.backoff(executeQuery, READ_MILLISECOND_BACKOFF);
+            const results = await this.#scheduler.backoff(executeQuery, READ_MILLISECOND_BACKOFF);
 
             if (results.code === DYNAMO_RESULT.FAILURE) {
                 throw results.error;
@@ -1076,7 +1086,7 @@ export default class DynamoProvider extends Disposable {
      * @public
      * @async
      * @param {Query[]} queries
-     * @returns {Promise<Object[]>}
+     * @returns {Promise<object[]>}
      */
     async queryParallel(queries) {
         assert.argumentIsArray(queries, 'queries', Query, 'Query');
@@ -1092,18 +1102,18 @@ export default class DynamoProvider extends Disposable {
      * @public
      * @async
      * @param {Query} query
-     * @param {Object=} startKey
+     * @param {object=} startKey
      * @return {Promise}
      */
     async queryChunk(query, startKey) {
         assert.argumentIsRequired(query, 'query', Query, 'Query');
         assert.argumentIsOptional(startKey, 'startKey', Object);
 
-        checkReady.call(this);
+        this.#checkReady();
 
         const options = query.toQuerySchema();
 
-        if (!query.consistentRead && query.index === null && this._options.preferConsistentReads) {
+        if (!query.consistentRead && query.index === null && this.#options.preferConsistentReads) {
             logger.debug('Overriding query definition, setting consistent reads to true for [', (query.description || 'unnamed query'), '] on [', query.table.name, ']');
 
             options.ConsistentRead = true;
@@ -1119,7 +1129,7 @@ export default class DynamoProvider extends Disposable {
             let data;
 
             try {
-                data = await this._dynamo.send(new QueryCommand(options));
+                data = await this.#dynamo.send(new QueryCommand(options));
             } catch (error) {
                 const dynamoError = Enum.fromCode(DynamoError, error.name);
 
@@ -1167,7 +1177,7 @@ export default class DynamoProvider extends Disposable {
         };
 
         try {
-            const results = await this._scheduler.backoff(executeQuery, READ_MILLISECOND_BACKOFF);
+            const results = await this.#scheduler.backoff(executeQuery, READ_MILLISECOND_BACKOFF);
 
             if (results.code === DYNAMO_RESULT.FAILURE) {
                 throw results.error;
@@ -1194,34 +1204,164 @@ export default class DynamoProvider extends Disposable {
     getTableBuilder(name) {
         assert.argumentIsRequired(name, 'name', String);
 
-        return TableBuilder.withName(getQualifiedTableName(this._configuration.prefix, name));
+        return TableBuilder.withName(getQualifiedTableName(this.#configuration.prefix, name));
     }
 
+    /**
+     * @protected
+     * @override
+     */
     _onDispose() {
-        if (this._scheduler !== null) {
-            this._scheduler.dispose();
-            this._scheduler = null;
+        if (this.#scheduler !== null) {
+            this.#scheduler.dispose();
+            this.#scheduler = null;
         }
 
-        if (this._batches !== null) {
-            this._batches.forEach((k, v) => v.dispose());
-            this._batches = null;
+        if (this.#batches !== null) {
+            this.#batches.forEach((k, v) => v.dispose());
+            this.#batches = null;
         }
     }
 
+    /**
+     * Returns a string representation.
+     *
+     * @public
+     * @returns {string}
+     */
     toString() {
         return '[DynamoProvider]';
     }
-}
 
-function checkReady() {
-    if (this.disposed) {
-        throw new Error('The Dynamo provider has been disposed');
-    }
 
-    if (!this._started) {
-        throw new Error('The Dynamo provider has not been started');
-    }
+    #checkReady() {
+        if (this.disposed) {
+            throw new Error('The Dynamo provider has been disposed');
+            }
+
+            if (!this.#started) {
+                throw new Error('The Dynamo provider has not been started');
+            }
+        }
+
+    async #getTable(qualifiedTableName) {
+        let data;
+
+        try {
+            data = await this.#dynamo.send(new DescribeTableCommand({ TableName: qualifiedTableName }));
+            } catch (error) {
+                logger.error(error);
+
+                throw 'Failed to retrieve DynamoDB table';
+            }
+
+            if (!is.object(data.Table)) {
+                throw 'Unexpected response from DynamoDB SDK.';
+            }
+
+            if (logger.isTraceEnabled()) {
+                logger.trace(JSON.stringify(data, null, 2));
+            }
+
+            return data.Table;
+        }
+
+    async #getTimeToLiveSettings(qualifiedTableName) {
+        try {
+            return await this.#dynamo.send(new DescribeTimeToLiveCommand({ TableName: qualifiedTableName }));
+            } catch (error) {
+                logger.error(error);
+
+                throw error;
+            }
+        }
+
+    #processBatch(table, type, items, explicit) {
+        assert.argumentIsRequired(table, 'table', Table, 'Table');
+        assert.argumentIsRequired(type, 'type', DynamoBatchType, 'DynamoBatchType');
+        assert.argumentIsArray(items, 'items');
+        assert.argumentIsOptional(explicit, 'explicit', Boolean);
+
+        this.#checkReady();
+
+        if (items.length === 0) {
+            return;
+            }
+
+            const qualifiedTableName = table.name;
+
+            if (!this.#batches.has(qualifiedTableName)) {
+                this.#batches.set(qualifiedTableName, new WorkQueue());
+            }
+
+            const workQueue = this.#batches.get(qualifiedTableName);
+
+            return workQueue.enqueue(async () => {
+                const batchNumber = workQueue.getCurrent();
+
+                logger.debug('Starting batch', type.description, 'on [', qualifiedTableName, '] for batch number [', batchNumber, '] with [', items.length, '] items');
+
+                const writeBatch = async (currentPayload) => {
+                    let data;
+
+                    try {
+                        data = await this.#dynamo.send(new BatchWriteItemCommand(currentPayload));
+                    } catch (error) {
+                        const dynamoError = Enum.fromCode(DynamoError, error.name);
+
+                        if (dynamoError !== null && dynamoError.getRetryable(error)) {
+                            logger.debug('Encountered retryable error [', error.name, '] while running batch', type.description, 'on [', qualifiedTableName, ']');
+
+                            throw error;
+                        }
+
+                        return { code: DYNAMO_RESULT.FAILURE, error: error };
+                    }
+
+                    let unprocessedItems;
+
+                    if (is.object(data.UnprocessedItems) && is.array(data.UnprocessedItems[qualifiedTableName])) {
+                        unprocessedItems = data.UnprocessedItems[qualifiedTableName];
+                    } else {
+                        unprocessedItems = [ ];
+                    }
+
+                    if (unprocessedItems.length === 0) {
+                        return { code: DYNAMO_RESULT.SUCCESS };
+                    }
+
+                    logger.debug('Continuing batch [', type.description, '] on [', qualifiedTableName, '] for batch number [', batchNumber,'] with [', unprocessedItems.length, '] unprocessed items');
+
+                    const continuePayload = getBatchPayload(qualifiedTableName, unprocessedItems);
+
+                    return this.#scheduler.backoff(() => writeBatch(continuePayload), WRITE_MILLISECOND_BACKOFF);
+                };
+
+                const originalPayload = getBatchPayload(qualifiedTableName,
+                    items.map((item) => {
+                        const request = { };
+                        const wrapper = { };
+
+                        wrapper[type.requestItemName] = Serializer.serialize(item, table, type.keysOnly, explicit);
+                        request[type.requestTypeName] = wrapper;
+
+                        return request;
+                    })
+                );
+
+                const result = await this.#scheduler.backoff(() => writeBatch(originalPayload), WRITE_MILLISECOND_BACKOFF);
+
+                if (result.code === DYNAMO_RESULT.FAILURE) {
+                    logger.error('Failed batch [', type.description, '] on [', qualifiedTableName, '] for batch number [', batchNumber,'] with [', items.length, '] items');
+
+                    throw result.error;
+                }
+
+                logger.debug('Finished batch [', type.description, '] on [', qualifiedTableName, '] for batch number [', batchNumber,'] with [', items.length, '] items');
+
+                return true;
+            });
+        }
 }
 
 // 2010/01/18, BRI. Using "setImmediate" causes the deserialization step to be deferred
@@ -1241,125 +1381,6 @@ function getQualifiedTableName(prefix, name) {
     return `${prefix}-${name}`;
 }
 
-async function getTable(qualifiedTableName) {
-    let data;
-
-    try {
-        data = await this._dynamo.send(new DescribeTableCommand({ TableName: qualifiedTableName }));
-    } catch (error) {
-        logger.error(error);
-
-        throw 'Failed to retrieve DynamoDB table';
-    }
-
-    if (!is.object(data.Table)) {
-        throw 'Unexpected response from DynamoDB SDK.';
-    }
-
-    if (logger.isTraceEnabled()) {
-        logger.trace(JSON.stringify(data, null, 2));
-    }
-
-    return data.Table;
-}
-
-async function getTimeToLiveSettings(qualifiedTableName) {
-    try {
-        return await this._dynamo.send(new DescribeTimeToLiveCommand({ TableName: qualifiedTableName }));
-    } catch (error) {
-        logger.error(error);
-
-        throw error;
-    }
-}
-
-function processBatch(table, type, items, explicit) {
-    assert.argumentIsRequired(table, 'table', Table, 'Table');
-    assert.argumentIsRequired(type, 'type', DynamoBatchType, 'DynamoBatchType');
-    assert.argumentIsArray(items, 'items');
-    assert.argumentIsOptional(explicit, 'explicit', Boolean);
-
-    checkReady.call(this);
-
-    if (items.length === 0) {
-        return;
-    }
-
-    const qualifiedTableName = table.name;
-
-    if (!this._batches.has(qualifiedTableName)) {
-        this._batches.set(qualifiedTableName, new WorkQueue());
-    }
-
-    const workQueue = this._batches.get(qualifiedTableName);
-
-    return workQueue.enqueue(async () => {
-        const batchNumber = workQueue.getCurrent();
-
-        logger.debug('Starting batch', type.description, 'on [', qualifiedTableName, '] for batch number [', batchNumber, '] with [', items.length, '] items');
-
-        const writeBatch = async (currentPayload) => {
-            let data;
-
-            try {
-                data = await this._dynamo.send(new BatchWriteItemCommand(currentPayload));
-            } catch (error) {
-                const dynamoError = Enum.fromCode(DynamoError, error.name);
-
-                if (dynamoError !== null && dynamoError.getRetryable(error)) {
-                    logger.debug('Encountered retryable error [', error.name, '] while running batch', type.description, 'on [', qualifiedTableName, ']');
-
-                    throw error;
-                }
-
-                return { code: DYNAMO_RESULT.FAILURE, error: error };
-            }
-
-            let unprocessedItems;
-
-            if (is.object(data.UnprocessedItems) && is.array(data.UnprocessedItems[qualifiedTableName])) {
-                unprocessedItems = data.UnprocessedItems[qualifiedTableName];
-            } else {
-                unprocessedItems = [ ];
-            }
-
-            if (unprocessedItems.length === 0) {
-                return { code: DYNAMO_RESULT.SUCCESS };
-            }
-
-            logger.debug('Continuing batch [', type.description, '] on [', qualifiedTableName, '] for batch number [', batchNumber,'] with [', unprocessedItems.length, '] unprocessed items');
-
-            const continuePayload = getBatchPayload(qualifiedTableName, unprocessedItems);
-
-            return this._scheduler.backoff(() => writeBatch(continuePayload), WRITE_MILLISECOND_BACKOFF);
-        };
-
-        const originalPayload = getBatchPayload(qualifiedTableName,
-            items.map((item) => {
-                const request = { };
-                const wrapper = { };
-
-                wrapper[type.requestItemName] = Serializer.serialize(item, table, type.keysOnly, explicit);
-                request[type.requestTypeName] = wrapper;
-
-                return request;
-            })
-        );
-
-        const result = await this._scheduler.backoff(() => writeBatch(originalPayload), WRITE_MILLISECOND_BACKOFF);
-
-        if (result.code === DYNAMO_RESULT.FAILURE) {
-            logger.error('Failed batch [', type.description, '] on [', qualifiedTableName, '] for batch number [', batchNumber,'] with [', items.length, '] items');
-
-            throw result.error;
-        }
-
-        logger.debug('Finished batch [', type.description, '] on [', qualifiedTableName, '] for batch number [', batchNumber,'] with [', items.length, '] items');
-
-        return true;
-    });
-}
-
 function getBatchPayload(tableName, serializedItems) {
     const payload = {
         RequestItems: { }
@@ -1376,18 +1397,20 @@ const DYNAMO_RESULT = {
 };
 
 class DynamoError extends Enum {
+    #retryablePredicate;
+
     constructor(code, description, retryablePredicate) {
         super(code, description);
 
-        this._retryablePredicate = retryablePredicate;
+        this.#retryablePredicate = retryablePredicate;
     }
 
     getRetryable(error) {
-        return this._retryablePredicate(error);
+        return this.#retryablePredicate(error);
     }
 
     toString() {
-        return `[DynamoError (code=${this._code})]`;
+        return `[DynamoError (code=${this.code})]`;
     }
 }
 
@@ -1398,25 +1421,29 @@ const dynamoErrorUnavailable = new DynamoError('UnknownError', 'Unknown Error Ex
 const dynamoErrorTimeout = new DynamoError('TimeoutError', 'Timeout Error Exception', error => is.object(error.$retryable));
 
 class DynamoBatchType extends Enum {
+    #keysOnly;
+    #requestItemName;
+    #requestTypeName;
+
     constructor(code, description, requestTypeName, requestItemName, keysOnly) {
         super(code, description);
 
-        this._requestTypeName = requestTypeName;
-        this._requestItemName = requestItemName;
+        this.#requestTypeName = requestTypeName;
+        this.#requestItemName = requestItemName;
 
-        this._keysOnly = keysOnly;
+        this.#keysOnly = keysOnly;
     }
 
     get requestTypeName() {
-        return this._requestTypeName;
+        return this.#requestTypeName;
     }
 
     get requestItemName() {
-        return this._requestItemName;
+        return this.#requestItemName;
     }
 
     get keysOnly() {
-        return this._keysOnly;
+        return this.#keysOnly;
     }
 
     static get PUT() {
@@ -1428,7 +1455,7 @@ class DynamoBatchType extends Enum {
     }
 
     toString() {
-        return `[DynamoBatchType (code=${this._code})]`;
+        return `[DynamoBatchType (code=${this.code})]`;
     }
 }
 

@@ -40,7 +40,7 @@ export default class Serializers {
 
 	/**
 	 * Binds a {@link DataType} to an {@link AttributeSerializer}, allowing the underlying framework
-	 * to automatically handle the a custom attribute type.
+	 * to automatically handle the custom attribute type.
 	 *
 	 * @public
 	 * @static
@@ -133,7 +133,7 @@ export default class Serializers {
 
 	/**
 	 * Binds a {@link DataType} to a {@link ComponentSerializer}, allowing the underlying framework
-	 * to automatically handle the a custom attribute type.
+	 * to automatically handle the custom attribute type.
 	 *
 	 * @public
 	 * @static
@@ -179,6 +179,12 @@ export default class Serializers {
 		return componentSerializers.get(componentType) || null;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Serializers]';
 	}

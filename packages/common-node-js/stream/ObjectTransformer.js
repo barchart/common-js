@@ -16,12 +16,20 @@ const logger = log4js.getLogger('common-node/stream/ObjectTransformer');
  *
  * @public
  * @extends {Stream.Transform}
- * @param {Array<Transformation>} transformations
- * @param {String=} description
- * @param {Boolean=} silent
- * @param {Object=} options
  */
 export default class ObjectTransformer extends Stream.Transform {
+	#counter;
+	#delegate;
+	#description;
+	#silent;
+	#transformations;
+
+	/**
+	 * @param {Array<Transformation>} transformations
+	 * @param {string=} description
+	 * @param {boolean=} silent
+	 * @param {object=} options
+	 */
 	constructor(transformations, description, silent, options) {
 		super(object.merge({ objectMode: true, highWaterMark: 1000 }, (options || { })));
 
@@ -30,110 +38,133 @@ export default class ObjectTransformer extends Stream.Transform {
 		assert.argumentIsOptional(silent, 'silent', Boolean);
 		assert.argumentIsOptional(options, 'options', Object);
 
-		this._tranformations = transformations;
+		this.#transformations = transformations;
 
-		this._description = description || 'Object Transformer';
-		this._silent = is.boolean(silent) && silent;
+		this.#description = description || 'Object Transformer';
+		this.#silent = is.boolean(silent) && silent;
 
 		let delegate;
 
 		if (transformations.every(t => t.synchronous)) {
-			delegate = processSynchronous.bind(this);
+			delegate = this.#processSynchronous.bind(this);
 		} else {
-			delegate = processAsynchronous.bind(this);
+			delegate = this.#processAsynchronous.bind(this);
 		}
 
-		this._delegate = delegate;
+		this.#delegate = delegate;
 
-		this._counter = 0;
+		this.#counter = 0;
 	}
 
+	/**
+	 * Returns the transformer count.
+	 *
+	 * @public
+	 * @returns {number}
+	 */
 	get transformerCount() {
-		return this._tranformations.length;
+		return this.#transformations.length;
 	}
 
 	_transform(chunk, encoding, callback) {
-		this._delegate(chunk, callback);
+		this.#delegate(chunk, callback);
 	}
 
 	/**
 	 * Adds a new {@link Transformer} instance.
 	 *
 	 * @public
-	 * @param {Transformation}
+	 * @param {Transformation} transformation
 	 * @returns {ObjectTransformer}
 	 */
 	addTransformation(transformation) {
 		assert.argumentIsRequired(transformation, 'transformation', Transformation, 'Transformation');
 
-		return new ObjectTransformer(this._tranformations.concat([ transformation ]), this._description, this._silent);
+		return new ObjectTransformer(this.#transformations.concat([ transformation ]), this.#description, this.#silent);
 	}
 
+	/**
+	 * Creates or returns define.
+	 *
+	 * @public
+	 * @static
+	 * @param {string} description
+	 * @param {*} silent
+	 * @param {object=} options
+	 * @returns {*}
+	 */
 	static define(description, silent, options) {
 		return new ObjectTransformer([ ], description, silent, options);
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[ObjectTransformer]';
 	}
-}
 
-function processSynchronous(chunk, callback) {
-	this._counter = this._counter + 1;
 
-	let error = null;
-	let transformed = chunk;
+	#processSynchronous(chunk, callback) {
+		this.#counter = this.#counter + 1;
 
-	this._tranformations.every((t) => {
-		try {
-			transformed = t.transform(transformed);
-		} catch (e) {
-			error = e;
-		}
+		let error = null;
+		let transformed = chunk;
 
-		return error === null;
-	});
-
-	if (error === null) {
-		callback(null, transformed);
-	} else {
-		if (this._silent) {
-			logger.warn(`Transformation [ ${this._counter} ] for [ ${this._description} ] failed.`);
-
-			if (logger.isTraceEnabled() && chunk) {
-				logger.trace(chunk);
-			}
-
-			error = null;
-		} else {
-			logger.error(error);
-		}
-
-		callback(error, null);
-	}
-}
-
-function processAsynchronous(chunk, callback) {
-	return promise.pipeline(this._tranformations.map(t => t.transform.bind(t)), chunk)
-		.then((transformed) => {
-			callback(null, transformed);
-		}).catch((e) => {
-			let error;
-
-			if (this._silent) {
-				logger.warn(`Transformation [ ${this._counter} ] for [ ${this._description} ] failed.`);
-
-				if (logger.isTraceEnabled() && chunk) {
-					logger.trace(chunk);
+		this.#transformations.every((t) => {
+			try {
+				transformed = t.transform(transformed);
+				} catch (e) {
+					error = e;
 				}
 
-				error = null;
+				return error === null;
+			});
+
+			if (error === null) {
+				callback(null, transformed);
 			} else {
-				logger.error(e);
+				if (this.#silent) {
+					logger.warn(`Transformation [ ${this.#counter} ] for [ ${this.#description} ] failed.`);
 
-				error = e;
+					if (logger.isTraceEnabled() && chunk) {
+						logger.trace(chunk);
+					}
+
+					error = null;
+				} else {
+					logger.error(error);
+				}
+
+				callback(error, null);
 			}
+		}
 
-			callback(error, null);
-		});
+	#processAsynchronous(chunk, callback) {
+		return promise.pipeline(this.#transformations.map(t => t.transform.bind(t)), chunk)
+			.then((transformed) => {
+				callback(null, transformed);
+				}).catch((e) => {
+					let error;
+
+					if (this.#silent) {
+						logger.warn(`Transformation [ ${this.#counter} ] for [ ${this.#description} ] failed.`);
+
+						if (logger.isTraceEnabled() && chunk) {
+							logger.trace(chunk);
+						}
+
+						error = null;
+					} else {
+						logger.error(e);
+
+						error = e;
+					}
+
+					callback(error, null);
+				});
+		}
 }

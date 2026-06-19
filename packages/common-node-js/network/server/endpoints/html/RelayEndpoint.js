@@ -10,6 +10,21 @@ const emptyCommand = CommandHandler.fromFunction((ignored) => {
 });
 
 export default class RelayEndpoint extends Endpoint {
+	#acceptPath;
+	#forwardHost;
+	#forwardPath;
+	#headerOverrides;
+	#parameterOverrides;
+	#verb;
+
+	/**
+	 * @param {*} verb
+	 * @param {*} acceptPath
+	 * @param {*} forwardHost
+	 * @param {*} forwardPath
+	 * @param {*} headerOverrides
+	 * @param {*} parameterOverrides
+	 */
 	constructor(verb, acceptPath, forwardHost, forwardPath, headerOverrides, parameterOverrides) {
 		super(emptyCommand);
 
@@ -20,41 +35,83 @@ export default class RelayEndpoint extends Endpoint {
 		assert.argumentIsOptional(headerOverrides, 'headerOverrides', Object);
 		assert.argumentIsOptional(parameterOverrides, 'parameterOverrides', Object);
 
-		this._verb = verb;
+		this.#verb = verb;
 
-		this._acceptPath = acceptPath;
+		this.#acceptPath = acceptPath;
 
-		this._forwardHost = forwardHost;
-		this._forwardPath = forwardPath;
+		this.#forwardHost = forwardHost;
+		this.#forwardPath = forwardPath;
 
-		this._headerOverrides = headerOverrides || { };
-		this._parameterOverrides = parameterOverrides || { };
+		this.#headerOverrides = headerOverrides || { };
+		this.#parameterOverrides = parameterOverrides || { };
 	}
 
+	/**
+	 * Returns the verb.
+	 *
+	 * @public
+	 * @returns {*}
+	 */
 	getVerb() {
-		return this._verb;
+		return this.#verb;
 	}
 
+	/**
+	 * Returns the accept path.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	getAcceptPath() {
-		return this._acceptPath;
+		return this.#acceptPath;
 	}
 
+	/**
+	 * Returns the forward host.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	getForwardHost() {
-		return this._forwardHost;
+		return this.#forwardHost;
 	}
 
+	/**
+	 * Returns the forward path.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	getForwardPath() {
-		return this._forwardPath;
+		return this.#forwardPath;
 	}
 
+	/**
+	 * Returns the header overrides.
+	 *
+	 * @public
+	 * @returns {object}
+	 */
 	getHeaderOverrides() {
-		return this._headerOverrides;
+		return this.#headerOverrides;
 	}
 
+	/**
+	 * Returns the parameter overrides.
+	 *
+	 * @public
+	 * @returns {object}
+	 */
 	getParameterOverrides() {
-		return this._parameterOverrides;
+		return this.#parameterOverrides;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[RelayEndpoint]';
 	}

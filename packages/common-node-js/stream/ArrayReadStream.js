@@ -12,25 +12,31 @@ import Stream from 'stream';
  *
  * @public
  * @extends {Stream.Readable}
- * @param {Object=} options
  */
 export default class ArrayReadStream extends Stream.Readable {
+	#data;
+	#index;
+
+	/**
+	 * @param {Array} data
+	 * @param {object=} options
+	 */
 	constructor(data, options) {
 		super(object.merge({ objectMode: true }, (options || { })));
 
 		assert.argumentIsArray(data, 'data');
 
-		this._data = data;
-		this._index = 0;
+		this.#data = data;
+		this.#index = 0;
 	}
 
 	_read(size) {
 		let item;
 
-		if (this._index < this._data.length) {
-			item = this._data[this._index];
+		if (this.#index < this.#data.length) {
+			item = this.#data[this.#index];
 
-			this._index = this._index + 1;
+			this.#index = this.#index + 1;
 		} else {
 			item = null;
 		}
@@ -38,6 +44,12 @@ export default class ArrayReadStream extends Stream.Readable {
 		this.push(item);
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[ArrayReadStream]';
 	}

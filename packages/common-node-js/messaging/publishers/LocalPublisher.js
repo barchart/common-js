@@ -6,39 +6,73 @@ import log4js from 'log4js';
 
 const logger = log4js.getLogger('common-node/messaging/publishers/LocalPublisher');
 
+/**
+ * @typedef {import('@barchart/common-js/lang/Disposable.js').default} Disposable
+ */
+
 export default class LocalPublisher extends Publisher {
+	#subscriptions;
+
+	/**
+	 * @param {*} suppressExpressions
+	 */
 	constructor(suppressExpressions) {
 		super(suppressExpressions);
 
-		this._subscriptions = {};
+		this.#subscriptions = {};
 	}
 
-	_publish(messageType, payload) {
-		if (this._subscriptions.hasOwnProperty(messageType)) {
-			this._subscriptions[messageType].fire(payload);
+	/**
+	 * @protected
+	 * @override
+	 * @async
+	 * @param {string} messageType
+	 * @param {*} payload
+	 */
+	async _publish(messageType, payload) {
+		if (this.#subscriptions.hasOwnProperty(messageType)) {
+			this.#subscriptions[messageType].fire(payload);
 		}
 	}
 
-	_subscribe(messageType, handler) {
-		if (!this._subscriptions.hasOwnProperty(messageType)) {
-			this._subscriptions[messageType] = new Event(this);
+	/**
+	 * @protected
+	 * @override
+	 * @async
+	 * @param {string} messageType
+	 * @param {Function} handler
+	 * @returns {Promise<Disposable>}
+	 */
+	async _subscribe(messageType, handler) {
+		if (!this.#subscriptions.hasOwnProperty(messageType)) {
+			this.#subscriptions[messageType] = new Event(this);
 		}
 
-		return this._subscriptions[messageType].register(getEventHandlerForSubscription(handler));
+		return this.#subscriptions[messageType].register(getEventHandlerForSubscription(handler));
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 */
 	_onDispose() {
-		Object.keys(this._subscriptions).forEach((key) => {
-			const event = this._subscriptions[key];
+		Object.keys(this.#subscriptions).forEach((key) => {
+			const event = this.#subscriptions[key];
 
 			event.dispose();
 		});
 
-		this._subscriptions = null;
+		this.#subscriptions = null;
 
 		logger.debug('Local publisher disposed');
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[LocalPublisher]';
 	}

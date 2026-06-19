@@ -1,31 +1,63 @@
 import * as assert from '@barchart/common-js/lang/assert.js';
 import * as is from '@barchart/common-js/lang/is.js';
 
+/**
+ * @typedef {import('./Endpoint.js').default} Endpoint
+ */
+
 export default class Container {
+	#endpoints;
+	#path;
+	#port;
+	#secure;
+
+	/**
+	 * @param {number} port
+	 * @param {string} path
+	 * @param {boolean=} secure
+	 */
 	constructor(port, path, secure) {
 		assert.argumentIsOptional(port, 'port', Number);
 		assert.argumentIsOptional(path, 'path', String);
 		assert.argumentIsOptional(secure, 'secure', Boolean);
 
-		this._port = getEffectivePort(port);
-		this._path = path || null;
-		this._secure = secure || false;
+		this.#port = getEffectivePort(port);
+		this.#path = path || null;
+		this.#secure = secure || false;
 
-		this._endpoints = [];
+		this.#endpoints = [];
 	}
 
+	/**
+	 * Runs the add endpoint operation.
+	 *
+	 * @public
+	 * @param {Endpoint} endpoint
+	 */
 	addEndpoint(endpoint) {
 		assert.argumentIsRequired(endpoint, 'endpoint', this.getEndpointType(), this._getEndpointType().toString());
 
-		this._endpoints.push(endpoint);
+		this.#endpoints.push(endpoint);
 
 		return this;
 	}
 
+	/**
+	 * Returns the endpoints.
+	 *
+	 * @public
+	 * @returns {Array}
+	 */
 	getEndpoints() {
-		return this._endpoints;
+		return this.#endpoints;
 	}
 
+	/**
+	 * Returns the endpoint type.
+	 *
+	 * @public
+	 * @returns {*}
+	 */
 	getEndpointType() {
 		return this._getEndpointType();
 	}
@@ -34,18 +66,42 @@ export default class Container {
 		return null;
 	}
 
+	/**
+	 * Returns the port.
+	 *
+	 * @public
+	 * @returns {number}
+	 */
 	getPort() {
-		return this._port;
+		return this.#port;
 	}
 
+	/**
+	 * Returns the path.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	getPath() {
-		return this._path;
+		return this.#path;
 	}
 
+	/**
+	 * Returns the is secure.
+	 *
+	 * @public
+	 * @returns {boolean}
+	 */
 	getIsSecure() {
-		return this._secure;
+		return this.#secure;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Container]';
 	}

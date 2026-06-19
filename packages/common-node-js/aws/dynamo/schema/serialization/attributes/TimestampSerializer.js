@@ -28,6 +28,12 @@ export default class TimestampSerializer extends DelegateSerializer {
 		return instance;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[TimestampSerializer]';
 	}

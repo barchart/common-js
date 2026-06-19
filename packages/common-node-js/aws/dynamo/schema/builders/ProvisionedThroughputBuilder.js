@@ -6,15 +6,19 @@ import ProvisionedThroughput from './../definitions/ProvisionedThroughput.js';
  * Fluent interface for building a {@link ProvisionedThroughput} instance.
  *
  * @public
- * @param {Number=} read
- * @param {Number=} write
  */
 export default class ProvisionedThroughputBuilder {
+	#provisionedThroughput;
+
+	/**
+	 * @param {number=} read
+	 * @param {number=} write
+	 */
 	constructor(read, write) {
 		assert.argumentIsOptional(read, 'read', Number);
 		assert.argumentIsOptional(write, 'write', Number);
 
-		this._provisionedThroughput = new ProvisionedThroughput(read, write);
+		this.#provisionedThroughput = new ProvisionedThroughput(read, write);
 	}
 
 	/**
@@ -24,20 +28,20 @@ export default class ProvisionedThroughputBuilder {
 	 * @returns {ProvisionedThroughput}
 	 */
 	get provisionedThroughput() {
-		return this._provisionedThroughput;
+		return this.#provisionedThroughput;
 	}
 
 	/**
 	 * Sets the read capacity units and returns the current instance.
 	 *
 	 * @public
-	 * @param {Number} value
+	 * @param {number} value
 	 * @returns {ProvisionedThroughputBuilder}
 	 */
 	withRead(value) {
 		assert.argumentIsRequired(value, 'value', Number);
 
-		this._provisionedThroughput = new ProvisionedThroughput(value, this._provisionedThroughput.write);
+		this.#provisionedThroughput = new ProvisionedThroughput(value, this.#provisionedThroughput.write);
 
 		return this;
 	}
@@ -46,17 +50,23 @@ export default class ProvisionedThroughputBuilder {
 	 * Sets the write capacity units and returns the current instance.
 	 *
 	 * @public
-	 * @param {Number} value
+	 * @param {number} value
 	 * @returns {ProvisionedThroughputBuilder}
 	 */
 	withWrite(value) {
 		assert.argumentIsRequired(value, 'value', Number);
 
-		this._provisionedThroughput = new ProvisionedThroughput(this._provisionedThroughput.read, value);
+		this.#provisionedThroughput = new ProvisionedThroughput(this.#provisionedThroughput.read, value);
 
 		return this;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[ProvisionedThroughputBuilder]';
 	}

@@ -8,16 +8,20 @@ import Enum from '@barchart/common-js/lang/Enum.js';
  *
  * @public
  * @extends {Enum}
- * @param {String} code
- * @param {Number} priority
  */
 export default class DataOperationStage extends Enum {
+	#priority;
+
+	/**
+	 * @param {string} code
+	 * @param {number} priority
+	 */
 	constructor(code, priority) {
 		super(code, code);
 
 		assert.argumentIsRequired(priority, 'priority', Number);
 
-		this._priority = priority;
+		this.#priority = priority;
 	}
 
 	/**
@@ -25,10 +29,10 @@ export default class DataOperationStage extends Enum {
 	 * means sooner, higher means later).
 	 *
 	 * @public
-	 * @returns {Boolean}
+	 * @returns {number}
 	 */
 	get priority() {
-		return this._priority;
+		return this.#priority;
 	}
 
 	/**
@@ -121,6 +125,12 @@ export default class DataOperationStage extends Enum {
 		return results;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[DataOperationStage]';
 	}

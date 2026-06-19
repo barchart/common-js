@@ -13,22 +13,27 @@ const logger = log4js.getLogger('common-node/database/postgres/PooledClientProvi
  *
  * @public
  * @extends {ClientProvider}
- * @param {String} host
- * @param {String} database
- * @param {String} username
- * @param {String} password
- * @param {Number=} port
- * @param {String=} applicationName
- * @param {*=} ssl
  */
 export default class PooledClientProvider extends ClientProvider {
+	#pool;
+	#preparedStatementMap;
+
+	/**
+	 * @param {string} host
+	 * @param {string} database
+	 * @param {string} username
+	 * @param {string} password
+	 * @param {number=} port
+	 * @param {string=} applicationName
+	 * @param {*=} ssl
+	 */
 	constructor(host, database, username, password, port, applicationName, ssl) {
 		super(host, database, username, password, port, applicationName, ssl);
 
-		this._pool = new pg.Pool(this.getConfiguration());
-		this._preparedStatementMap = {};
+		this.#pool = new pg.Pool(this.getConfiguration());
+		this.#preparedStatementMap = {};
 
-		this._pool.on('error', (e, client) => {
+		this.#pool.on('error', (e, client) => {
 			logger.error('Postgres connection pool experienced an error', e);
 		});
 	}
@@ -39,13 +44,13 @@ export default class PooledClientProvider extends ClientProvider {
 
 			logger.debug('Creating new [PooledClient] for [', configuration.host, '] [', configuration.database, ']');
 
-			this._pool.connect((e, pgClient, releaseCallback) => {
+			this.#pool.connect((e, pgClient, releaseCallback) => {
 				if (e) {
 					logger.error('Failed to connect [PooledClient] to [', configuration.host, '] [', configuration.database, ']', e);
 
 					rejectCallback(e);
 				} else {
-					const client = new PooledClient(pgClient, this._preparedStatementMap, releaseCallback);
+					const client = new PooledClient(pgClient, this.#preparedStatementMap, releaseCallback);
 
 					logger.info('Created new [PooledClient] [', client.id, '] for [', configuration.host, '] [', configuration.database, ']');
 
@@ -56,27 +61,38 @@ export default class PooledClientProvider extends ClientProvider {
 	}
 
 	_onDispose() {
-		this._pool.end();
-		this._pool = null;
+		this.#pool.end();
+		this.#pool = null;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[PooledClientProvider]';
 	}
 }
 
 class PooledClient extends Client {
+	#releaseCallback;
+
 	constructor(pgClient, preparedStatementMap, releaseCallback) {
 		super(pgClient, preparedStatementMap);
 
-		this._releaseCallback = releaseCallback;
+		this.#releaseCallback = releaseCallback;
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 */
 	_onDispose() {
-		this._releaseCallback();
+		this.#releaseCallback();
 
-		this._pgClient = null;
-		this._releaseCallback = null;
+		this.#releaseCallback = null;
 
 		logger.info('Disposed [PooledClient] [', this.id, ']');
 	}

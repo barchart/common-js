@@ -18,21 +18,28 @@ const DEFAULT_TIMEOUT_MILLISECONDS = 20000;
  *
  * @public
  * @extends {Disposable}
- * @param {Publisher} publisher
- * @param {Router} router
  */
 export default class Bus extends Disposable {
+	#publisher;
+	#router;
+	#startPromise;
+	#started;
+
+	/**
+	 * @param {Publisher} publisher
+	 * @param {Router} router
+	 */
 	constructor(publisher, router) {
 		super();
 
 		assert.argumentIsRequired(publisher, 'publisher', Publisher, 'Publisher');
 		assert.argumentIsRequired(router, 'router', Router, 'Router');
 
-		this._publisher = publisher;
-		this._router = router;
+		this.#publisher = publisher;
+		this.#router = router;
 
-		this._startPromise = null;
-		this._started = false;
+		this.#startPromise = null;
+		this.#started = false;
 	}
 
 	/**
@@ -47,16 +54,16 @@ export default class Bus extends Disposable {
 			throw new Error('The message bus has been disposed');
 		}
 
-		if (this._startPromise === null) {
-			this._startPromise = Promise.all([ this._publisher.start(), this._router.start() ])
+		if (this.#startPromise === null) {
+			this.#startPromise = Promise.all([ this.#publisher.start(), this.#router.start() ])
 				.then((ignored) => {
-					this._started = true;
+					this.#started = true;
 
-					return this._started;
+					return this.#started;
 				});
 		}
 
-		return this._startPromise;
+		return this.#startPromise;
 	}
 
 	/**
@@ -64,14 +71,14 @@ export default class Bus extends Disposable {
 	 *
 	 * @public
 	 * @async
-	 * @param {String} messageType
+	 * @param {string} messageType
 	 * @param {*} payload
 	 * @returns {Promise}
 	 */
 	async publish(messageType, payload) {
 		assert.argumentIsRequired(messageType, 'messageType', String);
 
-		if (!this._started) {
+		if (!this.#started) {
 			throw new Error('The bus has not started.');
 		}
 
@@ -79,7 +86,7 @@ export default class Bus extends Disposable {
 			throw new Error('The message bus has been disposed');
 		}
 
-		return this._publisher.publish(messageType, payload);
+		return this.#publisher.publish(messageType, payload);
 	}
 
 	/**
@@ -88,7 +95,7 @@ export default class Bus extends Disposable {
 	 *
 	 * @public
 	 * @async
-	 * @param {String} messageType
+	 * @param {string} messageType
 	 * @param {Function} handler
 	 * @returns {Promise<Disposable>}
 	 */
@@ -96,7 +103,7 @@ export default class Bus extends Disposable {
 		assert.argumentIsRequired(messageType, 'messageType', String);
 		assert.argumentIsRequired(handler, 'handler', Function);
 
-		if (!this._started) {
+		if (!this.#started) {
 			throw new Error('The bus has not started.');
 		}
 
@@ -104,7 +111,7 @@ export default class Bus extends Disposable {
 			throw new Error('The message bus has been disposed');
 		}
 
-		return this._publisher.subscribe(messageType, handler);
+		return this.#publisher.subscribe(messageType, handler);
 	}
 
 	/**
@@ -112,10 +119,10 @@ export default class Bus extends Disposable {
 	 *
 	 * @public
 	 * @async
-	 * @param {String} messageType
+	 * @param {string} messageType
 	 * @param {*} payload
-	 * @param {Number=} timeout
-	 * @param {Boolean=} forget
+	 * @param {number=} timeout
+	 * @param {boolean=} forget
 	 * @returns {Promise<*>}
 	 */
 	async request(messageType, payload, timeout, forget) {
@@ -123,7 +130,7 @@ export default class Bus extends Disposable {
 		assert.argumentIsOptional(timeout, 'timeout', Number);
 		assert.argumentIsOptional(forget, 'forget', Boolean);
 
-		if (!this._started) {
+		if (!this.#started) {
 			throw new Error('The bus has not started.');
 		}
 
@@ -135,7 +142,7 @@ export default class Bus extends Disposable {
 
 		let requestPromise;
 
-		if (this._router.canRoute(messageType)) {
+		if (this.#router.canRoute(messageType)) {
 			let timeoutToUse;
 
 			if (is.number(timeout) && timeout > 0) {
@@ -144,7 +151,7 @@ export default class Bus extends Disposable {
 				timeoutToUse = DEFAULT_TIMEOUT_MILLISECONDS;
 			}
 
-			requestPromise = this._router.route(messageType, payload, timeoutToUse, forget || false)
+			requestPromise = this.#router.route(messageType, payload, timeoutToUse, forget || false)
 				.then((response) => {
 					const end = date.getTimestamp();
 
@@ -171,7 +178,7 @@ export default class Bus extends Disposable {
 	 *
 	 * @public
 	 * @async
-	 * @param {String} messageType
+	 * @param {string} messageType
 	 * @param {Function} handler
 	 * @returns {Promise<Disposable>}
 	 */
@@ -179,7 +186,7 @@ export default class Bus extends Disposable {
 		assert.argumentIsRequired(messageType, 'messageType', String);
 		assert.argumentIsRequired(handler, 'handler', Function);
 
-		if (!this._started) {
+		if (!this.#started) {
 			throw new Error('The bus has not started.');
 		}
 
@@ -187,17 +194,27 @@ export default class Bus extends Disposable {
 			throw new Error('The message bus has been disposed');
 		}
 
-		return this._router.register(messageType, handler);
+		return this.#router.register(messageType, handler);
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 */
 	_onDispose() {
-		this._publisher.dispose();
-		this._router.dispose();
+		this.#publisher.dispose();
+		this.#router.dispose();
 
-		this._publisher = null;
-		this._router = null;
+		this.#publisher = null;
+		this.#router = null;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Bus]';
 	}

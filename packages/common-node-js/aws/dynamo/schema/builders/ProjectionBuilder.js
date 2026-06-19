@@ -5,18 +5,27 @@ import Projection from './../definitions/Projection.js';
 import ProjectionType from './../definitions/ProjectionType.js';
 
 /**
+ * @typedef {import('./TableBuilder.js').default} TableBuilder
+ */
+
+/**
  * Fluent interface for building a {@link Projection}.
  *
  * @public
- * @param {ProjectionType} projectionType
- * @param {TableBuilder} parent
  */
 export default class ProjectionBuilder {
+	#parent;
+	#projection;
+
+	/**
+	 * @param {ProjectionType} projectionType
+	 * @param {TableBuilder} parent
+	 */
 	constructor(projectionType, parent) {
 		assert.argumentIsRequired(projectionType, 'projectionType', ProjectionType, 'ProjectionType');
 
-		this._projection = new Projection(projectionType, [ ]);
-		this._parent = parent;
+		this.#projection = new Projection(projectionType, [ ]);
+		this.#parent = parent;
 	}
 
 	/**
@@ -26,28 +35,34 @@ export default class ProjectionBuilder {
 	 * @returns {Projection}
 	 */
 	get projection() {
-		return this._projection;
+		return this.#projection;
 	}
 
 	/**
 	 * Adds an {@link Attribute} to the projection and returns current instance.
 	 *
 	 * @public
-	 * @param {String} attributeName
-	 * @param {Boolean} allowMissing
+	 * @param {string} attributeName
+	 * @param {boolean} allowMissing
 	 * @returns {ProjectionBuilder}
 	 */
 	withAttribute(attributeName, allowMissing) {
 		assert.argumentIsRequired(attributeName, 'name', String);
 
-		const attribute = getAttribute(attributeName, this._parent, allowMissing);
-		const attributes = this._projection.attributes.filter(a => a.name !== attribute.name).concat(attribute);
+		const attribute = getAttribute(attributeName, this.#parent, allowMissing);
+		const attributes = this.#projection.attributes.filter(a => a.name !== attribute.name).concat(attribute);
 
-		this._projection = new Projection(this._projection.type, attributes);
+		this.#projection = new Projection(this.#projection.type, attributes);
 
 		return this;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[ProjectionBuilder]';
 	}

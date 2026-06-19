@@ -9,20 +9,24 @@ import BinarySerializer from './BinarySerializer.js';
  * on a DynamoDB record, using compression.
  *
  * @public
- * @param {Attribute} attribute
- * @extends {AttributeSerializer}
+ * @extends {BinarySerializer}
  */
 export default class CompressedBinarySerializer extends BinarySerializer {
+	#attribute;
+
+	/**
+	 * @param {Attribute} attribute
+	 */
 	constructor(attribute) {
 		super();
 
 		assert.argumentIsRequired(attribute, 'attribute', Attribute, 'Attribute');
 
-		this._attribute = attribute;
+		this.#attribute = attribute;
 	}
 
 	_getAttribute() {
-		return this._attribute;
+		return this.#attribute;
 	}
 
 	_getCompressionType() {
@@ -33,6 +37,12 @@ export default class CompressedBinarySerializer extends BinarySerializer {
 		return this._getAttribute().encryptor || null;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[CompressedBinarySerializer]';
 	}

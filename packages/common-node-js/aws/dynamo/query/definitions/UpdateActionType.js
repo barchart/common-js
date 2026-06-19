@@ -7,27 +7,32 @@ import UpdateOperatorType from './UpdateOperatorType.js';
  *
  * @public
  * @extends {Enum}
- * @param {String} code
- * @param {String} description
- * @param {String} keyword
- * @param {Array<UpdateOperatorType>} allowedOperators
  */
 export default class UpdateActionType extends Enum {
+	#keyword;
+	#operators;
+
+	/**
+	 * @param {string} code
+	 * @param {string} description
+	 * @param {string} keyword
+	 * @param {Array<UpdateOperatorType>} allowedOperators
+	 */
 	constructor(code, description, keyword, allowedOperators) {
 		super(code, description);
 
-		this._keyword = keyword;
-		this._operators = allowedOperators || [ ];
+		this.#keyword = keyword;
+		this.#operators = allowedOperators || [ ];
 	}
 
 	/**
-	 * Keyword for action to be used in DyanmoDB query language.
+	 * Keyword for action to be used in DynamoDB query language.
 	 *
 	 * @public
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	get keyword() {
-		return this._keyword;
+		return this.#keyword;
 	}
 
 	/**
@@ -37,7 +42,21 @@ export default class UpdateActionType extends Enum {
 	 * @returns {Array<UpdateOperatorType>}
 	 */
 	get operators() {
-		return this._operators;
+		return this.#operators;
+	}
+
+	/**
+	 * Given a code, returns the enumeration item.
+	 *
+	 * @public
+	 * @static
+	 * @param {string} code
+	 * @returns {UpdateActionType|null}
+	 */
+	static parse(code) {
+		const value = Enum.fromCode(UpdateActionType, code);
+
+		return value instanceof UpdateActionType ? value : null;
 	}
 
 	/**
@@ -84,6 +103,12 @@ export default class UpdateActionType extends Enum {
 		return remove;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return `[UpdateActionType (code=${this.code}, description=${this.description})]`;
 	}

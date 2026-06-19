@@ -8,29 +8,46 @@ import Projection from './Projection.js';
 import ProvisioningType from './ProvisioningType.js';
 
 /**
+ * @typedef {import('./ProvisionedThroughput.js').default} ProvisionedThroughput
+ */
+
+/**
  * The definition for a DynamoDB index.
  *
  * @public
  */
 export default class Index {
+	#keys;
+	#name;
+	#projection;
+	#provisionedThroughput;
+	#type;
+
+	/**
+	 * @param {string} name
+	 * @param {IndexType} type
+	 * @param {Array<Key>} keys
+	 * @param {Projection} projection
+	 * @param {ProvisionedThroughput} provisionedThroughput
+	 */
 	constructor(name, type, keys, projection, provisionedThroughput) {
-		this._name = name;
-		this._type = type || null;
+		this.#name = name;
+		this.#type = type || null;
 
-		this._keys = keys || [ ];
+		this.#keys = keys || [ ];
 
-		this._projection = projection || null;
-		this._provisionedThroughput = provisionedThroughput || null;
+		this.#projection = projection || null;
+		this.#provisionedThroughput = provisionedThroughput || null;
 	}
 
 	/**
 	 * Name of the index.
 	 *
 	 * @public
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	get name() {
-		return this._name;
+		return this.#name;
 	}
 
 	/**
@@ -40,7 +57,7 @@ export default class Index {
 	 * @returns {IndexType}
 	 */
 	get type() {
-		return this._type;
+		return this.#type;
 	}
 
 	/**
@@ -50,7 +67,7 @@ export default class Index {
 	 * @returns {Array<Key>}
 	 */
 	get keys() {
-		return [...this._keys];
+		return [...this.#keys];
 	}
 
 	/**
@@ -60,7 +77,7 @@ export default class Index {
 	 * @returns {Projection}
 	 */
 	get projection() {
-		return this._projection;
+		return this.#projection;
 	}
 
 	/**
@@ -70,7 +87,7 @@ export default class Index {
 	 * @returns {ProvisioningType}
 	 */
 	get provisioningType() {
-		if (this._provisionedThroughput === null) {
+		if (this.#provisionedThroughput === null) {
 			return ProvisioningType.ON_DEMAND;
 		} else {
 			return ProvisioningType.PROVISIONED;
@@ -85,7 +102,7 @@ export default class Index {
 	 * @returns {ProvisionedThroughput|null}
 	 */
 	get provisionedThroughput() {
-		return this._provisionedThroughput;
+		return this.#provisionedThroughput;
 	}
 
 	/**
@@ -94,45 +111,45 @@ export default class Index {
 	 * @public
 	 */
 	validate() {
-		if (!is.string(this._name) || this._name.length < 1) {
+		if (!is.string(this.#name) || this.#name.length < 1) {
 			throw new Error('Index name is invalid.');
 		}
 
-		if (!(this._type instanceof IndexType)) {
+		if (!(this.#type instanceof IndexType)) {
 			throw new Error('Index type is invalid.');
 		}
 
-		if (!is.array(this._keys)) {
+		if (!is.array(this.#keys)) {
 			throw new Error('Index must have an array of keys.');
 		}
 
-		if (!this._keys.every(k => k instanceof Key)) {
+		if (!this.#keys.every(k => k instanceof Key)) {
 			throw new Error('Index key array can only contain Key instances.');
 		}
 
-		if (this._keys.filter(k => k.keyType === KeyType.HASH).length !== 1) {
+		if (this.#keys.filter(k => k.keyType === KeyType.HASH).length !== 1) {
 			throw new Error('Index must have one hash key.');
 		}
 
-		if (this._keys.filter(k => k.keyType === KeyType.RANGE).length > 1) {
+		if (this.#keys.filter(k => k.keyType === KeyType.RANGE).length > 1) {
 			throw new Error('Table must not have more than one range key.');
 		}
 
-		if (!array.unique(this._keys.map(k => k.attribute.name))) {
+		if (!array.unique(this.#keys.map(k => k.attribute.name))) {
 			throw new Error('Index key names must be unique (only one key with a given name).');
 		}
 
-		if (!(this._projection instanceof Projection)) {
+		if (!(this.#projection instanceof Projection)) {
 			throw new Error('Index must have a projection definition.');
 		}
 
-		this._projection.validate();
+		this.#projection.validate();
 
-		if (this._type.separateProvisioning) {
-			if (this._provisionedThroughput) {
-				this._provisionedThroughput.validate();
+		if (this.#type.separateProvisioning) {
+			if (this.#provisionedThroughput) {
+				this.#provisionedThroughput.validate();
 			}
-		} else if (this._provisionedThroughput !== null) {
+		} else if (this.#provisionedThroughput !== null) {
 			throw new Error('Index type does not require separate throughput provisioning');
 		}
 	}
@@ -141,22 +158,22 @@ export default class Index {
 	 * Generates an object which is suitable for use by the AWS SDK.
 	 *
 	 * @public
-	 * @returns {Object}
+	 * @returns {object}
 	 */
 	toIndexSchema() {
 		this.validate();
 
 		const schema = {
-			IndexName: this._name
+			IndexName: this.#name
 		};
 
-		schema.KeySchema = this._keys.map(k => k.toKeySchema());
-		schema.Projection = this._projection.toProjectionSchema();
+		schema.KeySchema = this.#keys.map(k => k.toKeySchema());
+		schema.Projection = this.#projection.toProjectionSchema();
 
-		if (this.type.separateProvisioning && this._provisionedThroughput) {
+		if (this.type.separateProvisioning && this.#provisionedThroughput) {
 			if (this.provisioningType === ProvisioningType.PROVISIONED) {
 				schema.BillingMode = ProvisioningType.PROVISIONED.key;
-				schema.ProvisionedThroughput = this._provisionedThroughput.toProvisionedThroughputSchema();
+				schema.ProvisionedThroughput = this.#provisionedThroughput.toProvisionedThroughputSchema();
 			} else {
 				schema.BillingMode = ProvisioningType.ON_DEMAND.key;
 			}
@@ -170,8 +187,8 @@ export default class Index {
 	 *
 	 * @public
 	 * @param {Index} other - The index to compare.
-	 * @param {Boolean} relaxed - If true, provisioned throughput is not compared.
-	 * @returns {Boolean}
+	 * @param {boolean} relaxed - If true, provisioned throughput is not compared.
+	 * @returns {boolean}
 	 */
 	equals(other, relaxed) {
 		if (other === this) {
@@ -181,19 +198,19 @@ export default class Index {
 		let returnVal = other instanceof Index;
 
 		if (returnVal) {
-			returnVal = returnVal = this._name === other.name;
-			returnVal = returnVal = this._type === other.type;
+			returnVal = returnVal = this.#name === other.name;
+			returnVal = returnVal = this.#type === other.type;
 
-			returnVal = returnVal && this._keys.length === other.keys.length;
-			returnVal = returnVal && this._keys.every(k => other.keys.some(ok => ok.equals(k, relaxed)));
+			returnVal = returnVal && this.#keys.length === other.keys.length;
+			returnVal = returnVal && this.#keys.every(k => other.keys.some(ok => ok.equals(k, relaxed)));
 
-			returnVal = returnVal && this._projection.equals(other.projection, relaxed);
+			returnVal = returnVal && this.#projection.equals(other.projection, relaxed);
 
 			if (!(is.boolean(relaxed) && relaxed) && this.type.separateProvisioning) {
-				if (this._provisionedThroughput && other.provisionedThroughput) {
-					returnVal = returnVal && this._provisionedThroughput.equals(other.provisionedThroughput);
+				if (this.#provisionedThroughput && other.provisionedThroughput) {
+					returnVal = returnVal && this.#provisionedThroughput.equals(other.provisionedThroughput);
 				} else {
-					returnVal = returnVal && this._provisionedThroughput === other.provisionedThroughput;
+					returnVal = returnVal && this.#provisionedThroughput === other.provisionedThroughput;
 				}
 			}
 		}
@@ -201,7 +218,13 @@ export default class Index {
 		return returnVal;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
-		return `[Index (name=${this._name})]`;
+		return `[Index (name=${this.#name})]`;
 	}
 }

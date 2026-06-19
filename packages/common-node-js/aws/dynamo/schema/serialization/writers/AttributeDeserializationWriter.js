@@ -12,40 +12,52 @@ import Writer from './Writer.js';
  *
  * @public
  * @extends {Writer}
- * @param {Attribute} attribute
  */
 export default class AttributeDeserializationWriter extends Writer {
+	#attribute;
+	#serializer;
+	#writeDelegate;
+
+	/**
+	 * @param {Attribute} attribute
+	 */
 	constructor(attribute) {
 		super();
 
 		assert.argumentIsRequired(attribute, 'attribute', Attribute, 'Attribute');
 
-		this._attribute = attribute;
-		this._serializer = Serializers.forAttribute(attribute);
+		this.#attribute = attribute;
+		this.#serializer = Serializers.forAttribute(attribute);
 
 		let writeDelegate;
 
-		if (this._attribute.name.includes(Writer.SEPARATOR)) {
-			const names = this._attribute.name.split(Writer.SEPARATOR);
+		if (this.#attribute.name.includes(Writer.SEPARATOR)) {
+			const names = this.#attribute.name.split(Writer.SEPARATOR);
 
 			writeDelegate = (target, value) => attributes.write(target, names, value);
 		} else {
-			const name = this._attribute.name;
+			const name = this.#attribute.name;
 
 			writeDelegate = (target, value) => target[name] = value;
 		}
 
-		this._writeDelegate = writeDelegate;
+		this.#writeDelegate = writeDelegate;
 	}
 
 	_write(source, target) {
-		this._writeDelegate(target, this._serializer.deserialize(source[this._attribute.name]));
+		this.#writeDelegate(target, this.#serializer.deserialize(source[this.#attribute.name]));
 	}
 
 	_canWrite(source, target) {
-		return this._serializer !== null && is.object(source) && source.hasOwnProperty(this._attribute.name);
+		return this.#serializer !== null && is.object(source) && source.hasOwnProperty(this.#attribute.name);
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[AttributeDeserializationWriter]';
 	}

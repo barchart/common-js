@@ -21,17 +21,25 @@ const logger = log4js.getLogger('http/HttpProvider');
  * @interface
  */
 export default class HttpProvider extends Disposable {
+	#counter;
+	#scheduler;
+	#startPromise;
+	#started;
+
+	/**
+	 * @param {object} configuration
+	 */
 	constructor(configuration) {
 		super();
 
-		this._configuration = configuration;
+		assert.argumentIsOptional(configuration, 'configuration', Object);
 
-		this._startPromise = null;
-		this._started = false;
+		this.#startPromise = null;
+		this.#started = false;
 
-		this._counter = 0;
+		this.#counter = 0;
 
-		this._scheduler = new Scheduler();
+		this.#scheduler = new Scheduler();
 	}
 
 	/**
@@ -47,14 +55,14 @@ export default class HttpProvider extends Disposable {
 					throw new Error('The HTTP Provider has been disposed.');
 				}
 
-				if (this._startPromise === null) {
-					this._startPromise = Promise.resolve()
+				if (this.#startPromise === null) {
+					this.#startPromise = Promise.resolve()
 					.then(() => {
 						logger.info('HTTP Provider started');
 
-						this._started = true;
+						this.#started = true;
 
-						return this._started;
+						return this.#started;
 					}).catch((e) => {
 						logger.error('HTTP Provider failed to start', e);
 
@@ -62,22 +70,22 @@ export default class HttpProvider extends Disposable {
 					});
 				}
 
-				return this._startPromise;
+				return this.#startPromise;
 			});
 	}
 
 	/**
 	 * Executes an HTTP (or HTTPS) request and returns a promise.
 	 *
-	 * @param {String} host
-	 * @param {String=} path
-	 * @param {String=} query
-	 * @param {String=} method
-	 * @param {Boolean=} secure
-	 * @param {Number=} port
-	 * @param {Object=} data
-	 * @param {Object=} headers
-	 * @returns {Promise<String>}
+	 * @param {string} host
+	 * @param {string=} path
+	 * @param {string=} query
+	 * @param {string=} method
+	 * @param {boolean=} secure
+	 * @param {number=} port
+	 * @param {object=} data
+	 * @param {object=} headers
+	 * @returns {Promise<string>}
 	 */
 	callEndpoint(host, path, query, method, secure, port, data, headers) {
 		return Promise.resolve()
@@ -93,7 +101,7 @@ export default class HttpProvider extends Disposable {
 					throw new Error('The HTTP Provider has been disposed.');
 				}
 
-				if (!this._started) {
+				if (!this.#started) {
 					throw new Error('The HTTP Provider has not been started.');
 				}
 
@@ -140,11 +148,11 @@ export default class HttpProvider extends Disposable {
 
 				options.headers = headersToUse;
 
-				const counter = this._counter = this._counter + 1;
+				const counter = this.#counter = this.#counter + 1;
 
 				logger.info('Beginning HTTP request', counter);
 
-				return this._scheduler.backoff(() => {
+				return this.#scheduler.backoff(() => {
 					return promise.build((resolveCallback, rejectCallback) => {
 						const request = connector.request(options, (response) => {
 							response.setEncoding('utf8');
@@ -181,13 +189,14 @@ export default class HttpProvider extends Disposable {
 	}
 
 	/**
-	 * Executes an HTTP (or HTTPS) request and returns a promise.
-	 *
-	 * @param {String} uri
-	 * @param {String=} method
-	 * @param {Object=} data
-	 * @returns {Promise<String>}
-	 */
+     * Executes an HTTP (or HTTPS) request and returns a promise.
+     *
+     * @param {string} uri
+     * @param {string=} method
+     * @param {object=} data
+     * @param {object=} headers
+     * @returns {Promise<string>}
+     */
 	callEndpointUri(uri, method, data, headers) {
 		return Promise.resolve()
 			.then(() => {
@@ -196,7 +205,7 @@ export default class HttpProvider extends Disposable {
 
 				const components = parseUri(uri);
 
-				if (is.null(components)) {
+				if (is.nil(components)) {
 					throw new Error('Unable to call HTTP endpoint, the URI is invalid.');
 				}
 
@@ -210,12 +219,22 @@ export default class HttpProvider extends Disposable {
 			});
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 */
 	_onDispose() {
-		this._scheduler.dispose();
+		this.#scheduler.dispose();
 
 		logger.debug('HTTP Provider disposed');
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[HttpProvider]';
 	}

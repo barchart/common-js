@@ -5,23 +5,33 @@
  *
  * @public
  * @interface
- * @param {Object=} options
  */
 export default class DataProvider {
+	#options;
+
+	/**
+	 * @param {object=} options
+	 */
 	constructor(options) {
-		this._options = options || null;
+		this.#options = options || null;
 	}
 
 	/**
 	 * Return configuration options.
 	 *
 	 * @public
-	 * @return {Object|null}
+	 * @return {object|null}
 	 */
 	getOptions() {
-		return this._options;
+		return this.#options;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[DataProvider]';
 	}

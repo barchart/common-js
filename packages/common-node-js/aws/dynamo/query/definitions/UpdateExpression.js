@@ -5,29 +5,40 @@ import UpdateActionType from './UpdateActionType.js';
 import UpdateOperatorType from './UpdateOperatorType.js';
 
 /**
+ * @typedef {import('./OperatorType.js').default} OperatorType
+ */
+
+/**
  * Defines the change to make to one field during an {@link Update} operation.
  *
  * @public
- * @param {UpdateActionType} actionType
- * @param {Attribute} attribute
- * @param {UpdateOperatorType} operatorType
- * @param {*} operand
  */
 export default class UpdateExpression {
+	#actionType;
+	#attribute;
+	#operand;
+	#operatorType;
+
+	/**
+	 * @param {UpdateActionType} actionType
+	 * @param {Attribute} attribute
+	 * @param {UpdateOperatorType} operatorType
+	 * @param {*} operand
+	 */
 	constructor(actionType, attribute, operatorType, operand) {
-		this._actionType = actionType;
-		this._attribute = attribute;
-		this._operatorType = operatorType || UpdateOperatorType.EMPTY;
+		this.#actionType = actionType;
+		this.#attribute = attribute;
+		this.#operatorType = operatorType || UpdateOperatorType.EMPTY;
 
 		let operandToUse;
 
-		if (is.undefined(operand)) {
+		if (is.undef(operand)) {
 			operandToUse = null;
 		} else {
 			operandToUse = operand;
 		}
 
-		this._operand = operandToUse;
+		this.#operand = operandToUse;
 	}
 
 	/**
@@ -37,7 +48,7 @@ export default class UpdateExpression {
 	 * @returns {UpdateActionType}
 	 */
 	get actionType() {
-		return this._actionType;
+		return this.#actionType;
 	}
 
 	/**
@@ -47,17 +58,17 @@ export default class UpdateExpression {
 	 * @returns {Attribute}
 	 */
 	get attribute() {
-		return this._attribute;
+		return this.#attribute;
 	}
 
 	/**
-	 * The {@link OperatorType} used by the expression.
+	 * The {@link UpdateOperatorType} used by the expression.
 	 *
 	 * @public
-	 * @returns {OperatorType}
+	 * @returns {UpdateOperatorType}
 	 */
 	get operatorType() {
-		return this._operatorType;
+		return this.#operatorType;
 	}
 
 	/**
@@ -66,7 +77,7 @@ export default class UpdateExpression {
 	 * @returns {*}
 	 */
 	get operand() {
-		return this._operand;
+		return this.#operand;
 	}
 
 	/**
@@ -75,23 +86,29 @@ export default class UpdateExpression {
 	 * @public
 	 */
 	validate() {
-		if (!(this._actionType instanceof UpdateActionType)) {
+		if (!(this.#actionType instanceof UpdateActionType)) {
 			throw new Error('ActionType data type is invalid.');
 		}
 
-		if (!(this._attribute instanceof Attribute)) {
+		if (!(this.#attribute instanceof Attribute)) {
 			throw new Error('Attribute data type is invalid.');
 		}
 
-		if (!(this._operatorType instanceof UpdateOperatorType)) {
+		if (!(this.#operatorType instanceof UpdateOperatorType)) {
 			throw new Error('OperatorType data type is invalid.');
 		}
 
-		if (!(this._actionType.operators.includes(this._operatorType))) {
-			throw new Error(`OperatorType ${this._operatorType} incompatible with ${this._actionType} ActionType`);
+		if (!(this.#actionType.operators.includes(this.#operatorType))) {
+			throw new Error(`OperatorType ${this.#operatorType} incompatible with ${this.#actionType} ActionType`);
 		}
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return `[UpdateExpression]`;
 	}

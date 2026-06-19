@@ -13,11 +13,15 @@ import DataOperationStage from './DataOperationStage.js';
  * @abstract
  */
 export default class DataOperation {
-	constructor() {
-		this._processing = false;
-		this._processed = false;
+	#children;
+	#processed;
+	#processing;
 
-		this._children = null;
+	constructor() {
+		this.#processing = false;
+		this.#processed = false;
+
+		this.#children = null;
 	}
 
 	/**
@@ -49,8 +53,8 @@ export default class DataOperation {
 	 * @public
 	 * @async
 	 * @param {DataProvider} dataProvider
-	 * @param {String} session
-	 * @param {String|null} name
+	 * @param {string} session
+	 * @param {string|null} name
 	 * @returns {Promise}
 	 */
 	async process(dataProvider, session, name) {
@@ -58,21 +62,21 @@ export default class DataOperation {
 			.then(() => {
 				this._validateDataProvider(dataProvider);
 
-				if (this._processing || this._processed) {
+				if (this.#processing || this.#processed) {
 					throw new Error('Unable to process DataOperation, the operation is already processing.');
 				}
 
-				this._processing = true;
-				this._children = [ ];
+				this.#processing = true;
+				this.#children = [ ];
 
 				return Promise.resolve()
 					.then(() => {
 						return this._process(dataProvider, session, name);
 					}).then((result) => {
-						this._processing = false;
-						this._processed = true;
+						this.#processing = false;
+						this.#processed = true;
 
-						const children = this._children;
+						const children = this.#children;
 
 						return new DataOperationResult(this, result, children);
 					});
@@ -84,9 +88,9 @@ export default class DataOperation {
 	 * @async
 	 * @ignore
 	 * @param {DataProvider} dataProvider
-	 * @param {String} session
-	 * @param {String|null} name
-	 * @returns {*}
+	 * @param {string} session
+	 * @param {string|null} name
+	 * @returns {Promise<*>}
 	 */
 	async _process(dataProvider, session, name) {
 		return;
@@ -102,11 +106,11 @@ export default class DataOperation {
 	 * @param {DataOperationAdjustment=} adjustment
 	 */
 	_spawn(operation, priority, adjustment) {
-		if (!this._processing) {
+		if (!this.#processing) {
 			throw new Error('A new data operation can only be spawned during the processing of the operation.');
 		}
 
-		this._children.push(new DataOperationContainer(operation, priority || operation.stage, adjustment || operation.adjustment));
+		this.#children.push(new DataOperationContainer(operation, priority || operation.stage, adjustment || operation.adjustment));
 	}
 
 	/**
@@ -137,7 +141,7 @@ export default class DataOperation {
 	 *
 	 * @public
 	 * @param {DataOperation=} other
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	equals(other) {
 		assert.argumentIsOptional(other, 'other', DataOperation, 'DataOperation');
@@ -148,7 +152,7 @@ export default class DataOperation {
 	/**
 	 * @protected
 	 * @param {DataOperation=} other
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	_equals(other) {
 		return other === this;
@@ -158,6 +162,12 @@ export default class DataOperation {
 		assert.argumentIsRequired(dataProvider, 'dataProvider', DataProvider, 'DataProvider');
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[DataOperation]';
 	}

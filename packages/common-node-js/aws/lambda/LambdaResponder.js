@@ -9,53 +9,61 @@ import LambdaResponseGenerator from './responses/LambdaResponseGenerator.js';
  * Lambda Function bound to the API Gateway.
  *
  * @public
- * @param {Function} callback - The actual "callback" function passed to the Lambda Function by the AWS framework.
  */
 export default class LambdaResponder {
+	#callback;
+	#complete;
+	#headers;
+	#processor;
+	#response;
+
+	/**
+	 * @param {Function} callback - The actual "callback" function passed to the Lambda Function by the AWS framework.
+	 */
 	constructor(callback) {
 		assert.argumentIsRequired(callback, 'callback', Function);
 
-		this._callback = callback;
-		this._processor = new LambdaResponseProcessor();
+		this.#callback = callback;
+		this.#processor = new LambdaResponseProcessor();
 
-		this._headers = LambdaResponseGenerator.getHeadersForJson();
+		this.#headers = LambdaResponseGenerator.getHeadersForJson();
 
-		this._complete = false;
-		this._response = null;
+		this.#complete = false;
+		this.#response = null;
 	}
 
 	/**
 	 * If true, the response has already been transmitted.
 	 *
 	 * @public
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	get complete() {
-		return this._complete;
+		return this.#complete;
 	}
 
 	/**
 	 * Response headers.
 	 *
 	 * @public
-	 * @returns {Object}
+	 * @returns {object}
 	 */
 	get headers() {
-		return this._headers;
+		return this.#headers;
 	}
 
 	/**
 	 * Sets an HTTP header.
 	 *
 	 * @public
-	 * @param {String} key
-	 * @param {String|Number|Boolean} value
+	 * @param {string} key
+	 * @param {string|number|boolean} value
 	 * @returns {LambdaResponder}
 	 */
 	setHeader(key, value) {
 		assert.argumentIsRequired(key, 'key', String);
 
-		this._headers[key] = value;
+		this.#headers[key] = value;
 
 		return this;
 	}
@@ -80,7 +88,7 @@ export default class LambdaResponder {
 	addResponseGenerator(generator) {
 		assert.argumentIsRequired(generator, 'generator', LambdaResponseGenerator, 'LambdaResponseGenerator');
 
-		this._processor.addResponseGenerator(generator);
+		this.#processor.addResponseGenerator(generator);
 
 		return this;
 	}
@@ -103,13 +111,13 @@ export default class LambdaResponder {
 	 *
 	 * @public
 	 * @async
-	 * @param {Object|String} response
-	 * @param {Number=} responseCode
+	 * @param {object|string} response
+	 * @param {number=} responseCode
 	 * @returns {Promise<*>}
 	 */
 	async sendError(response, responseCode) {
 		if (this.complete) {
-			return this._response;
+			return this.#response;
 		}
 
 		if (is.string(response)) {
@@ -124,20 +132,20 @@ export default class LambdaResponder {
 	 *
 	 * @public
 	 * @async
-	 * @param {Object|String} response
-	 * @param {Number=} responseCode
+	 * @param {object|string} response
+	 * @param {number=} responseCode
 	 * @returns {Promise<*>}
 	 */
 	async send(response, responseCode) {
 		if (this.complete) {
-			return this._response;
+			return this.#response;
 		}
 
-		this._complete = true;
+		this.#complete = true;
 
 		let transformed;
 
-		if (!is.null(response) && !is.undefined(response)) {
+		if (!is.nil(response) && !is.undef(response)) {
 			let serialized;
 
 			if (Buffer.isBuffer(response)) {
@@ -149,12 +157,12 @@ export default class LambdaResponder {
 				serialized = response.toString();
 			}
 
-			transformed = await this._processor.process(responseCode || 200, this.headers, serialized);
+			transformed = await this.#processor.process(responseCode || 200, this.headers, serialized);
 		} else {
 			transformed = LambdaResponseGenerator.buildResponseForApiGateway(responseCode || 200, this.headers, response);
 		}
 
-		this._callback(null, this._response = transformed);
+		this.#callback(null, this.#response = transformed);
 
 		return transformed;
 	}
@@ -165,17 +173,17 @@ export default class LambdaResponder {
 	 * @public
 	 * @async
 	 * @param {Buffer} buffer
-	 * @param {String=} contentType
+	 * @param {string=} contentType
 	 * @returns {Promise<*>}
 	 */
 	async sendBinary(buffer, contentType) {
 		assert.argumentIsOptional(contentType, 'contentType', String);
 
 		if (this.complete) {
-			return this._response;
+			return this.#response;
 		}
 
-		this._complete = true;
+		this.#complete = true;
 
 		if (contentType) {
 			this.setHeader('Content-Type', contentType);
@@ -185,7 +193,7 @@ export default class LambdaResponder {
 
 		response.isBase64Encoded = true;
 
-		this._callback(null, this._response = response);
+		this.#callback(null, this.#response = response);
 
 		return response;
 	}
@@ -201,16 +209,22 @@ export default class LambdaResponder {
 	 */
 	async sendRaw(response, error) {
 		if (this.complete) {
-			return this._response;
+			return this.#response;
 		}
 
-		this._complete = true;
+		this.#complete = true;
 
-		this._callback(error || null, this._response = response);
+		this.#callback(error || null, this.#response = response);
 
 		return response;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[LambdaResponder]';
 	}

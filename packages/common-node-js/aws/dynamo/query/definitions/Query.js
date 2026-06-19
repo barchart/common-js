@@ -9,41 +9,61 @@ import OrderingType from './OrderingType.js';
 import Table from './../../schema/definitions/Table.js';
 
 /**
+ * @typedef {import('../../schema/definitions/Attribute.js').default} Attribute
+ */
+
+/**
  * The definition of a table (or index) query.
  *
  * @public
  * @extends {Action}
- * @param {Table} table
- * @param {Index} index
- * @param {Filter} keyFilter
- * @param {Filter} resultsFilter
- * @param {Array<Attribute>} attributes
- * @param {OrderingType=} orderingType
- * @param {Boolean=} consistentRead
- * @param {Boolean=} skipDeserialization
- * @param {Boolean=} countOnly
- * @param {String=} description
- * @param {Boolean=} monitorCapacityConsumed
- * @param {Object=} exclusiveStartKey
  */
 export default class Query extends Action {
+	#attributes;
+	#consistentRead;
+	#countOnly;
+	#exclusiveStartKey;
+	#keyFilter;
+	#limit;
+	#monitorCapacityConsumed;
+	#orderingType;
+	#parallelFilter;
+	#resultsFilter;
+	#skipDeserialization;
+
+	/**
+	 * @param {Table} table
+	 * @param {Index=} index
+	 * @param {Filter=} keyFilter
+	 * @param {Filter=} resultsFilter
+	 * @param {Filter=} parallelFilter
+	 * @param {Array<Attribute>=} attributes
+	 * @param {number=} limit
+	 * @param {OrderingType=} orderingType
+	 * @param {boolean=} consistentRead
+	 * @param {boolean=} skipDeserialization
+	 * @param {boolean=} countOnly
+	 * @param {string=} description
+	 * @param {boolean=} monitorCapacityConsumed
+	 * @param {object=} exclusiveStartKey
+	 */
 	constructor(table, index, keyFilter, resultsFilter, parallelFilter, attributes, limit, orderingType, consistentRead, skipDeserialization, countOnly, description, monitorCapacityConsumed, exclusiveStartKey) {
 		super(table, index, (description || '[Unnamed Query]'));
 
-		this._keyFilter = keyFilter || null;
-		this._resultsFilter = resultsFilter || null;
-		this._parallelFilter = parallelFilter || null;
+		this.#keyFilter = keyFilter || null;
+		this.#resultsFilter = resultsFilter || null;
+		this.#parallelFilter = parallelFilter || null;
 
-		this._attributes = attributes || [ ];
-		this._limit = limit || null;
-		this._consistentRead = consistentRead || false;
-		this._skipDeserialization = skipDeserialization || false;
-		this._countOnly = countOnly || false;
-		this._monitorCapacityConsumed = monitorCapacityConsumed || false;
+		this.#attributes = attributes || [ ];
+		this.#limit = limit || null;
+		this.#consistentRead = consistentRead || false;
+		this.#skipDeserialization = skipDeserialization || false;
+		this.#countOnly = countOnly || false;
+		this.#monitorCapacityConsumed = monitorCapacityConsumed || false;
 
-		this._orderingType = orderingType || OrderingType.ASCENDING;
+		this.#orderingType = orderingType || OrderingType.ASCENDING;
 
-        this._exclusiveStartKey = exclusiveStartKey || null;
+        this.#exclusiveStartKey = exclusiveStartKey || null;
 	}
 
 	/**
@@ -53,7 +73,7 @@ export default class Query extends Action {
 	 * @returns {Filter}
 	 */
 	get keyFilter() {
-		return this._keyFilter;
+		return this.#keyFilter;
 	}
 
 	/**
@@ -64,7 +84,7 @@ export default class Query extends Action {
 	 * @returns {Filter}
 	 */
 	get resultsFilter() {
-		return this._resultsFilter;
+		return this.#resultsFilter;
 	}
 
 	/**
@@ -76,7 +96,7 @@ export default class Query extends Action {
 	 * @returns {Filter}
 	 */
 	get parallelFilter() {
-		return this._parallelFilter;
+		return this.#parallelFilter;
 	}
 
 	/**
@@ -87,7 +107,7 @@ export default class Query extends Action {
 	 * @returns {Attribute[]}
 	 */
 	get attributes() {
-		return [...this._attributes];
+		return [...this.#attributes];
 	}
 
 	/**
@@ -95,10 +115,10 @@ export default class Query extends Action {
 	 * will be interpreted as no limit.
 	 *
 	 * @public
-	 * @returns {Number|null}
+	 * @returns {number|null}
 	 */
 	get limit() {
-		return this._limit;
+		return this.#limit;
 	}
 
 	/**
@@ -108,17 +128,17 @@ export default class Query extends Action {
 	 * @returns {OrderingType}
 	 */
 	get orderingType() {
-		return this._orderingType;
+		return this.#orderingType;
 	}
 
 	/**
 	 * If true, a consistent read will be used.
 	 *
 	 * @public
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	get consistentRead() {
-		return this._consistentRead;
+		return this.#consistentRead;
 	}
 
 	/**
@@ -126,30 +146,30 @@ export default class Query extends Action {
 	 * the conversion to normal objects.
 	 *
 	 * @public
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	get skipDeserialization() {
-		return this._skipDeserialization;
+		return this.#skipDeserialization;
 	}
 
 	/**
 	 * If true, the query will return a record count only.
 	 *
 	 * @public
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	get countOnly() {
-		return this._countOnly;
+		return this.#countOnly;
 	}
 
 	/**
 	 * If true, the total RCU (read capacity units) consumed will be monitored.
 	 *
 	 * @public
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	get monitorCapacityConsumed() {
-		return this._monitorCapacityConsumed;
+		return this.#monitorCapacityConsumed;
 	}
 
     /**
@@ -157,10 +177,10 @@ export default class Query extends Action {
      * If provided, the query will begin just after this key.
      *
      * @public
-     * @returns {Object}
+     * @returns {object}
      */
     get exclusiveStartKey(){
-        return this._exclusiveStartKey;
+        return this.#exclusiveStartKey;
     }
 
 	/**
@@ -181,15 +201,15 @@ export default class Query extends Action {
 			throw new Error('The index must belong to the table.');
 		}
 
-		if (this._index !== null && this._consistentRead && !this._index.type.allowsConsistentReads) {
+		if (this.index !== null && this.#consistentRead && !this.index.type.allowsConsistentReads) {
 			throw new Error('Unable to apply consistent read to index.');
 		}
 
-		if (!(this._keyFilter instanceof Filter)) {
+		if (!(this.#keyFilter instanceof Filter)) {
 			throw new Error('The key filter data type is invalid.');
 		}
 
-		this._keyFilter.validate();
+		this.#keyFilter.validate();
 
 		let keys;
 
@@ -199,33 +219,33 @@ export default class Query extends Action {
 			keys = this.index.keys;
 		}
 
-		if (this._keyFilter.expressions.filter(e => e.attribute.name === (keys.find(k => k.keyType === KeyType.HASH)).attribute.name).length !== 1) {
+		if (this.#keyFilter.expressions.filter(e => e.attribute.name === (keys.find(k => k.keyType === KeyType.HASH)).attribute.name).length !== 1) {
 			throw new Error('The key filter must reference the hash key.');
 		}
 
-		if (this._resultsFilter !== null) {
-			if (!(this._resultsFilter instanceof Filter)) {
+		if (this.#resultsFilter !== null) {
+			if (!(this.#resultsFilter instanceof Filter)) {
 				throw new Error('The results filter data type is invalid.');
 			}
 
-			this._resultsFilter.validate();
+			this.#resultsFilter.validate();
 		}
 
-		if (this._parallelFilter !== null) {
-			if (!(this._parallelFilter instanceof Filter)) {
+		if (this.#parallelFilter !== null) {
+			if (!(this.#parallelFilter instanceof Filter)) {
 				throw new Error('The parallel filter data type is invalid.');
 			}
 
-			if (this._parallelFilter.expressions.filter(e => e.attribute.name === (keys.find(k => k.keyType === KeyType.RANGE)).attribute.name).length !== 1) {
+			if (this.#parallelFilter.expressions.filter(e => e.attribute.name === (keys.find(k => k.keyType === KeyType.RANGE)).attribute.name).length !== 1) {
 				throw new Error('The key parallel must reference the range key.');
 			}
 		}
 
-		if (!(this._orderingType instanceof OrderingType)) {
+		if (!(this.#orderingType instanceof OrderingType)) {
 			throw new Error('The ordering type is invalid.');
 		}
 
-		if (this._limit !== null && (!is.large(this._limit) || !(this._limit > 0))) {
+		if (this.#limit !== null && (!is.large(this.#limit) || !(this.#limit > 0))) {
 			throw new Error('The limit must be a positive integer.');
 		}
 	}
@@ -235,7 +255,7 @@ export default class Query extends Action {
 	 * the DynamoDB SDK.
 	 *
 	 * @public
-	 * @returns {Object}
+	 * @returns {object}
 	 */
 	toQuerySchema() {
 		this.validate();
@@ -259,10 +279,10 @@ export default class Query extends Action {
 
 		let keyFilterToUse;
 
-		if (this._parallelFilter === null) {
-			keyFilterToUse = this._keyFilter;
+		if (this.#parallelFilter === null) {
+			keyFilterToUse = this.#keyFilter;
 		} else {
-			keyFilterToUse = Filter.merge(this._keyFilter, this._parallelFilter);
+			keyFilterToUse = Filter.merge(this.#keyFilter, this.#parallelFilter);
 		}
 
 		const keyExpressionData = Action.getConditionExpressionData(this.table, keyFilterToUse);
@@ -272,11 +292,11 @@ export default class Query extends Action {
 
 		let valueAliases = keyExpressionData.valueAliases;
 
-		if (this._resultsFilter !== null) {
-			const resultsExpressionData = Action.getConditionExpressionData(this.table, this._resultsFilter, keyExpressionData.offset);
+		if (this.#resultsFilter !== null) {
+			const resultsExpressionData = Action.getConditionExpressionData(this.table, this.#resultsFilter, keyExpressionData.offset);
 
 			schema.FilterExpression = resultsExpressionData.expression;
-			attributes = attributes.concat(this._resultsFilter.expressions.map(e => e.attribute));
+			attributes = attributes.concat(this.#resultsFilter.expressions.map(e => e.attribute));
 
 			valueAliases = object.merge(keyExpressionData.valueAliases, resultsExpressionData.valueAliases);
 		} else {
@@ -284,31 +304,37 @@ export default class Query extends Action {
 		}
 
 		if (attributes.length !== 0) {
-			schema.ExpressionAttributeNames = Action.getExpressionAttributeNames(this._table, attributes);
+			schema.ExpressionAttributeNames = Action.getExpressionAttributeNames(this.table, attributes);
 		}
 
 		schema.ExpressionAttributeValues = valueAliases;
-		schema.ScanIndexForward = this._orderingType.forward;
+		schema.ScanIndexForward = this.#orderingType.forward;
 
-		if (this._limit !== null) {
-			schema.Limit = this._limit;
+		if (this.#limit !== null) {
+			schema.Limit = this.#limit;
 		}
 
-		if (this._consistentRead) {
+		if (this.#consistentRead) {
 			schema.ConsistentRead = true;
 		}
 
-		if (this._monitorCapacityConsumed) {
+		if (this.#monitorCapacityConsumed) {
 			schema.ReturnConsumedCapacity = 'TOTAL';
 		}
 
-        if (this._exclusiveStartKey) {
-            schema.ExclusiveStartKey = this._exclusiveStartKey;
+        if (this.#exclusiveStartKey) {
+            schema.ExclusiveStartKey = this.#exclusiveStartKey;
         }
 
 		return schema;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Query]';
 	}

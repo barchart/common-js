@@ -9,29 +9,37 @@ import Encryptor from './Encryptor.js';
  * An explicitly defined field of a DynamoDB record.
  *
  * @public
- * @param {String} name
- * @param {DataType} dataType
- * @param {Derivation|null} derivation
- * @param {Encryptor|null} encryptor
- * @param {CompressionType|null} compressionType
  */
 export default class Attribute {
+	#compressionType;
+	#dataType;
+	#derivation;
+	#encryptor;
+	#name;
+
+	/**
+	 * @param {string} name
+	 * @param {DataType=} dataType
+	 * @param {Derivation|null=} derivation
+	 * @param {Encryptor|null=} encryptor
+	 * @param {CompressionType|null=} compressionType
+	 */
 	constructor(name, dataType, derivation, encryptor, compressionType) {
-		this._name = name;
-		this._dataType = dataType || null;
-		this._derivation = derivation || null;
-		this._encryptor = encryptor || null;
-		this._compressionType = compressionType || null;
+		this.#name = name;
+		this.#dataType = dataType || null;
+		this.#derivation = derivation || null;
+		this.#encryptor = encryptor || null;
+		this.#compressionType = compressionType || null;
 	}
 
 	/**
 	 * Name of the field.
 	 *
 	 * @public
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	get name() {
-		return this._name;
+		return this.#name;
 	}
 
 	/**
@@ -41,41 +49,41 @@ export default class Attribute {
 	 * @returns {DataType}
 	 */
 	get dataType() {
-		return this._dataType;
+		return this.#dataType;
 	}
 
 	/**
 	 * If this attribute derives its value from other attributes, then
 	 * this property will return a {@link Derivation} instance; otherwise
-	 * it return a null reference.
+	 * it returns a null reference.
 	 *
 	 * @public
 	 * @returns {Derivation|null}
 	 */
 	get derivation() {
-		return this._derivation;
+		return this.#derivation;
 	}
 
 	/**
 	 * If this attribute supports encryption, then this property will return
-	 * an {@link Encryptor} instance; otherwise it return a null reference.
+	 * an {@link Encryptor} instance; otherwise it returns a null reference.
 	 *
 	 * @public
 	 * @returns {Encryptor|null}
 	 */
 	get encryptor() {
-		return this._encryptor;
+		return this.#encryptor;
 	}
 
 	/**
 	 * If this attribute supports compression, then this property will return
-	 * an {@link CompressionType} to use; otherwise it return a null reference.
+	 * an {@link CompressionType} to use; otherwise it returns a null reference.
 	 *
 	 * @public
 	 * @returns {CompressionType|null}
 	 */
 	get compressionType() {
-		return this._compressionType;
+		return this.#compressionType;
 	}
 
 	/**
@@ -84,34 +92,34 @@ export default class Attribute {
 	 * @public
 	 */
 	validate() {
-		if (!is.string(this._name) || this._name.length < 1) {
+		if (!is.string(this.#name) || this.#name.length < 1) {
 			throw new Error('Attribute name is invalid.');
 		}
 
-		if (!(this._dataType instanceof DataType)) {
+		if (!(this.#dataType instanceof DataType)) {
 			throw new Error('Attribute data type is invalid.');
 		}
 
-		if (this._derivation && !(this._derivation instanceof Derivation)) {
+		if (this.#derivation && !(this.#derivation instanceof Derivation)) {
 			throw new Error('Attribute derivation must be an instance of Derivation.');
 		}
 
-		if (this._encryptor !== null) {
-			if (!this._dataType.supportsEncryption) {
-				throw new Error(`Attribute data type [${this._dataType}] does not support encryption.`);
+		if (this.#encryptor !== null) {
+			if (!this.#dataType.supportsEncryption) {
+				throw new Error(`Attribute data type [${this.#dataType}] does not support encryption.`);
 			}
 
-			if (!(this._encryptor instanceof Encryptor)) {
+			if (!(this.#encryptor instanceof Encryptor)) {
 				throw new Error('Attribute encryptor must be an instance of Encryptor.');
 			}
 		}
 
-		if (this._compressionType != null) {
-			if (!this._compressionType.supportsCompression) {
-				throw new Error(`Attribute data type [${this._dataType}] does not support compression.`);
+		if (this.#compressionType != null) {
+			if (!this.#dataType.supportsCompression) {
+				throw new Error(`Attribute data type [${this.#dataType}] does not support compression.`);
 			}
 
-			if (!(this._compressionType instanceof CompressionType)) {
+			if (!(this.#compressionType instanceof CompressionType)) {
 				throw new Error('Attribute compression type must be an instance of CompressionType.');
 			}
 		}
@@ -121,14 +129,14 @@ export default class Attribute {
 	 * Generates an object which is suitable for use by the AWS SDK.
 	 *
 	 * @public
-	 * @returns {Object}
+	 * @returns {object}
 	 */
 	toAttributeSchema() {
 		this.validate();
 
 		return {
-			AttributeName: this._name,
-			AttributeType: this._dataType.code
+			AttributeName: this.#name,
+			AttributeType: this.#dataType.code
 		};
 	}
 
@@ -138,24 +146,30 @@ export default class Attribute {
 	 *
 	 * @public
 	 * @param {Attribute} other - The attribute to compare.
-	 * @param {Boolean=} relaxed - If true, the dataType is not compared.
-	 * @returns {Boolean}
+	 * @param {boolean=} relaxed - If true, the dataType is not compared.
+	 * @returns {boolean}
 	 */
 	equals(other, relaxed) {
 		let returnVal = other instanceof Attribute;
 
 		if (returnVal) {
-			returnVal = returnVal = this._name === other.name;
+			returnVal = returnVal = this.#name === other.name;
 
 			if (!(is.boolean(relaxed) && relaxed)) {
-				returnVal = returnVal && this._dataType === other.dataType;
+				returnVal = returnVal && this.#dataType === other.dataType;
 			}
 		}
 
 		return returnVal;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
-		return `[Attribute (name=${this._name})]`;
+		return `[Attribute (name=${this.#name})]`;
 	}
 }

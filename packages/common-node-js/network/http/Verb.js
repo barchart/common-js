@@ -7,6 +7,9 @@ import Enum from '@barchart/common-js/lang/Enum.js';
  * @extends {Enum}
  */
 export default class Verb extends Enum {
+	/**
+	 * @param {string} code
+	 */
 	constructor(code) {
 		super(code, code);
 	}
@@ -15,7 +18,7 @@ export default class Verb extends Enum {
 	 * The http verb name, in caps.
 	 *
 	 * @public
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	getCode() {
 		return this.code;
@@ -25,6 +28,7 @@ export default class Verb extends Enum {
 	 * HTTP DELETE verb.
 	 *
 	 * @public
+	 * @static
 	 * @returns {Verb}
 	 */
 	static get DELETE() {
@@ -35,6 +39,7 @@ export default class Verb extends Enum {
 	 * HTTP GET verb.
 	 *
 	 * @public
+	 * @static
 	 * @returns {Verb}
 	 */
 	static get GET() {
@@ -45,6 +50,7 @@ export default class Verb extends Enum {
 	 * HTTP OPTIONS verb.
 	 *
 	 * @public
+	 * @static
 	 * @returns {Verb}
 	 */
 	static get OPTIONS() {
@@ -55,6 +61,7 @@ export default class Verb extends Enum {
 	 * HTTP POST verb.
 	 *
 	 * @public
+	 * @static
 	 * @returns {Verb}
 	 */
 	static get POST() {
@@ -65,12 +72,19 @@ export default class Verb extends Enum {
 	 * HTTP PUT verb.
 	 *
 	 * @public
+	 * @static
 	 * @returns {Verb}
 	 */
 	static get PUT() {
 		return verbPut;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Verb (code=' + this.code + ')]';
 	}

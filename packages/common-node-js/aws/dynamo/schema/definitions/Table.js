@@ -11,34 +11,57 @@ import ProvisioningType from './ProvisioningType.js';
 import StreamViewType from './StreamViewType.js';
 
 /**
+ * @typedef {import('./ProvisionedThroughput.js').default} ProvisionedThroughput
+ */
+
+/**
  * The schema for a DynamoDB table, including attributes, keys, indices, etc.
  *
  * @public
  */
 export default class Table {
+	#attributes;
+	#components;
+	#indices;
+	#keys;
+	#name;
+	#provisionedThroughput;
+	#streamViewType;
+	#ttlAttribute;
+
+	/**
+	 * @param {string} name
+	 * @param {*} keys
+	 * @param {*} indices
+	 * @param {*} attributes
+	 * @param {*} components
+	 * @param {*} provisionedThroughput
+	 * @param {*} streamViewType
+	 * @param {*} ttlAttribute
+	 */
 	constructor(name, keys, indices, attributes, components, provisionedThroughput, streamViewType, ttlAttribute) {
-		this._name = name;
+		this.#name = name;
 
-		this._keys = keys || [ ];
-		this._indices = indices || [ ];
-		this._attributes = attributes || [ ];
-		this._components = components || [ ];
+		this.#keys = keys || [ ];
+		this.#indices = indices || [ ];
+		this.#attributes = attributes || [ ];
+		this.#components = components || [ ];
 
-		this._provisionedThroughput = provisionedThroughput;
+		this.#provisionedThroughput = provisionedThroughput;
 
-		this._streamViewType = streamViewType || null;
+		this.#streamViewType = streamViewType || null;
 
-		this._ttlAttribute = ttlAttribute || null;
+		this.#ttlAttribute = ttlAttribute || null;
 	}
 
 	/**
 	 * Name of the table.
 	 *
 	 * @public
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	get name() {
-		return this._name;
+		return this.#name;
 	}
 
 	/**
@@ -48,7 +71,7 @@ export default class Table {
 	 * @returns {Array<Key>}
 	 */
 	get keys() {
-		return [...this._keys];
+		return [...this.#keys];
 	}
 
 	/**
@@ -58,7 +81,7 @@ export default class Table {
 	 * @returns {Key|null}
 	 */
 	get hashKey() {
-		return this._keys.find(k => k.keyType === KeyType.HASH) || null;
+		return this.#keys.find(k => k.keyType === KeyType.HASH) || null;
 	}
 
 	/**
@@ -68,7 +91,7 @@ export default class Table {
 	 * @returns {Key|null}
 	 */
 	get rangeKey() {
-		return this._keys.find(k => k.keyType === KeyType.RANGE) || null;
+		return this.#keys.find(k => k.keyType === KeyType.RANGE) || null;
 	}
 
 	/**
@@ -78,17 +101,17 @@ export default class Table {
 	 * @returns {Array<Index>}
 	 */
 	get indices() {
-		return [...this._indices];
+		return [...this.#indices];
 	}
 
 	/**
 	 * The attributes of the table.
 	 *
 	 * @public
-	 * @returns {Array<Attributes>}
+	 * @returns {Array<Attribute>}
 	 */
 	get attributes() {
-		return [...this._attributes];
+		return [...this.#attributes];
 	}
 
 	/**
@@ -98,7 +121,7 @@ export default class Table {
 	 * @returns {Array<Component>}
 	 */
 	get components() {
-		return [...this._components];
+		return [...this.#components];
 	}
 
 	/**
@@ -108,7 +131,7 @@ export default class Table {
 	 * @returns {ProvisioningType}
 	 */
 	get provisioningType() {
-		if (this._provisionedThroughput === null) {
+		if (this.#provisionedThroughput === null) {
 			return ProvisioningType.ON_DEMAND;
 		} else {
 			return ProvisioningType.PROVISIONED;
@@ -122,7 +145,7 @@ export default class Table {
 	 * @returns {Array<ProvisionedThroughput>}
 	 */
 	get provisionedThroughput() {
-		return this._provisionedThroughput;
+		return this.#provisionedThroughput;
 	}
 
 	/**
@@ -132,17 +155,17 @@ export default class Table {
 	 * @returns {StreamViewType|null}
 	 */
 	get streamViewType() {
-		return this._streamViewType;
+		return this.#streamViewType;
 	}
 
 	/**
 	 * The name of the attribute which defines time-to-live for the record.
 	 *
 	 * @public
-	 * @returns {String|null}
+	 * @returns {string|null}
 	 */
 	get ttlAttribute() {
-		return this._ttlAttribute;
+		return this.#ttlAttribute;
 	}
 
 	/**
@@ -151,84 +174,84 @@ export default class Table {
 	 * @public
 	 */
 	validate() {
-		if (!is.string(this._name) || this._name.length < 1) {
+		if (!is.string(this.#name) || this.#name.length < 1) {
 			throw new Error('Table name is invalid.');
 		}
 
-		if (!is.array(this._attributes)) {
+		if (!is.array(this.#attributes)) {
 			throw new Error('Table must have an array of attributes.');
 		}
 
-		if (!this._attributes.every(a => a instanceof Attribute)) {
+		if (!this.#attributes.every(a => a instanceof Attribute)) {
 			throw new Error('Table attribute array can only contain Attribute instances.');
 		}
 
-		if (array.unique(this._attributes.map(a => a.name)).length !== this._attributes.length) {
+		if (array.unique(this.#attributes.map(a => a.name)).length !== this.#attributes.length) {
 			throw new Error('Table attribute names must be unique (only one attribute with a given name).');
 		}
 
-		if (!is.array(this._keys)) {
+		if (!is.array(this.#keys)) {
 			throw new Error('Table must have an array of keys.');
 		}
 
-		if (!this._keys.every(k => k instanceof Key)) {
+		if (!this.#keys.every(k => k instanceof Key)) {
 			throw new Error('Table key array can only contain Key instances.');
 		}
 
-		if (this._keys.filter(k => k.keyType === KeyType.HASH).length !== 1) {
+		if (this.#keys.filter(k => k.keyType === KeyType.HASH).length !== 1) {
 			throw new Error('Table must have one hash key.');
 		}
 
-		if (this._keys.filter(k => k.keyType === KeyType.RANGE).length > 1) {
+		if (this.#keys.filter(k => k.keyType === KeyType.RANGE).length > 1) {
 			throw new Error('Table must not have more than one range key.');
 		}
 
-		if (array.unique(this._keys.map(k => k.attribute.name)).length !== this._keys.length) {
+		if (array.unique(this.#keys.map(k => k.attribute.name)).length !== this.#keys.length) {
 			throw new Error('Table key names must be unique (only one key with a given name).');
 		}
 
-		if (!is.array(this._indices)) {
+		if (!is.array(this.#indices)) {
 			throw new Error('Table must have an array of indices.');
 		}
 
-		if (!this._indices.every(i => i instanceof Index)) {
+		if (!this.#indices.every(i => i instanceof Index)) {
 			throw new Error('Table indices array can only contain Index instances.');
 		}
 
-		if (array.unique(this._indices.map(i => i.name)).length !== this._indices.length) {
+		if (array.unique(this.#indices.map(i => i.name)).length !== this.#indices.length) {
 			throw new Error('Table index names must be unique (only one index with a given name).');
 		}
 
-		if (!is.array(this._components)) {
+		if (!is.array(this.#components)) {
 			throw new Error('Table must have an array of components.');
 		}
 
-		if (!this._components.every(c => c instanceof Component)) {
+		if (!this.#components.every(c => c instanceof Component)) {
 			throw new Error('Table component array can only contain Component instances.');
 		}
 
-		const componentNames = this._components.reduce((names, component) => {
+		const componentNames = this.#components.reduce((names, component) => {
 			return names.concat(component.componentType.definitions.map(ctd => ctd.getFieldName(component.name)));
 		}, [ ]);
 
-		if (array.intersection(this._attributes.map(a => a.name), componentNames).length !== 0) {
+		if (array.intersection(this.#attributes.map(a => a.name), componentNames).length !== 0) {
 			throw new Error('Component names must not conflict with attribute names.');
 		}
 
-		if (this._streamViewType !== null && !(this._streamViewType instanceof StreamViewType)) {
+		if (this.#streamViewType !== null && !(this.#streamViewType instanceof StreamViewType)) {
 			throw new Error('Table steaming type is invalid.');
 		}
 
-		if (this._ttlAttribute !== null && this._attributes.filter(a => a.name === this._ttlAttribute).length === 0) {
+		if (this.#ttlAttribute !== null && this.#attributes.filter(a => a.name === this.#ttlAttribute).length === 0) {
 			throw new Error('A time-to-live attribute was specified, but it does not exist in the attribute list.');
 		}
 
-		this._keys.forEach(k => k.validate());
-		this._indices.forEach(i => i.validate());
-		this._components.forEach(c => c.validate());
+		this.#keys.forEach(k => k.validate());
+		this.#indices.forEach(i => i.validate());
+		this.#components.forEach(c => c.validate());
 
-		if (this._provisionedThroughput) {
-			this._provisionedThroughput.validate();
+		if (this.#provisionedThroughput) {
+			this.#provisionedThroughput.validate();
 		}
 	}
 
@@ -236,26 +259,26 @@ export default class Table {
 	 * Generates an object which is suitable for use by the AWS SDK.
 	 *
 	 * @public
-	 * @returns {Object}
+	 * @returns {object}
 	 */
 	toTableSchema() {
 		this.validate();
 
 		const schema = {
-			TableName: this._name
+			TableName: this.#name
 		};
 
-		schema.KeySchema = this._keys.map(k => k.toKeySchema());
+		schema.KeySchema = this.#keys.map(k => k.toKeySchema());
 
 		if (this.provisioningType === ProvisioningType.PROVISIONED) {
 			schema.BillingMode = ProvisioningType.PROVISIONED.key;
-			schema.ProvisionedThroughput = this._provisionedThroughput.toProvisionedThroughputSchema();
+			schema.ProvisionedThroughput = this.#provisionedThroughput.toProvisionedThroughputSchema();
 		} else {
 			schema.BillingMode = ProvisioningType.ON_DEMAND.key;
 		}
 
-		const globalIndices = this._indices.filter(i => i.type === IndexType.GLOBAL_SECONDARY);
-		const localIndices = this._indices.filter(i => i.type === IndexType.LOCAL_SECONDARY);
+		const globalIndices = this.#indices.filter(i => i.type === IndexType.GLOBAL_SECONDARY);
+		const localIndices = this.#indices.filter(i => i.type === IndexType.LOCAL_SECONDARY);
 
 		if (globalIndices.length !== 0) {
 			schema.GlobalSecondaryIndexes = globalIndices.map(i => i.toIndexSchema());
@@ -265,14 +288,14 @@ export default class Table {
 			schema.LocalSecondaryIndexes = localIndices.map(i => i.toIndexSchema());
 		}
 
-		let keys = array.uniqueBy(array.flatten(this._indices.map(i => i.keys)).concat([...this._keys]), k => k.attribute.name);
+		let keys = array.uniqueBy(array.flatten(this.#indices.map(i => i.keys)).concat([...this.#keys]), k => k.attribute.name);
 
 		schema.AttributeDefinitions = keys.map(k => k.attribute.toAttributeSchema());
 
-		if (this._streamViewType) {
+		if (this.#streamViewType) {
 			schema.StreamSpecification = {
 				StreamEnabled: true,
-				StreamViewType: this._streamViewType.schemaName
+				StreamViewType: this.#streamViewType.schemaName
 			};
 		}
 
@@ -283,16 +306,16 @@ export default class Table {
 	 * Generates an object which is suitable for use by the AWS SDK.
 	 *
 	 * @public
-	 * @returns {Object}
+	 * @returns {object}
 	 */
 	toTtlSchema() {
 		const schema = { };
 
-		schema.TableName = this._name;
+		schema.TableName = this.#name;
 
-		if (this._ttlAttribute) {
+		if (this.#ttlAttribute) {
 			schema.TimeToLiveSpecification = {
-				AttributeName: this._ttlAttribute,
+				AttributeName: this.#ttlAttribute,
 				Enabled: true
 			};
 		}
@@ -306,7 +329,7 @@ export default class Table {
 	 *
 	 * @public
 	 * @param {Table} other - The table to compare.
-	 * @param {Boolean} relaxed - If true, certain aspects of the data structures are ignored. This is because a definition received from the AWS SDK omits some information (e.g. non-key attributes, etc).
+	 * @param {boolean} relaxed - If true, certain aspects of the data structures are ignored. This is because a definition received from the AWS SDK omits some information (e.g. non-key attributes, etc.).
 	 */
 	equals(other, relaxed) {
 		if (other === this) {
@@ -316,24 +339,24 @@ export default class Table {
 		let returnVal = other instanceof Table;
 
 		if (returnVal) {
-			returnVal = returnVal && this._name === other.name;
+			returnVal = returnVal && this.#name === other.name;
 
-			returnVal = returnVal && this._keys.length === other.keys.length;
-			returnVal = returnVal && this._keys.every(k => other.keys.some(ok => ok.equals(k, relaxed)));
+			returnVal = returnVal && this.#keys.length === other.keys.length;
+			returnVal = returnVal && this.#keys.every(k => other.keys.some(ok => ok.equals(k, relaxed)));
 
-			returnVal = returnVal && this._indices.length === other.indices.length;
-			returnVal = returnVal && this._indices.every(i => other.indices.some(oi => oi.equals(i, relaxed)));
+			returnVal = returnVal && this.#indices.length === other.indices.length;
+			returnVal = returnVal && this.#indices.every(i => other.indices.some(oi => oi.equals(i, relaxed)));
 
 			if (!(is.boolean(relaxed) && relaxed)) {
-				returnVal = returnVal && this._ttlAttribute === other.ttlAttribute;
+				returnVal = returnVal && this.#ttlAttribute === other.ttlAttribute;
 
-				returnVal = returnVal && this._attributes.length === other.attributes.length;
-				returnVal = returnVal && this._attributes.every(a => other.attributes.some(oa => oa.equals(a, relaxed)));
+				returnVal = returnVal && this.#attributes.length === other.attributes.length;
+				returnVal = returnVal && this.#attributes.every(a => other.attributes.some(oa => oa.equals(a, relaxed)));
 
-				if (this._provisionedThroughput && other.provisionedThroughput) {
-					returnVal = returnVal && this._provisionedThroughput.compareTo(other.provisionedThroughput);
+				if (this.#provisionedThroughput && other.provisionedThroughput) {
+					returnVal = returnVal && this.#provisionedThroughput.compareTo(other.provisionedThroughput);
 				} else {
-					returnVal = returnVal && this._provisionedThroughput === other.provisionedThroughput;
+					returnVal = returnVal && this.#provisionedThroughput === other.provisionedThroughput;
 				}
 			}
 		}
@@ -341,7 +364,13 @@ export default class Table {
 		return returnVal;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
-		return `[Table (name=${this._name})]`;
+		return `[Table (name=${this.#name})]`;
 	}
 }

@@ -1,19 +1,26 @@
 import * as is from '@barchart/common-js/lang/is.js';
 
-import Attribute from './../definitions/Attribute.js';
 import Derivation from './../definitions/Derivation.js';
+
+/**
+ * @typedef {import('./TableBuilder.js').default} TableBuilder
+ */
 
 /**
  * Fluent interface for building a {@link Derivation}.
  *
  * @public
- * @param {string} name
- * @param {TableBuilder} parent
  */
 export default class DerivationBuilder {
+	#derivation;
+	#parent;
+
+	/**
+	 * @param {TableBuilder} parent
+	 */
 	constructor(parent) {
-		this._derivation = null;
-		this._parent = parent;
+		this.#derivation = null;
+		this.#parent = parent;
 	}
 
 	/**
@@ -23,7 +30,7 @@ export default class DerivationBuilder {
 	 * @returns {Derivation}
 	 */
 	get derivation() {
-		return this._derivation;
+		return this.#derivation;
 	}
 
 	/**
@@ -31,29 +38,29 @@ export default class DerivationBuilder {
 	 * attribute will be passed the generator function.
 	 *
 	 * @public
-	 * @param {String} attribute - The name of the {@link Attribute} to use in the derivation.
-	 * @param {Boolean=} optional - If true, the derivation will be processed (even if the attribute is absent).
+	 * @param {string} attribute - The name of the {@link Attribute} to use in the derivation.
+	 * @param {boolean=} optional - If true, the derivation will be processed (even if the attribute is absent).
 	 * @returns {DerivationBuilder}
 	 */
 	withAttribute(attribute, optional) {
-		const a = getAttribute(attribute, this._parent);
+		const a = getAttribute(attribute, this.#parent);
 		const o = is.boolean(optional) && optional;
 
 		let attributes;
 		let generator;
 		let optionalities;
 
-		if (this._derivation) {
-			attributes = this._derivation.attributes.concat([ a ]);
-			optionalities = this._derivation.optionalities.concat([  o ]);
-			generator = this._derivation.generator;
+		if (this.#derivation) {
+			attributes = this.#derivation.attributes.concat([ a ]);
+			optionalities = this.#derivation.optionalities.concat([  o ]);
+			generator = this.#derivation.generator;
 		} else {
 			attributes = [ a ];
 			optionalities = [ o ];
 			generator = null;
 		}
 
-		this._derivation = new Derivation(attributes, generator, optionalities);
+		this.#derivation = new Derivation(attributes, generator, optionalities);
 
 		return this;
 	}
@@ -71,19 +78,25 @@ export default class DerivationBuilder {
 		let attributes;
 		let optionalities;
 
-		if (this._derivation) {
-			attributes = this._derivation.attributes;
-			optionalities = this._derivation.optionalities;
+		if (this.#derivation) {
+			attributes = this.#derivation.attributes;
+			optionalities = this.#derivation.optionalities;
 		} else {
 			attributes = [ ];
 			optionalities = [ ];
 		}
 
-		this._derivation = new Derivation(attributes, generator, optionalities);
+		this.#derivation = new Derivation(attributes, generator, optionalities);
 
 		return this;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[DerivationBuilder]';
 	}

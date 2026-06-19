@@ -15,6 +15,13 @@ export default class BooleanSerializer extends AttributeSerializer {
 		super();
 	}
 
+	/**
+	 * Serializes a value.
+	 *
+	 * @public
+	 * @param {*} value
+	 * @returns {object}
+	 */
 	serialize(value) {
 		assert.argumentIsRequired(value, 'value', Boolean);
 
@@ -25,6 +32,13 @@ export default class BooleanSerializer extends AttributeSerializer {
 		return wrapper;
 	}
 
+	/**
+	 * Deserializes a value.
+	 *
+	 * @public
+	 * @param {*} wrapper
+	 * @returns {*}
+	 */
 	deserialize(wrapper) {
 		return wrapper[DataType.BOOLEAN.code];
 	}
@@ -40,6 +54,12 @@ export default class BooleanSerializer extends AttributeSerializer {
 		return instance;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[BooleanSerializer]';
 	}

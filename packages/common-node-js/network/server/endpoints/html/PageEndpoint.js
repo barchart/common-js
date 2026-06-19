@@ -10,6 +10,22 @@ const emptyCommand = CommandHandler.fromFunction((ignored) => {
 });
 
 export default class PageEndpoint extends Endpoint {
+	#acceptFile;
+	#cache;
+	#path;
+	#secureRedirect;
+	#template;
+	#verb;
+
+	/**
+	 * @param {*} verb
+	 * @param {string} path
+	 * @param {*} template
+	 * @param {Function} command
+	 * @param {*} cache
+	 * @param {*} acceptFile
+	 * @param {*} secureRedirect
+	 */
 	constructor(verb, path, template, command, cache, acceptFile, secureRedirect) {
 		super(command || emptyCommand);
 
@@ -20,38 +36,80 @@ export default class PageEndpoint extends Endpoint {
 		assert.argumentIsOptional(acceptFile, 'acceptFile', Boolean);
 		assert.argumentIsOptional(secureRedirect, 'secureRedirect', Boolean);
 
-		this._verb = verb;
-		this._path = path;
-		this._template = template;
-		this._cache = cache || false;
-		this._acceptFile = acceptFile || false;
-		this._secureRedirect = secureRedirect || false;
+		this.#verb = verb;
+		this.#path = path;
+		this.#template = template;
+		this.#cache = cache || false;
+		this.#acceptFile = acceptFile || false;
+		this.#secureRedirect = secureRedirect || false;
 	}
 
+	/**
+	 * Returns the verb.
+	 *
+	 * @public
+	 * @returns {*}
+	 */
 	getVerb() {
-		return this._verb;
+		return this.#verb;
 	}
 
+	/**
+	 * Returns the path.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	getPath() {
-		return this._path;
+		return this.#path;
 	}
 
+	/**
+	 * Returns the template.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	getTemplate() {
-		return this._template;
+		return this.#template;
 	}
 
+	/**
+	 * Returns the cache.
+	 *
+	 * @public
+	 * @returns {boolean}
+	 */
 	getCache() {
-		return this._cache;
+		return this.#cache;
 	}
 
+	/**
+	 * Returns the accept file.
+	 *
+	 * @public
+	 * @returns {boolean}
+	 */
 	getAcceptFile() {
-		return this._acceptFile;
+		return this.#acceptFile;
 	}
 
+	/**
+	 * Returns the secure redirect.
+	 *
+	 * @public
+	 * @returns {boolean}
+	 */
 	getSecureRedirect() {
-		return this._secureRedirect;
+		return this.#secureRedirect;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[PageEndpoint]';
 	}

@@ -20,6 +20,13 @@ export default class ListSerializer extends AttributeSerializer {
 		super();
 	}
 
+	/**
+	 * Serializes a value.
+	 *
+	 * @public
+	 * @param {*} list
+	 * @returns {object}
+	 */
 	serialize(list) {
 		assert.argumentIsArray(list, 'list');
 
@@ -42,11 +49,18 @@ export default class ListSerializer extends AttributeSerializer {
 		return wrapper;
 	}
 
+	/**
+	 * Deserializes a value.
+	 *
+	 * @public
+	 * @param {*} wrapper
+	 * @returns {*}
+	 */
 	deserialize(wrapper) {
 		const deserialized = wrapper[DataType.LIST.code];
 
 		return deserialized.reduce((acc, item) => {
-			const dt = getSupportedDataTypes().find((sdt) => !is.undefined(item[sdt.type.code]));
+			const dt = getSupportedDataTypes().find((sdt) => !is.undef(item[sdt.type.code]));
 
 			if (!dt) {
 				throw new Error(`Failed to deserialize list item. Provided type for [ ${item} ] is not supported.`);
@@ -69,6 +83,12 @@ export default class ListSerializer extends AttributeSerializer {
 		return instance;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[ListSerializer]';
 	}

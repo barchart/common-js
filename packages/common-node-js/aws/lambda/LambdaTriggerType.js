@@ -7,51 +7,57 @@ import Enum from '@barchart/common-js/lang/Enum.js';
  *
  * @public
  * @extends {Enum}
- * @param {String} code
- * @param {Function} matchPredicate
- * @param {Function} idExtractor
- * @param {Function} contentExtractor
  */
 export default class LambdaTriggerType extends Enum {
+	#contentExtractor;
+	#idExtractor;
+	#matchPredicate;
+
+	/**
+	 * @param {string} code
+	 * @param {Function} matchPredicate
+	 * @param {Function} idExtractor
+	 * @param {Function} contentExtractor
+	 */
 	constructor(code, matchPredicate, idExtractor, contentExtractor) {
 		super(code, code);
 
-		this._matchPredicate = matchPredicate;
-		this._idExtractor = idExtractor;
-		this._contentExtractor = contentExtractor;
+		this.#matchPredicate = matchPredicate;
+		this.#idExtractor = idExtractor;
+		this.#contentExtractor = contentExtractor;
 	}
 
 	/**
 	 * Returns true if the message matches the trigger type; otherwise false.
 	 *
 	 * @public
-	 * @param {Object} message
-	 * @returns {Boolean}
+	 * @param {object} message
+	 * @returns {boolean}
 	 */
 	getMatch(message) {
-		return this._matchPredicate(message);
+		return this.#matchPredicate(message);
 	}
 
 	/**
 	 * Extracts and returns the message's identifier.
 	 *
 	 * @public
-	 * @param {Object} message
-	 * @returns {String|null}
+	 * @param {object} message
+	 * @returns {string|null}
 	 */
 	getId(message) {
-		return this._idExtractor(message) || null;
+		return this.#idExtractor(message) || null;
 	}
 
 	/**
 	 * Extracts and returns the message's content.
 	 *
 	 * @public
-	 * @param {Object} message
-	 * @returns {String|null}
+	 * @param {object} message
+	 * @returns {string|null}
 	 */
 	getContent(message) {
-		return this._contentExtractor(message) || null;
+		return this.#contentExtractor(message) || null;
 	}
 
 	/**
@@ -59,7 +65,7 @@ export default class LambdaTriggerType extends Enum {
 	 *
 	 * @public
 	 * @static
-	 * @param {Object} message
+	 * @param {object} message
 	 * @returns {LambdaTriggerType|null}
 	 */
 	static fromMessage(message) {
@@ -155,6 +161,12 @@ export default class LambdaTriggerType extends Enum {
 		return apiGatewayHttp;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return `[LambdaTriggerType (code=${this.code})]`;
 	}

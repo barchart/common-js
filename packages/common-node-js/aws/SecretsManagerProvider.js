@@ -14,24 +14,31 @@ const logger = log4js.getLogger('common-node/aws/SecretsManagerProvider');
  *
  * @public
  * @extends {Disposable}
- * @param {object} configuration
- * @param {string} configuration.region - The AWS region (e.g. "us-east-1").
- * @param {string=} configuration.apiVersion - The Secrets Manager version (defaults to "2017-10-17").
  */
 export default class SecretsManagerProvider extends Disposable {
+	#configuration;
+	#secretsManager;
+	#startPromise;
+	#started;
+
+	/**
+	 * @param {object} configuration
+	 * @param {string} configuration.region - The AWS region (e.g. "us-east-1").
+	 * @param {string=} configuration.apiVersion - The Secrets Manager version (defaults to "2017-10-17").
+	 */
 	constructor(configuration) {
-		super(configuration);
+		super();
 
 		assert.argumentIsRequired(configuration, 'configuration', Object);
 		assert.argumentIsRequired(configuration.region, 'configuration.region', String);
 		assert.argumentIsOptional(configuration.apiVersion, 'configuration.apiVersion', String);
 
-		this._configuration = configuration;
+		this.#configuration = configuration;
 
-		this._secretsManager = null;
+		this.#secretsManager = null;
 
-		this._startPromise = null;
-		this._started = false;
+		this.#startPromise = null;
+		this.#started = false;
 	}
 
 	/**
@@ -40,23 +47,23 @@ export default class SecretsManagerProvider extends Disposable {
 	 *
 	 * @public
 	 * @async
-	 * @returns {Promise<Boolean>}
+	 * @returns {Promise<boolean>}
 	 */
 	async start() {
 		if (this.disposed) {
 			return Promise.reject('Unable to start, the Secrets Manager provider has been disposed');
 		}
 
-		if (this._startPromise === null) {
-			this._startPromise = (async () => {
+		if (this.#startPromise === null) {
+			this.#startPromise = (async () => {
 				try {
-					this._secretsManager = new SecretsManagerClient({ apiVersion: this._configuration.apiVersion || '2017-10-17', region: this._configuration.region });
+					this.#secretsManager = new SecretsManagerClient({ apiVersion: this.#configuration.apiVersion || '2017-10-17', region: this.#configuration.region });
 
 					logger.info('The Secrets Manager provider has started');
 
-					this._started = true;
+					this.#started = true;
 
-					return this._started;
+					return this.#started;
 				} catch (e) {
 					logger.error('The Secrets Manager provider failed to start', e);
 
@@ -65,7 +72,7 @@ export default class SecretsManagerProvider extends Disposable {
 			})();
 		}
 
-		return this._startPromise;
+		return this.#startPromise;
 	}
 
 	/**
@@ -73,8 +80,8 @@ export default class SecretsManagerProvider extends Disposable {
 	 *
 	 * @public
 	 * @async
-	 * @param {String} secretId
-	 * @returns {Promise<String>}
+	 * @param {string} secretId
+	 * @returns {Promise<string>}
 	 */
 	async getSecretValue(secretId) {
 		assert.argumentIsRequired(secretId, 'secretId', String);
@@ -83,12 +90,12 @@ export default class SecretsManagerProvider extends Disposable {
 			throw new Error('The "secretId" argument cannot be a zero-length string');
 		}
 
-		checkReady.call(this);
+		this.#checkReady();
 
 		logger.debug(`Attempting to retrieve secret [ ${secretId} ]`);
 
 		try {
-			const response = await this._secretsManager.send(new GetSecretValueCommand({ SecretId: secretId }));
+			const response = await this.#secretsManager.send(new GetSecretValueCommand({ SecretId: secretId }));
 
 			logger.info(`Retrieved secret [ ${secretId} ]`);
 
@@ -100,17 +107,24 @@ export default class SecretsManagerProvider extends Disposable {
 		}
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[SecretsManagerProvider]';
 	}
-}
 
-function checkReady() {
-	if (this.disposed) {
-		throw new Error('The Secrets Manager provider has been disposed');
-	}
 
-	if (!this._started) {
-		throw new Error('The Secrets Manager provider has not been started');
-	}
+	#checkReady() {
+		if (this.disposed) {
+			throw new Error('The Secrets Manager provider has been disposed');
+			}
+
+			if (!this.#started) {
+				throw new Error('The Secrets Manager provider has not been started');
+			}
+		}
 }

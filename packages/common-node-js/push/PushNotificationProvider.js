@@ -1,6 +1,5 @@
 import * as assert from '@barchart/common-js/lang/assert.js';
 
-import Enum from '@barchart/common-js/lang/Enum.js';
 import Disposable from '@barchart/common-js/lang/Disposable.js';
 import EndpointBuilder from '@barchart/common-js/api/http/builders/EndpointBuilder.js';
 import ErrorInterceptor from '@barchart/common-js/api/http/interceptors/ErrorInterceptor.js';
@@ -18,15 +17,28 @@ import log4js from 'log4js';
 
 const logger = log4js.getLogger('common-node/push/PushNotificationProvider');
 
+
 /**
  * A wrapper for the Push Notification Service.
  *
  * @public
- * @param {String} protocol - The protocol of the of the Push Notification service (either http or https).
- * @param {String} host - The hostname of the Push Notification service.
- * @param {Number} port - The TCP port number of the Push Notification service.
  */
 export default class PushNotificationProvider extends Disposable {
+	#host;
+	#jwtProviderRegister;
+	#jwtProviderSend;
+	#port;
+	#protocol;
+	#registerDeviceEndpoint;
+	#sendNotificationEndpoint;
+	#started;
+	#unregisterDeviceEndpoint;
+
+	/**
+	 * @param {string} protocol - The protocol of the Push Notification service (either http or https).
+	 * @param {string} host - The hostname of the Push Notification service.
+	 * @param {number} port - The TCP port number of the Push Notification service.
+	 */
 	constructor(protocol, host, port) {
 		super();
 
@@ -34,20 +46,24 @@ export default class PushNotificationProvider extends Disposable {
 		assert.argumentIsRequired(host, 'host', String);
 		assert.argumentIsRequired(port, 'port', Number);
 
-		const protocolType = Enum.fromCode(ProtocolType, protocol.toUpperCase());
+		const protocolType = ProtocolType.parse(protocol.toUpperCase());
 
-		const requestInterceptorForRegister = getRequestInterceptorForJwtForRegister.call(this);
-		const requestInterceptorForSend = getRequestInterceptorForJwtForSend.call(this);
-		
-		this._protocol = protocol;
-		this._host = host;
-		this._port = port;
-		
-		this._jwtProviderRegister = null;
-		this._jwtProviderSend = null;
-		this._started = true;
-		
-		this._sendNotificationEndpoint = EndpointBuilder.for('send-notification', 'send notification')
+		if (protocolType === null) {
+			throw new Error(`The argument [ protocol ] must be a [ ProtocolType ]`);
+		}
+
+		const requestInterceptorForRegister = this.#getRequestInterceptorForJwtForRegister();
+		const requestInterceptorForSend = this.#getRequestInterceptorForJwtForSend();
+
+		this.#protocol = protocol;
+		this.#host = host;
+		this.#port = port;
+
+		this.#jwtProviderRegister = null;
+		this.#jwtProviderSend = null;
+		this.#started = true;
+
+		this.#sendNotificationEndpoint = EndpointBuilder.for('send-notification', 'send notification')
 			.withVerb(VerbType.POST)
 			.withProtocol(protocolType)
 			.withHost(host)
@@ -62,7 +78,7 @@ export default class PushNotificationProvider extends Disposable {
 			.withErrorInterceptor(ErrorInterceptor.GENERAL)
 			.endpoint;
 
-		this._registerDeviceEndpoint = EndpointBuilder.for('register-device', 'register device')
+		this.#registerDeviceEndpoint = EndpointBuilder.for('register-device', 'register device')
 			.withVerb(VerbType.POST)
 			.withProtocol(protocolType)
 			.withHost(host)
@@ -77,7 +93,7 @@ export default class PushNotificationProvider extends Disposable {
 			.withErrorInterceptor(ErrorInterceptor.GENERAL)
 			.endpoint;
 
-		this._unregisterDeviceEndpoint = EndpointBuilder.for('unregister-device', 'unregister device')
+		this.#unregisterDeviceEndpoint = EndpointBuilder.for('unregister-device', 'unregister device')
 			.withVerb(VerbType.POST)
 			.withProtocol(protocolType)
 			.withHost(host)
@@ -92,7 +108,7 @@ export default class PushNotificationProvider extends Disposable {
 			.withErrorInterceptor(ErrorInterceptor.GENERAL)
 			.endpoint;
 	}
-	
+
 	/**
 	 * Attempts to establish a connection to the backend. This function should be invoked
 	 * immediately following instantiation. Once the resulting promise resolves, a
@@ -109,15 +125,15 @@ export default class PushNotificationProvider extends Disposable {
 				assert.argumentIsOptional(jwtProviderRegister, 'jwtProviderRegister', JwtProvider, 'JwtProvider');
 				assert.argumentIsOptional(jwtProviderSend, 'jwtProviderSend', JwtProvider, 'JwtProvider');
 
-				this._jwtProviderRegister = jwtProviderRegister;
-				this._jwtProviderSend = jwtProviderSend;
-				this._started = true;
+				this.#jwtProviderRegister = jwtProviderRegister;
+				this.#jwtProviderSend = jwtProviderSend;
+				this.#started = true;
 
 				return Promise.resolve(true)
 					.then(() => {
 						return Promise.resolve(this);
 					}).catch((e) => {
-						return Promise.reject(`Unable to connect to server using HTTP adapter [ ${this._host} ] [ ${this._port} ] [ ${this._protocol} ]`);
+						return Promise.reject(`Unable to connect to server using HTTP adapter [ ${this.#host} ] [ ${this.#port} ] [ ${this.#protocol} ]`);
 					});
 			});
 	}
@@ -126,24 +142,13 @@ export default class PushNotificationProvider extends Disposable {
 	 * Registers a device.
 	 *
 	 * @public
-	 * @param {Object} query - The query object
-	 * @param {Object} query.user - An object contains user data
-	 * @param {String} query.user.id - A user id
-	 * @param {String} query.user.context - A user context
-	 * @param {Object?} query.apns - An object contains APNS data
-	 * @param {String} query.apns.device - Unique device token
-	 * @param {String} query.apns.bundle - An application bundle name
-	 * @param {Object?} query.fcm - An object contains FCM data
-	 * @param {String} query.fcm.token - Unique device token
-	 * @param {String} query.fcm.package - An application package name
-	 * @param {String} query.fcm.iid - Firebase IID of device
-	 * @param {String} query.provider - Provider name
-	 * @returns {Promise<Object>}
+	 * @param {RegisterDeviceQuery} query - The query object
+	 * @returns {Promise<object>}
 	 */
 	registerDevice(query) {
 		return Promise.resolve()
 			.then(() => {
-				checkStatus(this, 'registerDevice');
+				this.#checkStatus('registerDevice');
 
 				return Promise.resolve()
 					.then(() => {
@@ -170,7 +175,7 @@ export default class PushNotificationProvider extends Disposable {
 							assert.argumentIsRequired(query.fcm.token, 'query.fcm.token', String);
 						}
 
-						return Gateway.invoke(this._registerDeviceEndpoint, query);
+						return Gateway.invoke(this.#registerDeviceEndpoint, query);
 					});
 			});
 	}
@@ -179,19 +184,19 @@ export default class PushNotificationProvider extends Disposable {
 	 * Unregisters a device.
 	 *
 	 * @public
-	 * @param {Object} query - The query object
-	 * @param {Object} query.user - An object contains user data
-	 * @param {String} query.user.id - A user id
-	 * @param {String} query.user.context - A user context
-	 * @param {Object} query.device - An object contains APNS or FCM data
-	 * @param {String} query.device.device - APNS device token or FCM IID
-	 * @param {String} query.device.bundle - Bundle or Package name of the application
-	 * @returns {Promise<Object>}
+	 * @param {object} query - The query object
+	 * @param {object} query.user - An object contains user data
+	 * @param {string} query.user.id - A user id
+	 * @param {string} query.user.context - A user context
+	 * @param {object} query.device - An object contains APNS or FCM data
+	 * @param {string} query.device.device - APNS device token or FCM IID
+	 * @param {string} query.device.bundle - Bundle or Package name of the application
+	 * @returns {Promise<object>}
 	 */
 	unregisterDevice(query) {
 		return Promise.resolve()
 			.then(() => {
-				checkStatus(this, 'unregisterDevice');
+				this.#checkStatus('unregisterDevice');
 
 				return Promise.resolve()
 					.then(() => {
@@ -203,7 +208,7 @@ export default class PushNotificationProvider extends Disposable {
 						assert.argumentIsRequired(query.device.device, 'query.device.device', String);
 						assert.argumentIsRequired(query.device.bundle, 'query.device.bundle', String);
 
-						return Gateway.invoke(this._unregisterDeviceEndpoint, {
+						return Gateway.invoke(this.#unregisterDeviceEndpoint, {
 							user: query.user.id,
 							context: query.user.context,
 							device: query.device.device,
@@ -217,22 +222,22 @@ export default class PushNotificationProvider extends Disposable {
 	 * Sends a Push Notifications by application bundle or package name.
 	 *
 	 * @public
-	 * @param {Object} query - The query object
-	 * @param {String} query.bundle - An application bundle or package name
-	 * @param {Object} query.notification - An notification object
-	 * @param {Boolean?} query.development - Forces APNS to send notifications in the development mode
-	 * @returns {Promise<Object>}
+	 * @param {object} query - The query object
+	 * @param {string} query.bundle - An application bundle or package name
+	 * @param {object} query.notification - An notification object
+	 * @param {boolean?} query.development - Forces APNS to send notifications in the development mode
+	 * @returns {Promise<object>}
 	 */
 	sendByBundle(query) {
 		return Promise.resolve()
 			.then(() => {
-				checkStatus(this, 'sendByBundle');
+				this.#checkStatus('sendByBundle');
 				return Promise.resolve()
 					.then(() => {
 						assert.argumentIsRequired(query, 'query', Object);
 						assert.argumentIsRequired(query.bundle, 'query.bundle', String);
 
-						return send.call(this, {
+						return this.#send({
 							bundle: query.bundle,
 							notification: query.notification,
 							development: query.development
@@ -245,19 +250,19 @@ export default class PushNotificationProvider extends Disposable {
 	 * Sends a Push Notifications by user.
 	 *
 	 * @public
-	 * @param {Object} query - The query object
-	 * @param {Object} query.user - A user object
-	 * @param {String} query.user.id - A user id
-	 * @param {String} query.user.context - A user context
-	 * @param {String} query.bundle - An application bundle or package name
-	 * @param {Object} query.notification - An notification object
-	 * @param {Boolean?} query.development - Forces APNS to send notifications in the development mode
-	 * @returns {Promise<Object>}
+	 * @param {object} query - The query object
+	 * @param {object} query.user - A user object
+	 * @param {string} query.user.id - A user id
+	 * @param {string} query.user.context - A user context
+	 * @param {string} query.bundle - An application bundle or package name
+	 * @param {object} query.notification - An notification object
+	 * @param {boolean?} query.development - Forces APNS to send notifications in the development mode
+	 * @returns {Promise<object>}
 	 */
 	sendByUser(query) {
 		return Promise.resolve()
 			.then(() => {
-				checkStatus(this, 'sendByUser');
+				this.#checkStatus('sendByUser');
 				return Promise.resolve()
 					.then(() => {
 						assert.argumentIsRequired(query, 'query', Object);
@@ -265,7 +270,7 @@ export default class PushNotificationProvider extends Disposable {
 						assert.argumentIsRequired(query.user.id, 'query.user.id', String);
 						assert.argumentIsRequired(query.user.context, 'query.user.context', String);
 
-						return send.call(this, {
+						return this.#send({
 							bundle: query.bundle,
 							user: query.user.id,
 							context: query.user.context,
@@ -280,22 +285,22 @@ export default class PushNotificationProvider extends Disposable {
 	 * Sends a Push Notifications by device.
 	 *
 	 * @public
-	 * @param {Object} query - The query object
-	 * @param {String} query.device - An APNS device token or FCM IID
-	 * @param {Object} query.notification - An notification object
-	 * @param {Boolean?} query.development - Forces APNS to send notifications in the development mode
-	 * @returns {Promise<Object>}
+	 * @param {object} query - The query object
+	 * @param {string} query.device - An APNS device token or FCM IID
+	 * @param {object} query.notification - An notification object
+	 * @param {boolean?} query.development - Forces APNS to send notifications in the development mode
+	 * @returns {Promise<object>}
 	 */
 	sendByDevice(query) {
 		return Promise.resolve()
 			.then(() => {
-				checkStatus(this, 'sendByDevice');
+				this.#checkStatus('sendByDevice');
 				return Promise.resolve()
 					.then(() => {
 						assert.argumentIsRequired(query, 'query', Object);
 						assert.argumentIsRequired(query.device, 'query.device', String);
 
-						return send.call(this, {
+						return this.#send({
 							device: query.device,
 							notification: query.notification,
 							development: query.development
@@ -304,78 +309,96 @@ export default class PushNotificationProvider extends Disposable {
 			});
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 */
 	_onDispose() {
 		logger.debug('Push Notification provider disposed');
-		
-		this._jwtProviderRegister = null;
-		this._started = false;
+
+		this.#jwtProviderRegister = null;
+		this.#started = false;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[PushNotificationProvider]';
 	}
-}
 
-function getRequestInterceptorForJwtForRegister() {
-	return RequestInterceptor.fromDelegate((options, endpoint) => {
-		const getFailure = (e) => {
-			return FailureReason.forRequest({endpoint: endpoint})
-				.addItem(FailureType.REQUEST_IDENTITY_FAILURE)
-				.format();
-		};
+	#getRequestInterceptorForJwtForRegister() {
+		return RequestInterceptor.fromDelegate((options, endpoint) => {
+			const getFailure = (e) => {
+				return FailureReason.forRequest({endpoint: endpoint})
+					.addItem(FailureType.REQUEST_IDENTITY_FAILURE)
+					.format();
+			};
 
-		if (this._jwtProviderRegister === null) {
-			return Promise.reject(getFailure());
-		}
+			if (this.#jwtProviderRegister === null) {
+				return Promise.reject(getFailure());
+			}
 
-		return this._jwtProviderRegister.getToken()
-			.then((token) => {
-				options.headers = options.headers || {};
-				options.headers.Authorization = `Bearer ${token}`;
+			return this.#jwtProviderRegister.getToken()
+				.then((token) => {
+					options.headers = options.headers || {};
+					options.headers.Authorization = `Bearer ${token}`;
 
-				return options;
-			}).catch((e) => {
-				return Promise.reject(getFailure(e));
-			});
-	});
-}
-
-function getRequestInterceptorForJwtForSend() {
-	return RequestInterceptor.fromDelegate((options, endpoint) => {
-		const getFailure = (e) => {
-			return FailureReason.forRequest({endpoint: endpoint})
-				.addItem(FailureType.REQUEST_IDENTITY_FAILURE)
-				.format();
-		};
-
-		if (this._jwtProviderSend === null) {
-			return Promise.reject(getFailure());
-		}
-
-		return this._jwtProviderSend.getToken()
-			.then((token) => {
-				options.headers = options.headers || {};
-				options.headers.Authorization = `Bearer ${token}`;
-
-				return options;
-			}).catch((e) => {
-				return Promise.reject(getFailure(e));
-			});
-	});
-}
-
-function send(query) {
-	return Promise.resolve().then(() => {
-		assert.argumentIsRequired(query.notification, 'notification', Object);
-		assert.argumentIsRequired(query.notification.title, 'notification.title', String);
-		assert.argumentIsRequired(query.notification.body, 'notification.body', String);
-		assert.argumentIsOptional(query.development, 'query.development', Boolean);
-
-		return Gateway.invoke(this._sendNotificationEndpoint, {
-			...query,
-			development: query.development === true
+					return options;
+				}).catch((e) => {
+					return Promise.reject(getFailure(e));
+				});
 		});
-	});
+	}
+
+	#getRequestInterceptorForJwtForSend() {
+		return RequestInterceptor.fromDelegate((options, endpoint) => {
+			const getFailure = (e) => {
+				return FailureReason.forRequest({endpoint: endpoint})
+					.addItem(FailureType.REQUEST_IDENTITY_FAILURE)
+					.format();
+			};
+
+			if (this.#jwtProviderSend === null) {
+				return Promise.reject(getFailure());
+			}
+
+			return this.#jwtProviderSend.getToken()
+				.then((token) => {
+					options.headers = options.headers || {};
+					options.headers.Authorization = `Bearer ${token}`;
+
+					return options;
+				}).catch((e) => {
+					return Promise.reject(getFailure(e));
+				});
+		});
+	}
+
+	#send(query) {
+		return Promise.resolve().then(() => {
+			assert.argumentIsRequired(query.notification, 'notification', Object);
+			assert.argumentIsRequired(query.notification.title, 'notification.title', String);
+			assert.argumentIsRequired(query.notification.body, 'notification.body', String);
+			assert.argumentIsOptional(query.development, 'query.development', Boolean);
+
+			return Gateway.invoke(this.#sendNotificationEndpoint, {
+				...query,
+				development: query.development === true
+			});
+		});
+	}
+
+	#checkStatus(operation) {
+		checkDispose(this, operation);
+
+		if (this.#started !== true) {
+			throw new Error(`Unable to perform ${operation}, the Push Notification Provider has not connected to the server`);
+		}
+	}
 }
 
 function checkDispose(provider, operation) {
@@ -384,10 +407,30 @@ function checkDispose(provider, operation) {
 	}
 }
 
-function checkStatus(provider, operation) {
-	checkDispose(provider, operation);
 
-	if (provider._started !== true) {
-		throw new Error(`Unable to perform ${operation}, the Push Notification Provider has not connected to the server`);
-	}
-}
+/**
+ * @typedef {object} RegisterDeviceUser
+ * @property {string} id
+ * @property {string} context
+ */
+
+/**
+ * @typedef {object} RegisterDeviceApns
+ * @property {string} device
+ * @property {string} bundle
+ */
+
+/**
+ * @typedef {object} RegisterDeviceFcm
+ * @property {string} token
+ * @property {string} package
+ * @property {string} iid
+ */
+
+/**
+ * @typedef {object} RegisterDeviceQuery
+ * @property {RegisterDeviceUser} user
+ * @property {RegisterDeviceApns=} apns
+ * @property {RegisterDeviceFcm=} fcm
+ * @property {string} provider
+ */

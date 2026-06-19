@@ -18,7 +18,7 @@ export default class AttributeSerializer {
 	 * @public
 	 * @abstract
 	 * @param {*} value - The value to serialize.
-	 * @returns {Object}
+	 * @returns {object}
 	 */
 	serialize(value) {
 		return value;
@@ -32,13 +32,19 @@ export default class AttributeSerializer {
 	 *
 	 * @public
 	 * @abstract
-	 * @param {Object} wrapper - The DynamoDB wrapper to extract a value from.
-	 * @returns {Object}
+	 * @param {object} wrapper - The DynamoDB wrapper to extract a value from.
+	 * @returns {object}
 	 */
 	deserialize(wrapper) {
 		return wrapper;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[AttributeSerializer]';
 	}

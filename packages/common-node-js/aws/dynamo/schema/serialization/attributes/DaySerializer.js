@@ -28,6 +28,12 @@ export default class DaySerializer extends DelegateSerializer {
 		return instance;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[DaySerializer]';
 	}

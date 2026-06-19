@@ -16,15 +16,17 @@ const logger = log4js.getLogger('common-node/database/postgres/DirectClientProvi
  *
  * @public
  * @extends {ClientProvider}
- * @param {String} host
- * @param {String} database
- * @param {String} username
- * @param {String} password
- * @param {Number=} port
- * @param {String=} applicationName
- * @param {*=} ssl
  */
 export default class DirectClientProviderSimple extends ClientProvider {
+	/**
+	 * @param {string} host
+	 * @param {string} database
+	 * @param {string} username
+	 * @param {string} password
+	 * @param {number=} port
+	 * @param {string=} applicationName
+	 * @param {*=} ssl
+	 */
 	constructor(host, database, username, password, port, applicationName, ssl) {
 		super(host, database, username, password, port, applicationName, ssl);
 	}
@@ -56,19 +58,31 @@ export default class DirectClientProviderSimple extends ClientProvider {
 		return;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[DirectClientProviderSimple]';
 	}
 }
 
 class DirectClient extends Client {
+	#pgClient;
+
 	constructor(pgClient) {
 		super(pgClient, {});
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 */
 	_onDispose() {
-		this._pgClient.end();
-		this._pgClient = null;
+		this.#pgClient.end();
+		this.#pgClient = null;
 
 		logger.info('Disposed [DirectClientSimple] [', this.id, ']');
 	}

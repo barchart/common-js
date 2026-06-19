@@ -7,17 +7,28 @@ import DerivationBuilder from './DerivationBuilder.js';
 import EncryptorBuilder from './EncryptorBuilder.js';
 
 /**
+ * @typedef {import('../definitions/EncryptionType.js').default} EncryptionType
+ * @typedef {import('./TableBuilder.js').default} TableBuilder
+ */
+
+/**
  * Fluent interface for building an {@link Attribute}.
  *
  * @public
- * @param {String} name
  */
 export default class AttributeBuilder {
+	#attribute;
+	#parent;
+
+	/**
+     * @param {string} name
+	 * @param {TableBuilder} parent
+     */
 	constructor(name, parent) {
 		assert.argumentIsRequired(name, 'name', String);
 
-		this._attribute = new Attribute(name);
-		this._parent = parent;
+		this.#attribute = new Attribute(name);
+		this.#parent = parent;
 	}
 
 	/**
@@ -27,7 +38,7 @@ export default class AttributeBuilder {
 	 * @returns {Attribute}
 	 */
 	get attribute() {
-		return this._attribute;
+		return this.#attribute;
 	}
 
 	/**
@@ -40,7 +51,7 @@ export default class AttributeBuilder {
 	withDataType(dataType) {
 		assert.argumentIsRequired(dataType, 'dataType', DataType, 'DataType');
 
-		this._attribute = new Attribute(this._attribute.name, dataType, this._attribute.derivation, this._attribute.encryptor, this._attribute.compressionType);
+		this.#attribute = new Attribute(this.#attribute.name, dataType, this.#attribute.derivation, this.#attribute.encryptor, this.#attribute.compressionType);
 
 		return this;
 	}
@@ -56,13 +67,13 @@ export default class AttributeBuilder {
 	withDerivationBuilder(callback) {
 		assert.argumentIsRequired(callback, 'callback', Function);
 
-		const derivationBuilder = new DerivationBuilder(this._parent);
+		const derivationBuilder = new DerivationBuilder(this.#parent);
 
 		callback(derivationBuilder);
 
 		const derivation = derivationBuilder.derivation;
 
-		this._attribute = new Attribute(this._attribute.name, this._attribute.dataType, derivation, this._attribute.encryptor, this._attribute.compressionType);
+		this.#attribute = new Attribute(this.#attribute.name, this.#attribute.dataType, derivation, this.#attribute.encryptor, this.#attribute.compressionType);
 
 		return this;
 	}
@@ -72,7 +83,7 @@ export default class AttributeBuilder {
 	 *
 	 * @public
 	 * @param {EncryptionType} encryptionType
-	 * @param {String} key
+	 * @param {string} key
 	 * @returns {AttributeBuilder}
 	 */
 	withEncryptor(encryptionType, key) {
@@ -80,10 +91,10 @@ export default class AttributeBuilder {
 			eb.withEncryptionType(encryptionType)
 				.withKey(key);
 		});
-		
+
 		return this;
 	}
-	
+
 	/**
 	 * Sets the encryption strategy for the field, using an {@link EncryptorBuilder} provided via callback.
 	 *
@@ -100,7 +111,7 @@ export default class AttributeBuilder {
 
 		const encryptor = encryptorBuilder.encryptor;
 
-		this._attribute = new Attribute(this._attribute.name, this._attribute.dataType, this._attribute.derivation, encryptor, this._attribute.compressionType);
+		this.#attribute = new Attribute(this.#attribute.name, this.#attribute.dataType, this.#attribute.derivation, encryptor, this.#attribute.compressionType);
 
 		return this;
 	}
@@ -115,11 +126,17 @@ export default class AttributeBuilder {
 	withCompression(compressionType) {
 		assert.argumentIsRequired(compressionType, 'compressionType', CompressionType);
 
-		this._attribute = new Attribute(this._attribute.name, this._attribute.dataType, this._attribute.derivation, this._attribute.encryptor, compressionType);
+		this.#attribute = new Attribute(this.#attribute.name, this.#attribute.dataType, this.#attribute.derivation, this.#attribute.encryptor, compressionType);
 
 		return this;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[AttributeBuilder]';
 	}

@@ -8,28 +8,38 @@ import PropertyTransformation from './PropertyTransformation.js';
  *
  * @public
  * @extends {PropertyTransformation}
- * @param {String} inputPropertyName - The name of the property to read from.
- * @param {Map} map - The map of translations.
- * @param {String=} outputPropertyName - The name of the property to write to.
- * @param {String=} description - Describes the transformation, intended for logging purposes.
  */
 export default class PropertyMapTransformation extends PropertyTransformation {
+	#map;
+
+	/**
+	 * @param {string} inputPropertyName - The name of the property to read from.
+	 * @param {Map} map - The map of translations.
+	 * @param {string=} outputPropertyName - The name of the property to write to.
+	 * @param {string=} description - Describes the transformation, intended for logging purposes.
+	 */
 	constructor(inputPropertyName, map, outputPropertyName, description) {
 		super(inputPropertyName, outputPropertyName, (description || `Property Map Transformation (${inputPropertyName}${(outputPropertyName ? ' to ' + outputPropertyName : '')})`));
 
 		assert.argumentIsRequired(map, 'map', Map, 'Map');
 
-		this._map = map;
+		this.#map = map;
 	}
 
 	_canTransformValue(value) {
-		return this._map.has(value);
+		return this.#map.has(value);
 	}
 
 	_transformValue(value) {
-		return this._map.get(value);
+		return this.#map.get(value);
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[PropertyMapTransformation]';
 	}

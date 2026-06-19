@@ -4,15 +4,28 @@ import Filter from './../definitions/Filter.js';
 import ExpressionBuilder from './ExpressionBuilder.js';
 
 /**
+ * @typedef {import('./ActionBuilder.js').default} ActionBuilder
+ */
+
+/**
+ * @typedef {import('../definitions/OperatorType.js').default} OperatorType
+ */
+
+/**
  * Fluent interface for building a {@link Filter}.
  *
  * @public
- * @param {ActionBuilder} parent
  */
 export default class FilterBuilder {
+	#filter;
+	#parent;
+
+	/**
+	 * @param {ActionBuilder} parent
+	 */
 	constructor(parent) {
-		this._filter = new Filter([ ]);
-		this._parent = parent;
+		this.#filter = new Filter([ ]);
+		this.#parent = parent;
 	}
 
 	/**
@@ -22,7 +35,7 @@ export default class FilterBuilder {
 	 * @returns {Filter}
 	 */
 	get filter() {
-		return this._filter;
+		return this.#filter;
 	}
 
 	/**
@@ -30,7 +43,7 @@ export default class FilterBuilder {
 	 * components of an expression, then returns the current instance.
 	 *
 	 * @public
-	 * @param {String} attributeName - The attribute name.
+	 * @param {string} attributeName - The attribute name.
 	 * @param {OperatorType} operatorType
 	 * @param {*=} operand
 	 * @returns {FilterBuilder}
@@ -45,7 +58,7 @@ export default class FilterBuilder {
 	 * the current instance.
 	 *
 	 * @public
-	 * @param {String} attributeName - The {@link Attribute} to target.
+	 * @param {string} attributeName - The {@link Attribute} to target.
 	 * @param {Function} callback - Synchronously called, providing a {@link ExpressionBuilder} tied to the current instance.
 	 * @returns {FilterBuilder}
 	 */
@@ -53,15 +66,21 @@ export default class FilterBuilder {
 		assert.argumentIsRequired(attributeName, 'attributeName', String);
 		assert.argumentIsRequired(callback, 'callback', Function);
 
-		const expressionBuilder = new ExpressionBuilder(attributeName, this._parent);
+		const expressionBuilder = new ExpressionBuilder(attributeName, this.#parent);
 
 		callback(expressionBuilder);
 
-		this._filter = new Filter(this._filter.expressions.concat([ expressionBuilder.expression ]));
+		this.#filter = new Filter(this.#filter.expressions.concat([ expressionBuilder.expression ]));
 
 		return this;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[FilterBuilder]';
 	}

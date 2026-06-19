@@ -5,15 +5,19 @@ import Enum from '@barchart/common-js/lang/Enum.js';
  *
  * @public
  * @extends {Enum}
- * @param {String} code
- * @param {String} description
- * @param {String} key
  */
 export default class ProvisioningType extends Enum {
+	#key;
+
+	/**
+	 * @param {string} code
+	 * @param {string} description
+	 * @param {string} key
+	 */
 	constructor(code, description, key) {
 		super(code, description);
 
-		this._key = key;
+		this.#key = key;
 	}
 
 	/**
@@ -23,7 +27,7 @@ export default class ProvisioningType extends Enum {
 	 * @returns {string}
 	 */
 	get key() {
-		return this._key;
+		return this.#key;
 	}
 
 	/**
@@ -48,6 +52,12 @@ export default class ProvisioningType extends Enum {
 		return onDemand;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return `[ProvisioningType (code=${this.code})]`;
 	}

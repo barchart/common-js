@@ -13,10 +13,22 @@ import StringSerializer from './StringSerializer.js';
  * @extends {DelegateSerializer}
  */
 export default class EnumSerializer extends DelegateSerializer {
+	/**
+	 * Creates a new EnumSerializer instance.
+	 *
+	 * @public
+	 * @param {*} EnumerationType
+	 */
 	constructor(EnumerationType) {
 		super(StringSerializer.INSTANCE, getEnumSerializerFor(EnumerationType), getEnumDeserializerFor(EnumerationType));
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[EnumSerializer]';
 	}

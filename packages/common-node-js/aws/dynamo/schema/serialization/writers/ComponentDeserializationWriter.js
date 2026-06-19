@@ -11,21 +11,26 @@ import Writer from './Writer.js';
  *
  * @public
  * @extends {Writer}
- * @param {Component} component
  */
 export default class ComponentDeserializationWriter extends Writer {
+	#component;
+	#serializer;
+
+	/**
+	 * @param {Component} component
+	 */
 	constructor(component) {
 		super();
 
 		assert.argumentIsRequired(component, 'component', Component, 'Component');
 
-		this._component = component;
-		this._serializer = Serializers.forComponent(component);
+		this.#component = component;
+		this.#serializer = Serializers.forComponent(component);
 	}
 
 	_write(source, target) {
-		const name = this._component.name;
-		const definitions = this._component.componentType.definitions;
+		const name = this.#component.name;
+		const definitions = this.#component.componentType.definitions;
 
 		const values = definitions.map((definition) => {
 			const componentName = definition.getFieldName(name);
@@ -33,13 +38,19 @@ export default class ComponentDeserializationWriter extends Writer {
 			return source[componentName];
 		});
 
-		target[name] = this._serializer.deserialize(values);
+		target[name] = this.#serializer.deserialize(values);
 	}
 
 	_canWrite(source, target) {
-		return this._serializer !== null && is.object(source) && source.hasOwnProperty(this._component.name);
+		return this.#serializer !== null && is.object(source) && source.hasOwnProperty(this.#component.name);
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[ComponentDeserializationWriter]';
 	}

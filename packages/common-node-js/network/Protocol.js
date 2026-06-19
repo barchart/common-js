@@ -1,43 +1,83 @@
 import * as assert from '@barchart/common-js/lang/assert.js';
 
 export default class Protocol {
+	#description;
+	#secure;
+	#standard;
+
+	/**
+	 * @param {string} description
+	 * @param {string} standard
+	 * @param {string} secure
+	 */
 	constructor(description, standard, secure) {
 		assert.argumentIsRequired(description, 'description', String);
 		assert.argumentIsRequired(standard, 'standard', String);
 		assert.argumentIsRequired(secure, 'secure', String);
 
-		this._description = description;
+		this.#description = description;
 
-		this._standard = standard;
-		this._secure = secure;
+		this.#standard = standard;
+		this.#secure = secure;
 	}
 
+	/**
+	 * Returns the description.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	getDescription() {
-		return this._description;
+		return this.#description;
 	}
 
+	/**
+	 * Returns the standard.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	getStandard() {
-		return this._standard;
+		return this.#standard;
 	}
 
+	/**
+	 * Returns the secure.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	getSecure() {
-		return this._secure;
+		return this.#secure;
 	}
 
+	/**
+	 * Returns the url prefix.
+	 *
+	 * @public
+	 * @param {boolean=} secure
+	 * @returns {string}
+	 */
 	getUrlPrefix(secure) {
 		let prefix;
 
 		if (secure) {
-			prefix = this._secure;
+			prefix = this.#secure;
 		} else {
-			prefix = this._standard;
+			prefix = this.#standard;
 		}
 
 		return prefix + '://';
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
-		return '[Protocol (description=' + this._description + ')]';
+		return '[Protocol (description=' + this.#description + ')]';
 	}
 }
 

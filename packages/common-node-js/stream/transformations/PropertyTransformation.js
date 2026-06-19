@@ -11,11 +11,16 @@ import Transformation from './Transformation.js';
  * @public
  * @interface
  * @extends {Transformation}
- * @param {String} inputPropertyName - The name of the property to read from.
- * @param {String=} outputPropertyName - The name of the property to write to. If omitted, the transformed value is written back to the input property.
- * @param {String=} description - Describes the transformation, intended for logging purposes.
  */
 export default class PropertyTransformation extends Transformation {
+	#inputPropertyName;
+	#outputPropertyName;
+
+	/**
+	 * @param {string} inputPropertyName - The name of the property to read from.
+	 * @param {string=} outputPropertyName - The name of the property to write to. If omitted, the transformed value is written back to the input property.
+	 * @param {string=} description - Describes the transformation, intended for logging purposes.
+	 */
 	constructor(inputPropertyName, outputPropertyName, description) {
 		super(description || `Property Transformation (${inputPropertyName}${(outputPropertyName ? ' to ' + outputPropertyName : '')})`);
 
@@ -23,12 +28,12 @@ export default class PropertyTransformation extends Transformation {
 		assert.argumentIsOptional(outputPropertyName, 'outputPropertyName', String);
 		assert.argumentIsOptional(description, 'description', String);
 
-		this._inputPropertyName = inputPropertyName;
-		this._outputPropertyName = outputPropertyName || inputPropertyName;
+		this.#inputPropertyName = inputPropertyName;
+		this.#outputPropertyName = outputPropertyName || inputPropertyName;
 	}
 
 	_canTransform(input) {
-		return attributes.has(input, this._inputPropertyName) && this._canTransformValue(attributes.read(input, this._inputPropertyName));
+		return attributes.has(input, this.#inputPropertyName) && this._canTransformValue(attributes.read(input, this.#inputPropertyName));
 	}
 
 	_canTransformValue(value) {
@@ -36,7 +41,7 @@ export default class PropertyTransformation extends Transformation {
 	}
 
 	_transform(input) {
-		attributes.write(input, this._outputPropertyName, this._transformValue(attributes.read(input, this._inputPropertyName)));
+		attributes.write(input, this.#outputPropertyName, this._transformValue(attributes.read(input, this.#inputPropertyName)));
 
 		return input;
 	}
@@ -45,6 +50,12 @@ export default class PropertyTransformation extends Transformation {
 		return value;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[PropertyTransformation]';
 	}

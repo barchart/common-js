@@ -22,13 +22,17 @@ import LambdaStage from '../../../lambda/LambdaStage.js';
  * Fluent interface for building a {@link Table}.
  *
  * @public
- * @param {String} name - Name of the table.
  */
 export default class TableBuilder {
+	#table;
+
+	/**
+	 * @param {string} name - Name of the table.
+	 */
 	constructor(name) {
 		assert.argumentIsRequired(name, 'name', String);
 
-		this._table = new Table(name, [ ], [ ], [ ], [ ], null, null, null);
+		this.#table = new Table(name, [ ], [ ], [ ], [ ], null, null, null);
 	}
 
 	/**
@@ -38,7 +42,7 @@ export default class TableBuilder {
 	 * @returns {Table}
 	 */
 	get table() {
-		return this._table;
+		return this.#table;
 	}
 
 	/**
@@ -47,14 +51,14 @@ export default class TableBuilder {
 	 *
 	 * @public
 	 * @param {LambdaStage} stage
-	 * @param {TableBuilder~stageCallback} callback
+	 * @param {StageCallback} callback
 	 * @return {TableBuilder}
 	 */
 	forStage(stage, callback) {
 		assert.argumentIsRequired(stage, 'stage', LambdaStage, 'LambdaStage');
 		assert.argumentIsRequired(callback, 'callback', Function);
 
-		if (LambdaStage.getStageFromName(this._table.name) === stage) {
+		if (LambdaStage.getStageFromName(this.#table.name) === stage) {
 			callback(this);
 		}
 
@@ -65,7 +69,7 @@ export default class TableBuilder {
 	 * Adds an {@link Attribute} and returns the current instance.
 	 *
 	 * @public
-	 * @param {String} attributeName
+	 * @param {string} attributeName
 	 * @param {DataType} dataType
 	 * @param {KeyType=} keyType
 	 * @returns {TableBuilder}
@@ -86,8 +90,8 @@ export default class TableBuilder {
 	 * the current instance.
 	 *
 	 * @public
-	 * @param {String} attributeName
-	 * @param {TableBuilder~attributeBuilderCallback} callback - Synchronously called, providing a {@link AttributeBuilder} tied to the current instance.
+	 * @param {string} attributeName
+	 * @param {AttributeBuilderCallback} callback - Synchronously called, providing a {@link AttributeBuilder} tied to the current instance.
 	 * @returns {TableBuilder}
 	 */
 	withAttributeBuilder(attributeName, callback) {
@@ -98,9 +102,9 @@ export default class TableBuilder {
 		callback(attributeBuilder);
 
 		const attribute = attributeBuilder.attribute;
-		const attributes = this._table.attributes.filter(a => a.name !== attribute.name).concat(attribute);
+		const attributes = this.#table.attributes.filter(a => a.name !== attribute.name).concat(attribute);
 
-		this._table = new Table(this._table.name, this._table.keys, this._table.indices, attributes, this._table.components, this._table.provisionedThroughput, this._table.streamViewType, this._table.ttlAttribute);
+		this.#table = new Table(this.#table.name, this.#table.keys, this.#table.indices, attributes, this.#table.components, this.#table.provisionedThroughput, this.#table.streamViewType, this.#table.ttlAttribute);
 
 		return this;
 	}
@@ -109,7 +113,7 @@ export default class TableBuilder {
 	 * Adds a {@link Component} and returns the current instance.
 	 *
 	 * @public
-	 * @param {String} componentName
+	 * @param {string} componentName
 	 * @param {ComponentType} componentType
 	 * @returns {TableBuilder}
 	 */
@@ -123,21 +127,21 @@ export default class TableBuilder {
 	 * the current instance.
 	 *
 	 * @public
-	 * @param {String} componentName
-	 * @param {TableBuilder~componentBuilderCallback} callback - Synchronously called, providing a {@link ComponentBuilder} tied to the current instance.
+	 * @param {string} componentName
+	 * @param {ComponentBuilderCallback} callback - Synchronously called, providing a {@link ComponentBuilder} tied to the current instance.
 	 * @returns {TableBuilder}
 	 */
 	withComponentBuilder(componentName, callback) {
 		assert.argumentIsRequired(callback, 'callback', Function);
 
-		const componentBuilder = new ComponentBuilder(componentName, this);
+		const componentBuilder = new ComponentBuilder(componentName);
 
 		callback(componentBuilder);
 
 		const component = componentBuilder.component;
-		const components = this._table.components.filter(c => c.name !== component.name).concat(component);
+		const components = this.#table.components.filter(c => c.name !== component.name).concat(component);
 
-		this._table = new Table(this._table.name, this._table.keys, this._table.indices, this._table.attributes, components, this._table.provisionedThroughput, this._table.streamViewType, this._table.ttlAttribute);
+		this.#table = new Table(this.#table.name, this.#table.keys, this.#table.indices, this.#table.attributes, components, this.#table.provisionedThroughput, this.#table.streamViewType, this.#table.ttlAttribute);
 
 		return this;
 	}
@@ -146,7 +150,7 @@ export default class TableBuilder {
 	 * Adds a {@link Key} and returns the current instance.
 	 *
 	 * @public
-	 * @param {String} keyName
+	 * @param {string} keyName
 	 * @param {KeyType} keyType
 	 * @returns {TableBuilder}
 	 */
@@ -160,7 +164,7 @@ export default class TableBuilder {
 	 * the current instance.
 	 *
 	 * @public
-	 * @param {String} keyName
+	 * @param {string} keyName
 	 * @param {Function} callback - Synchronously called, providing a {@link KeyBuilder} tied to the current instance.
 	 * @returns {TableBuilder}
 	 */
@@ -172,9 +176,9 @@ export default class TableBuilder {
 		callback(keyBuilder);
 
 		const key = keyBuilder.key;
-		const keys = this._table.keys.filter(k => k.attribute.name !== key.attribute.name).concat(key);
+		const keys = this.#table.keys.filter(k => k.attribute.name !== key.attribute.name).concat(key);
 
-		this._table = new Table(this._table.name, keys, this._table.indices, this._table.attributes, this._table.components, this._table.provisionedThroughput, this._table.streamViewType, this._table.ttlAttribute);
+		this.#table = new Table(this.#table.name, keys, this.#table.indices, this.#table.attributes, this.#table.components, this.#table.provisionedThroughput, this.#table.streamViewType, this.#table.ttlAttribute);
 
 		return this;
 	}
@@ -185,7 +189,7 @@ export default class TableBuilder {
 	 * the current instance.
 	 *
 	 * @public
-	 * @param {String} indexName
+	 * @param {string} indexName
 	 * @param {Function} callback - Synchronously called, providing a {@link IndexBuilder} tied to the current instance.
 	 * @returns {TableBuilder}
 	 */
@@ -197,9 +201,9 @@ export default class TableBuilder {
 		callback(indexBuilder);
 
 		const index = indexBuilder.index;
-		const indices = this._table._indices.filter(i => i.name !== index.name).concat(index);
+		const indices = this.#table._indices.filter(i => i.name !== index.name).concat(index);
 
-		this._table = new Table(this._table.name, this._table.keys, indices, this._table.attributes, this._table.components, this._table.provisionedThroughput, this._table.streamViewType, this._table.ttlAttribute);
+		this.#table = new Table(this.#table.name, this.#table.keys, indices, this.#table.attributes, this.#table.components, this.#table.provisionedThroughput, this.#table.streamViewType, this.#table.ttlAttribute);
 
 		return this;
 	}
@@ -209,8 +213,8 @@ export default class TableBuilder {
 	 * current instance.
 	 *
 	 * @public
-	 * @param {Number} readUnits
-	 * @param {Number} writeUnits
+	 * @param {number} readUnits
+	 * @param {number} writeUnits
 	 * @returns {TableBuilder}
 	 */
 	withProvisionedThroughput(readUnits, writeUnits) {
@@ -233,7 +237,7 @@ export default class TableBuilder {
 
 		callback(provisionedThroughputBuilder);
 
-		this._table = new Table(this._table.name, this._table.keys, this._table.indices, this._table.attributes, this._table.components, provisionedThroughputBuilder.provisionedThroughput, this._table.streamViewType, this._table.ttlAttribute);
+		this.#table = new Table(this.#table.name, this.#table.keys, this.#table.indices, this.#table.attributes, this.#table.components, provisionedThroughputBuilder.provisionedThroughput, this.#table.streamViewType, this.#table.ttlAttribute);
 
 		return this;
 	}
@@ -246,7 +250,7 @@ export default class TableBuilder {
 	 * @returns {TableBuilder}
 	 */
 	withOnDemandThroughput() {
-		this._table = new Table(this._table.name, this._table.keys, this._table.indices, this._table.attributes, this._table.components, null, this._table.streamViewType, this._table.ttlAttribute);
+		this.#table = new Table(this.#table.name, this.#table.keys, this.#table.indices, this.#table.attributes, this.#table.components, null, this.#table.streamViewType, this.#table.ttlAttribute);
 
 		return this;
 	}
@@ -260,7 +264,7 @@ export default class TableBuilder {
 	withStreamViewType(streamViewType) {
 		assert.argumentIsRequired(streamViewType, 'streamViewType', StreamViewType, 'StreamViewType');
 
-		this._table = new Table(this._table.name, this._table.keys, this._table.indices, this._table.attributes, this._table.components, this._table.provisionedThroughput, streamViewType, this._table.ttlAttribute);
+		this.#table = new Table(this.#table.name, this.#table.keys, this.#table.indices, this.#table.attributes, this.#table.components, this.#table.provisionedThroughput, streamViewType, this.#table.ttlAttribute);
 
 		return this;
 	}
@@ -269,13 +273,13 @@ export default class TableBuilder {
 	 * Defines field that stores expiration time.
 	 *
 	 * @public
-	 * @param {String} attributeName
+	 * @param {string} attributeName
 	 * @returns {TableBuilder}
 	 */
 	withTimeToLive(attributeName) {
 		assert.argumentIsRequired(attributeName, 'attributeName', String);
 
-		this._table = new Table(this._table.name, this._table.keys, this._table.indices, this._table.attributes, this._table.components, this._table.provisionedThroughput, this._table.streamViewType, attributeName);
+		this.#table = new Table(this.#table.name, this.#table.keys, this.#table.indices, this.#table.attributes, this.#table.components, this.#table.provisionedThroughput, this.#table.streamViewType, attributeName);
 
 		return this;
 	}
@@ -285,13 +289,21 @@ export default class TableBuilder {
 	 *
 	 * @public
 	 * @static
-	 * @param {String} name - Name of the table.
+	 * @param {string} name - Name of the table.
 	 * @returns {TableBuilder}
 	 */
 	static withName(name) {
 		return new TableBuilder(name);
 	}
 
+	/**
+	 * Creates or returns from definition.
+	 *
+	 * @public
+	 * @static
+	 * @param {*} definition
+	 * @returns {*}
+	 */
 	static fromDefinition(definition) {
 		let tableBuilder = TableBuilder.withName(definition.TableName);
 
@@ -334,6 +346,12 @@ export default class TableBuilder {
 		return tableBuilder.table;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[TableBuilder]';
 	}
@@ -343,7 +361,7 @@ export default class TableBuilder {
  * A callback that provides the consumer with an {@link AttributeBuilder}
  *
  * @public
- * @callback TableBuilder~attributeBuilderCallback
+ * @callback AttributeBuilderCallback
  * @param {AttributeBuilder} attributeBuilder
  */
 
@@ -351,8 +369,8 @@ export default class TableBuilder {
  * A callback that provides the consumer with a {@link ComponentBuilder}
  *
  * @public
- * @callback TableBuilder~componentBuilderCallback
- * @param {AttributeBuilder} attributeBuilder
+ * @callback ComponentBuilderCallback
+ * @param {ComponentBuilder} componentBuilder
  */
 
 /**
@@ -360,6 +378,6 @@ export default class TableBuilder {
  * the configuration applies to the correct environment (i.e. {@link LambdaStage}).
  *
  * @public
- * @callback TableBuilder~stageCallback
+ * @callback StageCallback
  * @param {TableBuilder} tableBuilder
  */

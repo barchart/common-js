@@ -6,20 +6,34 @@ import Serializers from './../../schema/serialization/Serializers.js';
 import Table from './../../schema/definitions/Table.js';
 
 /**
+ * @typedef {import('../../schema/definitions/Index.js').default} Index
+ */
+
+/**
+ * @typedef {import('../../schema/definitions/Attribute.js').default} Attribute
+ */
+
+/**
  * The base class for an object which defines some sort of conditional
  * operation that targets a {@link Table}.
  *
  * @public
  * @interface
- * @param {Table} table
- * @param {Index=} index
- * @param {String=} description
  */
 export default class Action {
+	#description;
+	#index;
+	#table;
+
+	/**
+	 * @param {Table} table
+	 * @param {Index=} index
+	 * @param {string=} description
+	 */
 	constructor(table, index, description) {
-		this._table = table;
-		this._index = index || null;
-		this._description = description;
+		this.#table = table;
+		this.#index = index || null;
+		this.#description = description;
 	}
 
 	/**
@@ -29,7 +43,7 @@ export default class Action {
 	 * @returns {Table}
 	 */
 	get table() {
-		return this._table;
+		return this.#table;
 	}
 
 	/**
@@ -39,17 +53,17 @@ export default class Action {
 	 * @returns {Index|null}
 	 */
 	get index() {
-		return this._index;
+		return this.#index;
 	}
 
 	/**
 	 * A description of the action (for logging purposes).
 	 *
 	 * @public
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	get description() {
-		return this._description;
+		return this.#description;
 	}
 
 	/**
@@ -60,7 +74,7 @@ export default class Action {
 	 * @static
 	 * @param {Table} table
 	 * @param {Array<Attribute>} attributes
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	static getExpressionAttributeNames(table, attributes) {
 		const aliases = getAttributeAliasMap(table);
@@ -83,7 +97,7 @@ export default class Action {
 	 * @static
 	 * @param {Table} table
 	 * @param {Array<Attribute>} projectedAttributes - Attributes to project (i.e. select).
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	static getProjectionExpression(table, projectedAttributes) {
 		const aliases = getAttributeAliasMap(table);
@@ -101,7 +115,7 @@ export default class Action {
 	 * @static
 	 * @param {Table} table
 	 * @param {Filter} filter
-	 * @param {Number=} offset - Used to "offset" the alias counter (when calling this function many times -- e.g. query key condition and result filter)
+	 * @param {number=} offset - Used to "offset" the alias counter (when calling this function many times -- e.g. query key condition and result filter)
 	 * @returns {*}
 	 */
 	static getConditionExpressionData(table, filter, offset) {
@@ -158,6 +172,12 @@ export default class Action {
 		return data;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Action]';
 	}

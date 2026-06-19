@@ -9,20 +9,41 @@ import log4js from 'log4js';
 const logger = log4js.getLogger('common-node/messaging/routers/LocalRouter');
 
 export default class LocalRouter extends Router {
+	#requestHandlers;
+
+	/**
+	 * @param {*} suppressExpressions
+	 */
 	constructor(suppressExpressions) {
 		super(suppressExpressions);
 
-		this._requestHandlers = {};
+		this.#requestHandlers = { };
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 * @param {string} messageType
+	 * @returns {boolean}
+	 */
 	_canRoute(messageType) {
-		return this._requestHandlers.hasOwnProperty(messageType);
+		return this.#requestHandlers.hasOwnProperty(messageType);
 	}
 
-	_route(messageType, payload, timeout, forget) {
+	/**
+	 * @protected
+	 * @override
+	 * @async
+	 * @param {string} messageType
+	 * @param {*} payload
+	 * @param {number} timeout
+	 * @param {boolean} forget
+	 * @returns {Promise<*>}
+	 */
+	async _route(messageType, payload, timeout, forget) {
 		const responsePromise = promise.timeout(Promise.resolve()
 			.then(() => {
-				const handler = this._requestHandlers[messageType];
+				const handler = this.#requestHandlers[messageType];
 
 				return handler(payload, messageType);
 			}), timeout);
@@ -34,20 +55,38 @@ export default class LocalRouter extends Router {
 		return responsePromise;
 	}
 
-	_register(messageType, handler) {
-		this._requestHandlers[messageType] = handler;
+	/**
+	 * @protected
+	 * @override
+	 * @async
+	 * @param {string} messageType
+	 * @param {Function} handler
+	 * @returns {Promise<Disposable>}
+	 */
+	async _register(messageType, handler) {
+		this.#requestHandlers[messageType] = handler;
 
 		return Disposable.fromAction(() => {
-			delete this._requestHandlers[messageType];
+			delete this.#requestHandlers[messageType];
 		});
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 */
 	_onDispose() {
-		this._requestHandlers = null;
+		this.#requestHandlers = null;
 
 		logger.debug('Local router disposed');
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[LocalRouter]';
 	}

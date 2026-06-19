@@ -15,6 +15,13 @@ export default class StringSerializer extends AttributeSerializer {
 		super();
 	}
 
+	/**
+	 * Serializes a value.
+	 *
+	 * @public
+	 * @param {*} value
+	 * @returns {object}
+	 */
 	serialize(value) {
 		assert.argumentIsRequired(value, 'value', String);
 
@@ -25,6 +32,13 @@ export default class StringSerializer extends AttributeSerializer {
 		return wrapper;
 	}
 
+	/**
+	 * Deserializes a value.
+	 *
+	 * @public
+	 * @param {*} wrapper
+	 * @returns {*}
+	 */
 	deserialize(wrapper) {
 		return wrapper[DataType.STRING.code];
 	}
@@ -40,6 +54,12 @@ export default class StringSerializer extends AttributeSerializer {
 		return instance;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[StringSerializer]';
 	}

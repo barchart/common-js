@@ -1,16 +1,26 @@
+
+/**
+ * @typedef {import('./DataOperation.js').default} DataOperation
+ */
 /**
  * The result of a {@link DataOperation#process} invocation.
  *
  * @public
- * @param {DataOperation} operation - The operation.
- * @param {*} result - The operation's result.
- * @param {Array<DataOperation>} children - Operations spawned during processing of the current operation.
  */
 export default class DataOperationResult {
+	#children;
+	#operation;
+	#result;
+
+	/**
+	 * @param {DataOperation} operation - The operation.
+	 * @param {*} result - The operation's result.
+	 * @param {Array<DataOperation>} children - Operations spawned during processing of the current operation.
+	 */
 	constructor(operation, result, children) {
-		this._operation = operation;
-		this._result = result;
-		this._children = children || [ ];
+		this.#operation = operation;
+		this.#result = result;
+		this.#children = children || [ ];
 	}
 
 	/**
@@ -20,7 +30,7 @@ export default class DataOperationResult {
 	 * @returns {DataOperation}
 	 */
 	get operation() {
-		return this._operation;
+		return this.#operation;
 	}
 
 	/**
@@ -30,7 +40,7 @@ export default class DataOperationResult {
 	 * @returns {*}
 	 */
 	get result() {
-		return this._result;
+		return this.#result;
 	}
 
 	/**
@@ -40,13 +50,26 @@ export default class DataOperationResult {
 	 * @returns {Array<DataOperation>}
 	 */
 	get children() {
-		return this._children;
+		return this.#children;
 	}
 
+	/**
+	 * Returns the initial.
+	 *
+	 * @public
+	 * @static
+	 * @returns {*}
+	 */
 	static getInitial() {
 		return new DataOperationResult(null, null, [ ]);
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[DataOperationResult]';
 	}

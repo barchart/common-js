@@ -4,18 +4,30 @@ import CompressedBinarySerializer from './CompressedBinarySerializer.js';
 import DelegateSerializer from './DelegateSerializer.js';
 
 /**
+ * @typedef {import('../../definitions/Attribute.js').default} Attribute
+ */
+
+/**
  * Converts a string into (and back from) the compressed representation
  * used on a DynamoDB record.
  *
  * @public
- * @param {Attribute} attribute
  * @extends {DelegateSerializer}
  */
 export default class CompressedStringSerializer extends DelegateSerializer {
+	/**
+	 * @param {Attribute} attribute
+	 */
 	constructor(attribute) {
 		super(new CompressedBinarySerializer(attribute), serializeBuffer, deserializeBuffer);
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[CompressedStringSerializer]';
 	}

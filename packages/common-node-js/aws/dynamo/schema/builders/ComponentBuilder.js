@@ -7,13 +7,17 @@ import ComponentType from './../definitions/ComponentType.js';
  * Fluent interface for building a {@link Component}.
  *
  * @public
- * @param {string} name
  */
 export default class ComponentBuilder {
+	#component;
+
+	/**
+	 * @param {string} name
+	 */
 	constructor(name) {
 		assert.argumentIsRequired(name, 'name', String);
 
-		this._component = new Component(name, null);
+		this.#component = new Component(name, null);
 	}
 
 	/**
@@ -23,7 +27,7 @@ export default class ComponentBuilder {
 	 * @returns {Component}
 	 */
 	get component() {
-		return this._component;
+		return this.#component;
 	}
 
 	/**
@@ -36,11 +40,17 @@ export default class ComponentBuilder {
 	withComponentType(componentType) {
 		assert.argumentIsRequired(componentType, 'componentType', ComponentType, 'ComponentType');
 
-		this._component = new Component(this._component.name, componentType);
+		this.#component = new Component(this.#component.name, componentType);
 
 		return this;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[ComponentBuilder]';
 	}

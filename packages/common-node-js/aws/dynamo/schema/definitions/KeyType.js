@@ -6,10 +6,12 @@ import Enum from '@barchart/common-js/lang/Enum.js';
  *
  * @public
  * @extends {Enum}
- * @param {String} code
- * @param {String} description
  */
 export default class KeyType extends Enum {
+	/**
+	 * @param {string} code
+	 * @param {string} description
+	 */
 	constructor(code, description) {
 		super(code, description);
 	}
@@ -32,6 +34,12 @@ export default class KeyType extends Enum {
 		return keyTypeRange;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return `[KeyType (code=${this.code}, description=${this.description})]`;
 	}

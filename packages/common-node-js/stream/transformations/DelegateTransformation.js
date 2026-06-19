@@ -8,12 +8,18 @@ import Transformation from './Transformation.js';
  *
  * @public
  * @extends {Transformation}
- * @param {Function} transformDelegate - Accepts the input and returns the transformed value.
- * @param {Function=} canTransformDelegate - Accepts the input and indicates if the transform delegate will succeed, passed the same input.
- * @param {Boolean=} asynchronous - True, if the delegate might run asynchronously.
- * @param {String=} description - Describes the transformation, intended for logging purposes.
  */
 export default class DelegateTransformation extends Transformation {
+	#canTransformDelegate;
+	#synchronous;
+	#transformDelegate;
+
+	/**
+	 * @param {Function} transformDelegate - Accepts the input and returns the transformed value.
+	 * @param {Function=} canTransformDelegate - Accepts the input and indicates if the transform delegate will succeed, passed the same input.
+	 * @param {boolean=} asynchronous - True, if the delegate might run asynchronously.
+	 * @param {string=} description - Describes the transformation, intended for logging purposes.
+	 */
 	constructor(transformDelegate, canTransformDelegate, asynchronous, description) {
 		super((description || 'Delegated Transformation'));
 
@@ -21,24 +27,36 @@ export default class DelegateTransformation extends Transformation {
 		assert.argumentIsOptional(canTransformDelegate, 'canTransformDelegate', Function);
 		assert.argumentIsOptional(asynchronous, 'asynchronous', Boolean);
 
-		this._transformDelegate = transformDelegate;
-		this._canTransformDelegate = canTransformDelegate || (input => true);
+		this.#transformDelegate = transformDelegate;
+		this.#canTransformDelegate = canTransformDelegate || (input => true);
 
-		this._synchronous = !(is.boolean(asynchronous) && asynchronous);
+		this.#synchronous = !(is.boolean(asynchronous) && asynchronous);
 	}
 
+	/**
+	 * Returns the synchronous.
+	 *
+	 * @public
+	 * @returns {boolean}
+	 */
 	get synchronous() {
-		return this._synchronous;
+		return this.#synchronous;
 	}
 
 	_canTransform(input) {
-		return this._canTransformDelegate(input);
+		return this.#canTransformDelegate(input);
 	}
 
 	_transform(input) {
-		return this._transformDelegate(input);
+		return this.#transformDelegate(input);
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[DelegateTransformation]';
 	}

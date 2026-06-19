@@ -14,46 +14,61 @@ const logger = log4js.getLogger('common-node/aws/dynamo/stream/DynamoQueryReader
  *
  * @public
  * @extends {Stream.Readable}
- * @param {Query} query
- * @param {DynamoProvider} provider
- * @param {Number=} highWaterMark
- * @param {Boolean=} discrete
  */
 export default class DynamoQueryReader extends Stream.Readable {
+	#batch;
+	#capacityConsumed;
+	#discrete;
+	#error;
+	#previous;
+	#provider;
+	#queried;
+	#query;
+	#readPromise;
+	#reading;
+	#started;
+	#stopping;
+
+	/**
+	 * @param {Query} query
+	 * @param {DynamoProvider} provider
+	 * @param {number=} highWaterMark
+	 * @param {boolean=} discrete
+	 */
 	constructor(query, provider, highWaterMark, discrete) {
 		super({ objectMode: true, highWaterMark: 10 });
 
 		assert.argumentIsRequired(query, 'query', Query, 'Query');
 		assert.argumentIsRequired(provider, 'provider', DynamoProvider, 'DynamoProvider');
 
-		this._query = query;
-		this._provider = provider;
+		this.#query = query;
+		this.#provider = provider;
 
-		this._discrete = discrete || false;
+		this.#discrete = discrete || false;
 
-		this._previous = null;
-		this._queried = 0;
-		this._batch = 0;
+		this.#previous = null;
+		this.#queried = 0;
+		this.#batch = 0;
 
-		this._started = false;
-		this._stopping = false;
-		this._reading = false;
+		this.#started = false;
+		this.#stopping = false;
+		this.#reading = false;
 
-		this._capacityConsumed = 0;
+		this.#capacityConsumed = 0;
 
-		this._error = false;
+		this.#error = false;
 
-		this._readPromise = null;
+		this.#readPromise = null;
 	}
 
 	/**
 	 * Returns the number of records queried (so far).
 	 *
 	 * @public
-	 * @returns {Number}
+	 * @returns {number}
 	 */
 	get queried() {
-		return this._queried;
+		return this.#queried;
 	}
 
 	/**
@@ -62,10 +77,10 @@ export default class DynamoQueryReader extends Stream.Readable {
 	 * stop producing data soon.
 	 *
 	 * @public
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	get stopping() {
-		return this._stopping;
+		return this.#stopping;
 	}
 
 	/**
@@ -73,17 +88,17 @@ export default class DynamoQueryReader extends Stream.Readable {
 	 * and all possible records have been enqueued.
 	 *
 	 * @public
-	 * @return {Boolean}
+	 * @return {boolean}
 	 */
 	get completed() {
-		return this._previous !== null && !this._previous.startKey;
+		return this.#previous !== null && !this.#previous.startKey;
 	}
 
 	/**
 	 * Returns the RCU (read capacity units) consumed (so far).
 	 */
 	get capacityConsumed() {
-		return this._capacityConsumed;
+		return this.#capacityConsumed;
 	}
 
 	/**
@@ -92,14 +107,14 @@ export default class DynamoQueryReader extends Stream.Readable {
 	 * a null value is returned.
 	 *
 	 * @public
-	 * @returns {Object|null} - An object with one or two properties -- table key names and values (see {@link TableContainer#getPagingKey})
+	 * @returns {object|null} - An object with one or two properties -- table key names and values (see {@link TableContainer#getPagingKey})
 	 */
 	get startKey() {
-		if (!this._previous || !this._previous.startKey) {
+		if (!this.#previous || !this.#previous.startKey) {
 			return null;
 		}
 
-		return this._previous.startKey;
+		return this.#previous.startKey;
 	}
 
 	/**
@@ -107,47 +122,47 @@ export default class DynamoQueryReader extends Stream.Readable {
 	 * begin.
 	 *
 	 * @public
-	 * @param {Object} startKey - An object with one or two properties -- table key names and values (see {@link TableContainer#getPagingKey})
+	 * @param {object} startKey - An object with one or two properties -- table key names and values (see {@link TableContainer#getPagingKey})
 	 */
 	set startKey(startKey) {
 		assert.argumentIsRequired(startKey, 'startKey', Object);
 
-		if (this._started) {
+		if (this.#started) {
 			throw new Error('Once the stream has started, the start key cannot be set.');
 		}
 
-		if (!this._previous) {
-			this._previous = {};
+		if (!this.#previous) {
+			this.#previous = {};
 		}
 
-		this._previous.startKey = startKey;
+		this.#previous.startKey = startKey;
 	}
 
 	_read(size) {
-		if (this._reading) {
+		if (this.#reading) {
 			return;
 		}
 
-		if (this._error) {
+		if (this.#error) {
 			logger.error('Unable to continue reading, an error was encountered.');
 			return;
 		}
 
-		if (this._started) {
+		if (this.#started) {
 			logger.debug('Query stream resumed');
 		} else {
 			logger.debug('Query stream started');
 
-			this._started = true;
+			this.#started = true;
 		}
 
-		this._reading = true;
+		this.#reading = true;
 
 		const queryChunkRecursive = () => {
-			if (this._stopping || this.completed) {
-				this._reading = false;
+			if (this.#stopping || this.completed) {
+				this.#reading = false;
 
-				if (this._stopping) {
+				if (this.#stopping) {
 					logger.debug('Query stream stopping, stream stopped');
 				} else {
 					logger.debug('Query stream stopping, no more results');
@@ -157,50 +172,50 @@ export default class DynamoQueryReader extends Stream.Readable {
 			} else {
 				let startKey;
 
-				if (this._previous !== null && this._previous.startKey) {
-					startKey = this._previous.startKey;
+				if (this.#previous !== null && this.#previous.startKey) {
+					startKey = this.#previous.startKey;
 				} else {
 					startKey = null;
 				}
 
-				const currentBatch = this._batch = this._batch + 1;
+				const currentBatch = this.#batch = this.#batch + 1;
 
 				logger.debug(`Starting batch [ ${currentBatch} ]`);
 
-				this._readPromise = this._provider.queryChunk(this._query, startKey)
+				this.#readPromise = this.#provider.queryChunk(this.#query, startKey)
 					.then((results) => {
-						this._readPromise = null;
+						this.#readPromise = null;
 
-						this._previous = results;
+						this.#previous = results;
 
 						if (results.results.length !== 0) {
-							this._queried = this._queried + results.results.length;
+							this.#queried = this.#queried + results.results.length;
 
 							if (results.capacityConsumed) {
-								this._capacityConsumed = this._capacityConsumed + results.capacityConsumed;
+								this.#capacityConsumed = this.#capacityConsumed + results.capacityConsumed;
 							}
 
-							if (this._discrete) {
-								this._reading = results.results.reduce((accumulator, item) => {
+							if (this.#discrete) {
+								this.#reading = results.results.reduce((accumulator, item) => {
 									return this.push(item);
-								}, this._reading);
+								}, this.#reading);
 							} else {
-								this._reading = this.push(results.results);
+								this.#reading = this.push(results.results);
 							}
 						}
 
 						logger.debug(`Completed batch [ ${currentBatch} ]`);
 
-						if (this._reading) {
+						if (this.#reading) {
 							queryChunkRecursive();
 						} else {
 							logger.debug('Query stream paused');
 						}
 					}).catch((e) => {
-						this._readPromise = null;
+						this.#readPromise = null;
 
-						this._reading = false;
-						this._error = true;
+						this.#reading = false;
+						this.#error = true;
 
 						this.push(null);
 
@@ -221,17 +236,17 @@ export default class DynamoQueryReader extends Stream.Readable {
 	 * stopped, and no more data will be produced, the returned promise resolves.
 	 *
 	 * @public
-	 * @return {Promise<Object|null>}
+	 * @return {Promise<object|null>}
 	 */
 	stop() {
-		this._stopping = true;
+		this.#stopping = true;
 
 		let readPromise;
 
-		if (this._readPromise === null) {
+		if (this.#readPromise === null) {
 			readPromise = Promise.resolve();
 		} else {
-			readPromise = this._readPromise;
+			readPromise = this.#readPromise;
 		}
 
 		return readPromise.then(() => {
@@ -239,6 +254,12 @@ export default class DynamoQueryReader extends Stream.Readable {
 		});
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[DynamoQueryReader]';
 	}

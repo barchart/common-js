@@ -6,33 +6,38 @@ import EncryptionType from './EncryptionType.js';
  * The definition an encryption scheme to use for data at rest.
  *
  * @public
- * @param {EncryptionType} type
- * @param {String} key
  */
 export default class Encryptor {
+	#key;
+	#type;
+
+	/**
+	 * @param {EncryptionType=} type
+	 * @param {string=} key
+	 */
 	constructor(type, key) {
-		this._type = type || null;
-		this._key = key;
+		this.#type = type || null;
+		this.#key = key;
 	}
 
 	/**
 	 * The algorithm type.
 	 *
 	 * @public
-	 * @returns {EncryptionType}
+	 * @returns {EncryptionType|null}
 	 */
 	get type() {
-		return this._type;
+		return this.#type;
 	}
 
 	/**
 	 * The key.
 	 *
 	 * @public
-	 * @returns {String}
+	 * @returns {string|undefined}
 	 */
 	get key() {
-		return this._key;
+		return this.#key;
 	}
 
 	/**
@@ -41,15 +46,21 @@ export default class Encryptor {
 	 * @public
 	 */
 	validate() {
-		if (!(this._type instanceof EncryptionType)) {
+		if (!(this.#type instanceof EncryptionType)) {
 			throw new Error('Encryption type is invalid.');
 		}
 
-		if (!(is.string(this._password)) || this._password.length === 0) {
+		if (!(is.string(this.#key)) || this.#key.length === 0) {
 			throw new Error('Password is invalid.');
 		}
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return `[Encryptor]`;
 	}

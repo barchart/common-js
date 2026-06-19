@@ -22,18 +22,30 @@ const encodingTypes = {
 	utf8: 'utf-8'
 };
 
+
+/**
+ * @typedef {import('stream').Readable} Readable
+ */
+
 /**
  * Wrapper for Amazon's S3 SDK.
  *
  * @public
  * @extends Disposable
- * @param {object} configuration
- * @param {string} configuration.region
- * @param {string=} configuration.apiVersion
- * @param {string=} configuration.bucket
- * @param {string=} configuration.folder
  */
 export default class S3Provider extends Disposable {
+	#configuration;
+	#s3;
+	#startPromise;
+	#started;
+
+	/**
+	 * @param {object} configuration
+	 * @param {string} configuration.region
+	 * @param {string=} configuration.apiVersion
+	 * @param {string=} configuration.bucket
+	 * @param {string=} configuration.folder
+	 */
 	constructor(configuration) {
 		super();
 
@@ -43,12 +55,12 @@ export default class S3Provider extends Disposable {
 		assert.argumentIsOptional(configuration.bucket, 'configuration.bucket', String);
 		assert.argumentIsOptional(configuration.folder, 'configuration.folder', String);
 
-		this._configuration = configuration;
+		this.#configuration = configuration;
 
-		this._s3 = null;
+		this.#s3 = null;
 
-		this._startPromise = null;
-		this._started = false;
+		this.#startPromise = null;
+		this.#started = false;
 	}
 
 	/**
@@ -57,23 +69,23 @@ export default class S3Provider extends Disposable {
 	 *
 	 * @public
 	 * @async
-	 * @returns {Promise<Boolean>}
+	 * @returns {Promise<boolean>}
 	 */
 	async start() {
 		if (this.disposed) {
 			return Promise.reject('Unable to start, the S3 provider has been disposed.');
 		}
 
-		if (this._startPromise === null) {
-			this._startPromise = (async () => {
+		if (this.#startPromise === null) {
+			this.#startPromise = (async () => {
 				try {
-					this._s3 = new S3Client({ apiVersion: this._configuration.apiVersion || '2006-03-01', region: this._configuration.region });
+					this.#s3 = new S3Client({ apiVersion: this.#configuration.apiVersion || '2006-03-01', region: this.#configuration.region });
 
 					logger.info('The S3 provider has started');
 
-					this._started = true;
+					this.#started = true;
 
-					return this._started;
+					return this.#started;
 				} catch (e) {
 					logger.error('The S3 provider failed to start', e);
 
@@ -82,7 +94,7 @@ export default class S3Provider extends Disposable {
 			})();
 		}
 
-		return this._startPromise;
+		return this.#startPromise;
 	}
 
 	/**
@@ -96,7 +108,7 @@ export default class S3Provider extends Disposable {
 			throw new Error('The S3 provider has been disposed.');
 		}
 
-		return object.clone(this._configuration);
+		return object.clone(this.#configuration);
 	}
 
 	/**
@@ -108,7 +120,7 @@ export default class S3Provider extends Disposable {
 	 * @param {string=} bucket
 	 * @param {number=} maximum
 	 * @param {string=} start
-	 * @returns {Promise<Object[]>}
+	 * @returns {Promise<object[]>}
 	 */
 	async getBucketContents(prefix, bucket, maximum, start) {
 		assert.argumentIsOptional(prefix, 'prefix', String);
@@ -116,7 +128,7 @@ export default class S3Provider extends Disposable {
 		assert.argumentIsOptional(maximum, 'maximum', Number);
 		assert.argumentIsOptional(start, 'start', String);
 
-		checkReady.call(this);
+		this.#checkReady();
 
 		const getBucketContentsRecursive = async (continuationToken) => {
 			const payload = { };
@@ -124,7 +136,7 @@ export default class S3Provider extends Disposable {
 			if (bucket) {
 				payload.Bucket = bucket;
 			} else {
-				payload.Bucket = this._configuration.bucket;
+				payload.Bucket = this.#configuration.bucket;
 			}
 
 			if (prefix) {
@@ -140,7 +152,7 @@ export default class S3Provider extends Disposable {
 			}
 
 			try {
-				const data = await this._s3.send(new ListObjectsV2Command(payload));
+				const data = await this.#s3.send(new ListObjectsV2Command(payload));
 
 				const results = data.Contents.map((item) => {
 					const transformed = { };
@@ -175,7 +187,7 @@ export default class S3Provider extends Disposable {
 	 * @async
 	 * @param {string} operation
 	 * @param {string} key
-	 * @param {Number=} expires
+	 * @param {number=} expires
 	 * @returns {Promise<string>}
 	 */
 	async getSignedUrl(operation, key, expires) {
@@ -183,11 +195,11 @@ export default class S3Provider extends Disposable {
 		assert.argumentIsRequired(key, 'key', String);
 		assert.argumentIsOptional(expires, 'expires', Number);
 
-		checkReady.call(this);
+		this.#checkReady();
 
 		const payload = { };
 
-		payload.Bucket = this._configuration.bucket;
+		payload.Bucket = this.#configuration.bucket;
 		payload.Key = key;
 
 		const options = { };
@@ -197,7 +209,7 @@ export default class S3Provider extends Disposable {
 		}
 
 		try {
-			return await getS3SignedUrl(this._s3, getSignedUrlCommand(operation, payload), options);
+			return await getS3SignedUrl(this.#s3, getSignedUrlCommand(operation, payload), options);
 		} catch (e) {
 			logger.error('S3 failed to get signed url', e);
 
@@ -212,13 +224,13 @@ export default class S3Provider extends Disposable {
 	 * @public
 	 * @async
 	 * @param {string} filename
-	 * @param {string|Buffer|Object} content - The content to upload
+	 * @param {string|Buffer|object} content - The content to upload
 	 * @param {string=} mimeType - Defaults to "text/plain"
 	 * @param {boolean=} secure - Indicates if the "private" ACL applies to the object
-	 * @returns {Promise<Object>}
+	 * @returns {Promise<object>}
 	 */
 	async upload(filename, content, mimeType, secure) {
-		return this.uploadObject(this._configuration.bucket, S3Provider.getQualifiedFilename(this._configuration.folder, filename), content, mimeType, secure);
+		return this.uploadObject(this.#configuration.bucket, S3Provider.getQualifiedFilename(this.#configuration.folder, filename), content, mimeType, secure);
 	}
 
 	/**
@@ -228,13 +240,13 @@ export default class S3Provider extends Disposable {
 	 * @async
 	 * @param {string} bucket
 	 * @param {string} filename
-	 * @param {string|Buffer|Object} content - The content to upload
+	 * @param {string|Buffer|object} content - The content to upload
 	 * @param {string=} mimeType - Defaults to "text/plain"
 	 * @param {boolean|string=} secure - Indicates if the "private" ACL applies to the object
-	 * @returns {Promise<Object>}
+	 * @returns {Promise<object>}
 	 */
 	async uploadObject(bucket, filename, content, mimeType, secure) {
-		checkReady.call(this);
+		this.#checkReady();
 
 		let acl;
 
@@ -250,7 +262,7 @@ export default class S3Provider extends Disposable {
 			mimeTypeToUse = mimeType;
 		} else if (is.string(content)) {
 			mimeTypeToUse = mimeTypes.text;
-		} else if (is.object) {
+		} else if (is.object(content)) {
 			mimeTypeToUse = mimeTypes.json;
 		} else {
 			throw new Error('Unable to automatically determine MIME type for file.');
@@ -272,7 +284,7 @@ export default class S3Provider extends Disposable {
 		};
 
 		const upload = new Upload({
-			client: this._s3,
+			client: this.#s3,
 			params,
 			partSize: options.partSize,
 			queueSize: options.queueSize
@@ -296,14 +308,14 @@ export default class S3Provider extends Disposable {
 	 * @async
 	 * @param {string} bucket
 	 * @param {string} key
-	 * @param {stream} reader
-	 * @return {Promise<Object>}
+	 * @param {Readable} reader
+	 * @return {Promise<object>}
 	 */
 	async uploadStream(bucket, key, reader) {
-		checkReady.call(this);
+		this.#checkReady();
 
 		return new Upload({
-			client: this._s3,
+			client: this.#s3,
 			params: { Bucket: bucket, Key: key, Body: reader }
 		}).done();
 	}
@@ -315,10 +327,10 @@ export default class S3Provider extends Disposable {
 	 * @public
 	 * @async
 	 * @param {string} filename
-	 * @returns {Promise<Object>}
+	 * @returns {Promise<object>}
 	 */
 	async download(filename) {
-		return this.downloadObject(this._configuration.bucket, S3Provider.getQualifiedFilename(this._configuration.folder, filename));
+		return this.downloadObject(this.#configuration.bucket, S3Provider.getQualifiedFilename(this.#configuration.folder, filename));
 	}
 
 	/**
@@ -328,13 +340,13 @@ export default class S3Provider extends Disposable {
 	 * @async
 	 * @param {string} bucket
 	 * @param {string} filename
-	 * @returns {Promise<Object>}
+	 * @returns {Promise<object>}
 	 */
 	async downloadObject(bucket, filename) {
-		checkReady.call(this);
+		this.#checkReady();
 
 		try {
-			const data = await this._s3.send(new GetObjectCommand(getParameters(bucket, filename)));
+			const data = await this.#s3.send(new GetObjectCommand(getParameters(bucket, filename)));
 			const buffer = await data.Body.transformToByteArray();
 
 			return ContentHandler.getHandlerFor(data.ContentType).fromBuffer(Buffer.from(buffer));
@@ -352,12 +364,12 @@ export default class S3Provider extends Disposable {
 	 * @async
 	 * @param {string} bucket
 	 * @param {string} key
-	 * @return {Promise<stream.Readable>}
+	 * @return {Promise<Readable>}
 	 */
 	async createReadStream(bucket, key) {
-		checkReady.call(this);
+		this.#checkReady();
 
-		const data = await this._s3.send(new GetObjectCommand({ Bucket: bucket, Key: key }));
+		const data = await this.#s3.send(new GetObjectCommand({ Bucket: bucket, Key: key }));
 
 		return data.Body;
 	}
@@ -369,13 +381,13 @@ export default class S3Provider extends Disposable {
 	 * @async
 	 * @param {string} bucket
 	 * @param {string} filename
-	 * @returns {Promise<Object>}
+	 * @returns {Promise<object>}
 	 */
 	async deleteObject(bucket, filename) {
-		checkReady.call(this);
+		this.#checkReady();
 
 		try {
-			const data = await this._s3.send(new DeleteObjectCommand(getParameters(bucket, filename)));
+			const data = await this.#s3.send(new DeleteObjectCommand(getParameters(bucket, filename)));
 
 			return { data: data };
 		} catch (e) {
@@ -392,10 +404,10 @@ export default class S3Provider extends Disposable {
 	 * @public
 	 * @async
 	 * @param {string} filename
-	 * @returns {Promise<Object>}
+	 * @returns {Promise<object>}
 	 */
 	async getMetadata(filename) {
-		return this.getMetadataObject(this._configuration.bucket, S3Provider.getQualifiedFilename(this._configuration.folder, filename));
+		return this.getMetadataObject(this.#configuration.bucket, S3Provider.getQualifiedFilename(this.#configuration.folder, filename));
 	}
 
 	/**
@@ -405,16 +417,16 @@ export default class S3Provider extends Disposable {
 	 * @async
 	 * @param {string} bucket
 	 * @param {string} filename
-	 * @returns {Promise<Object>}
+	 * @returns {Promise<object>}
 	 */
 	async getMetadataObject(bucket, filename) {
-		checkReady.call(this);
+		this.#checkReady();
 
 		assert.argumentIsRequired(bucket, 'bucket', String);
 		assert.argumentIsRequired(filename, 'filename', String);
 
 		try {
-			const data = await this._s3.send(new HeadObjectCommand(getParameters(bucket, filename)));
+			const data = await this.#s3.send(new HeadObjectCommand(getParameters(bucket, filename)));
 
 			return { data: data };
 		} catch (e) {
@@ -427,8 +439,8 @@ export default class S3Provider extends Disposable {
 	/**
 	 * Creates a filename that uses a folder.
 	 *
-	 * @static
 	 * @public
+	 * @static
 	 * @param {...string|string[]} components
 	 * @returns {string}
 	 */
@@ -455,19 +467,26 @@ export default class S3Provider extends Disposable {
 		}, [ ]).join('/');
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[S3Provider]';
 	}
-}
 
-function checkReady() {
-	if (this.disposed) {
-		throw new Error('The S3 provider has been disposed.');
-	}
 
-	if (!this._started) {
-		throw new Error('The S3 provider has not been started.');
-	}
+	#checkReady() {
+		if (this.disposed) {
+			throw new Error('The S3 provider has been disposed.');
+			}
+
+			if (!this.#started) {
+				throw new Error('The S3 provider has not been started.');
+			}
+		}
 }
 
 function getParameters(bucket, filename, additional) {

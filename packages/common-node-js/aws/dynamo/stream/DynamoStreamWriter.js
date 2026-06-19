@@ -14,12 +14,19 @@ const logger = log4js.getLogger('common-node/aws/dynamo/stream/DynamoStreamWrite
  *
  * @public
  * @extends {Stream.Writable}
- * @param {Table} table - The table schema which items must conform to.
- * @param {DynamoProvider} provider - The provider used to write records.
- * @param {Boolean=} remove - If true, the items are deleted (instead of written) to the database.
- * @param {Boolean=} explicit - If true, attribute derivation is skipped (only applies when remove is true).
  */
 export default class DynamoStreamWriter extends Stream.Writable {
+	#delegateFactory;
+	#explicit;
+	#provider;
+	#table;
+
+	/**
+	 * @param {Table} table - The table schema which items must conform to.
+	 * @param {DynamoProvider} provider - The provider used to write records.
+	 * @param {boolean=} remove - If true, the items are deleted (instead of written) to the database.
+	 * @param {boolean=} explicit - If true, attribute derivation is skipped (only applies when remove is true).
+	 */
 	constructor(table, provider, remove, explicit) {
 		super({ objectMode: true, highWaterMark: 100 });
 
@@ -28,26 +35,26 @@ export default class DynamoStreamWriter extends Stream.Writable {
 		assert.argumentIsOptional(remove, 'remove', Boolean);
 		assert.argumentIsOptional(explicit, 'explicit', Boolean);
 
-		this._table = table;
-		this._provider = provider;
+		this.#table = table;
+		this.#provider = provider;
 
 		let delegateFactory;
 
 		if (is.boolean(remove) && remove) {
-			delegateFactory = getDeleteDelegate;
+			delegateFactory = this.#getDeleteDelegate.bind(this);
 		} else {
-			delegateFactory = getCreateDelegate;
+			delegateFactory = this.#getCreateDelegate.bind(this);
 		}
 
-		this._delegateFactory = delegateFactory;
+		this.#delegateFactory = delegateFactory;
 
-		this._explicit = is.boolean(explicit) && explicit;
+		this.#explicit = is.boolean(explicit) && explicit;
 	}
 
 	_write(chunk, encoding, callback) {
-		let delegate = this._delegateFactory(chunk, this._explicit);
+		let delegate = this.#delegateFactory(chunk, this.#explicit);
 
-		delegate.call(this._provider, chunk, this._table)
+		delegate.call(this.#provider, chunk, this.#table)
 			.then(() => {
 				callback(null);
 			}).catch((e) => {
@@ -58,23 +65,30 @@ export default class DynamoStreamWriter extends Stream.Writable {
 			});
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[DynamoStreamWriter]';
 	}
-}
 
-function getCreateDelegate(chunk, explicit) {
-	if (is.array(chunk)) {
-		return this._provider.createItems;
-	} else {
-		return this._provider.saveItem;
-	}
-}
 
-function getDeleteDelegate(chunk, explicit) {
-	if (is.array(chunk)) {
-		return (items, table) => this._provider.deleteItems(items, table, explicit);
-	} else {
-		return (items, table) => this._provider.deleteItem(items, table, explicit);
-	}
+	#getCreateDelegate(chunk) {
+		if (is.array(chunk)) {
+			return this.#provider.createItems;
+			} else {
+				return this.#provider.saveItem;
+			}
+		}
+
+	#getDeleteDelegate(chunk, explicit) {
+		if (is.array(chunk)) {
+			return (items, table) => this.#provider.deleteItems(items, table, explicit);
+			} else {
+				return (items, table) => this.#provider.deleteItem(items, table, explicit);
+			}
+		}
 }

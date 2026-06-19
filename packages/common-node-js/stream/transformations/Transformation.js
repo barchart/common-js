@@ -12,15 +12,19 @@ const logger = log4js.getLogger('common-node/streams/Transformation');
  * @public
  * @interface
  * @extends {Disposable}
- * @param {String=} description - Describes the transformation, intended for logging purposes.
  */
 export default class Transformation extends Disposable {
+	#description;
+
+	/**
+	 * @param {string} description - Describes the transformation, intended for logging purposes.
+	 */
 	constructor(description) {
 		super();
 
 		assert.argumentIsRequired(description, 'description', String);
 
-		this._description = description;
+		this.#description = description;
 	}
 
 	/**
@@ -28,7 +32,7 @@ export default class Transformation extends Disposable {
 	 * functions will execute synchronously.
 	 *
 	 * @public
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	get synchronous() {
 		return true;
@@ -39,7 +43,7 @@ export default class Transformation extends Disposable {
 	 * {@link Transformation#transform} function.
 	 *
 	 * @param {*} input
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	canTransform(input) {
 		return this._canTransform(input);
@@ -49,7 +53,7 @@ export default class Transformation extends Disposable {
 	 * @protected
 	 * @abstract
 	 * @param {*} input
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	_canTransform(input) {
 		return true;
@@ -63,10 +67,10 @@ export default class Transformation extends Disposable {
 	 */
 	transform(input) {
 		if (!this._canTransform(input)) {
-			logger.error(`Unable to perform transformation [ ${this._description} ]`);
+			logger.error(`Unable to perform transformation [ ${this.#description} ]`);
 			logger.error(input);
 
-			throw new Error(`Unable to perform transformation [ ${this._description} ]`);
+			throw new Error(`Unable to perform transformation [ ${this.#description} ]`);
 		}
 
 		return this._transform(input);
@@ -76,16 +80,26 @@ export default class Transformation extends Disposable {
 	 * @protected
 	 * @abstract
 	 * @param {*} input
-	 * @returns {Boolean}
+	 * @returns {*}
 	 */
 	_transform(input) {
 		return input;
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 */
 	_onDispose() {
 		return;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Transformation]';
 	}

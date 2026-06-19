@@ -16,7 +16,6 @@ const S3_TTL_FOR_SIGNED_URL_IN_SECONDS = 60;
  *
  * @public
  * @extends {LambdaResponseGenerator}
- * @param {Object} options
  */
 export default class LambdaResponseGeneratorForS3 extends LambdaResponseGenerator {
 	constructor() {
@@ -80,6 +79,12 @@ export default class LambdaResponseGeneratorForS3 extends LambdaResponseGenerato
 			});
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[LambdaResponseGeneratorForS3]';
 	}

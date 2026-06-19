@@ -8,31 +8,41 @@ import Stream from 'stream';
  *
  * @public
  * @extends {Stream.Writable}
- * @param {Object=} options
  */
 export default class EmptyWriteStream extends Stream.Writable {
+	#counter;
+
+	/**
+	 * @param {object=} options
+	 */
 	constructor(options) {
 		super(object.merge({ objectMode: true }, (options || { })));
 
-		this._counter = 0;
+		this.#counter = 0;
 	}
 
 	/**
 	 * The number of empty "writes" which have been made.
 	 *
 	 * @public
-	 * @returns {Number}
+	 * @returns {number}
 	 */
 	get count() {
-		return this._counter;
+		return this.#counter;
 	}
 
 	_write(chunk, encoding, callback) {
-		this._counter = this._counter + 1;
+		this.#counter = this.#counter + 1;
 
 		callback(null);
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[EmptyWriteStream]';
 	}

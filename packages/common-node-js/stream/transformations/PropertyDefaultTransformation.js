@@ -8,15 +8,19 @@ import PropertyTransformation from './PropertyTransformation.js';
  *
  * @public
  * @extends {PropertyTransformation}
- * @param {String} propertyName - The name of the property to read inspect and set to a default value.
- * @param {*} defaultValue - The value to assign to a missing or undefined property.
- * @param {String=} description - Describes the transformation, intended for logging purposes.
  */
 export default class PropertyDefaultTransformation extends PropertyTransformation {
+	#defaultValue;
+
+	/**
+	 * @param {string} propertyName - The name of the property to read inspect and set to a default value.
+	 * @param {*} defaultValue - The value to assign to a missing or undefined property.
+	 * @param {string=} description - Describes the transformation, intended for logging purposes.
+	 */
 	constructor(defaultValue, propertyName, description) {
 		super(propertyName, propertyName, (description || `Property Transformation (${propertyName})`));
 
-		this._defaultValue = defaultValue;
+		this.#defaultValue = defaultValue;
 	}
 
 	_canTransform(input) {
@@ -24,13 +28,19 @@ export default class PropertyDefaultTransformation extends PropertyTransformatio
 	}
 
 	_transformValue(value) {
-		if (is.undefined(value)) {
-			return this._defaultValue;
+		if (is.undef(value)) {
+			return this.#defaultValue;
 		} else {
 			return value;
 		}
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[PropertyDefaultTransformation]';
 	}

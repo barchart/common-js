@@ -58,6 +58,12 @@ export default class LambdaMessageValidatorDst extends LambdaMessageValidator {
 		return valid;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[LambdaMessageValidatorDst]';
 	}

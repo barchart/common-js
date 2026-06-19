@@ -7,32 +7,48 @@ import DelegateTransformation from './DelegateTransformation.js';
  *
  * @public
  * @extends {PropertyTransformation}
- * @param {String} inputPropertyName - The name of the property to read from.
- * @param {Function} transformDelegate - Accepts the input property value and returns the transformed value.
- * @param {String=} outputPropertyName - The name of the property to write to.
- * @param {Function=} canTransformDelegate - Accepts the input property value and indicates if the transform delegate will succeed, passed the same value.
- * @param {Boolean=} asynchronous - True, if the delegate might run asynchronously.
- * @param {String=} description - Describes the transformation, intended for logging purposes.
  */
 export default class PropertyDelegateTransformation extends PropertyTransformation {
+	#delegateTransformation;
+
+	/**
+	 * @param {string} inputPropertyName - The name of the property to read from.
+	 * @param {Function} transformDelegate - Accepts the input property value and returns the transformed value.
+	 * @param {string=} outputPropertyName - The name of the property to write to.
+	 * @param {Function=} canTransformDelegate - Accepts the input property value and indicates if the transform delegate will succeed, passed the same value.
+	 * @param {boolean=} asynchronous - True, if the delegate might run asynchronously.
+	 * @param {string=} description - Describes the transformation, intended for logging purposes.
+	 */
 	constructor(inputPropertyName, transformDelegate, outputPropertyName, canTransformDelegate, asynchronous, description) {
 		super(inputPropertyName, outputPropertyName, (description || `Delegated Property Transformation (${inputPropertyName}${(outputPropertyName ? ' to ' + outputPropertyName : '')})`));
 
-		this._delegateTransformation = new DelegateTransformation(transformDelegate, canTransformDelegate, asynchronous);
+		this.#delegateTransformation = new DelegateTransformation(transformDelegate, canTransformDelegate, asynchronous);
 	}
 
+	/**
+	 * Returns the synchronous.
+	 *
+	 * @public
+	 * @returns {boolean}
+	 */
 	get synchronous() {
-		return this._delegateTransformation.synchronous;
+		return this.#delegateTransformation.synchronous;
 	}
 
 	_canTransformValue(value) {
-		return this._delegateTransformation.canTransform(value);
+		return this.#delegateTransformation.canTransform(value);
 	}
 
 	_transformValue(value) {
-		return this._delegateTransformation.transform(value);
+		return this.#delegateTransformation.transform(value);
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[PropertyDelegateTransformation]';
 	}

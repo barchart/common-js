@@ -8,19 +8,26 @@ import ComponentType from './ComponentType.js';
  * @public
  */
 export default class Component {
+	#componentType;
+	#name;
+
+	/**
+	 * @param {string} name
+	 * @param {*} componentType
+	 */
 	constructor(name, componentType) {
-		this._name = name;
-		this._componentType = componentType;
+		this.#name = name;
+		this.#componentType = componentType;
 	}
 
 	/**
 	 * Name of the component.
 	 *
 	 * @public
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	get name() {
-		return this._name;
+		return this.#name;
 	}
 
 	/**
@@ -30,7 +37,7 @@ export default class Component {
 	 * @returns {ComponentType}
 	 */
 	get componentType() {
-		return this._componentType;
+		return this.#componentType;
 	}
 
 	/**
@@ -39,16 +46,22 @@ export default class Component {
 	 * @public
 	 */
 	validate() {
-		if (!is.string(this._name) || this._name.length < 1) {
+		if (!is.string(this.#name) || this.#name.length < 1) {
 			throw new Error('Component name is invalid.');
 		}
 
-		if (!(this._componentType instanceof ComponentType)) {
+		if (!(this.#componentType instanceof ComponentType)) {
 			throw new Error('Component type is invalid.');
 		}
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
-		return `[Component (name=${this._name})]`;
+		return `[Component (name=${this.#name})]`;
 	}
 }

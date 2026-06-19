@@ -4,18 +4,25 @@ import Key from './../definitions/Key.js';
 import KeyType from './../definitions/KeyType.js';
 
 /**
+ * @typedef {import('./TableBuilder.js').default} TableBuilder
+ */
+
+/**
  * Fluent interface for building a {@link Key}.
  *
  * @public
- * @param {string} name
- * @param {TableBuilder} parent
  */
 export default class KeyBuilder {
+	#key;
+
+	/**
+	 * @param {string} name
+	 * @param {TableBuilder} parent
+	 */
 	constructor(name, parent) {
 		assert.argumentIsRequired(name, 'name', String);
 
-		this._key = new Key(getAttribute(name, parent), null);
-		this._parent = parent;
+		this.#key = new Key(getAttribute(name, parent), null);
 	}
 
 	/**
@@ -25,7 +32,7 @@ export default class KeyBuilder {
 	 * @returns {Key}
 	 */
 	get key() {
-		return this._key;
+		return this.#key;
 	}
 
 	/**
@@ -38,11 +45,17 @@ export default class KeyBuilder {
 	withKeyType(keyType) {
 		assert.argumentIsRequired(keyType, 'keyType', KeyType, 'KeyType');
 
-		this._key = new Key(this._key.attribute, keyType);
+		this.#key = new Key(this.#key.attribute, keyType);
 
 		return this;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[KeyBuilder]';
 	}

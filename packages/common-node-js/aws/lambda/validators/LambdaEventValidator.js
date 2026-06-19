@@ -22,6 +22,11 @@ const logger = log4js.getLogger('common-node/aws/lambda/validators/LambdaEventVa
  * @public
  */
 export default class LambdaEventValidator extends LambdaValidator {
+	#messageValidators;
+
+	/**
+	 * @param {*} messageValidators
+	 */
 	constructor(messageValidators) {
 		super();
 
@@ -29,7 +34,7 @@ export default class LambdaEventValidator extends LambdaValidator {
 			assert.argumentIsArray(messageValidators, 'messageValidators', LambdaMessageValidator, 'LambdaMessageValidator');
 		}
 
-		this._messageValidators = messageValidators || [ ];
+		this.#messageValidators = messageValidators || [ ];
 	}
 
 	/**
@@ -42,7 +47,7 @@ export default class LambdaEventValidator extends LambdaValidator {
 	addMessageValidator(messageValidator) {
 		assert.argumentIsRequired(messageValidator, 'messageValidator', LambdaMessageValidator, 'LambdaMessageValidator');
 
-		this._messageValidators.push(messageValidator);
+		this.#messageValidators.push(messageValidator);
 	}
 
 	/**
@@ -51,13 +56,13 @@ export default class LambdaEventValidator extends LambdaValidator {
 	 * @public
 	 * @async
 	 * @override
-	 * @param {Object} event
-	 * @returns {Promise<Boolean>}
+	 * @param {object} event
+	 * @returns {Promise<boolean>}
 	 */
 	async validate(event) {
 		return Promise.resolve()
 			.then(() => {
-				if (this._messageValidators.length === 0) {
+				if (this.#messageValidators.length === 0) {
 					return true;
 				}
 
@@ -86,7 +91,7 @@ export default class LambdaEventValidator extends LambdaValidator {
 						messageId = null;
 					}
 
-					const promises = this._messageValidators.map((messageValidator, i) => {
+					const promises = this.#messageValidators.map((messageValidator, i) => {
 						return messageValidator.validate(name, message, event, trigger, messageId)
 							.then((valid) => {
 								if (!valid) {
@@ -112,6 +117,12 @@ export default class LambdaEventValidator extends LambdaValidator {
 			});
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[LambdaEventValidator]';
 	}

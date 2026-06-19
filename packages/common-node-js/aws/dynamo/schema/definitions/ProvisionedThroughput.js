@@ -4,33 +4,38 @@ import * as is from '@barchart/common-js/lang/is.js';
  * The throughput of a {@link Table} or {@link Index}.
  *
  * @public
- * @param {Number} read - The read capacity units.
- * @param {Number} write - The write capacity units.
  */
 export default class ProvisionedThroughput {
+	#read;
+	#write;
+
+	/**
+	 * @param {number} read - The read capacity units.
+	 * @param {number} write - The write capacity units.
+	 */
 	constructor(read, write) {
-		this._read = read;
-		this._write = write;
+		this.#read = read;
+		this.#write = write;
 	}
 
 	/**
 	 * Read capacity units.
 	 *
 	 * @public
-	 * @returns {Number}
+	 * @returns {number}
 	 */
 	get read() {
-		return this._read;
+		return this.#read;
 	}
 
 	/**
 	 * Write capacity units.
 	 *
 	 * @public
-	 * @returns {Number}
+	 * @returns {number}
 	 */
 	get write() {
-		return this._write;
+		return this.#write;
 	}
 
 	/**
@@ -39,19 +44,19 @@ export default class ProvisionedThroughput {
 	 * @public
 	 */
 	validate() {
-		if (!is.integer(this._read)) {
+		if (!is.integer(this.#read)) {
 			throw new Error('Read capacity must be an integer.');
 		}
 
-		if (this._read < 0) {
+		if (this.#read < 0) {
 			throw new Error('Read capacity must be positive');
 		}
 
-		if (!is.integer(this._write)) {
+		if (!is.integer(this.#write)) {
 			throw new Error('Write capacity must be an integer.');
 		}
 
-		if (this._write < 0) {
+		if (this.#write < 0) {
 			throw new Error('Write capacity must be positive');
 		}
 	}
@@ -60,12 +65,12 @@ export default class ProvisionedThroughput {
 	 * Generates an object which is suitable for use by the AWS SDK.
 	 *
 	 * @public
-	 * @returns {Object}
+	 * @returns {object}
 	 */
 	toProvisionedThroughputSchema() {
 		return {
-			ReadCapacityUnits: this._read,
-			WriteCapacityUnits: this._write
+			ReadCapacityUnits: this.#read,
+			WriteCapacityUnits: this.#write
 		};
 	}
 
@@ -75,12 +80,18 @@ export default class ProvisionedThroughput {
 	 *
 	 * @public
 	 * @param {ProvisionedThroughput} other - The provisioned throughput level to compare.
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	equals(other) {
-		return other === this || (other instanceof ProvisionedThroughput && this._read === other.read && this._write === other.write);
+		return other === this || (other instanceof ProvisionedThroughput && this.#read === other.read && this.#write === other.write);
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[ProvisionedThroughput]';
 	}

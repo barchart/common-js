@@ -21,67 +21,77 @@ const DEFAULT_REFRESH_INTERVAL_MILLISECONDS = 5 * 60 * 1000;
  *
  * @public
  * @exported
- * @param {Callbacks.JwtTokenGenerator} tokenGenerator - An anonymous function which returns a signed JWT token.
- * @param {Number=} refreshInterval - The number of milliseconds which must pass before a new JWT token is generated. A null or undefined value means the token is not cached.
  */
 export default class JwtProvider extends Disposable {
+	#refreshInterval;
+	#refreshJitter;
+	#refreshPending;
+	#refreshTimestamp;
+	#scheduler;
+	#tokenGenerator;
+	#tokenPromise;
+
+	/**
+	 * @param {JwtTokenGenerator} tokenGenerator - An anonymous function which returns a signed JWT token.
+	 * @param {number=} refreshInterval - The number of milliseconds which must pass before a new JWT token is generated. A null or undefined value means the token is not cached.
+	 */
 	constructor(tokenGenerator, refreshInterval) {
 		super();
 
 		assert.argumentIsRequired(tokenGenerator, 'tokenGenerator', Function);
 		assert.argumentIsOptional(refreshInterval, 'refreshInterval', Number);
 
-		this._tokenGenerator = tokenGenerator;
+		this.#tokenGenerator = tokenGenerator;
 
-		this._tokenPromise = null;
+		this.#tokenPromise = null;
 
-		this._refreshTimestamp = null;
-		this._refreshPending = false;
+		this.#refreshTimestamp = null;
+		this.#refreshPending = false;
 
 		if (is.number(refreshInterval)) {
-			this._refreshInterval = Math.max(refreshInterval || 0, 0);
-			this._refreshJitter = random.range(0, Math.floor(this._refreshInterval / 10));
+			this.#refreshInterval = Math.max(refreshInterval || 0, 0);
+			this.#refreshJitter = random.range(0, Math.floor(this.#refreshInterval / 10));
 		} else {
-			this._refreshInterval = null;
-			this._refreshJitter = null;
+			this.#refreshInterval = null;
+			this.#refreshJitter = null;
 		}
 
-		this._scheduler = new Scheduler();
+		this.#scheduler = new Scheduler();
 	}
 
 	/**
 	 * Reads the current token, refreshing if necessary.
 	 *
 	 * @public
-	 * @returns {Promise<String>}
+	 * @returns {Promise<string>}
 	 */
 	getToken() {
 		return Promise.resolve()
 			.then(() => {
-				if (this._refreshPending) {
-					return this._tokenPromise;
+				if (this.#refreshPending) {
+					return this.#tokenPromise;
 				}
 
-				if (this._tokenPromise === null || this._refreshInterval === null || (this._refreshInterval > 0 && getTime() > (this._refreshTimestamp + this._refreshInterval + this._refreshJitter))) {
-					this._refreshPending = true;
+				if (this.#tokenPromise === null || this.#refreshInterval === null || (this.#refreshInterval > 0 && getTime() > (this.#refreshTimestamp + this.#refreshInterval + this.#refreshJitter))) {
+					this.#refreshPending = true;
 
-					this._tokenPromise = this._scheduler.backoff(() => this._tokenGenerator(), 100, 'Read JWT token', 3)
+					this.#tokenPromise = this.#scheduler.backoff(() => this.#tokenGenerator(), 100, 'Read JWT token', 3)
 						.then((token) => {
-							this._refreshTimestamp = getTime();
-							this._refreshPending = false;
+							this.#refreshTimestamp = getTime();
+							this.#refreshPending = false;
 
 							return token;
 						}).catch((e) => {
-							this._tokenPromise = null;
+							this.#tokenPromise = null;
 
-							this._refreshTimestamp = null;
-							this._refreshPending = false;
+							this.#refreshTimestamp = null;
+							this.#refreshPending = false;
 
 							return Promise.reject(e);
 						});
 				}
 
-				return this._tokenPromise;
+				return this.#tokenPromise;
 			});
 	}
 
@@ -90,8 +100,8 @@ export default class JwtProvider extends Disposable {
 	 *
 	 * @public
 	 * @static
-	 * @param {Callbacks.JwtTokenGenerator} tokenGenerator - An anonymous function which returns a signed JWT token.
-	 * @param {Number=} refreshInterval - The number of milliseconds which must pass before a new JWT token is generated. A zero value means the token should never be refreshed. A null or undefined value means the token is not cached.
+	 * @param {JwtTokenGenerator} tokenGenerator - An anonymous function which returns a signed JWT token.
+	 * @param {number=} refreshInterval - The number of milliseconds which must pass before a new JWT token is generated. A zero value means the token should never be refreshed. A null or undefined value means the token is not cached.
 	 * @returns {JwtProvider}
 	 */
 	static fromTokenGenerator(tokenGenerator, refreshInterval) {
@@ -105,9 +115,9 @@ export default class JwtProvider extends Disposable {
 	 *
 	 * @public
 	 * @static
-	 * @param {String} userId - The user identifier to impersonate.
-	 * @param {String} contextId - The context identifier of the user to impersonate.
-	 * @param {Number=} refreshInterval - The number of milliseconds which must pass before a new JWT token is generated. A null or undefined value means the token is not cached.
+	 * @param {string} userId - The user identifier to impersonate.
+	 * @param {string} contextId - The context identifier of the user to impersonate.
+	 * @param {number=} refreshInterval - The number of milliseconds which must pass before a new JWT token is generated. A null or undefined value means the token is not cached.
 	 * @returns {JwtProvider}
 	 */
 	static forStage(userId, contextId, refreshInterval) {
@@ -121,20 +131,30 @@ export default class JwtProvider extends Disposable {
 	 *
 	 * @public
 	 * @static
-	 * @param {String} userId - The user identifier to impersonate.
-	 * @param {String} contextId - The context identifier of the user to impersonate.
-	 * @param {Number=} refreshInterval - The number of milliseconds which must pass before a new JWT token is generated. A null or undefined value means the token is not cached.
+	 * @param {string} userId - The user identifier to impersonate.
+	 * @param {string} contextId - The context identifier of the user to impersonate.
+	 * @param {number=} refreshInterval - The number of milliseconds which must pass before a new JWT token is generated. A null or undefined value means the token is not cached.
 	 * @returns {JwtProvider}
 	 */
 	static forProduction(userId, contextId, refreshInterval) {
 		return getJwtProviderForImpersonation(Configuration.getJwtImpersonationHost, 'prod', userId, contextId, refreshInterval);
 	}
-	
+
+	/**
+	 * @protected
+	 * @override
+	 */
 	_onDispose() {
-		this._scheduler.dispose();
-		this._scheduler = null;
+		this.#scheduler.dispose();
+		this.#scheduler = null;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[JwtProvider]';
 	}
@@ -173,3 +193,10 @@ function getJwtProviderForImpersonation(host, environment, userId, contextId, re
 function getTime() {
 	return (new Date()).getTime();
 }
+
+/**
+ * A callback used to generate a signed JWT token.
+ *
+ * @callback JwtTokenGenerator
+ * @returns {Promise<*>}
+ */

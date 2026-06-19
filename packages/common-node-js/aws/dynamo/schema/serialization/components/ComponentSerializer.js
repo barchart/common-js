@@ -12,15 +12,20 @@ import Serializers from './../Serializers.js';
  * @interface
  */
 export default class ComponentSerializer {
+	#componentType;
+
+	/**
+	 * @param {*} componentType
+	 */
 	constructor(componentType) {
 		assert.argumentIsRequired(componentType, 'componentType', ComponentType, 'ComponentType');
 
-		this._componentType = componentType;
+		this.#componentType = componentType;
 	}
 
 	/**
 	 * Reads a complex component, and emits an array of DynamoDB values,
-	 * in the order defined by by {@link ComponentType#defintitions}.
+	 * in the order defined by {@link ComponentType#defintitions}.
 	 *
 	 * @public
 	 * @param {*} source - The component object.
@@ -29,14 +34,14 @@ export default class ComponentSerializer {
 	serialize(source) {
 		let serialized = [ ];
 
-		const definitions = this._componentType.definitions;
+		const definitions = this.#componentType.definitions;
 		const values = this._readComponent(source);
 
 		if (values !== null && values.length === definitions.length) {
 			serialized = definitions.map((ctd) => {
 				const serializer = Serializers.forDataType(ctd.dataType);
 
-				return serializer.serialize(values[i]);
+				return serializer.serialize(values[ctd]);
 			});
 		}
 
@@ -45,7 +50,7 @@ export default class ComponentSerializer {
 
 	/**
 	 * Reads each property value from the source component and returns
-	 * an array of primitive values, in the order defined by by
+	 * an array of primitive values, in the order defined by
 	 * {@link ComponentType#defintitions}.
 	 *
 	 * @protected
@@ -67,7 +72,7 @@ export default class ComponentSerializer {
 	deserialize(values) {
 		assert.argumentIsArray(values, 'values');
 
-		const definitions = this._componentType.definitions;
+		const definitions = this.#componentType.definitions;
 
 		return this._createComponent(
 			definitions.map((ctd, i) => {
@@ -92,6 +97,12 @@ export default class ComponentSerializer {
 		return null;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[ComponentSerializer]';
 	}

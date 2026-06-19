@@ -14,7 +14,7 @@ export default class Configuration {
 	 *
 	 * @public
 	 * @static
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	static get stagingHost() {
 		return 'push-notifications-stage.aws.barchart.com';
@@ -25,12 +25,12 @@ export default class Configuration {
 	 *
 	 * @public
 	 * @static
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	static get productionHost() {
 		return 'push-notifications.aws.barchart.com';
 	}
-	
+
 	/**
 	 * The hostname of REST API which generates impersonation tokens for non-secure
 	 * test and demo environments.
@@ -43,6 +43,12 @@ export default class Configuration {
 		return 'jwt-public-stage.aws.barchart.com';
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Configuration]';
 	}

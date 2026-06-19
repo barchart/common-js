@@ -8,25 +8,49 @@ import log4js from 'log4js';
 
 const logger = log4js.getLogger('common-node/messaging/publishers/CompositePublisher');
 
+/**
+ * @typedef {import('@barchart/common-js/lang/Disposable.js').default} Disposable
+ */
+
 export default class CompositePublisher extends Publisher {
+	#publishers;
+
+	/**
+	 * @param {*} publishers
+	 * @param {*} suppressExpressions
+	 */
 	constructor(publishers, suppressExpressions) {
 		super(suppressExpressions);
 
 		assert.argumentIsArray(publishers, 'publishers', Publisher, 'Publisher');
 
-		this._publishers = publishers;
+		this.#publishers = publishers;
 	}
 
-	_start() {
-		return Promise.all(this._publishers.map((publisher) => {
+	/**
+	 * @protected
+	 * @override
+	 * @async
+	 * @returns {Promise<boolean>}
+	 */
+	async _start() {
+		return Promise.all(this.#publishers.map((publisher) => {
 			return publisher.start();
 		})).then(() => {
 			return true;
 		});
 	}
 
-	_publish(messageType, payload) {
-		const publishPromises = this._publishers.map((publisher) => {
+	/**
+	 * @protected
+	 * @override
+	 * @async
+	 * @param {string} messageType
+	 * @param {*} payload
+	 * @returns {Promise}
+	 */
+	async _publish(messageType, payload) {
+		const publishPromises = this.#publishers.map((publisher) => {
 			return publisher.publish(messageType, payload);
 		});
 
@@ -36,8 +60,16 @@ export default class CompositePublisher extends Publisher {
 			});
 	}
 
-	_subscribe(messageType, handler) {
-		const subscribePromises = this._publishers.map((publisher) => {
+	/**
+	 * @protected
+	 * @override
+	 * @async
+	 * @param {string} messageType
+	 * @param {Function} handler
+	 * @returns {Promise<Disposable>}
+	 */
+	async _subscribe(messageType, handler) {
+		const subscribePromises = this.#publishers.map((publisher) => {
 			return publisher.subscribe(messageType, handler);
 		});
 
@@ -53,16 +85,26 @@ export default class CompositePublisher extends Publisher {
 			});
 	}
 
+	/**
+	 * @protected
+	 * @override
+	 */
 	_onDispose() {
-		this._publishers.forEach((publisher) => {
+		this.#publishers.forEach((publisher) => {
 			publisher.dispose();
 		});
 
-		this._publishers = null;
+		this.#publishers = null;
 
 		logger.debug('Composite publisher disposed');
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[CompositePublisher]';
 	}

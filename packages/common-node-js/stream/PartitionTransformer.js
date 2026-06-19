@@ -1,7 +1,6 @@
 import * as array from '@barchart/common-js/lang/array.js';
 import * as assert from '@barchart/common-js/lang/assert.js';
 import * as is from '@barchart/common-js/lang/is.js';
-import * as object from '@barchart/common-js/lang/object.js';
 
 import log4js from 'log4js';
 import Stream from 'stream';
@@ -13,11 +12,18 @@ const logger = log4js.getLogger('common-node/stream/PartitionTransformer');
  *
  * @public
  * @extends {Stream.Transform}
- * @param {Number} size
- * @param {String=} description
- * @param {Boolean=} silent
  */
 export default class PartitionTransformer extends Stream.Transform {
+	#counter;
+	#description;
+	#silent;
+	#size;
+
+	/**
+	 * @param {number} size
+	 * @param {string=} description
+	 * @param {boolean=} silent
+	 */
 	constructor(size, description, silent) {
 		super({ objectMode: true });
 
@@ -25,32 +31,32 @@ export default class PartitionTransformer extends Stream.Transform {
 		assert.argumentIsOptional(description, 'description', String);
 		assert.argumentIsOptional(silent, 'silent', Boolean);
 
-		this._size = size;
+		this.#size = size;
 
-		this._description = description || 'Partition Transformer';
-		this._silent = is.boolean(silent) && silent;
+		this.#description = description || 'Partition Transformer';
+		this.#silent = is.boolean(silent) && silent;
 
-		this._counter = 0;
+		this.#counter = 0;
 	}
 
 	_transform(chunk, encoding, callback) {
-		this._counter = this._counter + 1;
+		this.#counter = this.#counter + 1;
 
 		let error = null;
 
 		if (is.array(chunk)) {
-			const partitions = array.partition(chunk, this._size);
+			const partitions = array.partition(chunk, this.#size);
 
 			partitions.forEach(partition => this.push(partition));
 		} else {
-			error = new Error(`Transformation [ ${this._counter} ] for [ ${this._description} ] failed, unexpected input type.`);
+			error = new Error(`Transformation [ ${this.#counter} ] for [ ${this.#description} ] failed, unexpected input type.`);
 		}
 
 		if (error === null) {
 			callback();
 		} else {
-			if (this._silent) {
-				logger.warn(`Transformation [ ${this._counter} ] for [ ${this._description} ] failed.`);
+			if (this.#silent) {
+				logger.warn(`Transformation [ ${this.#counter} ] for [ ${this.#description} ] failed.`);
 
 				if (logger.isTraceEnabled() && chunk) {
 					logger.trace(chunk);
@@ -63,6 +69,12 @@ export default class PartitionTransformer extends Stream.Transform {
 		}
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[PartitionTransformer]';
 	}

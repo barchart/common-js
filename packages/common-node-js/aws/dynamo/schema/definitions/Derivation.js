@@ -1,28 +1,38 @@
+
+/**
+ * @typedef {import('./Attribute.js').default} Attribute
+ */
 /**
  * An attribute value can be derived from other attributes. This object
  * describes the input required and the function needed to derive an
  * attribute value.
  *
  * @public
- * @param {Array<Attribute>} name - The attributes used by the generator. Each attribute will be read, then passed to the generator as an array.
- * @param {Function} generator - The function which derives (i.e. generates) the attribute value.
- * @param {Array<Boolean>} optionalities - Indicates if the attributes are allowed to be missing.
  */
 export default class Derivation {
+	#attributes;
+	#generator;
+	#optionalities;
+
+	/**
+	 * @param {Array<Attribute>} attributes - The attributes used by the generator. Each attribute will be read, then passed to the generator as an array.
+	 * @param {Function} generator - The function which derives (i.e. generates) the attribute value.
+	 * @param {Array<boolean>} optionalities - Indicates if the attributes are allowed to be missing.
+	 */
 	constructor(attributes, generator, optionalities) {
-		this._attributes = attributes;
-		this._generator = generator;
-		this._optionalities = optionalities;
+		this.#attributes = attributes;
+		this.#generator = generator;
+		this.#optionalities = optionalities;
 	}
 
 	/**
 	 * The attributes used by the {@link Derivation#generator} function.
 	 *
 	 * @public
-	 * @returns {Array<Attributes>}
+	 * @returns {Array<Attribute>}
 	 */
 	get attributes() {
-		return [...this._attributes];
+		return [...this.#attributes];
 	}
 
 	/**
@@ -32,7 +42,7 @@ export default class Derivation {
 	 * @returns {Function}
 	 */
 	get generator() {
-		return this._generator;
+		return this.#generator;
 	}
 
 	/**
@@ -40,12 +50,18 @@ export default class Derivation {
 	 * the {@link Derivation#attributes} property on an index-by-index basis.
 	 *
 	 * @public
-	 * @returns {Array<Boolean>}
+	 * @returns {Array<boolean>}
 	 */
 	get optionalities() {
-		return [...this._optionalities];
+		return [...this.#optionalities];
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Derivation]';
 	}

@@ -12,11 +12,20 @@ const logger = log4js.getLogger('common-node/stream/GroupTransformer');
  *
  * @public
  * @extends {Stream.Transform}
- * @param {Function} keySelector
- * @param {String=} description
- * @param {Boolean=} silent
  */
 export default class GroupTransformer extends Stream.Transform {
+	#batch;
+	#counter;
+	#description;
+	#key;
+	#keySelector;
+	#silent;
+
+	/**
+	 * @param {Function} keySelector
+	 * @param {string=} description
+	 * @param {boolean=} silent
+	 */
 	constructor(keySelector, description, silent) {
 		super({ objectMode: true });
 
@@ -24,19 +33,19 @@ export default class GroupTransformer extends Stream.Transform {
 		assert.argumentIsOptional(description, 'description', String);
 		assert.argumentIsOptional(silent, 'silent', Boolean);
 
-		this._keySelector = keySelector;
+		this.#keySelector = keySelector;
 
-		this._description = description || 'Group Transformer';
-		this._silent = is.boolean(silent) && silent;
+		this.#description = description || 'Group Transformer';
+		this.#silent = is.boolean(silent) && silent;
 
-		this._counter = 0;
+		this.#counter = 0;
 
-		this._batch = null;
-		this._key = null;
+		this.#batch = null;
+		this.#key = null;
 	}
 
 	_transform(chunk, encoding, callback) {
-		this._counter = this._counter + 1;
+		this.#counter = this.#counter + 1;
 
 		let error = null;
 
@@ -44,29 +53,29 @@ export default class GroupTransformer extends Stream.Transform {
 			let key;
 
 			try {
-				key = this._keySelector(chunk);
+				key = this.#keySelector(chunk);
 			} catch (e) {
 				error = e;
 			}
 
 			if (error === null) {
-				if (!object.equals(this._key, key)) {
-					publish.call(this);
+				if (!object.equals(this.#key, key)) {
+					this.#publish();
 
-					this._key = key;
+					this.#key = key;
 				}
 
-				this._batch.push(chunk);
+				this.#batch.push(chunk);
 			}
 		} else {
-			error = new Error(`Transformation [ ${this._counter} ] for [ ${this._description} ] failed, unexpected input type.`);
+			error = new Error(`Transformation [ ${this.#counter} ] for [ ${this.#description} ] failed, unexpected input type.`);
 		}
 
 		if (error === null) {
 			callback();
 		} else {
-			if (this._silent) {
-				logger.warn(`Transformation [ ${this._counter} ] for [ ${this._description} ] failed.`);
+			if (this.#silent) {
+				logger.warn(`Transformation [ ${this.#counter} ] for [ ${this.#description} ] failed.`);
 
 				if (logger.isTraceEnabled() && chunk) {
 					logger.trace(chunk);
@@ -80,20 +89,27 @@ export default class GroupTransformer extends Stream.Transform {
 	}
 
 	_flush(callback) {
-		publish.call(this);
+		this.#publish();
 
 		callback();
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[GroupTransformer]';
 	}
-}
 
-function publish() {
-	if (is.array(this._batch) && this._batch.length !== 0) {
-		this.push(this._batch);
-	}
 
-	this._batch = [ ];
+	#publish() {
+		if (is.array(this.#batch) && this.#batch.length !== 0) {
+			this.push(this.#batch);
+			}
+
+			this.#batch = [ ];
+		}
 }

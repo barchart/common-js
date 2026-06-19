@@ -10,24 +10,30 @@ import DataType from './DataType.js';
  * Defines the items that compose a component.
  *
  * @public
- * @param {String} description
- * @param {Array<ComponentTypeDefinition>} definitions
- * @param {Function=} type
  */
 export default class ComponentType {
+	#definitions;
+	#description;
+	#type;
+
+	/**
+	 * @param {string} description
+	 * @param {Array<ComponentTypeDefinition>} definitions
+	 * @param {Function=} type
+	 */
 	constructor(description, definitions, type) {
 		assert.argumentIsRequired(description, 'description', String);
 		assert.argumentIsArray(definitions, 'definitions', ComponentTypeDefinition, 'ComponentTypeDefinition');
-		assert.argumentIsOptional(type, type, Function);
+		assert.argumentIsOptional(type, 'type', Function);
 
 		if (definitions.length < 1) {
 			throw new Error('The "definitions" array cannot be empty.');
 		}
 
-		this._description = description;
-		this._definitions = definitions;
+		this.#description = description;
+		this.#definitions = definitions;
 
-		this._type = type || null;
+		this.#type = type || null;
 	}
 
 	/**
@@ -37,7 +43,7 @@ export default class ComponentType {
 	 * @returns {*}
 	 */
 	get description() {
-		return this._description;
+		return this.#description;
 	}
 
 	/**
@@ -47,7 +53,7 @@ export default class ComponentType {
 	 * @returns {ComponentTypeDefinition[]}
 	 */
 	get definitions() {
-		return this._definitions;
+		return this.#definitions;
 	}
 
 	/**
@@ -57,21 +63,28 @@ export default class ComponentType {
 	 * @returns {Function|null}
 	 */
 	get type() {
-		return this._type;
+		return this.#type;
 	}
 
 	/**
 	 * The component type for amount -- using a fixed precisions -- combined with a currency.
 	 *
 	 * @public
+	 * @static
 	 * @returns {ComponentType}
 	 */
 	static get MONEY() {
 		return componentTypeAmount;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
-		return `[ComponentType (description=${this._description})]`;
+		return `[ComponentType (description=${this.#description})]`;
 	}
 }
 

@@ -7,12 +7,16 @@ import Enum from '@barchart/common-js/lang/Enum.js';
  * @extends {Enum}
  */
 export default class StreamViewType extends Enum {
+	/**
+	 * @param {*} schemaName
+	 * @param {string} description
+	 */
 	constructor(schemaName, description) {
 		super(schemaName, description);
 	}
 
 	/**
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	get schemaName() {
 		return this.code;
@@ -46,6 +50,12 @@ export default class StreamViewType extends Enum {
 		return streamTypeKeysOnly;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return `[StreamViewType (description=${this.code})]`;
 	}

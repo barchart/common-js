@@ -9,6 +9,14 @@ export default class ServerFactory {
 
 	}
 
+	/**
+	 * Runs the build operation.
+	 *
+	 * @public
+	 * @async
+	 * @param {*} serverDefinition
+	 * @returns {*}
+	 */
 	build(serverDefinition) {
 		assert.argumentIsRequired(serverDefinition, 'serverDefinition', ServerDefinition, 'ServerDefinition');
 
@@ -18,12 +26,26 @@ export default class ServerFactory {
 			});
 	}
 
-	_build(containers, staticPath, templatePath) {
+	/**
+	 * @protected
+	 * @async
+	 * @param containers
+	 * @param staticPaths
+	 * @param templatePath
+	 * @return {Promise<*>}
+	 */
+	async _build(containers, staticPaths, templatePath) {
 		return Disposable.fromAction(() => {
 			return;
 		});
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[ServerFactory]';
 	}

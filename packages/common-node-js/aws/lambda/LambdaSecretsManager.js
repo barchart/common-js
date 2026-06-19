@@ -8,8 +8,10 @@ import SecretsManagerProvider from './../SecretsManagerProvider.js';
  * @public
  */
 export default class LambdaSecretsManager {
+	#cache;
+
 	constructor() {
-		this._cache = new Map();
+		this.#cache = new Map();
 	}
 
 	/**
@@ -28,23 +30,23 @@ export default class LambdaSecretsManager {
 	 *
 	 * @public
 	 * @async
-	 * @param {String} secretId
-	 * @return {Promise<String>}
+	 * @param {string} secretId
+	 * @return {Promise<string>}
 	 */
 	async getValue(secretId) {
 		return Promise.resolve()
 			.then(() => {
 				assert.argumentIsRequired(secretId, 'secretId', String);
 
-				if (this._cache.has(secretId)) {
-					return Promise.resolve(this._cache.get(secretId));
+				if (this.#cache.has(secretId)) {
+					return Promise.resolve(this.#cache.get(secretId));
 				}
 
 				return getSecretsManagerProvider()
 					.then((provider) => {
 						return provider.getSecretValue(secretId)
 							.then((data) => {
-								this._cache.set(secretId, data);
+								this.#cache.set(secretId, data);
 
 								return data;
 							});

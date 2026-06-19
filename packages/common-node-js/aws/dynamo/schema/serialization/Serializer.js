@@ -25,11 +25,12 @@ export default class Serializer {
 	 * {@link Serializer.deserialize}.
 	 *
 	 * @public
-	 * @param {Object} item - The object to serialize (for DynamoDB).
+	 * @static
+	 * @param {object} item - The object to serialize (for DynamoDB).
 	 * @param {Table} table - The schema that controls serialization of the object.
-	 * @param {Boolean=} keysOnly - If true, only the item's key fields will be serialized.
-	 * @param {Boolean=} explicit - If true, derived properties will not be evaluated.
-	 * @returns {Object} - The serialized object.
+	 * @param {boolean=} keysOnly - If true, only the item's key fields will be serialized.
+	 * @param {boolean=} explicit - If true, derived properties will not be evaluated.
+	 * @returns {object} - The serialized object.
 	 */
 	static serialize(item, table, keysOnly, explicit) {
 		assert.argumentIsRequired(item, 'item', Object);
@@ -56,9 +57,10 @@ export default class Serializer {
 	 * operation is the inverse of {@link Serializer.serialize}.
 	 *
 	 * @public
-	 * @param {Object} item - The DynamoDB formatted object to deserialize.
+	 * @static
+	 * @param {object} item - The DynamoDB formatted object to deserialize.
 	 * @param {Table} table - The schema that controls serialization of the object.
-	 * @returns {Object} - The deserialized object.
+	 * @returns {object} - The deserialized object.
 	 */
 	static deserialize(item, table) {
 		assert.argumentIsRequired(item, 'item', Object);
@@ -67,6 +69,12 @@ export default class Serializer {
 		return getDeserializationWriter(table).write(item, { });
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Serializer]';
 	}

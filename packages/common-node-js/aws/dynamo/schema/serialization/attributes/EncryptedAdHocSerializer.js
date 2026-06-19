@@ -8,10 +8,19 @@ import CompressedAdHocSerializer from './CompressedAdHocSerializer.js';
  * @extends {CompressedAdHocSerializer}
  */
 export default class EncryptedAdHocSerializer extends CompressedAdHocSerializer {
+	/**
+	 * @param {*} attribute
+	 */
 	constructor(attribute) {
 		super(attribute);
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[EncryptedAdHocSerializer]';
 	}

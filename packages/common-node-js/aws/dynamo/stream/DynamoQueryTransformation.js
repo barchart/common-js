@@ -9,18 +9,28 @@ import Transformation from './../../../stream/transformations/Transformation.js'
  *
  * @public
  * @extends {Transformation}
- * @param {DynamoProvider} dynamoProvider - The table definition.
- * @param {String=} description - A description of the transformation.
  */
 export default class DynamoQueryTransformation extends Transformation {
+	#dynamoProvider;
+
+	/**
+	 * @param {DynamoProvider} dynamoProvider - The table definition.
+	 * @param {string=} description - A description of the transformation.
+	 */
 	constructor(dynamoProvider, description) {
 		super((description || 'Dynamo Query Transformation'));
 
 		assert.argumentIsRequired(dynamoProvider, 'dynamoProvider', DynamoProvider, 'DynamoProvider');
 
-		this._dynamoProvider = dynamoProvider;
+		this.#dynamoProvider = dynamoProvider;
 	}
 
+	/**
+	 * Returns the synchronous.
+	 *
+	 * @public
+	 * @returns {boolean}
+	 */
 	get synchronous() {
 		return false;
 	}
@@ -30,9 +40,15 @@ export default class DynamoQueryTransformation extends Transformation {
 	}
 
 	_transform(input) {
-		return this._dynamoProvider.query(input);
+		return this.#dynamoProvider.query(input);
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[DynamoQueryTransformation]';
 	}
