@@ -1,9 +1,9 @@
+import UpdateBuilder from '../../../../../../aws/dynamo/query/builders/UpdateBuilder.js';
 import TableBuilder from './../../../../../../aws/dynamo/schema/builders/TableBuilder.js';
 import DataType from './../../../../../../aws/dynamo/schema/definitions/DataType.js';
 import OperatorType from './../../../../../../aws/dynamo/query/definitions/OperatorType.js';
 import KeyType from './../../../../../../aws/dynamo/schema/definitions/KeyType.js';
 import UpdateActionType from './../../../../../../aws/dynamo/query/definitions/UpdateActionType.js';
-import UpdateBuilder from './../../../../../../aws/dynamo/query/builders/UpdateBuilder.js';
 import UpdateOperatorType from './../../../../../../aws/dynamo/query/definitions/UpdateOperatorType.js';
 
 describe('When creating an update query', () => {
@@ -98,11 +98,21 @@ describe('When creating an update query', () => {
 				.withUpdateExpression(UpdateActionType.REMOVE, 'counters.four');
 		});
 
-		it('should contain each action type keyword only once', () => {
+		it('should contain the SET action type keyword only once', () => {
 			const schema = builder.update.toUpdateSchema();
 
 			expect(schema.UpdateExpression.match(/SET/g).length).toEqual(1);
+		});
+
+		it('should contain the ADD action type keyword only once', () => {
+			const schema = builder.update.toUpdateSchema();
+
 			expect(schema.UpdateExpression.match(/ADD/g).length).toEqual(1);
+		});
+
+		it('should contain the REMOVE action type keyword only once', () => {
+			const schema = builder.update.toUpdateSchema();
+
 			expect(schema.UpdateExpression.match(/REMOVE/g).length).toEqual(1);
 		});
 	});
@@ -125,4 +135,3 @@ describe('When creating an update query', () => {
 		});
 	});
 });
-
