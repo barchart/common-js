@@ -41,15 +41,14 @@ export default class LocalRouter extends Router {
 	 * @returns {Promise<*>}
 	 */
 	async _route(messageType, payload, timeout, forget) {
-		const responsePromise = promise.timeout(Promise.resolve()
-			.then(() => {
-				const handler = this.#requestHandlers[messageType];
+		const responsePromise = promise.timeout((async () => {
+			const handler = this.#requestHandlers[messageType];
 
-				return handler(payload, messageType);
-			}), timeout);
+			return handler(payload, messageType);
+		})(), timeout);
 
 		if (forget) {
-			return Promise.resolve(null);
+			return null;
 		}
 
 		return responsePromise;

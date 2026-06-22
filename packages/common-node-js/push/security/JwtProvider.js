@@ -63,36 +63,37 @@ export default class JwtProvider extends Disposable {
 	 * Reads the current token, refreshing if necessary.
 	 *
 	 * @public
+	 * @async
 	 * @returns {Promise<string>}
 	 */
-	getToken() {
-		return Promise.resolve()
-			.then(() => {
-				if (this.#refreshPending) {
-					return this.#tokenPromise;
+	async getToken() {
+		if (this.#refreshPending) {
+			return this.#tokenPromise;
+		}
+
+		if (this.#tokenPromise === null || this.#refreshInterval === null || (this.#refreshInterval > 0 && getTime() > (this.#refreshTimestamp + this.#refreshInterval + this.#refreshJitter))) {
+			this.#refreshPending = true;
+
+			this.#tokenPromise = (async () => {
+				try {
+					const token = await this.#scheduler.backoff(() => this.#tokenGenerator(), 100, 'Read JWT token', 3);
+
+					this.#refreshTimestamp = getTime();
+					this.#refreshPending = false;
+
+					return token;
+				} catch (e) {
+					this.#tokenPromise = null;
+
+					this.#refreshTimestamp = null;
+					this.#refreshPending = false;
+
+					throw e;
 				}
+			})();
+		}
 
-				if (this.#tokenPromise === null || this.#refreshInterval === null || (this.#refreshInterval > 0 && getTime() > (this.#refreshTimestamp + this.#refreshInterval + this.#refreshJitter))) {
-					this.#refreshPending = true;
-
-					this.#tokenPromise = this.#scheduler.backoff(() => this.#tokenGenerator(), 100, 'Read JWT token', 3)
-						.then((token) => {
-							this.#refreshTimestamp = getTime();
-							this.#refreshPending = false;
-
-							return token;
-						}).catch((e) => {
-							this.#tokenPromise = null;
-
-							this.#refreshTimestamp = null;
-							this.#refreshPending = false;
-
-							return Promise.reject(e);
-						});
-				}
-
-				return this.#tokenPromise;
-			});
+		return this.#tokenPromise;
 	}
 
 	/**

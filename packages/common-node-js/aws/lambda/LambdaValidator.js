@@ -25,40 +25,33 @@ export default class LambdaValidator {
 	 * @return {Promise<boolean>}
 	 */
 	async validate(event) {
-		return Promise.resolve()
-			.then(() => {
-				let messages;
+		let messages;
 
-				if (is.array(event.Records)) {
-					messages = event.Records;
-				} else {
-					messages = [ event ];
-				}
+		if (is.array(event.Records)) {
+			messages = event.Records;
+		} else {
+			messages = [ event ];
+		}
 
-				return Promise.all(messages.map((message) => {
-					const trigger = LambdaTriggerType.fromMessage(message);
+		const results = await Promise.all(messages.map((message) => {
+			const trigger = LambdaTriggerType.fromMessage(message);
 
-					let messageId;
+			let messageId;
 
-					if (trigger !== null) {
-						messageId = trigger.getId(message);
-					} else {
-						messageId = null;
-					}
+			if (trigger !== null) {
+				messageId = trigger.getId(message);
+			} else {
+				messageId = null;
+			}
 
-					let validatePromise;
+			if (trigger !== null && messageId !== null) {
+				return this._validate(process.env.AWS_LAMBDA_FUNCTION_NAME, trigger, messageId);
+			}
 
-					if (trigger !== null && messageId !== null) {
-						validatePromise = Promise.resolve(this._validate(process.env.AWS_LAMBDA_FUNCTION_NAME, trigger, messageId));
-					} else {
-						validatePromise = Promise.resolve(true);
-					}
+			return true;
+		}));
 
-					return validatePromise;
-				}));
-			}).then((results) => {
-				return results.every(r => r === true);
-			});
+		return results.every(r => r === true);
 	}
 
 	/**

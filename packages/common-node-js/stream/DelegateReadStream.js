@@ -176,22 +176,17 @@ export default class DelegateReadStream extends Stream.Readable {
 	 * stopped, and no more data will be produced, the returned promise resolves.
 	 *
 	 * @public
+	 * @async
 	 * @return {Promise<object|null>}
 	 */
-	stop() {
+	async stop() {
 		this.#stopping = true;
 
-		let readPromise;
-
-		if (this.#readPromise === null) {
-			readPromise = Promise.resolve();
-		} else {
-			readPromise = this.#readPromise;
+		if (this.#readPromise !== null) {
+			await this.#readPromise;
 		}
 
-		return readPromise.then(() => {
-			return this.startKey;
-		});
+		return this.startKey;
 	}
 
 	/**

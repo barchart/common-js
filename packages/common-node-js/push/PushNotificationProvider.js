@@ -115,75 +115,68 @@ export default class PushNotificationProvider extends Disposable {
 	 * connection has been established and other instance methods can be used.
 	 *
 	 * @public
+	 * @async
 	 * @param {JwtProvider=} jwtProviderRegister - Your implementation of {@link JwtProvider} for {@link registerDevice} and {@link unregisterDevice} functions.
 	 * @param {JwtProvider=} jwtProviderSend - Your implementation of {@link JwtProvider} for {@link send} function.
 	 * @returns {Promise<PushNotificationProvider>}
 	 */
-	start(jwtProviderRegister, jwtProviderSend) {
-		return Promise.resolve()
-			.then(() => {
-				assert.argumentIsOptional(jwtProviderRegister, 'jwtProviderRegister', JwtProvider, 'JwtProvider');
-				assert.argumentIsOptional(jwtProviderSend, 'jwtProviderSend', JwtProvider, 'JwtProvider');
+	async start(jwtProviderRegister, jwtProviderSend) {
+		assert.argumentIsOptional(jwtProviderRegister, 'jwtProviderRegister', JwtProvider, 'JwtProvider');
+		assert.argumentIsOptional(jwtProviderSend, 'jwtProviderSend', JwtProvider, 'JwtProvider');
 
-				this.#jwtProviderRegister = jwtProviderRegister;
-				this.#jwtProviderSend = jwtProviderSend;
-				this.#started = true;
+		try {
+			this.#jwtProviderRegister = jwtProviderRegister;
+			this.#jwtProviderSend = jwtProviderSend;
+			this.#started = true;
 
-				return Promise.resolve(true)
-					.then(() => {
-						return Promise.resolve(this);
-					}).catch((e) => {
-						return Promise.reject(`Unable to connect to server using HTTP adapter [ ${this.#host} ] [ ${this.#port} ] [ ${this.#protocol} ]`);
-					});
-			});
+			return this;
+		} catch {
+			throw `Unable to connect to server using HTTP adapter [ ${this.#host} ] [ ${this.#port} ] [ ${this.#protocol} ]`;
+		}
 	}
 
 	/**
 	 * Registers a device.
 	 *
 	 * @public
+	 * @async
 	 * @param {RegisterDeviceQuery} query - The query object
 	 * @returns {Promise<object>}
 	 */
-	registerDevice(query) {
-		return Promise.resolve()
-			.then(() => {
-				this.#checkStatus('registerDevice');
+	async registerDevice(query) {
+		this.#checkStatus('registerDevice');
 
-				return Promise.resolve()
-					.then(() => {
-						assert.argumentIsRequired(query, 'query', Object);
-						assert.argumentIsRequired(query.user, 'query.user', Object);
-						assert.argumentIsRequired(query.user.id, 'query.user.id', String);
-						assert.argumentIsRequired(query.user.context, 'query.user.context', String);
-						assert.argumentIsRequired(query.provider, 'query.provider', String);
+		assert.argumentIsRequired(query, 'query', Object);
+		assert.argumentIsRequired(query.user, 'query.user', Object);
+		assert.argumentIsRequired(query.user.id, 'query.user.id', String);
+		assert.argumentIsRequired(query.user.context, 'query.user.context', String);
+		assert.argumentIsRequired(query.provider, 'query.provider', String);
 
-						if (!query.apns && !query.fcm) {
-							throw new Error('One of the arguments [ query.apns, query.fcm ] must be provided');
-						}
+		if (!query.apns && !query.fcm) {
+			throw new Error('One of the arguments [ query.apns, query.fcm ] must be provided');
+		}
 
-						if (query.apns) {
-							assert.argumentIsRequired(query.apns, 'query.apns', Object);
-							assert.argumentIsRequired(query.apns.device, 'query.apns.device', String);
-							assert.argumentIsRequired(query.apns.bundle, 'query.apns.bundle', String);
-						}
+		if (query.apns) {
+			assert.argumentIsRequired(query.apns, 'query.apns', Object);
+			assert.argumentIsRequired(query.apns.device, 'query.apns.device', String);
+			assert.argumentIsRequired(query.apns.bundle, 'query.apns.bundle', String);
+		}
 
-						if (query.fcm) {
-							assert.argumentIsRequired(query.fcm, 'query.fcm', Object);
-							assert.argumentIsRequired(query.fcm.iid, 'query.fcm.iid', String);
-							assert.argumentIsRequired(query.fcm.package, 'query.fcm.package', String);
-							assert.argumentIsRequired(query.fcm.token, 'query.fcm.token', String);
-						}
+		if (query.fcm) {
+			assert.argumentIsRequired(query.fcm, 'query.fcm', Object);
+			assert.argumentIsRequired(query.fcm.iid, 'query.fcm.iid', String);
+			assert.argumentIsRequired(query.fcm.package, 'query.fcm.package', String);
+			assert.argumentIsRequired(query.fcm.token, 'query.fcm.token', String);
+		}
 
-						return Gateway.invoke(this.#registerDeviceEndpoint, query);
-					});
-			});
+		return Gateway.invoke(this.#registerDeviceEndpoint, query);
 	}
 
 	/**
 	 * Unregisters a device.
 	 *
 	 * @public
+	 * @async
 	 * @param {object} query - The query object
 	 * @param {object} query.user - An object contains user data
 	 * @param {string} query.user.id - A user id
@@ -193,63 +186,54 @@ export default class PushNotificationProvider extends Disposable {
 	 * @param {string} query.device.bundle - Bundle or Package name of the application
 	 * @returns {Promise<object>}
 	 */
-	unregisterDevice(query) {
-		return Promise.resolve()
-			.then(() => {
-				this.#checkStatus('unregisterDevice');
+	async unregisterDevice(query) {
+		this.#checkStatus('unregisterDevice');
 
-				return Promise.resolve()
-					.then(() => {
-						assert.argumentIsRequired(query, 'query', Object);
-						assert.argumentIsRequired(query.user, 'query.user', Object);
-						assert.argumentIsRequired(query.user.id, 'query.user.id', String);
-						assert.argumentIsRequired(query.user.context, 'query.user.context', String);
-						assert.argumentIsRequired(query.device, 'query.device', Object);
-						assert.argumentIsRequired(query.device.device, 'query.device.device', String);
-						assert.argumentIsRequired(query.device.bundle, 'query.device.bundle', String);
+		assert.argumentIsRequired(query, 'query', Object);
+		assert.argumentIsRequired(query.user, 'query.user', Object);
+		assert.argumentIsRequired(query.user.id, 'query.user.id', String);
+		assert.argumentIsRequired(query.user.context, 'query.user.context', String);
+		assert.argumentIsRequired(query.device, 'query.device', Object);
+		assert.argumentIsRequired(query.device.device, 'query.device.device', String);
+		assert.argumentIsRequired(query.device.bundle, 'query.device.bundle', String);
 
-						return Gateway.invoke(this.#unregisterDeviceEndpoint, {
-							user: query.user.id,
-							context: query.user.context,
-							device: query.device.device,
-							bundle: query.device.bundle,
-						});
-					});
-			});
+		return Gateway.invoke(this.#unregisterDeviceEndpoint, {
+			user: query.user.id,
+			context: query.user.context,
+			device: query.device.device,
+			bundle: query.device.bundle,
+		});
 	}
 
 	/**
 	 * Sends a Push Notifications by application bundle or package name.
 	 *
 	 * @public
+	 * @async
 	 * @param {object} query - The query object
 	 * @param {string} query.bundle - An application bundle or package name
 	 * @param {object} query.notification - An notification object
 	 * @param {boolean?} query.development - Forces APNS to send notifications in the development mode
 	 * @returns {Promise<object>}
 	 */
-	sendByBundle(query) {
-		return Promise.resolve()
-			.then(() => {
-				this.#checkStatus('sendByBundle');
-				return Promise.resolve()
-					.then(() => {
-						assert.argumentIsRequired(query, 'query', Object);
-						assert.argumentIsRequired(query.bundle, 'query.bundle', String);
+	async sendByBundle(query) {
+		this.#checkStatus('sendByBundle');
 
-						return this.#send({
-							bundle: query.bundle,
-							notification: query.notification,
-							development: query.development
-						});
-					});
-			});
+		assert.argumentIsRequired(query, 'query', Object);
+		assert.argumentIsRequired(query.bundle, 'query.bundle', String);
+
+		return this.#send({
+			bundle: query.bundle,
+			notification: query.notification,
+			development: query.development
+		});
 	}
 
 	/**
 	 * Sends a Push Notifications by user.
 	 *
 	 * @public
+	 * @async
 	 * @param {object} query - The query object
 	 * @param {object} query.user - A user object
 	 * @param {string} query.user.id - A user id
@@ -259,54 +243,45 @@ export default class PushNotificationProvider extends Disposable {
 	 * @param {boolean?} query.development - Forces APNS to send notifications in the development mode
 	 * @returns {Promise<object>}
 	 */
-	sendByUser(query) {
-		return Promise.resolve()
-			.then(() => {
-				this.#checkStatus('sendByUser');
-				return Promise.resolve()
-					.then(() => {
-						assert.argumentIsRequired(query, 'query', Object);
-						assert.argumentIsRequired(query.bundle, 'query.bundle', String);
-						assert.argumentIsRequired(query.user.id, 'query.user.id', String);
-						assert.argumentIsRequired(query.user.context, 'query.user.context', String);
+	async sendByUser(query) {
+		this.#checkStatus('sendByUser');
 
-						return this.#send({
-							bundle: query.bundle,
-							user: query.user.id,
-							context: query.user.context,
-							notification: query.notification,
-							development: query.development
-						});
-					});
-			});
+		assert.argumentIsRequired(query, 'query', Object);
+		assert.argumentIsRequired(query.bundle, 'query.bundle', String);
+		assert.argumentIsRequired(query.user.id, 'query.user.id', String);
+		assert.argumentIsRequired(query.user.context, 'query.user.context', String);
+
+		return this.#send({
+			bundle: query.bundle,
+			user: query.user.id,
+			context: query.user.context,
+			notification: query.notification,
+			development: query.development
+		});
 	}
 
 	/**
 	 * Sends a Push Notifications by device.
 	 *
 	 * @public
+	 * @async
 	 * @param {object} query - The query object
 	 * @param {string} query.device - An APNS device token or FCM IID
 	 * @param {object} query.notification - An notification object
 	 * @param {boolean?} query.development - Forces APNS to send notifications in the development mode
 	 * @returns {Promise<object>}
 	 */
-	sendByDevice(query) {
-		return Promise.resolve()
-			.then(() => {
-				this.#checkStatus('sendByDevice');
-				return Promise.resolve()
-					.then(() => {
-						assert.argumentIsRequired(query, 'query', Object);
-						assert.argumentIsRequired(query.device, 'query.device', String);
+	async sendByDevice(query) {
+		this.#checkStatus('sendByDevice');
 
-						return this.#send({
-							device: query.device,
-							notification: query.notification,
-							development: query.development
-						});
-					});
-			});
+		assert.argumentIsRequired(query, 'query', Object);
+		assert.argumentIsRequired(query.device, 'query.device', String);
+
+		return this.#send({
+			device: query.device,
+			notification: query.notification,
+			development: query.development
+		});
 	}
 
 	/**
@@ -331,64 +306,64 @@ export default class PushNotificationProvider extends Disposable {
 	}
 
 	#getRequestInterceptorForJwtForRegister() {
-		return RequestInterceptor.fromDelegate((options, endpoint) => {
-			const getFailure = (e) => {
-				return FailureReason.forRequest({endpoint: endpoint})
+		return RequestInterceptor.fromDelegate(async (options, endpoint) => {
+			const getFailure = () => {
+				return FailureReason.forRequest({ endpoint: endpoint })
 					.addItem(FailureType.REQUEST_IDENTITY_FAILURE)
 					.format();
 			};
 
 			if (this.#jwtProviderRegister === null) {
-				return Promise.reject(getFailure());
+				throw getFailure();
 			}
 
-			return this.#jwtProviderRegister.getToken()
-				.then((token) => {
-					options.headers = options.headers || {};
-					options.headers.Authorization = `Bearer ${token}`;
+			try {
+				const token = await this.#jwtProviderRegister.getToken();
 
-					return options;
-				}).catch((e) => {
-					return Promise.reject(getFailure(e));
-				});
+				options.headers = options.headers || {};
+				options.headers.Authorization = `Bearer ${token}`;
+
+				return options;
+			} catch {
+				throw getFailure();
+			}
 		});
 	}
 
 	#getRequestInterceptorForJwtForSend() {
-		return RequestInterceptor.fromDelegate((options, endpoint) => {
-			const getFailure = (e) => {
+		return RequestInterceptor.fromDelegate(async (options, endpoint) => {
+			const getFailure = () => {
 				return FailureReason.forRequest({endpoint: endpoint})
 					.addItem(FailureType.REQUEST_IDENTITY_FAILURE)
 					.format();
 			};
 
 			if (this.#jwtProviderSend === null) {
-				return Promise.reject(getFailure());
+				throw getFailure();
 			}
 
-			return this.#jwtProviderSend.getToken()
-				.then((token) => {
-					options.headers = options.headers || {};
-					options.headers.Authorization = `Bearer ${token}`;
+			try {
+				const token = await this.#jwtProviderSend.getToken();
 
-					return options;
-				}).catch((e) => {
-					return Promise.reject(getFailure(e));
-				});
+				options.headers = options.headers || {};
+				options.headers.Authorization = `Bearer ${token}`;
+
+				return options;
+			} catch {
+				throw getFailure();
+			}
 		});
 	}
 
-	#send(query) {
-		return Promise.resolve().then(() => {
-			assert.argumentIsRequired(query.notification, 'notification', Object);
-			assert.argumentIsRequired(query.notification.title, 'notification.title', String);
-			assert.argumentIsRequired(query.notification.body, 'notification.body', String);
-			assert.argumentIsOptional(query.development, 'query.development', Boolean);
+	async #send(query) {
+		assert.argumentIsRequired(query.notification, 'notification', Object);
+		assert.argumentIsRequired(query.notification.title, 'notification.title', String);
+		assert.argumentIsRequired(query.notification.body, 'notification.body', String);
+		assert.argumentIsOptional(query.development, 'query.development', Boolean);
 
-			return Gateway.invoke(this.#sendNotificationEndpoint, {
-				...query,
-				development: query.development === true
-			});
+		return Gateway.invoke(this.#sendNotificationEndpoint, {
+			...query,
+			development: query.development === true
 		});
 	}
 

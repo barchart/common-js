@@ -127,136 +127,120 @@ export default class DataSession {
 	 * @returns {Promise}
 	 */
 	async flush(dataProvider) {
-		return Promise.resolve()
-			.then(() => {
-				assert.argumentIsRequired(dataProvider, 'dataProvider', DataProvider, 'DataProvider');
+		assert.argumentIsRequired(dataProvider, 'dataProvider', DataProvider, 'DataProvider');
 
-				if (this.#flushed) {
-					throw new Error(`Session [ ${this.#instanceCounter}  has already been flushed.`);
-				}
+		if (this.#flushed) {
+			throw new Error(`Session [ ${this.#instanceCounter}  has already been flushed.`);
+		}
 
-				this.#flushed = true;
+		this.#flushed = true;
 
-				logger.info('Session [', this.#instanceCounter, '] flush starting [', this.#instanceId, ']');
+		logger.info('Session [', this.#instanceCounter, '] flush starting [', this.#instanceId, ']');
 
-				if (this.#pending.empty()) {
-					logger.warn('Session [', this.#instanceCounter, '] has no operations');
-				}
+		if (this.#pending.empty()) {
+			logger.warn('Session [', this.#instanceCounter, '] has no operations');
+		}
 
-				let operationCounter = 0;
+		let operationCounter = 0;
 
-				const results = [ ];
+		const results = [ ];
 
-				let outputIndicies;
+		let outputIndicies;
 
-				if (this.#resultTypes.length === 0) {
-					outputIndicies = [ ];
+		if (this.#resultTypes.length === 0) {
+			outputIndicies = [ ];
+		} else {
+			outputIndicies = this.#resultTypes.map(() => [ ]);
+		}
+
+		const flushRecursive = async (previousResult) => {
+			if (this.#pending.empty()) {
+				return previousResult;
+			}
+
+			let operation = null;
+			let operationCount;
+
+			while (operation === null && !this.#pending.empty()) {
+				const candidate = this.#pending.dequeue().operation;
+
+				operationCount = ++operationCounter;
+
+				if (candidate.equals(previousResult.operation)) {
+					logger.debug('Session [', this.#instanceCounter, '] operation [', operationCount, '][', candidate.toString() ,'] discarded as duplicate');
 				} else {
-					outputIndicies = this.#resultTypes.map(() => [ ]);
+					operation = candidate;
 				}
+			}
 
-				const flushRecursive = (previousResult) => {
-					return Promise.resolve()
-						.then(() => {
-							let processPromise;
+			if (operation === null) {
+				return previousResult;
+			}
 
-							if (this.#pending.empty()) {
-								processPromise = Promise.resolve(previousResult);
-							} else {
-								let operation = null;
-								let operationCount;
+			this.#processed.push(operation);
 
-								while (operation === null && !this.#pending.empty()) {
-									const candidate = this.#pending.dequeue().operation;
+			logger.debug('Session [', this.#instanceCounter, '] operation [', operationCount, '][', operation.toString() ,'] starting');
 
-									operationCount = ++operationCounter;
+			const result = await operation.process(dataProvider, this.#instanceId, this.#name);
 
-									if (candidate.equals(previousResult.operation)) {
-										logger.debug('Session [', this.#instanceCounter, '] operation [', operationCount, '][', candidate.toString() ,'] discarded as duplicate');
-									} else {
-										operation = candidate;
-									}
-								}
+			logger.debug('Session [', this.#instanceCounter, '] operation [', operationCount, '][', operation.toString() ,'] complete');
 
-								if (operation === null) {
-									processPromise = Promise.resolve(previousResult);
-								} else {
-									this.#processed.push(operation);
+			results.push(result);
 
-									logger.debug('Session [', this.#instanceCounter, '] operation [', operationCount, '][', operation.toString() ,'] starting');
+			const operationIndex = results.length - 1;
 
-									processPromise = operation.process(dataProvider, this.#instanceId, this.#name)
-										.then((result) => {
-											logger.debug('Session [', this.#instanceCounter, '] operation [', operationCount, '][', operation.toString() ,'] complete');
+			if (this.#resultTypes.length === 0) {
+				const resultIndex = this.#userEnqueued.findIndex(o => o === result.operation);
 
-											results.push(result);
+				if (!(resultIndex < 0)) {
+					outputIndicies[resultIndex] = operationIndex;
+				}
+			} else {
+				const resultIndex = this.#resultTypes.findIndex(t => operation instanceof t);
 
-											const operationIndex = results.length - 1;
+				if (!(resultIndex < 0)) {
+					outputIndicies[resultIndex].push(operationIndex);
+				}
+			}
 
-											if (this.#resultTypes.length === 0) {
-												const resultIndex = this.#userEnqueued.findIndex(o => o === result.operation);
+			result.children.forEach(container => this.#enqueue(container));
 
-												if (!(resultIndex < 0)) {
-													outputIndicies[resultIndex] = operationIndex;
-												}
-											} else {
-												const resultIndex = this.#resultTypes.findIndex(t => operation instanceof t);
+			return flushRecursive(result);
+		};
 
-												if (!(resultIndex < 0)) {
-													outputIndicies[resultIndex].push(operationIndex);
-												}
-											}
+		await flushRecursive(DataOperationResult.getInitial());
 
-											result.children.forEach(container => this.#enqueue(container));
-
-											return result;
-										});
-								}
-
-								processPromise = processPromise.then((result) => {
-									return flushRecursive(result);
-								});
-							}
-
-							return processPromise;
-						});
-				};
-
-				return flushRecursive(DataOperationResult.getInitial())
-					.then(() => {
-						const transformedResults = results.reduceRight((resolvedResults, result) => {
-							const spawnResults = result.children.map((spawnContainer) => {
-								return resolvedResults.find((previousResult) => previousResult.operation === spawnContainer.operation);
-							});
-
-							resolvedResults.push(result.operation.transformResult(result, spawnResults));
-
-							return resolvedResults;
-						}, [ ]);
-
-						const resolveOutput = (outputIndex) => {
-							const reversedIndex = results.length - outputIndex - 1;
-
-							return transformedResults[reversedIndex].result;
-						};
-
-						const output = outputIndicies.map((i) => {
-							if (is.array(i)) {
-								return i.map(j => resolveOutput(j));
-							} else {
-								return resolveOutput(i);
-							}
-						});
-
-						logger.info('Session [', this.#instanceCounter, '] flush finished [', this.#instanceId, ']');
-
-						if (output.length === 1) {
-							return output[0];
-						} else {
-							return output;
-						}
-					});
+		const transformedResults = results.reduceRight((resolvedResults, result) => {
+			const spawnResults = result.children.map((spawnContainer) => {
+				return resolvedResults.find((previousResult) => previousResult.operation === spawnContainer.operation);
 			});
+
+			resolvedResults.push(result.operation.transformResult(result, spawnResults));
+
+			return resolvedResults;
+		}, [ ]);
+
+		const resolveOutput = (outputIndex) => {
+			const reversedIndex = results.length - outputIndex - 1;
+
+			return transformedResults[reversedIndex].result;
+		};
+
+		const output = outputIndicies.map((i) => {
+			if (is.array(i)) {
+				return i.map(j => resolveOutput(j));
+			} else {
+				return resolveOutput(i);
+			}
+		});
+
+		logger.info('Session [', this.#instanceCounter, '] flush finished [', this.#instanceId, ']');
+
+		if (output.length === 1) {
+			return output[0];
+		} else {
+			return output;
+		}
 	}
 
 	/**

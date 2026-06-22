@@ -61,15 +61,14 @@ function processSynchronous(delegate, chunk, callback) {
 	callback(result);
 }
 
-function processAsynchronous(delegate, chunk, callback) {
-	Promise.resolve()
-		.then(() => {
-			return delegate(chunk);
-		}).then(() => {
-			return null;
-		}).catch((e) => {
-			return e;
-		}).then((result) => {
-			callback(result);
-		});
+async function processAsynchronous(delegate, chunk, callback) {
+	let result = null;
+
+	try {
+		await delegate(chunk);
+	} catch (e) {
+		result = e;
+	}
+
+	callback(result);
 }

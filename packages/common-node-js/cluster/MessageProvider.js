@@ -22,18 +22,18 @@ export default class MessageProvider {
 	 * Starts the component.
 	 *
 	 * @public
+	 * @async
 	 * @returns {Promise<*>}
 	 */
-	start() {
+	async start() {
 		if (this.#startPromise === null) {
-			this.#startPromise = Promise.all([ sender.start(), receiver.start() ])
-				.then(() => {
+			this.#startPromise = (async () => {
+				await Promise.all([ sender.start(), receiver.start() ]);
 
-				}).then(() => {
-					this.#started = true;
+				this.#started = true;
 
-					return this;
-				});
+				return this;
+			})();
 		}
 
 		return this.#startPromise;
@@ -125,14 +125,13 @@ class Receiver {
 		this.#startPromise = null;
 	}
 
-	start() {
+	async start() {
 		if (this.#startPromise === null) {
-			this.#startPromise = Promise.resolve()
-				.then(() => {
-					return this._start();
-				}).then(() => {
-					return this;
-				});
+			this.#startPromise = (async () => {
+				await this._start();
+
+				return this;
+			})();
 		}
 
 		return this.#startPromise;
@@ -242,14 +241,13 @@ class Sender {
 		this.#startPromise = null;
 	}
 
-	start() {
+	async start() {
 		if (this.#startPromise === null) {
-			this.#startPromise = Promise.resolve()
-				.then(() => {
-					return this._start();
-				}).then(() => {
-					return this;
-				});
+			this.#startPromise = (async () => {
+				await this._start();
+
+				return this;
+			})();
 		}
 
 		return this.#startPromise;

@@ -34,24 +34,19 @@ export default class LambdaSecretsManager {
 	 * @return {Promise<string>}
 	 */
 	async getValue(secretId) {
-		return Promise.resolve()
-			.then(() => {
-				assert.argumentIsRequired(secretId, 'secretId', String);
+		assert.argumentIsRequired(secretId, 'secretId', String);
 
-				if (this.#cache.has(secretId)) {
-					return Promise.resolve(this.#cache.get(secretId));
-				}
+		if (this.#cache.has(secretId)) {
+			return this.#cache.get(secretId);
+		}
 
-				return getSecretsManagerProvider()
-					.then((provider) => {
-						return provider.getSecretValue(secretId)
-							.then((data) => {
-								this.#cache.set(secretId, data);
+		const provider = await getSecretsManagerProvider();
 
-								return data;
-							});
-					});
-			});
+		const data = await provider.getSecretValue(secretId);
+
+		this.#cache.set(secretId, data);
+
+		return data;
 	}
 }
 
@@ -59,19 +54,17 @@ let secretsManagerProviderPromise = null;
 
 function getSecretsManagerProvider() {
 	if (secretsManagerProviderPromise === null) {
-		secretsManagerProviderPromise = Promise.resolve()
-			.then(() => {
-				const configuration = { };
+		secretsManagerProviderPromise = (async () => {
+			const configuration = { };
 
-				configuration.region = process.env.SECRETS_MANAGER_REGION || 'us-east-1';
+			configuration.region = process.env.SECRETS_MANAGER_REGION || 'us-east-1';
 
-				const provider = new SecretsManagerProvider(configuration);
+			const provider = new SecretsManagerProvider(configuration);
 
-				return provider.start()
-					.then(() => {
-						return provider;
-					});
-			});
+			await provider.start();
+
+			return provider;
+		})();
 	}
 
 	return secretsManagerProviderPromise;

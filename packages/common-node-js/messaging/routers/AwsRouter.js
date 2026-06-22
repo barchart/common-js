@@ -66,35 +66,32 @@ export default class AwsRouter extends Router {
 	async _start() {
 		logger.debug('AWS router starting');
 
-		return Promise.resolve()
-			.then(() => {
-				return this.#sqsProvider.start();
-			}).then(() => {
-				const responseQueueName = getResponseChannel(this.#routerId);
+		await this.#sqsProvider.start();
 
-				const responseObserver = this.#sqsProvider.observe(responseQueueName, (message) => {
-					if (is.string(message.id) && this.#pendingRequests.hasOwnProperty(message.id)) {
-						const callbacks = this.#pendingRequests[message.id];
+		const responseQueueName = getResponseChannel(this.#routerId);
 
-						if (is.boolean(message.success) && !message.success) {
-							callbacks.reject('Request failed');
-						} else if (is.object(message.payload)) {
-							callbacks.resolve(message.payload);
-						}
-					}
-				}, 100, 20000, 10, this.#createOptions);
+		const responseObserver = this.#sqsProvider.observe(responseQueueName, (message) => {
+			if (is.string(message.id) && this.#pendingRequests.hasOwnProperty(message.id)) {
+				const callbacks = this.#pendingRequests[message.id];
 
-				const responseQueueBinding = Disposable.fromAction(() => {
-					this.#sqsProvider.deleteQueue(responseQueueName);
-				});
+				if (is.boolean(message.success) && !message.success) {
+					callbacks.reject('Request failed');
+				} else if (is.object(message.payload)) {
+					callbacks.resolve(message.payload);
+				}
+			}
+		}, 100, 20000, 10, this.#createOptions);
 
-				this.#disposeStack.push(responseQueueBinding);
-				this.#disposeStack.push(responseObserver);
+		const responseQueueBinding = Disposable.fromAction(() => {
+			this.#sqsProvider.deleteQueue(responseQueueName);
+		});
 
-				logger.debug('AWS router started');
-			}).then(() => {
-				return true;
-			});
+		this.#disposeStack.push(responseQueueBinding);
+		this.#disposeStack.push(responseObserver);
+
+		logger.debug('AWS router started');
+
+		return true;
 	}
 
 	/**
@@ -150,25 +147,29 @@ export default class AwsRouter extends Router {
 			};
 		});
 
-		const sendPromise = this.#sqsProvider.send(messageType, envelope, null, this.#createOptions)
-			.catch((e) => {
+		const sendPromise = (async () => {
+			try {
+				await this.#sqsProvider.send(messageType, envelope, null, this.#createOptions);
+
+				return routePromise;
+			} catch (e) {
 				logger.error('Request routing failed. Unable to enqueue request message.', e);
 
 				throw e;
-			}).then(() => {
-				return routePromise;
-			});
+			}
+		})();
 
-		return promise.timeout(sendPromise, timeout)
-			.then((response) => {
-				delete this.#pendingRequests[messageId];
+		try {
+			const response = await promise.timeout(sendPromise, timeout);
 
-				return response;
-			}).catch((e) => {
-				delete this.#pendingRequests[messageId];
+			delete this.#pendingRequests[messageId];
 
-				throw e;
-			});
+			return response;
+		} catch (e) {
+			delete this.#pendingRequests[messageId];
+
+			throw e;
+		}
 	}
 
 	/**
@@ -182,17 +183,12 @@ export default class AwsRouter extends Router {
 	async _register(messageType, handler) {
 		logger.debug('Registering AWS handler for [', messageType, ']');
 
-		const registerObserver = this.#sqsProvider.observe(messageType, (message) => {
+		const registerObserver = this.#sqsProvider.observe(messageType, async (message) => {
 			if (!is.string(message.id) || !is.object(message.payload) || !(is.string(message.sender) || message.sender === null)) {
 				logger.warn(`Dropping malformed request received from SQS queue [ ${messageType} ]`);
 
 				return;
 			}
-
-			let handlerPromise = Promise.resolve()
-				.then(() => {
-					return handler(message.payload);
-				});
 
 			if (message.sender !== null) {
 				const respond = (success, response) => {
@@ -207,20 +203,22 @@ export default class AwsRouter extends Router {
 					return this.#sqsProvider.send(responseQueueName, envelope, null, this.#createOptions);
 				};
 
-				handlerPromise = handlerPromise.then((response) => {
+				try {
+					const response = await handler(message.payload);
+
 					return respond(true, response);
-				}).catch((e) => {
+				} catch (e) {
 					logger.error('Request processing failed. Responding with failure message.', e);
 
 					return respond(false);
-				});
-			} else {
-				handlerPromise = handlerPromise.catch((e) => {
-					logger.error('Request processing failed.', e);
-				});
+				}
 			}
 
-			return handlerPromise;
+			try {
+				await handler(message.payload);
+			} catch (e) {
+				logger.error('Request processing failed.', e);
+			}
 		}, 100, 20000, 10, this.#createOptions);
 
 		this.#requestHandlers[messageType] = registerObserver;

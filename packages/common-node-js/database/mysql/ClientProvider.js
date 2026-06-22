@@ -53,17 +53,15 @@ export default class ClientProvider extends Disposable {
 	 * Creates a new Postgres {@link Client} instance.
 	 *
 	 * @public
+	 * @async
 	 * @returns {Promise<Client>}
 	 */
 	async getClient() {
-		return Promise.resolve()
-			.then(() => {
-				if (this.disposed) {
-					return Promise.reject(`Unable to get MySQL client, the ${this.toString()} has been disposed`);
-				}
+		if (this.disposed) {
+			throw `Unable to get MySQL client, the ${this.toString()} has been disposed`;
+		}
 
-				return this._getClient();
-			});
+		return this._getClient();
 	}
 
 	/**

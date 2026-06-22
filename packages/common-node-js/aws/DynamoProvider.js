@@ -83,7 +83,7 @@ export default class DynamoProvider extends Disposable {
      */
     async start() {
         if (this.disposed) {
-            return Promise.reject('Unable to start, the Dynamo provider has been disposed');
+            throw 'Unable to start, the Dynamo provider has been disposed';
         }
 
         if (this.#startPromise === null) {

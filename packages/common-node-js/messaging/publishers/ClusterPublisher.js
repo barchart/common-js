@@ -47,64 +47,65 @@ export default class ClusterPublisher extends Publisher {
 	 * @returns {Promise<boolean>}
 	 */
 	async _start() {
-		return this.#messageProvider.start()
-			.then(() => {
-				this.#disposeStack.push(
-					this.#messageProvider.registerPeerConnectedObserver((source) => {
-						const messageTypes = Object.keys(this.#subscribers);
+		await this.#messageProvider.start();
 
-						if (messageTypes.length !== 0) {
-							logger.debug('Sending subscriptions to newly connected IPC peer', source);
+		this.#disposeStack.push(
+			this.#messageProvider.registerPeerConnectedObserver((source) => {
+				const messageTypes = Object.keys(this.#subscribers);
 
-							messageTypes.forEach((messageType) => {
-								this.#subscribers[messageType].refresh(this.#messageProvider, source);
-							});
-						}
-					})
-				);
-			}).then(() => {
-				this.#disposeStack.push(
-					this.#messageProvider.handle(SUBSCRIBE, (source, type, payload) => {
-						const subscriptionId = payload.id;
-						const messageType = payload.t;
+				if (messageTypes.length !== 0) {
+					logger.debug('Sending subscriptions to newly connected IPC peer', source);
 
-						if (!this.#subscriptions.hasOwnProperty(messageType)) {
-							this.#subscriptions[messageType] = new SubscriptionData(messageType);
-						}
+					messageTypes.forEach((messageType) => {
+						this.#subscribers[messageType].refresh(this.#messageProvider, source);
+					});
+				}
+			})
+		);
 
-						const subscriptionData = this.#subscriptions[messageType];
+		this.#disposeStack.push(
+			this.#messageProvider.handle(SUBSCRIBE, (source, type, payload) => {
+				const subscriptionId = payload.id;
+				const messageType = payload.t;
 
-						subscriptionData.addSubscriber(subscriptionId, source);
-					})
-				);
+				if (!this.#subscriptions.hasOwnProperty(messageType)) {
+					this.#subscriptions[messageType] = new SubscriptionData(messageType);
+				}
 
-				this.#disposeStack.push(
-					this.#messageProvider.handle(UNSUBSCRIBE, (source, type, payload) => {
-						const subscriptionId = payload.id;
-						const messageType = payload.t;
+				const subscriptionData = this.#subscriptions[messageType];
 
-						if (this.#subscriptions.hasOwnProperty(messageType)) {
-							const subscriptionData = this.#subscriptions[messageType];
+				subscriptionData.addSubscriber(subscriptionId, source);
+			})
+		);
 
-							subscriptionData.removeSubscriber(subscriptionId);
+		this.#disposeStack.push(
+			this.#messageProvider.handle(UNSUBSCRIBE, (source, type, payload) => {
+				const subscriptionId = payload.id;
+				const messageType = payload.t;
 
-							if (subscriptionData.getSources().length === 0) {
-								delete this.#subscriptions[messageType];
-							}
-						}
-					})
-				);
+				if (this.#subscriptions.hasOwnProperty(messageType)) {
+					const subscriptionData = this.#subscriptions[messageType];
 
-				this.#disposeStack.push(
-					this.#messageProvider.handle(PUBLISH, (source, type, payload) => {
-						const messageType = payload.t;
+					subscriptionData.removeSubscriber(subscriptionId);
 
-						if (this.#subscribers.hasOwnProperty(messageType)) {
-							this.#subscribers[messageType].publish(payload.p);
-						}
-					})
-				);
-			});
+					if (subscriptionData.getSources().length === 0) {
+						delete this.#subscriptions[messageType];
+					}
+				}
+			})
+		);
+
+		this.#disposeStack.push(
+			this.#messageProvider.handle(PUBLISH, (source, type, payload) => {
+				const messageType = payload.t;
+
+				if (this.#subscribers.hasOwnProperty(messageType)) {
+					this.#subscribers[messageType].publish(payload.p);
+				}
+			})
+		);
+
+		return true;
 	}
 
 	/**

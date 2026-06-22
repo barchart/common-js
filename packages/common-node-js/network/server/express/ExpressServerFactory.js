@@ -1,6 +1,5 @@
 import * as assert from '@barchart/common-js/lang/assert.js';
 import * as is from '@barchart/common-js/lang/is.js';
-import * as promise from '@barchart/common-js/lang/promise.js';
 
 import CommandHandler from '@barchart/common-js/commands/CommandHandler.js';
 import Disposable from '@barchart/common-js/lang/Disposable.js';
@@ -51,25 +50,21 @@ export default class ExpressServerFactory extends ServerFactory {
 		const serverContainer = new ExpressServerContainer(staticPaths, templatePath);
 		const containerBindingStrategies = ContainerBindingStrategy.getStrategies();
 
-		return Promise.all(containers.map((container) => {
+		await Promise.all(containers.map((container) => {
 			const containerBindingStrategy = containerBindingStrategies.find((candidate) => {
 				return candidate.canBind(container);
 			});
 
-			let bindingPromise;
-
 			if (containerBindingStrategy) {
-				bindingPromise = containerBindingStrategy.bind(container, serverContainer);
-			} else {
-				logger.warn('Unable to find appropriate binding strategy for container');
-
-				bindingPromise = Promise.resolve(null);
+				return containerBindingStrategy.bind(container, serverContainer);
 			}
 
-			return bindingPromise;
-		})).then((ignored) => {
-			return serverContainer.start();
-		});
+			logger.warn('Unable to find appropriate binding strategy for container');
+
+			return null;
+		}));
+
+		return serverContainer.start();
 	}
 
 	/**
@@ -292,14 +287,18 @@ class ExpressServer {
 		this.#socketSubscriptionMap[completePath] = subscriptionInfo;
 	}
 
-	start() {
+	/**
+	 * @async
+	 * @returns {Promise<DisposableStack>}
+	 */
+	async start() {
 		if (this.#started) {
 			throw new Error('Unable to start server, the has already been started.');
 		}
 
 		this.#started = true;
 
-		let startPromise = Promise.resolve();
+		const startPromises = [ ];
 
 		const startStack = new DisposableStack();
 
@@ -337,40 +336,39 @@ class ExpressServer {
 					logger.info('Bound static path', serverPath, 'on', (secure ? 'HTTPS' : 'HTTP'), 'port', port, 'to file system at', staticPathItem.filePath);
 
 					app.use(serverPath, express.static(staticPathItem.filePath));
-				} else if (staticPathItem.type === 's3') {
-					startPromise = startPromise
-						.then(() => {
+					} else if (staticPathItem.type === 's3') {
+						startPromises.push((async () => {
 							const s3 = new S3Provider(staticPathItem.s3);
 
-							return s3.start()
-								.then(() => {
-									logger.info('Bound static path', serverPath, 'on', (secure ? 'HTTPS' : 'HTTP'), 'port', port, 'to s3 bucket', staticPathItem.s3.bucket);
+							await s3.start();
 
-									const router = express.Router();
+							logger.info('Bound static path', serverPath, 'on', (secure ? 'HTTPS' : 'HTTP'), 'port', port, 'to s3 bucket', staticPathItem.s3.bucket);
 
-									router.get(new RegExp('^[\\/\]*' + serverPath + '(.*)$'), (request, response) => {
-										const requestPath = request.params[0];
+							const router = express.Router();
 
-										if (is.string(requestPath) && requestPath.length > 0) {
-											return s3.download(staticPathItem.keyPrefix + requestPath)
-												.then((data) => {
-													response.send(data);
-												}).catch((e) => {
-													response.status(404);
-													response.json(generateRestResponse('file not found'));
-												});
-										} else {
-											response.status(404);
-											response.json(generateRestResponse('no data'));
-										}
-									});
+							router.get(new RegExp('^[\\/\]*' + serverPath + '(.*)$'), async (request, response) => {
+								const requestPath = request.params[0];
 
-									app.use(router);
-								});
-						});
-				} else {
-					logger.warn('Unable to configure static path', staticPathItem);
-				}
+								if (is.string(requestPath) && requestPath.length > 0) {
+									try {
+										const data = await s3.download(staticPathItem.keyPrefix + requestPath);
+
+										response.send(data);
+									} catch (e) {
+										response.status(404);
+										response.json(generateRestResponse('file not found'));
+									}
+								} else {
+									response.status(404);
+									response.json(generateRestResponse('no data'));
+								}
+							});
+
+							app.use(router);
+						})());
+					} else {
+						logger.warn('Unable to configure static path', staticPathItem);
+					}
 			});
 		}
 
@@ -486,25 +484,22 @@ class ExpressServer {
 		if (socketRequestKeys.some(() => true) || socketSubscriptionKeys.some(() => true) || this.#socketEmitters.some(() => true)) {
 			const io = new SocketIOServer(server);
 
-			this.#socketEmitters.forEach((emitterData) => {
-				startStack.push(
-					emitterData.event.register((data) => {
-						Promise.resolve()
-							.then(() => {
-								return emitterData.room.command.process(data);
-							}).then((qualifier) => {
-								let room = emitterData.room.base;
+				this.#socketEmitters.forEach((emitterData) => {
+					startStack.push(
+						emitterData.event.register(async (data) => {
+							const qualifier = await emitterData.room.command.process(data);
 
-								if (qualifier) {
-									room = room + qualifier;
-								}
+							let room = emitterData.room.base;
 
-								logger.debug('Socket.io emitter on port', port, 'emitting to', room);
+							if (qualifier) {
+								room = room + qualifier;
+							}
 
-								io.to(room).emit(emitterData.eventType, data);
-							});
-					})
-				);
+							logger.debug('Socket.io emitter on port', port, 'emitting to', room);
+
+							io.to(room).emit(emitterData.eventType, data);
+						})
+					);
 
 				logger.info('Bound socket.io emitter on port', port, 'for base room', emitterData.room.base);
 			});
@@ -552,9 +547,9 @@ class ExpressServer {
 			server.close();
 		}));
 
-		return startPromise.then(() => {
-			return startStack;
-		});
+		await Promise.all(startPromises);
+
+		return startStack;
 	}
 }
 
@@ -591,28 +586,32 @@ class ExpressServerContainer {
 		return returnRef;
 	}
 
-	start() {
+	/**
+	 * @async
+	 * @returns {Promise<DisposableStack>}
+	 */
+	async start() {
 		if (this.#started) {
 			throw new Error('Unable to start servers, the server container has already started.');
 		}
 
 		this.#started = true;
 
-		Promise.all(
+		const disposables = await Promise.all(
 			Object.keys(this.#serverMap).map((port) => {
 				const server = this.#serverMap[port];
 
-				logger.info('Starting new ' + (server.getIsSecure() ? 'secure ' : '') + 'server on port ' + server.getPort());
+			logger.info('Starting new ' + (server.getIsSecure() ? 'secure ' : '') + 'server on port ' + server.getPort());
 
 				return server.start();
 			})
-		).then((disposables) => {
-			return disposables.reduce((stack, disposable) => {
-				stack.push(disposable);
+		);
 
-				return stack;
-			}, new DisposableStack());
-		});
+		return disposables.reduce((stack, disposable) => {
+			stack.push(disposable);
+
+			return stack;
+		}, new DisposableStack());
 	}
 }
 
@@ -735,11 +734,11 @@ class ContainerBindingStrategy {
 		assert.argumentIsRequired(container, 'container', Container, 'Container');
 		assert.argumentIsRequired(serverContainer, 'serverContainer', ExpressServerContainer, 'ExpressServerContainer');
 
-		if (!this.canBind(container)) {
-			throw new Error('Unable to bind container, the strategy does not support the container.');
-		}
+	if (!this.canBind(container)) {
+		throw new Error('Unable to bind container, the strategy does not support the container.');
+	}
 
-		return Promise.resolve(this._bind(container, serverContainer));
+		return this._bind(container, serverContainer);
 	}
 
 	_bind(container, serverContainer) {
@@ -909,56 +908,47 @@ function buildPageHandlers(verb, basePath, routePath, template, command, cache, 
 		logger.warn('Unable to find appropriate argument extraction strategy for HTTP ' + verb.getCode() + ' requests');
 
 		argumentExtractionStrategy = () => {
-			return {};
+			return { };
 		};
 	}
 
-	handlers.push((request, response) => {
+	handlers.push(async (request, response) => {
 		const sequence = sequencer++;
 
 		logger.debug('Processing starting for', verb.getCode(), 'at', path.join(basePath, routePath), '(' + sequence + ')');
 
-		let handlerPromise;
-
-		if (secureRedirect && request.headers['x-forwarded-proto'] === 'http') {
-			handlerPromise = promise.build((resolveCallback, rejectCallback) => {
+		try {
+			if (secureRedirect && request.headers['x-forwarded-proto'] === 'http') {
 				if (verb === Verb.GET) {
 					logger.warn('Redirecting HTTP ', verb.getCode(), 'at', path.join(basePath, routePath), ' to HTTPS (' + sequence + ')');
 
 					response.redirect('https://' + request.headers.host + request.url);
 
-					resolveCallback();
+					return;
 				} else {
 					logger.error('Unable to redirect HTTP ', verb.getCode(), 'at', path.join(basePath, routePath), ' to HTTPS (' + sequence + ')');
 
-					rejectCallback('Unable to redirect HTTP ', verb.getCode(), 'at', path.join(basePath, routePath), ' to HTTPS (' + sequence + ')');
+					throw 'Unable to redirect HTTP ';
 				}
-			});
-		} else {
-			handlerPromise = Promise.resolve()
-				.then(() => {
-					const commandArguments = argumentExtractionStrategy.getCommandArguments(verb, request, useSession, acceptFile);
+			}
 
-					return command.process(commandArguments);
-				}).then((result) => {
-					if (!cache) {
-						response.setHeader('Cache-Control', 'private, max-age=0, no-cache');
-					}
+			const commandArguments = argumentExtractionStrategy.getCommandArguments(verb, request, useSession, acceptFile);
+			const result = await command.process(commandArguments);
 
-					response.render(template, result);
+			if (!cache) {
+				response.setHeader('Cache-Control', 'private, max-age=0, no-cache');
+			}
 
-					logger.debug('Processing completed for', verb.getCode(), 'at', path.join(basePath + routePath), '(' + sequence + ')');
-				});
+			response.render(template, result);
+
+			logger.debug('Processing completed for', verb.getCode(), 'at', path.join(basePath + routePath), '(' + sequence + ')');
+		} catch (error) {
+			logger.error('Processing failed for', verb.getCode(), 'at', path.join(basePath, routePath), '(' + sequence + ')');
+			logger.error(error);
+
+			response.status(500);
+			response.json(generateRestResponse(error.message || error.toString() || 'internal server error'));
 		}
-
-		return handlerPromise
-			.catch((error) => {
-				logger.error('Processing failed for', verb.getCode(), 'at', path.join(basePath, routePath), '(' + sequence + ')');
-				logger.error(error);
-
-				response.status(500);
-				response.json(generateRestResponse(error.message || error.toString() || 'internal server error'));
-			});
 	});
 
 	return handlers;
@@ -1005,82 +995,85 @@ function buildRestHandler(verb, basePath, routePath, command, validationCommand)
 		logger.warn('Unable to find appropriate argument extraction strategy for HTTP ' + verb.getCode() + ' requests');
 
 		argumentExtractionStrategy = () => {
-			return {};
+			return { };
 		};
 	}
 
-	return (request, response) => {
+	return async (request, response) => {
 		const sequence = sequencer++;
 
 		logger.debug('Processing starting for', verb.getCode(), 'at', path.join(basePath, routePath), '(' + sequence + ')');
 
-		return Promise.resolve()
-			.then(() => {
-				const validationData = {
-					payload: argumentExtractionStrategy.getCommandArguments(verb, request) || { }
-				};
+		try {
+			const validationData = {
+				payload: argumentExtractionStrategy.getCommandArguments(verb, request) || { }
+			};
 
-				const authorization = request.get('authorization');
+			const authorization = request.get('authorization');
 
-				if (is.string(authorization) && authorization.length > 0) {
-					validationData.context = { };
-					validationData.context.token = request.headers.authorization;
+			if (is.string(authorization) && authorization.length > 0) {
+				validationData.context = { };
+				validationData.context.token = request.headers.authorization;
+			} else {
+				validationData.context = null;
+			}
+
+			logger.trace('Validating command (' + sequence + ') with the following arguments:', validationData);
+
+			let commandArguments;
+
+			try {
+				const result = await validationCommand.process(validationData);
+
+				if (result) {
+					logger.trace('Validated command (' + sequence + ')');
+
+					commandArguments = validationData.payload;
 				} else {
-					validationData.context = null;
+					logger.info('Validate failed (' + sequence + ')');
+
+					commandArguments = null;
 				}
+			} catch (e) {
+				logger.error('Validate error (' + sequence + ')', e);
 
-				logger.trace('Validating command (' + sequence + ') with the following arguments:', validationData);
+				commandArguments = null;
+			}
 
-				return Promise.resolve(validationCommand.process(validationData))
-					.then((result) => {
-						if (result) {
-							logger.trace('Validated command (' + sequence + ')');
+			if (commandArguments === null) {
+				response.status(401);
+				response.json(generateRestResponse('unauthorized'));
 
-							 return validationData.payload;
-						} else {
-							logger.info('Validate failed (' + sequence + ')');
+				return;
+			}
 
-							return null;
-						}
-					}).catch((e) => {
-						logger.error('Validate error (' + sequence + ')', e);
+			logger.trace('Processing command (' + sequence + ') with the following arguments:', commandArguments);
 
-						return null;
-					});
-			}).then((commandArguments) => {
-				if (commandArguments === null) {
-					response.status(401);
-					response.json(generateRestResponse('unauthorized'));
-				} else {
-					logger.trace('Processing command (' + sequence + ') with the following arguments:', commandArguments);
+			const result = await command.process(commandArguments);
 
-					return Promise.resolve(command.process(commandArguments))
-						.then((result) => {
-							if (is.object(result) || is.array(result)) {
-								response.json(result);
-							} else if (verb === Verb.GET && (is.nil(result) || is.undef(result))) {
-								response.status(404);
-								response.json(generateRestResponse('no data'));
-							} else {
-								response.status(200);
-								response.json(generateRestResponse('success'));
-							}
+			if (is.object(result) || is.array(result)) {
+				response.json(result);
+			} else if (verb === Verb.GET && (is.nil(result) || is.undef(result))) {
+				response.status(404);
+				response.json(generateRestResponse('no data'));
+			} else {
+				response.status(200);
+				response.json(generateRestResponse('success'));
+			}
 
-							logger.debug('Processing completed for', verb.getCode(), 'at', path.join(basePath, routePath), '(' + sequence + ')');
-						});
-				}
-			}).catch((error) => {
-				logger.error('Processing failed for', verb.getCode(), 'at', path.join(basePath, routePath), '(' + sequence + ')');
-				logger.error(error);
+			logger.debug('Processing completed for', verb.getCode(), 'at', path.join(basePath, routePath), '(' + sequence + ')');
+		} catch (error) {
+			logger.error('Processing failed for', verb.getCode(), 'at', path.join(basePath, routePath), '(' + sequence + ')');
+			logger.error(error);
 
-				response.status(500);
-				response.json(generateRestResponse(error.message || error.toString() || 'internal server error'));
-			});
+			response.status(500);
+			response.json(generateRestResponse(error.message || error.toString() || 'internal server error'));
+		}
 	};
 }
 
 function buildSocketRequestHandler(channel, requestInfo, socket) {
-	return (request) => {
+	return async (request) => {
 		const sequence = sequencer++;
 
 		const requestId = request.requestId;
@@ -1091,116 +1084,107 @@ function buildSocketRequestHandler(channel, requestInfo, socket) {
 
 		logger.debug('Processing starting for socket.io request from [', socket.id ,'] on', channel, '(', sequence, ')');
 
-		return Promise.resolve()
-			.then(() => {
-				let validationData;
+		try {
+			let validationData;
 
-				if (request.context) {
-					validationData = {
-						context: request.context,
-						payload: request.request
-					};
-				} else {
-					validationData = null;
-				}
-
-				return requestInfo.commands.validation.process(validationData);
-			}).then((valid) => {
-				if (!valid) {
-					throw new Error('Unable to process request, validation failed.');
-				}
-
-				return requestInfo.commands.execution.process(request.request);
-			}).then((result) => {
-				const envelope = {
-					requestId: request.requestId,
-					response: result || {}
+			if (request.context) {
+				validationData = {
+					context: request.context,
+					payload: request.request
 				};
+			} else {
+				validationData = null;
+			}
 
-				socket.emit('response', envelope);
+			const valid = await requestInfo.commands.validation.process(validationData);
 
-				logger.debug('Processing completed for socket.io request on', channel, '(', sequence, ')');
-			}).catch((error) => {
-				logger.error('Processing failed for socket.io request on', channel, '(', sequence, ')');
-				logger.error(error);
-			});
+			if (!valid) {
+				throw new Error('Unable to process request, validation failed.');
+			}
+
+			const result = await requestInfo.commands.execution.process(request.request);
+
+			const envelope = {
+				requestId: request.requestId,
+				response: result || {}
+			};
+
+			socket.emit('response', envelope);
+
+			logger.debug('Processing completed for socket.io request on', channel, '(', sequence, ')');
+		} catch (error) {
+			logger.error('Processing failed for socket.io request on', channel, '(', sequence, ')');
+			logger.error(error);
+		}
 	};
 }
 
 function buildSocketSubscriptionHandler(channel, subscriptionInfo, socket) {
-	return (request) => {
+	return async (request) => {
 		const sequence = sequencer++;
 
 		logger.debug('Processing starting for socket.io subscription request from [', socket.id ,'] on', channel, '(', sequence, ')');
 
-		return Promise.resolve()
-			.then(() => {
-				let validationData;
+		try {
+			let validationData;
 
-				if (request.context) {
-					const context = request.context;
-					const payload = request;
+			if (request.context) {
+				const context = request.context;
+				const payload = request;
 
-					delete request.context;
+				delete request.context;
 
-					validationData = {
-						context: context,
-						payload: payload
-					};
-				} else {
-					validationData = null;
-				}
+				validationData = {
+					context: context,
+					payload: payload
+				};
+			} else {
+				validationData = null;
+			}
 
-				return subscriptionInfo.commands.validation.process(validationData);
-			}).then((valid) => {
-				if (!valid) {
-					throw new Error('Unable to process subscription, validation failed.');
-				}
+			const valid = await subscriptionInfo.commands.validation.process(validationData);
 
-				return subscriptionInfo.commands.rooms.process(request);
-			}).then((qualifiers) => {
-				let qualifiersToJoin;
+			if (!valid) {
+				throw new Error('Unable to process subscription, validation failed.');
+			}
 
-				if (is.array(qualifiers)) {
-					qualifiersToJoin = qualifiers;
-				} else if (is.string(qualifiers)) {
-					qualifiersToJoin = [ qualifiers ];
-				} else {
-					qualifiersToJoin = [ ];
-				}
+			const qualifiers = await subscriptionInfo.commands.rooms.process(request);
 
-				const roomsToJoin = qualifiersToJoin.map((qualifierToJoin) => {
-					return subscriptionInfo.room.base + qualifierToJoin;
-				});
+			let qualifiersToJoin;
 
-				roomsToJoin.forEach((roomToJoin) => {
-					socket.join(roomToJoin);
-				});
+			if (is.array(qualifiers)) {
+				qualifiersToJoin = qualifiers;
+			} else if (is.string(qualifiers)) {
+				qualifiersToJoin = [ qualifiers ];
+			} else {
+				qualifiersToJoin = [ ];
+			}
 
-				logger.debug('Socket.io client [', socket.id, '] joined [', roomsToJoin.join(','), ']');
-
-				let responsePromise;
-
-				if (subscriptionInfo.response.eventType) {
-					responsePromise = subscriptionInfo.commands.response.process(request)
-						.then((response) => {
-							if (response) {
-								socket.emit(subscriptionInfo.response.eventType, response);
-
-								logger.debug('Socket.io client [', socket.id, '] sent immediate response after joining [', roomsToJoin.join(','), ']');
-							}
-						});
-				} else {
-					responsePromise = Promise.resolve();
-				}
-
-				return responsePromise;
-			}).then(() => {
-				logger.debug('Processing completed for socket.io subscription request on', channel, '(', sequence, ')');
-			}).catch((error) => {
-				logger.error('Processing failed for socket.io subscription request on', channel, '(', sequence, ')');
-				logger.error(error);
+			const roomsToJoin = qualifiersToJoin.map((qualifierToJoin) => {
+				return subscriptionInfo.room.base + qualifierToJoin;
 			});
+
+			roomsToJoin.forEach((roomToJoin) => {
+				socket.join(roomToJoin);
+			});
+
+			logger.debug('Socket.io client [', socket.id, '] joined [', roomsToJoin.join(','), ']');
+
+			if (subscriptionInfo.response.eventType) {
+				const response = await subscriptionInfo.commands.response.process(request);
+
+				if (response) {
+					socket.emit(subscriptionInfo.response.eventType, response);
+
+					logger.debug('Socket.io client [', socket.id, '] sent immediate response after joining [', roomsToJoin.join(','), ']');
+				}
+			}
+
+			logger.debug('Processing completed for socket.io subscription request on', channel, '(', sequence, ')');
+		} catch (error) {
+			logger.error('Processing failed for socket.io subscription request on', channel, '(', sequence, ')');
+			logger.error(error);
+		}
 	};
 }
 

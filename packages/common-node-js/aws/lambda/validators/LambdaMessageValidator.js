@@ -27,13 +27,10 @@ export default class LambdaMessageValidator {
 	 * @returns {Promise<boolean>}
 	 */
 	async validate(name, message, event, trigger, messageId) {
-		return Promise.resolve()
-			.then(() => {
-				assert.argumentIsOptional(trigger, 'trigger', LambdaTriggerType, 'LambdaTriggerType');
-				assert.argumentIsOptional(messageId, 'messageId', String);
+		assert.argumentIsOptional(trigger, 'trigger', LambdaTriggerType, 'LambdaTriggerType');
+		assert.argumentIsOptional(messageId, 'messageId', String);
 
-				return this._validate(name, message, event, trigger, messageId);
-			});
+		return this._validate(name, message, event, trigger, messageId);
 	}
 
 	/**

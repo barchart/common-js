@@ -30,7 +30,17 @@ export default class LambdaResponseGeneratorGzip extends LambdaResponseGenerator
 		this.#parser = parser;
 	}
 
-	_generate(responseCode, responseHeaders, responseData, responseSize) {
+	/**
+	 * @protected
+	 * @override
+	 * @async
+	 * @param {number} responseCode
+	 * @param {object} responseHeaders
+	 * @param {Buffer|string} responseData
+	 * @param {number} responseSize
+	 * @returns {Promise<object|null>}
+	 */
+	async _generate(responseCode, responseHeaders, responseData, responseSize) {
 		const acceptEncoding = this.#parser.getHeader('Accept-Encoding') || this.#parser.getHeader('accept-encoding');
 
 		if (!(is.string(acceptEncoding) && acceptEncoding.includes('gzip'))) {
@@ -53,22 +63,21 @@ export default class LambdaResponseGeneratorGzip extends LambdaResponseGenerator
 
 		logger.debug('Response compression started, uncompressed size is [', responseSize, ']');
 
-		return compress(responseData).then((compressedData) => {
-			const compressedSize = Buffer.byteLength(compressedData, 'base64');
+		const compressedData = await compress(responseData);
+		const compressedSize = Buffer.byteLength(compressedData, 'base64');
 
-			if (compressedSize > LambdaResponseGenerator.MAXIMUM_RESPONSE_LENGTH_IN_BYTES) {
-				logger.debug('Response compressed completed; however, the compressed response size [', compressedSize, '] exceeds the maximum response size [', LambdaResponseGenerator.MAXIMUM_RESPONSE_LENGTH_IN_BYTES, ']');
+		if (compressedSize > LambdaResponseGenerator.MAXIMUM_RESPONSE_LENGTH_IN_BYTES) {
+			logger.debug('Response compressed completed; however, the compressed response size [', compressedSize, '] exceeds the maximum response size [', LambdaResponseGenerator.MAXIMUM_RESPONSE_LENGTH_IN_BYTES, ']');
 
-				return null;
-			} else {
-				logger.debug('Response compressed completed; compressed response size is [', compressedSize, ']');
+			return null;
+		} else {
+			logger.debug('Response compressed completed; compressed response size is [', compressedSize, ']');
 
-				const headers = Object.assign({ }, responseHeaders);
-				headers['Content-Encoding'] = 'gzip';
+			const headers = Object.assign({ }, responseHeaders);
+			headers['Content-Encoding'] = 'gzip';
 
-				return LambdaResponseGenerator.buildResponseForApiGateway(responseCode, headers, compressedData.toString('base64'), true);
-			}
-		});
+			return LambdaResponseGenerator.buildResponseForApiGateway(responseCode, headers, compressedData.toString('base64'), true);
+		}
 	}
 
 	/**

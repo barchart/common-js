@@ -177,18 +177,15 @@ export default class TableContainer extends Disposable {
 	 * @returns {Promise<boolean>}
 	 */
 	async _createItem(item, preventOverwrite) {
-		return Promise.resolve()
-			.then(() => {
-				this.#checkReady();
+		this.#checkReady();
 
-				if (!this._validate(item)) {
-					logger.trace('Failed to create item in [', this.definition.name, '] table', item);
+		if (!this._validate(item)) {
+			logger.trace('Failed to create item in [', this.definition.name, '] table', item);
 
-					throw new Error(`Unable to insert item into [ ${this.definition.name} ] table.`);
-				}
+			throw new Error(`Unable to insert item into [ ${this.definition.name} ] table.`);
+		}
 
-				return this.#provider.saveItem(item, this.definition, preventOverwrite);
-			});
+		return this.#provider.saveItem(item, this.definition, preventOverwrite);
 	}
 
 	/**
@@ -200,20 +197,17 @@ export default class TableContainer extends Disposable {
 	 * @returns {Promise<boolean>}
 	 */
 	async _createItems(items) {
-		return Promise.resolve()
-			.then(() => {
-				this.#checkReady();
+		this.#checkReady();
 
-				items.forEach((item) => {
-					if (!this._validate(item)) {
-						logger.trace('Failed to create item in [', this.definition.name, '] table', item);
+		items.forEach((item) => {
+			if (!this._validate(item)) {
+				logger.trace('Failed to create item in [', this.definition.name, '] table', item);
 
-						throw new Error(`Unable to insert items into [ ${this.definition.name} ] table.`);
-					}
-				});
+				throw new Error(`Unable to insert items into [ ${this.definition.name} ] table.`);
+			}
+		});
 
-				return this.#provider.createItems(items, this.definition);
-			});
+		return this.#provider.createItems(items, this.definition);
 	}
 
 	/**
@@ -225,18 +219,15 @@ export default class TableContainer extends Disposable {
 	 * @returns {Promise<boolean>}
 	 */
 	async _deleteItem(item) {
-		return Promise.resolve()
-			.then(() => {
-				this.#checkReady();
+		this.#checkReady();
 
-				if (!this._validate(item)) {
-					logger.trace('Failed to delete item from [', this.definition.name, '] table', item);
+		if (!this._validate(item)) {
+			logger.trace('Failed to delete item from [', this.definition.name, '] table', item);
 
-					throw new Error(`Unable to delete item from [ ${this.definition.name} ] table.`);
-				}
+			throw new Error(`Unable to delete item from [ ${this.definition.name} ] table.`);
+		}
 
-				return this.#provider.deleteItem(item, this.definition);
-			});
+		return this.#provider.deleteItem(item, this.definition);
 	}
 
 	/**
@@ -248,20 +239,17 @@ export default class TableContainer extends Disposable {
 	 * @returns {Promise<boolean>}
 	 */
 	async _deleteItems(items) {
-		return Promise.resolve()
-			.then(() => {
-				this.#checkReady();
+		this.#checkReady();
 
-				items.forEach((item) => {
-					if (!this._validate(item)) {
-						logger.trace('Failed to create delete item from [', this.definition.name, '] table', item);
+		items.forEach((item) => {
+			if (!this._validate(item)) {
+				logger.trace('Failed to create delete item from [', this.definition.name, '] table', item);
 
-						throw new Error(`Unable to delete items from [ ${this.definition.name} ] table.`);
-					}
-				});
+				throw new Error(`Unable to delete items from [ ${this.definition.name} ] table.`);
+			}
+		});
 
-				return this.#provider.deleteItems(items, this.definition);
-			});
+		return this.#provider.deleteItems(items, this.definition);
 	}
 
 	/**
@@ -273,12 +261,9 @@ export default class TableContainer extends Disposable {
 	 * @returns {Promise<object>}
 	 */
 	async _updateItem(update) {
-		return Promise.resolve()
-			.then(() => {
-				this.#checkReady();
+		this.#checkReady();
 
-				return this.#provider.updateItem(update);
-			});
+		return this.#provider.updateItem(update);
 	}
 
 	/**
@@ -289,17 +274,13 @@ export default class TableContainer extends Disposable {
 	 * @returns {Promise<object>}
 	 */
 	async deleteTable() {
-		return Promise.resolve()
-			.then(() => {
-				this.#checkReady();
+		this.#checkReady();
 
-				return this.#provider.deleteTable(this.definition.name)
-					.then((data) => {
-						this.dispose();
+		const data = await this.#provider.deleteTable(this.definition.name);
 
-						return data;
-					});
-			});
+		this.dispose();
+
+		return data;
 	}
 
 	/**
@@ -339,12 +320,9 @@ export default class TableContainer extends Disposable {
 	 * @return {Promise}
 	 */
 	async scanChunk(scan, startKey) {
-		return Promise.resolve()
-			.then(() => {
-				this.#checkReady();
+		this.#checkReady();
 
-				return this.#provider.scanChunk(scan, startKey);
-			});
+		return this.#provider.scanChunk(scan, startKey);
 	}
 
 
@@ -371,12 +349,9 @@ export default class TableContainer extends Disposable {
 	 * @returns {Promise<object[]>}
 	 */
 	async queryParallel(queries) {
-		return Promise.resolve()
-			.then(() => {
-				this.#checkReady();
+		this.#checkReady();
 
-				return this.#provider.queryParallel(queries);
-			});
+		return this.#provider.queryParallel(queries);
 	}
 
 	/**
@@ -389,12 +364,9 @@ export default class TableContainer extends Disposable {
 	 * @return {Promise}
 	 */
 	async queryChunk(query, startKey) {
-		return Promise.resolve()
-			.then(() => {
-				this.#checkReady();
+		this.#checkReady();
 
-				return this.#provider.queryChunk(query, startKey);
-			});
+		return this.#provider.queryChunk(query, startKey);
 	}
 
 	_onDispose() {

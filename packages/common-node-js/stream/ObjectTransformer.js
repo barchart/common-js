@@ -143,28 +143,29 @@ export default class ObjectTransformer extends Stream.Transform {
 			}
 		}
 
-	#processAsynchronous(chunk, callback) {
-		return promise.pipeline(this.#transformations.map(t => t.transform.bind(t)), chunk)
-			.then((transformed) => {
+		async #processAsynchronous(chunk, callback) {
+			try {
+				const transformed = await promise.pipeline(this.#transformations.map(t => t.transform.bind(t)), chunk);
+
 				callback(null, transformed);
-				}).catch((e) => {
-					let error;
+			} catch (e) {
+				let error;
 
-					if (this.#silent) {
-						logger.warn(`Transformation [ ${this.#counter} ] for [ ${this.#description} ] failed.`);
+				if (this.#silent) {
+					logger.warn(`Transformation [ ${this.#counter} ] for [ ${this.#description} ] failed.`);
 
-						if (logger.isTraceEnabled() && chunk) {
-							logger.trace(chunk);
-						}
-
-						error = null;
-					} else {
-						logger.error(e);
-
-						error = e;
+					if (logger.isTraceEnabled() && chunk) {
+						logger.trace(chunk);
 					}
 
-					callback(error, null);
-				});
+					error = null;
+				} else {
+					logger.error(e);
+
+					error = e;
+				}
+
+				callback(error, null);
+			}
 		}
-}
+	}

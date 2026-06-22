@@ -72,12 +72,11 @@ export default class AwsPublisher extends Publisher {
 	async _start() {
 		logger.debug('AWS publisher starting');
 
-		return Promise.all([ this.#snsProvider.start(), this.#sqsProvider.start() ])
-			.then((ignored) => {
-				logger.debug('AWS publisher started');
-			}).then(() => {
-				return true;
-			});
+		await Promise.all([ this.#snsProvider.start(), this.#sqsProvider.start() ]);
+
+		logger.debug('AWS publisher started');
+
+		return true;
 	}
 
 	/**
@@ -131,10 +130,12 @@ export default class AwsPublisher extends Publisher {
 
 			subscriptionStack.push(subscriptionEvent);
 
-			this.#subscriptionPromises[topic] = Promise.all([
-				this.#snsProvider.getTopicArn(topic, this.#createOptions),
-				this.#sqsProvider.getQueueArn(subscriptionQueueName, this.#createOptions)
-			]).then((resultGroup) => {
+			this.#subscriptionPromises[topic] = (async () => {
+				const resultGroup = await Promise.all([
+					this.#snsProvider.getTopicArn(topic, this.#createOptions),
+					this.#sqsProvider.getQueueArn(subscriptionQueueName, this.#createOptions)
+				]);
+
 				const topicArn = resultGroup[0];
 				const queueArn = resultGroup[1];
 
@@ -142,14 +143,13 @@ export default class AwsPublisher extends Publisher {
 					this.#sqsProvider.deleteQueue(subscriptionQueueName);
 				}));
 
-				return this.#sqsProvider.setQueuePolicy(subscriptionQueueName, SqsProvider.getPolicyForSnsDelivery(queueArn, topicArn))
-					.then(() => {
-						return this.#snsProvider.subscribe(topic, queueArn);
-					});
-			}).then((queueBinding) => {
+				await this.#sqsProvider.setQueuePolicy(subscriptionQueueName, SqsProvider.getPolicyForSnsDelivery(queueArn, topicArn));
+
+				const queueBinding = await this.#snsProvider.subscribe(topic, queueArn);
+
 				subscriptionStack.push(queueBinding);
 
-				return this.#sqsProvider.observe(subscriptionQueueName, (envelope) => {
+				const queueObserver = await this.#sqsProvider.observe(subscriptionQueueName, (envelope) => {
 					if (!is.object(envelope) || !is.string(envelope.Message)) {
 						return;
 					}
@@ -177,7 +177,7 @@ export default class AwsPublisher extends Publisher {
 						logger.debug('AWS publisher dropped an "echo" message for [', topic, ']');
 					}
 				}, 100, 20000, 10);
-			}).then((queueObserver) => {
+
 				subscriptionStack.push(queueObserver);
 
 				subscriptionStack.push(Disposable.fromAction(() => {
@@ -189,25 +189,24 @@ export default class AwsPublisher extends Publisher {
 					event: subscriptionEvent,
 					events: subscriptionEvents
 				};
-			});
+			})();
 		}
 
-		return this.#subscriptionPromises[topic]
-			.then((subscriberData) => {
-				const h = (data, ignored) => {
-					handler(data);
-				};
+		const subscriberData = await this.#subscriptionPromises[topic];
 
-				let binding;
+		const h = (data, ignored) => {
+			handler(data);
+		};
 
-				if (qualifier) {
-					binding = subscriberData.events.register(qualifier, h);
-				} else {
-					binding = subscriberData.event.register(h);
-				}
+		let binding;
 
-				return binding;
-			});
+		if (qualifier) {
+			binding = subscriberData.events.register(qualifier, h);
+		} else {
+			binding = subscriberData.event.register(h);
+		}
+
+		return binding;
 	}
 
 	/**
@@ -221,9 +220,11 @@ export default class AwsPublisher extends Publisher {
 		Object.keys(subscriptionPromises).forEach((key) => {
 			const subscriptionPromise = subscriptionPromises[key];
 
-			return subscriptionPromise.then((subscriptionData) => {
+			(async () => {
+				const subscriptionData = await subscriptionPromise;
+
 				subscriptionData.binding.dispose();
-			});
+			})();
 		});
 
 		logger.debug('AWS publisher disposed');

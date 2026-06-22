@@ -55,12 +55,13 @@ export default class Bus extends Disposable {
 		}
 
 		if (this.#startPromise === null) {
-			this.#startPromise = Promise.all([ this.#publisher.start(), this.#router.start() ])
-				.then((ignored) => {
-					this.#started = true;
+			this.#startPromise = (async () => {
+				await Promise.all([ this.#publisher.start(), this.#router.start() ]);
 
-					return this.#started;
-				});
+				this.#started = true;
+
+				return this.#started;
+			})();
 		}
 
 		return this.#startPromise;
@@ -140,8 +141,6 @@ export default class Bus extends Disposable {
 
 		const start = date.getTimestamp();
 
-		let requestPromise;
-
 		if (this.#router.canRoute(messageType)) {
 			let timeoutToUse;
 
@@ -151,25 +150,24 @@ export default class Bus extends Disposable {
 				timeoutToUse = DEFAULT_TIMEOUT_MILLISECONDS;
 			}
 
-			requestPromise = this.#router.route(messageType, payload, timeoutToUse, forget || false)
-				.then((response) => {
-					const end = date.getTimestamp();
+			try {
+				const response = await this.#router.route(messageType, payload, timeoutToUse, forget || false);
 
-					logger.debug('Request [', messageType, '] completed after [', (end - start), '] milliseconds');
+				const end = date.getTimestamp();
 
-					return response;
-				}).catch((e) => {
-					const end = date.getTimestamp();
+				logger.debug('Request [', messageType, '] completed after [', (end - start), '] milliseconds');
 
-					logger.warn('Request [', messageType, '] failed after [', (end - start), '] milliseconds');
+				return response;
+			} catch (e) {
+				const end = date.getTimestamp();
 
-					throw e;
-				});
-		} else {
-			requestPromise = Promise.reject(`Router is unable to handle request [ ${messageType} ].`);
+				logger.warn('Request [', messageType, '] failed after [', (end - start), '] milliseconds');
+
+				throw e;
+			}
 		}
 
-		return requestPromise;
+		throw `Router is unable to handle request [ ${messageType} ].`;
 	}
 
 	/**

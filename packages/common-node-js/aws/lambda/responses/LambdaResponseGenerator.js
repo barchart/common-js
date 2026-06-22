@@ -32,10 +32,7 @@ export default class LambdaResponseGenerator {
 	 * @returns {Promise<object|null>}
 	 */
 	async generate(responseCode, responseHeaders, responseData, responseSize) {
-		return Promise.resolve()
-			.then(() => {
-				return this._generate(responseCode, responseHeaders, responseData, responseSize);
-			});
+		return this._generate(responseCode, responseHeaders, responseData, responseSize);
 	}
 
 	/**

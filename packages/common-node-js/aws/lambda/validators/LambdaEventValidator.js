@@ -60,61 +60,53 @@ export default class LambdaEventValidator extends LambdaValidator {
 	 * @returns {Promise<boolean>}
 	 */
 	async validate(event) {
-		return Promise.resolve()
-			.then(() => {
-				if (this.#messageValidators.length === 0) {
-					return true;
+		if (this.#messageValidators.length === 0) {
+			return true;
+		}
+
+		let messages;
+
+		if (is.array(event.Records)) {
+			messages = event.Records;
+		} else {
+			messages = [event];
+		}
+
+		if (messages.length === 0) {
+			return true;
+		}
+
+		const name = process.env.AWS_LAMBDA_FUNCTION_NAME;
+
+		const validateMessage = async (message) => {
+			const trigger = LambdaTriggerType.fromMessage(message);
+
+			let messageId;
+
+			if (trigger) {
+				messageId = trigger.getId(message);
+			} else {
+				messageId = null;
+			}
+
+			const promises = this.#messageValidators.map(async (messageValidator, i) => {
+				const valid = await messageValidator.validate(name, message, event, trigger, messageId);
+
+				if (!valid) {
+					logger.warn(`Message rejected by validator [ ${i.toString()} ] [ ${messageValidator.toString()} ]`);
 				}
 
-				let messages;
-
-				if (is.array(event.Records)) {
-					messages = event.Records;
-				} else {
-					messages = [event];
-				}
-
-				if (messages.length === 0) {
-					return true;
-				}
-
-				const name = process.env.AWS_LAMBDA_FUNCTION_NAME;
-
-				const validateMessage = (message) => {
-					const trigger = LambdaTriggerType.fromMessage(message);
-
-					let messageId;
-
-					if (trigger) {
-						messageId = trigger.getId(message);
-					} else {
-						messageId = null;
-					}
-
-					const promises = this.#messageValidators.map((messageValidator, i) => {
-						return messageValidator.validate(name, message, event, trigger, messageId)
-							.then((valid) => {
-								if (!valid) {
-									logger.warn(`Message rejected by validator [ ${i.toString()} ] [ ${messageValidator.toString()} ]`);
-								}
-
-								return valid;
-							});
-					});
-
-					return checkValidationPromises(promises);
-				};
-
-				const validateEvent = () => {
-					const promises = messages.map((message) => {
-						return validateMessage(message);
-					});
-
-					return checkValidationPromises(promises);
-				};
-
-				return validateEvent();
+				return valid;
 			});
+
+			return checkValidationPromises(promises);
+		};
+
+		const promises = messages.map((message) => {
+			return validateMessage(message);
+		});
+
+		return checkValidationPromises(promises);
 	}
 
 	/**
@@ -128,9 +120,8 @@ export default class LambdaEventValidator extends LambdaValidator {
 	}
 }
 
-function checkValidationPromises(promise) {
-	return Promise.all(promise)
-		.then((results) => {
-			return results.every(r => r === true);
-		});
+async function checkValidationPromises(promise) {
+	const results = await Promise.all(promise);
+
+	return results.every(r => r === true);
 }

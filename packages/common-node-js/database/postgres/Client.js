@@ -59,7 +59,7 @@ export default class Client extends Disposable {
 	 */
 	async query(query, parameters, name) {
 		if (this.disposed) {
-			return Promise.reject(`Unable to execute Postgres query, the ${this.toString()} has been disposed`);
+			throw `Unable to execute Postgres query, the ${this.toString()} has been disposed`;
 		}
 
 		assert.argumentIsRequired(query, 'query', String);

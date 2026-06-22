@@ -50,14 +50,13 @@ export default class Router extends Disposable {
 		}
 
 		if (this.#startPromise === null) {
-			this.#startPromise = Promise.resolve()
-				.then(() => {
-					return this._start();
-				}).then(() => {
-					this.#started = true;
+			this.#startPromise = (async () => {
+				await this._start();
 
-					return this.#started;
-				});
+				this.#started = true;
+
+				return this.#started;
+			})();
 		}
 
 		return this.#startPromise;
@@ -130,10 +129,7 @@ export default class Router extends Disposable {
 			throw new Error('The message router does not support the message type.');
 		}
 
-		return Promise.resolve()
-			.then(() => {
-				return this._route(messageType, payload, timeout, forget);
-			});
+		return this._route(messageType, payload, timeout, forget);
 	}
 
 	/**
@@ -170,20 +166,13 @@ export default class Router extends Disposable {
 			throw new Error('The message router has been disposed');
 		}
 
-		let registerPromise;
-
 		if (checkSuppression(messageType, this.#suppressExpressions)) {
 			logger.debug('Suppressing registration for to', messageType);
 
-			registerPromise = Promise.resolve(Disposable.getEmpty());
-		} else {
-			registerPromise = Promise.resolve()
-				.then(() => {
-					return this._register(messageType, handler);
-				});
+			return Disposable.getEmpty();
 		}
 
-		return registerPromise;
+		return this._register(messageType, handler);
 	}
 
 	/**

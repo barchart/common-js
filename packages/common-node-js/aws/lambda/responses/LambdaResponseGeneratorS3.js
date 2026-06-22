@@ -22,7 +22,17 @@ export default class LambdaResponseGeneratorForS3 extends LambdaResponseGenerato
 		super();
 	}
 
-	_generate(responseCode, responseHeaders, responseData, responseSize) {
+	/**
+	 * @protected
+	 * @override
+	 * @async
+	 * @param {number} responseCode
+	 * @param {object} responseHeaders
+	 * @param {Buffer|string} responseData
+	 * @param {number} responseSize
+	 * @returns {Promise<object|null>}
+	 */
+	async _generate(responseCode, responseHeaders, responseData, responseSize) {
 		if (responseSize < LambdaResponseGenerator.MAXIMUM_RESPONSE_LENGTH_IN_BYTES) {
 			logger.debug('Unable to use S3 response strategy, the response size [', responseSize, '] is too small');
 
@@ -34,49 +44,34 @@ export default class LambdaResponseGeneratorForS3 extends LambdaResponseGenerato
 
 		logger.debug('Uploading response data to S3, the response size is [', responseSize, ']');
 
-		return Promise.resolve({ })
-			.then((context) => {
-				return getS3Provider()
-					.then((s3) => {
-						logger.debug('S3 provider initialized');
+		try {
+			const s3 = await getS3Provider();
 
-						context.s3 = s3;
+			logger.debug('S3 provider initialized');
 
-						return context;
-					});
-			}).then((context) => {
-				const mimeType = responseHeaders['Content-Type'] || null;
+			const mimeType = responseHeaders['Content-Type'] || null;
 
-				return context.s3.upload(key, responseData, mimeType, true)
-					.then(() => {
-						logger.debug('Uploaded response data to S3 at [', key, ']');
+			await s3.upload(key, responseData, mimeType, true);
 
-						return context;
-					});
-			}).then((context) => {
-				return context.s3.getSignedUrl('getObject', key, S3_TTL_FOR_SIGNED_URL_IN_SECONDS)
-					.then((url) => {
-						logger.debug('Retrieved signed URL for response data at [', key, ']');
+			logger.debug('Uploaded response data to S3 at [', key, ']');
 
-						context.signedUrl = url;
+			const signedUrl = await s3.getSignedUrl('getObject', key, S3_TTL_FOR_SIGNED_URL_IN_SECONDS);
 
-						return context;
-					});
-			}).then((context) => {
-				logger.info('Response uploaded to S3, sending HTTP 303 response referring to S3 object at [', key, ']');
+			logger.debug('Retrieved signed URL for response data at [', key, ']');
+			logger.info('Response uploaded to S3, sending HTTP 303 response referring to S3 object at [', key, ']');
 
-				const headers = Object.assign({ }, responseHeaders);
-				headers.Location = context.signedUrl;
+			const headers = Object.assign({ }, responseHeaders);
+			headers.Location = signedUrl;
 
-				const response = LambdaResponseGenerator.buildResponseForApiGateway(303, headers, null);
-				delete response.body;
+			const response = LambdaResponseGenerator.buildResponseForApiGateway(303, headers, null);
+			delete response.body;
 
-				return response;
-			}).catch((error) => {
-				logger.error('Failed to upload response data to S3', error);
+			return response;
+		} catch (error) {
+			logger.error('Failed to upload response data to S3', error);
 
-				return null;
-			});
+			return null;
+		}
 	}
 
 	/**
@@ -94,12 +89,13 @@ let s3ProviderPromise = null;
 
 function getS3Provider() {
 	if (s3ProviderPromise === null) {
-		s3ProviderPromise = Promise.resolve()
-			.then(() => {
-				const provider = new S3Provider({ region: process.env.S3_LARGE_HTTP_RESPONSE_REGION || 'us-east-1', bucket: process.env.S3_LARGE_HTTP_RESPONSE_BUCKET || 'barchart-aws-lambda-responses' });
+		s3ProviderPromise = (async () => {
+			const provider = new S3Provider({ region: process.env.S3_LARGE_HTTP_RESPONSE_REGION || 'us-east-1', bucket: process.env.S3_LARGE_HTTP_RESPONSE_BUCKET || 'barchart-aws-lambda-responses' });
 
-				return provider.start().then(() => provider);
-			});
+			await provider.start();
+
+			return provider;
+		})();
 	}
 
 	return s3ProviderPromise;

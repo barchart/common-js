@@ -50,106 +50,105 @@ export default class ClusterRouter extends Router {
 	 * @returns {Promise<boolean>}
 	 */
 	async _start() {
-		return this.#messageProvider.start()
-			.then(() => {
-				this.#disposeStack.push(
-					this.#messageProvider.registerPeerConnectedObserver((source) => {
-						const messageTypes = Object.keys(this.#requestHandlers);
+		await this.#messageProvider.start();
 
-						if (messageTypes.length !== 0) {
-							logger.debug('Sending registrations to newly connected IPC peer', source);
+		this.#disposeStack.push(
+			this.#messageProvider.registerPeerConnectedObserver((source) => {
+				const messageTypes = Object.keys(this.#requestHandlers);
 
-							messageTypes.forEach((messageTypes) => {
-								this.#messageProvider.send(REGISTER, getRegistrationEnvelope(messageTypes), source);
-							});
-						}
-					})
-				);
-			}).then(() => {
-				this.#disposeStack.push(
-					this.#messageProvider.handle(REGISTER, (source, type, payload) => {
-						const messageType = payload.t;
+				if (messageTypes.length !== 0) {
+					logger.debug('Sending registrations to newly connected IPC peer', source);
 
-						logger.debug('Processing registration to', messageType, 'from IPC peer', source);
+					messageTypes.forEach((messageTypes) => {
+						this.#messageProvider.send(REGISTER, getRegistrationEnvelope(messageTypes), source);
+					});
+				}
+			})
+		);
 
-						if (!this.#requestRegistrations.hasOwnProperty(messageType)) {
-							this.#requestRegistrations[messageType] = [ ];
-						}
+		this.#disposeStack.push(
+			this.#messageProvider.handle(REGISTER, (source, type, payload) => {
+				const messageType = payload.t;
 
-						const registrations = this.#requestRegistrations[messageType];
+				logger.debug('Processing registration to', messageType, 'from IPC peer', source);
 
-						if (!registrations.some((registration) => registration === source)) {
-							registrations.push(source);
-						} else {
-							logger.warn('A registration for', messageType, 'already exists for worker', source);
-						}
-					})
-				);
+				if (!this.#requestRegistrations.hasOwnProperty(messageType)) {
+					this.#requestRegistrations[messageType] = [ ];
+				}
 
-				this.#disposeStack.push(
-					this.#messageProvider.handle(UNREGISTER, (source, type, payload) => {
-						const messageType = payload.t;
+				const registrations = this.#requestRegistrations[messageType];
 
-						logger.debug('Processing registration cancel to', messageType, 'from IPC peer', source);
+				if (!registrations.some((registration) => registration === source)) {
+					registrations.push(source);
+				} else {
+					logger.warn('A registration for', messageType, 'already exists for worker', source);
+				}
+			})
+		);
 
-						if (this.#requestRegistrations.hasOwnProperty(messageType)) {
-							this.#requestRegistrations[messageType] = this.#requestRegistrations[messageType].filter((item) => {
-								return item !== source;
-							});
+		this.#disposeStack.push(
+			this.#messageProvider.handle(UNREGISTER, (source, type, payload) => {
+				const messageType = payload.t;
 
-							if (this.#requestRegistrations[messageType].length === 0) {
-								delete this.#requestRegistrations[messageType];
-							}
-						}
-					})
-				);
+				logger.debug('Processing registration cancel to', messageType, 'from IPC peer', source);
 
-				this.#disposeStack.push(
-					this.#messageProvider.handle(REQUEST, (source, type, payload) => {
-						const messageId = payload.id;
-						const messageType = payload.t;
-						const messagePayload = payload.p;
+				if (this.#requestRegistrations.hasOwnProperty(messageType)) {
+					this.#requestRegistrations[messageType] = this.#requestRegistrations[messageType].filter((item) => {
+						return item !== source;
+					});
 
-						Promise.resolve()
-							.then(() => {
-								const handler = this.#requestHandlers[messageType];
+					if (this.#requestRegistrations[messageType].length === 0) {
+						delete this.#requestRegistrations[messageType];
+					}
+				}
+			})
+		);
 
-								return handler(messagePayload);
-							}).then((result) => {
-								return getResponseEnvelope(payload, true, result);
-							}).catch((e) => {
-								logger.error('Request', messageId, 'failed. Sending reject message.', e);
+		this.#disposeStack.push(
+			this.#messageProvider.handle(REQUEST, async (source, type, payload) => {
+				const messageId = payload.id;
+				const messageType = payload.t;
+				const messagePayload = payload.p;
 
-								return getResponseEnvelope(payload, false, null);
-							}).then((envelope) => {
-								this.#messageProvider.send(RESPONSE, envelope, source);
-							});
-					})
-				);
+				let envelope;
 
-				this.#disposeStack.push(
-					this.#messageProvider.handle(RESPONSE, (source, type, payload) => {
-						const requestId = payload.id;
-						const callbacks = this.#pendingCallbacks[requestId];
+				try {
+					const handler = this.#requestHandlers[messageType];
 
-						if (callbacks) {
-							const responseSuccess = payload.s;
-							const responsePayload = payload.p;
+					const result = await handler(messagePayload);
 
-							if (responseSuccess) {
-								callbacks.resolve(responsePayload);
-							} else {
-								callbacks.reject();
-							}
+					envelope = getResponseEnvelope(payload, true, result);
+				} catch (e) {
+					logger.error('Request', messageId, 'failed. Sending reject message.', e);
 
-							delete this.#pendingCallbacks[requestId];
-						}
-					})
-				);
-			}).then(() => {
-				return true;
-			});
+					envelope = getResponseEnvelope(payload, false, null);
+				}
 
+				this.#messageProvider.send(RESPONSE, envelope, source);
+			})
+		);
+
+		this.#disposeStack.push(
+			this.#messageProvider.handle(RESPONSE, (source, type, payload) => {
+				const requestId = payload.id;
+				const callbacks = this.#pendingCallbacks[requestId];
+
+				if (callbacks) {
+					const responseSuccess = payload.s;
+					const responsePayload = payload.p;
+
+					if (responseSuccess) {
+						callbacks.resolve(responsePayload);
+					} else {
+						callbacks.reject();
+					}
+
+					delete this.#pendingCallbacks[requestId];
+				}
+			})
+		);
+
+		return true;
 	}
 
 	/**

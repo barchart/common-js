@@ -54,15 +54,18 @@ export default class DynamoStreamWriter extends Stream.Writable {
 	_write(chunk, encoding, callback) {
 		let delegate = this.#delegateFactory(chunk, this.#explicit);
 
-		delegate.call(this.#provider, chunk, this.#table)
-			.then(() => {
+		(async () => {
+			try {
+				await delegate.call(this.#provider, chunk, this.#table);
+
 				callback(null);
-			}).catch((e) => {
+			} catch (e) {
 				logger.error('Failed to write chunk', e);
 				logger.error('Failed to write chunk', JSON.stringify((chunk || {}), null, 2));
 
 				callback(e);
-			});
+			}
+		})();
 	}
 
 	/**

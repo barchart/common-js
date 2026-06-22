@@ -61,7 +61,7 @@ export default class SnsProvider extends Disposable {
 	 */
 	async start() {
 		if (this.disposed) {
-			return Promise.reject('Unable to start, the SNS provider has been disposed.');
+			throw 'Unable to start, the SNS provider has been disposed.';
 		}
 
 		if (this.#startPromise === null) {

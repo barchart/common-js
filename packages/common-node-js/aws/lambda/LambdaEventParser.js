@@ -1,7 +1,6 @@
 import * as assert from '@barchart/common-js/lang/assert.js';
 import * as attributes from '@barchart/common-js/lang/attributes.js';
 import * as is from '@barchart/common-js/lang/is.js';
-import * as promise from '@barchart/common-js/lang/promise.js';
 
 import Enum from '@barchart/common-js/lang/Enum.js';
 import Schema from '@barchart/common-js/serialization/json/Schema.js';
@@ -241,28 +240,23 @@ export default class LambdaEventParser {
 	 * @returns {Promise<object>}
 	 */
 	async parseSchema(jsonString, schema, description) {
-		return Promise.resolve()
-			.then(() => {
-				assert.argumentIsRequired(jsonString, 'jsonString', String);
-				assert.argumentIsRequired(schema, schema, Object);
-				assert.argumentIsRequired(schema.schema, 'schema.schema', Schema, 'Schema');
-				assert.argumentIsOptional(description, 'description', String);
+		assert.argumentIsRequired(jsonString, 'jsonString', String);
+		assert.argumentIsRequired(schema, schema, Object);
+		assert.argumentIsRequired(schema.schema, 'schema.schema', Schema, 'Schema');
+		assert.argumentIsOptional(description, 'description', String);
 
-				return promise.build((resolveCallback, rejectCallback) => {
-					try {
-						const reviver = schema.schema.getReviver();
+		try {
+			const reviver = schema.schema.getReviver();
 
-						resolveCallback(JSON.parse(jsonString, reviver));
-					} catch (e) {
-						let reason;
+			return JSON.parse(jsonString, reviver);
+		} catch (e) {
+			let reason;
 
-						reason = FailureReason.forRequest({ endpoint: { description: (description || 'deserialize JSON string') } });
-						reason = reason.addItem(FailureType.SCHEMA_VALIDATION_FAILURE, { key: e.key, name: e.name, schema: schema.schema.name });
+			reason = FailureReason.forRequest({ endpoint: { description: (description || 'deserialize JSON string') } });
+			reason = reason.addItem(FailureType.SCHEMA_VALIDATION_FAILURE, { key: e.key, name: e.name, schema: schema.schema.name });
 
-						rejectCallback(reason);
-					}
-				});
-			});
+			throw reason;
+		}
 	}
 
 	/**

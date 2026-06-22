@@ -57,14 +57,11 @@ export default class ClientProvider extends Disposable {
 	 * @returns {Promise<Client>}
 	 */
 	async getClient() {
-		return Promise.resolve()
-			.then(() => {
-				if (this.disposed) {
-					return Promise.reject(`Unable to get Postgres client, the ${this.toString()} has been disposed`);
-				}
+		if (this.disposed) {
+			throw `Unable to get Postgres client, the ${this.toString()} has been disposed`;
+		}
 
-				return this._getClient();
-			});
+		return this._getClient();
 	}
 
 	/**

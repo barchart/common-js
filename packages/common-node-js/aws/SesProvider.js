@@ -119,6 +119,7 @@ export default class SesProvider extends Disposable {
 	 * Sends a message.
 	 *
 	 * @public
+	 * @async
 	 * @param {object=} options
 	 * @returns {Promise<*>}
 	 */

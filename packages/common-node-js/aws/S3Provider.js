@@ -73,7 +73,7 @@ export default class S3Provider extends Disposable {
 	 */
 	async start() {
 		if (this.disposed) {
-			return Promise.reject('Unable to start, the S3 provider has been disposed.');
+			throw 'Unable to start, the S3 provider has been disposed.';
 		}
 
 		if (this.#startPromise === null) {

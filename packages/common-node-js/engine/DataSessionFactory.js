@@ -33,18 +33,18 @@ export default class DataSessionFactory {
 	 * Starts the component.
 	 *
 	 * @public
+	 * @async
 	 * @returns {Promise<*>}
 	 */
 	async start() {
 		if (this.#startPromise === null) {
-			this.#startPromise = Promise.resolve()
-				.then(() => {
-					return this._start();
-				}).then(() => {
-					this.#started = true;
+			this.#startPromise = (async () => {
+				await this._start();
 
-					return this.#started;
-				});
+				this.#started = true;
+
+				return this.#started;
+			})();
 		}
 
 		return this.#startPromise;
@@ -66,66 +66,53 @@ export default class DataSessionFactory {
 	 * @returns {Promise}
 	 */
 	async startSession(callback, options) {
-		return Promise.resolve()
-			.then(() => {
-				if (!this.#started) {
-					throw new Error('Unable to create session, the data session factory must be started.');
-				}
+		let pendingSession;
 
-				assert.argumentIsRequired(callback, 'callback', Function);
+		try {
+			if (!this.#started) {
+				throw new Error('Unable to create session, the data session factory must be started.');
+			}
 
-				return this._getSession();
-			}).catch((e) => {
-				logger.error('Session creation failed', e);
+			assert.argumentIsRequired(callback, 'callback', Function);
 
-				return null;
-			}).then((pendingSession) => {
-				let completedSession;
+			pendingSession = await this._getSession();
+		} catch (e) {
+			logger.error('Session creation failed', e);
 
+			pendingSession = null;
+		}
+
+		let completedSession;
+
+		try {
+			callback(pendingSession);
+
+			completedSession = pendingSession;
+		} catch(e) {
+			logger.error('Session construction failed', e);
+
+			completedSession = null;
+		}
+
+		try {
+			if (completedSession) {
+				const dataProvider = await this.getDataProvider(options);
+
+				return completedSession.flush(dataProvider);
+			}
+		} catch (e) {
+			if (is.object(options) && is.fn(options.handleError)) {
 				try {
-					callback(pendingSession);
+					return options.handleError(e, logger);
+				} catch (e2) {
+					logger.error('User-defined error handler threw an error', e2);
 
-					completedSession = pendingSession;
-				} catch(e) {
-					logger.error('Session construction failed', e);
-
-					completedSession = null;
+					return handleError(e);
 				}
+			}
 
-				return completedSession;
-			}).then((session) => {
-				let flushPromise;
-
-				if (session) {
-					flushPromise = this.getDataProvider(options)
-						.then((dataProvider) => {
-							return session.flush(dataProvider);
-						});
-				} else {
-					flushPromise = Promise.resolve();
-				}
-
-				return flushPromise;
-			}).catch((e) => {
-				let errorPromise;
-
-				if (is.object(options) && is.fn(options.handleError)) {
-					errorPromise = Promise.resolve()
-						.then(() => {
-							try {
-								return options.handleError(e, logger);
-							} catch (e2) {
-								logger.error('User-defined error handler threw an error', e2);
-
-								return handleError(e);
-							}
-						});
-				} else {
-					errorPromise = handleError(e);
-				}
-
-				return errorPromise;
-			});
+			return handleError(e);
+		}
 	}
 
 	/**
@@ -148,14 +135,11 @@ export default class DataSessionFactory {
 	 * @return {Promise}
 	 */
 	async getDataProvider(options) {
-		return Promise.resolve()
-			.then(() => {
-				if (!this.#started) {
-					throw new Error('Unable to create session, the data session factory must be started.');
-				}
+		if (!this.#started) {
+			throw new Error('Unable to create session, the data session factory must be started.');
+		}
 
-				return this._getDataProvider(options);
-			});
+		return this._getDataProvider(options);
 	}
 
 	/**
@@ -196,7 +180,7 @@ function handleError(e) {
 		logger.error('Session flush failed', e);
 	}
 
-	return Promise.reject(e);
+	throw e;
 }
 
 /**

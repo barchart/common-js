@@ -58,29 +58,23 @@ export default class DataOperation {
 	 * @returns {Promise}
 	 */
 	async process(dataProvider, session, name) {
-		return Promise.resolve()
-			.then(() => {
-				this._validateDataProvider(dataProvider);
+		this._validateDataProvider(dataProvider);
 
-				if (this.#processing || this.#processed) {
-					throw new Error('Unable to process DataOperation, the operation is already processing.');
-				}
+		if (this.#processing || this.#processed) {
+			throw new Error('Unable to process DataOperation, the operation is already processing.');
+		}
 
-				this.#processing = true;
-				this.#children = [ ];
+		this.#processing = true;
+		this.#children = [ ];
 
-				return Promise.resolve()
-					.then(() => {
-						return this._process(dataProvider, session, name);
-					}).then((result) => {
-						this.#processing = false;
-						this.#processed = true;
+		const result = await this._process(dataProvider, session, name);
 
-						const children = this.#children;
+		this.#processing = false;
+		this.#processed = true;
 
-						return new DataOperationResult(this, result, children);
-					});
-			});
+		const children = this.#children;
+
+		return new DataOperationResult(this, result, children);
 	}
 
 	/**

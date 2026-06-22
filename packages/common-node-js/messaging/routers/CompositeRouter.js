@@ -34,11 +34,11 @@ export default class CompositeRouter extends Router {
 	 * @returns {Promise<boolean>}
 	 */
 	async _start() {
-		return Promise.all(this.#routers.map((router) => {
+		await Promise.all(this.#routers.map((router) => {
 			return router.start();
-		})).then(() => {
-			return true;
-		});
+		}));
+
+		return true;
 	}
 
 	/**
@@ -84,16 +84,15 @@ export default class CompositeRouter extends Router {
 			return router.register(messageType, handler);
 		});
 
-		return Promise.all(registerPromises)
-			.then((registrations) => {
-				const disposableStack = new DisposableStack();
+		const registrations = await Promise.all(registerPromises);
 
-				registrations.forEach((registration) => {
-					disposableStack.push(registration);
-				});
+		const disposableStack = new DisposableStack();
 
-				return disposableStack;
-			});
+		registrations.forEach((registration) => {
+			disposableStack.push(registration);
+		});
+
+		return disposableStack;
 	}
 
 	/**

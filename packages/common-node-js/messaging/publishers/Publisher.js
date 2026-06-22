@@ -49,14 +49,13 @@ export default class Publisher extends Disposable {
 		}
 
 		if (this.#startPromise === null) {
-			this.#startPromise = Promise.resolve()
-				.then(() => {
-					return this._start();
-				}).then(() => {
-					this.#started = true;
+			this.#startPromise = (async () => {
+				await this._start();
 
-					return this.#started;
-				});
+				this.#started = true;
+
+				return this.#started;
+			})();
 		}
 
 		return this.#startPromise;
@@ -91,20 +90,13 @@ export default class Publisher extends Disposable {
 			throw new Error('The message publisher has been disposed');
 		}
 
-		let publishPromise;
-
 		if (checkSuppression(messageType, this.#suppressExpressions)) {
 			logger.trace('Suppressing publish for [', messageType, ']');
 
-			publishPromise = Promise.resolve();
-		} else {
-			publishPromise = Promise.resolve()
-				.then(() => {
-					return this._publish(messageType, payload);
-				});
+			return;
 		}
 
-		return publishPromise;
+		return this._publish(messageType, payload);
 	}
 
 	/**
@@ -140,20 +132,13 @@ export default class Publisher extends Disposable {
 			throw new Error('The message publisher has been disposed');
 		}
 
-		let subscribePromise;
-
 		if (checkSuppression(messageType, this.#suppressExpressions)) {
 			logger.debug('Suppressing subscription to [', messageType, ']');
 
-			subscribePromise = Promise.resolve(Disposable.getEmpty());
-		} else {
-			subscribePromise = Promise.resolve()
-				.then(() => {
-					return this._subscribe(messageType, handler);
-				});
+			return Disposable.getEmpty();
 		}
 
-		return subscribePromise;
+		return this._subscribe(messageType, handler);
 	}
 
 	/**

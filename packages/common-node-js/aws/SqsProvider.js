@@ -75,7 +75,7 @@ export default class SqsProvider extends Disposable {
 	 */
 	async start() {
 		if (this.disposed) {
-			return Promise.reject('Unable to start, the SQS provider has been disposed.');
+			throw 'Unable to start, the SQS provider has been disposed.';
 		}
 
 		if (this.#startPromise === null) {

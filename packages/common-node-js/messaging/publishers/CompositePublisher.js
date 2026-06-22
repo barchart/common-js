@@ -34,11 +34,11 @@ export default class CompositePublisher extends Publisher {
 	 * @returns {Promise<boolean>}
 	 */
 	async _start() {
-		return Promise.all(this.#publishers.map((publisher) => {
+		await Promise.all(this.#publishers.map((publisher) => {
 			return publisher.start();
-		})).then(() => {
-			return true;
-		});
+		}));
+
+		return true;
 	}
 
 	/**
@@ -54,10 +54,7 @@ export default class CompositePublisher extends Publisher {
 			return publisher.publish(messageType, payload);
 		});
 
-		return Promise.all(publishPromises)
-			.then((ignored) => {
-				return;
-			});
+		await Promise.all(publishPromises);
 	}
 
 	/**
@@ -73,16 +70,15 @@ export default class CompositePublisher extends Publisher {
 			return publisher.subscribe(messageType, handler);
 		});
 
-		return Promise.all(subscribePromises)
-			.then((subscriptions) => {
-				const disposableStack = new DisposableStack();
+		const subscriptions = await Promise.all(subscribePromises);
 
-				subscriptions.forEach((subscription) => {
-					disposableStack.push(subscription);
-				});
+		const disposableStack = new DisposableStack();
 
-				return disposableStack;
-			});
+		subscriptions.forEach((subscription) => {
+			disposableStack.push(subscription);
+		});
+
+		return disposableStack;
 	}
 
 	/**

@@ -17,13 +17,10 @@ export default class ServerFactory {
 	 * @param {*} serverDefinition
 	 * @returns {*}
 	 */
-	build(serverDefinition) {
+	async build(serverDefinition) {
 		assert.argumentIsRequired(serverDefinition, 'serverDefinition', ServerDefinition, 'ServerDefinition');
 
-		return Promise.resolve()
-			.then(() => {
-				return this._build(serverDefinition.getContainers(), serverDefinition.getStaticPaths(), serverDefinition.getTemplatePath());
-			});
+		return this._build(serverDefinition.getContainers(), serverDefinition.getStaticPaths(), serverDefinition.getTemplatePath());
 	}
 
 	/**

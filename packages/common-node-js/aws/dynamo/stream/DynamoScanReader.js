@@ -160,73 +160,76 @@ export default class DynamoScanReader extends Stream.Readable {
 
 		this.#reading = true;
 
-		const scanChunkRecursive = () => {
-			if (this.#stopping || this.completed) {
-				this.#reading = false;
+			const scanChunkRecursive = () => {
+				if (this.#stopping || this.completed) {
+					this.#reading = false;
 
-				if (this.#stopping) {
-					logger.debug('Scan stream stopping, stream stopped');
+					if (this.#stopping) {
+						logger.debug('Scan stream stopping, stream stopped');
+					} else {
+						logger.debug('Scan stream stopping, no more results');
+					}
+
+					this.push(null);
 				} else {
-					logger.debug('Scan stream stopping, no more results');
-				}
+					let startKey;
 
-				this.push(null);
-			} else {
-				let startKey;
+					if (this.#previous !== null && this.#previous.startKey) {
+						startKey = this.#previous.startKey;
+					} else {
+						startKey = null;
+					}
 
-				if (this.#previous !== null && this.#previous.startKey) {
-					startKey = this.#previous.startKey;
-				} else {
-					startKey = null;
-				}
+					const currentBatch = this.#batch = this.#batch + 1;
 
-				const currentBatch = this.#batch = this.#batch + 1;
+					logger.debug(`Starting batch [ ${currentBatch} ]`);
 
-				logger.debug(`Starting batch [ ${currentBatch} ]`);
+					this.#readPromise = (async () => {
+						try {
+							const results = await this.#provider.scanChunk(this.#scan, startKey);
 
-				this.#readPromise = this.#provider.scanChunk(this.#scan, startKey)
-					.then((results) => {
-						this.#readPromise = null;
+							this.#readPromise = null;
 
-						this.#previous = results;
+							this.#previous = results;
 
-						if (results.results.length !== 0) {
-							this.#scanned = this.#scanned + results.results.length;
+							if (results.results.length !== 0) {
+								this.#scanned = this.#scanned + results.results.length;
 
-							if (results.capacityConsumed) {
-								this.#capacityConsumed = this.#capacityConsumed + results.capacityConsumed;
+								if (results.capacityConsumed) {
+									this.#capacityConsumed = this.#capacityConsumed + results.capacityConsumed;
+								}
+
+								if (this.#discrete) {
+									this.#reading = results.results.reduce((accumulator, item) => {
+										return this.push(item);
+									}, this.#reading);
+								} else {
+									this.#reading = this.push(results.results);
+								}
 							}
 
-							if (this.#discrete) {
-								this.#reading = results.results.reduce((accumulator, item) => {
-									return this.push(item);
-								}, this.#reading);
+							logger.debug(`Completed batch [ ${currentBatch} ]`);
+
+							if (this.#reading) {
+								scanChunkRecursive();
 							} else {
-								this.#reading = this.push(results.results);
+								logger.debug('Scan stream paused');
 							}
+						} catch (e) {
+							this.#readPromise = null;
+
+							this.#reading = false;
+							this.#error = true;
+
+							this.push(null);
+
+							logger.error('Scan stopping, error encountered', e);
+
+							process.nextTick(() => this.emit('error', e));
 						}
-
-						logger.debug(`Completed batch [ ${currentBatch} ]`);
-
-						if (this.#reading) {
-							scanChunkRecursive();
-						} else {
-							logger.debug('Scan stream paused');
-						}
-					}).catch((e) => {
-						this.#readPromise = null;
-
-						this.#reading = false;
-						this.#error = true;
-
-						this.push(null);
-
-						logger.error('Scan stopping, error encountered', e);
-
-						process.nextTick(() => this.emit('error', e));
-					});
-			}
-		};
+					})();
+				}
+			};
 
 		scanChunkRecursive();
 	}
@@ -238,22 +241,17 @@ export default class DynamoScanReader extends Stream.Readable {
 	 * stopped, and no more data will be produced, the returned promise resolves.
 	 *
 	 * @public
+	 * @async
 	 * @return {Promise<object|null>}
 	 */
-	stop() {
+	async stop() {
 		this.#stopping = true;
 
-		let readPromise;
-
-		if (this.#readPromise === null) {
-			readPromise = Promise.resolve();
-		} else {
-			readPromise = this.#readPromise;
+		if (this.#readPromise !== null) {
+			await this.#readPromise;
 		}
 
-		return readPromise.then(() => {
-			return this.startKey;
-		});
+		return this.startKey;
 	}
 
 	/**
