@@ -25,11 +25,8 @@ describe('When a Serializer is used to schedule four tasks', () => {
 	});
 
 	describe('and the tasks complete', () => {
-		beforeEach((done) => {
-			Promise.all(promises)
-				.then(() => {
-					done();
-				});
+		beforeEach(async () => {
+			await Promise.all(promises);
 		});
 
 		it('the first task should have been executed', () => {
@@ -64,21 +61,20 @@ describe('When a Serializer is used to schedule four tasks', () => {
 
 describe('When a Serializer is used to schedule a task that throws', () => {
 	let serializer;
-	let promise;
 	let reject;
 
-	beforeEach((done) => {
+	beforeEach(async () => {
 		serializer = new Serializer();
 
 		reject = false;
 
-		promise = serializer.enqueue(() => {
-			throw new Error('Boom');
-		}).catch((e) => {
+		try {
+			await serializer.enqueue(() => {
+				throw new Error('Boom');
+			});
+		} catch (e) {
 			reject = true;
-
-			done();
-		});
+		}
 	});
 
 	it('should reject the promise', () => {
@@ -88,21 +84,20 @@ describe('When a Serializer is used to schedule a task that throws', () => {
 
 describe('When a Serializer is used to schedule a task that rejects', () => {
 	let serializer;
-	let promise;
 	let reject;
 
-	beforeEach((done) => {
+	beforeEach(async () => {
 		serializer = new Serializer();
 
 		reject = false;
 
-		promise = serializer.enqueue(() => {
-			return Promise.reject('Boom Boom');
-		}).catch((e) => {
+		try {
+			await serializer.enqueue(async () => {
+				throw 'Boom Boom';
+			});
+		} catch (e) {
 			reject = true;
-
-			done();
-		});
+		}
 	});
 
 	it('should reject the promise', () => {

@@ -6,8 +6,12 @@ describe('When a CompositeErrorInterceptor is used', () => {
 
 	it('should process rejected errors through both interceptors in order', async () => {
 		const interceptor = new CompositeErrorInterceptor(
-			ErrorInterceptor.fromDelegate(error => Promise.reject({ first: error })),
-			ErrorInterceptor.fromDelegate(error => Promise.reject({ second: error }))
+			ErrorInterceptor.fromDelegate(async error => {
+				throw { first: error };
+			}),
+			ErrorInterceptor.fromDelegate(async error => {
+				throw { second: error };
+			})
 		);
 
 		await expectAsync(interceptor.process('raw', null)).toBeRejectedWith({ second: { first: 'raw' } });

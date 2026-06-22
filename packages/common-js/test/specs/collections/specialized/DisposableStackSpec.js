@@ -106,12 +106,10 @@ describe('When an DisposableStack is constructed', () => {
 			let spyOne;
 			let disposableOne;
 
-			beforeEach((done) => {
+			beforeEach(async () => {
 				resolveAction(disposableOne = Disposable.fromAction(spyOne = jasmine.createSpy('spyOne')));
 
-				promise.then(() => {
-					done();
-				});
+				await promise;
 			});
 
 			describe('and the stack is disposed', () => {
@@ -154,7 +152,7 @@ describe('When an DisposableStack is constructed', () => {
 
 			let disposeOrder;
 
-			beforeEach((done) => {
+			beforeEach(async () => {
 				disposeOrder = [ ];
 
 				resolveActionTwo(disposableTwo = Disposable.fromAction(spyTwo = jasmine.createSpy('spyTwo').and.callFake(() => { disposeOrder.push(disposableTwo); })));
@@ -165,9 +163,7 @@ describe('When an DisposableStack is constructed', () => {
 					}, 5
 				);
 
-				promise.then(() => {
-					done();
-				});
+				await promise;
 			});
 
 			describe('and the stack is disposed', () => {

@@ -22,14 +22,16 @@ describe('When an Endpoint is constructed', () => {
 	let endpoint;
 
 	beforeEach(() => {
-		path = new Parameters([ new Parameter('Id', 'id', () => Promise.resolve('1')) ]);
+		path = new Parameters([ new Parameter('Id', 'id', async () => '1') ]);
 		query = new Parameters();
 		headers = new Parameters();
 		body = new Parameters();
 		credentials = new Credentials(() => 'user', () => 'pass');
 		requestInterceptor = RequestInterceptor.fromDelegate(request => request);
 		responseInterceptor = ResponseInterceptor.fromDelegate(response => response);
-		errorInterceptor = ErrorInterceptor.fromDelegate(error => Promise.reject(error));
+		errorInterceptor = ErrorInterceptor.fromDelegate(async error => {
+			throw error;
+		});
 
 		endpoint = new Endpoint('name', 'Description', VerbType.POST, ProtocolType.HTTP, 'example.com', 8080, path, query, headers, body, credentials, requestInterceptor, responseInterceptor, errorInterceptor);
 	});

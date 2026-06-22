@@ -34,81 +34,35 @@ describe('When a RateLimiter is constructed (1 execution per 25 milliseconds)', 
 			}
 		});
 
-		it('the tasks should serialized', (done) => {
-			let promise = null;
-
-			let getValidatedPromise = (promise, index) => {
-				return promise.then(() => {
-					for (let i = 0; i < spies.length; i++) {
-						let count;
-
-						if (i > index) {
-							count = 0;
-						} else {
-							count = 1;
-						}
-
-						expect(spies[i].calls.count()).toEqual(count);
-					}
-				});
-			};
-
-			function wrapPromise(existing, next) {
-				return existing.then(() => {
-					return next;
-				});
-			}
-
+		it('the tasks should serialized', async () => {
 			for (let i = 0; i < promises.length; i++) {
-				let p = getValidatedPromise(promises[i], i);
+				await promises[i];
 
-				if (promise === null) {
-					promise = p;
-				} else {
-					promise = wrapPromise(promise, p);
+				for (let j = 0; j < spies.length; j++) {
+					let count;
+
+					if (j > i) {
+						count = 0;
+					} else {
+						count = 1;
+					}
+
+					expect(spies[j].calls.count()).toEqual(count);
 				}
 			}
-
-			promise
-				.then(() => {
-					done();
-				});
 		});
 
-		it('the tasks not finish before the earliest possible moment', (done) => {
-			let promise = null;
-
-			let getValidatedPromise = (promise, index) => {
-				return promise.then(() => {
-					let end = new Date();
-					let duration = end.getTime() - start.getTime();
-
-					let shortestPossibleDuration = Math.floor(index / windowMaximumCount) * windowDurationMilliseconds;
-
-					expect(duration + 1).not.toBeLessThan(shortestPossibleDuration);
-				});
-			};
-
-			function wrapPromise(existing, next) {
-				return existing.then(() => {
-					return next;
-				});
-			}
-
+		it('the tasks not finish before the earliest possible moment', async () => {
 			for (let i = 0; i < promises.length; i++) {
-				let p = getValidatedPromise(promises[i], i);
+				await promises[i];
 
-				if (promise === null) {
-					promise = p;
-				} else {
-					promise = wrapPromise(promise, p);
-				}
+				let end = new Date();
+				let duration = end.getTime() - start.getTime();
+
+				let shortestPossibleDuration = Math.floor(i / windowMaximumCount) * windowDurationMilliseconds;
+
+				expect(duration + 1).not.toBeLessThan(shortestPossibleDuration);
 			}
-
-			promise
-				.then(() => {
-					done();
-				});
 		});
 	});
 
@@ -142,40 +96,19 @@ describe('When a RateLimiter is constructed (1 execution per 25 milliseconds)', 
 			}
 		});
 
-		it('each task should be executed with correct timing', (done) => {
-			let promise = null;
-
-			let getValidatedPromise = (promise, index) => {
-				return promise.catch(() => {
+		it('each task should be executed with correct timing', async () => {
+			for (let i = 0; i < promises.length; i++) {
+				try {
+					await promises[i];
+				} catch (e) {
 					let end = new Date();
 					let duration = end.getTime() - start.getTime();
 
-					let shortestPossibleDuration = Math.floor(index / windowMaximumCount) * windowDurationMilliseconds;
+					let shortestPossibleDuration = Math.floor(i / windowMaximumCount) * windowDurationMilliseconds;
 
 					expect(duration + 1).not.toBeLessThan(shortestPossibleDuration);
-				});
-			};
-
-			function wrapPromise(existing, next) {
-				return existing.then(() => {
-					return next;
-				});
-			}
-
-			for (let i = 0; i < promises.length; i++) {
-				let p = getValidatedPromise(promises[i], i);
-
-				if (promise === null) {
-					promise = p;
-				} else {
-					promise = wrapPromise(promise, p);
 				}
 			}
-
-			promise
-				.then(() => {
-					done();
-				});
 		});
 	});
 });
@@ -214,40 +147,17 @@ describe('When a RateLimiter is constructed (2 execution per 25 milliseconds)', 
 			}
 		});
 
-		it('the tasks not finish before the earliest possible moment', (done) => {
-			let promise = null;
-
-			let getValidatedPromise = (promise, index) => {
-				return promise.then(() => {
-					let end = new Date();
-					let duration = end.getTime() - start.getTime();
-
-					let shortestPossibleDuration = Math.floor(index / windowMaximumCount) * windowDurationMilliseconds;
-
-					expect(duration + 1).not.toBeLessThan(shortestPossibleDuration);
-				});
-			};
-
-			function wrapPromise(existing, next) {
-				return existing.then(() => {
-					return next;
-				});
-			}
-
+		it('the tasks not finish before the earliest possible moment', async () => {
 			for (let i = 0; i < promises.length; i++) {
-				let p = getValidatedPromise(promises[i], i);
+				await promises[i];
 
-				if (promise === null) {
-					promise = p;
-				} else {
-					promise = wrapPromise(promise, p);
-				}
+				let end = new Date();
+				let duration = end.getTime() - start.getTime();
+
+				let shortestPossibleDuration = Math.floor(i / windowMaximumCount) * windowDurationMilliseconds;
+
+				expect(duration + 1).not.toBeLessThan(shortestPossibleDuration);
 			}
-
-			promise
-				.then(() => {
-					done();
-				});
 		});
 	});
 });

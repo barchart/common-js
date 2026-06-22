@@ -140,13 +140,8 @@ describe('When a schema is validated', () => {
 	describe('and a valid schema is processed', () => {
 		let result;
 
-		beforeEach((done) => {
-			FailureReason.validateSchema(schema, { first: 'bryan', last: 'ingle'})
-				.then((r) => {
-					result = r;
-
-					done();
-				});
+		beforeEach(async () => {
+			result = await FailureReason.validateSchema(schema, { first: 'bryan', last: 'ingle'});
 		});
 
 		it('should return null (not a FailureReason)', () => {
@@ -158,17 +153,12 @@ describe('When a schema is validated', () => {
 		let successResult = null;
 		let failureResult = null;
 
-		beforeEach((done) => {
-			FailureReason.validateSchema(schema, { first: 'bryan' })
-				.then((r) => {
-					successResult = r;
-
-					done();
-				}).catch((e) => {
-					failureResult = e;
-
-					done();
-				});
+		beforeEach(async () => {
+			try {
+				successResult = await FailureReason.validateSchema(schema, { first: 'bryan' });
+			} catch (e) {
+				failureResult = e;
+			}
 		});
 
 		it('should fail with a formatted failure reason', () => {
@@ -184,17 +174,12 @@ describe('When a schema is validated', () => {
 		let successResult = null;
 		let failureResult = null;
 
-		beforeEach((done) => {
-			FailureReason.validateSchema(schema, { })
-				.then((r) => {
-					successResult = r;
-
-					done();
-				}).catch((e) => {
-					failureResult = e;
-
-					done();
-				});
+		beforeEach(async () => {
+			try {
+				successResult = await FailureReason.validateSchema(schema, { });
+			} catch (e) {
+				failureResult = e;
+			}
 		});
 
 		it('should fail with a formatted failure reason', () => {

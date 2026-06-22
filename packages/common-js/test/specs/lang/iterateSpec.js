@@ -18,15 +18,12 @@ describe('When using the iterate function', () => {
 	describe('to synchronously iterate over an array with three items', () => {
 		let processor;
 
-		beforeEach((done) => {
+		beforeEach(async () => {
 			processor = jasmine.createSpy('processor').and.callFake((item, callback) => {
 				callback();
 			});
 
-			iterate(iterable, processor)
-				.then(() => {
-					done();
-				});
+			await iterate(iterable, processor);
 		});
 
 		it('the "processor" should have been called three times', () => {
@@ -49,15 +46,12 @@ describe('When using the iterate function', () => {
 	describe('to synchronously iterate over an array with three items, breaking after the second item', () => {
 		let processor;
 
-		beforeEach((done) => {
+		beforeEach(async () => {
 			processor = jasmine.createSpy('processor').and.callFake((item, callback) => {
 				callback(item !== b);
 			});
 
-			iterate(iterable, processor)
-				.then(() => {
-					done();
-				});
+			await iterate(iterable, processor);
 		});
 
 		it('the "processor" should have been called two times', () => {
@@ -86,7 +80,7 @@ describe('When using the iterate function', () => {
 			jasmine.clock().uninstall();
 		});
 
-		beforeEach((done) => {
+		beforeEach(async () => {
 			processor = jasmine.createSpy('processor').and.callFake((item, callback) => {
 				invocations.push((new Date()).getTime());
 
@@ -95,12 +89,11 @@ describe('When using the iterate function', () => {
 				}, 5);
 			});
 
-			iterate(iterable, processor)
-				.then(() => {
-					done();
-				});
+			const promise = iterate(iterable, processor);
 
 			jasmine.clock().tick(15);
+
+			await promise;
 		});
 
 		it('the "processor" should have been called three times', () => {
@@ -141,7 +134,7 @@ describe('When using the iterate function', () => {
 			jasmine.clock().uninstall();
 		});
 
-		beforeEach((done) => {
+		beforeEach(async () => {
 			processor = jasmine.createSpy('processor').and.callFake((item, callback) => {
 				invocations.push((new Date()).getTime());
 
@@ -150,12 +143,11 @@ describe('When using the iterate function', () => {
 				}, 5);
 			});
 
-			iterate(iterable, processor)
-				.then(() => {
-					done();
-				});
+			const promise = iterate(iterable, processor);
 
 			jasmine.clock().tick(10);
+
+			await promise;
 		});
 
 		it('the "processor" should have been called two times', () => {

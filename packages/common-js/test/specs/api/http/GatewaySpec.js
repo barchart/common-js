@@ -17,7 +17,7 @@ describe('When Gateway is used', () => {
 	let axiosRequestSpy;
 
 	beforeEach(() => {
-		axiosRequestSpy = spyOn(axios, 'request').and.returnValue(Promise.resolve({ data: { ok: true } }));
+		axiosRequestSpy = spyOn(axios, 'request').and.callFake(async () => ({ data: { ok: true } }));
 	});
 
 	it('should invoke axios with composed request options and return data', async () => {
@@ -28,10 +28,10 @@ describe('When Gateway is used', () => {
 			ProtocolType.HTTPS,
 			'example.com',
 			8443,
-			new Parameters([ new Parameter('Symbol', 'symbol', payload => Promise.resolve(payload.symbol)) ]),
-			new Parameters([ new Parameter('Mode', 'mode', payload => Promise.resolve(payload.mode)) ]),
-			new Parameters([ new Parameter('Token', 'x-token', payload => Promise.resolve(payload.token)) ]),
-			new Parameters([ new Parameter('Body', 'body.value', payload => Promise.resolve(payload.value)) ]),
+			new Parameters([ new Parameter('Symbol', 'symbol', async payload => payload.symbol) ]),
+			new Parameters([ new Parameter('Mode', 'mode', async payload => payload.mode) ]),
+			new Parameters([ new Parameter('Token', 'x-token', async payload => payload.token) ]),
+			new Parameters([ new Parameter('Body', 'body.value', async payload => payload.value) ]),
 			new Credentials(payload => payload.user, payload => payload.pass),
 			RequestInterceptor.fromDelegate(options => {
 				options.requestIntercepted = true;
@@ -61,10 +61,10 @@ describe('When Gateway is used', () => {
 			ProtocolType.HTTPS,
 			'example.com',
 			8443,
-			new Parameters([ new Parameter('Symbol', 'symbol', payload => Promise.resolve(payload.symbol)) ]),
-			new Parameters([ new Parameter('Mode', 'mode', payload => Promise.resolve(payload.mode)) ]),
-			new Parameters([ new Parameter('Token', 'x-token', payload => Promise.resolve(payload.token)) ]),
-			new Parameters([ new Parameter('Body', 'body.value', payload => Promise.resolve(payload.value)) ]),
+			new Parameters([ new Parameter('Symbol', 'symbol', async payload => payload.symbol) ]),
+			new Parameters([ new Parameter('Mode', 'mode', async payload => payload.mode) ]),
+			new Parameters([ new Parameter('Token', 'x-token', async payload => payload.token) ]),
+			new Parameters([ new Parameter('Body', 'body.value', async payload => payload.value) ]),
 			new Credentials(payload => payload.user, payload => payload.pass),
 			RequestInterceptor.fromDelegate(options => {
 				options.requestIntercepted = true;
@@ -113,7 +113,7 @@ describe('When Gateway is used', () => {
 			ProtocolType.HTTPS,
 			'example.com',
 			443,
-			new Parameters([ new Parameter('Symbol', 'symbol', () => Promise.resolve(null)) ])
+			new Parameters([ new Parameter('Symbol', 'symbol', async () => null) ])
 		);
 
 		await expectAsync(Gateway.invoke(endpoint, { })).toBeRejected();
@@ -127,7 +127,7 @@ describe('When Gateway is used', () => {
 			ProtocolType.HTTPS,
 			'example.com',
 			443,
-			new Parameters([ new Parameter('Symbol', 'symbol', () => Promise.resolve(null)) ])
+			new Parameters([ new Parameter('Symbol', 'symbol', async () => null) ])
 		);
 
 		try {
@@ -147,7 +147,7 @@ describe('When Gateway is used', () => {
 			ProtocolType.HTTPS,
 			'example.com',
 			443,
-			new Parameters([ new Parameter('Symbol', 'symbol', () => Promise.resolve(null), true) ])
+			new Parameters([ new Parameter('Symbol', 'symbol', async () => null, true) ])
 		);
 
 		await Gateway.invoke(endpoint, { });
@@ -173,10 +173,14 @@ describe('When Gateway is used', () => {
 			null,
 			RequestInterceptor.EMPTY,
 			ResponseInterceptor.EMPTY,
-			ErrorInterceptor.fromDelegate(error => Promise.reject({ wrapped: error.message }))
+			ErrorInterceptor.fromDelegate(async error => {
+				throw { wrapped: error.message };
+			})
 		);
 
-		axiosRequestSpy.and.returnValue(Promise.reject(remoteError));
+		axiosRequestSpy.and.callFake(async () => {
+			throw remoteError;
+		});
 
 		await expectAsync(Gateway.invoke(endpoint, { })).toBeRejectedWith({ wrapped: 'remote' });
 	});

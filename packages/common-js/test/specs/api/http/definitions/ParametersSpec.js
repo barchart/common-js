@@ -9,8 +9,8 @@ describe('When Parameters are constructed', () => {
 	let parameters;
 
 	beforeEach(() => {
-		parameterA = new Parameter('A', 'a', () => Promise.resolve('a'));
-		parameterB = new Parameter('B', 'b', () => Promise.resolve('b'));
+		parameterA = new Parameter('A', 'a', async () => 'a');
+		parameterB = new Parameter('B', 'b', async () => 'b');
 
 		parameters = new Parameters([ parameterA ]);
 	});
@@ -36,7 +36,7 @@ describe('When Parameters are constructed', () => {
 
 		beforeEach(() => {
 			merged = Parameters.merge(parameters, new Parameters([
-				new Parameter('A duplicate', 'a', () => Promise.resolve('duplicate')),
+				new Parameter('A duplicate', 'a', async () => 'duplicate'),
 				parameterB
 			]));
 		});

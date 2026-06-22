@@ -7,7 +7,7 @@ describe('When a Parameter is constructed', () => {
 	let parameter;
 
 	beforeEach(() => {
-		extractor = () => Promise.resolve('value');
+		extractor = async () => 'value';
 
 		parameter = new Parameter('Description', 'name', extractor, true);
 	});

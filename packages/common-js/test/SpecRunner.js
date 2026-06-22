@@ -29019,6 +29019,10 @@ var _Schema = _interopRequireDefault(require("./../../serialization/json/Schema.
 var _Tree = _interopRequireDefault(require("./../../collections/Tree.js"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { "default": e }; }
 function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, "default": e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
+function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
 function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
@@ -29261,6 +29265,7 @@ var FailureReason = exports["default"] = /*#__PURE__*/function () {
      *
      * @public
      * @static
+     * @async
      * @param {Schema|EnumWithSchema} schema
      * @param {object} candidate
      * @param {string=} description
@@ -29268,34 +29273,59 @@ var FailureReason = exports["default"] = /*#__PURE__*/function () {
      */
   }, {
     key: "validateSchema",
-    value: function validateSchema(schema, candidate, description) {
-      return Promise.resolve().then(function () {
-        var schemaToUse;
-        if (schema instanceof _Schema["default"]) {
-          schemaToUse = schema;
-        } else if (schema.schema && schema.schema instanceof _Schema["default"]) {
-          schemaToUse = schema.schema;
-        } else {
-          throw new TypeError('The schema argument must be a Schema instance or an Enum instance containing a Schema.');
-        }
-        var fields = schemaToUse.getInvalidFields(candidate);
-        if (fields.length === 0) {
-          return null;
-        }
-        var failure = FailureReason.forRequest({
-          endpoint: {
-            description: description || "serialize data into ".concat(schemaToUse.name)
+    value: (function () {
+      var _validateSchema = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee(schema, candidate, description) {
+        var schemaToUse, fields, failure;
+        return _regenerator().w(function (_context) {
+          while (1) switch (_context.n) {
+            case 0:
+              if (!(schema instanceof _Schema["default"])) {
+                _context.n = 1;
+                break;
+              }
+              schemaToUse = schema;
+              _context.n = 3;
+              break;
+            case 1:
+              if (!(schema.schema && schema.schema instanceof _Schema["default"])) {
+                _context.n = 2;
+                break;
+              }
+              schemaToUse = schema.schema;
+              _context.n = 3;
+              break;
+            case 2:
+              throw new TypeError('The schema argument must be a Schema instance or an Enum instance containing a Schema.');
+            case 3:
+              fields = schemaToUse.getInvalidFields(candidate);
+              if (!(fields.length === 0)) {
+                _context.n = 4;
+                break;
+              }
+              return _context.a(2, null);
+            case 4:
+              failure = FailureReason.forRequest({
+                endpoint: {
+                  description: description || "serialize data into ".concat(schemaToUse.name)
+                }
+              }).addItem(_FailureType["default"].REQUEST_INPUT_MALFORMED, {}, true);
+              failure = fields.reduce(function (accumulator, field) {
+                accumulator.addItem(_FailureType["default"].REQUEST_PARAMETER_MALFORMED, {
+                  name: field.name
+                });
+                return accumulator;
+              }, failure);
+              throw failure.format();
+            case 5:
+              return _context.a(2);
           }
-        }).addItem(_FailureType["default"].REQUEST_INPUT_MALFORMED, {}, true);
-        failure = fields.reduce(function (accumulator, field) {
-          accumulator.addItem(_FailureType["default"].REQUEST_PARAMETER_MALFORMED, {
-            name: field.name
-          });
-          return accumulator;
-        }, failure);
-        return Promise.reject(failure.format());
-      });
-    }
+        }, _callee);
+      }));
+      function validateSchema(_x, _x2, _x3) {
+        return _validateSchema.apply(this, arguments);
+      }
+      return validateSchema;
+    }())
   }]);
 }();
 
@@ -29723,7 +29753,7 @@ var _Endpoint = _interopRequireDefault(require("./definitions/Endpoint.js"));
 var _VerbType = _interopRequireDefault(require("./definitions/VerbType.js"));
 var _FailureReason = _interopRequireDefault(require("./../failures/FailureReason.js"));
 var _FailureType = _interopRequireDefault(require("./../failures/FailureType.js"));
-function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, "default": e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, "default": e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t4 in e) "default" !== _t4 && {}.hasOwnProperty.call(e, _t4) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t4)) && (i.get || i.set) ? o(f, _t4, i) : f[_t4] = e[_t4]); return f; })(e, t); }
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { "default": e }; }
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
@@ -29770,154 +29800,202 @@ var Gateway = exports["default"] = /*#__PURE__*/function () {
   }], [{
     key: "invoke",
     value: (function () {
-      var _invoke = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee(endpoint, payload) {
-        return _regenerator().w(function (_context) {
-          while (1) switch (_context.n) {
+      var _invoke = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2(endpoint, payload) {
+        var pathParameters, headerParameters, queryParameters, bodyParameters, extractParameter, groups, pathValues, headerValues, queryValues, bodyValues, parameters, values, failure, options, url, paths, headers, query, body, credentials, request, response, _t2, _t3;
+        return _regenerator().w(function (_context2) {
+          while (1) switch (_context2.p = _context2.n) {
             case 0:
-              return _context.a(2, Promise.resolve().then(function () {
-                assert.argumentIsRequired(endpoint, 'endpoint', _Endpoint["default"], 'Endpoint');
-                var pathParameters = endpoint.path.parameters;
-                var headerParameters = endpoint.headers.parameters;
-                var queryParameters = endpoint.query.parameters;
-                var bodyParameters = endpoint.body.parameters;
-                var extractParameter = function extractParameter(parameter) {
-                  return parameter.extractor(payload)["catch"](function () {
-                    return null;
-                  });
+              assert.argumentIsRequired(endpoint, 'endpoint', _Endpoint["default"], 'Endpoint');
+              pathParameters = endpoint.path.parameters;
+              headerParameters = endpoint.headers.parameters;
+              queryParameters = endpoint.query.parameters;
+              bodyParameters = endpoint.body.parameters;
+              extractParameter = /*#__PURE__*/function () {
+                var _ref = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee(parameter) {
+                  var value, _t;
+                  return _regenerator().w(function (_context) {
+                    while (1) switch (_context.p = _context.n) {
+                      case 0:
+                        _context.p = 0;
+                        _context.n = 1;
+                        return parameter.extractor(payload);
+                      case 1:
+                        value = _context.v;
+                        return _context.a(2, value);
+                      case 2:
+                        _context.p = 2;
+                        _t = _context.v;
+                        return _context.a(2, null);
+                    }
+                  }, _callee, null, [[0, 2]]);
+                }));
+                return function extractParameter(_x3) {
+                  return _ref.apply(this, arguments);
                 };
-                return Promise.all([promise.map(pathParameters, extractParameter), promise.map(headerParameters, extractParameter), promise.map(queryParameters, extractParameter), promise.map(bodyParameters, extractParameter)]).then(function (groups) {
-                  var pathValues = groups[0];
-                  var headerValues = groups[1];
-                  var queryValues = groups[2];
-                  var bodyValues = groups[3];
-                  var parameters = array.flatten([pathParameters, headerParameters, queryParameters, bodyParameters]);
-                  var values = array.flatten([pathValues, headerValues, queryValues, bodyValues]);
-                  var failure = values.reduce(function (accumulator, value, index) {
-                    var updatedFailure = accumulator;
-                    var parameter = parameters[index];
-                    if (value === null && !parameter.optional) {
-                      if (accumulator === null) {
-                        updatedFailure = _FailureReason["default"].forRequest({
-                          endpoint: endpoint
-                        }).addItem(_FailureType["default"].REQUEST_CONSTRUCTION_FAILURE, null, true);
-                      }
-                      updatedFailure.addItem(_FailureType["default"].REQUEST_PARAMETER_MISSING, {
-                        name: parameter.description
-                      });
-                    }
-                    return updatedFailure;
-                  }, null);
-                  if (failure !== null) {
-                    throw failure.format();
+              }();
+              _context2.n = 1;
+              return Promise.all([promise.map(pathParameters, extractParameter), promise.map(headerParameters, extractParameter), promise.map(queryParameters, extractParameter), promise.map(bodyParameters, extractParameter)]);
+            case 1:
+              groups = _context2.v;
+              pathValues = groups[0];
+              headerValues = groups[1];
+              queryValues = groups[2];
+              bodyValues = groups[3];
+              parameters = array.flatten([pathParameters, headerParameters, queryParameters, bodyParameters]);
+              values = array.flatten([pathValues, headerValues, queryValues, bodyValues]);
+              failure = values.reduce(function (accumulator, value, index) {
+                var updatedFailure = accumulator;
+                var parameter = parameters[index];
+                if (value === null && !parameter.optional) {
+                  if (accumulator === null) {
+                    updatedFailure = _FailureReason["default"].forRequest({
+                      endpoint: endpoint
+                    }).addItem(_FailureType["default"].REQUEST_CONSTRUCTION_FAILURE, null, true);
                   }
-                  var options = {};
-                  return Promise.resolve(options).then(function (options) {
-                    var url = [];
-                    url.push(endpoint.protocol.prefix);
-                    url.push(endpoint.host);
-                    if (endpoint.port !== endpoint.protocol.defaultPort) {
-                      url.push(':');
-                      url.push(endpoint.port);
-                    }
-                    url.push('/');
-                    return promise.pipeline(pathValues.map(function (value) {
-                      return function (previous) {
-                        var encodedValue;
-                        if (is.nil(value) || is.undef(value)) {
-                          encodedValue = value;
-                        } else {
-                          encodedValue = value.toString().replace(/\//g, '%2F');
-                        }
-                        previous.push(encodedValue);
-                        return previous;
-                      };
-                    }), []).then(function (paths) {
-                      url.push(paths.join('/'));
-                      return url.join('');
-                    }).then(function (url) {
-                      options.method = verbs.get(endpoint.verb);
-                      options.url = url;
-                      return options;
-                    });
-                  }).then(function (options) {
-                    if (headerParameters.length === 0) {
-                      return options;
-                    }
-                    return promise.pipeline(headerValues.map(function (value, i) {
-                      return function (accumulator) {
-                        var parameter = headerParameters[i];
-                        accumulator[parameter.key] = value;
-                        return accumulator;
-                      };
-                    }), {}).then(function (headers) {
-                      if (headers.length !== 0) {
-                        options.headers = headers;
-                      }
-                      return options;
-                    });
-                  }).then(function (options) {
-                    if (queryParameters.length === 0) {
-                      return options;
-                    }
-                    return promise.pipeline(queryValues.map(function (value, i) {
-                      return function (accumulator) {
-                        var parameter = queryParameters[i];
-                        accumulator[parameter.key] = value;
-                        return accumulator;
-                      };
-                    }), {}).then(function (query) {
-                      if (query.length !== 0) {
-                        options.params = query;
-                      }
-                      return options;
-                    });
-                  }).then(function (options) {
-                    if (bodyParameters.length === 0) {
-                      return options;
-                    }
-                    return promise.pipeline(bodyValues.map(function (value, i) {
-                      return function (accumulator) {
-                        var parameter = bodyParameters[i];
-                        attributes.write(accumulator, parameter.key, value);
-                        return accumulator;
-                      };
-                    }), {}).then(function (body) {
-                      options.data = body.body;
-                      return options;
-                    });
-                  }).then(function (options) {
-                    if (!endpoint.credentials) {
-                      return options;
-                    }
-                    return Promise.all([Promise.resolve(endpoint.credentials.usernameExtractor(payload)), Promise.resolve(endpoint.credentials.passwordExtractor(payload))]).then(function (credentials) {
-                      options.auth = {
-                        username: credentials[0],
-                        password: credentials[1]
-                      };
-                      return options;
-                    });
-                  }).then(function (options) {
-                    if (endpoint.requestInterceptor) {
-                      return endpoint.requestInterceptor.process(options, endpoint);
-                    }
-                    return options;
-                  }).then(function (options) {
-                    return _axios["default"].request(options).then(function (response) {
-                      if (endpoint.responseInterceptor) {
-                        return endpoint.responseInterceptor.process(response, endpoint);
-                      }
-                      return response;
-                    })["catch"](function (error) {
-                      if (endpoint.errorInterceptor) {
-                        return endpoint.errorInterceptor.process(error, endpoint);
-                      }
-                      throw error;
-                    });
+                  updatedFailure.addItem(_FailureType["default"].REQUEST_PARAMETER_MISSING, {
+                    name: parameter.description
                   });
-                });
-              }));
+                }
+                return updatedFailure;
+              }, null);
+              if (!(failure !== null)) {
+                _context2.n = 2;
+                break;
+              }
+              throw failure.format();
+            case 2:
+              options = {};
+              url = [];
+              url.push(endpoint.protocol.prefix);
+              url.push(endpoint.host);
+              if (endpoint.port !== endpoint.protocol.defaultPort) {
+                url.push(':');
+                url.push(endpoint.port);
+              }
+              url.push('/');
+              _context2.n = 3;
+              return promise.pipeline(pathValues.map(function (value) {
+                return function (previous) {
+                  var encodedValue;
+                  if (is.nil(value) || is.undef(value)) {
+                    encodedValue = value;
+                  } else {
+                    encodedValue = value.toString().replace(/\//g, '%2F');
+                  }
+                  previous.push(encodedValue);
+                  return previous;
+                };
+              }), []);
+            case 3:
+              paths = _context2.v;
+              url.push(paths.join('/'));
+              options.method = verbs.get(endpoint.verb);
+              options.url = url.join('');
+              if (!(headerParameters.length !== 0)) {
+                _context2.n = 5;
+                break;
+              }
+              _context2.n = 4;
+              return promise.pipeline(headerValues.map(function (value, i) {
+                return function (accumulator) {
+                  var parameter = headerParameters[i];
+                  accumulator[parameter.key] = value;
+                  return accumulator;
+                };
+              }), {});
+            case 4:
+              headers = _context2.v;
+              if (headers.length !== 0) {
+                options.headers = headers;
+              }
+            case 5:
+              if (!(queryParameters.length !== 0)) {
+                _context2.n = 7;
+                break;
+              }
+              _context2.n = 6;
+              return promise.pipeline(queryValues.map(function (value, i) {
+                return function (accumulator) {
+                  var parameter = queryParameters[i];
+                  accumulator[parameter.key] = value;
+                  return accumulator;
+                };
+              }), {});
+            case 6:
+              query = _context2.v;
+              if (query.length !== 0) {
+                options.params = query;
+              }
+            case 7:
+              if (!(bodyParameters.length !== 0)) {
+                _context2.n = 9;
+                break;
+              }
+              _context2.n = 8;
+              return promise.pipeline(bodyValues.map(function (value, i) {
+                return function (accumulator) {
+                  var parameter = bodyParameters[i];
+                  attributes.write(accumulator, parameter.key, value);
+                  return accumulator;
+                };
+              }), {});
+            case 8:
+              body = _context2.v;
+              options.data = body.body;
+            case 9:
+              if (!endpoint.credentials) {
+                _context2.n = 11;
+                break;
+              }
+              _context2.n = 10;
+              return Promise.all([endpoint.credentials.usernameExtractor(payload), endpoint.credentials.passwordExtractor(payload)]);
+            case 10:
+              credentials = _context2.v;
+              options.auth = {
+                username: credentials[0],
+                password: credentials[1]
+              };
+            case 11:
+              if (!endpoint.requestInterceptor) {
+                _context2.n = 13;
+                break;
+              }
+              _context2.n = 12;
+              return endpoint.requestInterceptor.process(options, endpoint);
+            case 12:
+              _t2 = _context2.v;
+              _context2.n = 14;
+              break;
+            case 13:
+              _t2 = options;
+            case 14:
+              request = _t2;
+              _context2.p = 15;
+              _context2.n = 16;
+              return _axios["default"].request(request);
+            case 16:
+              response = _context2.v;
+              if (!endpoint.responseInterceptor) {
+                _context2.n = 17;
+                break;
+              }
+              return _context2.a(2, endpoint.responseInterceptor.process(response, endpoint));
+            case 17:
+              return _context2.a(2, response);
+            case 18:
+              _context2.p = 18;
+              _t3 = _context2.v;
+              if (!endpoint.errorInterceptor) {
+                _context2.n = 19;
+                break;
+              }
+              return _context2.a(2, endpoint.errorInterceptor.process(_t3, endpoint));
+            case 19:
+              throw _t3;
+            case 20:
+              return _context2.a(2);
           }
-        }, _callee);
+        }, _callee2, null, [[15, 18]]);
       }));
       function invoke(_x, _x2) {
         return _invoke.apply(this, arguments);
@@ -30421,6 +30499,10 @@ var _Parameter = _interopRequireDefault(require("./../definitions/Parameter.js")
 var _Parameters = _interopRequireDefault(require("./../definitions/Parameters.js"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { "default": e }; }
 function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, "default": e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
+function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
 function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
@@ -30547,17 +30629,30 @@ function buildSerializer(serializer) {
 }
 function buildDelegateExtractor(fn, serializer) {
   assert.argumentIsRequired(fn, 'fn', Function);
-  return function (payload) {
-    return Promise.resolve().then(function () {
-      return serializer(fn(payload));
-    });
-  };
+  return /*#__PURE__*/function () {
+    var _ref = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee(payload) {
+      return _regenerator().w(function (_context) {
+        while (1) switch (_context.n) {
+          case 0:
+            return _context.a(2, serializer(fn(payload)));
+        }
+      }, _callee);
+    }));
+    return function (_x) {
+      return _ref.apply(this, arguments);
+    };
+  }();
 }
 function buildLiteralExtractor(value) {
   assert.argumentIsRequired(value, 'value', String);
-  return function (payload) {
-    return Promise.resolve(value);
-  };
+  return /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2() {
+    return _regenerator().w(function (_context2) {
+      while (1) switch (_context2.n) {
+        case 0:
+          return _context2.a(2, value);
+      }
+    }, _callee2);
+  }));
 }
 function buildVariableExtractor(variable, serializer) {
   assert.argumentIsRequired(variable, 'variable', String);
@@ -31497,7 +31592,11 @@ exports["default"] = void 0;
 var assert = _interopRequireWildcard(require("./../../../lang/assert.js"));
 var _ErrorInterceptor2 = _interopRequireDefault(require("./ErrorInterceptor.js"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { "default": e }; }
-function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, "default": e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, "default": e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t2 in e) "default" !== _t2 && {}.hasOwnProperty.call(e, _t2) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t2)) && (i.get || i.set) ? o(f, _t2, i) : f[_t2] = e[_t2]); return f; })(e, t); }
+function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
+function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
 function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
@@ -31540,22 +31639,49 @@ var CompositeErrorInterceptor = exports["default"] = /*#__PURE__*/function (_Err
     _classPrivateFieldSet(_b, _this, b);
     return _this;
   }
+
+  /**
+   * @protected
+   * @override
+   * @async
+   * @param {object} error
+   * @param {*} endpoint
+   * @returns {Promise<*>}
+   */
   _inherits(CompositeErrorInterceptor, _ErrorInterceptor);
   return _createClass(CompositeErrorInterceptor, [{
     key: "_onProcess",
-    value: function _onProcess(error, endpoint) {
-      var _this2 = this;
-      return _classPrivateFieldGet(_a, this).process(error, endpoint)["catch"](function (adjusted) {
-        return _classPrivateFieldGet(_b, _this2).process(adjusted, endpoint);
-      });
-    }
-
+    value: (function () {
+      var _onProcess2 = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee(error, endpoint) {
+        var result, _t;
+        return _regenerator().w(function (_context) {
+          while (1) switch (_context.p = _context.n) {
+            case 0:
+              _context.p = 0;
+              _context.n = 1;
+              return _classPrivateFieldGet(_a, this).process(error, endpoint);
+            case 1:
+              result = _context.v;
+              return _context.a(2, result);
+            case 2:
+              _context.p = 2;
+              _t = _context.v;
+              return _context.a(2, _classPrivateFieldGet(_b, this).process(_t, endpoint));
+          }
+        }, _callee, this, [[0, 2]]);
+      }));
+      function _onProcess(_x, _x2) {
+        return _onProcess2.apply(this, arguments);
+      }
+      return _onProcess;
+    }()
     /**
      * Returns a string representation.
      *
      * @public
      * @returns {string}
      */
+    )
   }, {
     key: "toString",
     value: function toString() {
@@ -31576,6 +31702,10 @@ var assert = _interopRequireWildcard(require("./../../../lang/assert.js"));
 var _RequestInterceptor2 = _interopRequireDefault(require("./RequestInterceptor.js"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { "default": e }; }
 function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, "default": e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
+function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
 function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
@@ -31625,6 +31755,7 @@ var CompositeRequestInterceptor = exports["default"] = /*#__PURE__*/function (_R
   /**
    * @protected
    * @override
+   * @async
    * @param {object} request
    * @param {Endpoint} endpoint
    * @returns {Promise<*>}
@@ -31632,19 +31763,32 @@ var CompositeRequestInterceptor = exports["default"] = /*#__PURE__*/function (_R
   _inherits(CompositeRequestInterceptor, _RequestInterceptor);
   return _createClass(CompositeRequestInterceptor, [{
     key: "_onProcess",
-    value: function _onProcess(request, endpoint) {
-      var _this2 = this;
-      return _classPrivateFieldGet(_a, this).process(request, endpoint).then(function (adjusted) {
-        return _classPrivateFieldGet(_b, _this2).process(adjusted, endpoint);
-      });
-    }
-
+    value: (function () {
+      var _onProcess2 = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee(request, endpoint) {
+        var adjusted;
+        return _regenerator().w(function (_context) {
+          while (1) switch (_context.n) {
+            case 0:
+              _context.n = 1;
+              return _classPrivateFieldGet(_a, this).process(request, endpoint);
+            case 1:
+              adjusted = _context.v;
+              return _context.a(2, _classPrivateFieldGet(_b, this).process(adjusted, endpoint));
+          }
+        }, _callee, this);
+      }));
+      function _onProcess(_x, _x2) {
+        return _onProcess2.apply(this, arguments);
+      }
+      return _onProcess;
+    }()
     /**
      * Returns a string representation.
      *
      * @public
      * @returns {string}
      */
+    )
   }, {
     key: "toString",
     value: function toString() {
@@ -31665,6 +31809,10 @@ var assert = _interopRequireWildcard(require("./../../../lang/assert.js"));
 var _ResponseInterceptor2 = _interopRequireDefault(require("./ResponseInterceptor.js"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { "default": e }; }
 function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, "default": e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
+function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
 function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
@@ -31714,6 +31862,7 @@ var CompositeResponseInterceptor = exports["default"] = /*#__PURE__*/function (_
   /**
    * @protected
    * @override
+   * @async
    * @param {object} response
    * @param {Endpoint} endpoint
    * @returns {Promise<*>}
@@ -31721,19 +31870,32 @@ var CompositeResponseInterceptor = exports["default"] = /*#__PURE__*/function (_
   _inherits(CompositeResponseInterceptor, _ResponseInterceptor);
   return _createClass(CompositeResponseInterceptor, [{
     key: "_onProcess",
-    value: function _onProcess(response, endpoint) {
-      var _this2 = this;
-      return _classPrivateFieldGet(_a, this).process(response, endpoint).then(function (adjusted) {
-        return _classPrivateFieldGet(_b, _this2).process(adjusted, endpoint);
-      });
-    }
-
+    value: (function () {
+      var _onProcess2 = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee(response, endpoint) {
+        var adjusted;
+        return _regenerator().w(function (_context) {
+          while (1) switch (_context.n) {
+            case 0:
+              _context.n = 1;
+              return _classPrivateFieldGet(_a, this).process(response, endpoint);
+            case 1:
+              adjusted = _context.v;
+              return _context.a(2, _classPrivateFieldGet(_b, this).process(adjusted, endpoint));
+          }
+        }, _callee, this);
+      }));
+      function _onProcess(_x, _x2) {
+        return _onProcess2.apply(this, arguments);
+      }
+      return _onProcess;
+    }()
     /**
      * Returns a string representation.
      *
      * @public
      * @returns {string}
      */
+    )
   }, {
     key: "toString",
     value: function toString() {
@@ -31768,6 +31930,10 @@ function _classPrivateFieldGet(s, a) { return s.get(_assertClassBrand(s, a)); }
 function _classPrivateFieldSet(s, a, r) { return s.set(_assertClassBrand(s, a), r), r; }
 function _assertClassBrand(e, t, n) { if ("function" == typeof e ? e === t : e.has(t)) return arguments.length < 3 ? t : n; throw new TypeError("Private element is not present on this object"); }
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
+function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
 function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
@@ -31792,31 +31958,53 @@ var ErrorInterceptor = exports["default"] = /*#__PURE__*/function () {
    * back to the original caller.
    *
    * @public
+   * @async
    * @param {object} error
    * @param {Endpoint} endpoint - The endpoint which is originating the request.
    * @returns {Promise<*>}
    */
   return _createClass(ErrorInterceptor, [{
     key: "process",
-    value: function process(error, endpoint) {
-      var _this = this;
-      return Promise.resolve().then(function () {
-        return _this._onProcess(error, endpoint);
-      });
-    }
-
+    value: (function () {
+      var _process = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee(error, endpoint) {
+        return _regenerator().w(function (_context) {
+          while (1) switch (_context.n) {
+            case 0:
+              return _context.a(2, this._onProcess(error, endpoint));
+          }
+        }, _callee, this);
+      }));
+      function process(_x, _x2) {
+        return _process.apply(this, arguments);
+      }
+      return process;
+    }()
     /**
      * @protected
+     * @async
      * @param {object} error
      * @param {Endpoint} endpoint
      * @returns {Promise<*>}
      */
+    )
   }, {
     key: "_onProcess",
-    value: function _onProcess(error, endpoint) {
-      return Promise.reject(error);
-    }
-
+    value: (function () {
+      var _onProcess2 = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2(error, endpoint) {
+        return _regenerator().w(function (_context2) {
+          while (1) switch (_context2.n) {
+            case 0:
+              throw error;
+            case 1:
+              return _context2.a(2);
+          }
+        }, _callee2);
+      }));
+      function _onProcess(_x3, _x4) {
+        return _onProcess2.apply(this, arguments);
+      }
+      return _onProcess;
+    }()
     /**
      * A no-op error interceptor which rejects using raw response data.
      *
@@ -31824,6 +32012,7 @@ var ErrorInterceptor = exports["default"] = /*#__PURE__*/function () {
      * @static
      * @returns {ErrorInterceptor}
      */
+    )
   }, {
     key: "toString",
     value:
@@ -31877,13 +32066,13 @@ var DelegateErrorInterceptor = /*#__PURE__*/function (_ErrorInterceptor) {
    * @param {Function} delegate
    */
   function DelegateErrorInterceptor(delegate) {
-    var _this2;
+    var _this;
     _classCallCheck(this, DelegateErrorInterceptor);
-    _this2 = _callSuper(this, DelegateErrorInterceptor);
-    _classPrivateFieldInitSpec(_this2, _delegate, void 0);
+    _this = _callSuper(this, DelegateErrorInterceptor);
+    _classPrivateFieldInitSpec(_this, _delegate, void 0);
     assert.argumentIsRequired(delegate, 'delegate', Function);
-    _classPrivateFieldSet(_delegate, _this2, delegate);
-    return _this2;
+    _classPrivateFieldSet(_delegate, _this, delegate);
+    return _this;
   }
 
   /**
@@ -31907,36 +32096,49 @@ var DelegateErrorInterceptor = /*#__PURE__*/function (_ErrorInterceptor) {
   }]);
 }(ErrorInterceptor);
 var errorInterceptorEmpty = new ErrorInterceptor();
-var errorInterceptorGeneral = new DelegateErrorInterceptor(function (error, endpoint) {
-  var response = error.response;
-  var rejectPromise = null;
-  if (is.object(response) && is.object(response.headers) && response.headers['content-type'] === 'application/json') {
-    var deserialized = null;
-    if (is.object(response.data)) {
-      deserialized = response.data;
-    } else {
-      try {
-        deserialized = JSON.parse(response.data);
-      } catch (e) {
-        deserialized = null;
+var errorInterceptorGeneral = new DelegateErrorInterceptor(/*#__PURE__*/function () {
+  var _ref = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3(error, endpoint) {
+    var response, rejection, deserialized;
+    return _regenerator().w(function (_context3) {
+      while (1) switch (_context3.n) {
+        case 0:
+          response = error.response;
+          rejection = null;
+          if (is.object(response) && is.object(response.headers) && response.headers['content-type'] === 'application/json') {
+            deserialized = null;
+            if (is.object(response.data)) {
+              deserialized = response.data;
+            } else {
+              try {
+                deserialized = JSON.parse(response.data);
+              } catch (_unused) {
+                deserialized = null;
+              }
+            }
+            if (deserialized !== null) {
+              rejection = deserialized;
+            }
+          }
+          if (rejection === null && is.undef(response) && error.message === 'Network Error') {
+            rejection = _FailureReason["default"].forRequest({
+              endpoint: endpoint
+            }).addItem(_FailureType["default"].REQUEST_AUTHORIZATION_FAILURE).format();
+          }
+          if (rejection === null) {
+            rejection = _FailureReason["default"].forRequest({
+              endpoint: endpoint
+            }).addItem(_FailureType["default"].REQUEST_GENERAL_FAILURE).format();
+          }
+          throw rejection;
+        case 1:
+          return _context3.a(2);
       }
-    }
-    if (deserialized !== null) {
-      rejectPromise = Promise.reject(deserialized);
-    }
-  }
-  if (rejectPromise === null && is.undef(response) && error.message === 'Network Error') {
-    rejectPromise = Promise.reject(_FailureReason["default"].forRequest({
-      endpoint: endpoint
-    }).addItem(_FailureType["default"].REQUEST_AUTHORIZATION_FAILURE).format());
-  }
-  if (rejectPromise === null) {
-    rejectPromise = Promise.reject(_FailureReason["default"].forRequest({
-      endpoint: endpoint
-    }).addItem(_FailureType["default"].REQUEST_GENERAL_FAILURE).format());
-  }
-  return rejectPromise;
-});
+    }, _callee3);
+  }));
+  return function (_x5, _x6) {
+    return _ref.apply(this, arguments);
+  };
+}());
 
 },{"./../../../lang/assert.js":376,"./../../../lang/is.js":384,"./../../failures/FailureReason.js":324,"./../../failures/FailureType.js":326}],341:[function(require,module,exports){
 "use strict";
@@ -31960,6 +32162,10 @@ function _classPrivateFieldGet(s, a) { return s.get(_assertClassBrand(s, a)); }
 function _classPrivateFieldSet(s, a, r) { return s.set(_assertClassBrand(s, a), r), r; }
 function _assertClassBrand(e, t, n) { if ("function" == typeof e ? e === t : e.has(t)) return arguments.length < 3 ? t : n; throw new TypeError("Private element is not present on this object"); }
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
+function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
 function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
@@ -31982,25 +32188,34 @@ var RequestInterceptor = exports["default"] = /*#__PURE__*/function () {
    * Adjusts outgoing requests data before the request is transmitted.
    *
    * @public
+   * @async
    * @param {object} request
    * @param {Endpoint} endpoint - The endpoint which is originating the request.
    * @returns {Promise<*>}
    */
   return _createClass(RequestInterceptor, [{
     key: "process",
-    value: function process(request, endpoint) {
-      var _this = this;
-      return Promise.resolve().then(function () {
-        return _this._onProcess(request, endpoint);
-      });
-    }
-
+    value: (function () {
+      var _process = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee(request, endpoint) {
+        return _regenerator().w(function (_context) {
+          while (1) switch (_context.n) {
+            case 0:
+              return _context.a(2, this._onProcess(request, endpoint));
+          }
+        }, _callee, this);
+      }));
+      function process(_x, _x2) {
+        return _process.apply(this, arguments);
+      }
+      return process;
+    }()
     /**
      * @protected
      * @param {object} request
      * @param {Endpoint} endpoint
      * @returns {*}
      */
+    )
   }, {
     key: "_onProcess",
     value: function _onProcess(request, endpoint) {
@@ -32067,13 +32282,13 @@ var DelegateRequestInterceptor = /*#__PURE__*/function (_RequestInterceptor) {
    * @param {Function} delegate
    */
   function DelegateRequestInterceptor(delegate) {
-    var _this2;
+    var _this;
     _classCallCheck(this, DelegateRequestInterceptor);
-    _this2 = _callSuper(this, DelegateRequestInterceptor);
-    _classPrivateFieldInitSpec(_this2, _delegate, void 0);
+    _this = _callSuper(this, DelegateRequestInterceptor);
+    _classPrivateFieldInitSpec(_this, _delegate, void 0);
     assert.argumentIsRequired(delegate, 'delegate', Function);
-    _classPrivateFieldSet(_delegate, _this2, delegate);
-    return _this2;
+    _classPrivateFieldSet(_delegate, _this, delegate);
+    return _this;
   }
 
   /**
@@ -32126,6 +32341,10 @@ function _classPrivateFieldGet(s, a) { return s.get(_assertClassBrand(s, a)); }
 function _classPrivateFieldSet(s, a, r) { return s.set(_assertClassBrand(s, a), r), r; }
 function _assertClassBrand(e, t, n) { if ("function" == typeof e ? e === t : e.has(t)) return arguments.length < 3 ? t : n; throw new TypeError("Private element is not present on this object"); }
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
+function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
 function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
@@ -32150,25 +32369,34 @@ var ResponseInterceptor = exports["default"] = /*#__PURE__*/function () {
    * back to the original caller.
    *
    * @public
+   * @async
    * @param {object} response
    * @param {Endpoint} endpoint - The endpoint which is originating the request.
    * @returns {Promise<*>}
    */
   return _createClass(ResponseInterceptor, [{
     key: "process",
-    value: function process(response, endpoint) {
-      var _this = this;
-      return Promise.resolve().then(function () {
-        return _this._onProcess(response, endpoint);
-      });
-    }
-
+    value: (function () {
+      var _process = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee(response, endpoint) {
+        return _regenerator().w(function (_context) {
+          while (1) switch (_context.n) {
+            case 0:
+              return _context.a(2, this._onProcess(response, endpoint));
+          }
+        }, _callee, this);
+      }));
+      function process(_x, _x2) {
+        return _process.apply(this, arguments);
+      }
+      return process;
+    }()
     /**
      * @protected
      * @param {object} response
      * @param {Endpoint} endpoint
      * @returns {*}
      */
+    )
   }, {
     key: "_onProcess",
     value: function _onProcess(response, endpoint) {
@@ -32235,13 +32463,13 @@ var DelegateResponseInterceptor = /*#__PURE__*/function (_ResponseInterceptor) {
    * @param {Function} delegate
    */
   function DelegateResponseInterceptor(delegate) {
-    var _this2;
+    var _this;
     _classCallCheck(this, DelegateResponseInterceptor);
-    _this2 = _callSuper(this, DelegateResponseInterceptor);
-    _classPrivateFieldInitSpec(_this2, _delegate, void 0);
+    _this = _callSuper(this, DelegateResponseInterceptor);
+    _classPrivateFieldInitSpec(_this, _delegate, void 0);
     assert.argumentIsRequired(delegate, 'delegate', Function);
-    _classPrivateFieldSet(_delegate, _this2, delegate);
-    return _this2;
+    _classPrivateFieldSet(_delegate, _this, delegate);
+    return _this;
   }
 
   /**
@@ -33731,6 +33959,10 @@ var _Stack = _interopRequireDefault(require("./../Stack.js"));
 var _Disposable2 = _interopRequireDefault(require("./../../lang/Disposable.js"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { "default": e }; }
 function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, "default": e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
+function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
 function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
@@ -33816,27 +34048,43 @@ var DisposableStack = exports["default"] = /*#__PURE__*/function (_Disposable) {
     /**
      * @public
      * @static
+     * @async
      * @param {*} stack
      * @param {*} promise
      * @returns {Promise}
      */
   }, {
     key: "pushPromise",
-    value: function pushPromise(stack, promise) {
-      assert.argumentIsRequired(stack, 'stack', DisposableStack, 'DisposableStack');
-      assert.argumentIsRequired(promise, 'promise');
-      return promise.then(function (b) {
-        var bindings;
-        if (is.array(b)) {
-          bindings = b;
-        } else {
-          bindings = [b];
-        }
-        bindings.forEach(function (binding) {
-          return stack.push(binding);
-        });
-      });
-    }
+    value: (function () {
+      var _pushPromise = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee(stack, promise) {
+        var b, bindings;
+        return _regenerator().w(function (_context) {
+          while (1) switch (_context.n) {
+            case 0:
+              assert.argumentIsRequired(stack, 'stack', DisposableStack, 'DisposableStack');
+              assert.argumentIsRequired(promise, 'promise');
+              _context.n = 1;
+              return promise;
+            case 1:
+              b = _context.v;
+              if (is.array(b)) {
+                bindings = b;
+              } else {
+                bindings = [b];
+              }
+              bindings.forEach(function (binding) {
+                return stack.push(binding);
+              });
+            case 2:
+              return _context.a(2);
+          }
+        }, _callee);
+      }));
+      function pushPromise(_x, _x2) {
+        return _pushPromise.apply(this, arguments);
+      }
+      return pushPromise;
+    }())
   }]);
 }(_Disposable2["default"]);
 
@@ -35186,6 +35434,8 @@ function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
 function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
 function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
 function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
@@ -35193,9 +35443,6 @@ function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.
 function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
 function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
 function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
-function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 function _classPrivateFieldInitSpec(e, t, a) { _checkPrivateRedeclaration(e, t), t.set(e, a); }
 function _checkPrivateRedeclaration(e, t) { if (t.has(e)) throw new TypeError("Cannot initialize the same private elements twice on an object"); }
 function _classPrivateFieldGet(s, a) { return s.get(_assertClassBrand(s, a)); }
@@ -35211,17 +35458,17 @@ var _precision = /*#__PURE__*/new WeakMap();
 var _alternateDescription = /*#__PURE__*/new WeakMap();
 var Currency = exports["default"] = /*#__PURE__*/function (_Enum) {
   /**
-   * @param {string} code - Currency code (e.g. "USD")
-   * @param {string} description - The description (e.g. "US Dollar")
-   * @param {number} precision - The number of decimal places possible for by a real world transaction.
-   */
+      * @param {string} code - Currency code (e.g. "USD")
+      * @param {string} description - The description (e.g. "US Dollar")
+      * @param {number} precision - The number of decimal places possible for by a real world transaction.
+      * @param {string=} alternateDescription
+      */
   function Currency(code, description, precision, alternateDescription) {
     var _this;
     _classCallCheck(this, Currency);
     _this = _callSuper(this, Currency, [code, description]);
     _classPrivateFieldInitSpec(_this, _precision, void 0);
     _classPrivateFieldInitSpec(_this, _alternateDescription, void 0);
-    _defineProperty(_this, "z", void 0);
     assert.argumentIsRequired(precision, 'precision', Number);
     assert.argumentIsValid(precision, 'precision', is.integer, 'is an integer');
     assert.argumentIsOptional(alternateDescription, 'alternateDescription', String);
@@ -35281,9 +35528,7 @@ var Currency = exports["default"] = /*#__PURE__*/function (_Enum) {
       var value = _Enum2["default"].fromCode(Currency, code);
       return value instanceof Currency ? value : null;
     }
-  }, {
-    key: "ARS",
-    get:
+
     /**
      * The Argentine Peso.
      *
@@ -35291,7 +35536,9 @@ var Currency = exports["default"] = /*#__PURE__*/function (_Enum) {
      * @static
      * @returns {Currency}
      */
-    function get() {
+  }, {
+    key: "ARS",
+    get: function get() {
       return ars;
     }
 
@@ -36899,8 +37146,13 @@ var _dayIndex = /*#__PURE__*/new WeakMap();
 var _yearShift = /*#__PURE__*/new WeakMap();
 var DayFormatType = exports["default"] = /*#__PURE__*/function (_Enum) {
   /**
-   * @param {string} description
-   */
+      * @param {string} description
+      * @param {RegExp} regex
+      * @param {number} yearIndex
+      * @param {number} monthIndex
+      * @param {number} dayIndex
+      * @param {number} yearShift
+      */
   function DayFormatType(description, regex, yearIndex, monthIndex, dayIndex, yearShift) {
     var _this;
     _classCallCheck(this, DayFormatType);
@@ -36969,7 +37221,7 @@ var DayFormatType = exports["default"] = /*#__PURE__*/function (_Enum) {
 
     /**
      * The amount to add to the year (extracted from a formatted string) to get the
-     * full year (e.g. for "11-31-25" of a MM-DD-YY string, the value will be 2000).
+     * full year (e.g. for "11-31-25" of an MM-DD-YY string, the value will be 2000).
      *
      * @public
      * @returns {number}
@@ -41251,7 +41503,7 @@ function approximate(a, b) {
   if (!is.number(a) || !is.number(b)) {
     return false;
   }
-  if (a == b) {
+  if (a === b) {
     return true;
   }
   if (isFinite(a) && isFinite(b)) {
@@ -41500,7 +41752,7 @@ exports.map = map;
 exports.pipeline = pipeline;
 exports.timeout = timeout;
 var assert = _interopRequireWildcard(require("./assert.js"));
-function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, "default": e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, "default": e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t4 in e) "default" !== _t4 && {}.hasOwnProperty.call(e, _t4) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t4)) && (i.get || i.set) ? o(f, _t4, i) : f[_t4] = e[_t4]); return f; })(e, t); }
 function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
 function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
 function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
@@ -41540,40 +41792,55 @@ function timeout(_x, _x2, _x3) {
  * @returns {Promise<Array>}
  */
 function _timeout() {
-  _timeout = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee(promise, milliseconds, description) {
-    return _regenerator().w(function (_context) {
-      while (1) switch (_context.n) {
+  _timeout = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2(promise, milliseconds, description) {
+    var timeoutToken, timeoutPromise, userPromise;
+    return _regenerator().w(function (_context2) {
+      while (1) switch (_context2.n) {
         case 0:
-          return _context.a(2, Promise.resolve().then(function () {
-            assert.argumentIsRequired(promise, 'promise', Promise, 'Promise');
-            assert.argumentIsRequired(milliseconds, 'milliseconds', Number);
-            assert.argumentIsOptional(description, 'description', String);
-            if (!(milliseconds > 0)) {
-              return Promise.reject('Unable to configure promise timeout, the "milliseconds" argument must be positive');
-            }
-            var timeoutToken = null;
-            var timeoutPromise = build(function (resolveCallback, rejectCallback) {
-              timeoutToken = setTimeout(function () {
-                rejectCallback(description || "Promise timed out after ".concat(milliseconds, " milliseconds"));
-              }, milliseconds);
-            });
-            var userPromise = Promise.resolve().then(function () {
-              return promise;
-            }).then(function (result) {
-              if (timeoutToken !== null) {
-                clearTimeout(timeoutToken);
+          assert.argumentIsRequired(promise, 'promise', Promise, 'Promise');
+          assert.argumentIsRequired(milliseconds, 'milliseconds', Number);
+          assert.argumentIsOptional(description, 'description', String);
+          if (milliseconds > 0) {
+            _context2.n = 1;
+            break;
+          }
+          throw 'Unable to configure promise timeout, the "milliseconds" argument must be positive';
+        case 1:
+          timeoutToken = null;
+          timeoutPromise = build(function (resolveCallback, rejectCallback) {
+            timeoutToken = setTimeout(function () {
+              rejectCallback(description || "Promise timed out after ".concat(milliseconds, " milliseconds"));
+            }, milliseconds);
+          });
+          userPromise = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
+            var result, _t;
+            return _regenerator().w(function (_context) {
+              while (1) switch (_context.p = _context.n) {
+                case 0:
+                  _context.p = 0;
+                  _context.n = 1;
+                  return promise;
+                case 1:
+                  result = _context.v;
+                  if (timeoutToken !== null) {
+                    clearTimeout(timeoutToken);
+                  }
+                  return _context.a(2, result);
+                case 2:
+                  _context.p = 2;
+                  _t = _context.v;
+                  if (timeoutToken !== null) {
+                    clearTimeout(timeoutToken);
+                  }
+                  throw _t;
+                case 3:
+                  return _context.a(2);
               }
-              return result;
-            })["catch"](function (e) {
-              if (timeoutToken !== null) {
-                clearTimeout(timeoutToken);
-              }
-              return Promise.reject(e);
-            });
-            return Promise.race([userPromise, timeoutPromise]);
-          }));
+            }, _callee, null, [[0, 2]]);
+          }))();
+          return _context2.a(2, Promise.race([userPromise, timeoutPromise]));
       }
-    }, _callee);
+    }, _callee2);
   }));
   return _timeout.apply(this, arguments);
 }
@@ -41594,66 +41861,91 @@ function map(_x4, _x5, _x6) {
  * @returns {Promise<*>}
  */
 function _map() {
-  _map = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2(items, mapper, concurrency) {
-    return _regenerator().w(function (_context2) {
-      while (1) switch (_context2.n) {
+  _map = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee5(items, mapper, concurrency) {
+    var c, mapPromise, total, active, complete, failure, results, executors;
+    return _regenerator().w(function (_context5) {
+      while (1) switch (_context5.n) {
         case 0:
-          return _context2.a(2, Promise.resolve().then(function () {
-            assert.argumentIsArray(items, 'items');
-            assert.argumentIsRequired(mapper, 'mapper', Function);
-            assert.argumentIsOptional(concurrency, 'concurrency', Number);
-            var c = Math.max(0, concurrency || 0);
-            var mapPromise;
-            if (c === 0 || items.length === 0) {
-              mapPromise = Promise.all(items.map(function (item) {
-                return Promise.resolve(mapper(item));
-              }));
-            } else {
-              var total = items.length;
-              var active = 0;
-              var complete = 0;
-              var failure = false;
-              var results = Array.of(total);
-              var executors = items.map(function (item, index) {
-                return function () {
-                  return Promise.resolve().then(function () {
-                    return mapper(item);
-                  }).then(function (result) {
-                    results[index] = result;
-                  });
-                };
-              });
-              mapPromise = build(function (resolveCallback, rejectCallback) {
-                var _execute = function execute() {
-                  if (!(executors.length > 0 && c > active && !failure)) {
-                    return;
+          assert.argumentIsArray(items, 'items');
+          assert.argumentIsRequired(mapper, 'mapper', Function);
+          assert.argumentIsOptional(concurrency, 'concurrency', Number);
+          c = Math.max(0, concurrency || 0);
+          if (c === 0 || items.length === 0) {
+            mapPromise = Promise.all(items.map(function (item) {
+              return mapper(item);
+            }));
+          } else {
+            total = items.length;
+            active = 0;
+            complete = 0;
+            failure = false;
+            results = Array.of(total);
+            executors = items.map(function (item, index) {
+              return /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3() {
+                var result;
+                return _regenerator().w(function (_context3) {
+                  while (1) switch (_context3.n) {
+                    case 0:
+                      _context3.n = 1;
+                      return mapper(item);
+                    case 1:
+                      result = _context3.v;
+                      results[index] = result;
+                    case 2:
+                      return _context3.a(2);
                   }
-                  active = active + 1;
-                  var executor = executors.shift();
-                  executor().then(function () {
-                    if (failure) {
-                      return;
+                }, _callee3);
+              }));
+            });
+            mapPromise = build(function (resolveCallback, rejectCallback) {
+              var _execute = function execute() {
+                if (!(executors.length > 0 && c > active && !failure)) {
+                  return;
+                }
+                active = active + 1;
+                var executor = executors.shift();
+                _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee4() {
+                  var _t2;
+                  return _regenerator().w(function (_context4) {
+                    while (1) switch (_context4.p = _context4.n) {
+                      case 0:
+                        _context4.p = 0;
+                        _context4.n = 1;
+                        return executor();
+                      case 1:
+                        if (!failure) {
+                          _context4.n = 2;
+                          break;
+                        }
+                        return _context4.a(2);
+                      case 2:
+                        active = active - 1;
+                        complete = complete + 1;
+                        if (complete < total) {
+                          _execute();
+                        } else {
+                          resolveCallback(results);
+                        }
+                        _context4.n = 4;
+                        break;
+                      case 3:
+                        _context4.p = 3;
+                        _t2 = _context4.v;
+                        failure = false;
+                        rejectCallback(_t2);
+                      case 4:
+                        return _context4.a(2);
                     }
-                    active = active - 1;
-                    complete = complete + 1;
-                    if (complete < total) {
-                      _execute();
-                    } else {
-                      resolveCallback(results);
-                    }
-                  })["catch"](function (error) {
-                    failure = false;
-                    rejectCallback(error);
-                  });
-                  _execute();
-                };
+                  }, _callee4, null, [[0, 3]]);
+                }))();
                 _execute();
-              });
-            }
-            return mapPromise;
-          }));
+              };
+              _execute();
+            });
+          }
+          return _context5.a(2, mapPromise);
       }
-    }, _callee2);
+    }, _callee5);
   }));
   return _map.apply(this, arguments);
 }
@@ -41672,20 +41964,31 @@ function pipeline(_x7, _x8) {
  * @returns {Promise}
  */
 function _pipeline() {
-  _pipeline = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3(functions, input) {
-    return _regenerator().w(function (_context3) {
-      while (1) switch (_context3.n) {
+  _pipeline = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee6(functions, input) {
+    var result, i;
+    return _regenerator().w(function (_context6) {
+      while (1) switch (_context6.n) {
         case 0:
-          return _context3.a(2, Promise.resolve().then(function () {
-            assert.argumentIsArray(functions, 'functions', Function);
-            return functions.reduce(function (previous, fn) {
-              return previous.then(function (result) {
-                return fn(result);
-              });
-            }, Promise.resolve(input));
-          }));
+          assert.argumentIsArray(functions, 'functions', Function);
+          result = input;
+          i = 0;
+        case 1:
+          if (!(i < functions.length)) {
+            _context6.n = 4;
+            break;
+          }
+          _context6.n = 2;
+          return functions[i](result);
+        case 2:
+          result = _context6.v;
+        case 3:
+          i++;
+          _context6.n = 1;
+          break;
+        case 4:
+          return _context6.a(2, result);
       }
-    }, _callee3);
+    }, _callee6);
   }));
   return _pipeline.apply(this, arguments);
 }
@@ -41706,26 +42009,38 @@ function first(_x9) {
  * @returns {Promise}
  */
 function _first() {
-  _first = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee4(executors) {
-    return _regenerator().w(function (_context4) {
-      while (1) switch (_context4.n) {
+  _first = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee7(executors) {
+    var result, i, _t3;
+    return _regenerator().w(function (_context7) {
+      while (1) switch (_context7.p = _context7.n) {
         case 0:
-          return _context4.a(2, Promise.resolve().then(function () {
-            assert.argumentIsArray(executors, 'executors', Function);
-            return executors.reduce(function (previous, executor) {
-              return previous.then(function (result) {
-                if (result === null) {
-                  return executor()["catch"](function () {
-                    return Promise.resolve(null);
-                  });
-                } else {
-                  return previous;
-                }
-              });
-            }, Promise.resolve(null));
-          }));
+          assert.argumentIsArray(executors, 'executors', Function);
+          result = null;
+          i = 0;
+        case 1:
+          if (!(i < executors.length && result === null)) {
+            _context7.n = 6;
+            break;
+          }
+          _context7.p = 2;
+          _context7.n = 3;
+          return executors[i]();
+        case 3:
+          result = _context7.v;
+          _context7.n = 5;
+          break;
+        case 4:
+          _context7.p = 4;
+          _t3 = _context7.v;
+          result = null;
+        case 5:
+          i++;
+          _context7.n = 1;
+          break;
+        case 6:
+          return _context7.a(2, result);
       }
-    }, _callee4);
+    }, _callee7, null, [[2, 4]]);
   }));
   return _first.apply(this, arguments);
 }
@@ -41733,11 +42048,11 @@ function build(_x0) {
   return _build.apply(this, arguments);
 }
 function _build() {
-  _build = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee5(executor) {
-    return _regenerator().w(function (_context5) {
-      while (1) switch (_context5.n) {
+  _build = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee8(executor) {
+    return _regenerator().w(function (_context8) {
+      while (1) switch (_context8.n) {
         case 0:
-          return _context5.a(2, new Promise(function (resolve, reject) {
+          return _context8.a(2, new Promise(function (resolve, reject) {
             try {
               executor(resolve, reject);
             } catch (e) {
@@ -41745,7 +42060,7 @@ function _build() {
             }
           }));
       }
-    }, _callee5);
+    }, _callee8);
   }));
   return _build.apply(this, arguments);
 }
@@ -44464,7 +44779,7 @@ function _classPrivateFieldSet(s, a, r) { return s.set(_assertClassBrand(s, a), 
 function _assertClassBrand(e, t, n) { if ("function" == typeof e ? e === t : e.has(t)) return arguments.length < 3 ? t : n; throw new TypeError("Private element is not present on this object"); }
 /**
  * A {@link Specification} that passes when the value of the item passed to
- * the constructor is neither null or undefined.
+ * the constructor is neither null nor undefined.
  *
  * @public
  * @extends {Specification}
@@ -45988,6 +46303,10 @@ var _DataType = _interopRequireDefault(require("./../../../../serialization/json
 var _Field = _interopRequireDefault(require("./../../../../serialization/json/Field.js"));
 var _Schema = _interopRequireDefault(require("./../../../../serialization/json/Schema.js"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { "default": e }; }
+function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
+function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 describe('When a FailureReason is created with a verbose failure type', function () {
   'use strict';
 
@@ -46100,15 +46419,22 @@ describe('When a schema is validated', function () {
   });
   describe('and a valid schema is processed', function () {
     var result;
-    beforeEach(function (done) {
-      _FailureReason["default"].validateSchema(schema, {
-        first: 'bryan',
-        last: 'ingle'
-      }).then(function (r) {
-        result = r;
-        done();
-      });
-    });
+    beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
+      return _regenerator().w(function (_context) {
+        while (1) switch (_context.n) {
+          case 0:
+            _context.n = 1;
+            return _FailureReason["default"].validateSchema(schema, {
+              first: 'bryan',
+              last: 'ingle'
+            });
+          case 1:
+            result = _context.v;
+          case 2:
+            return _context.a(2);
+        }
+      }, _callee);
+    })));
     it('should return null (not a FailureReason)', function () {
       expect(result).toEqual(null);
     });
@@ -46116,17 +46442,29 @@ describe('When a schema is validated', function () {
   describe('and an invalid schema is processed (with one invalid property)', function () {
     var successResult = null;
     var failureResult = null;
-    beforeEach(function (done) {
-      _FailureReason["default"].validateSchema(schema, {
-        first: 'bryan'
-      }).then(function (r) {
-        successResult = r;
-        done();
-      })["catch"](function (e) {
-        failureResult = e;
-        done();
-      });
-    });
+    beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2() {
+      var _t;
+      return _regenerator().w(function (_context2) {
+        while (1) switch (_context2.p = _context2.n) {
+          case 0:
+            _context2.p = 0;
+            _context2.n = 1;
+            return _FailureReason["default"].validateSchema(schema, {
+              first: 'bryan'
+            });
+          case 1:
+            successResult = _context2.v;
+            _context2.n = 3;
+            break;
+          case 2:
+            _context2.p = 2;
+            _t = _context2.v;
+            failureResult = _t;
+          case 3:
+            return _context2.a(2);
+        }
+      }, _callee2, null, [[0, 2]]);
+    })));
     it('should fail with a formatted failure reason', function () {
       expect(failureResult).not.toEqual(null);
     });
@@ -46137,15 +46475,27 @@ describe('When a schema is validated', function () {
   describe('and an invalid schema is processed (with two invalid properties)', function () {
     var successResult = null;
     var failureResult = null;
-    beforeEach(function (done) {
-      _FailureReason["default"].validateSchema(schema, {}).then(function (r) {
-        successResult = r;
-        done();
-      })["catch"](function (e) {
-        failureResult = e;
-        done();
-      });
-    });
+    beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3() {
+      var _t2;
+      return _regenerator().w(function (_context3) {
+        while (1) switch (_context3.p = _context3.n) {
+          case 0:
+            _context3.p = 0;
+            _context3.n = 1;
+            return _FailureReason["default"].validateSchema(schema, {});
+          case 1:
+            successResult = _context3.v;
+            _context3.n = 3;
+            break;
+          case 2:
+            _context3.p = 2;
+            _t2 = _context3.v;
+            failureResult = _t2;
+          case 3:
+            return _context3.a(2);
+        }
+      }, _callee3, null, [[0, 2]]);
+    })));
     it('should fail with a formatted failure reason', function () {
       expect(failureResult).not.toEqual(null);
     });
@@ -46293,26 +46643,73 @@ describe('When Gateway is used', function () {
 
   var axiosRequestSpy;
   beforeEach(function () {
-    axiosRequestSpy = spyOn(_axios["default"], 'request').and.returnValue(Promise.resolve({
-      data: {
-        ok: true
-      }
-    }));
+    axiosRequestSpy = spyOn(_axios["default"], 'request').and.callFake(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
+      return _regenerator().w(function (_context) {
+        while (1) switch (_context.n) {
+          case 0:
+            return _context.a(2, {
+              data: {
+                ok: true
+              }
+            });
+        }
+      }, _callee);
+    })));
   });
-  it('should invoke axios with composed request options and return data', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
+  it('should invoke axios with composed request options and return data', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee6() {
     var endpoint, result;
-    return _regenerator().w(function (_context) {
-      while (1) switch (_context.n) {
+    return _regenerator().w(function (_context6) {
+      while (1) switch (_context6.n) {
         case 0:
-          endpoint = new _Endpoint["default"]('quotes', 'Quotes', _VerbType["default"].POST, _ProtocolType["default"].HTTPS, 'example.com', 8443, new _Parameters["default"]([new _Parameter["default"]('Symbol', 'symbol', function (payload) {
-            return Promise.resolve(payload.symbol);
-          })]), new _Parameters["default"]([new _Parameter["default"]('Mode', 'mode', function (payload) {
-            return Promise.resolve(payload.mode);
-          })]), new _Parameters["default"]([new _Parameter["default"]('Token', 'x-token', function (payload) {
-            return Promise.resolve(payload.token);
-          })]), new _Parameters["default"]([new _Parameter["default"]('Body', 'body.value', function (payload) {
-            return Promise.resolve(payload.value);
-          })]), new _Credentials["default"](function (payload) {
+          endpoint = new _Endpoint["default"]('quotes', 'Quotes', _VerbType["default"].POST, _ProtocolType["default"].HTTPS, 'example.com', 8443, new _Parameters["default"]([new _Parameter["default"]('Symbol', 'symbol', /*#__PURE__*/function () {
+            var _ref3 = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2(payload) {
+              return _regenerator().w(function (_context2) {
+                while (1) switch (_context2.n) {
+                  case 0:
+                    return _context2.a(2, payload.symbol);
+                }
+              }, _callee2);
+            }));
+            return function (_x) {
+              return _ref3.apply(this, arguments);
+            };
+          }())]), new _Parameters["default"]([new _Parameter["default"]('Mode', 'mode', /*#__PURE__*/function () {
+            var _ref4 = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3(payload) {
+              return _regenerator().w(function (_context3) {
+                while (1) switch (_context3.n) {
+                  case 0:
+                    return _context3.a(2, payload.mode);
+                }
+              }, _callee3);
+            }));
+            return function (_x2) {
+              return _ref4.apply(this, arguments);
+            };
+          }())]), new _Parameters["default"]([new _Parameter["default"]('Token', 'x-token', /*#__PURE__*/function () {
+            var _ref5 = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee4(payload) {
+              return _regenerator().w(function (_context4) {
+                while (1) switch (_context4.n) {
+                  case 0:
+                    return _context4.a(2, payload.token);
+                }
+              }, _callee4);
+            }));
+            return function (_x3) {
+              return _ref5.apply(this, arguments);
+            };
+          }())]), new _Parameters["default"]([new _Parameter["default"]('Body', 'body.value', /*#__PURE__*/function () {
+            var _ref6 = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee5(payload) {
+              return _regenerator().w(function (_context5) {
+                while (1) switch (_context5.n) {
+                  case 0:
+                    return _context5.a(2, payload.value);
+                }
+              }, _callee5);
+            }));
+            return function (_x4) {
+              return _ref6.apply(this, arguments);
+            };
+          }())]), new _Credentials["default"](function (payload) {
             return payload.user;
           }, function (payload) {
             return payload.pass;
@@ -46320,7 +46717,7 @@ describe('When Gateway is used', function () {
             options.requestIntercepted = true;
             return options;
           }), _ResponseInterceptor["default"].DATA, _ErrorInterceptor["default"].EMPTY);
-          _context.n = 1;
+          _context6.n = 1;
           return _Gateway["default"].invoke(endpoint, {
             symbol: 'A/B',
             mode: 'full',
@@ -46330,29 +46727,69 @@ describe('When Gateway is used', function () {
             pass: 'p'
           });
         case 1:
-          result = _context.v;
+          result = _context6.v;
           expect(result).toEqual({
             ok: true
           });
         case 2:
-          return _context.a(2);
+          return _context6.a(2);
       }
-    }, _callee);
+    }, _callee6);
   })));
-  it('should invoke axios with correct request options structure', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2() {
+  it('should invoke axios with correct request options structure', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee1() {
     var endpoint;
-    return _regenerator().w(function (_context2) {
-      while (1) switch (_context2.n) {
+    return _regenerator().w(function (_context1) {
+      while (1) switch (_context1.n) {
         case 0:
-          endpoint = new _Endpoint["default"]('quotes', 'Quotes', _VerbType["default"].POST, _ProtocolType["default"].HTTPS, 'example.com', 8443, new _Parameters["default"]([new _Parameter["default"]('Symbol', 'symbol', function (payload) {
-            return Promise.resolve(payload.symbol);
-          })]), new _Parameters["default"]([new _Parameter["default"]('Mode', 'mode', function (payload) {
-            return Promise.resolve(payload.mode);
-          })]), new _Parameters["default"]([new _Parameter["default"]('Token', 'x-token', function (payload) {
-            return Promise.resolve(payload.token);
-          })]), new _Parameters["default"]([new _Parameter["default"]('Body', 'body.value', function (payload) {
-            return Promise.resolve(payload.value);
-          })]), new _Credentials["default"](function (payload) {
+          endpoint = new _Endpoint["default"]('quotes', 'Quotes', _VerbType["default"].POST, _ProtocolType["default"].HTTPS, 'example.com', 8443, new _Parameters["default"]([new _Parameter["default"]('Symbol', 'symbol', /*#__PURE__*/function () {
+            var _ref8 = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee7(payload) {
+              return _regenerator().w(function (_context7) {
+                while (1) switch (_context7.n) {
+                  case 0:
+                    return _context7.a(2, payload.symbol);
+                }
+              }, _callee7);
+            }));
+            return function (_x5) {
+              return _ref8.apply(this, arguments);
+            };
+          }())]), new _Parameters["default"]([new _Parameter["default"]('Mode', 'mode', /*#__PURE__*/function () {
+            var _ref9 = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee8(payload) {
+              return _regenerator().w(function (_context8) {
+                while (1) switch (_context8.n) {
+                  case 0:
+                    return _context8.a(2, payload.mode);
+                }
+              }, _callee8);
+            }));
+            return function (_x6) {
+              return _ref9.apply(this, arguments);
+            };
+          }())]), new _Parameters["default"]([new _Parameter["default"]('Token', 'x-token', /*#__PURE__*/function () {
+            var _ref0 = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee9(payload) {
+              return _regenerator().w(function (_context9) {
+                while (1) switch (_context9.n) {
+                  case 0:
+                    return _context9.a(2, payload.token);
+                }
+              }, _callee9);
+            }));
+            return function (_x7) {
+              return _ref0.apply(this, arguments);
+            };
+          }())]), new _Parameters["default"]([new _Parameter["default"]('Body', 'body.value', /*#__PURE__*/function () {
+            var _ref1 = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee0(payload) {
+              return _regenerator().w(function (_context0) {
+                while (1) switch (_context0.n) {
+                  case 0:
+                    return _context0.a(2, payload.value);
+                }
+              }, _callee0);
+            }));
+            return function (_x8) {
+              return _ref1.apply(this, arguments);
+            };
+          }())]), new _Credentials["default"](function (payload) {
             return payload.user;
           }, function (payload) {
             return payload.pass;
@@ -46360,7 +46797,7 @@ describe('When Gateway is used', function () {
             options.requestIntercepted = true;
             return options;
           }), _ResponseInterceptor["default"].DATA, _ErrorInterceptor["default"].EMPTY);
-          _context2.n = 1;
+          _context1.n = 1;
           return _Gateway["default"].invoke(endpoint, {
             symbol: 'A/B',
             mode: 'full',
@@ -46389,17 +46826,17 @@ describe('When Gateway is used', function () {
             requestIntercepted: true
           }));
         case 2:
-          return _context2.a(2);
+          return _context1.a(2);
       }
-    }, _callee2);
+    }, _callee1);
   })));
-  it('should omit the default port from the request URL', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3() {
+  it('should omit the default port from the request URL', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee10() {
     var endpoint;
-    return _regenerator().w(function (_context3) {
-      while (1) switch (_context3.n) {
+    return _regenerator().w(function (_context10) {
+      while (1) switch (_context10.n) {
         case 0:
           endpoint = new _Endpoint["default"]('quotes', 'Quotes', _VerbType["default"].GET, _ProtocolType["default"].HTTPS, 'example.com');
-          _context3.n = 1;
+          _context10.n = 1;
           return _Gateway["default"].invoke(endpoint, {});
         case 1:
           expect(axiosRequestSpy).toHaveBeenCalledWith(jasmine.objectContaining({
@@ -46407,99 +46844,135 @@ describe('When Gateway is used', function () {
             url: 'https://example.com/'
           }));
         case 2:
-          return _context3.a(2);
+          return _context10.a(2);
       }
-    }, _callee3);
+    }, _callee10);
   })));
-  it('should reject missing required parameter values', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee4() {
+  it('should reject missing required parameter values', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee12() {
     var endpoint;
-    return _regenerator().w(function (_context4) {
-      while (1) switch (_context4.n) {
+    return _regenerator().w(function (_context12) {
+      while (1) switch (_context12.n) {
         case 0:
-          endpoint = new _Endpoint["default"]('quotes', 'Quotes', _VerbType["default"].GET, _ProtocolType["default"].HTTPS, 'example.com', 443, new _Parameters["default"]([new _Parameter["default"]('Symbol', 'symbol', function () {
-            return Promise.resolve(null);
-          })]));
-          _context4.n = 1;
+          endpoint = new _Endpoint["default"]('quotes', 'Quotes', _VerbType["default"].GET, _ProtocolType["default"].HTTPS, 'example.com', 443, new _Parameters["default"]([new _Parameter["default"]('Symbol', 'symbol', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee11() {
+            return _regenerator().w(function (_context11) {
+              while (1) switch (_context11.n) {
+                case 0:
+                  return _context11.a(2, null);
+              }
+            }, _callee11);
+          })))]));
+          _context12.n = 1;
           return expectAsync(_Gateway["default"].invoke(endpoint, {})).toBeRejected();
         case 1:
-          return _context4.a(2);
+          return _context12.a(2);
       }
-    }, _callee4);
+    }, _callee12);
   })));
-  it('should not call axios when required parameter values are missing', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee5() {
+  it('should not call axios when required parameter values are missing', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee14() {
     var endpoint, _t;
-    return _regenerator().w(function (_context5) {
-      while (1) switch (_context5.p = _context5.n) {
+    return _regenerator().w(function (_context14) {
+      while (1) switch (_context14.p = _context14.n) {
         case 0:
-          endpoint = new _Endpoint["default"]('quotes', 'Quotes', _VerbType["default"].GET, _ProtocolType["default"].HTTPS, 'example.com', 443, new _Parameters["default"]([new _Parameter["default"]('Symbol', 'symbol', function () {
-            return Promise.resolve(null);
-          })]));
-          _context5.p = 1;
-          _context5.n = 2;
+          endpoint = new _Endpoint["default"]('quotes', 'Quotes', _VerbType["default"].GET, _ProtocolType["default"].HTTPS, 'example.com', 443, new _Parameters["default"]([new _Parameter["default"]('Symbol', 'symbol', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee13() {
+            return _regenerator().w(function (_context13) {
+              while (1) switch (_context13.n) {
+                case 0:
+                  return _context13.a(2, null);
+              }
+            }, _callee13);
+          })))]));
+          _context14.p = 1;
+          _context14.n = 2;
           return _Gateway["default"].invoke(endpoint, {});
         case 2:
-          _context5.n = 4;
+          _context14.n = 4;
           break;
         case 3:
-          _context5.p = 3;
-          _t = _context5.v;
+          _context14.p = 3;
+          _t = _context14.v;
         case 4:
           expect(axiosRequestSpy).not.toHaveBeenCalled();
         case 5:
-          return _context5.a(2);
+          return _context14.a(2);
       }
-    }, _callee5, null, [[1, 3]]);
+    }, _callee14, null, [[1, 3]]);
   })));
-  it('should allow missing optional parameter values', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee6() {
+  it('should allow missing optional parameter values', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee16() {
     var endpoint;
-    return _regenerator().w(function (_context6) {
-      while (1) switch (_context6.n) {
+    return _regenerator().w(function (_context16) {
+      while (1) switch (_context16.n) {
         case 0:
-          endpoint = new _Endpoint["default"]('quotes', 'Quotes', _VerbType["default"].GET, _ProtocolType["default"].HTTPS, 'example.com', 443, new _Parameters["default"]([new _Parameter["default"]('Symbol', 'symbol', function () {
-            return Promise.resolve(null);
-          }, true)]));
-          _context6.n = 1;
+          endpoint = new _Endpoint["default"]('quotes', 'Quotes', _VerbType["default"].GET, _ProtocolType["default"].HTTPS, 'example.com', 443, new _Parameters["default"]([new _Parameter["default"]('Symbol', 'symbol', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee15() {
+            return _regenerator().w(function (_context15) {
+              while (1) switch (_context15.n) {
+                case 0:
+                  return _context15.a(2, null);
+              }
+            }, _callee15);
+          })), true)]));
+          _context16.n = 1;
           return _Gateway["default"].invoke(endpoint, {});
         case 1:
           expect(axiosRequestSpy).toHaveBeenCalledWith(jasmine.objectContaining({
             url: 'https://example.com/'
           }));
         case 2:
-          return _context6.a(2);
+          return _context16.a(2);
       }
-    }, _callee6);
+    }, _callee16);
   })));
-  it('should delegate axios errors to the endpoint error interceptor', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee7() {
+  it('should delegate axios errors to the endpoint error interceptor', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee19() {
     var remoteError, endpoint;
-    return _regenerator().w(function (_context7) {
-      while (1) switch (_context7.n) {
+    return _regenerator().w(function (_context19) {
+      while (1) switch (_context19.n) {
         case 0:
           remoteError = new Error('remote');
-          endpoint = new _Endpoint["default"]('quotes', 'Quotes', _VerbType["default"].GET, _ProtocolType["default"].HTTPS, 'example.com', 443, new _Parameters["default"](), new _Parameters["default"](), new _Parameters["default"](), new _Parameters["default"](), null, _RequestInterceptor["default"].EMPTY, _ResponseInterceptor["default"].EMPTY, _ErrorInterceptor["default"].fromDelegate(function (error) {
-            return Promise.reject({
-              wrapped: error.message
-            });
-          }));
-          axiosRequestSpy.and.returnValue(Promise.reject(remoteError));
-          _context7.n = 1;
+          endpoint = new _Endpoint["default"]('quotes', 'Quotes', _VerbType["default"].GET, _ProtocolType["default"].HTTPS, 'example.com', 443, new _Parameters["default"](), new _Parameters["default"](), new _Parameters["default"](), new _Parameters["default"](), null, _RequestInterceptor["default"].EMPTY, _ResponseInterceptor["default"].EMPTY, _ErrorInterceptor["default"].fromDelegate(/*#__PURE__*/function () {
+            var _ref18 = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee17(error) {
+              return _regenerator().w(function (_context17) {
+                while (1) switch (_context17.n) {
+                  case 0:
+                    throw {
+                      wrapped: error.message
+                    };
+                  case 1:
+                    return _context17.a(2);
+                }
+              }, _callee17);
+            }));
+            return function (_x9) {
+              return _ref18.apply(this, arguments);
+            };
+          }()));
+          axiosRequestSpy.and.callFake(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee18() {
+            return _regenerator().w(function (_context18) {
+              while (1) switch (_context18.n) {
+                case 0:
+                  throw remoteError;
+                case 1:
+                  return _context18.a(2);
+              }
+            }, _callee18);
+          })));
+          _context19.n = 1;
           return expectAsync(_Gateway["default"].invoke(endpoint, {})).toBeRejectedWith({
             wrapped: 'remote'
           });
         case 1:
-          return _context7.a(2);
+          return _context19.a(2);
       }
-    }, _callee7);
+    }, _callee19);
   })));
-  it('should validate endpoint arguments', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee8() {
-    return _regenerator().w(function (_context8) {
-      while (1) switch (_context8.n) {
+  it('should validate endpoint arguments', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee20() {
+    return _regenerator().w(function (_context20) {
+      while (1) switch (_context20.n) {
         case 0:
-          _context8.n = 1;
+          _context20.n = 1;
           return expectAsync(_Gateway["default"].invoke(null, {})).toBeRejected();
         case 1:
-          return _context8.a(2);
+          return _context20.a(2);
       }
-    }, _callee8);
+    }, _callee20);
   })));
   it('should have the expected string representation', function () {
     expect(new _Gateway["default"]().toString()).toEqual('[Gateway]');
@@ -46744,13 +47217,13 @@ describe('When an EndpointBuilder is used', function () {
       while (1) switch (_context3.n) {
         case 0:
           builder.withErrorInterceptor(_ErrorInterceptor["default"].fromDelegate(function (error) {
-            return Promise.reject({
+            throw {
               a: error
-            });
+            };
           })).withErrorInterceptor(_ErrorInterceptor["default"].fromDelegate(function (error) {
-            return Promise.reject({
+            throw {
               b: error
-            });
+            };
           }));
           _context3.n = 1;
           return expectAsync(builder.endpoint.errorInterceptor.process('x', builder.endpoint)).toBeRejectedWith({
@@ -46783,10 +47256,10 @@ describe('When an EndpointBuilder is used', function () {
             return response;
           })).withErrorInterceptor(_ErrorInterceptor["default"].fromDelegate(function (error) {
             calls.push('error:a');
-            return Promise.reject(error);
+            throw error;
           })).withErrorInterceptor(_ErrorInterceptor["default"].fromDelegate(function (error) {
             calls.push('error:b');
-            return Promise.reject(error);
+            throw error;
           }));
           _context4.n = 1;
           return builder.endpoint.requestInterceptor.process({}, builder.endpoint);
@@ -47016,6 +47489,10 @@ var _ErrorInterceptor = _interopRequireDefault(require("./../../../../../api/htt
 var _RequestInterceptor = _interopRequireDefault(require("./../../../../../api/http/interceptors/RequestInterceptor.js"));
 var _ResponseInterceptor = _interopRequireDefault(require("./../../../../../api/http/interceptors/ResponseInterceptor.js"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { "default": e }; }
+function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
+function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 describe('When an Endpoint is constructed', function () {
   'use strict';
 
@@ -47029,9 +47506,14 @@ describe('When an Endpoint is constructed', function () {
   var errorInterceptor;
   var endpoint;
   beforeEach(function () {
-    path = new _Parameters["default"]([new _Parameter["default"]('Id', 'id', function () {
-      return Promise.resolve('1');
-    })]);
+    path = new _Parameters["default"]([new _Parameter["default"]('Id', 'id', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
+      return _regenerator().w(function (_context) {
+        while (1) switch (_context.n) {
+          case 0:
+            return _context.a(2, '1');
+        }
+      }, _callee);
+    })))]);
     query = new _Parameters["default"]();
     headers = new _Parameters["default"]();
     body = new _Parameters["default"]();
@@ -47046,9 +47528,21 @@ describe('When an Endpoint is constructed', function () {
     responseInterceptor = _ResponseInterceptor["default"].fromDelegate(function (response) {
       return response;
     });
-    errorInterceptor = _ErrorInterceptor["default"].fromDelegate(function (error) {
-      return Promise.reject(error);
-    });
+    errorInterceptor = _ErrorInterceptor["default"].fromDelegate(/*#__PURE__*/function () {
+      var _ref2 = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2(error) {
+        return _regenerator().w(function (_context2) {
+          while (1) switch (_context2.n) {
+            case 0:
+              throw error;
+            case 1:
+              return _context2.a(2);
+          }
+        }, _callee2);
+      }));
+      return function (_x) {
+        return _ref2.apply(this, arguments);
+      };
+    }());
     endpoint = new _Endpoint["default"]('name', 'Description', _VerbType["default"].POST, _ProtocolType["default"].HTTP, 'example.com', 8080, path, query, headers, body, credentials, requestInterceptor, responseInterceptor, errorInterceptor);
   });
   it('should expose name through getter', function () {
@@ -47170,15 +47664,29 @@ describe('When an Endpoint is constructed', function () {
 
 var _Parameter = _interopRequireDefault(require("./../../../../../api/http/definitions/Parameter.js"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { "default": e }; }
+function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
+function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 describe('When a Parameter is constructed', function () {
   'use strict';
 
   var extractor;
   var parameter;
   beforeEach(function () {
-    extractor = function extractor() {
-      return Promise.resolve('value');
-    };
+    extractor = /*#__PURE__*/function () {
+      var _ref = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
+        return _regenerator().w(function (_context) {
+          while (1) switch (_context.n) {
+            case 0:
+              return _context.a(2, 'value');
+          }
+        }, _callee);
+      }));
+      return function extractor() {
+        return _ref.apply(this, arguments);
+      };
+    }();
     parameter = new _Parameter["default"]('Description', 'name', extractor, true);
   });
   it('should expose the description', function () {
@@ -47219,6 +47727,10 @@ describe('When a Parameter is constructed', function () {
 var _Parameter = _interopRequireDefault(require("./../../../../../api/http/definitions/Parameter.js"));
 var _Parameters = _interopRequireDefault(require("./../../../../../api/http/definitions/Parameters.js"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { "default": e }; }
+function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
+function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 describe('When Parameters are constructed', function () {
   'use strict';
 
@@ -47226,12 +47738,22 @@ describe('When Parameters are constructed', function () {
   var parameterB;
   var parameters;
   beforeEach(function () {
-    parameterA = new _Parameter["default"]('A', 'a', function () {
-      return Promise.resolve('a');
-    });
-    parameterB = new _Parameter["default"]('B', 'b', function () {
-      return Promise.resolve('b');
-    });
+    parameterA = new _Parameter["default"]('A', 'a', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
+      return _regenerator().w(function (_context) {
+        while (1) switch (_context.n) {
+          case 0:
+            return _context.a(2, 'a');
+        }
+      }, _callee);
+    })));
+    parameterB = new _Parameter["default"]('B', 'b', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2() {
+      return _regenerator().w(function (_context2) {
+        while (1) switch (_context2.n) {
+          case 0:
+            return _context2.a(2, 'b');
+        }
+      }, _callee2);
+    })));
     parameters = new _Parameters["default"]([parameterA]);
   });
   it('should expose the parameter list', function () {
@@ -47253,9 +47775,14 @@ describe('When Parameters are constructed', function () {
   describe('and two parameter collections are merged', function () {
     var merged;
     beforeEach(function () {
-      merged = _Parameters["default"].merge(parameters, new _Parameters["default"]([new _Parameter["default"]('A duplicate', 'a', function () {
-        return Promise.resolve('duplicate');
-      }), parameterB]));
+      merged = _Parameters["default"].merge(parameters, new _Parameters["default"]([new _Parameter["default"]('A duplicate', 'a', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3() {
+        return _regenerator().w(function (_context3) {
+          while (1) switch (_context3.n) {
+            case 0:
+              return _context3.a(2, 'duplicate');
+          }
+        }, _callee3);
+      }))), parameterB]));
     });
     it('should keep existing parameters first', function () {
       expect(merged.parameters[0]).toBe(parameterA);
@@ -47375,30 +47902,54 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
 describe('When a CompositeErrorInterceptor is used', function () {
   'use strict';
 
-  it('should process rejected errors through both interceptors in order', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
+  it('should process rejected errors through both interceptors in order', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3() {
     var interceptor;
-    return _regenerator().w(function (_context) {
-      while (1) switch (_context.n) {
+    return _regenerator().w(function (_context3) {
+      while (1) switch (_context3.n) {
         case 0:
-          interceptor = new _CompositeErrorInterceptor["default"](_ErrorInterceptor["default"].fromDelegate(function (error) {
-            return Promise.reject({
-              first: error
-            });
-          }), _ErrorInterceptor["default"].fromDelegate(function (error) {
-            return Promise.reject({
-              second: error
-            });
-          }));
-          _context.n = 1;
+          interceptor = new _CompositeErrorInterceptor["default"](_ErrorInterceptor["default"].fromDelegate(/*#__PURE__*/function () {
+            var _ref2 = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee(error) {
+              return _regenerator().w(function (_context) {
+                while (1) switch (_context.n) {
+                  case 0:
+                    throw {
+                      first: error
+                    };
+                  case 1:
+                    return _context.a(2);
+                }
+              }, _callee);
+            }));
+            return function (_x) {
+              return _ref2.apply(this, arguments);
+            };
+          }()), _ErrorInterceptor["default"].fromDelegate(/*#__PURE__*/function () {
+            var _ref3 = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2(error) {
+              return _regenerator().w(function (_context2) {
+                while (1) switch (_context2.n) {
+                  case 0:
+                    throw {
+                      second: error
+                    };
+                  case 1:
+                    return _context2.a(2);
+                }
+              }, _callee2);
+            }));
+            return function (_x2) {
+              return _ref3.apply(this, arguments);
+            };
+          }()));
+          _context3.n = 1;
           return expectAsync(interceptor.process('raw', null)).toBeRejectedWith({
             second: {
               first: 'raw'
             }
           });
         case 1:
-          return _context.a(2);
+          return _context3.a(2);
       }
-    }, _callee);
+    }, _callee3);
   })));
   it('should validate constructor arguments', function () {
     expect([function () {
@@ -47570,48 +48121,66 @@ describe('When ErrorInterceptor is used', function () {
       }
     }, _callee2);
   })));
-  it('should create delegate interceptors that reject with delegated values', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3() {
+  it('should create delegate interceptors that reject with delegated values', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee4() {
     var delegate, interceptor;
-    return _regenerator().w(function (_context3) {
-      while (1) switch (_context3.n) {
+    return _regenerator().w(function (_context4) {
+      while (1) switch (_context4.n) {
         case 0:
-          delegate = jasmine.createSpy('delegate').and.returnValue(Promise.reject('done'));
+          delegate = jasmine.createSpy('delegate').and.callFake(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3() {
+            return _regenerator().w(function (_context3) {
+              while (1) switch (_context3.n) {
+                case 0:
+                  throw 'done';
+                case 1:
+                  return _context3.a(2);
+              }
+            }, _callee3);
+          })));
           interceptor = _ErrorInterceptor["default"].fromDelegate(delegate);
-          _context3.n = 1;
+          _context4.n = 1;
           return expectAsync(interceptor.process('raw', endpoint)).toBeRejectedWith('done');
         case 1:
-          return _context3.a(2);
+          return _context4.a(2);
       }
-    }, _callee3);
+    }, _callee4);
   })));
-  it('should create delegate interceptors that call the delegate with correct arguments', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee4() {
+  it('should create delegate interceptors that call the delegate with correct arguments', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee6() {
     var delegate, interceptor, _t;
-    return _regenerator().w(function (_context4) {
-      while (1) switch (_context4.p = _context4.n) {
+    return _regenerator().w(function (_context6) {
+      while (1) switch (_context6.p = _context6.n) {
         case 0:
-          delegate = jasmine.createSpy('delegate').and.returnValue(Promise.reject('done'));
+          delegate = jasmine.createSpy('delegate').and.callFake(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee5() {
+            return _regenerator().w(function (_context5) {
+              while (1) switch (_context5.n) {
+                case 0:
+                  throw 'done';
+                case 1:
+                  return _context5.a(2);
+              }
+            }, _callee5);
+          })));
           interceptor = _ErrorInterceptor["default"].fromDelegate(delegate);
-          _context4.p = 1;
-          _context4.n = 2;
+          _context6.p = 1;
+          _context6.n = 2;
           return interceptor.process('raw', endpoint);
         case 2:
-          _context4.n = 4;
+          _context6.n = 4;
           break;
         case 3:
-          _context4.p = 3;
-          _t = _context4.v;
+          _context6.p = 3;
+          _t = _context6.v;
         case 4:
           expect(delegate).toHaveBeenCalledWith('raw', endpoint);
         case 5:
-          return _context4.a(2);
+          return _context6.a(2);
       }
-    }, _callee4, null, [[1, 3]]);
+    }, _callee6, null, [[1, 3]]);
   })));
-  it('should reject deserialized JSON response data from the general interceptor', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee5() {
-    return _regenerator().w(function (_context5) {
-      while (1) switch (_context5.n) {
+  it('should reject deserialized JSON response data from the general interceptor', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee7() {
+    return _regenerator().w(function (_context7) {
+      while (1) switch (_context7.n) {
         case 0:
-          _context5.n = 1;
+          _context7.n = 1;
           return expectAsync(_ErrorInterceptor["default"].GENERAL.process({
             response: {
               headers: {
@@ -47623,15 +48192,15 @@ describe('When ErrorInterceptor is used', function () {
             message: 'bad'
           });
         case 1:
-          return _context5.a(2);
+          return _context7.a(2);
       }
-    }, _callee5);
+    }, _callee7);
   })));
-  it('should reject object JSON response data from the general interceptor', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee6() {
-    return _regenerator().w(function (_context6) {
-      while (1) switch (_context6.n) {
+  it('should reject object JSON response data from the general interceptor', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee8() {
+    return _regenerator().w(function (_context8) {
+      while (1) switch (_context8.n) {
         case 0:
-          _context6.n = 1;
+          _context8.n = 1;
           return expectAsync(_ErrorInterceptor["default"].GENERAL.process({
             response: {
               headers: {
@@ -47645,35 +48214,35 @@ describe('When ErrorInterceptor is used', function () {
             message: 'bad'
           });
         case 1:
-          return _context6.a(2);
+          return _context8.a(2);
       }
-    }, _callee6);
+    }, _callee8);
   })));
-  it('should convert network errors with no response into authorization failures', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee7() {
-    return _regenerator().w(function (_context7) {
-      while (1) switch (_context7.n) {
+  it('should convert network errors with no response into authorization failures', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee9() {
+    return _regenerator().w(function (_context9) {
+      while (1) switch (_context9.n) {
         case 0:
-          _context7.n = 1;
+          _context9.n = 1;
           return expectAsync(_ErrorInterceptor["default"].GENERAL.process({
             message: 'Network Error'
           }, endpoint)).toBeRejected();
         case 1:
-          return _context7.a(2);
+          return _context9.a(2);
       }
-    }, _callee7);
+    }, _callee9);
   })));
-  it('should convert general errors into general failures', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee8() {
-    return _regenerator().w(function (_context8) {
-      while (1) switch (_context8.n) {
+  it('should convert general errors into general failures', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee0() {
+    return _regenerator().w(function (_context0) {
+      while (1) switch (_context0.n) {
         case 0:
-          _context8.n = 1;
+          _context0.n = 1;
           return expectAsync(_ErrorInterceptor["default"].GENERAL.process({
             message: 'Other Error'
           }, endpoint)).toBeRejected();
         case 1:
-          return _context8.a(2);
+          return _context0.a(2);
       }
-    }, _callee8);
+    }, _callee0);
   })));
   it('should validate delegate arguments', function () {
     expect(function () {
@@ -48963,6 +49532,10 @@ describe('When an CompoundMap is constructed', function () {
 var _Disposable = _interopRequireDefault(require("./../../../../lang/Disposable.js"));
 var _DisposableStack = _interopRequireDefault(require("./../../../../collections/specialized/DisposableStack.js"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { "default": e }; }
+function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
+function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 describe('When an DisposableStack is constructed', function () {
   'use strict';
 
@@ -49047,12 +49620,18 @@ describe('When an DisposableStack is constructed', function () {
     describe('and the promise resolves', function () {
       var spyOne;
       var disposableOne;
-      beforeEach(function (done) {
-        resolveAction(disposableOne = _Disposable["default"].fromAction(spyOne = jasmine.createSpy('spyOne')));
-        promise.then(function () {
-          done();
-        });
-      });
+      beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
+        return _regenerator().w(function (_context) {
+          while (1) switch (_context.n) {
+            case 0:
+              resolveAction(disposableOne = _Disposable["default"].fromAction(spyOne = jasmine.createSpy('spyOne')));
+              _context.n = 1;
+              return promise;
+            case 1:
+              return _context.a(2);
+          }
+        }, _callee);
+      })));
       describe('and the stack is disposed', function () {
         beforeEach(function () {
           disposeStack.dispose();
@@ -49081,20 +49660,26 @@ describe('When an DisposableStack is constructed', function () {
       var spyTwo;
       var disposableTwo;
       var disposeOrder;
-      beforeEach(function (done) {
-        disposeOrder = [];
-        resolveActionTwo(disposableTwo = _Disposable["default"].fromAction(spyTwo = jasmine.createSpy('spyTwo').and.callFake(function () {
-          disposeOrder.push(disposableTwo);
-        })));
-        setTimeout(function () {
-          resolveActionOne(disposableOne = _Disposable["default"].fromAction(spyOne = jasmine.createSpy('spyOne').and.callFake(function () {
-            disposeOrder.push(disposableOne);
-          })));
-        }, 5);
-        promise.then(function () {
-          done();
-        });
-      });
+      beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2() {
+        return _regenerator().w(function (_context2) {
+          while (1) switch (_context2.n) {
+            case 0:
+              disposeOrder = [];
+              resolveActionTwo(disposableTwo = _Disposable["default"].fromAction(spyTwo = jasmine.createSpy('spyTwo').and.callFake(function () {
+                disposeOrder.push(disposableTwo);
+              })));
+              setTimeout(function () {
+                resolveActionOne(disposableOne = _Disposable["default"].fromAction(spyOne = jasmine.createSpy('spyOne').and.callFake(function () {
+                  disposeOrder.push(disposableOne);
+                })));
+              }, 5);
+              _context2.n = 1;
+              return promise;
+            case 1:
+              return _context2.a(2);
+          }
+        }, _callee2);
+      })));
       describe('and the stack is disposed', function () {
         beforeEach(function () {
           disposeStack.dispose();
@@ -55849,6 +56434,10 @@ describe('When checking inheritance', function () {
 
 var _iterate = _interopRequireDefault(require("./../../../lang/iterate.js"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { "default": e }; }
+function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
+function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 describe('When using the iterate function', function () {
   var a;
   var b;
@@ -55862,14 +56451,20 @@ describe('When using the iterate function', function () {
   });
   describe('to synchronously iterate over an array with three items', function () {
     var processor;
-    beforeEach(function (done) {
-      processor = jasmine.createSpy('processor').and.callFake(function (item, callback) {
-        callback();
-      });
-      (0, _iterate["default"])(iterable, processor).then(function () {
-        done();
-      });
-    });
+    beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
+      return _regenerator().w(function (_context) {
+        while (1) switch (_context.n) {
+          case 0:
+            processor = jasmine.createSpy('processor').and.callFake(function (item, callback) {
+              callback();
+            });
+            _context.n = 1;
+            return (0, _iterate["default"])(iterable, processor);
+          case 1:
+            return _context.a(2);
+        }
+      }, _callee);
+    })));
     it('the "processor" should have been called three times', function () {
       expect(processor).toHaveBeenCalledTimes(3);
     });
@@ -55885,14 +56480,20 @@ describe('When using the iterate function', function () {
   });
   describe('to synchronously iterate over an array with three items, breaking after the second item', function () {
     var processor;
-    beforeEach(function (done) {
-      processor = jasmine.createSpy('processor').and.callFake(function (item, callback) {
-        callback(item !== b);
-      });
-      (0, _iterate["default"])(iterable, processor).then(function () {
-        done();
-      });
-    });
+    beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2() {
+      return _regenerator().w(function (_context2) {
+        while (1) switch (_context2.n) {
+          case 0:
+            processor = jasmine.createSpy('processor').and.callFake(function (item, callback) {
+              callback(item !== b);
+            });
+            _context2.n = 1;
+            return (0, _iterate["default"])(iterable, processor);
+          case 1:
+            return _context2.a(2);
+        }
+      }, _callee2);
+    })));
     it('the "processor" should have been called two times', function () {
       expect(processor).toHaveBeenCalledTimes(2);
     });
@@ -55913,18 +56514,26 @@ describe('When using the iterate function', function () {
     afterEach(function () {
       jasmine.clock().uninstall();
     });
-    beforeEach(function (done) {
-      processor = jasmine.createSpy('processor').and.callFake(function (item, callback) {
-        invocations.push(new Date().getTime());
-        setTimeout(function () {
-          callback();
-        }, 5);
-      });
-      (0, _iterate["default"])(iterable, processor).then(function () {
-        done();
-      });
-      jasmine.clock().tick(15);
-    });
+    beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3() {
+      var promise;
+      return _regenerator().w(function (_context3) {
+        while (1) switch (_context3.n) {
+          case 0:
+            processor = jasmine.createSpy('processor').and.callFake(function (item, callback) {
+              invocations.push(new Date().getTime());
+              setTimeout(function () {
+                callback();
+              }, 5);
+            });
+            promise = (0, _iterate["default"])(iterable, processor);
+            jasmine.clock().tick(15);
+            _context3.n = 1;
+            return promise;
+          case 1:
+            return _context3.a(2);
+        }
+      }, _callee3);
+    })));
     it('the "processor" should have been called three times', function () {
       expect(processor).toHaveBeenCalledTimes(3);
     });
@@ -55954,18 +56563,26 @@ describe('When using the iterate function', function () {
     afterEach(function () {
       jasmine.clock().uninstall();
     });
-    beforeEach(function (done) {
-      processor = jasmine.createSpy('processor').and.callFake(function (item, callback) {
-        invocations.push(new Date().getTime());
-        setTimeout(function () {
-          callback(item !== b);
-        }, 5);
-      });
-      (0, _iterate["default"])(iterable, processor).then(function () {
-        done();
-      });
-      jasmine.clock().tick(10);
-    });
+    beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee4() {
+      var promise;
+      return _regenerator().w(function (_context4) {
+        while (1) switch (_context4.n) {
+          case 0:
+            processor = jasmine.createSpy('processor').and.callFake(function (item, callback) {
+              invocations.push(new Date().getTime());
+              setTimeout(function () {
+                callback(item !== b);
+              }, 5);
+            });
+            promise = (0, _iterate["default"])(iterable, processor);
+            jasmine.clock().tick(10);
+            _context4.n = 1;
+            return promise;
+          case 1:
+            return _context4.a(2);
+        }
+      }, _callee4);
+    })));
     it('the "processor" should have been called two times', function () {
       expect(processor).toHaveBeenCalledTimes(2);
     });
@@ -56649,7 +57266,11 @@ describe('When cloning a complex object (using a custom value extractor)', funct
 
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 var promise = _interopRequireWildcard(require("./../../../lang/promise.js"));
-function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, "default": e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, "default": e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t5 in e) "default" !== _t5 && {}.hasOwnProperty.call(e, _t5) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t5)) && (i.get || i.set) ? o(f, _t5, i) : f[_t5] = e[_t5]); return f; })(e, t); }
+function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
+function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 describe('When a timeout is set for a promise', function () {
   'use strict';
 
@@ -56658,30 +57279,55 @@ describe('When a timeout is set for a promise', function () {
     var timeoutPromise;
     var result;
     beforeEach(function () {
-      originalPromise = Promise.resolve(result = 'instant');
+      originalPromise = buildResolved(result = 'instant');
       timeoutPromise = promise.timeout(originalPromise, 10);
     });
-    it('it will resolve', function (done) {
-      timeoutPromise.then(function (r) {
-        expect(r).toBe(result);
-        done();
-      });
-    });
+    it('it will resolve', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
+      var r;
+      return _regenerator().w(function (_context) {
+        while (1) switch (_context.n) {
+          case 0:
+            _context.n = 1;
+            return timeoutPromise;
+          case 1:
+            r = _context.v;
+            expect(r).toBe(result);
+          case 2:
+            return _context.a(2);
+        }
+      }, _callee);
+    })));
   });
   describe('on a promise that has already been rejected', function () {
     var originalPromise;
     var timeoutPromise;
     var result;
     beforeEach(function () {
-      originalPromise = Promise.reject(result = 'instant');
+      originalPromise = buildRejected(result = 'instant');
       timeoutPromise = promise.timeout(originalPromise, 10);
     });
-    it('it reject normally', function (done) {
-      timeoutPromise["catch"](function (r) {
-        expect(r).toBe(result);
-        done();
-      });
-    });
+    it('it reject normally', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2() {
+      var r, _t;
+      return _regenerator().w(function (_context2) {
+        while (1) switch (_context2.p = _context2.n) {
+          case 0:
+            _context2.p = 0;
+            _context2.n = 1;
+            return timeoutPromise;
+          case 1:
+            _context2.n = 3;
+            break;
+          case 2:
+            _context2.p = 2;
+            _t = _context2.v;
+            r = _t;
+          case 3:
+            expect(r).toBe(result);
+          case 4:
+            return _context2.a(2);
+        }
+      }, _callee2, null, [[0, 2]]);
+    })));
   });
   describe('on a promise that resolves quickly', function () {
     var originalPromise;
@@ -56695,12 +57341,21 @@ describe('When a timeout is set for a promise', function () {
       });
       timeoutPromise = promise.timeout(originalPromise, 10);
     });
-    it('it will resolve', function (done) {
-      timeoutPromise.then(function (r) {
-        expect(r).toBe(result);
-        done();
-      });
-    });
+    it('it will resolve', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3() {
+      var r;
+      return _regenerator().w(function (_context3) {
+        while (1) switch (_context3.n) {
+          case 0:
+            _context3.n = 1;
+            return timeoutPromise;
+          case 1:
+            r = _context3.v;
+            expect(r).toBe(result);
+          case 2:
+            return _context3.a(2);
+        }
+      }, _callee3);
+    })));
   });
   describe('on a promise that rejects quickly', function () {
     var originalPromise;
@@ -56714,12 +57369,21 @@ describe('When a timeout is set for a promise', function () {
       });
       timeoutPromise = promise.timeout(originalPromise, 10);
     });
-    it('it reject normally', function (done) {
-      timeoutPromise["catch"](function (r) {
-        expect(r).toBe(result);
-        done();
-      });
-    });
+    it('it reject normally', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee4() {
+      var r;
+      return _regenerator().w(function (_context4) {
+        while (1) switch (_context4.n) {
+          case 0:
+            _context4.n = 1;
+            return getRejected(timeoutPromise);
+          case 1:
+            r = _context4.v;
+            expect(r).toBe(result);
+          case 2:
+            return _context4.a(2);
+        }
+      }, _callee4);
+    })));
   });
   describe('on a promise that resolves slowly', function () {
     var originalPromise;
@@ -56733,12 +57397,19 @@ describe('When a timeout is set for a promise', function () {
       });
       timeoutPromise = promise.timeout(originalPromise, 10);
     });
-    it('will reject due to timeout', function (done) {
-      timeoutPromise["catch"](function () {
-        expect(true).toBe(true);
-        done();
-      });
-    });
+    it('will reject due to timeout', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee5() {
+      return _regenerator().w(function (_context5) {
+        while (1) switch (_context5.n) {
+          case 0:
+            _context5.n = 1;
+            return getRejected(timeoutPromise);
+          case 1:
+            expect(true).toBe(true);
+          case 2:
+            return _context5.a(2);
+        }
+      }, _callee5);
+    })));
   });
   describe('on a promise that rejects slowly', function () {
     var originalPromise;
@@ -56752,12 +57423,21 @@ describe('When a timeout is set for a promise', function () {
       });
       timeoutPromise = promise.timeout(originalPromise, 10);
     });
-    it('it reject normally', function (done) {
-      timeoutPromise["catch"](function (r) {
-        expect(r).not.toBe(result);
-        done();
-      });
-    });
+    it('it reject normally', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee6() {
+      var r;
+      return _regenerator().w(function (_context6) {
+        while (1) switch (_context6.n) {
+          case 0:
+            _context6.n = 1;
+            return getRejected(timeoutPromise);
+          case 1:
+            r = _context6.v;
+            expect(r).not.toBe(result);
+          case 2:
+            return _context6.a(2);
+        }
+      }, _callee6);
+    })));
   });
   describe('on a promise that will never resolve', function () {
     var originalPromise;
@@ -56768,12 +57448,19 @@ describe('When a timeout is set for a promise', function () {
       });
       timeoutPromise = promise.timeout(originalPromise, 10);
     });
-    it('will reject due to timeout', function (done) {
-      timeoutPromise["catch"](function () {
-        expect(true).toBe(true);
-        done();
-      });
-    });
+    it('will reject due to timeout', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee7() {
+      return _regenerator().w(function (_context7) {
+        while (1) switch (_context7.n) {
+          case 0:
+            _context7.n = 1;
+            return getRejected(timeoutPromise);
+          case 1:
+            expect(true).toBe(true);
+          case 2:
+            return _context7.a(2);
+        }
+      }, _callee7);
+    })));
   });
 });
 describe('When using the "promise.map" function', function () {
@@ -56791,35 +57478,71 @@ describe('When using the "promise.map" function', function () {
         beforeEach(function () {
           mapPromise = promise.map(mapItems, mapSpy = jasmine.createSpy('mapSpy'), 0);
         });
-        it('the result should be an empty array', function (done) {
-          mapPromise.then(function (results) {
-            expect(results.length).toEqual(0);
-            done();
-          });
-        });
-        it('the mapping function should not have been called', function (done) {
-          mapPromise.then(function (results) {
-            expect(mapSpy).not.toHaveBeenCalled();
-            done();
-          });
-        });
+        it('the result should be an empty array', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee8() {
+          var results;
+          return _regenerator().w(function (_context8) {
+            while (1) switch (_context8.n) {
+              case 0:
+                _context8.n = 1;
+                return mapPromise;
+              case 1:
+                results = _context8.v;
+                expect(results.length).toEqual(0);
+              case 2:
+                return _context8.a(2);
+            }
+          }, _callee8);
+        })));
+        it('the mapping function should not have been called', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee9() {
+          var results;
+          return _regenerator().w(function (_context9) {
+            while (1) switch (_context9.n) {
+              case 0:
+                _context9.n = 1;
+                return mapPromise;
+              case 1:
+                results = _context9.v;
+                expect(mapSpy).not.toHaveBeenCalled();
+              case 2:
+                return _context9.a(2);
+            }
+          }, _callee9);
+        })));
       });
       describe('and the concurrency level is six', function () {
         beforeEach(function () {
           mapPromise = promise.map(mapItems, mapSpy = jasmine.createSpy('mapSpy'), 6);
         });
-        it('the result should be an empty array', function (done) {
-          mapPromise.then(function (results) {
-            expect(results.length).toEqual(0);
-            done();
-          });
-        });
-        it('the mapping function should not have been called', function (done) {
-          mapPromise.then(function (results) {
-            expect(mapSpy).not.toHaveBeenCalled();
-            done();
-          });
-        });
+        it('the result should be an empty array', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee0() {
+          var results;
+          return _regenerator().w(function (_context0) {
+            while (1) switch (_context0.n) {
+              case 0:
+                _context0.n = 1;
+                return mapPromise;
+              case 1:
+                results = _context0.v;
+                expect(results.length).toEqual(0);
+              case 2:
+                return _context0.a(2);
+            }
+          }, _callee0);
+        })));
+        it('the mapping function should not have been called', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee1() {
+          var results;
+          return _regenerator().w(function (_context1) {
+            while (1) switch (_context1.n) {
+              case 0:
+                _context1.n = 1;
+                return mapPromise;
+              case 1:
+                results = _context1.v;
+                expect(mapSpy).not.toHaveBeenCalled();
+              case 2:
+                return _context1.a(2);
+            }
+          }, _callee1);
+        })));
       });
     });
     describe('and the array has three items', function () {
@@ -56836,176 +57559,401 @@ describe('When using the "promise.map" function', function () {
         beforeEach(function () {
           mapPromise = promise.map(mapItems, mapSpy = getMapSpy(), 0);
         });
-        it('the maximum concurrency level should be three', function (done) {
-          mapPromise.then(function (results) {
-            expect(getMaximumConcurrency(results)).toEqual(3);
-            done();
-          });
-        });
-        it('the actual concurrency for the first item should be three', function (done) {
-          mapPromise.then(function (results) {
-            expect(getConcurrency(results, 0)).toEqual(3);
-            done();
-          });
-        });
-        it('the result for the first item should be first', function (done) {
-          mapPromise.then(function (results) {
-            expect(results[0].item).toBe(first);
-            done();
-          });
-        });
-        it('the result for the second item should be second', function (done) {
-          mapPromise.then(function (results) {
-            expect(results[1].item).toBe(second);
-            done();
-          });
-        });
-        it('the result for the third item should be third', function (done) {
-          mapPromise.then(function (results) {
-            expect(results[2].item).toBe(third);
-            done();
-          });
-        });
+        it('the maximum concurrency level should be three', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee10() {
+          var results;
+          return _regenerator().w(function (_context10) {
+            while (1) switch (_context10.n) {
+              case 0:
+                _context10.n = 1;
+                return mapPromise;
+              case 1:
+                results = _context10.v;
+                expect(getMaximumConcurrency(results)).toEqual(3);
+              case 2:
+                return _context10.a(2);
+            }
+          }, _callee10);
+        })));
+        it('the actual concurrency for the first item should be three', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee11() {
+          var results;
+          return _regenerator().w(function (_context11) {
+            while (1) switch (_context11.n) {
+              case 0:
+                _context11.n = 1;
+                return mapPromise;
+              case 1:
+                results = _context11.v;
+                expect(getConcurrency(results, 0)).toEqual(3);
+              case 2:
+                return _context11.a(2);
+            }
+          }, _callee11);
+        })));
+        it('the result for the first item should be first', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee12() {
+          var results;
+          return _regenerator().w(function (_context12) {
+            while (1) switch (_context12.n) {
+              case 0:
+                _context12.n = 1;
+                return mapPromise;
+              case 1:
+                results = _context12.v;
+                expect(results[0].item).toBe(first);
+              case 2:
+                return _context12.a(2);
+            }
+          }, _callee12);
+        })));
+        it('the result for the second item should be second', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee13() {
+          var results;
+          return _regenerator().w(function (_context13) {
+            while (1) switch (_context13.n) {
+              case 0:
+                _context13.n = 1;
+                return mapPromise;
+              case 1:
+                results = _context13.v;
+                expect(results[1].item).toBe(second);
+              case 2:
+                return _context13.a(2);
+            }
+          }, _callee13);
+        })));
+        it('the result for the third item should be third', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee14() {
+          var results;
+          return _regenerator().w(function (_context14) {
+            while (1) switch (_context14.n) {
+              case 0:
+                _context14.n = 1;
+                return mapPromise;
+              case 1:
+                results = _context14.v;
+                expect(results[2].item).toBe(third);
+              case 2:
+                return _context14.a(2);
+            }
+          }, _callee14);
+        })));
       });
       describe('and the concurrency level is one', function () {
         beforeEach(function () {
           mapPromise = promise.map(mapItems, mapSpy = getMapSpy(), 1);
         });
-        it('the maximum concurrency level should be one', function (done) {
-          mapPromise.then(function (results) {
-            expect(getMaximumConcurrency(results)).toEqual(1);
-            done();
-          });
-        });
-        it('the actual concurrency for the first item should be one', function (done) {
-          mapPromise.then(function (results) {
-            expect(getConcurrency(results, 0)).toEqual(1);
-            done();
-          });
-        });
-        it('the result for the first item should be first', function (done) {
-          mapPromise.then(function (results) {
-            expect(results[0].item).toBe(first);
-            done();
-          });
-        });
-        it('the result for the second item should be second', function (done) {
-          mapPromise.then(function (results) {
-            expect(results[1].item).toBe(second);
-            done();
-          });
-        });
-        it('the result for the third item should be third', function (done) {
-          mapPromise.then(function (results) {
-            expect(results[2].item).toBe(third);
-            done();
-          });
-        });
+        it('the maximum concurrency level should be one', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee15() {
+          var results;
+          return _regenerator().w(function (_context15) {
+            while (1) switch (_context15.n) {
+              case 0:
+                _context15.n = 1;
+                return mapPromise;
+              case 1:
+                results = _context15.v;
+                expect(getMaximumConcurrency(results)).toEqual(1);
+              case 2:
+                return _context15.a(2);
+            }
+          }, _callee15);
+        })));
+        it('the actual concurrency for the first item should be one', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee16() {
+          var results;
+          return _regenerator().w(function (_context16) {
+            while (1) switch (_context16.n) {
+              case 0:
+                _context16.n = 1;
+                return mapPromise;
+              case 1:
+                results = _context16.v;
+                expect(getConcurrency(results, 0)).toEqual(1);
+              case 2:
+                return _context16.a(2);
+            }
+          }, _callee16);
+        })));
+        it('the result for the first item should be first', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee17() {
+          var results;
+          return _regenerator().w(function (_context17) {
+            while (1) switch (_context17.n) {
+              case 0:
+                _context17.n = 1;
+                return mapPromise;
+              case 1:
+                results = _context17.v;
+                expect(results[0].item).toBe(first);
+              case 2:
+                return _context17.a(2);
+            }
+          }, _callee17);
+        })));
+        it('the result for the second item should be second', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee18() {
+          var results;
+          return _regenerator().w(function (_context18) {
+            while (1) switch (_context18.n) {
+              case 0:
+                _context18.n = 1;
+                return mapPromise;
+              case 1:
+                results = _context18.v;
+                expect(results[1].item).toBe(second);
+              case 2:
+                return _context18.a(2);
+            }
+          }, _callee18);
+        })));
+        it('the result for the third item should be third', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee19() {
+          var results;
+          return _regenerator().w(function (_context19) {
+            while (1) switch (_context19.n) {
+              case 0:
+                _context19.n = 1;
+                return mapPromise;
+              case 1:
+                results = _context19.v;
+                expect(results[2].item).toBe(third);
+              case 2:
+                return _context19.a(2);
+            }
+          }, _callee19);
+        })));
       });
       describe('and the concurrency level is two', function () {
         beforeEach(function () {
           mapPromise = promise.map(mapItems, mapSpy = getMapSpy(), 2);
         });
-        it('the maximum concurrency level should be two', function (done) {
-          mapPromise.then(function (results) {
-            expect(getMaximumConcurrency(results)).toEqual(2);
-            done();
-          });
-        });
-        it('the actual concurrency for the first item should be two', function (done) {
-          mapPromise.then(function (results) {
-            expect(getConcurrency(results, 0)).toEqual(2);
-            done();
-          });
-        });
-        it('the result for the first item should be first', function (done) {
-          mapPromise.then(function (results) {
-            expect(results[0].item).toBe(first);
-            done();
-          });
-        });
-        it('the result for the second item should be second', function (done) {
-          mapPromise.then(function (results) {
-            expect(results[1].item).toBe(second);
-            done();
-          });
-        });
-        it('the result for the third item should be third', function (done) {
-          mapPromise.then(function (results) {
-            expect(results[2].item).toBe(third);
-            done();
-          });
-        });
+        it('the maximum concurrency level should be two', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee20() {
+          var results;
+          return _regenerator().w(function (_context20) {
+            while (1) switch (_context20.n) {
+              case 0:
+                _context20.n = 1;
+                return mapPromise;
+              case 1:
+                results = _context20.v;
+                expect(getMaximumConcurrency(results)).toEqual(2);
+              case 2:
+                return _context20.a(2);
+            }
+          }, _callee20);
+        })));
+        it('the actual concurrency for the first item should be two', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee21() {
+          var results;
+          return _regenerator().w(function (_context21) {
+            while (1) switch (_context21.n) {
+              case 0:
+                _context21.n = 1;
+                return mapPromise;
+              case 1:
+                results = _context21.v;
+                expect(getConcurrency(results, 0)).toEqual(2);
+              case 2:
+                return _context21.a(2);
+            }
+          }, _callee21);
+        })));
+        it('the result for the first item should be first', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee22() {
+          var results;
+          return _regenerator().w(function (_context22) {
+            while (1) switch (_context22.n) {
+              case 0:
+                _context22.n = 1;
+                return mapPromise;
+              case 1:
+                results = _context22.v;
+                expect(results[0].item).toBe(first);
+              case 2:
+                return _context22.a(2);
+            }
+          }, _callee22);
+        })));
+        it('the result for the second item should be second', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee23() {
+          var results;
+          return _regenerator().w(function (_context23) {
+            while (1) switch (_context23.n) {
+              case 0:
+                _context23.n = 1;
+                return mapPromise;
+              case 1:
+                results = _context23.v;
+                expect(results[1].item).toBe(second);
+              case 2:
+                return _context23.a(2);
+            }
+          }, _callee23);
+        })));
+        it('the result for the third item should be third', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee24() {
+          var results;
+          return _regenerator().w(function (_context24) {
+            while (1) switch (_context24.n) {
+              case 0:
+                _context24.n = 1;
+                return mapPromise;
+              case 1:
+                results = _context24.v;
+                expect(results[2].item).toBe(third);
+              case 2:
+                return _context24.a(2);
+            }
+          }, _callee24);
+        })));
       });
       describe('and the concurrency level is three', function () {
         beforeEach(function () {
           mapPromise = promise.map(mapItems, mapSpy = getMapSpy(), 3);
         });
-        it('the maximum concurrency level should be three', function (done) {
-          mapPromise.then(function (results) {
-            expect(getMaximumConcurrency(results)).toEqual(3);
-            done();
-          });
-        });
-        it('the actual concurrency for the first item should be three', function (done) {
-          mapPromise.then(function (results) {
-            expect(getConcurrency(results, 0)).toEqual(3);
-            done();
-          });
-        });
-        it('the result for the first item should be first', function (done) {
-          mapPromise.then(function (results) {
-            expect(results[0].item).toBe(first);
-            done();
-          });
-        });
-        it('the result for the second item should be second', function (done) {
-          mapPromise.then(function (results) {
-            expect(results[1].item).toBe(second);
-            done();
-          });
-        });
-        it('the result for the third item should be third', function (done) {
-          mapPromise.then(function (results) {
-            expect(results[2].item).toBe(third);
-            done();
-          });
-        });
+        it('the maximum concurrency level should be three', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee25() {
+          var results;
+          return _regenerator().w(function (_context25) {
+            while (1) switch (_context25.n) {
+              case 0:
+                _context25.n = 1;
+                return mapPromise;
+              case 1:
+                results = _context25.v;
+                expect(getMaximumConcurrency(results)).toEqual(3);
+              case 2:
+                return _context25.a(2);
+            }
+          }, _callee25);
+        })));
+        it('the actual concurrency for the first item should be three', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee26() {
+          var results;
+          return _regenerator().w(function (_context26) {
+            while (1) switch (_context26.n) {
+              case 0:
+                _context26.n = 1;
+                return mapPromise;
+              case 1:
+                results = _context26.v;
+                expect(getConcurrency(results, 0)).toEqual(3);
+              case 2:
+                return _context26.a(2);
+            }
+          }, _callee26);
+        })));
+        it('the result for the first item should be first', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee27() {
+          var results;
+          return _regenerator().w(function (_context27) {
+            while (1) switch (_context27.n) {
+              case 0:
+                _context27.n = 1;
+                return mapPromise;
+              case 1:
+                results = _context27.v;
+                expect(results[0].item).toBe(first);
+              case 2:
+                return _context27.a(2);
+            }
+          }, _callee27);
+        })));
+        it('the result for the second item should be second', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee28() {
+          var results;
+          return _regenerator().w(function (_context28) {
+            while (1) switch (_context28.n) {
+              case 0:
+                _context28.n = 1;
+                return mapPromise;
+              case 1:
+                results = _context28.v;
+                expect(results[1].item).toBe(second);
+              case 2:
+                return _context28.a(2);
+            }
+          }, _callee28);
+        })));
+        it('the result for the third item should be third', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee29() {
+          var results;
+          return _regenerator().w(function (_context29) {
+            while (1) switch (_context29.n) {
+              case 0:
+                _context29.n = 1;
+                return mapPromise;
+              case 1:
+                results = _context29.v;
+                expect(results[2].item).toBe(third);
+              case 2:
+                return _context29.a(2);
+            }
+          }, _callee29);
+        })));
       });
       describe('and the concurrency level is four', function () {
         beforeEach(function () {
           mapPromise = promise.map(mapItems, mapSpy = getMapSpy(), 4);
         });
-        it('the maximum concurrency level should be three', function (done) {
-          mapPromise.then(function (results) {
-            expect(getMaximumConcurrency(results)).toEqual(3);
-            done();
-          });
-        });
-        it('the actual concurrency for the first item should be three', function (done) {
-          mapPromise.then(function (results) {
-            expect(getConcurrency(results, 0)).toEqual(3);
-            done();
-          });
-        });
-        it('the result for the first item should be first', function (done) {
-          mapPromise.then(function (results) {
-            expect(results[0].item).toBe(first);
-            done();
-          });
-        });
-        it('the result for the second item should be second', function (done) {
-          mapPromise.then(function (results) {
-            expect(results[1].item).toBe(second);
-            done();
-          });
-        });
-        it('the result for the third item should be third', function (done) {
-          mapPromise.then(function (results) {
-            expect(results[2].item).toBe(third);
-            done();
-          });
-        });
+        it('the maximum concurrency level should be three', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee30() {
+          var results;
+          return _regenerator().w(function (_context30) {
+            while (1) switch (_context30.n) {
+              case 0:
+                _context30.n = 1;
+                return mapPromise;
+              case 1:
+                results = _context30.v;
+                expect(getMaximumConcurrency(results)).toEqual(3);
+              case 2:
+                return _context30.a(2);
+            }
+          }, _callee30);
+        })));
+        it('the actual concurrency for the first item should be three', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee31() {
+          var results;
+          return _regenerator().w(function (_context31) {
+            while (1) switch (_context31.n) {
+              case 0:
+                _context31.n = 1;
+                return mapPromise;
+              case 1:
+                results = _context31.v;
+                expect(getConcurrency(results, 0)).toEqual(3);
+              case 2:
+                return _context31.a(2);
+            }
+          }, _callee31);
+        })));
+        it('the result for the first item should be first', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee32() {
+          var results;
+          return _regenerator().w(function (_context32) {
+            while (1) switch (_context32.n) {
+              case 0:
+                _context32.n = 1;
+                return mapPromise;
+              case 1:
+                results = _context32.v;
+                expect(results[0].item).toBe(first);
+              case 2:
+                return _context32.a(2);
+            }
+          }, _callee32);
+        })));
+        it('the result for the second item should be second', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee33() {
+          var results;
+          return _regenerator().w(function (_context33) {
+            while (1) switch (_context33.n) {
+              case 0:
+                _context33.n = 1;
+                return mapPromise;
+              case 1:
+                results = _context33.v;
+                expect(results[1].item).toBe(second);
+              case 2:
+                return _context33.a(2);
+            }
+          }, _callee33);
+        })));
+        it('the result for the third item should be third', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee34() {
+          var results;
+          return _regenerator().w(function (_context34) {
+            while (1) switch (_context34.n) {
+              case 0:
+                _context34.n = 1;
+                return mapPromise;
+              case 1:
+                results = _context34.v;
+                expect(results[2].item).toBe(third);
+              case 2:
+                return _context34.a(2);
+            }
+          }, _callee34);
+        })));
       });
     });
     describe('and the array has four items (with a concurrency level of two)', function () {
@@ -57041,30 +57989,66 @@ describe('When using the "promise.map" function', function () {
             });
           }), 2);
         });
-        it('the result for the first item should be first', function (done) {
-          mapPromise.then(function (results) {
-            expect(results[0].item).toBe(first);
-            done();
-          });
-        });
-        it('the result for the second item should be second', function (done) {
-          mapPromise.then(function (results) {
-            expect(results[1].item).toBe(second);
-            done();
-          });
-        });
-        it('the result for the third item should be third', function (done) {
-          mapPromise.then(function (results) {
-            expect(results[2].item).toBe(third);
-            done();
-          });
-        });
-        it('the result for the fourth item should be fourth', function (done) {
-          mapPromise.then(function (results) {
-            expect(results[3].item).toBe(fourth);
-            done();
-          });
-        });
+        it('the result for the first item should be first', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee35() {
+          var results;
+          return _regenerator().w(function (_context35) {
+            while (1) switch (_context35.n) {
+              case 0:
+                _context35.n = 1;
+                return mapPromise;
+              case 1:
+                results = _context35.v;
+                expect(results[0].item).toBe(first);
+              case 2:
+                return _context35.a(2);
+            }
+          }, _callee35);
+        })));
+        it('the result for the second item should be second', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee36() {
+          var results;
+          return _regenerator().w(function (_context36) {
+            while (1) switch (_context36.n) {
+              case 0:
+                _context36.n = 1;
+                return mapPromise;
+              case 1:
+                results = _context36.v;
+                expect(results[1].item).toBe(second);
+              case 2:
+                return _context36.a(2);
+            }
+          }, _callee36);
+        })));
+        it('the result for the third item should be third', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee37() {
+          var results;
+          return _regenerator().w(function (_context37) {
+            while (1) switch (_context37.n) {
+              case 0:
+                _context37.n = 1;
+                return mapPromise;
+              case 1:
+                results = _context37.v;
+                expect(results[2].item).toBe(third);
+              case 2:
+                return _context37.a(2);
+            }
+          }, _callee37);
+        })));
+        it('the result for the fourth item should be fourth', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee38() {
+          var results;
+          return _regenerator().w(function (_context38) {
+            while (1) switch (_context38.n) {
+              case 0:
+                _context38.n = 1;
+                return mapPromise;
+              case 1:
+                results = _context38.v;
+                expect(results[3].item).toBe(fourth);
+              case 2:
+                return _context38.a(2);
+            }
+          }, _callee38);
+        })));
       });
     });
     var getMapSpy = function getMapSpy() {
@@ -57091,24 +58075,51 @@ describe('When using the "promise.map" function', function () {
       beforeEach(function () {
         mapPromise = promise.map(mapItems = [], mapSpy = jasmine.createSpy('mapSpy'));
       });
-      it('the result will be an array', function (done) {
-        mapPromise.then(function (results) {
-          expect(results instanceof Array).toEqual(true);
-          done();
-        });
-      });
-      it('the resulting array will be the same size as the input array', function (done) {
-        mapPromise.then(function (results) {
-          expect(results.length).toEqual(mapItems.length);
-          done();
-        });
-      });
-      it('the mapper function will be not have been called', function (done) {
-        mapPromise.then(function (results) {
-          expect(mapSpy.calls.count()).toEqual(0);
-          done();
-        });
-      });
+      it('the result will be an array', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee39() {
+        var results;
+        return _regenerator().w(function (_context39) {
+          while (1) switch (_context39.n) {
+            case 0:
+              _context39.n = 1;
+              return mapPromise;
+            case 1:
+              results = _context39.v;
+              expect(results instanceof Array).toEqual(true);
+            case 2:
+              return _context39.a(2);
+          }
+        }, _callee39);
+      })));
+      it('the resulting array will be the same size as the input array', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee40() {
+        var results;
+        return _regenerator().w(function (_context40) {
+          while (1) switch (_context40.n) {
+            case 0:
+              _context40.n = 1;
+              return mapPromise;
+            case 1:
+              results = _context40.v;
+              expect(results.length).toEqual(mapItems.length);
+            case 2:
+              return _context40.a(2);
+          }
+        }, _callee40);
+      })));
+      it('the mapper function will be not have been called', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee41() {
+        var results;
+        return _regenerator().w(function (_context41) {
+          while (1) switch (_context41.n) {
+            case 0:
+              _context41.n = 1;
+              return mapPromise;
+            case 1:
+              results = _context41.v;
+              expect(mapSpy.calls.count()).toEqual(0);
+            case 2:
+              return _context41.a(2);
+          }
+        }, _callee41);
+      })));
     });
     describe('and the array has two items (with an infinite concurrency level)', function () {
       var mapPromise;
@@ -57117,36 +58128,81 @@ describe('When using the "promise.map" function', function () {
       beforeEach(function () {
         mapPromise = promise.map(mapItems = ['x', 'y'], mapSpy = jasmine.createSpy('mapSpy'));
       });
-      it('the result will be an array', function (done) {
-        mapPromise.then(function (results) {
-          expect(results instanceof Array).toEqual(true);
-          done();
-        });
-      });
-      it('the resulting array have two items', function (done) {
-        mapPromise.then(function (results) {
-          expect(results.length).toEqual(2);
-          done();
-        });
-      });
-      it('the mapper function to have been called twice', function (done) {
-        mapPromise.then(function (results) {
-          expect(mapSpy.calls.count()).toEqual(2);
-          done();
-        });
-      });
-      it('the mapper function will have been called once with the first item', function (done) {
-        mapPromise.then(function (results) {
-          expect(mapSpy).toHaveBeenCalledWith(mapItems[0]);
-          done();
-        });
-      });
-      it('the mapper function will have been called once with the second item', function (done) {
-        mapPromise.then(function (results) {
-          expect(mapSpy).toHaveBeenCalledWith(mapItems[1]);
-          done();
-        });
-      });
+      it('the result will be an array', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee42() {
+        var results;
+        return _regenerator().w(function (_context42) {
+          while (1) switch (_context42.n) {
+            case 0:
+              _context42.n = 1;
+              return mapPromise;
+            case 1:
+              results = _context42.v;
+              expect(results instanceof Array).toEqual(true);
+            case 2:
+              return _context42.a(2);
+          }
+        }, _callee42);
+      })));
+      it('the resulting array have two items', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee43() {
+        var results;
+        return _regenerator().w(function (_context43) {
+          while (1) switch (_context43.n) {
+            case 0:
+              _context43.n = 1;
+              return mapPromise;
+            case 1:
+              results = _context43.v;
+              expect(results.length).toEqual(2);
+            case 2:
+              return _context43.a(2);
+          }
+        }, _callee43);
+      })));
+      it('the mapper function to have been called twice', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee44() {
+        var results;
+        return _regenerator().w(function (_context44) {
+          while (1) switch (_context44.n) {
+            case 0:
+              _context44.n = 1;
+              return mapPromise;
+            case 1:
+              results = _context44.v;
+              expect(mapSpy.calls.count()).toEqual(2);
+            case 2:
+              return _context44.a(2);
+          }
+        }, _callee44);
+      })));
+      it('the mapper function will have been called once with the first item', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee45() {
+        var results;
+        return _regenerator().w(function (_context45) {
+          while (1) switch (_context45.n) {
+            case 0:
+              _context45.n = 1;
+              return mapPromise;
+            case 1:
+              results = _context45.v;
+              expect(mapSpy).toHaveBeenCalledWith(mapItems[0]);
+            case 2:
+              return _context45.a(2);
+          }
+        }, _callee45);
+      })));
+      it('the mapper function will have been called once with the second item', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee46() {
+        var results;
+        return _regenerator().w(function (_context46) {
+          while (1) switch (_context46.n) {
+            case 0:
+              _context46.n = 1;
+              return mapPromise;
+            case 1:
+              results = _context46.v;
+              expect(mapSpy).toHaveBeenCalledWith(mapItems[1]);
+            case 2:
+              return _context46.a(2);
+          }
+        }, _callee46);
+      })));
     });
   });
   var getConcurrency = function getConcurrency(results, index) {
@@ -57177,12 +58233,21 @@ describe('When processing a "pipeline" of promises', function () {
     beforeEach(function () {
       p = promise.pipeline([], input = {});
     });
-    it('should return the original input', function (done) {
-      p.then(function (result) {
-        expect(result).toBe(input);
-        done();
-      });
-    });
+    it('should return the original input', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee47() {
+      var result;
+      return _regenerator().w(function (_context47) {
+        while (1) switch (_context47.n) {
+          case 0:
+            _context47.n = 1;
+            return p;
+          case 1:
+            result = _context47.v;
+            expect(result).toBe(input);
+          case 2:
+            return _context47.a(2);
+        }
+      }, _callee47);
+    })));
   });
   describe('and one asynchronous executor is specified', function () {
     var input;
@@ -57199,18 +58264,36 @@ describe('When processing a "pipeline" of promises', function () {
       spyOne = jasmine.createSpy('spyOne').and.callFake(delayedSquare);
       p = promise.pipeline([spyOne], input = 2);
     });
-    it('the first executor should be called with the input', function (done) {
-      p.then(function (result) {
-        expect(spyOne).toHaveBeenCalledWith(2);
-        done();
-      });
-    });
-    it('the promise should return the correct result', function (done) {
-      p.then(function (result) {
-        expect(result).toEqual(4);
-        done();
-      });
-    });
+    it('the first executor should be called with the input', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee48() {
+      var result;
+      return _regenerator().w(function (_context48) {
+        while (1) switch (_context48.n) {
+          case 0:
+            _context48.n = 1;
+            return p;
+          case 1:
+            result = _context48.v;
+            expect(spyOne).toHaveBeenCalledWith(2);
+          case 2:
+            return _context48.a(2);
+        }
+      }, _callee48);
+    })));
+    it('the promise should return the correct result', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee49() {
+      var result;
+      return _regenerator().w(function (_context49) {
+        while (1) switch (_context49.n) {
+          case 0:
+            _context49.n = 1;
+            return p;
+          case 1:
+            result = _context49.v;
+            expect(result).toEqual(4);
+          case 2:
+            return _context49.a(2);
+        }
+      }, _callee49);
+    })));
   });
   describe('and two asynchronous executors are specified', function () {
     var input;
@@ -57229,24 +58312,51 @@ describe('When processing a "pipeline" of promises', function () {
       spyTwo = jasmine.createSpy('spyTwo').and.callFake(delayedSquare);
       p = promise.pipeline([spyOne, spyTwo], input = 2);
     });
-    it('the first executor should be called with the input', function (done) {
-      p.then(function (result) {
-        expect(spyOne).toHaveBeenCalledWith(2);
-        done();
-      });
-    });
-    it('the second executor should be called with the result of the first executor', function (done) {
-      p.then(function (result) {
-        expect(spyTwo).toHaveBeenCalledWith(4);
-        done();
-      });
-    });
-    it('the promise should return the correct result', function (done) {
-      p.then(function (result) {
-        expect(result).toEqual(16);
-        done();
-      });
-    });
+    it('the first executor should be called with the input', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee50() {
+      var result;
+      return _regenerator().w(function (_context50) {
+        while (1) switch (_context50.n) {
+          case 0:
+            _context50.n = 1;
+            return p;
+          case 1:
+            result = _context50.v;
+            expect(spyOne).toHaveBeenCalledWith(2);
+          case 2:
+            return _context50.a(2);
+        }
+      }, _callee50);
+    })));
+    it('the second executor should be called with the result of the first executor', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee51() {
+      var result;
+      return _regenerator().w(function (_context51) {
+        while (1) switch (_context51.n) {
+          case 0:
+            _context51.n = 1;
+            return p;
+          case 1:
+            result = _context51.v;
+            expect(spyTwo).toHaveBeenCalledWith(4);
+          case 2:
+            return _context51.a(2);
+        }
+      }, _callee51);
+    })));
+    it('the promise should return the correct result', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee52() {
+      var result;
+      return _regenerator().w(function (_context52) {
+        while (1) switch (_context52.n) {
+          case 0:
+            _context52.n = 1;
+            return p;
+          case 1:
+            result = _context52.v;
+            expect(result).toEqual(16);
+          case 2:
+            return _context52.a(2);
+        }
+      }, _callee52);
+    })));
   });
   describe('and one synchronous executor is specified', function () {
     var input;
@@ -57259,18 +58369,36 @@ describe('When processing a "pipeline" of promises', function () {
       spyOne = jasmine.createSpy('spyOne').and.callFake(synchronousSquare);
       p = promise.pipeline([spyOne], input = 2);
     });
-    it('the first executor should be called with the input', function (done) {
-      p.then(function (result) {
-        expect(spyOne).toHaveBeenCalledWith(2);
-        done();
-      });
-    });
-    it('the promise should return the correct result', function (done) {
-      p.then(function (result) {
-        expect(result).toEqual(4);
-        done();
-      });
-    });
+    it('the first executor should be called with the input', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee53() {
+      var result;
+      return _regenerator().w(function (_context53) {
+        while (1) switch (_context53.n) {
+          case 0:
+            _context53.n = 1;
+            return p;
+          case 1:
+            result = _context53.v;
+            expect(spyOne).toHaveBeenCalledWith(2);
+          case 2:
+            return _context53.a(2);
+        }
+      }, _callee53);
+    })));
+    it('the promise should return the correct result', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee54() {
+      var result;
+      return _regenerator().w(function (_context54) {
+        while (1) switch (_context54.n) {
+          case 0:
+            _context54.n = 1;
+            return p;
+          case 1:
+            result = _context54.v;
+            expect(result).toEqual(4);
+          case 2:
+            return _context54.a(2);
+        }
+      }, _callee54);
+    })));
   });
   describe('and two synchronous executors are specified', function () {
     var input;
@@ -57285,24 +58413,51 @@ describe('When processing a "pipeline" of promises', function () {
       spyTwo = jasmine.createSpy('spyTwo').and.callFake(synchronousSquare);
       p = promise.pipeline([spyOne, spyTwo], input = 2);
     });
-    it('the first executor should be called with the input', function (done) {
-      p.then(function (result) {
-        expect(spyOne).toHaveBeenCalledWith(2);
-        done();
-      });
-    });
-    it('the second executor should be called with the result of the first executor', function (done) {
-      p.then(function (result) {
-        expect(spyTwo).toHaveBeenCalledWith(4);
-        done();
-      });
-    });
-    it('the promise should return the correct result', function (done) {
-      p.then(function (result) {
-        expect(result).toEqual(16);
-        done();
-      });
-    });
+    it('the first executor should be called with the input', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee55() {
+      var result;
+      return _regenerator().w(function (_context55) {
+        while (1) switch (_context55.n) {
+          case 0:
+            _context55.n = 1;
+            return p;
+          case 1:
+            result = _context55.v;
+            expect(spyOne).toHaveBeenCalledWith(2);
+          case 2:
+            return _context55.a(2);
+        }
+      }, _callee55);
+    })));
+    it('the second executor should be called with the result of the first executor', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee56() {
+      var result;
+      return _regenerator().w(function (_context56) {
+        while (1) switch (_context56.n) {
+          case 0:
+            _context56.n = 1;
+            return p;
+          case 1:
+            result = _context56.v;
+            expect(spyTwo).toHaveBeenCalledWith(4);
+          case 2:
+            return _context56.a(2);
+        }
+      }, _callee56);
+    })));
+    it('the promise should return the correct result', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee57() {
+      var result;
+      return _regenerator().w(function (_context57) {
+        while (1) switch (_context57.n) {
+          case 0:
+            _context57.n = 1;
+            return p;
+          case 1:
+            result = _context57.v;
+            expect(result).toEqual(16);
+          case 2:
+            return _context57.a(2);
+        }
+      }, _callee57);
+    })));
   });
   describe('and an executor throws an exception', function () {
     var input;
@@ -57320,35 +58475,69 @@ describe('When processing a "pipeline" of promises', function () {
       spyTwo = jasmine.createSpy('spyTwo').and.callFake(synchronousSquare);
       p = promise.pipeline([spyOne, spyTwo], input = 2);
     });
-    it('the promise should reject', function (done) {
-      p["catch"](function (error) {
-        expect(error instanceof Error).toEqual(true);
-        done();
-      });
-    });
-    it('the first executor should be called with the input', function (done) {
-      p["catch"](function (error) {
-        expect(spyOne).toHaveBeenCalledWith(2);
-        done();
-      });
-    });
-    it('the second executor not have should be called with the result of the first executor', function (done) {
-      p["catch"](function (error) {
-        expect(spyTwo).not.toHaveBeenCalled();
-        done();
-      });
-    });
+    it('the promise should reject', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee58() {
+      var error;
+      return _regenerator().w(function (_context58) {
+        while (1) switch (_context58.n) {
+          case 0:
+            _context58.n = 1;
+            return getRejected(p);
+          case 1:
+            error = _context58.v;
+            expect(error instanceof Error).toEqual(true);
+          case 2:
+            return _context58.a(2);
+        }
+      }, _callee58);
+    })));
+    it('the first executor should be called with the input', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee59() {
+      var error;
+      return _regenerator().w(function (_context59) {
+        while (1) switch (_context59.n) {
+          case 0:
+            _context59.n = 1;
+            return getRejected(p);
+          case 1:
+            error = _context59.v;
+            expect(spyOne).toHaveBeenCalledWith(2);
+          case 2:
+            return _context59.a(2);
+        }
+      }, _callee59);
+    })));
+    it('the second executor not have should be called with the result of the first executor', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee60() {
+      var error;
+      return _regenerator().w(function (_context60) {
+        while (1) switch (_context60.n) {
+          case 0:
+            _context60.n = 1;
+            return getRejected(p);
+          case 1:
+            error = _context60.v;
+            expect(spyTwo).not.toHaveBeenCalled();
+          case 2:
+            return _context60.a(2);
+        }
+      }, _callee60);
+    })));
   });
 });
 describe('When searching for the "first" valid promise', function () {
   describe('with an empty array', function () {
     var result;
-    beforeEach(function (done) {
-      promise.first([]).then(function (r) {
-        result = r;
-        done();
-      });
-    });
+    beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee61() {
+      return _regenerator().w(function (_context61) {
+        while (1) switch (_context61.n) {
+          case 0:
+            _context61.n = 1;
+            return promise.first([]);
+          case 1:
+            result = _context61.v;
+          case 2:
+            return _context61.a(2);
+        }
+      }, _callee61);
+    })));
     it('the result should be a null value', function () {
       expect(result).toEqual(null);
     });
@@ -57357,14 +58546,35 @@ describe('When searching for the "first" valid promise', function () {
     var one;
     var two;
     var result;
-    beforeEach(function (done) {
-      one = jasmine.createSpy('one').and.returnValue(Promise.resolve(null));
-      two = jasmine.createSpy('two').and.returnValue(Promise.resolve(null));
-      promise.first([one, two]).then(function (r) {
-        result = r;
-        done();
-      });
-    });
+    beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee64() {
+      return _regenerator().w(function (_context64) {
+        while (1) switch (_context64.n) {
+          case 0:
+            one = jasmine.createSpy('one').and.callFake(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee62() {
+              return _regenerator().w(function (_context62) {
+                while (1) switch (_context62.n) {
+                  case 0:
+                    return _context62.a(2, null);
+                }
+              }, _callee62);
+            })));
+            two = jasmine.createSpy('two').and.callFake(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee63() {
+              return _regenerator().w(function (_context63) {
+                while (1) switch (_context63.n) {
+                  case 0:
+                    return _context63.a(2, null);
+                }
+              }, _callee63);
+            })));
+            _context64.n = 1;
+            return promise.first([one, two]);
+          case 1:
+            result = _context64.v;
+          case 2:
+            return _context64.a(2);
+        }
+      }, _callee64);
+    })));
     it('the result should be a null value', function () {
       expect(result).toEqual(null);
     });
@@ -57381,16 +58591,37 @@ describe('When searching for the "first" valid promise', function () {
     var valueOne;
     var valueTwo;
     var result;
-    beforeEach(function (done) {
-      valueOne = {};
-      valueTwo = {};
-      one = jasmine.createSpy('one').and.returnValue(Promise.resolve(valueOne));
-      two = jasmine.createSpy('two').and.returnValue(Promise.resolve(valueTwo));
-      promise.first([one, two]).then(function (r) {
-        result = r;
-        done();
-      });
-    });
+    beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee67() {
+      return _regenerator().w(function (_context67) {
+        while (1) switch (_context67.n) {
+          case 0:
+            valueOne = {};
+            valueTwo = {};
+            one = jasmine.createSpy('one').and.callFake(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee65() {
+              return _regenerator().w(function (_context65) {
+                while (1) switch (_context65.n) {
+                  case 0:
+                    return _context65.a(2, valueOne);
+                }
+              }, _callee65);
+            })));
+            two = jasmine.createSpy('two').and.callFake(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee66() {
+              return _regenerator().w(function (_context66) {
+                while (1) switch (_context66.n) {
+                  case 0:
+                    return _context66.a(2, valueTwo);
+                }
+              }, _callee66);
+            })));
+            _context67.n = 1;
+            return promise.first([one, two]);
+          case 1:
+            result = _context67.v;
+          case 2:
+            return _context67.a(2);
+        }
+      }, _callee67);
+    })));
     it('the result the value from the first executor', function () {
       expect(result).toBe(valueOne);
     });
@@ -57407,16 +58638,37 @@ describe('When searching for the "first" valid promise', function () {
     var valueOne;
     var valueTwo;
     var result;
-    beforeEach(function (done) {
-      valueOne = null;
-      valueTwo = {};
-      one = jasmine.createSpy('one').and.returnValue(Promise.resolve(valueOne));
-      two = jasmine.createSpy('two').and.returnValue(Promise.resolve(valueTwo));
-      promise.first([one, two]).then(function (r) {
-        result = r;
-        done();
-      });
-    });
+    beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee70() {
+      return _regenerator().w(function (_context70) {
+        while (1) switch (_context70.n) {
+          case 0:
+            valueOne = null;
+            valueTwo = {};
+            one = jasmine.createSpy('one').and.callFake(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee68() {
+              return _regenerator().w(function (_context68) {
+                while (1) switch (_context68.n) {
+                  case 0:
+                    return _context68.a(2, valueOne);
+                }
+              }, _callee68);
+            })));
+            two = jasmine.createSpy('two').and.callFake(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee69() {
+              return _regenerator().w(function (_context69) {
+                while (1) switch (_context69.n) {
+                  case 0:
+                    return _context69.a(2, valueTwo);
+                }
+              }, _callee69);
+            })));
+            _context70.n = 1;
+            return promise.first([one, two]);
+          case 1:
+            result = _context70.v;
+          case 2:
+            return _context70.a(2);
+        }
+      }, _callee70);
+    })));
     it('the result the value from the second executor', function () {
       expect(result).toBe(valueTwo);
     });
@@ -57432,15 +58684,38 @@ describe('When searching for the "first" valid promise', function () {
     var two;
     var valueTwo;
     var result;
-    beforeEach(function (done) {
-      valueTwo = {};
-      one = jasmine.createSpy('one').and.returnValue(Promise.reject('Oops'));
-      two = jasmine.createSpy('two').and.returnValue(Promise.resolve(valueTwo));
-      promise.first([one, two]).then(function (r) {
-        result = r;
-        done();
-      });
-    });
+    beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee73() {
+      return _regenerator().w(function (_context73) {
+        while (1) switch (_context73.n) {
+          case 0:
+            valueTwo = {};
+            one = jasmine.createSpy('one').and.callFake(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee71() {
+              return _regenerator().w(function (_context71) {
+                while (1) switch (_context71.n) {
+                  case 0:
+                    throw 'Oops';
+                  case 1:
+                    return _context71.a(2);
+                }
+              }, _callee71);
+            })));
+            two = jasmine.createSpy('two').and.callFake(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee72() {
+              return _regenerator().w(function (_context72) {
+                while (1) switch (_context72.n) {
+                  case 0:
+                    return _context72.a(2, valueTwo);
+                }
+              }, _callee72);
+            })));
+            _context73.n = 1;
+            return promise.first([one, two]);
+          case 1:
+            result = _context73.v;
+          case 2:
+            return _context73.a(2);
+        }
+      }, _callee73);
+    })));
     it('the result the value from the second executor', function () {
       expect(result).toBe(valueTwo);
     });
@@ -57462,12 +58737,21 @@ describe('When "promise.build" is used to create a promise', function () {
         r('ok');
       });
     });
-    it('the promise should be fulfilled', function (done) {
-      p.then(function (result) {
-        expect(result).toEqual('ok');
-        done();
-      });
-    });
+    it('the promise should be fulfilled', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee74() {
+      var result;
+      return _regenerator().w(function (_context74) {
+        while (1) switch (_context74.n) {
+          case 0:
+            _context74.n = 1;
+            return p;
+          case 1:
+            result = _context74.v;
+            expect(result).toEqual('ok');
+          case 2:
+            return _context74.a(2);
+        }
+      }, _callee74);
+    })));
   });
   describe('and the executor rejects', function () {
     var p;
@@ -57476,12 +58760,28 @@ describe('When "promise.build" is used to create a promise', function () {
         x('not ok');
       });
     });
-    it('the promise should be fulfilled', function (done) {
-      p["catch"](function (result) {
-        expect(result).toEqual('not ok');
-        done();
-      });
-    });
+    it('the promise should be fulfilled', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee75() {
+      var result, _t2;
+      return _regenerator().w(function (_context75) {
+        while (1) switch (_context75.p = _context75.n) {
+          case 0:
+            _context75.p = 0;
+            _context75.n = 1;
+            return p;
+          case 1:
+            _context75.n = 3;
+            break;
+          case 2:
+            _context75.p = 2;
+            _t2 = _context75.v;
+            result = _t2;
+          case 3:
+            expect(result).toEqual('not ok');
+          case 4:
+            return _context75.a(2);
+        }
+      }, _callee75, null, [[0, 2]]);
+    })));
   });
   describe('and the executor throws an error', function () {
     var p;
@@ -57492,14 +58792,88 @@ describe('When "promise.build" is used to create a promise', function () {
         throw e;
       });
     });
-    it('the promise should be rejected', function (done) {
-      p["catch"](function (error) {
-        expect(error).toBe(e);
-        done();
-      });
-    });
+    it('the promise should be rejected', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee76() {
+      var error, _t3;
+      return _regenerator().w(function (_context76) {
+        while (1) switch (_context76.p = _context76.n) {
+          case 0:
+            _context76.p = 0;
+            _context76.n = 1;
+            return p;
+          case 1:
+            _context76.n = 3;
+            break;
+          case 2:
+            _context76.p = 2;
+            _t3 = _context76.v;
+            error = _t3;
+          case 3:
+            expect(error).toBe(e);
+          case 4:
+            return _context76.a(2);
+        }
+      }, _callee76, null, [[0, 2]]);
+    })));
   });
 });
+function getRejected(_x) {
+  return _getRejected.apply(this, arguments);
+}
+function _getRejected() {
+  _getRejected = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee77(promiseToReject) {
+    var _t4;
+    return _regenerator().w(function (_context77) {
+      while (1) switch (_context77.p = _context77.n) {
+        case 0:
+          _context77.p = 0;
+          _context77.n = 1;
+          return promiseToReject;
+        case 1:
+          _context77.n = 3;
+          break;
+        case 2:
+          _context77.p = 2;
+          _t4 = _context77.v;
+          return _context77.a(2, _t4);
+        case 3:
+          throw new Error("Expected promise to reject.");
+        case 4:
+          return _context77.a(2);
+      }
+    }, _callee77, null, [[0, 2]]);
+  }));
+  return _getRejected.apply(this, arguments);
+}
+function buildResolved(_x2) {
+  return _buildResolved.apply(this, arguments);
+}
+function _buildResolved() {
+  _buildResolved = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee78(value) {
+    return _regenerator().w(function (_context78) {
+      while (1) switch (_context78.n) {
+        case 0:
+          return _context78.a(2, value);
+      }
+    }, _callee78);
+  }));
+  return _buildResolved.apply(this, arguments);
+}
+function buildRejected(_x3) {
+  return _buildRejected.apply(this, arguments);
+}
+function _buildRejected() {
+  _buildRejected = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee79(value) {
+    return _regenerator().w(function (_context79) {
+      while (1) switch (_context79.n) {
+        case 0:
+          throw value;
+        case 1:
+          return _context79.a(2);
+      }
+    }, _callee79);
+  }));
+  return _buildRejected.apply(this, arguments);
+}
 
 },{"./../../../lang/promise.js":390}],497:[function(require,module,exports){
 "use strict";
@@ -61172,6 +62546,10 @@ describe('When evaluating a compound Within specification (with a tolerance of 5
 
 var _RateLimiter = _interopRequireDefault(require("./../../../timing/RateLimiter.js"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { "default": e }; }
+function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
+function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 describe('When a RateLimiter is constructed (1 execution per 25 milliseconds)', function () {
   'use strict';
 
@@ -61196,65 +62574,65 @@ describe('When a RateLimiter is constructed (1 execution per 25 milliseconds)', 
         promises.push(limiter.enqueue(spy));
       }
     });
-    it('the tasks should serialized', function (done) {
-      var promise = null;
-      var getValidatedPromise = function getValidatedPromise(promise, index) {
-        return promise.then(function () {
-          for (var i = 0; i < spies.length; i++) {
-            var count = void 0;
-            if (i > index) {
-              count = 0;
-            } else {
-              count = 1;
+    it('the tasks should serialized', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
+      var i, j, count;
+      return _regenerator().w(function (_context) {
+        while (1) switch (_context.n) {
+          case 0:
+            i = 0;
+          case 1:
+            if (!(i < promises.length)) {
+              _context.n = 4;
+              break;
             }
-            expect(spies[i].calls.count()).toEqual(count);
-          }
-        });
-      };
-      function wrapPromise(existing, next) {
-        return existing.then(function () {
-          return next;
-        });
-      }
-      for (var i = 0; i < promises.length; i++) {
-        var p = getValidatedPromise(promises[i], i);
-        if (promise === null) {
-          promise = p;
-        } else {
-          promise = wrapPromise(promise, p);
+            _context.n = 2;
+            return promises[i];
+          case 2:
+            for (j = 0; j < spies.length; j++) {
+              count = void 0;
+              if (j > i) {
+                count = 0;
+              } else {
+                count = 1;
+              }
+              expect(spies[j].calls.count()).toEqual(count);
+            }
+          case 3:
+            i++;
+            _context.n = 1;
+            break;
+          case 4:
+            return _context.a(2);
         }
-      }
-      promise.then(function () {
-        done();
-      });
-    });
-    it('the tasks not finish before the earliest possible moment', function (done) {
-      var promise = null;
-      var getValidatedPromise = function getValidatedPromise(promise, index) {
-        return promise.then(function () {
-          var end = new Date();
-          var duration = end.getTime() - start.getTime();
-          var shortestPossibleDuration = Math.floor(index / windowMaximumCount) * windowDurationMilliseconds;
-          expect(duration + 1).not.toBeLessThan(shortestPossibleDuration);
-        });
-      };
-      function wrapPromise(existing, next) {
-        return existing.then(function () {
-          return next;
-        });
-      }
-      for (var i = 0; i < promises.length; i++) {
-        var p = getValidatedPromise(promises[i], i);
-        if (promise === null) {
-          promise = p;
-        } else {
-          promise = wrapPromise(promise, p);
+      }, _callee);
+    })));
+    it('the tasks not finish before the earliest possible moment', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2() {
+      var i, end, duration, shortestPossibleDuration;
+      return _regenerator().w(function (_context2) {
+        while (1) switch (_context2.n) {
+          case 0:
+            i = 0;
+          case 1:
+            if (!(i < promises.length)) {
+              _context2.n = 4;
+              break;
+            }
+            _context2.n = 2;
+            return promises[i];
+          case 2:
+            end = new Date();
+            duration = end.getTime() - start.getTime();
+            shortestPossibleDuration = Math.floor(i / windowMaximumCount) * windowDurationMilliseconds;
+            expect(duration + 1).not.toBeLessThan(shortestPossibleDuration);
+          case 3:
+            i++;
+            _context2.n = 1;
+            break;
+          case 4:
+            return _context2.a(2);
         }
-      }
-      promise.then(function () {
-        done();
-      });
-    });
+      }, _callee2);
+    })));
   });
   describe('and failing tasks are scheduled', function () {
     var spies;
@@ -61277,33 +62655,39 @@ describe('When a RateLimiter is constructed (1 execution per 25 milliseconds)', 
         promises.push(limiter.enqueue(spy));
       }
     });
-    it('each task should be executed with correct timing', function (done) {
-      var promise = null;
-      var getValidatedPromise = function getValidatedPromise(promise, index) {
-        return promise["catch"](function () {
-          var end = new Date();
-          var duration = end.getTime() - start.getTime();
-          var shortestPossibleDuration = Math.floor(index / windowMaximumCount) * windowDurationMilliseconds;
-          expect(duration + 1).not.toBeLessThan(shortestPossibleDuration);
-        });
-      };
-      function wrapPromise(existing, next) {
-        return existing.then(function () {
-          return next;
-        });
-      }
-      for (var i = 0; i < promises.length; i++) {
-        var p = getValidatedPromise(promises[i], i);
-        if (promise === null) {
-          promise = p;
-        } else {
-          promise = wrapPromise(promise, p);
+    it('each task should be executed with correct timing', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3() {
+      var i, end, duration, shortestPossibleDuration, _t;
+      return _regenerator().w(function (_context3) {
+        while (1) switch (_context3.p = _context3.n) {
+          case 0:
+            i = 0;
+          case 1:
+            if (!(i < promises.length)) {
+              _context3.n = 6;
+              break;
+            }
+            _context3.p = 2;
+            _context3.n = 3;
+            return promises[i];
+          case 3:
+            _context3.n = 5;
+            break;
+          case 4:
+            _context3.p = 4;
+            _t = _context3.v;
+            end = new Date();
+            duration = end.getTime() - start.getTime();
+            shortestPossibleDuration = Math.floor(i / windowMaximumCount) * windowDurationMilliseconds;
+            expect(duration + 1).not.toBeLessThan(shortestPossibleDuration);
+          case 5:
+            i++;
+            _context3.n = 1;
+            break;
+          case 6:
+            return _context3.a(2);
         }
-      }
-      promise.then(function () {
-        done();
-      });
-    });
+      }, _callee3, null, [[2, 4]]);
+    })));
   });
 });
 describe('When a RateLimiter is constructed (2 execution per 25 milliseconds)', function () {
@@ -61330,33 +62714,33 @@ describe('When a RateLimiter is constructed (2 execution per 25 milliseconds)', 
         promises.push(limiter.enqueue(spy));
       }
     });
-    it('the tasks not finish before the earliest possible moment', function (done) {
-      var promise = null;
-      var getValidatedPromise = function getValidatedPromise(promise, index) {
-        return promise.then(function () {
-          var end = new Date();
-          var duration = end.getTime() - start.getTime();
-          var shortestPossibleDuration = Math.floor(index / windowMaximumCount) * windowDurationMilliseconds;
-          expect(duration + 1).not.toBeLessThan(shortestPossibleDuration);
-        });
-      };
-      function wrapPromise(existing, next) {
-        return existing.then(function () {
-          return next;
-        });
-      }
-      for (var i = 0; i < promises.length; i++) {
-        var p = getValidatedPromise(promises[i], i);
-        if (promise === null) {
-          promise = p;
-        } else {
-          promise = wrapPromise(promise, p);
+    it('the tasks not finish before the earliest possible moment', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee4() {
+      var i, end, duration, shortestPossibleDuration;
+      return _regenerator().w(function (_context4) {
+        while (1) switch (_context4.n) {
+          case 0:
+            i = 0;
+          case 1:
+            if (!(i < promises.length)) {
+              _context4.n = 4;
+              break;
+            }
+            _context4.n = 2;
+            return promises[i];
+          case 2:
+            end = new Date();
+            duration = end.getTime() - start.getTime();
+            shortestPossibleDuration = Math.floor(i / windowMaximumCount) * windowDurationMilliseconds;
+            expect(duration + 1).not.toBeLessThan(shortestPossibleDuration);
+          case 3:
+            i++;
+            _context4.n = 1;
+            break;
+          case 4:
+            return _context4.a(2);
         }
-      }
-      promise.then(function () {
-        done();
-      });
-    });
+      }, _callee4);
+    })));
   });
 });
 
@@ -61365,6 +62749,10 @@ describe('When a RateLimiter is constructed (2 execution per 25 milliseconds)', 
 
 var _Scheduler = _interopRequireDefault(require("./../../../timing/Scheduler.js"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { "default": e }; }
+function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
+function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 describe('When a Scheduler is constructed', function () {
   'use strict';
 
@@ -61382,13 +62770,19 @@ describe('When a Scheduler is constructed', function () {
     it('should not execute the task synchronously', function () {
       expect(spy).not.toHaveBeenCalled();
     });
-    it('should execute the task asynchronously', function (done) {
-      promise.then(function () {
-        expect(spy.calls.count()).toEqual(1);
-      }).then(function () {
-        done();
-      });
-    });
+    it('should execute the task asynchronously', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
+      return _regenerator().w(function (_context) {
+        while (1) switch (_context.n) {
+          case 0:
+            _context.n = 1;
+            return promise;
+          case 1:
+            expect(spy.calls.count()).toEqual(1);
+          case 2:
+            return _context.a(2);
+        }
+      }, _callee);
+    })));
   });
   describe('and is disposed', function () {
     beforeEach(function () {
@@ -61397,15 +62791,27 @@ describe('When a Scheduler is constructed', function () {
     describe('and a task is scheduled', function () {
       var spy;
       var success;
-      beforeEach(function (done) {
-        scheduler.schedule(spy = jasmine.createSpy('spy'), 10, 'A scheduled task').then(function () {
-          success = true;
-        })["catch"](function () {
-          success = false;
-        }).then(function () {
-          done();
-        });
-      });
+      beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2() {
+        var _t;
+        return _regenerator().w(function (_context2) {
+          while (1) switch (_context2.p = _context2.n) {
+            case 0:
+              _context2.p = 0;
+              _context2.n = 1;
+              return scheduler.schedule(spy = jasmine.createSpy('spy'), 10, 'A scheduled task');
+            case 1:
+              success = true;
+              _context2.n = 3;
+              break;
+            case 2:
+              _context2.p = 2;
+              _t = _context2.v;
+              success = false;
+            case 3:
+              return _context2.a(2);
+          }
+        }, _callee2, null, [[0, 2]]);
+      })));
       it('should reject the promise', function () {
         expect(success).toEqual(false);
       });
@@ -61427,17 +62833,24 @@ describe('When a backoff is used', function () {
     var spyFailure;
     var actualResult;
     var successfulResult;
-    beforeEach(function (done) {
-      spyAction = jasmine.createSpy('spyAction').and.callFake(function () {
-        successfulResult = 'ok computer';
-        return successfulResult;
-      });
-      spyFailure = jasmine.createSpy('spyFailure');
-      scheduler.backoff(spyAction, 5, 'succeeds immediately', 1, spyFailure, undefined, 100).then(function (r) {
-        actualResult = r;
-        done();
-      });
-    });
+    beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3() {
+      return _regenerator().w(function (_context3) {
+        while (1) switch (_context3.n) {
+          case 0:
+            spyAction = jasmine.createSpy('spyAction').and.callFake(function () {
+              successfulResult = 'ok computer';
+              return successfulResult;
+            });
+            spyFailure = jasmine.createSpy('spyFailure');
+            _context3.n = 1;
+            return scheduler.backoff(spyAction, 5, 'succeeds immediately', 1, spyFailure, undefined, 100);
+          case 1:
+            actualResult = _context3.v;
+          case 2:
+            return _context3.a(2);
+        }
+      }, _callee3);
+    })));
     it('should call the "backoff" action one time', function () {
       expect(spyAction.calls.count()).toEqual(1);
     });
@@ -61454,22 +62867,29 @@ describe('When a backoff is used', function () {
     var actualResult;
     var successfulResult;
     var x;
-    beforeEach(function (done) {
-      x = 0;
-      spyAction = jasmine.createSpy('spyAction').and.callFake(function () {
-        if (++x > 1) {
-          successfulResult = 'ok computer';
-          return successfulResult;
-        } else {
-          throw new Error('nope...');
+    beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee4() {
+      return _regenerator().w(function (_context4) {
+        while (1) switch (_context4.n) {
+          case 0:
+            x = 0;
+            spyAction = jasmine.createSpy('spyAction').and.callFake(function () {
+              if (++x > 1) {
+                successfulResult = 'ok computer';
+                return successfulResult;
+              } else {
+                throw new Error('nope...');
+              }
+            });
+            spyFailure = jasmine.createSpy('spyFailure');
+            _context4.n = 1;
+            return scheduler.backoff(spyAction, 5, 'succeeds immediately', 5, spyFailure, undefined, 100);
+          case 1:
+            actualResult = _context4.v;
+          case 2:
+            return _context4.a(2);
         }
-      });
-      spyFailure = jasmine.createSpy('spyFailure');
-      scheduler.backoff(spyAction, 5, 'succeeds immediately', 5, spyFailure, undefined, 100).then(function (r) {
-        actualResult = r;
-        done();
-      });
-    });
+      }, _callee4);
+    })));
     it('should call the "backoff" action two times', function () {
       expect(spyAction.calls.count()).toEqual(2);
     });
@@ -61486,22 +62906,29 @@ describe('When a backoff is used', function () {
     var actualResult;
     var successfulResult;
     var x;
-    beforeEach(function (done) {
-      x = 0;
-      spyAction = jasmine.createSpy('spyAction').and.callFake(function () {
-        if (++x > 2) {
-          successfulResult = ['ok computer'];
-          return successfulResult;
-        } else {
-          return [];
+    beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee5() {
+      return _regenerator().w(function (_context5) {
+        while (1) switch (_context5.n) {
+          case 0:
+            x = 0;
+            spyAction = jasmine.createSpy('spyAction').and.callFake(function () {
+              if (++x > 2) {
+                successfulResult = ['ok computer'];
+                return successfulResult;
+              } else {
+                return [];
+              }
+            });
+            spyFailure = jasmine.createSpy('spyFailure');
+            _context5.n = 1;
+            return scheduler.backoff(spyAction, 5, 'succeeds immediately', 5, spyFailure, [], 100);
+          case 1:
+            actualResult = _context5.v;
+          case 2:
+            return _context5.a(2);
         }
-      });
-      spyFailure = jasmine.createSpy('spyFailure');
-      scheduler.backoff(spyAction, 5, 'succeeds immediately', 5, spyFailure, [], 100).then(function (r) {
-        actualResult = r;
-        done();
-      });
-    });
+      }, _callee5);
+    })));
     it('should call the "backoff" action three times', function () {
       expect(spyAction.calls.count()).toEqual(3);
     });
@@ -61516,16 +62943,30 @@ describe('When a backoff is used', function () {
     var spyAction;
     var spyFailure;
     var actualResult;
-    beforeEach(function (done) {
-      spyAction = jasmine.createSpy('spyAction').and.callFake(function () {
-        throw new Error('not gonna happen');
-      });
-      spyFailure = jasmine.createSpy('spyFailure');
-      scheduler.backoff(spyAction, 5, 'succeeds immediately', 3, spyFailure, [], 100)["catch"](function (r) {
-        actualResult = r;
-        done();
-      });
-    });
+    beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee6() {
+      var _t2;
+      return _regenerator().w(function (_context6) {
+        while (1) switch (_context6.p = _context6.n) {
+          case 0:
+            spyAction = jasmine.createSpy('spyAction').and.callFake(function () {
+              throw new Error('not gonna happen');
+            });
+            spyFailure = jasmine.createSpy('spyFailure');
+            _context6.p = 1;
+            _context6.n = 2;
+            return scheduler.backoff(spyAction, 5, 'succeeds immediately', 3, spyFailure, [], 100);
+          case 2:
+            _context6.n = 4;
+            break;
+          case 3:
+            _context6.p = 3;
+            _t2 = _context6.v;
+            actualResult = _t2;
+          case 4:
+            return _context6.a(2);
+        }
+      }, _callee6, null, [[1, 3]]);
+    })));
     it('should call the "backoff" action three times', function () {
       expect(spyAction.calls.count()).toEqual(3);
     });
@@ -61540,16 +62981,30 @@ describe('When a backoff is used', function () {
     var spyAction;
     var spyFailure;
     var actualResult;
-    beforeEach(function (done) {
-      spyAction = jasmine.createSpy('spyAction').and.callFake(function () {
-        return 'boom';
-      });
-      spyFailure = jasmine.createSpy('spyFailure');
-      scheduler.backoff(spyAction, 5, 'detonate', 3, spyFailure, 'boom', 100)["catch"](function (r) {
-        actualResult = r;
-        done();
-      });
-    });
+    beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee7() {
+      var _t3;
+      return _regenerator().w(function (_context7) {
+        while (1) switch (_context7.p = _context7.n) {
+          case 0:
+            spyAction = jasmine.createSpy('spyAction').and.callFake(function () {
+              return 'boom';
+            });
+            spyFailure = jasmine.createSpy('spyFailure');
+            _context7.p = 1;
+            _context7.n = 2;
+            return scheduler.backoff(spyAction, 5, 'detonate', 3, spyFailure, 'boom', 100);
+          case 2:
+            _context7.n = 4;
+            break;
+          case 3:
+            _context7.p = 3;
+            _t3 = _context7.v;
+            actualResult = _t3;
+          case 4:
+            return _context7.a(2);
+        }
+      }, _callee7, null, [[1, 3]]);
+    })));
     it('should call the "backoff" action three times', function () {
       expect(spyAction.calls.count()).toEqual(3);
     });
@@ -61564,20 +63019,34 @@ describe('When a backoff is used', function () {
     var spyAction;
     var spyFailure;
     var delays;
-    beforeEach(function (done) {
-      delays = [];
-      spyAction = jasmine.createSpy('spyAction').and.callFake(function () {
-        throw new Error('nope...');
-      });
-      spyFailure = jasmine.createSpy('spyFailure');
-      spyOn(scheduler, 'schedule').and.callFake(function (action, delay) {
-        delays.push(delay);
-        return Promise.resolve().then(action);
-      });
-      scheduler.backoff(spyAction, 5, 'test max delay', 5, spyFailure, undefined, 20)["catch"](function () {
-        done();
-      });
-    });
+    beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee8() {
+      var _t4;
+      return _regenerator().w(function (_context8) {
+        while (1) switch (_context8.p = _context8.n) {
+          case 0:
+            delays = [];
+            spyAction = jasmine.createSpy('spyAction').and.callFake(function () {
+              throw new Error('nope...');
+            });
+            spyFailure = jasmine.createSpy('spyFailure');
+            spyOn(scheduler, 'schedule').and.callFake(function (action, delay) {
+              delays.push(delay);
+              return action();
+            });
+            _context8.p = 1;
+            _context8.n = 2;
+            return scheduler.backoff(spyAction, 5, 'test max delay', 5, spyFailure, undefined, 20);
+          case 2:
+            _context8.n = 4;
+            break;
+          case 3:
+            _context8.p = 3;
+            _t4 = _context8.v;
+          case 4:
+            return _context8.a(2);
+        }
+      }, _callee8, null, [[1, 3]]);
+    })));
     it('should not exceed the maximum delay', function () {
       expect(delays.every(function (delay) {
         return delay <= 20;
@@ -61591,6 +63060,10 @@ describe('When a backoff is used', function () {
 
 var _Serializer = _interopRequireDefault(require("./../../../timing/Serializer.js"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { "default": e }; }
+function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
+function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 describe('When a Serializer is used to schedule four tasks', function () {
   'use strict';
 
@@ -61610,11 +63083,17 @@ describe('When a Serializer is used to schedule four tasks', function () {
     }
   });
   describe('and the tasks complete', function () {
-    beforeEach(function (done) {
-      Promise.all(promises).then(function () {
-        done();
-      });
-    });
+    beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
+      return _regenerator().w(function (_context) {
+        while (1) switch (_context.n) {
+          case 0:
+            _context.n = 1;
+            return Promise.all(promises);
+          case 1:
+            return _context.a(2);
+        }
+      }, _callee);
+    })));
     it('the first task should have been executed', function () {
       expect(spies[0]).toHaveBeenCalled();
     });
@@ -61640,36 +63119,69 @@ describe('When a Serializer is used to schedule four tasks', function () {
 });
 describe('When a Serializer is used to schedule a task that throws', function () {
   var serializer;
-  var promise;
   var reject;
-  beforeEach(function (done) {
-    serializer = new _Serializer["default"]();
-    reject = false;
-    promise = serializer.enqueue(function () {
-      throw new Error('Boom');
-    })["catch"](function (e) {
-      reject = true;
-      done();
-    });
-  });
+  beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2() {
+    var _t;
+    return _regenerator().w(function (_context2) {
+      while (1) switch (_context2.p = _context2.n) {
+        case 0:
+          serializer = new _Serializer["default"]();
+          reject = false;
+          _context2.p = 1;
+          _context2.n = 2;
+          return serializer.enqueue(function () {
+            throw new Error('Boom');
+          });
+        case 2:
+          _context2.n = 4;
+          break;
+        case 3:
+          _context2.p = 3;
+          _t = _context2.v;
+          reject = true;
+        case 4:
+          return _context2.a(2);
+      }
+    }, _callee2, null, [[1, 3]]);
+  })));
   it('should reject the promise', function () {
     expect(reject).toEqual(true);
   });
 });
 describe('When a Serializer is used to schedule a task that rejects', function () {
   var serializer;
-  var promise;
   var reject;
-  beforeEach(function (done) {
-    serializer = new _Serializer["default"]();
-    reject = false;
-    promise = serializer.enqueue(function () {
-      return Promise.reject('Boom Boom');
-    })["catch"](function (e) {
-      reject = true;
-      done();
-    });
-  });
+  beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee4() {
+    var _t2;
+    return _regenerator().w(function (_context4) {
+      while (1) switch (_context4.p = _context4.n) {
+        case 0:
+          serializer = new _Serializer["default"]();
+          reject = false;
+          _context4.p = 1;
+          _context4.n = 2;
+          return serializer.enqueue(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3() {
+            return _regenerator().w(function (_context3) {
+              while (1) switch (_context3.n) {
+                case 0:
+                  throw 'Boom Boom';
+                case 1:
+                  return _context3.a(2);
+              }
+            }, _callee3);
+          })));
+        case 2:
+          _context4.n = 4;
+          break;
+        case 3:
+          _context4.p = 3;
+          _t2 = _context4.v;
+          reject = true;
+        case 4:
+          return _context4.a(2);
+      }
+    }, _callee4, null, [[1, 3]]);
+  })));
   it('should reject the promise', function () {
     expect(reject).toEqual(true);
   });
@@ -61769,7 +63281,11 @@ var _Disposable2 = _interopRequireDefault(require("./../lang/Disposable.js"));
 var _Queue = _interopRequireDefault(require("./../collections/Queue.js"));
 var _Scheduler = _interopRequireDefault(require("./Scheduler.js"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { "default": e }; }
-function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, "default": e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, "default": e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t2 in e) "default" !== _t2 && {}.hasOwnProperty.call(e, _t2) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t2)) && (i.get || i.set) ? o(f, _t2, i) : f[_t2] = e[_t2]); return f; })(e, t); }
+function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
+function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
 function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
@@ -61851,17 +63367,32 @@ var RateLimiter = exports["default"] = /*#__PURE__*/function (_Disposable) {
         if (_this2.disposed) {
           throw new Error('Unable to enqueue action, the rate limiter has been disposed.');
         }
-        _classPrivateFieldGet(_workQueue, _this2).enqueue(function () {
-          Promise.resolve().then(function () {
-            return actionToEnqueue();
-          }).then(function (result) {
-            resolveCallback(result);
-          })["catch"](function (error) {
-            rejectCallback(error);
-          }).then(function () {
-            _assertClassBrand(_RateLimiter_brand, _this2, _checkStart).call(_this2);
-          });
-        });
+        _classPrivateFieldGet(_workQueue, _this2).enqueue(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
+          var result, _t;
+          return _regenerator().w(function (_context) {
+            while (1) switch (_context.p = _context.n) {
+              case 0:
+                _context.p = 0;
+                _context.n = 1;
+                return actionToEnqueue();
+              case 1:
+                result = _context.v;
+                resolveCallback(result);
+                _context.n = 3;
+                break;
+              case 2:
+                _context.p = 2;
+                _t = _context.v;
+                rejectCallback(_t);
+              case 3:
+                _context.p = 3;
+                _assertClassBrand(_RateLimiter_brand, _this2, _checkStart).call(_this2);
+                return _context.f(3);
+              case 4:
+                return _context.a(2);
+            }
+          }, _callee, null, [[0, 2, 3, 4]]);
+        })));
         _assertClassBrand(_RateLimiter_brand, _this2, _checkStart).call(_this2);
       });
     }
@@ -61930,7 +63461,7 @@ var object = _interopRequireWildcard(require("./../lang/object.js"));
 var promise = _interopRequireWildcard(require("./../lang/promise.js"));
 var _Disposable2 = _interopRequireDefault(require("./../lang/Disposable.js"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { "default": e }; }
-function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, "default": e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, "default": e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t3 in e) "default" !== _t3 && {}.hasOwnProperty.call(e, _t3) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t3)) && (i.get || i.set) ? o(f, _t3, i) : f[_t3] = e[_t3]); return f; })(e, t); }
 function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
 function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
 function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
@@ -62060,7 +63591,9 @@ var Scheduler = exports["default"] = /*#__PURE__*/function (_Disposable) {
       var wrappedAction = function wrappedAction() {
         try {
           actionToRepeat();
-        } catch (e) {}
+        } catch (_unused) {
+          return;
+        }
       };
       var token = setInterval(wrappedAction, millisecondInterval);
       _classPrivateFieldGet(_intervalBindings, this)[token] = _Disposable2["default"].fromAction(function () {
@@ -62087,11 +63620,11 @@ var Scheduler = exports["default"] = /*#__PURE__*/function (_Disposable) {
   }, {
     key: "backoff",
     value: (function () {
-      var _backoff = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts, failureCallback, failureValue, maximumDelay) {
+      var _backoff = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee4(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts, failureCallback, failureValue, maximumDelay) {
         var _this4 = this;
         var processAction, attempts, _processActionRecursive;
-        return _regenerator().w(function (_context2) {
-          while (1) switch (_context2.n) {
+        return _regenerator().w(function (_context4) {
+          while (1) switch (_context4.n) {
             case 0:
               assert.argumentIsRequired(actionToBackoff, 'actionToBackoff', Function);
               assert.argumentIsOptional(millisecondDelay, 'millisecondDelay', Number);
@@ -62100,65 +63633,106 @@ var Scheduler = exports["default"] = /*#__PURE__*/function (_Disposable) {
               assert.argumentIsOptional(failureCallback, 'failureCallback', Function);
               assert.argumentIsOptional(maximumDelay, 'maximumDelay', Number);
               if (!this.disposed) {
-                _context2.n = 1;
+                _context4.n = 1;
                 break;
               }
               throw new Error('The Scheduler has been disposed.');
             case 1:
-              processAction = function processAction(attempts) {
-                return Promise.resolve().then(function () {
-                  var delay;
-                  if (attempts === 0) {
-                    delay = 0;
-                  } else {
-                    delay = (millisecondDelay || 1000) * Math.pow(2, attempts - 1);
-                    if (maximumDelay && delay > maximumDelay) {
-                      delay = maximumDelay;
+              processAction = /*#__PURE__*/function () {
+                var _ref = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2(attempts) {
+                  var delay, result, _t;
+                  return _regenerator().w(function (_context2) {
+                    while (1) switch (_context2.p = _context2.n) {
+                      case 0:
+                        if (attempts === 0) {
+                          delay = 0;
+                        } else {
+                          delay = (millisecondDelay || 1000) * Math.pow(2, attempts - 1);
+                          if (maximumDelay && delay > maximumDelay) {
+                            delay = maximumDelay;
+                          }
+                        }
+                        _context2.p = 1;
+                        if (!(delay === 0)) {
+                          _context2.n = 3;
+                          break;
+                        }
+                        _context2.n = 2;
+                        return actionToBackoff();
+                      case 2:
+                        result = _context2.v;
+                        _context2.n = 5;
+                        break;
+                      case 3:
+                        _context2.n = 4;
+                        return _this4.schedule(actionToBackoff, delay, "Attempt [ ".concat(attempts, " ] for [ ").concat(actionDescription || 'unnamed action', " ]"));
+                      case 4:
+                        result = _context2.v;
+                      case 5:
+                        if (!(!is.undef(failureValue) && object.equals(result, failureValue))) {
+                          _context2.n = 6;
+                          break;
+                        }
+                        throw "Attempt [ ".concat(attempts, " ] for [ ").concat(actionDescription || 'unnamed action', " ] failed due to invalid result");
+                      case 6:
+                        return _context2.a(2, result);
+                      case 7:
+                        _context2.p = 7;
+                        _t = _context2.v;
+                        if (is.fn(failureCallback)) {
+                          failureCallback(attempts);
+                        }
+                        throw _t;
+                      case 8:
+                        return _context2.a(2);
                     }
-                  }
-                  if (delay === 0) {
-                    return Promise.resolve().then(function () {
-                      return actionToBackoff();
-                    });
-                  } else {
-                    return _this4.schedule(actionToBackoff, delay, "Attempt [ ".concat(attempts, " ] for [ ").concat(actionDescription || 'unnamed action', " ]"));
-                  }
-                }).then(function (result) {
-                  var resultPromise;
-                  if (!is.undef(failureValue) && object.equals(result, failureValue)) {
-                    resultPromise = Promise.reject("Attempt [ ".concat(attempts, " ] for [ ").concat(actionDescription || 'unnamed action', " ] failed due to invalid result"));
-                  } else {
-                    resultPromise = Promise.resolve(result);
-                  }
-                  return resultPromise;
-                })["catch"](function (e) {
-                  if (is.fn(failureCallback)) {
-                    failureCallback(attempts);
-                  }
-                  return Promise.reject(e);
-                });
-              };
+                  }, _callee2, null, [[1, 7]]);
+                }));
+                return function processAction(_x1) {
+                  return _ref.apply(this, arguments);
+                };
+              }();
               attempts = 0;
-              _processActionRecursive = function processActionRecursive() {
-                return processAction(attempts++)["catch"](function (e) {
-                  if (maximumAttempts > 0 && attempts === maximumAttempts) {
-                    var message = "Maximum failures reached for ".concat(actionDescription || 'unnamed action');
-                    var rejectPromise;
-                    if (is.object(e)) {
-                      e.backoff = message;
-                      rejectPromise = Promise.reject(e);
-                    } else {
-                      rejectPromise = Promise.reject(message);
+              _processActionRecursive = /*#__PURE__*/function () {
+                var _ref2 = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3() {
+                  var result, message, _t2;
+                  return _regenerator().w(function (_context3) {
+                    while (1) switch (_context3.p = _context3.n) {
+                      case 0:
+                        _context3.p = 0;
+                        _context3.n = 1;
+                        return processAction(attempts++);
+                      case 1:
+                        result = _context3.v;
+                        return _context3.a(2, result);
+                      case 2:
+                        _context3.p = 2;
+                        _t2 = _context3.v;
+                        if (!(maximumAttempts > 0 && attempts === maximumAttempts)) {
+                          _context3.n = 4;
+                          break;
+                        }
+                        message = "Maximum failures reached for ".concat(actionDescription || 'unnamed action');
+                        if (!is.object(_t2)) {
+                          _context3.n = 3;
+                          break;
+                        }
+                        _t2.backoff = message;
+                        throw _t2;
+                      case 3:
+                        throw message;
+                      case 4:
+                        return _context3.a(2, _processActionRecursive());
                     }
-                    return rejectPromise;
-                  } else {
-                    return _processActionRecursive();
-                  }
-                });
-              };
-              return _context2.a(2, _processActionRecursive());
+                  }, _callee3, null, [[0, 2]]);
+                }));
+                return function processActionRecursive() {
+                  return _ref2.apply(this, arguments);
+                };
+              }();
+              return _context4.a(2, _processActionRecursive());
           }
-        }, _callee2, this);
+        }, _callee4, this);
       }));
       function backoff(_x4, _x5, _x6, _x7, _x8, _x9, _x0) {
         return _backoff.apply(this, arguments);
@@ -62208,27 +63782,27 @@ var Scheduler = exports["default"] = /*#__PURE__*/function (_Disposable) {
   }], [{
     key: "schedule",
     value: (function () {
-      var _schedule2 = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3(actionToSchedule, millisecondDelay, actionDescription) {
+      var _schedule2 = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee5(actionToSchedule, millisecondDelay, actionDescription) {
         var scheduler, result;
-        return _regenerator().w(function (_context3) {
-          while (1) switch (_context3.p = _context3.n) {
+        return _regenerator().w(function (_context5) {
+          while (1) switch (_context5.p = _context5.n) {
             case 0:
               scheduler = new Scheduler();
-              _context3.p = 1;
-              _context3.n = 2;
+              _context5.p = 1;
+              _context5.n = 2;
               return scheduler.schedule(actionToSchedule, millisecondDelay, actionDescription);
             case 2:
-              result = _context3.v;
+              result = _context5.v;
             case 3:
-              _context3.p = 3;
+              _context5.p = 3;
               scheduler.dispose();
-              return _context3.f(3);
+              return _context5.f(3);
             case 4:
-              return _context3.a(2, result);
+              return _context5.a(2, result);
           }
-        }, _callee3, null, [[1,, 3, 4]]);
+        }, _callee5, null, [[1,, 3, 4]]);
       }));
-      function schedule(_x1, _x10, _x11) {
+      function schedule(_x10, _x11, _x12) {
         return _schedule2.apply(this, arguments);
       }
       return schedule;
@@ -62250,27 +63824,27 @@ var Scheduler = exports["default"] = /*#__PURE__*/function (_Disposable) {
   }, {
     key: "backoff",
     value: (function () {
-      var _backoff2 = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee4(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts, failureCallback, failureValue, maximumDelay) {
+      var _backoff2 = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee6(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts, failureCallback, failureValue, maximumDelay) {
         var scheduler, result;
-        return _regenerator().w(function (_context4) {
-          while (1) switch (_context4.p = _context4.n) {
+        return _regenerator().w(function (_context6) {
+          while (1) switch (_context6.p = _context6.n) {
             case 0:
               scheduler = new Scheduler();
-              _context4.p = 1;
-              _context4.n = 2;
+              _context6.p = 1;
+              _context6.n = 2;
               return scheduler.backoff(actionToBackoff, millisecondDelay, actionDescription, maximumAttempts, failureCallback, failureValue, maximumDelay);
             case 2:
-              result = _context4.v;
+              result = _context6.v;
             case 3:
-              _context4.p = 3;
+              _context6.p = 3;
               scheduler.dispose();
-              return _context4.f(3);
+              return _context6.f(3);
             case 4:
-              return _context4.a(2, result);
+              return _context6.a(2, result);
           }
-        }, _callee4, null, [[1,, 3, 4]]);
+        }, _callee6, null, [[1,, 3, 4]]);
       }));
-      function backoff(_x12, _x13, _x14, _x15, _x16, _x17, _x18) {
+      function backoff(_x13, _x14, _x15, _x16, _x17, _x18, _x19) {
         return _backoff2.apply(this, arguments);
       }
       return backoff;
@@ -62291,7 +63865,11 @@ var promise = _interopRequireWildcard(require("./../lang/promise.js"));
 var _Disposable2 = _interopRequireDefault(require("./../lang/Disposable.js"));
 var _Queue = _interopRequireDefault(require("./../collections/Queue.js"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { "default": e }; }
-function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, "default": e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, "default": e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t2 in e) "default" !== _t2 && {}.hasOwnProperty.call(e, _t2) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t2)) && (i.get || i.set) ? o(f, _t2, i) : f[_t2] = e[_t2]); return f; })(e, t); }
+function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
+function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
 function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
@@ -62352,7 +63930,7 @@ var Serializer = exports["default"] = /*#__PURE__*/function (_Disposable) {
     }
 
     /**
-     * The the total number of items that have been added to the queue.
+     * The total number of items that have been added to the queue.
      *
      * @public
      * @returns {number}
@@ -62405,19 +63983,35 @@ var Serializer = exports["default"] = /*#__PURE__*/function (_Disposable) {
           throw new Error('Unable to add action to the Serializer, it has been disposed.');
         }
         _classPrivateFieldSet(_enqueued, _this2, _classPrivateFieldGet(_enqueued, _this2) + 1);
-        _this2._getWorkQueue().enqueue(function () {
-          return Promise.resolve().then(function () {
-            if (_this2.getIsDisposed()) {
-              throw new Error('Unable to process Serializer action, the serializer has been disposed.');
+        _this2._getWorkQueue().enqueue(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
+          var result, _t;
+          return _regenerator().w(function (_context) {
+            while (1) switch (_context.p = _context.n) {
+              case 0:
+                _context.p = 0;
+                if (!_this2.getIsDisposed()) {
+                  _context.n = 1;
+                  break;
+                }
+                throw new Error('Unable to process Serializer action, the serializer has been disposed.');
+              case 1:
+                _classPrivateFieldSet(_processed, _this2, _classPrivateFieldGet(_processed, _this2) + 1);
+                _context.n = 2;
+                return actionToEnqueue();
+              case 2:
+                result = _context.v;
+                resolveCallback(result);
+                _context.n = 4;
+                break;
+              case 3:
+                _context.p = 3;
+                _t = _context.v;
+                rejectCallback(_t);
+              case 4:
+                return _context.a(2);
             }
-            _classPrivateFieldSet(_processed, _this2, _classPrivateFieldGet(_processed, _this2) + 1);
-            return actionToEnqueue();
-          }).then(function (result) {
-            resolveCallback(result);
-          })["catch"](function (error) {
-            rejectCallback(error);
-          });
-        });
+          }, _callee, null, [[0, 3]]);
+        })));
         _assertClassBrand(_Serializer_brand, _this2, _checkStart).call(_this2);
       });
     }
@@ -62455,10 +64049,26 @@ function _checkStart() {
   }
   _classPrivateFieldSet(_running, this, true);
   var actionToExecute = workQueue.dequeue();
-  actionToExecute().then(function () {
-    _classPrivateFieldSet(_running, _this3, false);
-    _assertClassBrand(_Serializer_brand, _this3, _checkStart).call(_this3);
-  });
+  var run = /*#__PURE__*/function () {
+    var _ref2 = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2() {
+      return _regenerator().w(function (_context2) {
+        while (1) switch (_context2.n) {
+          case 0:
+            _context2.n = 1;
+            return actionToExecute();
+          case 1:
+            _classPrivateFieldSet(_running, _this3, false);
+            _assertClassBrand(_Serializer_brand, _this3, _checkStart).call(_this3);
+          case 2:
+            return _context2.a(2);
+        }
+      }, _callee2);
+    }));
+    return function run() {
+      return _ref2.apply(this, arguments);
+    };
+  }();
+  run();
 }
 
 },{"./../collections/Queue.js":344,"./../lang/Disposable.js":367,"./../lang/assert.js":376,"./../lang/promise.js":390}],543:[function(require,module,exports){

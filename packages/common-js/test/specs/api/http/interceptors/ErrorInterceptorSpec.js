@@ -18,14 +18,18 @@ describe('When ErrorInterceptor is used', () => {
 	});
 
 	it('should create delegate interceptors that reject with delegated values', async () => {
-		const delegate = jasmine.createSpy('delegate').and.returnValue(Promise.reject('done'));
+		const delegate = jasmine.createSpy('delegate').and.callFake(async () => {
+			throw 'done';
+		});
 		const interceptor = ErrorInterceptor.fromDelegate(delegate);
 
 		await expectAsync(interceptor.process('raw', endpoint)).toBeRejectedWith('done');
 	});
 
 	it('should create delegate interceptors that call the delegate with correct arguments', async () => {
-		const delegate = jasmine.createSpy('delegate').and.returnValue(Promise.reject('done'));
+		const delegate = jasmine.createSpy('delegate').and.callFake(async () => {
+			throw 'done';
+		});
 		const interceptor = ErrorInterceptor.fromDelegate(delegate);
 
 		try {

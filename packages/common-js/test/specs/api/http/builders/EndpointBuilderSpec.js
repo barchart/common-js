@@ -163,10 +163,10 @@ describe('When an EndpointBuilder is used', () => {
 	it('should compose error interceptors', async () => {
 		builder
 			.withErrorInterceptor(ErrorInterceptor.fromDelegate(error => {
-				return Promise.reject({ a: error });
+				throw { a: error };
 			}))
 			.withErrorInterceptor(ErrorInterceptor.fromDelegate(error => {
-				return Promise.reject({ b: error });
+				throw { b: error };
 			}));
 
 		await expectAsync(builder.endpoint.errorInterceptor.process('x', builder.endpoint)).toBeRejectedWith({ b: { a: 'x' } });
@@ -194,11 +194,11 @@ describe('When an EndpointBuilder is used', () => {
 			}))
 			.withErrorInterceptor(ErrorInterceptor.fromDelegate(error => {
 				calls.push('error:a');
-				return Promise.reject(error);
+				throw error;
 			}))
 			.withErrorInterceptor(ErrorInterceptor.fromDelegate(error => {
 				calls.push('error:b');
-				return Promise.reject(error);
+				throw error;
 			}));
 
 		await builder.endpoint.requestInterceptor.process({ }, builder.endpoint);

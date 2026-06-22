@@ -22,14 +22,10 @@ describe('When a Scheduler is constructed', () => {
 			expect(spy).not.toHaveBeenCalled();
 		});
 
-		it('should execute the task asynchronously', (done) => {
-			promise
-				.then(() => {
-					expect(spy.calls.count()).toEqual(1);
-				})
-				.then(() => {
-					done();
-				});
+		it('should execute the task asynchronously', async () => {
+			await promise;
+
+			expect(spy.calls.count()).toEqual(1);
 		});
 	});
 
@@ -42,15 +38,14 @@ describe('When a Scheduler is constructed', () => {
 			let spy;
 			let success;
 
-			beforeEach((done) => {
-				scheduler.schedule(spy = jasmine.createSpy('spy'), 10, 'A scheduled task')
-					.then(() => {
-						success = true;
-					}).catch(() => {
-						success = false;
-					}).then(() => {
-						done();
-					});
+			beforeEach(async () => {
+				try {
+					await scheduler.schedule(spy = jasmine.createSpy('spy'), 10, 'A scheduled task');
+
+					success = true;
+				} catch (e) {
+					success = false;
+				}
 			});
 
 			it('should reject the promise', () => {
@@ -80,7 +75,7 @@ describe('When a backoff is used', () => {
 		let actualResult;
 		let successfulResult;
 
-		beforeEach((done) => {
+		beforeEach(async () => {
 			spyAction = jasmine.createSpy('spyAction').and.callFake(() => {
 				successfulResult = 'ok computer';
 
@@ -89,12 +84,7 @@ describe('When a backoff is used', () => {
 
 			spyFailure = jasmine.createSpy('spyFailure');
 
-			scheduler.backoff(spyAction, 5, 'succeeds immediately', 1, spyFailure, undefined, 100)
-				.then((r) => {
-					actualResult = r;
-
-					done();
-				});
+			actualResult = await scheduler.backoff(spyAction, 5, 'succeeds immediately', 1, spyFailure, undefined, 100);
 		});
 
 		it('should call the "backoff" action one time', () => {
@@ -119,7 +109,7 @@ describe('When a backoff is used', () => {
 
 		let x;
 
-		beforeEach((done) => {
+		beforeEach(async () => {
 			x = 0;
 
 			spyAction = jasmine.createSpy('spyAction').and.callFake(() => {
@@ -134,12 +124,7 @@ describe('When a backoff is used', () => {
 
 			spyFailure = jasmine.createSpy('spyFailure');
 
-			scheduler.backoff(spyAction, 5, 'succeeds immediately', 5, spyFailure, undefined, 100)
-				.then((r) => {
-					actualResult = r;
-
-					done();
-				});
+			actualResult = await scheduler.backoff(spyAction, 5, 'succeeds immediately', 5, spyFailure, undefined, 100);
 		});
 
 		it('should call the "backoff" action two times', () => {
@@ -164,7 +149,7 @@ describe('When a backoff is used', () => {
 
 		let x;
 
-		beforeEach((done) => {
+		beforeEach(async () => {
 			x = 0;
 
 			spyAction = jasmine.createSpy('spyAction').and.callFake(() => {
@@ -179,12 +164,7 @@ describe('When a backoff is used', () => {
 
 			spyFailure = jasmine.createSpy('spyFailure');
 
-			scheduler.backoff(spyAction, 5, 'succeeds immediately', 5, spyFailure, [ ], 100)
-				.then((r) => {
-					actualResult = r;
-
-					done();
-				});
+			actualResult = await scheduler.backoff(spyAction, 5, 'succeeds immediately', 5, spyFailure, [ ], 100);
 		});
 
 		it('should call the "backoff" action three times', () => {
@@ -206,19 +186,18 @@ describe('When a backoff is used', () => {
 
 		let actualResult;
 
-		beforeEach((done) => {
+		beforeEach(async () => {
 			spyAction = jasmine.createSpy('spyAction').and.callFake(() => {
 				throw new Error('not gonna happen');
 			});
 
 			spyFailure = jasmine.createSpy('spyFailure');
 
-			scheduler.backoff(spyAction, 5, 'succeeds immediately', 3, spyFailure, [ ], 100)
-				.catch((r) => {
-					actualResult = r;
-
-					done();
-				});
+			try {
+				await scheduler.backoff(spyAction, 5, 'succeeds immediately', 3, spyFailure, [ ], 100);
+			} catch (r) {
+				actualResult = r;
+			}
 		});
 
 		it('should call the "backoff" action three times', () => {
@@ -240,19 +219,18 @@ describe('When a backoff is used', () => {
 
 		let actualResult;
 
-		beforeEach((done) => {
+		beforeEach(async () => {
 			spyAction = jasmine.createSpy('spyAction').and.callFake(() => {
 				return 'boom';
 			});
 
 			spyFailure = jasmine.createSpy('spyFailure');
 
-			scheduler.backoff(spyAction, 5, 'detonate', 3, spyFailure, 'boom', 100)
-				.catch((r) => {
-					actualResult = r;
-
-					done();
-				});
+			try {
+				await scheduler.backoff(spyAction, 5, 'detonate', 3, spyFailure, 'boom', 100);
+			} catch (r) {
+				actualResult = r;
+			}
 		});
 
 		it('should call the "backoff" action three times', () => {
@@ -273,7 +251,7 @@ describe('When a backoff is used', () => {
 		let spyFailure;
 		let delays;
 
-		beforeEach((done) => {
+		beforeEach(async () => {
 			delays = [];
 			spyAction = jasmine.createSpy('spyAction').and.callFake(() => {
 				throw new Error('nope...');
@@ -283,13 +261,14 @@ describe('When a backoff is used', () => {
 
 			spyOn(scheduler, 'schedule').and.callFake((action, delay) => {
 				delays.push(delay);
-				return Promise.resolve().then(action);
+				return action();
 			});
 
-			scheduler.backoff(spyAction, 5, 'test max delay', 5, spyFailure, undefined, 20)
-				.catch(() => {
-					done();
-				});
+			try {
+				await scheduler.backoff(spyAction, 5, 'test max delay', 5, spyFailure, undefined, 20);
+			} catch (e) {
+
+			}
 		});
 
 		it('should not exceed the maximum delay', () => {
