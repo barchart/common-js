@@ -115,18 +115,15 @@ function buildSerializer(serializer) {
 function buildDelegateExtractor(fn, serializer) {
 	assert.argumentIsRequired(fn, 'fn', Function);
 
-	return (payload) => {
-		return Promise.resolve()
-			.then(() => {
-				return serializer(fn(payload));
-			});
+	return async (payload) => {
+		return serializer(fn(payload));
 	};
 }
 
 function buildLiteralExtractor(value) {
 	assert.argumentIsRequired(value, 'value', String);
 
-	return (payload) => Promise.resolve(value);
+	return async () => value;
 }
 
 function buildVariableExtractor(variable, serializer) {

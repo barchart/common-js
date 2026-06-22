@@ -68,24 +68,25 @@ export default class DisposableStack extends Disposable {
 	/**
 	 * @public
 	 * @static
+	 * @async
 	 * @param {*} stack
 	 * @param {*} promise
 	 * @returns {Promise}
 	 */
-	static pushPromise(stack, promise) {
+	static async pushPromise(stack, promise) {
 		assert.argumentIsRequired(stack, 'stack', DisposableStack, 'DisposableStack');
 		assert.argumentIsRequired(promise, 'promise');
 
-		return promise.then((b) => {
-			let bindings;
+		const b = await promise;
 
-			if (is.array(b)) {
-				bindings = b;
-			} else {
-				bindings = [ b ];
-			}
+		let bindings;
 
-			bindings.forEach(binding => stack.push(binding));
-		});
+		if (is.array(b)) {
+			bindings = b;
+		} else {
+			bindings = [ b ];
+		}
+
+		bindings.forEach(binding => stack.push(binding));
 	}
 }

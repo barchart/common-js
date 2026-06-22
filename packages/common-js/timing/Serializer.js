@@ -85,21 +85,20 @@ export default class Serializer extends Disposable {
 
 			this.#enqueued = this.#enqueued + 1;
 
-			this._getWorkQueue().enqueue(() => {
-				return Promise.resolve()
-					.then(() => {
-						if (this.getIsDisposed()) {
-							throw new Error('Unable to process Serializer action, the serializer has been disposed.');
-						}
+			this._getWorkQueue().enqueue(async () => {
+				try {
+					if (this.getIsDisposed()) {
+						throw new Error('Unable to process Serializer action, the serializer has been disposed.');
+					}
 
-						this.#processed = this.#processed + 1;
+					this.#processed = this.#processed + 1;
 
-						return actionToEnqueue();
-					}).then((result) => {
-						resolveCallback(result);
-					}).catch((error) => {
-						rejectCallback(error);
-					});
+					const result = await actionToEnqueue();
+
+					resolveCallback(result);
+				} catch (error) {
+					rejectCallback(error);
+				}
 			});
 
 			this.#checkStart();
@@ -127,12 +126,15 @@ export default class Serializer extends Disposable {
 
 		const actionToExecute = workQueue.dequeue();
 
-		actionToExecute()
-			.then(() => {
-				this.#running = false;
+		const run = async () => {
+			await actionToExecute();
 
-				this.#checkStart();
-			});
+			this.#running = false;
+
+			this.#checkStart();
+		};
+
+		run();
 	}
 
 	/**

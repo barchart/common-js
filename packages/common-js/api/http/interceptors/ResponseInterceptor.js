@@ -20,15 +20,13 @@ export default class ResponseInterceptor {
 	 * back to the original caller.
 	 *
 	 * @public
+	 * @async
 	 * @param {object} response
 	 * @param {Endpoint} endpoint - The endpoint which is originating the request.
 	 * @returns {Promise<*>}
 	 */
-	process(response, endpoint) {
-		return Promise.resolve()
-			.then(() => {
-				return this._onProcess(response, endpoint);
-			});
+	async process(response, endpoint) {
+		return this._onProcess(response, endpoint);
 	}
 
 	/**

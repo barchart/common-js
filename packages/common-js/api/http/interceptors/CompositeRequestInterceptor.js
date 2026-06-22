@@ -33,15 +33,15 @@ export default class CompositeRequestInterceptor extends RequestInterceptor {
 	/**
 	 * @protected
 	 * @override
+	 * @async
 	 * @param {object} request
 	 * @param {Endpoint} endpoint
 	 * @returns {Promise<*>}
 	 */
-	_onProcess(request, endpoint) {
-		return this.#a.process(request, endpoint)
-			.then((adjusted) => {
-				return this.#b.process(adjusted, endpoint);
-			});
+	async _onProcess(request, endpoint) {
+		const adjusted = await this.#a.process(request, endpoint);
+
+		return this.#b.process(adjusted, endpoint);
 	}
 
 	/**

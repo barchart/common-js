@@ -58,17 +58,16 @@ export default class RateLimiter extends Disposable {
 				throw new Error('Unable to enqueue action, the rate limiter has been disposed.');
 			}
 
-			this.#workQueue.enqueue(() => {
-				Promise.resolve()
-					.then(() => {
-						return actionToEnqueue();
-					}).then((result) => {
-						resolveCallback(result);
-					}).catch((error) => {
-						rejectCallback(error);
-					}).then(() => {
-						this.#checkStart();
-					});
+			this.#workQueue.enqueue(async () => {
+				try {
+					const result = await actionToEnqueue();
+
+					resolveCallback(result);
+				} catch (error) {
+					rejectCallback(error);
+				} finally {
+					this.#checkStart();
+				}
 			});
 
 			this.#checkStart();

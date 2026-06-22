@@ -99,7 +99,7 @@ export default class Scheduler extends Disposable {
 		const wrappedAction = () => {
 			try {
 				actionToRepeat();
-			} catch (e) {
+			} catch {
 
 			}
 		};
@@ -141,70 +141,64 @@ export default class Scheduler extends Disposable {
 			throw new Error('The Scheduler has been disposed.');
 		}
 
-		const processAction = (attempts) => {
-			return Promise.resolve()
-				.then(() => {
-					let delay;
+		const processAction = async (attempts) => {
+			let delay;
 
-					if (attempts === 0) {
-						delay = 0;
-					} else {
-						delay = (millisecondDelay || 1000) * Math.pow(2, attempts - 1);
-						if (maximumDelay && delay > maximumDelay) {
-							delay = maximumDelay;
-						}
-					}
+			if (attempts === 0) {
+				delay = 0;
+			} else {
+				delay = (millisecondDelay || 1000) * Math.pow(2, attempts - 1);
 
-					if (delay === 0) {
-						return Promise.resolve()
-							.then(() => {
-								return actionToBackoff();
-							});
-					} else {
-						return this.schedule(actionToBackoff, delay, `Attempt [ ${attempts} ] for [ ${(actionDescription || 'unnamed action')} ]`);
-					}
-				}).then((result) => {
-					let resultPromise;
+				if (maximumDelay && delay > maximumDelay) {
+					delay = maximumDelay;
+				}
+			}
 
-					if (!is.undef(failureValue) && object.equals(result, failureValue)) {
-						resultPromise = Promise.reject(`Attempt [ ${attempts} ] for [ ${(actionDescription || 'unnamed action')} ] failed due to invalid result`);
-					} else {
-						resultPromise = Promise.resolve(result);
-					}
+			try {
+				let result;
 
-					return resultPromise;
-				}).catch((e) => {
-					if (is.fn(failureCallback)) {
-						failureCallback(attempts);
-					}
+				if (delay === 0) {
+					result = await actionToBackoff();
+				} else {
+					result = await this.schedule(actionToBackoff, delay, `Attempt [ ${attempts} ] for [ ${(actionDescription || 'unnamed action')} ]`);
+				}
 
-					return Promise.reject(e);
-				});
+				if (!is.undef(failureValue) && object.equals(result, failureValue)) {
+					throw `Attempt [ ${attempts} ] for [ ${(actionDescription || 'unnamed action')} ] failed due to invalid result`;
+				}
+
+				return result;
+			} catch (e) {
+				if (is.fn(failureCallback)) {
+					failureCallback(attempts);
+				}
+
+				throw e;
+			}
 		};
 
 		let attempts = 0;
 
-		const processActionRecursive = () => {
-			return processAction(attempts++)
-				.catch((e) => {
-					if (maximumAttempts > 0 && attempts === maximumAttempts) {
-						let message = `Maximum failures reached for ${(actionDescription || 'unnamed action')}`;
+		const processActionRecursive = async () => {
+			try {
+				const result = await processAction(attempts++);
 
-						let rejectPromise;
+				return result;
+			} catch (e) {
+				if (maximumAttempts > 0 && attempts === maximumAttempts) {
+					const message = `Maximum failures reached for ${(actionDescription || 'unnamed action')}`;
 
-						if (is.object(e)) {
-							e.backoff = message;
+					if (is.object(e)) {
+						e.backoff = message;
 
-							rejectPromise = Promise.reject(e);
-						} else {
-							rejectPromise = Promise.reject(message);
-						}
-
-						return rejectPromise;
-					} else {
-						return processActionRecursive();
+						throw e;
 					}
-				});
+
+					throw message;
+				}
+
+				return processActionRecursive();
+			}
 		};
 
 		return processActionRecursive();

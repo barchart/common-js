@@ -218,41 +218,39 @@ export default class FailureReason {
 	 *
 	 * @public
 	 * @static
+	 * @async
 	 * @param {Schema|EnumWithSchema} schema
 	 * @param {object} candidate
 	 * @param {string=} description
 	 * @returns {Promise<null>}
 	 */
-	static validateSchema(schema, candidate, description) {
-		return Promise.resolve()
-			.then(() => {
-				let schemaToUse;
+	static async validateSchema(schema, candidate, description) {
+		let schemaToUse;
 
-				if (schema instanceof Schema) {
-					schemaToUse = schema;
-				} else if (schema.schema && schema.schema instanceof Schema) {
-					schemaToUse = schema.schema;
-				} else {
-					throw new TypeError('The schema argument must be a Schema instance or an Enum instance containing a Schema.');
-				}
+		if (schema instanceof Schema) {
+			schemaToUse = schema;
+		} else if (schema.schema && schema.schema instanceof Schema) {
+			schemaToUse = schema.schema;
+		} else {
+			throw new TypeError('The schema argument must be a Schema instance or an Enum instance containing a Schema.');
+		}
 
-				const fields = schemaToUse.getInvalidFields(candidate);
+		const fields = schemaToUse.getInvalidFields(candidate);
 
-				if (fields.length === 0) {
-					return null;
-				}
+		if (fields.length === 0) {
+			return null;
+		}
 
-				let failure = FailureReason.forRequest({ endpoint: { description: description || `serialize data into ${schemaToUse.name}`}})
-					.addItem(FailureType.REQUEST_INPUT_MALFORMED, { }, true);
+		let failure = FailureReason.forRequest({ endpoint: { description: description || `serialize data into ${schemaToUse.name}`}})
+			.addItem(FailureType.REQUEST_INPUT_MALFORMED, { }, true);
 
-				failure = fields.reduce((accumulator, field) => {
-					accumulator.addItem(FailureType.REQUEST_PARAMETER_MALFORMED, { name: field.name });
+		failure = fields.reduce((accumulator, field) => {
+			accumulator.addItem(FailureType.REQUEST_PARAMETER_MALFORMED, { name: field.name });
 
-					return accumulator;
-				}, failure);
+			return accumulator;
+		}, failure);
 
-				return Promise.reject(failure.format());
-			});
+		throw failure.format();
 	}
 
 	/**

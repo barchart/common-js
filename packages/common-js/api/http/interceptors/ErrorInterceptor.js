@@ -24,25 +24,24 @@ export default class ErrorInterceptor {
 	 * back to the original caller.
 	 *
 	 * @public
+	 * @async
 	 * @param {object} error
 	 * @param {Endpoint} endpoint - The endpoint which is originating the request.
 	 * @returns {Promise<*>}
 	 */
-	process(error, endpoint) {
-		return Promise.resolve()
-			.then(() => {
-				return this._onProcess(error, endpoint);
-			});
+	async process(error, endpoint) {
+		return this._onProcess(error, endpoint);
 	}
 
 	/**
 	 * @protected
+	 * @async
 	 * @param {object} error
 	 * @param {Endpoint} endpoint
 	 * @returns {Promise<*>}
 	 */
-	_onProcess(error, endpoint) {
-		return Promise.reject(error);
+	async _onProcess(error, endpoint) {
+		throw error;
 	}
 
 	/**
@@ -123,10 +122,10 @@ class DelegateErrorInterceptor extends ErrorInterceptor {
 
 const errorInterceptorEmpty = new ErrorInterceptor();
 
-const errorInterceptorGeneral = new DelegateErrorInterceptor((error, endpoint) => {
+const errorInterceptorGeneral = new DelegateErrorInterceptor(async (error, endpoint) => {
 	const response = error.response;
 
-	let rejectPromise = null;
+	let rejection = null;
 
 	if (is.object(response) && is.object(response.headers) && response.headers['content-type'] === 'application/json') {
 		let deserialized = null;
@@ -136,31 +135,27 @@ const errorInterceptorGeneral = new DelegateErrorInterceptor((error, endpoint) =
 		} else {
 			try {
 				deserialized = JSON.parse(response.data);
-			} catch (e) {
+			} catch {
 				deserialized = null;
 			}
 		}
 
 		if (deserialized !== null) {
-			rejectPromise = Promise.reject(deserialized);
+			rejection = deserialized;
 		}
 	}
 
-	if (rejectPromise === null && is.undef(response) && error.message === 'Network Error') {
-		rejectPromise = Promise.reject(
-			FailureReason.forRequest({endpoint: endpoint})
-				.addItem(FailureType.REQUEST_AUTHORIZATION_FAILURE)
-				.format()
-		);
+	if (rejection === null && is.undef(response) && error.message === 'Network Error') {
+		rejection = FailureReason.forRequest({endpoint: endpoint})
+			.addItem(FailureType.REQUEST_AUTHORIZATION_FAILURE)
+			.format();
 	}
 
-	if (rejectPromise === null) {
-		rejectPromise = Promise.reject(
-			FailureReason.forRequest({endpoint: endpoint})
-				.addItem(FailureType.REQUEST_GENERAL_FAILURE)
-				.format()
-		);
+	if (rejection === null) {
+		rejection = FailureReason.forRequest({endpoint: endpoint})
+			.addItem(FailureType.REQUEST_GENERAL_FAILURE)
+			.format();
 	}
 
-	return rejectPromise;
+	throw rejection;
 });

@@ -18,15 +18,13 @@ export default class RequestInterceptor {
 	 * Adjusts outgoing requests data before the request is transmitted.
 	 *
 	 * @public
+	 * @async
 	 * @param {object} request
 	 * @param {Endpoint} endpoint - The endpoint which is originating the request.
 	 * @returns {Promise<*>}
 	 */
-	process(request, endpoint) {
-		return Promise.resolve()
-			.then(() => {
-				return this._onProcess(request, endpoint);
-			});
+	async process(request, endpoint) {
+		return this._onProcess(request, endpoint);
 	}
 
 	/**

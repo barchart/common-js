@@ -26,11 +26,22 @@ export default class CompositeErrorInterceptor extends ErrorInterceptor {
 		this.#b = b;
 	}
 
-	_onProcess(error, endpoint) {
-		return this.#a.process(error, endpoint)
-			.catch((adjusted) => {
-				return this.#b.process(adjusted, endpoint);
-			});
+	/**
+	 * @protected
+	 * @override
+	 * @async
+	 * @param {object} error
+	 * @param {*} endpoint
+	 * @returns {Promise<*>}
+	 */
+	async _onProcess(error, endpoint) {
+		try {
+			const result = await this.#a.process(error, endpoint);
+
+			return result;
+		} catch (adjusted) {
+			return this.#b.process(adjusted, endpoint);
+		}
 	}
 
 	/**

@@ -20,43 +20,41 @@ import * as assert from './assert.js';
  * @returns {Promise<*>}
  */
 export async function timeout(promise, milliseconds, description) {
-	return Promise.resolve()
-		.then(() => {
-			assert.argumentIsRequired(promise, 'promise', Promise, 'Promise');
-			assert.argumentIsRequired(milliseconds, 'milliseconds', Number);
-			assert.argumentIsOptional(description, 'description', String);
+	assert.argumentIsRequired(promise, 'promise', Promise, 'Promise');
+	assert.argumentIsRequired(milliseconds, 'milliseconds', Number);
+	assert.argumentIsOptional(description, 'description', String);
 
-			if (!(milliseconds > 0)) {
-				return Promise.reject('Unable to configure promise timeout, the "milliseconds" argument must be positive');
+	if (!(milliseconds > 0)) {
+		throw 'Unable to configure promise timeout, the "milliseconds" argument must be positive';
+	}
+
+	let timeoutToken = null;
+
+	const timeoutPromise = build((resolveCallback, rejectCallback) => {
+		timeoutToken = setTimeout(() => {
+			rejectCallback(description || `Promise timed out after ${milliseconds} milliseconds`);
+		}, milliseconds);
+	});
+
+	const userPromise = (async () => {
+		try {
+			const result = await promise;
+
+			if (timeoutToken !== null) {
+				clearTimeout(timeoutToken);
 			}
 
-			let timeoutToken = null;
+			return result;
+		} catch (e) {
+			if (timeoutToken !== null) {
+				clearTimeout(timeoutToken);
+			}
 
-			const timeoutPromise = build((resolveCallback, rejectCallback) => {
-				timeoutToken = setTimeout(() => {
-					rejectCallback(description || `Promise timed out after ${milliseconds} milliseconds`);
-				}, milliseconds);
-			});
+			throw e;
+		}
+	})();
 
-			const userPromise = Promise.resolve()
-				.then(() => {
-					return promise;
-				}).then((result) => {
-					if (timeoutToken !== null) {
-						clearTimeout(timeoutToken);
-					}
-
-					return result;
-				}).catch((e) => {
-					if (timeoutToken !== null) {
-						clearTimeout(timeoutToken);
-					}
-
-					return Promise.reject(e);
-				});
-
-			return Promise.race([ userPromise, timeoutPromise ]);
-		});
+	return Promise.race([ userPromise, timeoutPromise ]);
 }
 
 /**
@@ -73,76 +71,73 @@ export async function timeout(promise, milliseconds, description) {
  * @returns {Promise<Array>}
  */
 export async function map(items, mapper, concurrency) {
-	return Promise.resolve()
-		.then(() => {
-			assert.argumentIsArray(items, 'items');
-			assert.argumentIsRequired(mapper, 'mapper', Function);
-			assert.argumentIsOptional(concurrency, 'concurrency', Number);
+	assert.argumentIsArray(items, 'items');
+	assert.argumentIsRequired(mapper, 'mapper', Function);
+	assert.argumentIsOptional(concurrency, 'concurrency', Number);
 
-			const c = Math.max(0, concurrency || 0);
+	const c = Math.max(0, concurrency || 0);
 
-			let mapPromise;
+	let mapPromise;
 
-			if (c === 0 || items.length === 0) {
-				mapPromise = Promise.all(items.map((item) => Promise.resolve(mapper(item))));
-			} else {
-				let total = items.length;
-				let active = 0;
-				let complete = 0;
-				let failure = false;
+	if (c === 0 || items.length === 0) {
+		mapPromise = Promise.all(items.map((item) => mapper(item)));
+	} else {
+		const total = items.length;
+		let active = 0;
+		let complete = 0;
+		let failure = false;
 
-				const results = Array.of(total);
+		const results = Array.of(total);
 
-				const executors = items.map((item, index) => {
-					return () => {
-						return Promise.resolve()
-							.then(() => {
-								return mapper(item);
-							}).then((result) => {
-								results[index] = result;
-							});
-					};
-				});
+		const executors = items.map((item, index) => {
+			return async () => {
+				const result = await mapper(item);
 
-				mapPromise = build((resolveCallback, rejectCallback) => {
-					const execute = () => {
-						if (!(executors.length > 0 && c > active && !failure)) {
+				results[index] = result;
+			};
+		});
+
+		mapPromise = build((resolveCallback, rejectCallback) => {
+			const execute = () => {
+				if (!(executors.length > 0 && c > active && !failure)) {
+					return;
+				}
+
+				active = active + 1;
+
+				const executor = executors.shift();
+
+				(async () => {
+					try {
+						await executor();
+
+						if (failure) {
 							return;
 						}
 
-						active = active + 1;
+						active = active - 1;
+						complete = complete + 1;
 
-						const executor = executors.shift();
+						if (complete < total) {
+							execute();
+						} else {
+							resolveCallback(results);
+						}
+					} catch (error) {
+						failure = true;
 
-						executor()
-							.then(() => {
-								if (failure) {
-									return;
-								}
+						rejectCallback(error);
+					}
+				})();
 
-								active = active - 1;
-								complete = complete + 1;
+				execute();
+			};
 
-								if (complete < total) {
-									execute();
-								} else {
-									resolveCallback(results);
-								}
-							}).catch((error) => {
-								failure = false;
-
-								rejectCallback(error);
-							});
-
-						execute();
-					};
-
-					execute();
-				});
-			}
-
-			return mapPromise;
+			execute();
 		});
+	}
+
+	return mapPromise;
 }
 
 /**
@@ -159,12 +154,15 @@ export async function map(items, mapper, concurrency) {
  * @returns {Promise<*>}
  */
 export async function pipeline(functions, input) {
-	return Promise.resolve()
-		.then(() => {
-			assert.argumentIsArray(functions, 'functions', Function);
+	assert.argumentIsArray(functions, 'functions', Function);
 
-			return functions.reduce((previous, fn) => previous.then((result) => fn(result)), Promise.resolve(input));
-		});
+	let result = input;
+
+	for (let i = 0; i < functions.length; i++) {
+		result = await functions[i](result);
+	}
+
+	return result;
 }
 
 /**
@@ -179,20 +177,19 @@ export async function pipeline(functions, input) {
  * @returns {Promise}
  */
 export async function first(executors) {
-	return Promise.resolve()
-		.then(() => {
-			assert.argumentIsArray(executors, 'executors', Function);
+	assert.argumentIsArray(executors, 'executors', Function);
 
-			return executors.reduce((previous, executor) => {
-				return previous.then((result) => {
-					if (result === null) {
-						return executor().catch(() => Promise.resolve(null));
-					} else {
-						return previous;
-					}
-				});
-			}, Promise.resolve(null));
-		});
+	let result = null;
+
+	for (let i = 0; i < executors.length && result === null; i++) {
+		try {
+			result = await executors[i]();
+		} catch {
+			result = null;
+		}
+	}
+
+	return result;
 }
 
 /**
