@@ -23,6 +23,11 @@ async function main() {
     console.log('Email removed from suppression list:', emailToAdd);
 }
 
-main().catch(error => {
-    console.error('Error:', error);
-});
+(async function run() {
+    try {
+        await main();
+    } catch (error) {
+        console.error('Error:', error);
+    }
+})()
+

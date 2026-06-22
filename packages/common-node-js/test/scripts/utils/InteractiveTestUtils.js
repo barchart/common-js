@@ -26,7 +26,7 @@ export function region() {
 }
 
 export function prefix() {
-	return env('AWS_TEST_PREFIX', `common-node-js-manual-${Date.now()}-${crypto.randomBytes(4).toString('hex')}`);
+	return env('AWS_TEST_PREFIX', `common-node-js-interactive-${Date.now()}-${crypto.randomUUID().slice(0, 8)}`);
 }
 
 export function value(name, defaultValue) {
@@ -35,34 +35,6 @@ export function value(name, defaultValue) {
 
 export function section(name) {
 	console.log(`\n--- ${name} ---`);
-}
-
-export function assert(condition, message) {
-	if (!condition) {
-		throw new Error(`Manual test assertion failed: ${message}`);
-	}
-}
-
-export function assertArray(value, message) {
-	assert(Array.isArray(value), message);
-}
-
-export function assertObject(value, message) {
-	assert(value !== null && typeof value === 'object' && !Array.isArray(value), message);
-}
-
-export function assertString(value, message) {
-	assert(typeof value === 'string' && value.length > 0, message);
-}
-
-export function assertEqual(actual, expected, message) {
-	assert(actual === expected, `${message}. Expected [ ${expected} ], got [ ${actual} ]`);
-}
-
-export function assertIncludes(values, expected, message) {
-	assertArray(values, message);
-
-	assert(values.includes(expected), `${message}. Expected array to include [ ${expected} ]`);
 }
 
 export async function step(name, callback) {
@@ -77,13 +49,13 @@ export async function step(name, callback) {
 	return result;
 }
 
-export function pauseBeforeCleanup(message) {
+export async function pauseBeforeCleanup(message) {
 	if (env('PAUSE_BEFORE_CLEANUP', 'false') !== 'true') {
-		return Promise.resolve();
+		return;
 	}
 
 	return new Promise((resolve) => {
-		const prompt = message || 'Manual verification pause before cleanup. Press Enter to continue cleanup.';
+		const prompt = message || 'interactive verification pause before cleanup. Press Enter to continue cleanup.';
 
 		const rl = readline.createInterface({
 			input: process.stdin,
@@ -92,6 +64,7 @@ export function pauseBeforeCleanup(message) {
 
 		rl.question(`\n${prompt}\n`, () => {
 			rl.close();
+
 			resolve();
 		});
 	});
@@ -126,4 +99,3 @@ export async function run(name, callback) {
 		process.exitCode = 1;
 	}
 }
-

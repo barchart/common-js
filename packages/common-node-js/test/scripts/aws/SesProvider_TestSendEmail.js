@@ -1,6 +1,6 @@
 import SesProvider from './../../../aws/SesProvider.js';
 
-async function sesProvider_TestSendEmail() {
+async function main() {
 	const configuration = {
 		region: 'us-east-1'
 	};
@@ -37,6 +37,11 @@ async function sesProvider_TestSendEmail() {
 	}
 }
 
-sesProvider_TestSendEmail().catch(error => {
-	console.error('Error:', error);
-});
+(async function run() {
+	try {
+		await main();
+	} catch (error) {
+		console.error('Error:', error);
+	}
+})()
+

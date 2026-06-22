@@ -1,3 +1,4 @@
+import * as assert from '@barchart/common-js/lang/assert.js';
 import * as utils from '../utils/InteractiveTestUtils.js';
 
 import DynamoProvider from '../../../aws/DynamoProvider.js';
@@ -11,20 +12,20 @@ import QueryBuilder from '../../../aws/dynamo/query/builders/QueryBuilder.js';
 import ScanBuilder from '../../../aws/dynamo/query/builders/ScanBuilder.js';
 import UpdateBuilder from '../../../aws/dynamo/query/builders/UpdateBuilder.js';
 
-utils.run('DynamoProvider manual test', async () => {
+utils.run('DynamoProvider interactive test', async () => {
 	const prefix = utils.prefix();
 
-	const tableName = 'manual-table';
+	const tableName = 'interactive-table';
 	const provider = new DynamoProvider({ region: utils.region(), prefix });
 
 	let table = null;
 	let backupArn = null;
 
 	const started = await provider.start();
-	utils.assertEqual(started, true, 'Dynamo provider should start');
+	assert.areEqual(started, true, 'Dynamo provider should start');
 
 	console.log('Configuration:', provider.getConfiguration());
-	utils.assertEqual(provider.getConfiguration().prefix, prefix, 'getConfiguration should return configured prefix');
+	assert.areEqual(provider.getConfiguration().prefix, prefix, 'getConfiguration should return configured prefix');
 
 	try {
 		table = provider.getTableBuilder(tableName)
@@ -35,17 +36,17 @@ utils.run('DynamoProvider manual test', async () => {
 			.table;
 
 		const createdTable = await utils.step('createTable', () => provider.createTable(table));
-		utils.assertEqual(createdTable.name, table.name, 'createTable should return created table definition');
+		assert.areEqual(createdTable.name, table.name, 'createTable should return created table definition');
 
 		const fetchedTable = await utils.step('getTable', () => provider.getTable(tableName));
-		utils.assertEqual(fetchedTable.name, table.name, 'getTable should return created table definition');
+		assert.areEqual(fetchedTable.name, table.name, 'getTable should return created table definition');
 
 		const tables = await utils.step('getTables', () => provider.getTables());
-		utils.assertIncludes(tables, table.name, 'getTables should include created table');
+		assert.argumentIsValid(tables, 'values', value => Array.isArray(value) && value.includes(table.name), 'getTables should include created table');
 
-		utils.assertEqual(await utils.step('saveItem', () => provider.saveItem({ id: 'one', value: 'created', count: 1 }, table, true)), true, 'saveItem should return true');
+		assert.areEqual(await utils.step('saveItem', () => provider.saveItem({ id: 'one', value: 'created', count: 1 }, table, true)), true, 'saveItem should return true');
 
-		utils.assertEqual(await utils.step('createItems', () => provider.createItems([
+		assert.areEqual(await utils.step('createItems', () => provider.createItems([
 			{ id: 'two', value: 'batch-2', count: 2 },
 			{ id: 'three', value: 'batch-3', count: 3 }
 		], table)), true, 'createItems should return true');
@@ -57,44 +58,44 @@ utils.run('DynamoProvider manual test', async () => {
 			.update;
 
 		const updated = await utils.step('updateItem', () => provider.updateItem(update));
-		utils.assertEqual(updated.value, 'updated', 'updateItem should return updated value');
+		assert.areEqual(updated.value, 'updated', 'updateItem should return updated value');
 
 		const scan = ScanBuilder.targeting(table)
-			.withDescription('manual scan')
+			.withDescription('interactive scan')
 			.withLimit(10)
 			.scan;
 
 		const scanned = await utils.step('scan', () => provider.scan(scan));
-		utils.assertEqual(scanned.length, 3, 'scan should return all inserted items');
+		assert.areEqual(scanned.length, 3, 'scan should return all inserted items');
 
 		const scanChunk = await utils.step('scanChunk', () => provider.scanChunk(scan));
-		utils.assertEqual(scanChunk.results.length, 3, 'scanChunk should return inserted items');
+		assert.areEqual(scanChunk.results.length, 3, 'scanChunk should return inserted items');
 
 		const query = QueryBuilder.targeting(table)
-			.withDescription('manual query')
+			.withDescription('interactive query')
 			.withKeyFilterBuilder(fb => fb.withExpression('id', OperatorType.EQUALS, 'one'))
 			.query;
 
 		const queried = await utils.step('query', () => provider.query(query));
-		utils.assertEqual(queried.length, 1, 'query should return one item');
-		utils.assertEqual(queried[0].id, 'one', 'query should return requested item');
+		assert.areEqual(queried.length, 1, 'query should return one item');
+		assert.areEqual(queried[0].id, 'one', 'query should return requested item');
 
 		const queryChunk = await utils.step('queryChunk', () => provider.queryChunk(query));
-		utils.assertEqual(queryChunk.results.length, 1, 'queryChunk should return one item');
+		assert.areEqual(queryChunk.results.length, 1, 'queryChunk should return one item');
 
 		const parallel = await utils.step('queryParallel', () => provider.queryParallel([query]));
-		utils.assertEqual(parallel.length, 1, 'queryParallel should flatten query results');
+		assert.areEqual(parallel.length, 1, 'queryParallel should flatten query results');
 
 		if (utils.env('DYNAMO_TEST_BACKUPS', 'false') === 'true') {
-			const backupName = `manual-backup-${Date.now()}`;
+			const backupName = `interactive-backup-${Date.now()}`;
 
 			const backup = await utils.step('createBackup', () => provider.createBackup(table.name, backupName));
 
-			utils.assertString(backup.BackupDetails.BackupArn, 'createBackup should return BackupArn');
+			assert.argumentIsValid(backup.BackupDetails.BackupArn, 'value', value => typeof value === 'string' && value.length > 0, 'createBackup should return BackupArn');
 			backupArn = backup.BackupDetails.BackupArn;
 
 			const backups = await utils.step('listBackups', () => provider.listBackups(table.name));
-			utils.assert(backups.some(item => item.BackupArn === backup.BackupDetails.BackupArn), 'listBackups should include created backup');
+			assert.argumentIsValid(backups.some(item => item.BackupArn === backup.BackupDetails.BackupArn), 'condition', value => value === true, 'listBackups should include created backup');
 		} else {
 			console.log('Skipping backup functions, set DYNAMO_TEST_BACKUPS=true to test createBackup/listBackups/deleteBackup.');
 		}
@@ -104,14 +105,19 @@ utils.run('DynamoProvider manual test', async () => {
 			await utils.pauseBeforeCleanup(`Inspect DynamoDB table [ ${table.name} ], then press Enter to cleanup.`);
 
 			await utils.cleanup('deleteItem', async () => {
-				utils.assertEqual(await provider.deleteItem({ id: 'one' }, table, true), true, 'deleteItem should return true');
+				assert.areEqual(await provider.deleteItem({ id: 'one' }, table, true), true, 'deleteItem should return true');
 			});
 
 			await utils.cleanup('deleteItems', async () => {
-				utils.assertEqual(await provider.deleteItems([{ id: 'two' }, { id: 'three' }], table, true), true, 'deleteItems should return true');
+				assert.areEqual(await provider.deleteItems([{ id: 'two' }, { id: 'three' }], table, true), true, 'deleteItems should return true');
 			});
 
-			await utils.cleanup('deleteBackup', () => backupArn ? provider.deleteBackup(backupArn) : Promise.resolve());
+			await utils.cleanup('deleteBackup', async () => {
+				if (backupArn) {
+					await provider.deleteBackup(backupArn);
+				}
+			});
+
 			await utils.cleanup('deleteTable', () => provider.deleteTable(table.name));
 		}
 	}

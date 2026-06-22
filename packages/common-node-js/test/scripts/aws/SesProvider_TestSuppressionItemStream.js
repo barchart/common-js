@@ -45,6 +45,10 @@ async function main() {
 	});
 }
 
-main().catch(error => {
-	console.error('Error:', error);
-});
+(async function run() {
+	try {
+		await main();
+	} catch (error) {
+		console.error('Error:', error);
+	}
+})()

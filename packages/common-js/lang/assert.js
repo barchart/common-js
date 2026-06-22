@@ -152,8 +152,8 @@ export function argumentIsValid(variable, variableName, predicate, predicateDesc
  * @public
  * @param {*} a
  * @param {*} b
- * @param {*} descriptionA
- * @param {*} descriptionB
+ * @param {*=} descriptionA
+ * @param {*=} descriptionB
  */
 export function areEqual(a, b, descriptionA, descriptionB) {
 	if (a !== b) {
