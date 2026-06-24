@@ -309,6 +309,10 @@ export default class Tree {
 		return converted;
 	}
 
+	_getChildren() {
+		return this.#children;
+	}
+
 	/**
 	 * Returns a string representation.
 	 *
