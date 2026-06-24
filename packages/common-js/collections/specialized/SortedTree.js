@@ -46,7 +46,7 @@ export default class SortedTree extends Tree {
 			throw new Error('Unable to find a comparator for the sorted tree.');
 		}
 
-		array.insert(this._getChildren(), child, comparatorNode.#comparator);
+		array.insert(this.getChildren(), child, comparatorNode.#comparator);
 
 		return child;
 	}
