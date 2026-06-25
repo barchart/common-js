@@ -13,8 +13,8 @@ export default class PriorityQueue extends Queue {
 	#comparator;
 
 	/**
-     * @param {(a: any, b: any) => number} comparator
-     */
+	 * @param {(a: *, b: *) => number} comparator - The comparator used to sort items.
+	 */
 	constructor(comparator) {
 		super();
 
@@ -24,46 +24,16 @@ export default class PriorityQueue extends Queue {
 	}
 
 	/**
+	 * Adds an item to the queue according to its priority.
+	 *
 	 * @public
-	 * @param {*} item
-	 * @returns {PriorityQueue}
+	 * @param {*} item - The item to add.
+	 * @returns {*} The item added to the queue.
 	 */
 	enqueue(item) {
 		array.insert(this._getArray(), item, this.#comparator);
 
 		return item;
-	}
-
-	/**
-	 * @public
-	 * @returns {*}
-	 */
-	dequeue() {
-		return super.dequeue();
-	}
-
-	/**
-	 * @public
-	 * @returns {*}
-	 */
-	peek() {
-		return super.peek();
-	}
-
-	/**
-	 * @public
-	 * @param {*} action
-	 */
-	scan(action) {
-		super.scan(action);
-	}
-
-	/**
-	 * @public
-	 * @returns {Array}
-	 */
-	toArray() {
-		return super.toArray();
 	}
 
 	/**

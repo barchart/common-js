@@ -1,7 +1,7 @@
 import * as assert from './../lang/assert.js';
 
 /**
- * A queue collection (i.e. supports FIFO operations).
+ * A queue collection that supports FIFO operations.
  *
  * @public
  */
@@ -13,11 +13,11 @@ export default class Queue {
 	}
 
 	/**
-	 * Adds an item to the queue.
+	 * Adds an item to the end of the queue.
 	 *
 	 * @public
-	 * @param {object} item
-	 * @returns {object} - The item added to the queue.
+	 * @param {*} item - The item to add.
+	 * @returns {*} The item added to the queue.
 	 */
 	enqueue(item) {
 		this.#array.push(item);
@@ -29,7 +29,8 @@ export default class Queue {
 	 * Removes the next item from the queue and returns it. Throws if the queue is empty.
 	 *
 	 * @public
-	 * @returns {object} - The item added to the queue.
+	 * @returns {*} The item removed from the queue.
+	 * @throws {Error} If the queue is empty.
 	 */
 	dequeue() {
 		if (this.empty()) {
@@ -40,10 +41,11 @@ export default class Queue {
 	}
 
 	/**
-	 * Returns the next item in the queue (without removing it). Throws if the queue is empty.
+	 * Returns the next item in the queue without removing it.
 	 *
 	 * @public
-	 * @returns {object} - The item added to the queue.
+	 * @returns {*} The next item in the queue.
+	 * @throws {Error} If the queue is empty.
 	 */
 	peek() {
 		if (this.empty()) {
@@ -54,10 +56,10 @@ export default class Queue {
 	}
 
 	/**
-	 * Returns true if the queue is empty; otherwise false.
+	 * Indicates whether the queue is empty.
 	 *
 	 * @public
-	 * @returns {boolean}
+	 * @returns {boolean} True if the queue is empty; otherwise, false.
 	 */
 	empty() {
 		return this.#array.length === 0;
@@ -72,20 +74,25 @@ export default class Queue {
 	scan(action) {
 		assert.argumentIsRequired(action, 'action', Function);
 
-		this.#array.forEach(x => action(x));
+		this.#array.forEach(item => action(item));
 	}
 
 	/**
-	 * Outputs an array of the queue's items; without affecting the
-	 * queue's internal state;
+	 * Returns a copy of the queue's items without affecting its internal state.
 	 *
 	 * @public
-	 * @returns {Array}
+	 * @returns {Array<*>} A copy of the queue's items.
 	 */
 	toArray() {
 		return this.#array.slice(0);
 	}
 
+	/**
+	 * Returns the queue's internal array for use by derived classes.
+	 *
+	 * @protected
+	 * @returns {Array<*>} The internal array.
+	 */
 	_getArray() {
 		return this.#array;
 	}
