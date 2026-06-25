@@ -31,6 +31,7 @@ export default class ComponentTypeDefinition {
 	/**
 	 * The field's description.
 	 *
+	 * @public
 	 * @returns {string}
 	 */
 	get description() {
@@ -40,6 +41,7 @@ export default class ComponentTypeDefinition {
 	/**
 	 * The field's data type.
 	 *
+	 * @public
 	 * @returns {DataType}
 	 */
 	get dataType() {
@@ -49,6 +51,7 @@ export default class ComponentTypeDefinition {
 	/**
 	 * The field's suffix.
 	 *
+	 * @public
 	 * @returns {string}
 	 */
 	get suffix() {

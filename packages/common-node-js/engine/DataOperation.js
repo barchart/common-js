@@ -152,6 +152,13 @@ export default class DataOperation {
 		return other === this;
 	}
 
+	/**
+	 * Validates the input.
+	 *
+	 * @protected
+	 * @param {number} dataProvider - The data provider.
+	 * @returns {*}
+	 */
 	_validateDataProvider(dataProvider) {
 		assert.argumentIsRequired(dataProvider, 'dataProvider', DataProvider, 'DataProvider');
 	}

@@ -16,13 +16,13 @@ export default class ClientProvider extends Disposable {
 	#configuration;
 
 	/**
-	 * @param {string} host
-	 * @param {string} database
-	 * @param {string} username
-	 * @param {string} password
-	 * @param {number=} port
-	 * @param {string=} applicationName
-	 * @param {string=} charset
+	 * @param {string} host - The host.
+	 * @param {string} database - The database.
+	 * @param {string} username - The username.
+	 * @param {string} password - The password.
+	 * @param {number=} port - The port.
+	 * @param {string=} applicationName - The application name.
+	 * @param {string=} charset - The charset.
 	 */
 	constructor(host, database, username, password, port, applicationName, charset) {
 		super();

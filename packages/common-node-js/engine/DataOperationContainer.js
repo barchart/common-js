@@ -19,10 +19,10 @@ export default class DataOperationContainer {
 	#stage;
 
 	/**
-	 * @param {DataOperation} operation
-	 * @param {DataOperationStage=} stage
-	 * @param {DataOperationAdjustment=} adjustment
-	 * @param {number=} order
+	 * @param {DataOperation} operation - The operation.
+	 * @param {DataOperationStage=} stage - The stage.
+	 * @param {DataOperationAdjustment=} adjustment - The adjustment.
+	 * @param {number=} order - The order.
 	 */
 	constructor(operation, stage, adjustment, order) {
 		assert.argumentIsOptional(stage, 'stage', DataOperationStage, 'DataOperationStage');

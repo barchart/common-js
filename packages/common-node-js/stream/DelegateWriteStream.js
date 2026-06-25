@@ -16,9 +16,9 @@ export default class DelegateWriteStream extends Stream.Writable {
 	#delegate;
 
 	/**
-	 * @param {Function} delegate
-	 * @param {object=} options
-	 * @param {boolean=} asynchronous
+	 * @param {Function} delegate - The delegate.
+	 * @param {object=} options - The options.
+	 * @param {boolean=} asynchronous - The asynchronous.
 	 */
 	constructor(delegate, options, asynchronous) {
 		super(object.merge({ objectMode: true }, (options || { })));
@@ -30,6 +30,15 @@ export default class DelegateWriteStream extends Stream.Writable {
 		this.#asynchronous = is.boolean(asynchronous) && asynchronous;
 	}
 
+	/**
+	 * Writes data from the stream.
+	 *
+	 * @protected
+	 * @param {*} chunk - The chunk.
+	 * @param {string} encoding - The encoding.
+	 * @param {Function} callback - The callback.
+	 * @returns {*}
+	 */
 	_write(chunk, encoding, callback) {
 		if (this.#asynchronous) {
 			processAsynchronous(this.#delegate, chunk, callback);

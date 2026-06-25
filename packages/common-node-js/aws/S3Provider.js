@@ -40,7 +40,7 @@ export default class S3Provider extends Disposable {
 	#started;
 
 	/**
-	 * @param {object} configuration
+	 * @param {object} configuration - The configuration.
 	 * @param {string} configuration.region
 	 * @param {string=} configuration.apiVersion
 	 * @param {string=} configuration.bucket
@@ -309,7 +309,7 @@ export default class S3Provider extends Disposable {
 	 * @param {string} bucket
 	 * @param {string} key
 	 * @param {Readable} reader
-	 * @return {Promise<object>}
+	 * @returns {Promise<object>}
 	 */
 	async uploadStream(bucket, key, reader) {
 		this.#checkReady();
@@ -364,7 +364,7 @@ export default class S3Provider extends Disposable {
 	 * @async
 	 * @param {string} bucket
 	 * @param {string} key
-	 * @return {Promise<Readable>}
+	 * @returns {Promise<Readable>}
 	 */
 	async createReadStream(bucket, key) {
 		this.#checkReady();
@@ -513,23 +513,55 @@ function getSignedUrlCommand(operation, payload) {
 
 const contentHandlers = [ ];
 
+/**
+ * Handles content content.
+ */
 class ContentHandler {
 	constructor() {
 
 	}
 
+	/**
+	 * Indicates if the process can be performed.
+	 *
+	 * @public
+	 * @param {string} mimeType - The mime type.
+	 * @returns {boolean}
+	 */
 	canProcess(mimeType) {
 		return true;
 	}
 
+	/**
+	 * Runs the to buffer operation.
+	 *
+	 * @public
+	 * @param {*} content - The content.
+	 * @returns {*}
+	 */
 	toBuffer(content) {
 		return Buffer.from(content);
 	}
 
+	/**
+	 * Runs the from buffer operation.
+	 *
+	 * @public
+	 * @param {Buffer} buffer - The buffer.
+	 * @returns {*}
+	 */
 	fromBuffer(buffer) {
 		return buffer;
 	}
 
+	/**
+	 * Returns the handler for.
+	 *
+	 * @public
+	 * @static
+	 * @param {string} mimeType - The mime type.
+	 * @returns {*}
+	 */
 	static getHandlerFor(mimeType) {
 		if (contentHandlers.length === 0) {
 			contentHandlers.push(new JsonContentHandler());
@@ -541,15 +573,32 @@ class ContentHandler {
 	}
 }
 
+/**
+ * Handles text content content.
+ */
 class TextContentHandler extends ContentHandler {
 	constructor() {
 		super();
 	}
 
+	/**
+	 * Indicates if the process can be performed.
+	 *
+	 * @public
+	 * @param {string} mimeType - The mime type.
+	 * @returns {boolean}
+	 */
 	canProcess(mimeType) {
 		return mimeType.startsWith('text');
 	}
 
+	/**
+	 * Runs the to buffer operation.
+	 *
+	 * @public
+	 * @param {*} content - The content.
+	 * @returns {*}
+	 */
 	toBuffer(content) {
 		if (is.string(content)) {
 			return Buffer.from(content, encodingTypes.utf8);
@@ -558,20 +607,44 @@ class TextContentHandler extends ContentHandler {
 		}
 	}
 
+	/**
+	 * Runs the from buffer operation.
+	 *
+	 * @public
+	 * @param {Buffer} buffer - The buffer.
+	 * @returns {*}
+	 */
 	fromBuffer(buffer) {
 		return buffer.toString(encodingTypes.utf8);
 	}
 }
 
+/**
+ * Handles json content content.
+ */
 class JsonContentHandler extends TextContentHandler {
 	constructor() {
 		super();
 	}
 
+	/**
+	 * Indicates if the process can be performed.
+	 *
+	 * @public
+	 * @param {string} mimeType - The mime type.
+	 * @returns {boolean}
+	 */
 	canProcess(mimeType) {
 		return mimeType === mimeTypes.json;
 	}
 
+	/**
+	 * Runs the to buffer operation.
+	 *
+	 * @public
+	 * @param {*} content - The content.
+	 * @returns {*}
+	 */
 	toBuffer(content) {
 		if (is.object(content)) {
 			return super.toBuffer(JSON.stringify(content));
@@ -580,11 +653,21 @@ class JsonContentHandler extends TextContentHandler {
 		}
 	}
 
+	/**
+	 * Runs the from buffer operation.
+	 *
+	 * @public
+	 * @param {Buffer} buffer - The buffer.
+	 * @returns {*}
+	 */
 	fromBuffer(buffer) {
 		return JSON.parse(super.fromBuffer(buffer));
 	}
 }
 
+/**
+ * Handles default content content.
+ */
 class DefaultContentHandler extends ContentHandler {
 	constructor() {
 		super();

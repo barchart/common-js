@@ -27,7 +27,7 @@ export default class HttpProvider extends Disposable {
 	#started;
 
 	/**
-	 * @param {object} configuration
+	 * @param {object} configuration - The configuration.
 	 */
 	constructor(configuration) {
 		super();
@@ -46,6 +46,7 @@ export default class HttpProvider extends Disposable {
 	 * Initializes the provider. Do not call other functions until
 	 * this function is invoked and the resulting promise resolves.
 	 *
+	 * @public
 	 * @async
 	 * @returns {Promise}
 	 */
@@ -76,6 +77,7 @@ export default class HttpProvider extends Disposable {
 	/**
 	 * Executes an HTTP (or HTTPS) request and returns a promise.
 	 *
+	 * @public
 	 * @async
 	 * @param {string} host
 	 * @param {string=} path
@@ -188,6 +190,7 @@ export default class HttpProvider extends Disposable {
 	/**
      * Executes an HTTP (or HTTPS) request and returns a promise.
      *
+	 * @public
      * @async
      * @param {string} uri
      * @param {string=} method

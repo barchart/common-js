@@ -11,7 +11,7 @@ export default class Filter {
 	#expressions;
 
 	/**
-	 * @param {Expression[]} expressions
+	 * @param {Expression[]} expressions - The expressions.
 	 */
 	constructor(expressions) {
 		this.#expressions = expressions;

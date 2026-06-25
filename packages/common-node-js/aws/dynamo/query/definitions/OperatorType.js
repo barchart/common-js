@@ -15,10 +15,10 @@ export default class OperatorType {
 	#operandCount;
 
 	/**
-	 * @param {string} description
-	 * @param {Function} formatter
-	 * @param {number} operandCount
-	 * @param {Array<KeyType>} keyTypes
+	 * @param {string} description - The description.
+	 * @param {Function} formatter - The formatter.
+	 * @param {number} operandCount - The operand count.
+	 * @param {Array<KeyType>} keyTypes - The key types.
 	 */
 	constructor(description, formatter, operandCount, keyTypes) {
 		assert.argumentIsRequired(description, 'description', String);

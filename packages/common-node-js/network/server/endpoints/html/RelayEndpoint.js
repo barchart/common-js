@@ -9,6 +9,11 @@ const emptyCommand = CommandHandler.fromFunction((ignored) => {
 	return {};
 });
 
+/**
+ * Provides relay endpoint behavior.
+ *
+ * @public
+ */
 export default class RelayEndpoint extends Endpoint {
 	#acceptPath;
 	#forwardHost;
@@ -18,12 +23,12 @@ export default class RelayEndpoint extends Endpoint {
 	#verb;
 
 	/**
-	 * @param {*} verb
-	 * @param {*} acceptPath
-	 * @param {*} forwardHost
-	 * @param {*} forwardPath
-	 * @param {*} headerOverrides
-	 * @param {*} parameterOverrides
+	 * @param {*} verb - The verb.
+	 * @param {*} acceptPath - The accept path.
+	 * @param {*} forwardHost - The forward host.
+	 * @param {*} forwardPath - The forward path.
+	 * @param {*} headerOverrides - The header overrides.
+	 * @param {*} parameterOverrides - The parameter overrides.
 	 */
 	constructor(verb, acceptPath, forwardHost, forwardPath, headerOverrides, parameterOverrides) {
 		super(emptyCommand);

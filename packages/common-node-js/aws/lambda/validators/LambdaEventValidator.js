@@ -25,7 +25,7 @@ export default class LambdaEventValidator extends LambdaValidator {
 	#messageValidators;
 
 	/**
-	 * @param {*} messageValidators
+	 * @param {*} messageValidators - The message validators.
 	 */
 	constructor(messageValidators) {
 		super();

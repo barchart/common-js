@@ -15,9 +15,9 @@ export default class Conditional extends Action {
 	#filter;
 
 	/**
-	 * @param {Table} table
-	 * @param {Filter=} filter
-	 * @param {string=} description
+	 * @param {Table} table - The table.
+	 * @param {Filter=} filter - The filter.
+	 * @param {string=} description - The description.
 	 */
 	constructor(table, filter, description) {
 		super(table, null, (description || '[Unnamed Conditional]'));

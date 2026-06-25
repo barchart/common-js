@@ -22,9 +22,9 @@ export default class GroupTransformer extends Stream.Transform {
 	#silent;
 
 	/**
-	 * @param {Function} keySelector
-	 * @param {string=} description
-	 * @param {boolean=} silent
+	 * @param {Function} keySelector - The key selector.
+	 * @param {string=} description - The description.
+	 * @param {boolean=} silent - The silent.
 	 */
 	constructor(keySelector, description, silent) {
 		super({ objectMode: true });
@@ -44,6 +44,14 @@ export default class GroupTransformer extends Stream.Transform {
 		this.#key = null;
 	}
 
+	/**
+	 * Transforms the input.
+	 *
+	 * @protected
+	 * @param {*} chunk - The chunk.
+	 * @param {string} encoding - The encoding.
+	 * @param {Function} callback - The callback.
+	 */
 	_transform(chunk, encoding, callback) {
 		this.#counter = this.#counter + 1;
 
@@ -88,6 +96,13 @@ export default class GroupTransformer extends Stream.Transform {
 		}
 	}
 
+	/**
+	 * Runs the flush operation.
+	 *
+	 * @protected
+	 * @param {Function} callback - The callback.
+	 * @returns {*}
+	 */
 	_flush(callback) {
 		this.#publish();
 

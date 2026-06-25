@@ -13,7 +13,7 @@ export default class CompositeWriter extends Writer {
 	#writers;
 
 	/**
-	 * @param {Writer[]} writers
+	 * @param {Writer[]} writers - The writers.
 	 */
 	constructor(writers) {
 		super();
@@ -23,10 +23,26 @@ export default class CompositeWriter extends Writer {
 		this.#writers = writers;
 	}
 
+	/**
+	 * Writes data from the stream.
+	 *
+	 * @protected
+	 * @param {object} source - The source.
+	 * @param {object} target - The target.
+	 * @returns {*}
+	 */
 	_write(source, target) {
 		return this.#writers.reduce((targetToUse, writer) => writer.write(source, targetToUse), target);
 	}
 
+	/**
+	 * Indicates if the write can be performed.
+	 *
+	 * @protected
+	 * @param {object} source - The source.
+	 * @param {object} target - The target.
+	 * @returns {boolean}
+	 */
 	_canWrite(source, target) {
 		return true;
 	}

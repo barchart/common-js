@@ -21,7 +21,7 @@ export default class Client extends Disposable {
 	#id;
 
 	/**
-	 * @param {object} connection
+	 * @param {object} connection - The connection.
 	 */
 	constructor(connection) {
 		super();

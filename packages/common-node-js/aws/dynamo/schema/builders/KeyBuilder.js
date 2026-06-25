@@ -16,8 +16,8 @@ export default class KeyBuilder {
 	#key;
 
 	/**
-	 * @param {string} name
-	 * @param {TableBuilder} parent
+	 * @param {string} name - The name.
+	 * @param {TableBuilder} parent - The parent.
 	 */
 	constructor(name, parent) {
 		assert.argumentIsRequired(name, 'name', String);

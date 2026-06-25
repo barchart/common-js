@@ -22,7 +22,7 @@ export default class Router extends Disposable {
 	#suppressExpressions;
 
 	/**
-	 * @param {RegExp[]=} suppressExpressions
+	 * @param {RegExp[]=} suppressExpressions - The suppress expressions.
 	 */
 	constructor(suppressExpressions) {
 		super();
@@ -94,8 +94,8 @@ export default class Router extends Disposable {
 
 	/**
 	 * @protected
-	 * @param messageType
-	 * @return {boolean}
+	 * @param {string} messageType - The message type.
+	 * @returns {boolean}
 	 */
 	_canRoute(messageType) {
 		return false;
@@ -135,10 +135,10 @@ export default class Router extends Disposable {
 	/**
 	 * @protected
 	 * @async
-	 * @param messageType
-	 * @param payload
-	 * @param timeout
-	 * @param forget
+	 * @param {string} messageType - The message type.
+	 * @param {object} payload - The payload.
+	 * @param {number} timeout - The timeout.
+	 * @param {boolean} forget - The forget.
 	 */
 	async _route(messageType, payload, timeout, forget) {
 		return;

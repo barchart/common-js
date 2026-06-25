@@ -23,10 +23,24 @@ export default class PropertyDefaultTransformation extends PropertyTransformatio
 		this.#defaultValue = defaultValue;
 	}
 
+	/**
+	 * Indicates if the transform can be performed.
+	 *
+	 * @protected
+	 * @param {*} input - The input.
+	 * @returns {boolean}
+	 */
 	_canTransform(input) {
 		return true;
 	}
 
+	/**
+	 * Transforms the input.
+	 *
+	 * @protected
+	 * @param {*} value - The value.
+	 * @returns {*}
+	 */
 	_transformValue(value) {
 		if (is.undef(value)) {
 			return this.#defaultValue;

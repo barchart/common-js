@@ -50,7 +50,7 @@ export default class LambdaHelper {
 	 * @static
 	 * @async
 	 * @param {string} secretId
-	 * @return {Promise<string>}
+	 * @returns {Promise<string>}
 	 */
 	static async getSecretValue(secretId) {
 		return LambdaSecretsManager.INSTANCE.getValue(secretId);

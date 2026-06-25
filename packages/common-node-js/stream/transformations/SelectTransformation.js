@@ -34,10 +34,24 @@ export default class SelectTransformation extends Transformation {
 		this.#outputPropertyNames = outputPropertyNames || inputPropertyNames;
 	}
 
+	/**
+	 * Indicates if the transform can be performed.
+	 *
+	 * @protected
+	 * @param {*} input - The input.
+	 * @returns {boolean}
+	 */
 	_canTransform(input) {
 		return is.object(input);
 	}
 
+	/**
+	 * Transforms the input.
+	 *
+	 * @protected
+	 * @param {*} input - The input.
+	 * @returns {*}
+	 */
 	_transform(input) {
 		return this.#inputPropertyNames.reduce((output, inputPropertyName, i) => {
 			if (attributes.has(input, inputPropertyName)) {

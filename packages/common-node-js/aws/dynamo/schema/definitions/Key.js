@@ -12,8 +12,8 @@ export default class Key {
 	#keyType;
 
 	/**
-	 * @param {*} attribute
-	 * @param {*} keyType
+	 * @param {*} attribute - The attribute.
+	 * @param {*} keyType - The key type.
 	 */
 	constructor(attribute, keyType) {
 		this.#attribute = attribute;

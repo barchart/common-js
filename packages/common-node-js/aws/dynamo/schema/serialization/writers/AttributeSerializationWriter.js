@@ -20,7 +20,7 @@ export default class AttributeSerializationWriter extends Writer {
 	#validDelegate;
 
 	/**
-	 * @param {Attribute} attribute
+	 * @param {Attribute} attribute - The attribute.
 	 * @param {boolean=} explicit - If true, derivation is suppressed.
 	 */
 	constructor(attribute, explicit) {
@@ -52,12 +52,28 @@ export default class AttributeSerializationWriter extends Writer {
 		this.#readDelegate = readDelegate;
 	}
 
+	/**
+	 * Writes data from the stream.
+	 *
+	 * @protected
+	 * @param {object} source - The source.
+	 * @param {object} target - The target.
+	 * @returns {*}
+	 */
 	_write(source, target) {
 		const name = this.#attribute.name;
 
 		target[name] = this.#serializer.serialize(this.#readDelegate(source));
 	}
 
+	/**
+	 * Indicates if the write can be performed.
+	 *
+	 * @protected
+	 * @param {object} source - The source.
+	 * @param {object} target - The target.
+	 * @returns {boolean}
+	 */
 	_canWrite(source, target) {
 		return this.#serializer !== null && is.object(source) && this.#validDelegate(source);
 	}

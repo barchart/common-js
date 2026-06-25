@@ -26,10 +26,24 @@ export default class PropertyMapTransformation extends PropertyTransformation {
 		this.#map = map;
 	}
 
+	/**
+	 * Indicates if the transform value can be performed.
+	 *
+	 * @protected
+	 * @param {*} value - The value.
+	 * @returns {boolean}
+	 */
 	_canTransformValue(value) {
 		return this.#map.has(value);
 	}
 
+	/**
+	 * Transforms the input.
+	 *
+	 * @protected
+	 * @param {*} value - The value.
+	 * @returns {*}
+	 */
 	_transformValue(value) {
 		return this.#map.get(value);
 	}

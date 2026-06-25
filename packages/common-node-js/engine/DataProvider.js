@@ -10,7 +10,7 @@ export default class DataProvider {
 	#options;
 
 	/**
-	 * @param {object=} options
+	 * @param {object=} options - The options.
 	 */
 	constructor(options) {
 		this.#options = options || null;
@@ -20,7 +20,7 @@ export default class DataProvider {
 	 * Return configuration options.
 	 *
 	 * @public
-	 * @return {object|null}
+	 * @returns {object|null}
 	 */
 	getOptions() {
 		return this.#options;

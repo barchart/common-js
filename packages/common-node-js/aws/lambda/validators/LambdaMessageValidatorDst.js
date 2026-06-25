@@ -23,6 +23,17 @@ export default class LambdaMessageValidatorDst extends LambdaMessageValidator {
 		super();
 	}
 
+	/**
+	 * Validates the input.
+	 *
+	 * @protected
+	 * @param {string} name - The name.
+	 * @param {object} message - The message.
+	 * @param {object} event - The event.
+	 * @param {*} trigger - The trigger.
+	 * @param {number} messageId - The message id.
+	 * @returns {*}
+	 */
 	_validate(name, message, event, trigger, messageId) {
 		if (trigger !== LambdaTriggerType.CLOUDWATCH) {
 			return true;

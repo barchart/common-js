@@ -27,7 +27,7 @@ export default class SnsProvider extends Disposable {
 	#topicPromises;
 
 	/**
-	 * @param {object} configuration
+	 * @param {object} configuration - The configuration.
 	 * @param {string} configuration.region - The AWS region (e.g. "us-east-1").
 	 * @param {string} configuration.prefix - The prefix that is prepended to any topic name.
 	 * @param {string=} configuration.apiVersion - The SES version (defaults to "2010-03-31").

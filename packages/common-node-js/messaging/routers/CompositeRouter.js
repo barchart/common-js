@@ -16,8 +16,8 @@ export default class CompositeRouter extends Router {
 	#routers;
 
 	/**
-	 * @param {*} routers
-	 * @param {*} suppressExpressions
+	 * @param {*} routers - The routers.
+	 * @param {*} suppressExpressions - The suppress expressions.
 	 */
 	constructor(routers, suppressExpressions) {
 		super(suppressExpressions);

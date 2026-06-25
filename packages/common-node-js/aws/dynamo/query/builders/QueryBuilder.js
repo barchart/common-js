@@ -232,7 +232,7 @@ export default class QueryBuilder extends ActionBuilder {
      * Sets the exclusive start key for the query.
      *
      * @public
-     * @param exclusiveStartKey
+     * @param {boolean} exclusiveStartKey - The exclusive start key.
      * @returns {QueryBuilder}
      */
     withExclusiveStartKey(exclusiveStartKey){

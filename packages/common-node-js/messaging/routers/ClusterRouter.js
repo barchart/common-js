@@ -18,6 +18,11 @@ const UNREGISTER = 'r.u';
 const REQUEST = 'r.q';
 const RESPONSE = 'r.s';
 
+/**
+ * Provides cluster router behavior.
+ *
+ * @public
+ */
 export default class ClusterRouter extends Router {
 	#disposeStack;
 	#messageProvider;
@@ -26,8 +31,8 @@ export default class ClusterRouter extends Router {
 	#requestRegistrations;
 
 	/**
-	 * @param {*} messageProvider
-	 * @param {*} suppressExpressions
+	 * @param {*} messageProvider - The message provider.
+	 * @param {*} suppressExpressions - The suppress expressions.
 	 */
 	constructor(messageProvider, suppressExpressions) {
 		super(suppressExpressions);

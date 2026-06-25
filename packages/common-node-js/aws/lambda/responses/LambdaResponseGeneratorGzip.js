@@ -20,7 +20,7 @@ export default class LambdaResponseGeneratorGzip extends LambdaResponseGenerator
 	#parser;
 
 	/**
-	 * @param {*} parser
+	 * @param {*} parser - The parser.
 	 */
 	constructor(parser) {
 		super();

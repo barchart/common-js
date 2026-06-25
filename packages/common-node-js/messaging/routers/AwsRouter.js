@@ -28,10 +28,10 @@ export default class AwsRouter extends Router {
 	#sqsProvider;
 
 	/**
-	 * @param {SqsProvider} sqsProvider
-	 * @param {RegExp[]=} suppressExpressions
-	 * @param {object=} tags
-	 * @param {string=} identifier
+	 * @param {SqsProvider} sqsProvider - The sqs provider.
+	 * @param {RegExp[]=} suppressExpressions - The suppress expressions.
+	 * @param {object=} tags - The tags.
+	 * @param {string=} identifier - The identifier.
 	 */
 	constructor(sqsProvider, suppressExpressions, tags, identifier) {
 		super(suppressExpressions);

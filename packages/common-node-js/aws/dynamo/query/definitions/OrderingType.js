@@ -10,8 +10,8 @@ export default class OrderingType {
 	#forward;
 
 	/**
-	 * @param {string} description
-	 * @param {boolean} forward
+	 * @param {string} description - The description.
+	 * @param {boolean} forward - The forward.
 	 */
 	constructor(description, forward) {
 		assert.argumentIsRequired(description, 'description', String);

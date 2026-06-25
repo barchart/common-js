@@ -14,9 +14,9 @@ export default class Expression {
 	#operatorType;
 
 	/**
-	 * @param {Attribute} attribute
-	 * @param {OperatorType=} operatorType
-	 * @param {*=} operand
+	 * @param {Attribute} attribute - The attribute.
+	 * @param {OperatorType=} operatorType - The operator type.
+	 * @param {*=} operand - The operand.
 	 */
 	constructor(attribute, operatorType, operand) {
 		this.#attribute = attribute;

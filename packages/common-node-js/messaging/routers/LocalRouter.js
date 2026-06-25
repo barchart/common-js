@@ -8,11 +8,16 @@ import log4js from 'log4js';
 
 const logger = log4js.getLogger('common-node/messaging/routers/LocalRouter');
 
+/**
+ * Provides local router behavior.
+ *
+ * @public
+ */
 export default class LocalRouter extends Router {
 	#requestHandlers;
 
 	/**
-	 * @param {*} suppressExpressions
+	 * @param {*} suppressExpressions - The suppress expressions.
 	 */
 	constructor(suppressExpressions) {
 		super(suppressExpressions);

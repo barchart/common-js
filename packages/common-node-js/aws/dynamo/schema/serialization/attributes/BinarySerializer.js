@@ -20,10 +20,22 @@ export default class BinarySerializer extends AttributeSerializer {
 		super();
 	}
 
+	/**
+	 * Returns the compression type.
+	 *
+	 * @protected
+	 * @returns {*}
+	 */
 	_getCompressionType() {
 		return null;
 	}
 
+	/**
+	 * Returns the encryptor.
+	 *
+	 * @protected
+	 * @returns {*}
+	 */
 	_getEncryptor() {
 		return null;
 	}

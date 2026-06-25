@@ -40,7 +40,7 @@ export default class Writer {
 	 * @public
 	 * @param {object} source
 	 * @param {object} target
-	 * @return {boolean}
+	 * @returns {boolean}
 	 */
 	canWrite(source, target) {
 		return this._canWrite(source, target);
@@ -51,7 +51,7 @@ export default class Writer {
 	 * @abstract
 	 * @param {object} source
 	 * @param {object} target
-	 * @return {boolean}
+	 * @returns {boolean}
 	 */
 	_canWrite(source, target) {
 		return true;

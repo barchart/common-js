@@ -17,7 +17,7 @@ export default class ComponentDeserializationWriter extends Writer {
 	#serializer;
 
 	/**
-	 * @param {Component} component
+	 * @param {Component} component - The component.
 	 */
 	constructor(component) {
 		super();
@@ -28,6 +28,14 @@ export default class ComponentDeserializationWriter extends Writer {
 		this.#serializer = Serializers.forComponent(component);
 	}
 
+	/**
+	 * Writes data from the stream.
+	 *
+	 * @protected
+	 * @param {object} source - The source.
+	 * @param {object} target - The target.
+	 * @returns {*}
+	 */
 	_write(source, target) {
 		const name = this.#component.name;
 		const definitions = this.#component.componentType.definitions;
@@ -41,6 +49,14 @@ export default class ComponentDeserializationWriter extends Writer {
 		target[name] = this.#serializer.deserialize(values);
 	}
 
+	/**
+	 * Indicates if the write can be performed.
+	 *
+	 * @protected
+	 * @param {object} source - The source.
+	 * @param {object} target - The target.
+	 * @returns {boolean}
+	 */
 	_canWrite(source, target) {
 		return this.#serializer !== null && is.object(source) && source.hasOwnProperty(this.#component.name);
 	}

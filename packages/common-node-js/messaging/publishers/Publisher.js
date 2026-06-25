@@ -21,7 +21,7 @@ export default class Publisher extends Disposable {
 	#suppressExpressions;
 
 	/**
-	 * @param {RegExp[]=} suppressExpressions
+	 * @param {RegExp[]=} suppressExpressions - The suppress expressions.
 	 */
 	constructor(suppressExpressions) {
 		super();

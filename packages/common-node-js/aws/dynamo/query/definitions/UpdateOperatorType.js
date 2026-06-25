@@ -1,14 +1,19 @@
 import * as assert from '@barchart/common-js/lang/assert.js';
 
+/**
+ * Defines the update operator type enumeration.
+ *
+ * @public
+ */
 export default class UpdateOperatorType {
 	#description;
 	#formatter;
 	#operandCount;
 
 	/**
-	 * @param {string} description
-	 * @param {*} formatter
-	 * @param {*} operandCount
+	 * @param {string} description - The description.
+	 * @param {*} formatter - The formatter.
+	 * @param {*} operandCount - The operand count.
 	 */
 	constructor(description, formatter, operandCount) {
 		assert.argumentIsRequired(description, 'description', String);

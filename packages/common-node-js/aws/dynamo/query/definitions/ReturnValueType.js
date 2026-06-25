@@ -12,9 +12,9 @@ export default class ReturnValueType extends Enum {
 	#keyword;
 
 	/**
-	 * @param {string} code
-	 * @param {string} description
-	 * @param {string} keyword
+	 * @param {string} code - The code.
+	 * @param {string} description - The description.
+	 * @param {string} keyword - The keyword.
 	 */
 	constructor(code, description, keyword) {
 		super(code, description);

@@ -30,10 +30,10 @@ export default class DynamoScanReader extends Stream.Readable {
 	#stopping;
 
 	/**
-	 * @param {Scan} scan
-	 * @param {DynamoProvider} provider
-	 * @param {number=} highWaterMark
-	 * @param {boolean=} discrete
+	 * @param {Scan} scan - The scan.
+	 * @param {DynamoProvider} provider - The provider.
+	 * @param {number=} highWaterMark - The high water mark.
+	 * @param {boolean=} discrete - The discrete.
 	 */
 	constructor(scan, provider, highWaterMark, discrete) {
 		super({ objectMode: true, highWaterMark: highWaterMark || 10 });
@@ -90,7 +90,7 @@ export default class DynamoScanReader extends Stream.Readable {
 	 * and all possible records have been enqueued.
 	 *
 	 * @public
-	 * @return {boolean}
+	 * @returns {boolean}
 	 */
 	get completed() {
 		 return this.#previous !== null && !this.#previous.startKey;
@@ -98,6 +98,8 @@ export default class DynamoScanReader extends Stream.Readable {
 
 	/**
 	 * Returns the RCU (read capacity units) consumed (so far).
+	 *
+	 * @public
 	 */
 	get capacityConsumed() {
 		return this.#capacityConsumed;
@@ -140,6 +142,12 @@ export default class DynamoScanReader extends Stream.Readable {
 		this.#previous.startKey = startKey;
 	}
 
+	/**
+	 * Reads data into the stream.
+	 *
+	 * @protected
+	 * @param {number} size - The size.
+	 */
 	_read(size) {
 		if (this.#reading) {
 			return;
@@ -242,7 +250,7 @@ export default class DynamoScanReader extends Stream.Readable {
 	 *
 	 * @public
 	 * @async
-	 * @return {Promise<object|null>}
+	 * @returns {Promise<object|null>}
 	 */
 	async stop() {
 		this.#stopping = true;

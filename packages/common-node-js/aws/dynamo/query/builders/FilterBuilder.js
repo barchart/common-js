@@ -21,7 +21,7 @@ export default class FilterBuilder {
 	#parent;
 
 	/**
-	 * @param {ActionBuilder} parent
+	 * @param {ActionBuilder} parent - The parent.
 	 */
 	constructor(parent) {
 		this.#filter = new Filter([ ]);

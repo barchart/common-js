@@ -8,7 +8,7 @@ import Enum from '@barchart/common-js/lang/Enum.js';
  */
 export default class CompressionType extends Enum {
 	/**
-	 * @param {string} code
+	 * @param {string} code - The code.
 	 */
 	constructor(code) {
 		super(code, code);
@@ -17,6 +17,7 @@ export default class CompressionType extends Enum {
 	/**
 	 * DEFLATE.
 	 *
+	 * @public
 	 * @static
 	 * @returns {CompressionType}
 	 */
@@ -27,6 +28,7 @@ export default class CompressionType extends Enum {
 	/**
 	 * ZIP.
 	 *
+	 * @public
 	 * @static
 	 * @returns {CompressionType}
 	 */

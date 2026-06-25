@@ -17,7 +17,7 @@ export default class EnumSerializer extends DelegateSerializer {
 	 * Creates a new EnumSerializer instance.
 	 *
 	 * @public
-	 * @param {*} EnumerationType
+	 * @param {*} EnumerationType - The enumeration type.
 	 */
 	constructor(EnumerationType) {
 		super(StringSerializer.INSTANCE, getEnumSerializerFor(EnumerationType), getEnumDeserializerFor(EnumerationType));

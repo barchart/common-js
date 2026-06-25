@@ -31,7 +31,7 @@ export default class LambdaSecretsManager {
 	 * @public
 	 * @async
 	 * @param {string} secretId
-	 * @return {Promise<string>}
+	 * @returns {Promise<string>}
 	 */
 	async getValue(secretId) {
 		assert.argumentIsRequired(secretId, 'secretId', String);

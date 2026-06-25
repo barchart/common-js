@@ -10,8 +10,8 @@ import Enum from '@barchart/common-js/lang/Enum.js';
  */
 export default class ProjectionType extends Enum {
 	/**
-	 * @param {string} code
-	 * @param {string} description
+	 * @param {string} code - The code.
+	 * @param {string} description - The description.
 	 */
 	constructor(code, description) {
 		super(code, description);

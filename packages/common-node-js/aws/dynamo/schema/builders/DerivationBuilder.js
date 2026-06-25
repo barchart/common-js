@@ -16,7 +16,7 @@ export default class DerivationBuilder {
 	#parent;
 
 	/**
-	 * @param {TableBuilder} parent
+	 * @param {TableBuilder} parent - The parent.
 	 */
 	constructor(parent) {
 		this.#derivation = null;

@@ -16,18 +16,24 @@ const logger = log4js.getLogger('common-node/database/postgres/DirectClientProvi
  */
 export default class DirectClientProvider extends ClientProvider {
 	/**
-	 * @param {string} host
-	 * @param {string} database
-	 * @param {string} username
-	 * @param {string} password
-	 * @param {number=} port
-	 * @param {string=} applicationName
-	 * @param {*=} ssl
+	 * @param {string} host - The host.
+	 * @param {string} database - The database.
+	 * @param {string} username - The username.
+	 * @param {string} password - The password.
+	 * @param {number=} port - The port.
+	 * @param {string=} applicationName - The application name.
+	 * @param {*=} ssl - The ssl.
 	 */
 	constructor(host, database, username, password, port, applicationName, ssl) {
 		super(host, database, username, password, port, applicationName, ssl);
 	}
 
+	/**
+	 * Returns the client.
+	 *
+	 * @protected
+	 * @returns {*}
+	 */
 	_getClient() {
 		return promise.build((resolveCallback, rejectCallback) => {
 			const configuration = this.getConfiguration();
@@ -51,6 +57,12 @@ export default class DirectClientProvider extends ClientProvider {
 		});
 	}
 
+	/**
+	 * Runs disposal logic.
+	 *
+	 * @protected
+	 * @returns {*}
+	 */
 	_onDispose() {
 		return;
 	}
@@ -66,9 +78,15 @@ export default class DirectClientProvider extends ClientProvider {
 	}
 }
 
+/**
+ * Provides direct client behavior.
+ */
 class DirectClient extends Client {
 	#pgClient;
 
+	/**
+	 * @param {*} pgClient - The pg client.
+	 */
 	constructor(pgClient) {
 		super(pgClient, {});
 	}
@@ -84,6 +102,12 @@ class DirectClient extends Client {
 		logger.info('Disposed [DirectClient] [', this.id, ']');
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[DirectClient]';
 	}

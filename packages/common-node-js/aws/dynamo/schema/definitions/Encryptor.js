@@ -12,8 +12,8 @@ export default class Encryptor {
 	#type;
 
 	/**
-	 * @param {EncryptionType=} type
-	 * @param {string=} key
+	 * @param {EncryptionType=} type - The type.
+	 * @param {string=} key - The key.
 	 */
 	constructor(type, key) {
 		this.#type = type || null;

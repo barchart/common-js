@@ -13,10 +13,10 @@ export default class UpdateActionType extends Enum {
 	#operators;
 
 	/**
-	 * @param {string} code
-	 * @param {string} description
-	 * @param {string} keyword
-	 * @param {Array<UpdateOperatorType>} allowedOperators
+	 * @param {string} code - The code.
+	 * @param {string} description - The description.
+	 * @param {string} keyword - The keyword.
+	 * @param {Array<UpdateOperatorType>} allowedOperators - The allowed operators.
 	 */
 	constructor(code, description, keyword, allowedOperators) {
 		super(code, description);

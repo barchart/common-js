@@ -42,6 +42,7 @@ export default class Transformation extends Disposable {
 	 * Indicates if the proposed input can successfully be processed by the
 	 * {@link Transformation#transform} function.
 	 *
+	 * @public
 	 * @param {*} input
 	 * @returns {boolean}
 	 */
@@ -62,6 +63,7 @@ export default class Transformation extends Disposable {
 	/**
 	 * Transforms input (could mutate the input or return another object).
 	 *
+	 * @public
 	 * @param {*} input
 	 * @returns {*}
 	 */

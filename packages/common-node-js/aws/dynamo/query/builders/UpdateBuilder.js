@@ -121,7 +121,7 @@ export default class UpdateBuilder extends ActionBuilder {
 	 *
 	 * @public
 	 * @param {ReturnValueType} returnValueType
-	 * @return {UpdateBuilder}
+	 * @returns {UpdateBuilder}
 	 */
 	withReturnValueType(returnValueType) {
 		assert.argumentIsRequired(returnValueType, 'returnValueType', ReturnValueType, 'ReturnValueType');

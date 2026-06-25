@@ -17,8 +17,8 @@ export default class StringReadStream extends Stream.Readable {
 	#data;
 
 	/**
-     * @param {string} data
-     * @param {object=} options
+     * @param {string} data - The data.
+     * @param {object=} options - The options.
      */
 	constructor(data, options) {
 		super(object.merge({ objectMode: true }, (options || { })));
@@ -28,6 +28,13 @@ export default class StringReadStream extends Stream.Readable {
 		this.#data = data;
 	}
 
+	/**
+	 * Reads data into the stream.
+	 *
+	 * @protected
+	 * @param {number} size - The size.
+	 * @returns {*}
+	 */
 	_read(size) {
 		this.push(this.#data);
 		this.push(null);

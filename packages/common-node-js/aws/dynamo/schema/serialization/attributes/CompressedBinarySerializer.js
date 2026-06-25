@@ -15,7 +15,7 @@ export default class CompressedBinarySerializer extends BinarySerializer {
 	#attribute;
 
 	/**
-	 * @param {Attribute} attribute
+	 * @param {Attribute} attribute - The attribute.
 	 */
 	constructor(attribute) {
 		super();
@@ -25,14 +25,32 @@ export default class CompressedBinarySerializer extends BinarySerializer {
 		this.#attribute = attribute;
 	}
 
+	/**
+	 * Returns the attribute.
+	 *
+	 * @protected
+	 * @returns {*}
+	 */
 	_getAttribute() {
 		return this.#attribute;
 	}
 
+	/**
+	 * Returns the compression type.
+	 *
+	 * @protected
+	 * @returns {*}
+	 */
 	_getCompressionType() {
 		return this._getAttribute().compressionType || CompressionType.DEFLATE;
 	}
 
+	/**
+	 * Returns the encryptor.
+	 *
+	 * @protected
+	 * @returns {*}
+	 */
 	_getEncryptor() {
 		return this._getAttribute().encryptor || null;
 	}

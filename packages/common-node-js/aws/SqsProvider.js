@@ -34,7 +34,7 @@ export default class SqsProvider extends Disposable {
 	#started;
 
 	/**
-	 * @param {object} configuration
+	 * @param {object} configuration - The configuration.
 	 * @param {string} configuration.region - The AWS region (e.g. "us-east-1").
 	 * @param {string} configuration.prefix - The prefix that is prepended to any queue name.
 	 * @param {string=} configuration.apiVersion - The SES version (defaults to "2012-11-05").

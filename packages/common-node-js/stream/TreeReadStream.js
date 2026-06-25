@@ -15,8 +15,8 @@ export default class TreeReadStream extends Stream.Readable {
     #generator;
 
     /**
-     * @param {Tree} tree
-     * @param {object=} options
+     * @param {Tree} tree - The tree.
+     * @param {object=} options - The options.
      */
     constructor(tree, options) {
         super(object.merge({ objectMode: true }, (options || { })));
@@ -27,6 +27,12 @@ export default class TreeReadStream extends Stream.Readable {
         this.#generator = walk(tree);
     }
 
+    /**
+     * Reads data into the stream.
+     *
+     * @protected
+     * @param {number} size - The size.
+     */
     _read(size) {
         let item;
 

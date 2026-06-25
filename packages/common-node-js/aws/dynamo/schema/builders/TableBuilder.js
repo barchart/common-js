@@ -52,7 +52,7 @@ export default class TableBuilder {
 	 * @public
 	 * @param {LambdaStage} stage
 	 * @param {StageCallback} callback
-	 * @return {TableBuilder}
+	 * @returns {TableBuilder}
 	 */
 	forStage(stage, callback) {
 		assert.argumentIsRequired(stage, 'stage', LambdaStage, 'LambdaStage');

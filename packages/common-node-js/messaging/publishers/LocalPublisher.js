@@ -14,7 +14,7 @@ export default class LocalPublisher extends Publisher {
 	#subscriptions;
 
 	/**
-	 * @param {*} suppressExpressions
+	 * @param {*} suppressExpressions - The suppress expressions.
 	 */
 	constructor(suppressExpressions) {
 		super(suppressExpressions);

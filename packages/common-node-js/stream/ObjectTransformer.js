@@ -25,10 +25,10 @@ export default class ObjectTransformer extends Stream.Transform {
 	#transformations;
 
 	/**
-	 * @param {Array<Transformation>} transformations
-	 * @param {string=} description
-	 * @param {boolean=} silent
-	 * @param {object=} options
+	 * @param {Array<Transformation>} transformations - The transformations.
+	 * @param {string=} description - The description.
+	 * @param {boolean=} silent - The silent.
+	 * @param {object=} options - The options.
 	 */
 	constructor(transformations, description, silent, options) {
 		super(object.merge({ objectMode: true, highWaterMark: 1000 }, (options || { })));
@@ -66,6 +66,15 @@ export default class ObjectTransformer extends Stream.Transform {
 		return this.#transformations.length;
 	}
 
+	/**
+	 * Transforms the input.
+	 *
+	 * @protected
+	 * @param {*} chunk - The chunk.
+	 * @param {string} encoding - The encoding.
+	 * @param {Function} callback - The callback.
+	 * @returns {*}
+	 */
 	_transform(chunk, encoding, callback) {
 		this.#delegate(chunk, callback);
 	}

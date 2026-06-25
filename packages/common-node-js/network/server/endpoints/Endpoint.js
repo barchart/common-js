@@ -2,13 +2,18 @@ import * as assert from '@barchart/common-js/lang/assert.js';
 
 import CommandHandler from '@barchart/common-js/commands/CommandHandler.js';
 
+/**
+ * Provides endpoint behavior.
+ *
+ * @public
+ */
 export default class Endpoint {
 	#executionCommand;
 	#validationCommand;
 
 	/**
-	 * @param {*} executionCommand
-	 * @param {*} validationCommand
+	 * @param {*} executionCommand - The execution command.
+	 * @param {*} validationCommand - The validation command.
 	 */
 	constructor(executionCommand, validationCommand) {
 		assert.argumentIsRequired(executionCommand, 'executionCommand', CommandHandler, 'CommandHandler');

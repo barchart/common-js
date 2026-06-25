@@ -20,8 +20,8 @@ export default class ExpressionBuilder {
 	#expression;
 
 	/**
-	 * @param {string} attributeName
-	 * @param {ActionBuilder} parent
+	 * @param {string} attributeName - The attribute name.
+	 * @param {ActionBuilder} parent - The parent.
 	 */
 	constructor(attributeName, parent) {
 		assert.argumentIsRequired(attributeName, 'attributeName', String);

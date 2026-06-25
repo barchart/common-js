@@ -43,8 +43,8 @@ export default class TableContainer extends Disposable {
 	#started;
 
 	/**
-	 * @param {DynamoProvider} provider
-	 * @param {Table} definition
+	 * @param {DynamoProvider} provider - The provider.
+	 * @param {Table} definition - The definition.
 	 */
 	constructor(provider, definition) {
 		super();
@@ -317,7 +317,7 @@ export default class TableContainer extends Disposable {
 	 * @async
 	 * @param {Scan} scan
 	 * @param {object=} startKey
-	 * @return {Promise}
+	 * @returns {Promise}
 	 */
 	async scanChunk(scan, startKey) {
 		this.#checkReady();
@@ -361,7 +361,7 @@ export default class TableContainer extends Disposable {
 	 * @async
 	 * @param {Query} query
 	 * @param {object=} startKey
-	 * @return {Promise}
+	 * @returns {Promise}
 	 */
 	async queryChunk(query, startKey) {
 		this.#checkReady();
@@ -369,6 +369,12 @@ export default class TableContainer extends Disposable {
 		return this.#provider.queryChunk(query, startKey);
 	}
 
+	/**
+	 * Runs disposal logic.
+	 *
+	 * @protected
+	 * @returns {*}
+	 */
 	_onDispose() {
 		return;
 	}

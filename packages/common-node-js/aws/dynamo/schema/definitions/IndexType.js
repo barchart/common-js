@@ -15,11 +15,11 @@ export default class IndexType extends Enum {
 	#separateProvisioning;
 
 	/**
-	 * @param {string} code
-	 * @param {string} description
-	 * @param {*} schemaName
-	 * @param {*} separateProvisioning
-	 * @param {*} allowsConsistentReads
+	 * @param {string} code - The code.
+	 * @param {string} description - The description.
+	 * @param {*} schemaName - The schema name.
+	 * @param {*} separateProvisioning - The separate provisioning.
+	 * @param {*} allowsConsistentReads - The allows consistent reads.
 	 */
 	constructor(code, description, schemaName, separateProvisioning, allowsConsistentReads) {
 		super(code, description);

@@ -9,6 +9,11 @@ const emptyCommand = CommandHandler.fromFunction((ignored) => {
 	return {};
 });
 
+/**
+ * Provides page endpoint behavior.
+ *
+ * @public
+ */
 export default class PageEndpoint extends Endpoint {
 	#acceptFile;
 	#cache;
@@ -18,13 +23,13 @@ export default class PageEndpoint extends Endpoint {
 	#verb;
 
 	/**
-	 * @param {*} verb
-	 * @param {string} path
-	 * @param {*} template
-	 * @param {Function} command
-	 * @param {*} cache
-	 * @param {*} acceptFile
-	 * @param {*} secureRedirect
+	 * @param {*} verb - The verb.
+	 * @param {string} path - The path.
+	 * @param {*} template - The template.
+	 * @param {Function} command - The command.
+	 * @param {*} cache - The cache.
+	 * @param {*} acceptFile - The accept file.
+	 * @param {*} secureRedirect - The secure redirect.
 	 */
 	constructor(verb, path, template, command, cache, acceptFile, secureRedirect) {
 		super(command || emptyCommand);

@@ -26,8 +26,8 @@ export default class Bus extends Disposable {
 	#started;
 
 	/**
-	 * @param {Publisher} publisher
-	 * @param {Router} router
+	 * @param {Publisher} publisher - The publisher.
+	 * @param {Router} router - The router.
 	 */
 	constructor(publisher, router) {
 		super();

@@ -30,12 +30,12 @@ export default class AwsPublisher extends Publisher {
 	#suppressEcho;
 
 	/**
-	 * @param {SnsProvider} snsProvider
-	 * @param {SqsProvider} sqsProvider
-	 * @param {boolean[]=} suppressEcho
-	 * @param {RegExp[]=} suppressExpressions
-	 * @param {object=} tags
-	 * @param {string=} identifier
+	 * @param {SnsProvider} snsProvider - The sns provider.
+	 * @param {SqsProvider} sqsProvider - The sqs provider.
+	 * @param {boolean[]=} suppressEcho - The suppress echo.
+	 * @param {RegExp[]=} suppressExpressions - The suppress expressions.
+	 * @param {object=} tags - The tags.
+	 * @param {string=} identifier - The identifier.
 	 */
 	constructor(snsProvider, sqsProvider, suppressEcho, suppressExpressions, tags, identifier) {
 		super(suppressExpressions);

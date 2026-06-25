@@ -20,10 +20,10 @@ export default class SelectiveTransformation extends Transformation {
 	#transformations;
 
 	/**
-	 * @param {*} transformations
-	 * @param {*} first
-	 * @param {*} silent
-	 * @param {string} description
+	 * @param {*} transformations - The transformations.
+	 * @param {*} first - The first.
+	 * @param {*} silent - The silent.
+	 * @param {string} description - The description.
 	 */
 	constructor(transformations, first, silent, description) {
 		super((description || 'Selector Transformation'));
@@ -50,10 +50,24 @@ export default class SelectiveTransformation extends Transformation {
 		return this.#synchronous;
 	}
 
+	/**
+	 * Indicates if the transform can be performed.
+	 *
+	 * @protected
+	 * @param {*} input - The input.
+	 * @returns {boolean}
+	 */
 	_canTransform(input) {
 		return this.#silent || this.#transformations.some(t => t.canTransform(input));
 	}
 
+	/**
+	 * Transforms the input.
+	 *
+	 * @protected
+	 * @param {*} input - The input.
+	 * @returns {*}
+	 */
 	_transform(input) {
 		let output = input;
 

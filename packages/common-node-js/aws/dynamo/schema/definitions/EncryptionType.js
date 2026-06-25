@@ -11,9 +11,9 @@ export default class EncryptionType extends Enum {
 	#keyLength;
 
 	/**
-	 * @param {string} code
-	 * @param {number} keyLength
-	 * @param {number} initializationVectorLength
+	 * @param {string} code - The code.
+	 * @param {number} keyLength - The key length.
+	 * @param {number} initializationVectorLength - The initialization vector length.
 	 */
 	constructor(code, keyLength, initializationVectorLength) {
 		super(code, code);

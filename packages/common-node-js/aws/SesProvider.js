@@ -32,7 +32,7 @@ export default class SesProvider extends Disposable {
 	#started;
 
 	/**
-	 * @param {object} configuration
+	 * @param {object} configuration - The configuration.
 	 * @param {string} configuration.region - The AWS region (e.g. "us-east-1").
 	 * @param {string=} configuration.apiVersion - The SES version (defaults to "2010-12-01").
 	 * @param {string=} configuration.recipientOverride - If specified, all emails sent will be redirected to this email address, ignoring the specified recipient.
@@ -105,6 +105,7 @@ export default class SesProvider extends Disposable {
 	 * Returns a clone of the configuration object originally passed
 	 * to the constructor.
 	 *
+	 * @public
 	 * @returns {object}
 	 */
 	getConfiguration() {

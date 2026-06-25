@@ -9,8 +9,8 @@ import Enum from '@barchart/common-js/lang/Enum.js';
  */
 export default class KeyType extends Enum {
 	/**
-	 * @param {string} code
-	 * @param {string} description
+	 * @param {string} code - The code.
+	 * @param {string} description - The description.
 	 */
 	constructor(code, description) {
 		super(code, description);
@@ -19,6 +19,8 @@ export default class KeyType extends Enum {
 	/**
 	 * A hash key.
 	 *
+	 * @public
+	 * @static
 	 * @returns {KeyType}
 	 */
 	static get HASH() {
@@ -28,6 +30,8 @@ export default class KeyType extends Enum {
 	/**
 	 * A range key.
 	 *
+	 * @public
+	 * @static
 	 * @returns {KeyType}
 	 */
 	static get RANGE() {

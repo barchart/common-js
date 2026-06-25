@@ -4,6 +4,11 @@ import Disposable from '@barchart/common-js/lang/Disposable.js';
 
 import ServerDefinition from './ServerDefinition.js';
 
+/**
+ * Builds server instances.
+ *
+ * @public
+ */
 export default class ServerFactory {
 	constructor() {
 
@@ -26,10 +31,10 @@ export default class ServerFactory {
 	/**
 	 * @protected
 	 * @async
-	 * @param containers
-	 * @param staticPaths
-	 * @param templatePath
-	 * @return {Promise<*>}
+	 * @param {Array<Container>} containers - The containers.
+	 * @param {object} staticPaths - The static paths.
+	 * @param {string} templatePath - The template path.
+	 * @returns {Promise<*>}
 	 */
 	async _build(containers, staticPaths, templatePath) {
 		return Disposable.fromAction(() => {

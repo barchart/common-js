@@ -29,19 +29,19 @@ export default class Scan extends Action {
 	#totalSegments;
 
 	/**
-	 * @param {Table} table
-	 * @param {Index=} index
-	 * @param {Filter=} filter
-	 * @param {Array<Attribute>=} attributes
-	 * @param {number=} limit
-	 * @param {number=} segment
-	 * @param {number=} totalSegments
-	 * @param {boolean=} consistentRead
-	 * @param {boolean=} skipDeserialization
-	 * @param {boolean=} countOnly
-	 * @param {string=} description
-	 * @param {boolean=} monitorCapacityConsumed
-	 * @param {object=} exclusiveStartKey
+	 * @param {Table} table - The table.
+	 * @param {Index=} index - The index.
+	 * @param {Filter=} filter - The filter.
+	 * @param {Array<Attribute>=} attributes - The attributes.
+	 * @param {number=} limit - The limit.
+	 * @param {number=} segment - The segment.
+	 * @param {number=} totalSegments - The total segments.
+	 * @param {boolean=} consistentRead - The consistent read.
+	 * @param {boolean=} skipDeserialization - The skip deserialization.
+	 * @param {boolean=} countOnly - The count only.
+	 * @param {string=} description - The description.
+	 * @param {boolean=} monitorCapacityConsumed - The monitor capacity consumed.
+	 * @param {object=} exclusiveStartKey - The exclusive start key.
 	 */
 	constructor(table, index, filter, attributes, limit, segment, totalSegments, consistentRead, skipDeserialization, countOnly, description, monitorCapacityConsumed, exclusiveStartKey) {
 		super(table, index, (description || '[Unnamed Scan]'));
@@ -94,7 +94,7 @@ export default class Scan extends Action {
 	 * Identifies an individual segment to be scanned by an AWS DynamoDB worker.
 	 *
 	 * @public
-	 * @return {number|null}
+	 * @returns {number|null}
 	 */
 	get segment() {
 		return this.#segment;
@@ -104,7 +104,7 @@ export default class Scan extends Action {
 	 * The total number of segments into which the Scan operation will be divided.
 	 *
 	 * @public
-	 * @return {number|null}
+	 * @returns {number|null}
 	 */
 	get totalSegments() {
 		return this.#totalSegments;

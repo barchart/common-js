@@ -12,9 +12,9 @@ export default class Container {
 	#secure;
 
 	/**
-	 * @param {number} port
-	 * @param {string} path
-	 * @param {boolean=} secure
+	 * @param {number} port - The port.
+	 * @param {string} path - The path.
+	 * @param {boolean=} secure - The secure.
 	 */
 	constructor(port, path, secure) {
 		assert.argumentIsOptional(port, 'port', Number);
@@ -62,6 +62,12 @@ export default class Container {
 		return this._getEndpointType();
 	}
 
+	/**
+	 * Returns the endpoint type.
+	 *
+	 * @protected
+	 * @returns {*}
+	 */
 	_getEndpointType() {
 		return null;
 	}

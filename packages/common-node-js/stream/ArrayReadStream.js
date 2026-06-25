@@ -18,8 +18,8 @@ export default class ArrayReadStream extends Stream.Readable {
 	#index;
 
 	/**
-	 * @param {Array} data
-	 * @param {object=} options
+	 * @param {Array} data - The data.
+	 * @param {object=} options - The options.
 	 */
 	constructor(data, options) {
 		super(object.merge({ objectMode: true }, (options || { })));
@@ -30,6 +30,12 @@ export default class ArrayReadStream extends Stream.Readable {
 		this.#index = 0;
 	}
 
+	/**
+	 * Reads data into the stream.
+	 *
+	 * @protected
+	 * @param {number} size - The size.
+	 */
 	_read(size) {
 		let item;
 

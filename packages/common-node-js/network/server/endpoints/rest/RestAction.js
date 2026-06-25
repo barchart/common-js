@@ -2,13 +2,18 @@ import * as assert from '@barchart/common-js/lang/assert.js';
 
 import Verb from './../../../http/Verb.js';
 
+/**
+ * Defines the rest action enumeration.
+ *
+ * @public
+ */
 export default class RestAction {
 	#description;
 	#verb;
 
 	/**
-	 * @param {string} description
-	 * @param {*} verb
+	 * @param {string} description - The description.
+	 * @param {*} verb - The verb.
 	 */
 	constructor(description, verb) {
 		assert.argumentIsRequired(description, 'description', String);

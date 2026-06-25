@@ -206,7 +206,7 @@ export default class ScanBuilder extends ActionBuilder {
      * Sets the exclusive start key for the scan.
      *
      * @public
-     * @param exclusiveStartKey
+     * @param {boolean} exclusiveStartKey - The exclusive start key.
      * @returns {ScanBuilder}
      */
     withExclusiveStartKey(exclusiveStartKey){

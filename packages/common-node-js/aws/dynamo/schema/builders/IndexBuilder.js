@@ -23,8 +23,8 @@ export default class IndexBuilder {
 	#parent;
 
 	/**
-	 * @param {string} name
-	 * @param {TableBuilder} parent
+	 * @param {string} name - The name.
+	 * @param {TableBuilder} parent - The parent.
 	 */
 	constructor(name, parent) {
 		assert.argumentIsRequired(name, 'name', String);
@@ -50,7 +50,7 @@ export default class IndexBuilder {
 	 * @public
 	 * @param {LambdaStage} stage
 	 * @param {StageCallback} callback
-	 * @return {IndexBuilder}
+	 * @returns {IndexBuilder}
 	 */
 	forStage(stage, callback) {
 		assert.argumentIsRequired(stage, 'stage', LambdaStage, 'LambdaStage');

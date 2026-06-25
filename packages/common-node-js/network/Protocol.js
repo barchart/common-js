@@ -1,14 +1,19 @@
 import * as assert from '@barchart/common-js/lang/assert.js';
 
+/**
+ * Provides protocol behavior.
+ *
+ * @public
+ */
 export default class Protocol {
 	#description;
 	#secure;
 	#standard;
 
 	/**
-	 * @param {string} description
-	 * @param {string} standard
-	 * @param {string} secure
+	 * @param {string} description - The description.
+	 * @param {string} standard - The standard.
+	 * @param {string} secure - The secure.
 	 */
 	constructor(description, standard, secure) {
 		assert.argumentIsRequired(description, 'description', String);

@@ -13,6 +13,11 @@ const broadcastCommand = CommandHandler.fromFunction(() => {
 	return null;
 });
 
+/**
+ * Provides socket emitter endpoint behavior.
+ *
+ * @public
+ */
 export default class SocketEmitterEndpoint extends Endpoint {
 	#channel;
 	#event;
@@ -20,10 +25,10 @@ export default class SocketEmitterEndpoint extends Endpoint {
 	#roomCommand;
 
 	/**
-	 * @param {*} channel
-	 * @param {object} event
-	 * @param {*} eventType
-	 * @param {*} roomCommand
+	 * @param {*} channel - The channel.
+	 * @param {object} event - The event.
+	 * @param {*} eventType - The event type.
+	 * @param {*} roomCommand - The room command.
 	 */
 	constructor(channel, event, eventType, roomCommand) {
 		super(emptyCommand);

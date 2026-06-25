@@ -35,10 +35,24 @@ export default class DynamoQueryTransformation extends Transformation {
 		return false;
 	}
 
+	/**
+	 * Indicates if the transform can be performed.
+	 *
+	 * @protected
+	 * @param {*} input - The input.
+	 * @returns {boolean}
+	 */
 	_canTransform(input) {
 		return input instanceof Query;
 	}
 
+	/**
+	 * Transforms the input.
+	 *
+	 * @protected
+	 * @param {*} input - The input.
+	 * @returns {*}
+	 */
 	_transform(input) {
 		return this.#dynamoProvider.query(input);
 	}

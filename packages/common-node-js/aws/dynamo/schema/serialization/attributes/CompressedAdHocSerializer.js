@@ -18,7 +18,7 @@ import DelegateSerializer from './DelegateSerializer.js';
  */
 export default class CompressedAdHocSerializer extends DelegateSerializer {
 	/**
-	 * @param {Attribute} attribute
+	 * @param {Attribute} attribute - The attribute.
 	 */
 	constructor(attribute) {
 		super(new CompressedBinarySerializer(attribute), serializeBuffer, deserializeBuffer);

@@ -46,11 +46,11 @@ export default class DynamoProvider extends Disposable {
     #started;
 
     /**
-     * @param {object} configuration
+     * @param {object} configuration - The configuration.
      * @param {string} configuration.region - The AWS region (e.g. "us-east-1").
      * @param {string} configuration.prefix - The prefix to automatically append to table names.
      * @param {string=} configuration.apiVersion - The DynamoDB API version (defaults to "2012-08-10").
-     * @param {object=} options
+     * @param {object=} options - The options.
      * @param {boolean=} options.preferConsistentReads
      */
     constructor(configuration, options) {
@@ -801,7 +801,7 @@ export default class DynamoProvider extends Disposable {
      * @async
      * @param {Scan} scan
      * @param {object=} startKey
-     * @return {Promise}
+     * @returns {Promise}
      */
     async scanChunk(scan, startKey) {
         assert.argumentIsRequired(scan, 'scan', Scan, 'Scan');
@@ -1103,7 +1103,7 @@ export default class DynamoProvider extends Disposable {
      * @async
      * @param {Query} query
      * @param {object=} startKey
-     * @return {Promise}
+     * @returns {Promise}
      */
     async queryChunk(query, startKey) {
         assert.argumentIsRequired(query, 'query', Query, 'Query');
@@ -1197,7 +1197,7 @@ export default class DynamoProvider extends Disposable {
      * Returns a new {@link TableBuilder} instance, suitable for use by the
      * {@link DynamoProvider#createTable} function.
      *
-     * @publicq
+     * @public
      * @param {string} name - The (unqualified) name of the table.
      * @returns {TableBuilder}
      */
@@ -1396,19 +1396,40 @@ const DYNAMO_RESULT = {
     FAILURE: 'FAILURE'
 };
 
+/**
+ * Provides dynamo error behavior.
+ */
 class DynamoError extends Enum {
     #retryablePredicate;
 
+    /**
+     * @param {string} code - The code.
+     * @param {string} description - The description.
+     * @param {Function} retryablePredicate - The retryable predicate.
+     */
     constructor(code, description, retryablePredicate) {
         super(code, description);
 
         this.#retryablePredicate = retryablePredicate;
     }
 
+    /**
+     * Returns the retryable.
+     *
+     * @public
+     * @param {*} error - The error.
+     * @returns {*}
+     */
     getRetryable(error) {
         return this.#retryablePredicate(error);
     }
 
+    /**
+     * Returns a string representation.
+     *
+     * @public
+     * @returns {string}
+     */
     toString() {
         return `[DynamoError (code=${this.code})]`;
     }
@@ -1420,11 +1441,21 @@ const dynamoErrorConditional = new DynamoError('ConditionalCheckFailedException'
 const dynamoErrorUnavailable = new DynamoError('UnknownError', 'Unknown Error Exception', error => is.object(error.$retryable));
 const dynamoErrorTimeout = new DynamoError('TimeoutError', 'Timeout Error Exception', error => is.object(error.$retryable));
 
+/**
+ * Defines the dynamo batch type enumeration.
+ */
 class DynamoBatchType extends Enum {
     #keysOnly;
     #requestItemName;
     #requestTypeName;
 
+    /**
+     * @param {string} code - The code.
+     * @param {string} description - The description.
+     * @param {string} requestTypeName - The request type name.
+     * @param {string} requestItemName - The request item name.
+     * @param {boolean} keysOnly - The keys only.
+     */
     constructor(code, description, requestTypeName, requestItemName, keysOnly) {
         super(code, description);
 
@@ -1434,26 +1465,64 @@ class DynamoBatchType extends Enum {
         this.#keysOnly = keysOnly;
     }
 
+    /**
+     * Returns the request type name.
+     *
+     * @public
+     * @returns {string}
+     */
     get requestTypeName() {
         return this.#requestTypeName;
     }
 
+    /**
+     * Returns the request item name.
+     *
+     * @public
+     * @returns {string}
+     */
     get requestItemName() {
         return this.#requestItemName;
     }
 
+    /**
+     * Returns the keys only.
+     *
+     * @public
+     * @returns {boolean}
+     */
     get keysOnly() {
         return this.#keysOnly;
     }
 
+    /**
+     * Returns the put.
+     *
+     * @public
+     * @static
+     * @returns {*}
+     */
     static get PUT() {
         return dynamoBatchPut;
     }
 
+    /**
+     * Returns the delete.
+     *
+     * @public
+     * @static
+     * @returns {*}
+     */
     static get DELETE() {
         return dynamoBatchDelete;
     }
 
+    /**
+     * Returns a string representation.
+     *
+     * @public
+     * @returns {string}
+     */
     toString() {
         return `[DynamoBatchType (code=${this.code})]`;
     }

@@ -30,10 +30,10 @@ export default class DynamoQueryReader extends Stream.Readable {
 	#stopping;
 
 	/**
-	 * @param {Query} query
-	 * @param {DynamoProvider} provider
-	 * @param {number=} highWaterMark
-	 * @param {boolean=} discrete
+	 * @param {Query} query - The query.
+	 * @param {DynamoProvider} provider - The provider.
+	 * @param {number=} highWaterMark - The high water mark.
+	 * @param {boolean=} discrete - The discrete.
 	 */
 	constructor(query, provider, highWaterMark, discrete) {
 		super({ objectMode: true, highWaterMark: 10 });
@@ -88,7 +88,7 @@ export default class DynamoQueryReader extends Stream.Readable {
 	 * and all possible records have been enqueued.
 	 *
 	 * @public
-	 * @return {boolean}
+	 * @returns {boolean}
 	 */
 	get completed() {
 		return this.#previous !== null && !this.#previous.startKey;
@@ -96,6 +96,8 @@ export default class DynamoQueryReader extends Stream.Readable {
 
 	/**
 	 * Returns the RCU (read capacity units) consumed (so far).
+	 *
+	 * @public
 	 */
 	get capacityConsumed() {
 		return this.#capacityConsumed;
@@ -138,6 +140,12 @@ export default class DynamoQueryReader extends Stream.Readable {
 		this.#previous.startKey = startKey;
 	}
 
+	/**
+	 * Reads data into the stream.
+	 *
+	 * @protected
+	 * @param {number} size - The size.
+	 */
 	_read(size) {
 		if (this.#reading) {
 			return;
@@ -240,7 +248,7 @@ export default class DynamoQueryReader extends Stream.Readable {
 	 *
 	 * @public
 	 * @async
-	 * @return {Promise<object|null>}
+	 * @returns {Promise<object|null>}
 	 */
 	async stop() {
 		this.#stopping = true;

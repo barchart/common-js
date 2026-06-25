@@ -16,6 +16,13 @@ export default class MoneySerializer extends ComponentSerializer {
 		super(ComponentType.MONEY);
 	}
 
+	/**
+	 * Runs the read component operation.
+	 *
+	 * @protected
+	 * @param {object} object - The object.
+	 * @returns {*}
+	 */
 	_readComponent(object) {
 		assert.argumentIsRequired(object, 'object', Money, 'Money');
 
@@ -25,6 +32,13 @@ export default class MoneySerializer extends ComponentSerializer {
 		];
 	}
 
+	/**
+	 * Runs the create component operation.
+	 *
+	 * @protected
+	 * @param {object} data - The data.
+	 * @returns {*}
+	 */
 	_createComponent(data) {
 		return new Money(data[0], data[1]);
 	}

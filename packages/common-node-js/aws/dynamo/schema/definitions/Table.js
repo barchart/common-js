@@ -30,14 +30,14 @@ export default class Table {
 	#ttlAttribute;
 
 	/**
-	 * @param {string} name
-	 * @param {*} keys
-	 * @param {*} indices
-	 * @param {*} attributes
-	 * @param {*} components
-	 * @param {*} provisionedThroughput
-	 * @param {*} streamViewType
-	 * @param {*} ttlAttribute
+	 * @param {string} name - The name.
+	 * @param {*} keys - The keys.
+	 * @param {*} indices - The indices.
+	 * @param {*} attributes - The attributes.
+	 * @param {*} components - The components.
+	 * @param {*} provisionedThroughput - The provisioned throughput.
+	 * @param {*} streamViewType - The stream view type.
+	 * @param {*} ttlAttribute - The ttl attribute.
 	 */
 	constructor(name, keys, indices, attributes, components, provisionedThroughput, streamViewType, ttlAttribute) {
 		this.#name = name;
@@ -152,6 +152,7 @@ export default class Table {
 	 * The streaming behavior of the table. If this property returns
 	 * null; then the table does not stream.
 	 *
+	 * @public
 	 * @returns {StreamViewType|null}
 	 */
 	get streamViewType() {

@@ -18,11 +18,11 @@ export default class Attribute {
 	#name;
 
 	/**
-	 * @param {string} name
-	 * @param {DataType=} dataType
-	 * @param {Derivation|null=} derivation
-	 * @param {Encryptor|null=} encryptor
-	 * @param {CompressionType|null=} compressionType
+	 * @param {string} name - The name.
+	 * @param {DataType=} dataType - The data type.
+	 * @param {Derivation|null=} derivation - The derivation.
+	 * @param {Encryptor|null=} encryptor - The encryptor.
+	 * @param {CompressionType|null=} compressionType - The compression type.
 	 */
 	constructor(name, dataType, derivation, encryptor, compressionType) {
 		this.#name = name;

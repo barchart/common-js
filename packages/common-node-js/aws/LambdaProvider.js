@@ -22,7 +22,7 @@ export default class LambdaProvider extends Disposable {
 	#started;
 
 	/**
-	 * @param {object} configuration
+	 * @param {object} configuration - The configuration.
 	 * @param {string} configuration.region
 	 * @param {string=} configuration.apiVersion
 	 * @param {string=} configuration.bucket
@@ -85,7 +85,7 @@ export default class LambdaProvider extends Disposable {
 	 * @param {string} functionName
 	 * @param {object} event
 	 * @param {boolean=} synchronous
-	 * @return {Promise<object>}
+	 * @returns {Promise<object>}
 	 */
 	async invoke(functionName, event, synchronous) {
 		assert.argumentIsRequired(functionName, 'functionName', String);

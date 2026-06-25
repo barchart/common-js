@@ -20,10 +20,10 @@ export default class UpdateExpression {
 	#operatorType;
 
 	/**
-	 * @param {UpdateActionType} actionType
-	 * @param {Attribute} attribute
-	 * @param {UpdateOperatorType} operatorType
-	 * @param {*} operand
+	 * @param {UpdateActionType} actionType - The action type.
+	 * @param {Attribute} attribute - The attribute.
+	 * @param {UpdateOperatorType} operatorType - The operator type.
+	 * @param {*} operand - The operand.
 	 */
 	constructor(actionType, attribute, operatorType, operand) {
 		this.#actionType = actionType;
@@ -74,6 +74,7 @@ export default class UpdateExpression {
 	/**
 	 * The operand used by the expression.
 	 *
+	 * @public
 	 * @returns {*}
 	 */
 	get operand() {

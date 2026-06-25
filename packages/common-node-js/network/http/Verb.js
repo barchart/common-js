@@ -8,7 +8,7 @@ import Enum from '@barchart/common-js/lang/Enum.js';
  */
 export default class Verb extends Enum {
 	/**
-	 * @param {string} code
+	 * @param {string} code - The code.
 	 */
 	constructor(code) {
 		super(code, code);

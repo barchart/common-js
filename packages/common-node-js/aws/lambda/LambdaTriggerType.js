@@ -14,10 +14,10 @@ export default class LambdaTriggerType extends Enum {
 	#matchPredicate;
 
 	/**
-	 * @param {string} code
-	 * @param {Function} matchPredicate
-	 * @param {Function} idExtractor
-	 * @param {Function} contentExtractor
+	 * @param {string} code - The code.
+	 * @param {Function} matchPredicate - The match predicate.
+	 * @param {Function} idExtractor - The id extractor.
+	 * @param {Function} contentExtractor - The content extractor.
 	 */
 	constructor(code, matchPredicate, idExtractor, contentExtractor) {
 		super(code, code);

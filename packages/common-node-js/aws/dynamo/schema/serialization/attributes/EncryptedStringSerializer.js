@@ -9,7 +9,7 @@ import CompressedStringSerializer from './CompressedStringSerializer.js';
  */
 export default class EncryptedStringSerializer extends CompressedStringSerializer {
 	/**
-	 * @param {*} attribute
+	 * @param {*} attribute - The attribute.
 	 */
 	constructor(attribute) {
 		super(attribute);

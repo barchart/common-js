@@ -28,12 +28,12 @@ export default class Update extends Action {
 	#returnType;
 
 	/**
-	 * @param {Table} table
-	 * @param {Filter=} keyFilter
-	 * @param {Filter=} conditionFilter
-	 * @param {UpdateExpression[]=} expressions
-	 * @param {ReturnValueType=} returnType
-	 * @param {string=} description
+	 * @param {Table} table - The table.
+	 * @param {Filter=} keyFilter - The key filter.
+	 * @param {Filter=} conditionFilter - The condition filter.
+	 * @param {UpdateExpression[]=} expressions - The expressions.
+	 * @param {ReturnValueType=} returnType - The return type.
+	 * @param {string=} description - The description.
 	 */
 	constructor(table, keyFilter, conditionFilter, expressions, returnType, description) {
 		super(table, null, (description || '[Unnamed Update]'));

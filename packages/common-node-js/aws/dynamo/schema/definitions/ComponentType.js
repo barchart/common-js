@@ -17,9 +17,9 @@ export default class ComponentType {
 	#type;
 
 	/**
-	 * @param {string} description
-	 * @param {Array<ComponentTypeDefinition>} definitions
-	 * @param {Function=} type
+	 * @param {string} description - The description.
+	 * @param {Array<ComponentTypeDefinition>} definitions - The definitions.
+	 * @param {Function=} type - The type.
 	 */
 	constructor(description, definitions, type) {
 		assert.argumentIsRequired(description, 'description', String);

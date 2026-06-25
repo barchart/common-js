@@ -12,8 +12,8 @@ export default class Component {
 	#name;
 
 	/**
-	 * @param {string} name
-	 * @param {*} componentType
+	 * @param {string} name - The name.
+	 * @param {*} componentType - The component type.
 	 */
 	constructor(name, componentType) {
 		this.#name = name;

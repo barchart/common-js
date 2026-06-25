@@ -26,7 +26,7 @@ export default class CloudWatchLogsProvider extends Disposable {
 	#started;
 
 	/**
-	 * @param {object} configuration
+	 * @param {object} configuration - The configuration.
 	 * @param {string} configuration.region - The AWS region (e.g. "us-east-1").
 	 * @param {string=} configuration.apiVersion - The CloudWatchLogs version (defaults to "2014-03-28").
 	 */

@@ -19,13 +19,13 @@ export default class PooledClientProvider extends ClientProvider {
 	#preparedStatementMap;
 
 	/**
-	 * @param {string} host
-	 * @param {string} database
-	 * @param {string} username
-	 * @param {string} password
-	 * @param {number=} port
-	 * @param {string=} applicationName
-	 * @param {*=} ssl
+	 * @param {string} host - The host.
+	 * @param {string} database - The database.
+	 * @param {string} username - The username.
+	 * @param {string} password - The password.
+	 * @param {number=} port - The port.
+	 * @param {string=} applicationName - The application name.
+	 * @param {*=} ssl - The ssl.
 	 */
 	constructor(host, database, username, password, port, applicationName, ssl) {
 		super(host, database, username, password, port, applicationName, ssl);
@@ -38,6 +38,12 @@ export default class PooledClientProvider extends ClientProvider {
 		});
 	}
 
+	/**
+	 * Returns the client.
+	 *
+	 * @protected
+	 * @returns {*}
+	 */
 	_getClient() {
 		return promise.build((resolveCallback, rejectCallback) => {
 			const configuration = this.getConfiguration();
@@ -60,6 +66,12 @@ export default class PooledClientProvider extends ClientProvider {
 		});
 	}
 
+	/**
+	 * Runs disposal logic.
+	 *
+	 * @protected
+	 * @returns {*}
+	 */
 	_onDispose() {
 		this.#pool.end();
 		this.#pool = null;
@@ -76,9 +88,17 @@ export default class PooledClientProvider extends ClientProvider {
 	}
 }
 
+/**
+ * Provides pooled client behavior.
+ */
 class PooledClient extends Client {
 	#releaseCallback;
 
+	/**
+	 * @param {*} pgClient - The pg client.
+	 * @param {Map} preparedStatementMap - The prepared statement map.
+	 * @param {Function} releaseCallback - The release callback.
+	 */
 	constructor(pgClient, preparedStatementMap, releaseCallback) {
 		super(pgClient, preparedStatementMap);
 
@@ -97,6 +117,12 @@ class PooledClient extends Client {
 		logger.info('Disposed [PooledClient] [', this.id, ']');
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[PooledClient]';
 	}

@@ -19,7 +19,7 @@ export default class AttributeDeserializationWriter extends Writer {
 	#writeDelegate;
 
 	/**
-	 * @param {Attribute} attribute
+	 * @param {Attribute} attribute - The attribute.
 	 */
 	constructor(attribute) {
 		super();
@@ -44,10 +44,26 @@ export default class AttributeDeserializationWriter extends Writer {
 		this.#writeDelegate = writeDelegate;
 	}
 
+	/**
+	 * Writes data from the stream.
+	 *
+	 * @protected
+	 * @param {object} source - The source.
+	 * @param {object} target - The target.
+	 * @returns {*}
+	 */
 	_write(source, target) {
 		this.#writeDelegate(target, this.#serializer.deserialize(source[this.#attribute.name]));
 	}
 
+	/**
+	 * Indicates if the write can be performed.
+	 *
+	 * @protected
+	 * @param {object} source - The source.
+	 * @param {object} target - The target.
+	 * @returns {boolean}
+	 */
 	_canWrite(source, target) {
 		return this.#serializer !== null && is.object(source) && source.hasOwnProperty(this.#attribute.name);
 	}

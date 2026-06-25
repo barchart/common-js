@@ -15,7 +15,7 @@ export default class ComponentSerializer {
 	#componentType;
 
 	/**
-	 * @param {*} componentType
+	 * @param {*} componentType - The component type.
 	 */
 	constructor(componentType) {
 		assert.argumentIsRequired(componentType, 'componentType', ComponentType, 'ComponentType');
@@ -66,6 +66,7 @@ export default class ComponentSerializer {
 	 * Generates a complex component, from an array of DynamoDB object, assuming
 	 * the array is ordered according to {@link ComponentType#defintitions}.
 	 *
+	 * @public
 	 * @param {Array} values - An array of serialized component values.
 	 * @returns {*} - The component object.
 	 */

@@ -22,7 +22,7 @@ export default class SecretsManagerProvider extends Disposable {
 	#started;
 
 	/**
-	 * @param {object} configuration
+	 * @param {object} configuration - The configuration.
 	 * @param {string} configuration.region - The AWS region (e.g. "us-east-1").
 	 * @param {string=} configuration.apiVersion - The Secrets Manager version (defaults to "2017-10-17").
 	 */

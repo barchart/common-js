@@ -13,8 +13,8 @@ export default class DataOperationStage extends Enum {
 	#priority;
 
 	/**
-	 * @param {string} code
-	 * @param {number} priority
+	 * @param {string} code - The code.
+	 * @param {number} priority - The priority.
 	 */
 	constructor(code, priority) {
 		super(code, code);

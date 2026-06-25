@@ -16,11 +16,11 @@ export default class DataType {
 	#supportsEncryption;
 
 	/**
-	 * @param {string} code
-	 * @param {string} description
-	 * @param {Function=} enumerationType
-	 * @param {boolean=} supportsCompression
-	 * @param {boolean=} supportsEncryption
+	 * @param {string} code - The code.
+	 * @param {string} description - The description.
+	 * @param {Function=} enumerationType - The enumeration type.
+	 * @param {boolean=} supportsCompression - The supports compression.
+	 * @param {boolean=} supportsEncryption - The supports encryption.
 	 */
 	constructor(code, description, enumerationType, supportsCompression, supportsEncryption) {
 		assert.argumentIsRequired(code, 'code', String);
@@ -155,7 +155,7 @@ export default class DataType {
 	 *
 	 * @public
 	 * @static
-	 * @return {DataType}
+	 * @returns {DataType}
 	 */
 	static get STRING_SET() {
 		return dataTypeStringSet;
@@ -166,7 +166,7 @@ export default class DataType {
 	 *
 	 * @public
 	 * @static
-	 * @return {DataType}
+	 * @returns {DataType}
 	 */
 	static get LIST() {
 		return dataTypeList;
@@ -177,7 +177,7 @@ export default class DataType {
 	 *
 	 * @public
 	 * @static
-	 * @return {DataType}
+	 * @returns {DataType}
 	 */
 	static get MAP() {
 		return dataTypeMap;

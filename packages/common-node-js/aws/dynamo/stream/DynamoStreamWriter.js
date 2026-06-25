@@ -51,6 +51,14 @@ export default class DynamoStreamWriter extends Stream.Writable {
 		this.#explicit = is.boolean(explicit) && explicit;
 	}
 
+	/**
+	 * Writes data from the stream.
+	 *
+	 * @protected
+	 * @param {*} chunk - The chunk.
+	 * @param {string} encoding - The encoding.
+	 * @param {Function} callback - The callback.
+	 */
 	_write(chunk, encoding, callback) {
 		let delegate = this.#delegateFactory(chunk, this.#explicit);
 

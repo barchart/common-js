@@ -8,6 +8,11 @@ const staticPathTypes = {
 	s3: 's3'
 };
 
+/**
+ * Provides server definition behavior.
+ *
+ * @public
+ */
 export default class ServerDefinition {
 	#containers;
 	#staticPaths;

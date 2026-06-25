@@ -16,6 +16,11 @@ const SUBSCRIBE = 'p.s';
 const UNSUBSCRIBE = 'p.u';
 const PUBLISH = 'p.p';
 
+/**
+ * Provides cluster publisher behavior.
+ *
+ * @public
+ */
 export default class ClusterPublisher extends Publisher {
 	#disposeStack;
 	#messageProvider;
@@ -24,8 +29,8 @@ export default class ClusterPublisher extends Publisher {
 	#subscriptions;
 
 	/**
-	 * @param {*} messageProvider
-	 * @param {*} suppressExpressions
+	 * @param {*} messageProvider - The message provider.
+	 * @param {*} suppressExpressions - The suppress expressions.
 	 */
 	constructor(messageProvider, suppressExpressions) {
 		super();
@@ -143,6 +148,11 @@ export default class ClusterPublisher extends Publisher {
 		return this.#subscribers[messageType].handle(handler, this.#messageProvider);
 	}
 
+	/**
+	 * Runs disposal logic.
+	 *
+	 * @protected
+	 */
 	_onDispose() {
 		this.#disposeStack.dispose();
 		this.#disposeStack = null;
@@ -171,11 +181,17 @@ export default class ClusterPublisher extends Publisher {
 	}
 }
 
+/**
+ * Provides subscriber data behavior.
+ */
 class SubscriberData extends Disposable {
 	#handlers;
 	#messageType;
 	#publish;
 
+	/**
+	 * @param {string} messageType - The message type.
+	 */
 	constructor(messageType) {
 		super();
 
@@ -186,10 +202,24 @@ class SubscriberData extends Disposable {
 		this.#publish = new Event(this);
 	}
 
+	/**
+	 * Returns the message type.
+	 *
+	 * @public
+	 * @returns {*}
+	 */
 	getMessageType() {
 		return this.#messageType;
 	}
 
+	/**
+	 * Registers a handler.
+	 *
+	 * @public
+	 * @param {Function} handler - The handler.
+	 * @param {string} sender - The sender.
+	 * @returns {*}
+	 */
 	handle(handler, sender) {
 		const handlerId = uuid.v4();
 
@@ -208,12 +238,25 @@ class SubscriberData extends Disposable {
 		});
 	}
 
+	/**
+	 * Refreshes the stored state.
+	 *
+	 * @public
+	 * @param {string} sender - The sender.
+	 * @param {string} source - The source.
+	 */
 	refresh(sender, source) {
 		Object.keys(this.#handlers).forEach((handlerId) => {
 			sender.send(SUBSCRIBE, getSubscriptionEnvelope(handlerId, this.#messageType), source);
 		});
 	}
 
+	/**
+	 * Publishes a message.
+	 *
+	 * @public
+	 * @param {object} payload - The payload.
+	 */
 	publish(payload) {
 		this.#publish.fire(payload);
 	}
@@ -230,11 +273,17 @@ class SubscriberData extends Disposable {
 	}
 }
 
+/**
+ * Provides subscription data behavior.
+ */
 class SubscriptionData {
 	#messageType;
 	#sources;
 	#subscribers;
 
+	/**
+	 * @param {string} messageType - The message type.
+	 */
 	constructor(messageType) {
 		this.#messageType = messageType;
 
@@ -242,10 +291,24 @@ class SubscriptionData {
 		this.#sources = [ ];
 	}
 
+	/**
+	 * Returns the message type.
+	 *
+	 * @public
+	 * @returns {*}
+	 */
 	getMessageType() {
 		return this.#messageType;
 	}
 
+	/**
+	 * Adds the subscriber.
+	 *
+	 * @public
+	 * @param {number} id - The id.
+	 * @param {string} source - The source.
+	 * @returns {*}
+	 */
 	addSubscriber(id, source) {
 		this.#subscribers[id] = source;
 
@@ -254,6 +317,13 @@ class SubscriptionData {
 		}
 	}
 
+	/**
+	 * Runs the remove subscriber operation.
+	 *
+	 * @public
+	 * @param {number} id - The id.
+	 * @returns {*}
+	 */
 	removeSubscriber(id) {
 		if (this.#subscribers.hasOwnProperty(id)) {
 			const source = this.#subscribers[id];
@@ -266,6 +336,12 @@ class SubscriptionData {
 		}
 	}
 
+	/**
+	 * Returns the sources.
+	 *
+	 * @public
+	 * @returns {*}
+	 */
 	getSources() {
 		return this.#sources;
 	}

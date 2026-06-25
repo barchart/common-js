@@ -19,9 +19,9 @@ export default class SplitTransformer extends Stream.Transform {
 	#silent;
 
 	/**
-	 * @param {string=} description
-	 * @param {boolean=} silent
-	 * @param {object=} options
+	 * @param {string=} description - The description.
+	 * @param {boolean=} silent - The silent.
+	 * @param {object=} options - The options.
 	 */
 	constructor(description, silent, options) {
 		super(object.merge({ objectMode: true }, (options || { })));
@@ -36,6 +36,14 @@ export default class SplitTransformer extends Stream.Transform {
 		this.#counter = 0;
 	}
 
+	/**
+	 * Transforms the input.
+	 *
+	 * @protected
+	 * @param {*} chunk - The chunk.
+	 * @param {string} encoding - The encoding.
+	 * @param {Function} callback - The callback.
+	 */
 	_transform(chunk, encoding, callback) {
 		this.#counter = this.#counter + 1;
 

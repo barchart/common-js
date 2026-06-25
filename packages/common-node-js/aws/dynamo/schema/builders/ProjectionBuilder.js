@@ -18,8 +18,8 @@ export default class ProjectionBuilder {
 	#projection;
 
 	/**
-	 * @param {ProjectionType} projectionType
-	 * @param {TableBuilder} parent
+	 * @param {ProjectionType} projectionType - The projection type.
+	 * @param {TableBuilder} parent - The parent.
 	 */
 	constructor(projectionType, parent) {
 		assert.argumentIsRequired(projectionType, 'projectionType', ProjectionType, 'ProjectionType');

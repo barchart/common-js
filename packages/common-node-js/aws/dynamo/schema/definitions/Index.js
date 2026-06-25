@@ -24,11 +24,11 @@ export default class Index {
 	#type;
 
 	/**
-	 * @param {string} name
-	 * @param {IndexType} type
-	 * @param {Array<Key>} keys
-	 * @param {Projection} projection
-	 * @param {ProvisionedThroughput} provisionedThroughput
+	 * @param {string} name - The name.
+	 * @param {IndexType} type - The type.
+	 * @param {Array<Key>} keys - The keys.
+	 * @param {Projection} projection - The projection.
+	 * @param {ProvisionedThroughput} provisionedThroughput - The provisioned throughput.
 	 */
 	constructor(name, type, keys, projection, provisionedThroughput) {
 		this.#name = name;

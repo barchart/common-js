@@ -8,14 +8,15 @@ import Enum from '@barchart/common-js/lang/Enum.js';
  */
 export default class StreamViewType extends Enum {
 	/**
-	 * @param {*} schemaName
-	 * @param {string} description
+	 * @param {*} schemaName - The schema name.
+	 * @param {string} description - The description.
 	 */
 	constructor(schemaName, description) {
 		super(schemaName, description);
 	}
 
 	/**
+	 * @public
 	 * @returns {string}
 	 */
 	get schemaName() {
@@ -23,6 +24,8 @@ export default class StreamViewType extends Enum {
 	}
 
 	/**
+	 * @public
+	 * @static
 	 * @returns {StreamViewType}
 	 */
 	static get NEW_IMAGE() {
@@ -30,6 +33,8 @@ export default class StreamViewType extends Enum {
 	}
 
 	/**
+	 * @public
+	 * @static
 	 * @returns {StreamViewType}
 	 */
 	static get OLD_IMAGE() {
@@ -37,6 +42,8 @@ export default class StreamViewType extends Enum {
 	}
 
 	/**
+	 * @public
+	 * @static
 	 * @returns {StreamViewType}
 	 */
 	static get BOTH_IMAGES() {
@@ -44,6 +51,8 @@ export default class StreamViewType extends Enum {
 	}
 
 	/**
+	 * @public
+	 * @static
 	 * @returns {StreamViewType}
 	 */
 	static get KEYS_ONLY() {

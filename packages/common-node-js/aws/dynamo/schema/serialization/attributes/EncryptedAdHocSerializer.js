@@ -9,7 +9,7 @@ import CompressedAdHocSerializer from './CompressedAdHocSerializer.js';
  */
 export default class EncryptedAdHocSerializer extends CompressedAdHocSerializer {
 	/**
-	 * @param {*} attribute
+	 * @param {*} attribute - The attribute.
 	 */
 	constructor(attribute) {
 		super(attribute);

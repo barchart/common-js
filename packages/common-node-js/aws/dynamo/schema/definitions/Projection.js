@@ -15,8 +15,8 @@ export default class Projection {
 	#type;
 
 	/**
-	 * @param {ProjectionType} type
-	 * @param {*} attributes
+	 * @param {ProjectionType} type - The type.
+	 * @param {*} attributes - The attributes.
 	 */
 	constructor(type, attributes) {
 		this.#type = type;

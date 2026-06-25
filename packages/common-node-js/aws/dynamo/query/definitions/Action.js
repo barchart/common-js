@@ -26,9 +26,9 @@ export default class Action {
 	#table;
 
 	/**
-	 * @param {Table} table
-	 * @param {Index=} index
-	 * @param {string=} description
+	 * @param {Table} table - The table.
+	 * @param {Index=} index - The index.
+	 * @param {string=} description - The description.
 	 */
 	constructor(table, index, description) {
 		this.#table = table;
@@ -70,7 +70,7 @@ export default class Action {
 	 * Returns a string suitable to pass to an "ExpressionAttributeNames" property
 	 * on an AWS query or scan object.
 	 *
-	 * @protected
+	 * @public
 	 * @static
 	 * @param {Table} table
 	 * @param {Array<Attribute>} attributes
@@ -93,7 +93,7 @@ export default class Action {
 	 * Returns a string suitable to pass to a "ProjectionExpression" property
 	 * on an AWS query or scan object.
 	 *
-	 * @protected
+	 * @public
 	 * @static
 	 * @param {Table} table
 	 * @param {Array<Attribute>} projectedAttributes - Attributes to project (i.e. select).
@@ -111,7 +111,7 @@ export default class Action {
 	 * field. Also, a "valueAliases" object which conforms to the "ExpressionAttributeValues"
 	 * field.
 	 *
-	 * @protected
+	 * @public
 	 * @static
 	 * @param {Table} table
 	 * @param {Filter} filter

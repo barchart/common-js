@@ -23,8 +23,8 @@ export default class Client extends Disposable {
 	#preparedStatementMap;
 
 	/**
-	 * @param {*} pgClient
-	 * @param {*} preparedStatementMap
+	 * @param {*} pgClient - The pg client.
+	 * @param {*} preparedStatementMap - The prepared statement map.
 	 */
 	constructor(pgClient, preparedStatementMap) {
 		super();

@@ -16,8 +16,8 @@ export default class CompositePublisher extends Publisher {
 	#publishers;
 
 	/**
-	 * @param {*} publishers
-	 * @param {*} suppressExpressions
+	 * @param {*} publishers - The publishers.
+	 * @param {*} suppressExpressions - The suppress expressions.
 	 */
 	constructor(publishers, suppressExpressions) {
 		super(suppressExpressions);

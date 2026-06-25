@@ -3,12 +3,17 @@ import * as object from '@barchart/common-js/lang/object.js';
 
 import Stream from 'stream';
 
+/**
+ * Provides iterator read stream behavior.
+ *
+ * @public
+ */
 export default class IteratorReadStream extends Stream.Readable {
 	#iterator;
 
 	/**
-	 * @param {*} iterator
-	 * @param {object=} options
+	 * @param {*} iterator - The iterator.
+	 * @param {object=} options - The options.
 	 */
 	constructor(iterator, options) {
 		super(object.merge({ objectMode: true }, (options || { })));
@@ -16,6 +21,11 @@ export default class IteratorReadStream extends Stream.Readable {
 		this.#iterator = iterator;
 	}
 
+	/**
+	 * Reads data into the stream.
+	 *
+	 * @protected
+	 */
 	_read() {
 		let next = this.#iterator.next();
 		let value;
@@ -30,6 +40,8 @@ export default class IteratorReadStream extends Stream.Readable {
 	}
 
 	/**
+	 * @public
+	 * @static
 	 * @param {Array<object>} a
 	 * @returns {IteratorReadStream}
 	 */
@@ -40,6 +52,8 @@ export default class IteratorReadStream extends Stream.Readable {
 	}
 
 	/**
+	 * @static
+	 * @public
 	 * @param {Map} m
 	 * @returns {IteratorReadStream}
 	 */

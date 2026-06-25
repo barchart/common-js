@@ -10,9 +10,9 @@ export default class ProvisioningType extends Enum {
 	#key;
 
 	/**
-	 * @param {string} code
-	 * @param {string} description
-	 * @param {string} key
+	 * @param {string} code - The code.
+	 * @param {string} description - The description.
+	 * @param {string} key - The key.
 	 */
 	constructor(code, description, key) {
 		super(code, description);
@@ -35,7 +35,7 @@ export default class ProvisioningType extends Enum {
 	 *
 	 * @public
 	 * @static
-	 * @return {ProvisioningType}
+	 * @returns {ProvisioningType}
 	 */
 	static get PROVISIONED() {
 		return provisioned;
@@ -46,7 +46,7 @@ export default class ProvisioningType extends Enum {
 	 *
 	 * @public
 	 * @static
-	 * @return {ProvisioningType}
+	 * @returns {ProvisioningType}
 	 */
 	static get ON_DEMAND() {
 		return onDemand;

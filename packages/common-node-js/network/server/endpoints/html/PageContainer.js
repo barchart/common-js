@@ -3,16 +3,21 @@ import * as assert from '@barchart/common-js/lang/assert.js';
 import Container from './../Container.js';
 import PageEndpoint from './PageEndpoint.js';
 
+/**
+ * Stores page configuration.
+ *
+ * @public
+ */
 export default class PageContainer extends Container {
 	#secureRedirect;
 	#useSession;
 
 	/**
-	 * @param {number} port
-	 * @param {string} path
-	 * @param {boolean=} secure
-	 * @param {boolean=} useSession
-	 * @param {boolean=} secureRedirect
+	 * @param {number} port - The port.
+	 * @param {string} path - The path.
+	 * @param {boolean=} secure - The secure.
+	 * @param {boolean=} useSession - The use session.
+	 * @param {boolean=} secureRedirect - The secure redirect.
 	 */
 	constructor(port, path, secure, useSession, secureRedirect) {
 		super(port, path, secure);
@@ -24,6 +29,12 @@ export default class PageContainer extends Container {
 		this.#secureRedirect = secureRedirect || false;
 	}
 
+	/**
+	 * Returns the endpoint type.
+	 *
+	 * @protected
+	 * @returns {*}
+	 */
 	_getEndpointType() {
 		return PageEndpoint;
 	}

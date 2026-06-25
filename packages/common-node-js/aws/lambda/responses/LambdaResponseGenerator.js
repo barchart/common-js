@@ -162,11 +162,24 @@ function convertHeadersToObject(headersArray) {
 	}, { });
 }
 
+/**
+ * Provides lambda response generator default behavior.
+ */
 class LambdaResponseGeneratorDefault extends LambdaResponseGenerator {
 	constructor() {
 		super();
 	}
 
+	/**
+	 * Runs the generate operation.
+	 *
+	 * @protected
+	 * @param {number} responseCode - The response code.
+	 * @param {object} responseHeaders - The response headers.
+	 * @param {object} responseData - The response data.
+	 * @param {number} responseSize - The response size.
+	 * @returns {*}
+	 */
 	_generate(responseCode, responseHeaders, responseData, responseSize) {
 		let body;
 		let size;
@@ -191,6 +204,12 @@ class LambdaResponseGeneratorDefault extends LambdaResponseGenerator {
 		}
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[LambdaResponseGeneratorDefault]';
 	}

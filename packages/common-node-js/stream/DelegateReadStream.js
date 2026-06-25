@@ -26,9 +26,9 @@ export default class DelegateReadStream extends Stream.Readable {
 	#stopping;
 
 	/**
-	 * @param {DataProvider} delegate
-	 * @param {number=} highWaterMark
-	 * @param {boolean=} discrete
+	 * @param {DataProvider} delegate - The delegate.
+	 * @param {number=} highWaterMark - The high water mark.
+	 * @param {boolean=} discrete - The discrete.
 	 */
 	constructor(delegate, highWaterMark, discrete) {
 		super({ objectMode: true, highWaterMark: highWaterMark || 10 });
@@ -81,12 +81,18 @@ export default class DelegateReadStream extends Stream.Readable {
 	 * and all possible items have been enqueued.
 	 *
 	 * @public
-	 * @return {boolean}
+	 * @returns {boolean}
 	 */
 	get completed() {
 		return this.#completed;
 	}
 
+	/**
+	 * Reads data into the stream.
+	 *
+	 * @protected
+	 * @param {number} size - The size.
+	 */
 	_read(size) {
 		if (this.#reading) {
 			return;
@@ -177,7 +183,7 @@ export default class DelegateReadStream extends Stream.Readable {
 	 *
 	 * @public
 	 * @async
-	 * @return {Promise<object|null>}
+	 * @returns {Promise<object|null>}
 	 */
 	async stop() {
 		this.#stopping = true;

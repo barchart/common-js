@@ -13,7 +13,7 @@ export default class EmptyWriteStream extends Stream.Writable {
 	#counter;
 
 	/**
-	 * @param {object=} options
+	 * @param {object=} options - The options.
 	 */
 	constructor(options) {
 		super(object.merge({ objectMode: true }, (options || { })));
@@ -31,6 +31,15 @@ export default class EmptyWriteStream extends Stream.Writable {
 		return this.#counter;
 	}
 
+	/**
+	 * Writes data from the stream.
+	 *
+	 * @protected
+	 * @param {*} chunk - The chunk.
+	 * @param {string} encoding - The encoding.
+	 * @param {Function} callback - The callback.
+	 * @returns {*}
+	 */
 	_write(chunk, encoding, callback) {
 		this.#counter = this.#counter + 1;
 

@@ -43,10 +43,24 @@ export default class DelegateTransformation extends Transformation {
 		return this.#synchronous;
 	}
 
+	/**
+	 * Indicates if the transform can be performed.
+	 *
+	 * @protected
+	 * @param {*} input - The input.
+	 * @returns {boolean}
+	 */
 	_canTransform(input) {
 		return this.#canTransformDelegate(input);
 	}
 
+	/**
+	 * Transforms the input.
+	 *
+	 * @protected
+	 * @param {*} input - The input.
+	 * @returns {*}
+	 */
 	_transform(input) {
 		return this.#transformDelegate(input);
 	}

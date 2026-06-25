@@ -12,7 +12,7 @@ export default class ComponentBuilder {
 	#component;
 
 	/**
-	 * @param {string} name
+	 * @param {string} name - The name.
 	 */
 	constructor(name) {
 		assert.argumentIsRequired(name, 'name', String);

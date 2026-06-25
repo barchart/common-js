@@ -9,7 +9,7 @@ import CompressedJsonSerializer from './CompressedJsonSerializer.js';
  */
 export default class EncryptedJsonSerializer extends CompressedJsonSerializer {
 	/**
-	 * @param {*} attribute
+	 * @param {*} attribute - The attribute.
 	 */
 	constructor(attribute) {
 		super(attribute);

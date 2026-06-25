@@ -32,20 +32,20 @@ export default class Query extends Action {
 	#skipDeserialization;
 
 	/**
-	 * @param {Table} table
-	 * @param {Index=} index
-	 * @param {Filter=} keyFilter
-	 * @param {Filter=} resultsFilter
-	 * @param {Filter=} parallelFilter
-	 * @param {Array<Attribute>=} attributes
-	 * @param {number=} limit
-	 * @param {OrderingType=} orderingType
-	 * @param {boolean=} consistentRead
-	 * @param {boolean=} skipDeserialization
-	 * @param {boolean=} countOnly
-	 * @param {string=} description
-	 * @param {boolean=} monitorCapacityConsumed
-	 * @param {object=} exclusiveStartKey
+	 * @param {Table} table - The table.
+	 * @param {Index=} index - The index.
+	 * @param {Filter=} keyFilter - The key filter.
+	 * @param {Filter=} resultsFilter - The results filter.
+	 * @param {Filter=} parallelFilter - The parallel filter.
+	 * @param {Array<Attribute>=} attributes - The attributes.
+	 * @param {number=} limit - The limit.
+	 * @param {OrderingType=} orderingType - The ordering type.
+	 * @param {boolean=} consistentRead - The consistent read.
+	 * @param {boolean=} skipDeserialization - The skip deserialization.
+	 * @param {boolean=} countOnly - The count only.
+	 * @param {string=} description - The description.
+	 * @param {boolean=} monitorCapacityConsumed - The monitor capacity consumed.
+	 * @param {object=} exclusiveStartKey - The exclusive start key.
 	 */
 	constructor(table, index, keyFilter, resultsFilter, parallelFilter, attributes, limit, orderingType, consistentRead, skipDeserialization, countOnly, description, monitorCapacityConsumed, exclusiveStartKey) {
 		super(table, index, (description || '[Unnamed Query]'));

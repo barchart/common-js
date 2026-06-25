@@ -35,10 +35,24 @@ export default class PropertyDelegateTransformation extends PropertyTransformati
 		return this.#delegateTransformation.synchronous;
 	}
 
+	/**
+	 * Indicates if the transform value can be performed.
+	 *
+	 * @protected
+	 * @param {*} value - The value.
+	 * @returns {boolean}
+	 */
 	_canTransformValue(value) {
 		return this.#delegateTransformation.canTransform(value);
 	}
 
+	/**
+	 * Transforms the input.
+	 *
+	 * @protected
+	 * @param {*} value - The value.
+	 * @returns {*}
+	 */
 	_transformValue(value) {
 		return this.#delegateTransformation.transform(value);
 	}

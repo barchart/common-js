@@ -11,8 +11,8 @@ export default class ProvisionedThroughputBuilder {
 	#provisionedThroughput;
 
 	/**
-	 * @param {number=} read
-	 * @param {number=} write
+	 * @param {number=} read - The read.
+	 * @param {number=} write - The write.
 	 */
 	constructor(read, write) {
 		assert.argumentIsOptional(read, 'read', Number);

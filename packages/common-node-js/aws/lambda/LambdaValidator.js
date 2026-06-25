@@ -22,7 +22,7 @@ export default class LambdaValidator {
 	 * @public
 	 * @async
 	 * @param {object} event
-	 * @return {Promise<boolean>}
+	 * @returns {Promise<boolean>}
 	 */
 	async validate(event) {
 		let messages;

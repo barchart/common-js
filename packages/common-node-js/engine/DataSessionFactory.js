@@ -50,6 +50,11 @@ export default class DataSessionFactory {
 		return this.#startPromise;
 	}
 
+	/**
+	 * Starts the component.
+	 *
+	 * @protected
+	 */
 	_start() {
 		return;
 	}
@@ -132,7 +137,7 @@ export default class DataSessionFactory {
 	 * @public
 	 * @async
 	 * @param {object} options
-	 * @return {Promise}
+	 * @returns {Promise}
 	 */
 	async getDataProvider(options) {
 		if (!this.#started) {

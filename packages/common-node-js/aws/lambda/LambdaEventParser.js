@@ -264,7 +264,7 @@ export default class LambdaEventParser {
 	 *
 	 * @public
 	 * @param {boolean=} text
-	 * @return {Array<object>}
+	 * @returns {Array<object>}
 	 */
 	getMessages(text) {
 		let messages;

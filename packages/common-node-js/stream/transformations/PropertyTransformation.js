@@ -32,20 +32,48 @@ export default class PropertyTransformation extends Transformation {
 		this.#outputPropertyName = outputPropertyName || inputPropertyName;
 	}
 
+	/**
+	 * Indicates if the transform can be performed.
+	 *
+	 * @protected
+	 * @param {*} input - The input.
+	 * @returns {boolean}
+	 */
 	_canTransform(input) {
 		return attributes.has(input, this.#inputPropertyName) && this._canTransformValue(attributes.read(input, this.#inputPropertyName));
 	}
 
+	/**
+	 * Indicates if the transform value can be performed.
+	 *
+	 * @protected
+	 * @param {*} value - The value.
+	 * @returns {boolean}
+	 */
 	_canTransformValue(value) {
 		return true;
 	}
 
+	/**
+	 * Transforms the input.
+	 *
+	 * @protected
+	 * @param {*} input - The input.
+	 * @returns {*}
+	 */
 	_transform(input) {
 		attributes.write(input, this.#outputPropertyName, this._transformValue(attributes.read(input, this.#inputPropertyName)));
 
 		return input;
 	}
 
+	/**
+	 * Transforms the input.
+	 *
+	 * @protected
+	 * @param {*} value - The value.
+	 * @returns {*}
+	 */
 	_transformValue(value) {
 		return value;
 	}

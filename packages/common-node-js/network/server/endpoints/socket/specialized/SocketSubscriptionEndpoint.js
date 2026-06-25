@@ -6,6 +6,11 @@ import Endpoint from './../../Endpoint.js';
 
 const emptyCommand = CommandHandler.fromFunction(() => null);
 
+/**
+ * Provides socket subscription endpoint behavior.
+ *
+ * @public
+ */
 export default class SocketSubscriptionEndpoint extends Endpoint {
 	#channel;
 	#responseCommand;
@@ -13,11 +18,11 @@ export default class SocketSubscriptionEndpoint extends Endpoint {
 	#roomsCommand;
 
 	/**
-	 * @param {*} channel
-	 * @param {*} roomsCommand
-	 * @param {*} responseCommand
-	 * @param {*} responseEventType
-	 * @param {*} validationCommand
+	 * @param {*} channel - The channel.
+	 * @param {*} roomsCommand - The rooms command.
+	 * @param {*} responseCommand - The response command.
+	 * @param {*} responseEventType - The response event type.
+	 * @param {*} validationCommand - The validation command.
 	 */
 	constructor(channel, roomsCommand, responseCommand, responseEventType, validationCommand) {
 		super(emptyCommand, validationCommand);

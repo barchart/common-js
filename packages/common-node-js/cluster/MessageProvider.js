@@ -9,6 +9,11 @@ import process from 'process';
 
 const logger = log4js.getLogger('common-node/cluster/MessageProvider');
 
+/**
+ * Provides message services.
+ *
+ * @public
+ */
 export default class MessageProvider {
 	#startPromise;
 	#started;
@@ -112,6 +117,9 @@ export default class MessageProvider {
 	}
 }
 
+/**
+ * Provides receiver behavior.
+ */
 class Receiver {
 	#handlers;
 	#peerConnected;
@@ -125,6 +133,13 @@ class Receiver {
 		this.#startPromise = null;
 	}
 
+	/**
+	 * Starts the component.
+	 *
+	 * @public
+	 * @async
+	 * @returns {Promise<*>}
+	 */
 	async start() {
 		if (this.#startPromise === null) {
 			this.#startPromise = (async () => {
@@ -137,10 +152,24 @@ class Receiver {
 		return this.#startPromise;
 	}
 
+	/**
+	 * Starts the component.
+	 *
+	 * @protected
+	 * @returns {*}
+	 */
 	_start() {
 		return;
 	}
 
+	/**
+	 * Registers a handler.
+	 *
+	 * @public
+	 * @param {string} type - The type.
+	 * @param {Function} handler - The handler.
+	 * @returns {*}
+	 */
 	handle(type, handler) {
 		assert.argumentIsRequired(type, 'type', String);
 		assert.argumentIsRequired(handler, 'handler', Function);
@@ -156,28 +185,63 @@ class Receiver {
 		});
 	}
 
+	/**
+	 * Registers the peer connected observer.
+	 *
+	 * @public
+	 * @param {Function} handler - The handler.
+	 * @returns {*}
+	 */
 	registerPeerConnectedObserver(handler) {
 		return this.#peerConnected.register(handler);
 	}
 
+	/**
+	 * Returns the handler.
+	 *
+	 * @protected
+	 * @param {string} type - The type.
+	 * @returns {*}
+	 */
 	_getHandler(type) {
 		return this.#handlers[type];
 	}
 
+	/**
+	 * Runs the fire peer connected operation.
+	 *
+	 * @protected
+	 * @param {*} peer - The peer.
+	 * @returns {*}
+	 */
 	_firePeerConnected(peer) {
 		this.#peerConnected.fire(peer);
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Receiver]';
 	}
 }
 
+/**
+ * Provides master receiver behavior.
+ */
 class MasterReceiver extends Receiver {
 	constructor() {
 		super();
 	}
 
+	/**
+	 * Starts the component.
+	 *
+	 * @protected
+	 */
 	_start() {
 		const connectToWorker = (worker) => {
 			logger.info('Master listening on IPC channel to messages from worker', worker.id);
@@ -210,11 +274,19 @@ class MasterReceiver extends Receiver {
 	}
 }
 
+/**
+ * Provides worker receiver behavior.
+ */
 class WorkerReceiver extends Receiver {
 	constructor() {
 		super();
 	}
 
+	/**
+	 * Starts the component.
+	 *
+	 * @protected
+	 */
 	_start() {
 		process.on('message', (message) => {
 			logger.trace('Worker process', cluster.worker.id, 'received message from master process', message);
@@ -231,16 +303,29 @@ class WorkerReceiver extends Receiver {
 	}
 }
 
+/**
+ * Provides sender behavior.
+ */
 class Sender {
 	#id;
 	#startPromise;
 
+	/**
+	 * @param {number} id - The id.
+	 */
 	constructor(id) {
 		this.#id = id;
 
 		this.#startPromise = null;
 	}
 
+	/**
+	 * Starts the component.
+	 *
+	 * @public
+	 * @async
+	 * @returns {Promise<*>}
+	 */
 	async start() {
 		if (this.#startPromise === null) {
 			this.#startPromise = (async () => {
@@ -253,26 +338,71 @@ class Sender {
 		return this.#startPromise;
 	}
 
+	/**
+	 * Starts the component.
+	 *
+	 * @protected
+	 * @returns {*}
+	 */
 	_start() {
 		return;
 	}
 
+	/**
+	 * Sends a message.
+	 *
+	 * @public
+	 * @param {string} type - The type.
+	 * @param {object} payload - The payload.
+	 * @param {number} target - The target.
+	 * @returns {*}
+	 */
 	send(type, payload, target) {
 		return;
 	}
 
+	/**
+	 * Broadcasts a message.
+	 *
+	 * @public
+	 * @param {string} type - The type.
+	 * @param {object} payload - The payload.
+	 * @returns {*}
+	 */
 	broadcast(type, payload) {
 		return;
 	}
 
+	/**
+	 * Returns the id.
+	 *
+	 * @protected
+	 * @returns {*}
+	 */
 	_getId() {
 		return this.#id;
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[Sender]';
 	}
 
+	/**
+	 * Returns the message.
+	 *
+	 * @public
+	 * @static
+	 * @param {string} sender - The sender.
+	 * @param {string} type - The type.
+	 * @param {object} payload - The payload.
+	 * @returns {*}
+	 */
 	static getMessage(sender, type, payload) {
 		return {
 			s: sender,
@@ -282,15 +412,35 @@ class Sender {
 	}
 }
 
+/**
+ * Provides master sender behavior.
+ */
 class MasterSender extends Sender {
 	constructor() {
 		super(0);
 	}
 
+	/**
+	 * Sends a message.
+	 *
+	 * @public
+	 * @param {string} type - The type.
+	 * @param {object} payload - The payload.
+	 * @param {number} target - The target.
+	 * @returns {*}
+	 */
 	send(type, payload, target) {
 		cluster.workers[target].send(Sender.getMessage(this._getId(), type, payload));
 	}
 
+	/**
+	 * Broadcasts a message.
+	 *
+	 * @public
+	 * @param {string} type - The type.
+	 * @param {object} payload - The payload.
+	 * @returns {*}
+	 */
 	broadcast(type, payload) {
 		const message = Sender.getMessage(this._getId(), type, payload);
 
@@ -299,20 +449,44 @@ class MasterSender extends Sender {
 		});
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[MasterSender]';
 	}
 }
 
+/**
+ * Provides worker sender behavior.
+ */
 class WorkerSender extends Sender {
 	constructor() {
 		super(cluster.worker.id);
 	}
 
+	/**
+	 * Starts the component.
+	 *
+	 * @protected
+	 * @returns {*}
+	 */
 	_start() {
 		this.send('ready', { }, 0);
 	}
 
+	/**
+	 * Sends a message.
+	 *
+	 * @public
+	 * @param {string} type - The type.
+	 * @param {object} payload - The payload.
+	 * @param {number} target - The target.
+	 * @returns {*}
+	 */
 	send(type, payload, target) {
 		if (this._getId() === null) {
 			throw new Error('Unable to send message without worker identifier.');
@@ -321,10 +495,24 @@ class WorkerSender extends Sender {
 		process.send(Sender.getMessage(this._getId(), type, payload));
 	}
 
+	/**
+	 * Broadcasts a message.
+	 *
+	 * @public
+	 * @param {string} type - The type.
+	 * @param {object} payload - The payload.
+	 * @returns {*}
+	 */
 	broadcast(type, payload) {
 		this.send(type, payload, 0);
 	}
 
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
 	toString() {
 		return '[WorkerSender]';
 	}
