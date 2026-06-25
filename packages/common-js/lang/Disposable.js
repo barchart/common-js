@@ -6,7 +6,6 @@ import * as assert from './assert.js';
  * @public
  */
 export default class Disposable {
-
 	#disposed;
 
 	constructor() {

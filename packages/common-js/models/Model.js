@@ -5,7 +5,6 @@ import Disposable from './../lang/Disposable.js';
 import Event from './../messaging/Event.js';
 
 export default class Model extends Disposable {
-
 	#propertyNames;
 	#transactionCommit;
 	#transactionOpen;
