@@ -101,7 +101,7 @@ export default class Table {
 	 * @returns {Array<Index>}
 	 */
 	get indices() {
-		return [...this.#indices];
+		return [ ...this.#indices ];
 	}
 
 	/**
