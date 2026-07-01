@@ -2,10 +2,7 @@ import * as assert from '@barchart/common-js/lang/assert.js';
 
 import Expression from './../definitions/Expression.js';
 import OperatorType from './../definitions/OperatorType.js';
-
-/**
- * @typedef {import('./ActionBuilder.js').default} ActionBuilder
- */
+import ActionBuilder from './ActionBuilder.js';
 
 /**
  * @typedef {import('../../schema/definitions/Attribute.js').default} Attribute
@@ -25,6 +22,7 @@ export default class ExpressionBuilder {
 	 */
 	constructor(attributeName, parent) {
 		assert.argumentIsRequired(attributeName, 'attributeName', String);
+		assert.argumentIsRequired(parent, 'parent', ActionBuilder, 'ActionBuilder');
 
 		this.#expression = new Expression(getAttribute(attributeName, parent), null, null);
 	}
@@ -65,6 +63,19 @@ export default class ExpressionBuilder {
 		this.#expression = new Expression(this.#expression.attribute, this.#expression.operatorType, operand);
 
 		return this;
+	}
+
+	/**
+	 * Constructs a new, and incomplete, {@link ExpressionBuilder}.
+	 *
+	 * @public
+	 * @static
+	 * @param {Attribute} attribute
+	 * @param {ActionBuilder} parent
+	 * @returns {ExpressionBuilder}
+	 */
+	static withAttribute(attribute, parent) {
+		return new ExpressionBuilder(attribute.name, parent);
 	}
 
 	/**

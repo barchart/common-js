@@ -2,10 +2,7 @@ import * as assert from '@barchart/common-js/lang/assert.js';
 
 import Filter from './../definitions/Filter.js';
 import ExpressionBuilder from './ExpressionBuilder.js';
-
-/**
- * @typedef {import('./ActionBuilder.js').default} ActionBuilder
- */
+import ActionBuilder from './ActionBuilder.js';
 
 /**
  * @typedef {import('../definitions/OperatorType.js').default} OperatorType
@@ -24,6 +21,8 @@ export default class FilterBuilder {
 	 * @param {ActionBuilder} parent - The parent.
 	 */
 	constructor(parent) {
+		assert.argumentIsRequired(parent, 'parent', ActionBuilder, 'ActionBuilder');
+
 		this.#filter = new Filter([ ]);
 		this.#parent = parent;
 	}
