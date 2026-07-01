@@ -201,7 +201,7 @@ export default class TableBuilder {
 		callback(indexBuilder);
 
 		const index = indexBuilder.index;
-		const indices = this.#table._indices.filter(i => i.name !== index.name).concat(index);
+		const indices = this.#table.indices.filter(i => i.name !== index.name).concat(index);
 
 		this.#table = new Table(this.#table.name, this.#table.keys, indices, this.#table.attributes, this.#table.components, this.#table.provisionedThroughput, this.#table.streamViewType, this.#table.ttlAttribute);
 
