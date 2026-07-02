@@ -4,7 +4,7 @@ import JwtProvider from './../../../../push/security/JwtProvider.js';
 describe('When JWT providers are used with local token generators', () => {
 	'use strict';
 
-	it('should expose public push security host configuration', () => {
+	it('should return public push security host configuration', () => {
 		expect({
 			staging: Configuration.stagingHost,
 			production: Configuration.productionHost,
@@ -18,7 +18,7 @@ describe('When JWT providers are used with local token generators', () => {
 
 	it('should cache tokens when a refresh interval is configured', async () => {
 		let counter = 0;
-		const provider = JwtProvider.fromTokenGenerator(() => Promise.resolve(`token-${++counter}`), 0);
+		const provider = JwtProvider.fromTokenGenerator(async () => `token-${++counter}`, 0);
 
 		const first = await provider.getToken();
 		const second = await provider.getToken();
@@ -38,7 +38,7 @@ describe('When JWT providers are used with local token generators', () => {
 
 	it('should generate a new token when caching is disabled', async () => {
 		let counter = 0;
-		const provider = JwtProvider.fromTokenGenerator(() => Promise.resolve(`token-${++counter}`));
+		const provider = JwtProvider.fromTokenGenerator(async () => `token-${++counter}`);
 
 		const first = await provider.getToken();
 		const second = await provider.getToken();

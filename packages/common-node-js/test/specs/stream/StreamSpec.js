@@ -66,7 +66,7 @@ describe('When common stream utilities are used', () => {
 			[ 3 ],
 			null
 		];
-		const stream = new DelegateReadStream(() => Promise.resolve(batches.shift()));
+		const stream = new DelegateReadStream(async () => batches.shift());
 
 		const items = await collect(stream);
 
@@ -91,7 +91,7 @@ describe('When common stream utilities are used', () => {
 			[ 1, 2 ],
 			null
 		];
-		const stream = new DelegateReadStream(() => Promise.resolve(batches.shift()), 10, true);
+		const stream = new DelegateReadStream(async () => batches.shift(), 10, true);
 
 		expect(await collect(stream)).toEqual([ 1, 2 ]);
 	});

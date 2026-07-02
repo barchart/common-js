@@ -81,7 +81,7 @@ class TestSessionFactory extends DataSessionFactory {
 describe('When data engine primitives are used', () => {
 	'use strict';
 
-	it('should expose provider options and operation result values', () => {
+	it('should return provider options and operation result values', () => {
 		const provider = new DataProvider({ account: 'A1' });
 		const operation = new TestOperation('read', 'ok');
 		const child = new TestOperation('child', 'child');

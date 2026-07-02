@@ -138,7 +138,7 @@ describe('When stream transformations are used', () => {
 
 	it('should transform stream objects asynchronously when needed', async () => {
 		const transformer = ObjectTransformer.define('quotes').addTransformation(
-			new DelegateTransformation(input => Promise.resolve(Object.assign({ }, input, { price: input.price + 1 })), () => true, true)
+			new DelegateTransformation(async input => Object.assign({ }, input, { price: input.price + 1 }), () => true, true)
 		);
 
 		const output = await collect(new ArrayReadStream([ { symbol: 'AAPL', price: 200 } ]).pipe(transformer));

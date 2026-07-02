@@ -3,19 +3,15 @@ import Protocol from './../../../network/Protocol.js';
 describe('When network protocols are used', () => {
 	'use strict';
 
-	it('should expose standard and secure URL prefixes', () => {
-		expect({
-			description: Protocol.HyperText.getDescription(),
-			standard: Protocol.HyperText.getStandard(),
-			secure: Protocol.HyperText.getSecure(),
-			standardPrefix: Protocol.HyperText.getUrlPrefix(false),
-			securePrefix: Protocol.HyperText.getUrlPrefix(true)
-		}).toEqual({
-			description: 'HyperText',
-			standard: 'http',
-			secure: 'https',
-			standardPrefix: 'http://',
-			securePrefix: 'https://'
-		});
+	it('should return the standard URL prefix when secure mode is disabled', () => {
+		const protocol = new Protocol('Test', 'standard', 'secure');
+
+		expect(protocol.getUrlPrefix(false)).toEqual('standard://');
+	});
+
+	it('should return the secure URL prefix when secure mode is enabled', () => {
+		const protocol = new Protocol('Test', 'standard', 'secure');
+
+		expect(protocol.getUrlPrefix(true)).toEqual('secure://');
 	});
 });

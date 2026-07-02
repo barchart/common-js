@@ -13,7 +13,7 @@ describe('When environment values are used', () => {
 		process.argv = argv;
 	});
 
-	it('should expose environment metadata and cloned configuration', () => {
+	it('should return environment metadata and cloned configuration', () => {
 		const configuration = {
 			server: {
 				path: '/tmp/app'
