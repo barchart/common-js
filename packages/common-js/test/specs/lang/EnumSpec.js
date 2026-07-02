@@ -24,6 +24,10 @@ describe('When Enum is extended (as types EnumA and EnumB) and type items are ad
 		expect(Enum.fromCode(EnumA, 'x')).toBe(ax);
 	});
 
+	it('toJSON should return the enum code', () => {
+		expect(ax.toJSON()).toEqual('x');
+	});
+
 	it('should be able to find Y in EnumA using the code', () => {
 		expect(Enum.fromCode(EnumA, 'y')).toBe(ay);
 	});

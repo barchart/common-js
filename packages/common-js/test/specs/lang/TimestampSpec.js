@@ -13,6 +13,29 @@ describe('When Timestamp is created from a timestamp (1502372574350)', () => {
 		expect(instance.timestamp).toEqual(1502372574350);
 	});
 
+	it('toJSON should return the timestamp', () => {
+		expect(instance.toJSON()).toEqual(1502372574350);
+	});
+
+
+	it('clone should return an equal Timestamp instance', () => {
+		const clone = Timestamp.clone(instance);
+
+		expect({
+			instance: clone instanceof Timestamp,
+			same: clone === instance,
+			timestamp: clone.timestamp
+		}).toEqual({
+			instance: true,
+			same: false,
+			timestamp: 1502372574350
+		});
+	});
+
+	it('parse should return a Timestamp instance', () => {
+		expect(Timestamp.parse(1502372574350).timestamp).toEqual(1502372574350);
+	});
+
 	describe('and two seconds are added', () => {
 		let result;
 
@@ -159,6 +182,10 @@ describe('When comparing two unequal Timestamp instances', () => {
 
 	it('The later timestamp should not be considered "equal to" the earlier timestamp', () => {
 		expect(later.getIsEqual(earlier)).toEqual(false);
+	});
+
+	it('compareTimestamps should sort the timestamps', () => {
+		expect(Timestamp.compareTimestamps(earlier, later) < 0).toEqual(true);
 	});
 });
 

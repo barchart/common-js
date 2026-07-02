@@ -10,12 +10,76 @@ describe('When an Model is constructed with "firstName" and "lastName" propertie
 		model = new Model(['firstName', 'lastName']);
 	});
 
+	it('should return a snapshot of the current model state', () => {
+		model.firstName = 'Bryan';
+		model.lastName = 'Ingle';
+
+		expect(model.getSnapshot()).toEqual({
+			firstName: 'Bryan',
+			lastName: 'Ingle',
+			sequence: 2
+		});
+	});
+
 	describe('and a transaction observer is registered', () => {
 		let spy;
 		let binding;
 
 		beforeEach(() => {
 			binding = model.onTransactionCommitted(spy = jasmine.createSpy('spy'));
+		});
+
+		describe('and a manual transaction is completed', () => {
+			beforeEach(() => {
+				model.beginTransaction();
+
+				model.firstName = 'Bryan';
+				model.lastName = 'Ingle';
+
+				model.endTransaction();
+			});
+
+			it('should commit one transaction', () => {
+				expect(spy.calls.count()).toEqual(1);
+			});
+
+			it('should include both updates in the transaction', () => {
+				expect(spy.calls.argsFor(0)[0]).toEqual({
+					firstName: 'Bryan',
+					lastName: 'Ingle',
+					sequence: 0
+				});
+			});
+		});
+
+		describe('and tracking is used around a transaction', () => {
+			let trackedData;
+
+			beforeEach(() => {
+				model.startTracker();
+
+				model.executeTransaction((m) => {
+					m.firstName = 'Bryan';
+					m.lastName = 'Ingle';
+				});
+
+				trackedData = model.resetTracker();
+				model.stopTracking();
+			});
+
+			it('should return tracked transaction data', () => {
+				expect(trackedData).toEqual({
+					firstName: 'Bryan',
+					lastName: 'Ingle',
+					sequence: 0
+				});
+			});
+
+			it('should clear tracking when tracking is stopped', () => {
+				model.firstName = 'Luka';
+
+				expect(model.resetTracker()).toEqual(null);
+			});
 		});
 
 		it('should return a Disposable instance', () => {

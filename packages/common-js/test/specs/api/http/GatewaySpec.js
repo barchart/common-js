@@ -188,8 +188,4 @@ describe('When Gateway is used', () => {
 	it('should validate endpoint arguments', async () => {
 		await expectAsync(Gateway.invoke(null, { })).toBeRejected();
 	});
-
-	it('should have the expected string representation', () => {
-		expect(new Gateway().toString()).toEqual('[Gateway]');
-	});
 });

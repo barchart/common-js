@@ -1,5 +1,41 @@
 import * as assert from './../../../lang/assert.js';
 
+describe('when validating a required argument', () => {
+	'use strict';
+
+	it('should not throw when the argument has the expected type', () => {
+		expect(() => assert.argumentIsRequired('abc', 'value', String)).not.toThrow();
+	});
+
+	it('should throw when the argument has the wrong type', () => {
+		expect(() => assert.argumentIsRequired(123, 'value', String)).toThrow();
+	});
+});
+
+describe('when checking two values for equality', () => {
+	'use strict';
+
+	it('should not throw when values are equal', () => {
+		expect(() => assert.areEqual('abc', 'abc', 'a', 'b')).not.toThrow();
+	});
+
+	it('should throw when values are not equal', () => {
+		expect(() => assert.areEqual('abc', 'def', 'a', 'b')).toThrow();
+	});
+});
+
+describe('when checking two values for inequality', () => {
+	'use strict';
+
+	it('should not throw when values are not equal', () => {
+		expect(() => assert.areNotEqual('abc', 'def', 'a', 'b')).not.toThrow();
+	});
+
+	it('should throw when values are equal', () => {
+		expect(() => assert.areNotEqual('abc', 'abc', 'a', 'b')).toThrow();
+	});
+});
+
 describe('when attempting to validate an array', () => {
 	'use strict';
 

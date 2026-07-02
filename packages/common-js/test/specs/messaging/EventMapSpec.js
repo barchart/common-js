@@ -9,6 +9,15 @@ describe('When an EventMap is constructed', () => {
 		eventMap = new EventMap();
 	});
 
+	it('should not have keys', () => {
+		expect(eventMap.getKeys()).toEqual([ ]);
+	});
+
+	it('should not have an unknown key', () => {
+		expect(eventMap.hasKey('hi')).toEqual(false);
+	});
+
+
 	describe('and a handler is registered', () => {
 		let eventName;
 		let eventHandler;
@@ -19,6 +28,30 @@ describe('When an EventMap is constructed', () => {
 
 		it('should report the event as not empty', () => {
 			expect(eventMap.getIsEmpty(eventName)).toBe(false);
+		});
+
+		it('should expose the event key', () => {
+			expect({
+				keys: eventMap.getKeys(),
+				hasKey: eventMap.hasKey(eventName)
+			}).toEqual({
+				keys: [ eventName ],
+				hasKey: true
+			});
+		});
+
+		describe('and the event is cleared', () => {
+			beforeEach(() => {
+				eventMap.clear(eventName);
+			});
+
+			it('should report the event as empty', () => {
+				expect(eventMap.getIsEmpty(eventName)).toBe(true);
+			});
+
+			it('should remove the event key', () => {
+				expect(eventMap.hasKey(eventName)).toEqual(false);
+			});
 		});
 
 		describe('and the event fires', () => {

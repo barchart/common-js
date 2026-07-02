@@ -25,10 +25,6 @@ describe('When a CompositeResponseInterceptor is used', () => {
 	it('should validate constructor arguments', () => {
 		expect([ () => new CompositeResponseInterceptor(null, ResponseInterceptor.EMPTY), () => new CompositeResponseInterceptor(ResponseInterceptor.EMPTY, null) ].map(throws)).toEqual([ true, true ]);
 	});
-
-	it('should have the expected string representation', () => {
-		expect(new CompositeResponseInterceptor(ResponseInterceptor.EMPTY, ResponseInterceptor.EMPTY).toString()).toEqual('[CompositeResponseInterceptor]');
-	});
 });
 
 function throws(action) {

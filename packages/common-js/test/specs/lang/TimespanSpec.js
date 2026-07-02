@@ -16,6 +16,25 @@ describe('When a timespan is created with an elapsed time of 2 days, 3 hours, 4 
 		ts = new Timespan(start.getTime(), end.getTime());
 	});
 
+	it('fromDates should create a Timespan from Date instances', () => {
+		const fromDates = Timespan.fromDates(start, end);
+
+		expect({
+			start: fromDates.start,
+			end: fromDates.end
+		}).toEqual({
+			start: start.getTime(),
+			end: end.getTime()
+		});
+	});
+
+	it('toJSON should return start and end timestamps', () => {
+		expect(ts.toJSON()).toEqual({
+			start: start.getTime(),
+			end: end.getTime()
+		});
+	});
+
 	it('the days should be 2', () => {
 		expect(ts.days).toEqual(2);
 	});

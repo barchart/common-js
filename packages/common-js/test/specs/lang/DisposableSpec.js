@@ -74,6 +74,24 @@ describe('When a Disposable is extended', () => {
 	});
 });
 
+describe('When a Disposable.getEmpty creates a Disposable', () => {
+	'use strict';
+
+	let testDisposable;
+
+	beforeEach(() => {
+		testDisposable = Disposable.getEmpty();
+	});
+
+	it('should be an instance of Disposable', () => {
+		expect(testDisposable instanceof Disposable).toEqual(true);
+	});
+
+	it('should dispose without custom action', () => {
+		expect(() => testDisposable.dispose()).not.toThrow();
+	});
+});
+
 describe('When a Disposable.fromAction creates a Disposable', () => {
 	'use strict';
 

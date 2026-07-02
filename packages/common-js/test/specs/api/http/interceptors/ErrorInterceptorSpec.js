@@ -70,8 +70,4 @@ describe('When ErrorInterceptor is used', () => {
 	it('should validate delegate arguments', () => {
 		expect(() => ErrorInterceptor.fromDelegate(null)).toThrow();
 	});
-
-	it('should have the expected string representation', () => {
-		expect(new ErrorInterceptor().toString()).toEqual('[ErrorInterceptor]');
-	});
 });

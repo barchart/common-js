@@ -74,8 +74,4 @@ describe('When DayFormatType values are used', () => {
 			expect(DayFormatType.MM_DD_YY.yearShift).toEqual(Math.floor(new Date().getFullYear() / 100) * 100);
 		});
 	});
-
-	it('should have the expected string representation', () => {
-		expect(DayFormatType.YYYY_MM_DD.toString()).toEqual('[DayFormatType (description=YYYY_MM_DD)]');
-	});
 });

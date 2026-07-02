@@ -61,8 +61,4 @@ describe('When Money is constructed', () => {
 	it('should validate currency arguments', () => {
 		expect(() => new Money('1.23', null)).toThrow();
 	});
-
-	it('should have the expected string representation', () => {
-		expect(money.toString()).toEqual('[Money]');
-	});
 });

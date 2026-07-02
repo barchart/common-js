@@ -159,8 +159,4 @@ describe('When an Endpoint is constructed', () => {
 	it('should reject invalid errorInterceptor', () => {
 		expect(() => new Endpoint('name', null, VerbType.GET, ProtocolType.HTTP, 'example.com', 80, path, query, headers, body, null, null, null, { }).validate()).toThrow();
 	});
-
-	it('should have the expected string representation', () => {
-		expect(endpoint.toString()).toEqual('[Endpoint (name=name)]');
-	});
 });

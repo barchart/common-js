@@ -240,6 +240,20 @@ describe('When an invalid string is parsed as a Day', () => {
 describe('When checking to see if a Day is valid', () => {
 	'use strict';
 
+	it('getDaysInMonth should return the expected number of days', () => {
+		expect({
+			jan: Day.getDaysInMonth(2017, 1),
+			febCommon: Day.getDaysInMonth(2017, 2),
+			febLeap: Day.getDaysInMonth(2020, 2),
+			apr: Day.getDaysInMonth(2017, 4)
+		}).toEqual({
+			jan: 31,
+			febCommon: 28,
+			febLeap: 29,
+			apr: 30
+		});
+	});
+
 	it('should consider Jan 1, 2017 to be valid', () => {
 		expect(Day.validate(2017, 1, 1)).toEqual(true);
 	});
@@ -800,6 +814,23 @@ describe('When "1900-01-01 is parsed as a Day', () => {
 });
 
 describe('When comparing days', () => {
+	it('toJSON should return the formatted day', () => {
+		expect(Day.parse('2017-07-18').toJSON()).toEqual('2017-07-18');
+	});
+
+	it('compareDays should compare two Day instances', () => {
+		expect({
+			before: Day.compareDays(Day.parse('2017-07-18'), Day.parse('2017-07-19')) < 0,
+			equal: Day.compareDays(Day.parse('2017-07-18'), Day.parse('2017-07-18')),
+			after: Day.compareDays(Day.parse('2017-07-19'), Day.parse('2017-07-18')) > 0
+		}).toEqual({
+			before: true,
+			equal: 0,
+			after: true
+		});
+	});
+
+
 	it('The day "2017-07-18" should be before "2017-07-19"', () => {
 		expect(Day.parse('2017-07-18').getIsBefore(Day.parse('2017-07-19'))).toEqual(true);
 	});

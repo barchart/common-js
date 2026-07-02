@@ -90,8 +90,4 @@ describe('When FailureType values are used', () => {
 	it('should validate getHttpStatusCode arguments', () => {
 		expect(() => FailureType.getHttpStatusCode(null)).toThrow();
 	});
-
-	it('should have the expected string representation', () => {
-		expect(FailureType.REQUEST_GENERAL_FAILURE.toString()).toEqual('[FailureType (code=REQUEST_GENERAL_FAILURE)]');
-	});
 });

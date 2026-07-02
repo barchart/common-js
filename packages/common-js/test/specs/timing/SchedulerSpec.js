@@ -1,3 +1,4 @@
+import Disposable from './../../../lang/Disposable.js';
 import Scheduler from './../../../timing/Scheduler.js';
 
 describe('When a Scheduler is constructed', () => {
@@ -26,6 +27,28 @@ describe('When a Scheduler is constructed', () => {
 			await promise;
 
 			expect(spy.calls.count()).toEqual(1);
+		});
+	});
+
+	describe('and a task is repeated', () => {
+		let binding;
+		let spy;
+
+		beforeEach(async () => {
+			spy = jasmine.createSpy('spy');
+			binding = scheduler.repeat(spy, 5, 'A repeated task');
+
+			await new Promise(resolve => setTimeout(resolve, 15));
+
+			binding.dispose();
+		});
+
+		it('should return a Disposable instance', () => {
+			expect(binding instanceof Disposable).toEqual(true);
+		});
+
+		it('should execute the task repeatedly', () => {
+			expect(spy.calls.count() > 0).toEqual(true);
 		});
 	});
 

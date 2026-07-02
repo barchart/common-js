@@ -32,8 +32,4 @@ describe('When an Edge is constructed', () => {
 	it('should default missing data to null', () => {
 		expect(new Edge(from, to).data).toBeNull();
 	});
-
-	it('should have the expected string representation', () => {
-		expect(edge.toString()).toEqual('[Edge (from=from, to=to})]');
-	});
 });

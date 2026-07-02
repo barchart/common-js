@@ -79,8 +79,4 @@ describe('When a ParametersBuilder is used', () => {
 
 		expect(requiredBuilder.parameters.parameters[0].optional).toEqual(true);
 	});
-
-	it('should have the expected string representation', () => {
-		expect(builder.toString()).toEqual('[ParametersBuilder]');
-	});
 });

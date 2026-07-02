@@ -6,7 +6,7 @@ describe('When using the "compareDates" comparator', () => {
 	let first = new Date(2015, 12, 1);
 	let second = new Date(2015, 12, 31);
 	let third = new Date(2016, 1, 31);
-	
+
 	describe('to rank Date instances', () => {
 		it('comparing 2019-08-27 with 2019-07-31 should return a positive value', () => {
 			expect(comparators.compareDates(new Date(2019, 7, 27), new Date(2019, 6, 31)) > 0).toEqual(true);
@@ -216,5 +216,13 @@ describe('When using the "compareNull" comparator', () => {
 		it('the array should be in the correct order', () => {
 			expect(arrayToSort).toEqual([ b, a, c ]);
 		});
+	});
+});
+
+describe('When using the "empty" comparator', () => {
+	'use strict';
+
+	it('comparing any two values should return a zero value', () => {
+		expect(comparators.empty('a', 1)).toEqual(0);
 	});
 });

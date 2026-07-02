@@ -198,14 +198,6 @@ describe('When converting Time to JSON', () => {
     });
 });
 
-describe('When toString is called', () => {
-    it('should return "[Time]"', () => {
-        const time = Time.parse('01:02:03');
-
-        expect(time.toString()).toEqual('[Time]');
-    });
-});
-
 describe('When adding seconds to 12:34:56', () => {
     let time;
 

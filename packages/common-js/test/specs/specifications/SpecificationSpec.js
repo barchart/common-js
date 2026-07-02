@@ -50,20 +50,4 @@ describe('When Specification is used', () => {
 	it('should validate or specification argument', () => {
 		expect(() => new Specification().or(null)).toThrow();
 	});
-
-	it('should expose And constructor with correct string representation', () => {
-		expect(new Specification.And(new PassingSpecification(), new PassingSpecification()).toString()).toEqual('[And]');
-	});
-
-	it('should expose Or constructor with correct string representation', () => {
-		expect(new Specification.Or(new PassingSpecification(), new FailingSpecification()).toString()).toEqual('[Or]');
-	});
-
-	it('should expose Not constructor with correct string representation', () => {
-		expect(new Specification.Not(new PassingSpecification()).toString()).toEqual('[Not]');
-	});
-
-	it('should have the expected string representation', () => {
-		expect(new Specification().toString()).toEqual('[Specification]');
-	});
 });

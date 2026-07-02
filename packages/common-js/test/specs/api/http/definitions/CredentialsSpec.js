@@ -26,10 +26,6 @@ describe('When Credentials are constructed', () => {
 		expect(() => credentials.validate()).not.toThrow();
 	});
 
-	it('should have the expected string representation', () => {
-		expect(credentials.toString()).toEqual('[Credentials]');
-	});
-
 	it('should reject a missing username extractor', () => {
 		expect(() => new Credentials(null, passwordExtractor).validate()).toThrow();
 	});

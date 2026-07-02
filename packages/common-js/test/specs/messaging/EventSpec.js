@@ -11,6 +11,11 @@ describe('When an Event is constructed', () => {
 		event = new Event(context = {});
 	});
 
+	it('should report a new event as empty', () => {
+		expect(event.getIsEmpty()).toEqual(true);
+	});
+
+
 	describe('and an event handler is registered', () => {
 		let spyOne;
 		let bindingOne;
@@ -23,6 +28,40 @@ describe('When an Event is constructed', () => {
 			expect(bindingOne instanceof Disposable).toEqual(true);
 		});
 
+		it('should report the event as not empty', () => {
+			expect(event.getIsEmpty()).toEqual(false);
+		});
+
+		describe('and the event handler is unregistered', () => {
+			beforeEach(() => {
+				event.unregister(spyOne);
+			});
+
+			it('should report the event as empty', () => {
+				expect(event.getIsEmpty()).toEqual(true);
+			});
+
+			describe('and the event fires', () => {
+				beforeEach(() => {
+					event.fire('payload');
+				});
+
+				it('should not notify the observer', () => {
+					expect(spyOne).not.toHaveBeenCalled();
+				});
+			});
+		});
+
+		describe('and the event is cleared', () => {
+			beforeEach(() => {
+				event.clear();
+			});
+
+			it('should report the event as empty', () => {
+				expect(event.getIsEmpty()).toEqual(true);
+			});
+		});
+
 		describe('and the event fires', () => {
 			let data;
 
@@ -32,6 +71,12 @@ describe('When an Event is constructed', () => {
 
 			it('should notify the observer', () => {
 				expect(spyOne).toHaveBeenCalledWith(context, data);
+			});
+
+			it('should pass the event data before the sender', () => {
+				event.fire('payload');
+
+				expect(spyOne).toHaveBeenCalledWith('payload', context);
 			});
 		});
 

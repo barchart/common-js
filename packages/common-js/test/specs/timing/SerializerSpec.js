@@ -24,9 +24,37 @@ describe('When a Serializer is used to schedule four tasks', () => {
 		}
 	});
 
+	it('should expose the initial counters', () => {
+		expect({
+			current: serializer.getCurrent(),
+			total: serializer.getTotal(),
+			pending: serializer.getPending(),
+			running: serializer.getRunning()
+		}).toEqual({
+			current: 1,
+			total: 4,
+			pending: 3,
+			running: true
+		});
+	});
+
 	describe('and the tasks complete', () => {
 		beforeEach(async () => {
 			await Promise.all(promises);
+		});
+
+		it('should expose the completed counters', () => {
+			expect({
+				current: serializer.getCurrent(),
+				total: serializer.getTotal(),
+				pending: serializer.getPending(),
+				running: serializer.getRunning()
+			}).toEqual({
+				current: 4,
+				total: 4,
+				pending: 0,
+				running: false
+			});
 		});
 
 		it('the first task should have been executed', () => {

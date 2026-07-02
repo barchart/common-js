@@ -48,6 +48,10 @@ describe('When an EvictingMap is constructed (with a capacity of 1)', () => {
 			expect(map.get(a.key)).toBe(a);
 		});
 
+		it('has should return true for the item key', () => {
+			expect(map.has(a.key)).toEqual(true);
+		});
+
 		it('should not be empty',() => {
 			expect(map.empty()).toEqual(false);
 		});
@@ -141,6 +145,16 @@ describe('When an EvictingMap is constructed (with a capacity of 1)', () => {
 				it('should have one item',() => {
 					expect(map.getSize()).toEqual(1);
 				});
+			});
+		});
+
+		describe('when the first item is deleted from the map', () => {
+			beforeEach(() => {
+				map.delete('a');
+			});
+
+			it('should be empty',() => {
+				expect(map.empty()).toEqual(true);
 			});
 		});
 	});
@@ -275,6 +289,24 @@ describe('When an EvictingMap is constructed (with a capacity of 3)', () => {
 				});
 			});
 		});
+	});
+});
+
+describe('When an EvictingMap uses set to add an item', () => {
+	'use strict';
+
+	let map;
+	let item;
+
+	beforeEach(() => {
+		map = new EvictingMap(1);
+		item = { key: 'a' };
+
+		map.set(item.key, item);
+	});
+
+	it('get should return the item', () => {
+		expect(map.get(item.key)).toBe(item);
 	});
 });
 

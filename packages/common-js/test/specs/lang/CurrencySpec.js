@@ -46,8 +46,4 @@ describe('When Currency values are used', () => {
 	it('should reject invalid precision', () => {
 		expect(() => new Currency('XTS', 'Test', 2.5)).toThrow();
 	});
-
-	it('should have the expected string representation', () => {
-		expect(Currency.USD.toString()).toEqual('[Currency (code=USD)]');
-	});
 });

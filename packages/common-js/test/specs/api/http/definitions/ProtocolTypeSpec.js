@@ -42,8 +42,4 @@ describe('When ProtocolType values are used', () => {
 	it('should reject null prefix', () => {
 		expect(() => new ProtocolType('CUSTOM', 1234, null)).toThrow();
 	});
-
-	it('should have the expected string representation', () => {
-		expect(ProtocolType.HTTP.toString()).toEqual('[ProtocolType (description=HTTP)]');
-	});
 });

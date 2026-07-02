@@ -1,5 +1,17 @@
 import * as is from './../../../lang/is.js';
 
+describe('When checking a regular expression', () => {
+	'use strict';
+
+	it('it should be a regexp', () => {
+		expect(is.regexp(/abc/)).toEqual(true);
+	});
+
+	it('a string should not be a regexp', () => {
+		expect(is.regexp('abc')).toEqual(false);
+	});
+});
+
 describe('When checking the number 3', () => {
 	'use strict';
 

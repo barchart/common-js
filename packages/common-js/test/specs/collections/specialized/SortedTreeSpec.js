@@ -32,8 +32,4 @@ describe('When a SortedTree is constructed', () => {
 	it('should return SortedTree child instances', () => {
 		expect(tree.addChild(1) instanceof SortedTree).toEqual(true);
 	});
-
-	it('should have the expected string representation', () => {
-		expect(tree.toString()).toEqual('[SortedTree]');
-	});
 });

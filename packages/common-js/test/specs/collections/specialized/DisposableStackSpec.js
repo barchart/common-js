@@ -14,6 +14,45 @@ describe('When an DisposableStack is constructed', () => {
 		expect(disposeStack instanceof Disposable).toEqual(true);
 	});
 
+	describe('and a stack is created from an array of Disposable items', () => {
+		let disposableOne;
+		let disposableTwo;
+		let spyOne;
+		let spyTwo;
+		let stackFromArray;
+
+		beforeEach(() => {
+			disposableOne = Disposable.fromAction(spyOne = jasmine.createSpy('spyOne'));
+			disposableTwo = Disposable.fromAction(spyTwo = jasmine.createSpy('spyTwo'));
+
+			stackFromArray = DisposableStack.fromArray([ disposableOne, disposableTwo ]);
+		});
+
+		describe('and the stack is disposed', () => {
+			beforeEach(() => {
+				stackFromArray.dispose();
+			});
+
+			it('the first item should be disposed', () => {
+				expect(disposableOne.getIsDisposed()).toEqual(true);
+			});
+
+			it('the second item should be disposed', () => {
+				expect(disposableTwo.getIsDisposed()).toEqual(true);
+			});
+
+			it('the dispose logic should have been triggered', () => {
+				expect({
+					one: spyOne.calls.count(),
+					two: spyTwo.calls.count()
+				}).toEqual({
+					one: 1,
+					two: 1
+				});
+			});
+		});
+	});
+
 	describe('and a Disposable item is added to the stack', () => {
 		let disposableOne;
 		let spyOne;

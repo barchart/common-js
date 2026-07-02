@@ -32625,7 +32625,7 @@ function _classPrivateFieldGet(s, a) { return s.get(_assertClassBrand(s, a)); }
 function _classPrivateFieldSet(s, a, r) { return s.set(_assertClassBrand(s, a), r), r; }
 function _assertClassBrand(e, t, n) { if ("function" == typeof e ? e === t : e.has(t)) return arguments.length < 3 ? t : n; throw new TypeError("Private element is not present on this object"); }
 /**
- * A queue collection (i.e. supports FIFO operations).
+ * A queue collection that supports FIFO operations.
  *
  * @public
  */
@@ -32638,11 +32638,11 @@ var Queue = exports["default"] = /*#__PURE__*/function () {
   }
 
   /**
-   * Adds an item to the queue.
+   * Adds an item to the end of the queue.
    *
    * @public
-   * @param {object} item
-   * @returns {object} - The item added to the queue.
+   * @param {*} item - The item to add.
+   * @returns {*} The item added to the queue.
    */
   return _createClass(Queue, [{
     key: "enqueue",
@@ -32655,7 +32655,8 @@ var Queue = exports["default"] = /*#__PURE__*/function () {
      * Removes the next item from the queue and returns it. Throws if the queue is empty.
      *
      * @public
-     * @returns {object} - The item added to the queue.
+     * @returns {*} The item removed from the queue.
+     * @throws {Error} If the queue is empty.
      */
   }, {
     key: "dequeue",
@@ -32667,10 +32668,11 @@ var Queue = exports["default"] = /*#__PURE__*/function () {
     }
 
     /**
-     * Returns the next item in the queue (without removing it). Throws if the queue is empty.
+     * Returns the next item in the queue without removing it.
      *
      * @public
-     * @returns {object} - The item added to the queue.
+     * @returns {*} The next item in the queue.
+     * @throws {Error} If the queue is empty.
      */
   }, {
     key: "peek",
@@ -32682,10 +32684,10 @@ var Queue = exports["default"] = /*#__PURE__*/function () {
     }
 
     /**
-     * Returns true if the queue is empty; otherwise false.
+     * Indicates whether the queue is empty.
      *
      * @public
-     * @returns {boolean}
+     * @returns {boolean} True if the queue is empty; otherwise, false.
      */
   }, {
     key: "empty",
@@ -32703,23 +32705,29 @@ var Queue = exports["default"] = /*#__PURE__*/function () {
     key: "scan",
     value: function scan(action) {
       assert.argumentIsRequired(action, 'action', Function);
-      _classPrivateFieldGet(_array, this).forEach(function (x) {
-        return action(x);
+      _classPrivateFieldGet(_array, this).forEach(function (item) {
+        return action(item);
       });
     }
 
     /**
-     * Outputs an array of the queue's items; without affecting the
-     * queue's internal state;
+     * Returns a copy of the queue's items without affecting its internal state.
      *
      * @public
-     * @returns {Array}
+     * @returns {Array<*>} A copy of the queue's items.
      */
   }, {
     key: "toArray",
     value: function toArray() {
       return _classPrivateFieldGet(_array, this).slice(0);
     }
+
+    /**
+     * Returns the queue's internal array for use by derived classes.
+     *
+     * @protected
+     * @returns {Array<*>} The internal array.
+     */
   }, {
     key: "_getArray",
     value: function _getArray() {
@@ -32806,7 +32814,7 @@ var Stack = exports["default"] = /*#__PURE__*/function () {
      * Returns the next item in the stack (without removing it). Throws if the stack is empty.
      *
      * @public
-     * @returns {object} - The item added to the queue.
+     * @returns {object} - The item added to the stack.
      */
   }, {
     key: "peek",
@@ -32818,7 +32826,7 @@ var Stack = exports["default"] = /*#__PURE__*/function () {
     }
 
     /**
-     * Returns true if the queue is empty; otherwise false.
+     * Returns true if the stack is empty; otherwise false.
      *
      * @public
      * @returns {boolean}
@@ -32846,7 +32854,7 @@ var Stack = exports["default"] = /*#__PURE__*/function () {
 
     /**
      * Outputs an array of the stack's items; without affecting the
-     * queue's internal state;
+     * stack's internal state;
      *
      * @public
      * @returns {Array}
@@ -33213,11 +33221,6 @@ var Tree = exports["default"] = /*#__PURE__*/function () {
         });
       }
       return converted;
-    }
-  }, {
-    key: "_getChildren",
-    value: function _getChildren() {
-      return _classPrivateFieldGet(_children, this);
     }
 
     /**
@@ -34613,9 +34616,6 @@ function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstruct
 function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
 function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
 function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
-function _superPropGet(t, o, e, r) { var p = _get(_getPrototypeOf(1 & r ? t.prototype : t), o, e); return 2 & r && "function" == typeof p ? function (t) { return p.apply(e, t); } : p; }
-function _get() { return _get = "undefined" != typeof Reflect && Reflect.get ? Reflect.get.bind() : function (e, t, r) { var p = _superPropBase(e, t); if (p) { var n = Object.getOwnPropertyDescriptor(p, t); return n.get ? n.get.call(arguments.length < 3 ? e : r) : n.value; } }, _get.apply(null, arguments); }
-function _superPropBase(t, o) { for (; !{}.hasOwnProperty.call(t, o) && null !== (t = _getPrototypeOf(t));); return t; }
 function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
 function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
 function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
@@ -34633,8 +34633,8 @@ function _assertClassBrand(e, t, n) { if ("function" == typeof e ? e === t : e.h
 var _comparator = /*#__PURE__*/new WeakMap();
 var PriorityQueue = exports["default"] = /*#__PURE__*/function (_Queue) {
   /**
-      * @param {(a: any, b: any) => number} comparator
-      */
+   * @param {(a: *, b: *) => number} comparator - The comparator used to sort items.
+   */
   function PriorityQueue(comparator) {
     var _this;
     _classCallCheck(this, PriorityQueue);
@@ -34646,9 +34646,11 @@ var PriorityQueue = exports["default"] = /*#__PURE__*/function (_Queue) {
   }
 
   /**
+   * Adds an item to the queue according to its priority.
+   *
    * @public
-   * @param {*} item
-   * @returns {PriorityQueue}
+   * @param {*} item - The item to add.
+   * @returns {*} The item added to the queue.
    */
   _inherits(PriorityQueue, _Queue);
   return _createClass(PriorityQueue, [{
@@ -34656,46 +34658,6 @@ var PriorityQueue = exports["default"] = /*#__PURE__*/function (_Queue) {
     value: function enqueue(item) {
       array.insert(this._getArray(), item, _classPrivateFieldGet(_comparator, this));
       return item;
-    }
-
-    /**
-     * @public
-     * @returns {*}
-     */
-  }, {
-    key: "dequeue",
-    value: function dequeue() {
-      return _superPropGet(PriorityQueue, "dequeue", this, 3)([]);
-    }
-
-    /**
-     * @public
-     * @returns {*}
-     */
-  }, {
-    key: "peek",
-    value: function peek() {
-      return _superPropGet(PriorityQueue, "peek", this, 3)([]);
-    }
-
-    /**
-     * @public
-     * @param {*} action
-     */
-  }, {
-    key: "scan",
-    value: function scan(action) {
-      _superPropGet(PriorityQueue, "scan", this, 3)([action]);
-    }
-
-    /**
-     * @public
-     * @returns {Array}
-     */
-  }, {
-    key: "toArray",
-    value: function toArray() {
-      return _superPropGet(PriorityQueue, "toArray", this, 3)([]);
     }
 
     /**
@@ -34788,7 +34750,7 @@ var SortedTree = exports["default"] = /*#__PURE__*/function (_Tree) {
       if (!(comparatorNode instanceof SortedTree) || _classPrivateFieldGet(_comparator, comparatorNode) === null) {
         throw new Error('Unable to find a comparator for the sorted tree.');
       }
-      array.insert(this._getChildren(), child, _classPrivateFieldGet(_comparator, comparatorNode));
+      array.insert(this.getChildren(), child, _classPrivateFieldGet(_comparator, comparatorNode));
       return child;
     }
 
@@ -40534,8 +40496,8 @@ function argumentIsValid(variable, variableName, predicate, predicateDescription
  * @public
  * @param {*} a
  * @param {*} b
- * @param {*} descriptionA
- * @param {*} descriptionB
+ * @param {*=} descriptionA
+ * @param {*=} descriptionB
  */
 function areEqual(a, b, descriptionA, descriptionB) {
   if (a !== b) {
@@ -41931,7 +41893,7 @@ function _map() {
                       case 3:
                         _context4.p = 3;
                         _t2 = _context4.v;
-                        failure = false;
+                        failure = true;
                         rejectCallback(_t2);
                       case 4:
                         return _context4.a(2);
@@ -46614,9 +46576,6 @@ describe('When FailureType values are used', function () {
       return _FailureType["default"].getHttpStatusCode(null);
     }).toThrow();
   });
-  it('should have the expected string representation', function () {
-    expect(_FailureType["default"].REQUEST_GENERAL_FAILURE.toString()).toEqual('[FailureType (code=REQUEST_GENERAL_FAILURE)]');
-  });
 });
 
 },{"./../../../../api/failures/FailureType.js":326}],433:[function(require,module,exports){
@@ -46974,9 +46933,6 @@ describe('When Gateway is used', function () {
       }
     }, _callee20);
   })));
-  it('should have the expected string representation', function () {
-    expect(new _Gateway["default"]().toString()).toEqual('[Gateway]');
-  });
 });
 
 },{"./../../../../api/http/Gateway.js":327,"./../../../../api/http/definitions/Credentials.js":331,"./../../../../api/http/definitions/Endpoint.js":332,"./../../../../api/http/definitions/Parameter.js":333,"./../../../../api/http/definitions/Parameters.js":334,"./../../../../api/http/definitions/ProtocolType.js":335,"./../../../../api/http/definitions/VerbType.js":336,"./../../../../api/http/interceptors/ErrorInterceptor.js":340,"./../../../../api/http/interceptors/RequestInterceptor.js":341,"./../../../../api/http/interceptors/ResponseInterceptor.js":342,"axios":1}],434:[function(require,module,exports){
@@ -47039,9 +46995,6 @@ describe('When a CredentialsBuilder is used', function () {
       username: 'luka',
       password: 'secret'
     });
-  });
-  it('should have the expected string representation', function () {
-    expect(builder.toString()).toEqual('[CredentialsBuilder]');
   });
 });
 
@@ -47286,9 +47239,6 @@ describe('When an EndpointBuilder is used', function () {
   it('should create a builder from the static factory', function () {
     expect(_EndpointBuilder["default"]["for"]('name') instanceof _EndpointBuilder["default"]).toEqual(true);
   });
-  it('should have the expected string representation', function () {
-    expect(builder.toString()).toEqual('[EndpointBuilder]');
-  });
 });
 
 },{"./../../../../../api/http/builders/EndpointBuilder.js":329,"./../../../../../api/http/definitions/Endpoint.js":332,"./../../../../../api/http/definitions/ProtocolType.js":335,"./../../../../../api/http/definitions/VerbType.js":336,"./../../../../../api/http/interceptors/ErrorInterceptor.js":340,"./../../../../../api/http/interceptors/RequestInterceptor.js":341,"./../../../../../api/http/interceptors/ResponseInterceptor.js":342}],436:[function(require,module,exports){
@@ -47425,9 +47375,6 @@ describe('When a ParametersBuilder is used', function () {
     requiredBuilder.withLiteralParameter('Id', 'id');
     expect(requiredBuilder.parameters.parameters[0].optional).toEqual(true);
   });
-  it('should have the expected string representation', function () {
-    expect(builder.toString()).toEqual('[ParametersBuilder]');
-  });
 });
 
 },{"./../../../../../api/http/builders/ParametersBuilder.js":330,"./../../../../../api/http/definitions/Parameters.js":334}],437:[function(require,module,exports){
@@ -47460,9 +47407,6 @@ describe('When Credentials are constructed', function () {
     expect(function () {
       return credentials.validate();
     }).not.toThrow();
-  });
-  it('should have the expected string representation', function () {
-    expect(credentials.toString()).toEqual('[Credentials]');
   });
   it('should reject a missing username extractor', function () {
     expect(function () {
@@ -47654,9 +47598,6 @@ describe('When an Endpoint is constructed', function () {
       return new _Endpoint["default"]('name', null, _VerbType["default"].GET, _ProtocolType["default"].HTTP, 'example.com', 80, path, query, headers, body, null, null, null, {}).validate();
     }).toThrow();
   });
-  it('should have the expected string representation', function () {
-    expect(endpoint.toString()).toEqual('[Endpoint (name=name)]');
-  });
 });
 
 },{"./../../../../../api/http/definitions/Credentials.js":331,"./../../../../../api/http/definitions/Endpoint.js":332,"./../../../../../api/http/definitions/Parameter.js":333,"./../../../../../api/http/definitions/Parameters.js":334,"./../../../../../api/http/definitions/ProtocolType.js":335,"./../../../../../api/http/definitions/VerbType.js":336,"./../../../../../api/http/interceptors/ErrorInterceptor.js":340,"./../../../../../api/http/interceptors/RequestInterceptor.js":341,"./../../../../../api/http/interceptors/ResponseInterceptor.js":342}],439:[function(require,module,exports){
@@ -47705,9 +47646,6 @@ describe('When a Parameter is constructed', function () {
     expect(function () {
       return parameter.validate();
     }).not.toThrow();
-  });
-  it('should have the expected string representation', function () {
-    expect(parameter.toString()).toEqual('[Parameter]');
   });
   it('should reject an empty key', function () {
     expect(function () {
@@ -47763,9 +47701,6 @@ describe('When Parameters are constructed', function () {
     expect(function () {
       return parameters.validate();
     }).not.toThrow();
-  });
-  it('should have the expected string representation', function () {
-    expect(parameters.toString()).toEqual('[Parameters]');
   });
   it('should reject non-Parameter items', function () {
     expect(function () {
@@ -47840,9 +47775,6 @@ describe('When ProtocolType values are used', function () {
       return new _ProtocolType["default"]('CUSTOM', 1234, null);
     }).toThrow();
   });
-  it('should have the expected string representation', function () {
-    expect(_ProtocolType["default"].HTTP.toString()).toEqual('[ProtocolType (description=HTTP)]');
-  });
 });
 
 },{"./../../../../../api/http/definitions/ProtocolType.js":335}],442:[function(require,module,exports){
@@ -47883,9 +47815,6 @@ describe('When VerbType values are used', function () {
         code: description
       });
     });
-  });
-  it('should have the expected string representation', function () {
-    expect(_VerbType["default"].GET.toString()).toEqual('[VerbType (description=GET)]');
   });
 });
 
@@ -47958,9 +47887,6 @@ describe('When a CompositeErrorInterceptor is used', function () {
       return new _CompositeErrorInterceptor["default"](_ErrorInterceptor["default"].EMPTY, null);
     }].map(_throws)).toEqual([true, true]);
   });
-  it('should have the expected string representation', function () {
-    expect(new _CompositeErrorInterceptor["default"](_ErrorInterceptor["default"].EMPTY, _ErrorInterceptor["default"].EMPTY).toString()).toEqual('[CompositeErrorInterceptor]');
-  });
 });
 function _throws(action) {
   try {
@@ -48013,9 +47939,6 @@ describe('When a CompositeRequestInterceptor is used', function () {
       return new _CompositeRequestInterceptor["default"](_RequestInterceptor["default"].EMPTY, null);
     }].map(_throws)).toEqual([true, true]);
   });
-  it('should have the expected string representation', function () {
-    expect(new _CompositeRequestInterceptor["default"](_RequestInterceptor["default"].EMPTY, _RequestInterceptor["default"].EMPTY).toString()).toEqual('[CompositeRequestInterceptor]');
-  });
 });
 function _throws(action) {
   try {
@@ -48067,9 +47990,6 @@ describe('When a CompositeResponseInterceptor is used', function () {
     }, function () {
       return new _CompositeResponseInterceptor["default"](_ResponseInterceptor["default"].EMPTY, null);
     }].map(_throws)).toEqual([true, true]);
-  });
-  it('should have the expected string representation', function () {
-    expect(new _CompositeResponseInterceptor["default"](_ResponseInterceptor["default"].EMPTY, _ResponseInterceptor["default"].EMPTY).toString()).toEqual('[CompositeResponseInterceptor]');
   });
 });
 function _throws(action) {
@@ -48249,9 +48169,6 @@ describe('When ErrorInterceptor is used', function () {
       return _ErrorInterceptor["default"].fromDelegate(null);
     }).toThrow();
   });
-  it('should have the expected string representation', function () {
-    expect(new _ErrorInterceptor["default"]().toString()).toEqual('[ErrorInterceptor]');
-  });
 });
 
 },{"./../../../../../api/http/interceptors/ErrorInterceptor.js":340}],447:[function(require,module,exports){
@@ -48341,9 +48258,6 @@ describe('When RequestInterceptor is used', function () {
     expect(function () {
       return _RequestInterceptor["default"].fromDelegate(null);
     }).toThrow();
-  });
-  it('should have the expected string representation', function () {
-    expect(new _RequestInterceptor["default"]().toString()).toEqual('[RequestInterceptor]');
   });
 });
 
@@ -48436,9 +48350,6 @@ describe('When ResponseInterceptor is used', function () {
     expect(function () {
       return _ResponseInterceptor["default"].fromDelegate(null);
     }).toThrow();
-  });
-  it('should have the expected string representation', function () {
-    expect(new _ResponseInterceptor["default"]().toString()).toEqual('[ResponseInterceptor]');
   });
 });
 
@@ -49020,9 +48931,6 @@ describe('When an Edge is constructed', function () {
   it('should default missing data to null', function () {
     expect(new _Edge["default"](from, to).data).toBeNull();
   });
-  it('should have the expected string representation', function () {
-    expect(edge.toString()).toEqual('[Edge (from=from, to=to})]');
-  });
 });
 
 },{"./../../../../collections/graph/Edge.js":347,"./../../../../collections/graph/Vertex.js":348}],454:[function(require,module,exports){
@@ -49043,6 +48951,9 @@ describe('When graph vertex (a) is initialized', function () {
   });
   it('the vertex (a) has no connected edges', function () {
     expect(vertexA.getEdges().length).toEqual(0);
+  });
+  it('the vertex (a) should not have an edge to itself', function () {
+    expect(vertexA.hasEdge(vertexA)).toEqual(false);
   });
   describe('and vertex (b) is attached', function () {
     var vertexB;
@@ -49066,6 +48977,9 @@ describe('When graph vertex (a) is initialized', function () {
     });
     it('the vertex (a) has an edge to vertex (b)', function () {
       expect(vertexA.getEdge(vertexB)).toEqual(edgeAB);
+    });
+    it('the vertex (a) should have an edge to vertex (b)', function () {
+      expect(vertexA.hasEdge(vertexB)).toEqual(true);
     });
     it('the vertex (b) has no edges', function () {
       expect(vertexB.getEdges().length).toEqual(0);
@@ -49388,6 +49302,13 @@ describe('When using the "compareNull" comparator', function () {
     });
   });
 });
+describe('When using the "empty" comparator', function () {
+  'use strict';
+
+  it('comparing any two values should return a zero value', function () {
+    expect(comparators.empty('a', 1)).toEqual(0);
+  });
+});
 
 },{"./../../../../collections/sorting/comparators.js":350}],457:[function(require,module,exports){
 "use strict";
@@ -49545,6 +49466,38 @@ describe('When an DisposableStack is constructed', function () {
   });
   it('should be disposable', function () {
     expect(disposeStack instanceof _Disposable["default"]).toEqual(true);
+  });
+  describe('and a stack is created from an array of Disposable items', function () {
+    var disposableOne;
+    var disposableTwo;
+    var spyOne;
+    var spyTwo;
+    var stackFromArray;
+    beforeEach(function () {
+      disposableOne = _Disposable["default"].fromAction(spyOne = jasmine.createSpy('spyOne'));
+      disposableTwo = _Disposable["default"].fromAction(spyTwo = jasmine.createSpy('spyTwo'));
+      stackFromArray = _DisposableStack["default"].fromArray([disposableOne, disposableTwo]);
+    });
+    describe('and the stack is disposed', function () {
+      beforeEach(function () {
+        stackFromArray.dispose();
+      });
+      it('the first item should be disposed', function () {
+        expect(disposableOne.getIsDisposed()).toEqual(true);
+      });
+      it('the second item should be disposed', function () {
+        expect(disposableTwo.getIsDisposed()).toEqual(true);
+      });
+      it('the dispose logic should have been triggered', function () {
+        expect({
+          one: spyOne.calls.count(),
+          two: spyTwo.calls.count()
+        }).toEqual({
+          one: 1,
+          two: 1
+        });
+      });
+    });
   });
   describe('and a Disposable item is added to the stack', function () {
     var disposableOne;
@@ -49925,6 +49878,9 @@ describe('When an EvictingMap is constructed (with a capacity of 1)', function (
     it('get should return the item', function () {
       expect(map.get(a.key)).toBe(a);
     });
+    it('has should return true for the item key', function () {
+      expect(map.has(a.key)).toEqual(true);
+    });
     it('should not be empty', function () {
       expect(map.empty()).toEqual(false);
     });
@@ -49999,6 +49955,14 @@ describe('When an EvictingMap is constructed (with a capacity of 1)', function (
         it('should have one item', function () {
           expect(map.getSize()).toEqual(1);
         });
+      });
+    });
+    describe('when the first item is deleted from the map', function () {
+      beforeEach(function () {
+        map["delete"]('a');
+      });
+      it('should be empty', function () {
+        expect(map.empty()).toEqual(true);
       });
     });
   });
@@ -50111,6 +50075,22 @@ describe('When an EvictingMap is constructed (with a capacity of 3)', function (
         });
       });
     });
+  });
+});
+describe('When an EvictingMap uses set to add an item', function () {
+  'use strict';
+
+  var map;
+  var item;
+  beforeEach(function () {
+    map = new _EvictingMap["default"](1);
+    item = {
+      key: 'a'
+    };
+    map.set(item.key, item);
+  });
+  it('get should return the item', function () {
+    expect(map.get(item.key)).toBe(item);
   });
 });
 describe('When an EvictingMap is constructed', function () {
@@ -50472,9 +50452,6 @@ describe('When a SortedTree is constructed', function () {
   it('should return SortedTree child instances', function () {
     expect(tree.addChild(1) instanceof _SortedTree["default"]).toEqual(true);
   });
-  it('should have the expected string representation', function () {
-    expect(tree.toString()).toEqual('[SortedTree]');
-  });
 });
 
 },{"./../../../../collections/specialized/SortedTree.js":356}],463:[function(require,module,exports){
@@ -50501,6 +50478,22 @@ describe('When an TimeMap is constructed (with a 10 millisecond time to live)', 
     it('should return the original value', function () {
       expect(map.get(key)).toBe(item);
     });
+    describe('and the item is removed', function () {
+      beforeEach(function () {
+        map.remove(key);
+      });
+      it('should not contain the key', function () {
+        expect(map.has(key)).toEqual(false);
+      });
+    });
+    describe('and the item is deleted', function () {
+      beforeEach(function () {
+        map["delete"](key);
+      });
+      it('should not contain the key', function () {
+        expect(map.has(key)).toEqual(false);
+      });
+    });
     describe('and 15 milliseconds elapses', function () {
       beforeEach(function (done) {
         setTimeout(function () {
@@ -50513,6 +50506,16 @@ describe('When an TimeMap is constructed (with a 10 millisecond time to live)', 
       it('should not return the original value', function () {
         expect(map.get(key)).toEqual(null);
       });
+    });
+  });
+  describe('and an item is put into the map', function () {
+    var key;
+    var item;
+    beforeEach(function () {
+      map.put(key = 'a', item = {});
+    });
+    it('should return the original value', function () {
+      expect(map.get(key)).toBe(item);
     });
   });
 });
@@ -50659,6 +50662,24 @@ describe('When a MappedCommandHandler is created with two mapped commands', func
       return resultTwo;
     })));
   });
+  describe('and a default command handler is configured', function () {
+    var defaultResult;
+    var defaultSpy;
+    var commandData;
+    var commandResult;
+    beforeEach(function () {
+      defaultResult = 'default';
+      commandResult = commandHandler.setDefaultCommandHandler(_CommandHandler["default"].fromFunction(defaultSpy = jasmine.createSpy('defaultSpy').and.returnValue(defaultResult))).process(commandData = {
+        commandType: 'unknown'
+      });
+    });
+    it('should invoke the default command handler', function () {
+      expect(defaultSpy).toHaveBeenCalledWith(commandData);
+    });
+    it('should return the default command handler result', function () {
+      expect(commandResult).toEqual(defaultResult);
+    });
+  });
   describe('and the command is process with data for the first handler', function () {
     var commandData;
     var commandResult;
@@ -50786,9 +50807,6 @@ describe('When Currency values are used', function () {
       return new _Currency["default"]('XTS', 'Test', 2.5);
     }).toThrow();
   });
-  it('should have the expected string representation', function () {
-    expect(_Currency["default"].USD.toString()).toEqual('[Currency (code=USD)]');
-  });
 });
 
 },{"./../../../lang/Currency.js":362}],469:[function(require,module,exports){
@@ -50817,6 +50835,10 @@ describe('When a CurrencyTranslator is created with ^AUDUSD and ^CADUSD', functi
   describe('and rates are initialized (^AUDUSD to 0.6656 and ^CADUSD to 0.7230)', function () {
     beforeEach(function () {
       translator.setRates([_Rate["default"].fromPair(0.6656, '^AUDUSD'), _Rate["default"].fromPair(0.7230, '^CADUSD')]);
+    });
+    it('clear should allow rates to be recomputed on the next translation', function () {
+      translator.setRate(_Rate["default"].fromPair(0.68, '^AUDUSD'));
+      expect(translator.translate(1, _Currency["default"].AUD, _Currency["default"].USD)).toBeCloseTo(0.68, 4);
     });
     describe('and translations are performed (on floats)', function () {
       it('Direct translation of of a float should return a float', function () {
@@ -51032,9 +51054,6 @@ describe('When DayFormatType values are used', function () {
       expect(_DayFormatType["default"].MM_DD_YY.yearShift).toEqual(Math.floor(new Date().getFullYear() / 100) * 100);
     });
   });
-  it('should have the expected string representation', function () {
-    expect(_DayFormatType["default"].YYYY_MM_DD.toString()).toEqual('[DayFormatType (description=YYYY_MM_DD)]');
-  });
 });
 
 },{"./../../../lang/DayFormatType.js":365}],471:[function(require,module,exports){
@@ -51231,6 +51250,19 @@ describe('When an invalid string is parsed as a Day', function () {
 describe('When checking to see if a Day is valid', function () {
   'use strict';
 
+  it('getDaysInMonth should return the expected number of days', function () {
+    expect({
+      jan: _Day["default"].getDaysInMonth(2017, 1),
+      febCommon: _Day["default"].getDaysInMonth(2017, 2),
+      febLeap: _Day["default"].getDaysInMonth(2020, 2),
+      apr: _Day["default"].getDaysInMonth(2017, 4)
+    }).toEqual({
+      jan: 31,
+      febCommon: 28,
+      febLeap: 29,
+      apr: 30
+    });
+  });
   it('should consider Jan 1, 2017 to be valid', function () {
     expect(_Day["default"].validate(2017, 1, 1)).toEqual(true);
   });
@@ -51655,6 +51687,20 @@ describe('When "1900-01-01 is parsed as a Day', function () {
   });
 });
 describe('When comparing days', function () {
+  it('toJSON should return the formatted day', function () {
+    expect(_Day["default"].parse('2017-07-18').toJSON()).toEqual('2017-07-18');
+  });
+  it('compareDays should compare two Day instances', function () {
+    expect({
+      before: _Day["default"].compareDays(_Day["default"].parse('2017-07-18'), _Day["default"].parse('2017-07-19')) < 0,
+      equal: _Day["default"].compareDays(_Day["default"].parse('2017-07-18'), _Day["default"].parse('2017-07-18')),
+      after: _Day["default"].compareDays(_Day["default"].parse('2017-07-19'), _Day["default"].parse('2017-07-18')) > 0
+    }).toEqual({
+      before: true,
+      equal: 0,
+      after: true
+    });
+  });
   it('The day "2017-07-18" should be before "2017-07-19"', function () {
     expect(_Day["default"].parse('2017-07-18').getIsBefore(_Day["default"].parse('2017-07-19'))).toEqual(true);
   });
@@ -51860,6 +51906,71 @@ describe('When adding values that cause floating point problems (e.g. 1.1 + 2.2 
     });
     it('should sum to 3.3 (not 3.3000000000000003)', function () {
       expect(f).toEqual(3.3);
+    });
+  });
+});
+describe('When using Decimal arithmetic methods', function () {
+  'use strict';
+
+  it('subtract should return the difference', function () {
+    expect(new _Decimal["default"](10).subtract(3).toNumber()).toEqual(7);
+  });
+  it('multiply should return the product', function () {
+    expect(new _Decimal["default"](6).multiply(7).toNumber()).toEqual(42);
+  });
+  it('absolute should return a positive value', function () {
+    expect(new _Decimal["default"](-5).absolute().toNumber()).toEqual(5);
+  });
+  it('opposite should return the opposite sign', function () {
+    expect(new _Decimal["default"](5).opposite().toNumber()).toEqual(-5);
+  });
+});
+describe('When using Decimal comparison methods', function () {
+  'use strict';
+
+  it('getIsGreaterThan should identify a greater value', function () {
+    expect(new _Decimal["default"](10).getIsGreaterThan(9)).toEqual(true);
+  });
+  it('getIsGreaterThanOrEqual should identify an equal value', function () {
+    expect(new _Decimal["default"](10).getIsGreaterThanOrEqual(10)).toEqual(true);
+  });
+  it('getIsLessThan should identify a lesser value', function () {
+    expect(new _Decimal["default"](9).getIsLessThan(10)).toEqual(true);
+  });
+  it('getIsLessThanOrEqual should identify an equal value', function () {
+    expect(new _Decimal["default"](10).getIsLessThanOrEqual(10)).toEqual(true);
+  });
+});
+describe('When using Decimal JSON, constants, and static helpers', function () {
+  'use strict';
+
+  it('toJSON should return the fixed string value', function () {
+    expect(new _Decimal["default"]('1.23').toJSON()).toEqual('1.23');
+  });
+  it('ONE should equal one', function () {
+    expect(_Decimal["default"].ONE.getIsEqual(1)).toEqual(true);
+  });
+  it('NEGATIVE_ONE should equal negative one', function () {
+    expect(_Decimal["default"].NEGATIVE_ONE.getIsEqual(-1)).toEqual(true);
+  });
+  it('getIsNotZero should identify a non-zero value', function () {
+    expect(_Decimal["default"].getIsNotZero(new _Decimal["default"](1))).toEqual(true);
+  });
+  it('getIsNotPositive should identify zero', function () {
+    expect(_Decimal["default"].getIsNotPositive(_Decimal["default"].ZERO)).toEqual(true);
+  });
+  it('getIsNotNegative should identify zero', function () {
+    expect(_Decimal["default"].getIsNotNegative(_Decimal["default"].ZERO)).toEqual(true);
+  });
+  it('compareDecimals should compare two Decimal instances', function () {
+    expect({
+      less: _Decimal["default"].compareDecimals(new _Decimal["default"](1), new _Decimal["default"](2)) < 0,
+      equal: _Decimal["default"].compareDecimals(new _Decimal["default"](2), new _Decimal["default"](2)),
+      greater: _Decimal["default"].compareDecimals(new _Decimal["default"](3), new _Decimal["default"](2)) > 0
+    }).toEqual({
+      less: true,
+      equal: 0,
+      greater: true
     });
   });
 });
@@ -52366,6 +52477,22 @@ describe('When a Disposable is extended', function () {
     });
   });
 });
+describe('When a Disposable.getEmpty creates a Disposable', function () {
+  'use strict';
+
+  var testDisposable;
+  beforeEach(function () {
+    testDisposable = _Disposable2["default"].getEmpty();
+  });
+  it('should be an instance of Disposable', function () {
+    expect(testDisposable instanceof _Disposable2["default"]).toEqual(true);
+  });
+  it('should dispose without custom action', function () {
+    expect(function () {
+      return testDisposable.dispose();
+    }).not.toThrow();
+  });
+});
 describe('When a Disposable.fromAction creates a Disposable', function () {
   'use strict';
 
@@ -52459,6 +52586,9 @@ describe('When Enum is extended (as types EnumA and EnumB) and type items are ad
   var by = new EnumB('y', 'B-Y');
   it('should be able to find X in EnumA using the code', function () {
     expect(_Enum5["default"].fromCode(EnumA, 'x')).toBe(ax);
+  });
+  it('toJSON should return the enum code', function () {
+    expect(ax.toJSON()).toEqual('x');
   });
   it('should be able to find Y in EnumA using the code', function () {
     expect(_Enum5["default"].fromCode(EnumA, 'y')).toBe(ay);
@@ -52593,9 +52723,6 @@ describe('When Money is constructed', function () {
       return new _Money["default"]('1.23', null);
     }).toThrow();
   });
-  it('should have the expected string representation', function () {
-    expect(money.toString()).toEqual('[Money]');
-  });
 });
 
 },{"./../../../lang/Currency.js":362,"./../../../lang/Decimal.js":366,"./../../../lang/Money.js":369}],476:[function(require,module,exports){
@@ -52629,6 +52756,35 @@ describe('When parsing an "^EURUSD" rate of 1.2', function () {
   });
   it('the value should be 1.2', function () {
     expect(rate.decimal.getIsEqual(1.2)).toEqual(true);
+  });
+  it('the float value should be 1.2', function () {
+    expect(rate["float"]).toEqual(1.2);
+  });
+  it('formatPair should return the numerator and denominator codes', function () {
+    expect({
+      plain: rate.formatPair(),
+      carat: rate.formatPair(true)
+    }).toEqual({
+      plain: 'USDEUR',
+      carat: '^USDEUR'
+    });
+  });
+  it('invert should return the inverse rate', function () {
+    var inverted = rate.invert();
+    expect({
+      numerator: inverted.numerator,
+      denominator: inverted.denominator,
+      value: inverted.decimal.round(4).toNumber()
+    }).toEqual({
+      numerator: _Currency["default"].EUR,
+      denominator: _Currency["default"].USD,
+      value: 0.8333
+    });
+  });
+  it('getStaticRates should return static Rate instances', function () {
+    expect(_Rate["default"].getStaticRates().every(function (staticRate) {
+      return staticRate instanceof _Rate["default"];
+    })).toEqual(true);
   });
   describe('When converting 10 USD to EUR', function () {
     it('should be 8.33 EUR', function () {
@@ -52885,12 +53041,6 @@ describe('When converting Time to JSON', function () {
     expect(time.toJSON()).toEqual('06:07:08');
   });
 });
-describe('When toString is called', function () {
-  it('should return "[Time]"', function () {
-    var time = _Time["default"].parse('01:02:03');
-    expect(time.toString()).toEqual('[Time]');
-  });
-});
 describe('When adding seconds to 12:34:56', function () {
   var time;
   beforeEach(function () {
@@ -53043,6 +53193,22 @@ describe('When a timespan is created with an elapsed time of 2 days, 3 hours, 4 
     end = new Date(start.getTime() + 1000 * 60 * 60 * 24 * 2 + 1000 * 60 * 60 * 3 + 1000 * 60 * 4 + 1000 * 5 + 6);
     ts = new _Timespan["default"](start.getTime(), end.getTime());
   });
+  it('fromDates should create a Timespan from Date instances', function () {
+    var fromDates = _Timespan["default"].fromDates(start, end);
+    expect({
+      start: fromDates.start,
+      end: fromDates.end
+    }).toEqual({
+      start: start.getTime(),
+      end: end.getTime()
+    });
+  });
+  it('toJSON should return start and end timestamps', function () {
+    expect(ts.toJSON()).toEqual({
+      start: start.getTime(),
+      end: end.getTime()
+    });
+  });
   it('the days should be 2', function () {
     expect(ts.days).toEqual(2);
   });
@@ -53159,6 +53325,24 @@ describe('When Timestamp is created from a timestamp (1502372574350)', function 
   it('should know the timestamp', function () {
     expect(instance.timestamp).toEqual(1502372574350);
   });
+  it('toJSON should return the timestamp', function () {
+    expect(instance.toJSON()).toEqual(1502372574350);
+  });
+  it('clone should return an equal Timestamp instance', function () {
+    var clone = _Timestamp["default"].clone(instance);
+    expect({
+      instance: clone instanceof _Timestamp["default"],
+      same: clone === instance,
+      timestamp: clone.timestamp
+    }).toEqual({
+      instance: true,
+      same: false,
+      timestamp: 1502372574350
+    });
+  });
+  it('parse should return a Timestamp instance', function () {
+    expect(_Timestamp["default"].parse(1502372574350).timestamp).toEqual(1502372574350);
+  });
   describe('and two seconds are added', function () {
     var result;
     beforeEach(function () {
@@ -53271,6 +53455,9 @@ describe('When comparing two unequal Timestamp instances', function () {
   it('The later timestamp should not be considered "equal to" the earlier timestamp', function () {
     expect(later.getIsEqual(earlier)).toEqual(false);
   });
+  it('compareTimestamps should sort the timestamps', function () {
+    expect(_Timestamp["default"].compareTimestamps(earlier, later) < 0).toEqual(true);
+  });
 });
 describe('When comparing two equal Timestamp instances', function () {
   var a;
@@ -53327,6 +53514,9 @@ describe('When accessing static items', function () {
   });
   it('The timezone for New York should return the expected item', function () {
     expect(_Timezones["default"].AMERICA_NEW_YORK.code).toEqual('America/New_York');
+  });
+  it('The timezone for Denver should return the expected item', function () {
+    expect(_Timezones["default"].AMERICA_DENVER.code).toEqual('America/Denver');
   });
 });
 describe('When calculating timezone offset on 2019-10-02 UTC', function () {
@@ -54585,6 +54775,48 @@ function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), 
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
+describe('when validating a required argument', function () {
+  'use strict';
+
+  it('should not throw when the argument has the expected type', function () {
+    expect(function () {
+      return assert.argumentIsRequired('abc', 'value', String);
+    }).not.toThrow();
+  });
+  it('should throw when the argument has the wrong type', function () {
+    expect(function () {
+      return assert.argumentIsRequired(123, 'value', String);
+    }).toThrow();
+  });
+});
+describe('when checking two values for equality', function () {
+  'use strict';
+
+  it('should not throw when values are equal', function () {
+    expect(function () {
+      return assert.areEqual('abc', 'abc', 'a', 'b');
+    }).not.toThrow();
+  });
+  it('should throw when values are not equal', function () {
+    expect(function () {
+      return assert.areEqual('abc', 'def', 'a', 'b');
+    }).toThrow();
+  });
+});
+describe('when checking two values for inequality', function () {
+  'use strict';
+
+  it('should not throw when values are not equal', function () {
+    expect(function () {
+      return assert.areNotEqual('abc', 'def', 'a', 'b');
+    }).not.toThrow();
+  });
+  it('should throw when values are equal', function () {
+    expect(function () {
+      return assert.areNotEqual('abc', 'abc', 'a', 'b');
+    }).toThrow();
+  });
+});
 describe('when attempting to validate an array', function () {
   'use strict';
 
@@ -55550,6 +55782,22 @@ describe('When extracting the "short" day of week', function () {
     expect(utilities.getShortDay(new Date(2016, july, 27))).toEqual('Wed');
   });
 });
+describe('When extracting the "short" month', function () {
+  'use strict';
+
+  var july = 7 - 1;
+  it("07/27/2016 should resolve to 'Jul'", function () {
+    expect(utilities.getShortMonth(new Date(2016, july, 27))).toEqual('Jul');
+  });
+});
+describe('When extracting the year', function () {
+  'use strict';
+
+  var july = 7 - 1;
+  it('07/27/2016 should resolve to 2016', function () {
+    expect(utilities.getYear(new Date(2016, july, 27))).toEqual(2016);
+  });
+});
 describe('When determining the ordinal for a date', function () {
   'use strict';
 
@@ -55709,6 +55957,16 @@ function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), 
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
+describe('When checking a regular expression', function () {
+  'use strict';
+
+  it('it should be a regexp', function () {
+    expect(is.regexp(/abc/)).toEqual(true);
+  });
+  it('a string should not be a regexp', function () {
+    expect(is.regexp('abc')).toEqual(false);
+  });
+});
 describe('When checking the number 3', function () {
   'use strict';
 
@@ -57279,23 +57537,30 @@ describe('When a timeout is set for a promise', function () {
     var timeoutPromise;
     var result;
     beforeEach(function () {
-      originalPromise = buildResolved(result = 'instant');
+      originalPromise = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
+        return _regenerator().w(function (_context) {
+          while (1) switch (_context.n) {
+            case 0:
+              return _context.a(2, result = 'instant');
+          }
+        }, _callee);
+      }))();
       timeoutPromise = promise.timeout(originalPromise, 10);
     });
-    it('it will resolve', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
+    it('it will resolve', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2() {
       var r;
-      return _regenerator().w(function (_context) {
-        while (1) switch (_context.n) {
+      return _regenerator().w(function (_context2) {
+        while (1) switch (_context2.n) {
           case 0:
-            _context.n = 1;
+            _context2.n = 1;
             return timeoutPromise;
           case 1:
-            r = _context.v;
+            r = _context2.v;
             expect(r).toBe(result);
           case 2:
-            return _context.a(2);
+            return _context2.a(2);
         }
-      }, _callee);
+      }, _callee2);
     })));
   });
   describe('on a promise that has already been rejected', function () {
@@ -57303,30 +57568,39 @@ describe('When a timeout is set for a promise', function () {
     var timeoutPromise;
     var result;
     beforeEach(function () {
-      originalPromise = buildRejected(result = 'instant');
+      originalPromise = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3() {
+        return _regenerator().w(function (_context3) {
+          while (1) switch (_context3.n) {
+            case 0:
+              throw result = 'instant';
+            case 1:
+              return _context3.a(2);
+          }
+        }, _callee3);
+      }))();
       timeoutPromise = promise.timeout(originalPromise, 10);
     });
-    it('it reject normally', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2() {
+    it('it reject normally', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee4() {
       var r, _t;
-      return _regenerator().w(function (_context2) {
-        while (1) switch (_context2.p = _context2.n) {
+      return _regenerator().w(function (_context4) {
+        while (1) switch (_context4.p = _context4.n) {
           case 0:
-            _context2.p = 0;
-            _context2.n = 1;
+            _context4.p = 0;
+            _context4.n = 1;
             return timeoutPromise;
           case 1:
-            _context2.n = 3;
+            _context4.n = 3;
             break;
           case 2:
-            _context2.p = 2;
-            _t = _context2.v;
+            _context4.p = 2;
+            _t = _context4.v;
             r = _t;
           case 3:
             expect(r).toBe(result);
           case 4:
-            return _context2.a(2);
+            return _context4.a(2);
         }
-      }, _callee2, null, [[0, 2]]);
+      }, _callee4, null, [[0, 2]]);
     })));
   });
   describe('on a promise that resolves quickly', function () {
@@ -57341,20 +57615,20 @@ describe('When a timeout is set for a promise', function () {
       });
       timeoutPromise = promise.timeout(originalPromise, 10);
     });
-    it('it will resolve', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3() {
+    it('it will resolve', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee5() {
       var r;
-      return _regenerator().w(function (_context3) {
-        while (1) switch (_context3.n) {
+      return _regenerator().w(function (_context5) {
+        while (1) switch (_context5.n) {
           case 0:
-            _context3.n = 1;
+            _context5.n = 1;
             return timeoutPromise;
           case 1:
-            r = _context3.v;
+            r = _context5.v;
             expect(r).toBe(result);
           case 2:
-            return _context3.a(2);
+            return _context5.a(2);
         }
-      }, _callee3);
+      }, _callee5);
     })));
   });
   describe('on a promise that rejects quickly', function () {
@@ -57369,20 +57643,20 @@ describe('When a timeout is set for a promise', function () {
       });
       timeoutPromise = promise.timeout(originalPromise, 10);
     });
-    it('it reject normally', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee4() {
+    it('it reject normally', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee6() {
       var r;
-      return _regenerator().w(function (_context4) {
-        while (1) switch (_context4.n) {
+      return _regenerator().w(function (_context6) {
+        while (1) switch (_context6.n) {
           case 0:
-            _context4.n = 1;
+            _context6.n = 1;
             return getRejected(timeoutPromise);
           case 1:
-            r = _context4.v;
+            r = _context6.v;
             expect(r).toBe(result);
           case 2:
-            return _context4.a(2);
+            return _context6.a(2);
         }
-      }, _callee4);
+      }, _callee6);
     })));
   });
   describe('on a promise that resolves slowly', function () {
@@ -57394,57 +57668,6 @@ describe('When a timeout is set for a promise', function () {
         setTimeout(function () {
           resolveCallback(result = 'slow');
         }, 20);
-      });
-      timeoutPromise = promise.timeout(originalPromise, 10);
-    });
-    it('will reject due to timeout', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee5() {
-      return _regenerator().w(function (_context5) {
-        while (1) switch (_context5.n) {
-          case 0:
-            _context5.n = 1;
-            return getRejected(timeoutPromise);
-          case 1:
-            expect(true).toBe(true);
-          case 2:
-            return _context5.a(2);
-        }
-      }, _callee5);
-    })));
-  });
-  describe('on a promise that rejects slowly', function () {
-    var originalPromise;
-    var timeoutPromise;
-    var result;
-    beforeEach(function () {
-      originalPromise = new Promise(function (resolveCallback, rejectCallback) {
-        setTimeout(function () {
-          rejectCallback(result = 'slow');
-        }, 20);
-      });
-      timeoutPromise = promise.timeout(originalPromise, 10);
-    });
-    it('it reject normally', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee6() {
-      var r;
-      return _regenerator().w(function (_context6) {
-        while (1) switch (_context6.n) {
-          case 0:
-            _context6.n = 1;
-            return getRejected(timeoutPromise);
-          case 1:
-            r = _context6.v;
-            expect(r).not.toBe(result);
-          case 2:
-            return _context6.a(2);
-        }
-      }, _callee6);
-    })));
-  });
-  describe('on a promise that will never resolve', function () {
-    var originalPromise;
-    var timeoutPromise;
-    beforeEach(function () {
-      originalPromise = new Promise(function (resolveCallback, rejectCallback) {
-        return;
       });
       timeoutPromise = promise.timeout(originalPromise, 10);
     });
@@ -57460,6 +57683,57 @@ describe('When a timeout is set for a promise', function () {
             return _context7.a(2);
         }
       }, _callee7);
+    })));
+  });
+  describe('on a promise that rejects slowly', function () {
+    var originalPromise;
+    var timeoutPromise;
+    var result;
+    beforeEach(function () {
+      originalPromise = new Promise(function (resolveCallback, rejectCallback) {
+        setTimeout(function () {
+          rejectCallback(result = 'slow');
+        }, 20);
+      });
+      timeoutPromise = promise.timeout(originalPromise, 10);
+    });
+    it('it reject normally', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee8() {
+      var r;
+      return _regenerator().w(function (_context8) {
+        while (1) switch (_context8.n) {
+          case 0:
+            _context8.n = 1;
+            return getRejected(timeoutPromise);
+          case 1:
+            r = _context8.v;
+            expect(r).not.toBe(result);
+          case 2:
+            return _context8.a(2);
+        }
+      }, _callee8);
+    })));
+  });
+  describe('on a promise that will never resolve', function () {
+    var originalPromise;
+    var timeoutPromise;
+    beforeEach(function () {
+      originalPromise = new Promise(function (resolveCallback, rejectCallback) {
+        return;
+      });
+      timeoutPromise = promise.timeout(originalPromise, 10);
+    });
+    it('will reject due to timeout', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee9() {
+      return _regenerator().w(function (_context9) {
+        while (1) switch (_context9.n) {
+          case 0:
+            _context9.n = 1;
+            return getRejected(timeoutPromise);
+          case 1:
+            expect(true).toBe(true);
+          case 2:
+            return _context9.a(2);
+        }
+      }, _callee9);
     })));
   });
 });
@@ -57478,41 +57752,6 @@ describe('When using the "promise.map" function', function () {
         beforeEach(function () {
           mapPromise = promise.map(mapItems, mapSpy = jasmine.createSpy('mapSpy'), 0);
         });
-        it('the result should be an empty array', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee8() {
-          var results;
-          return _regenerator().w(function (_context8) {
-            while (1) switch (_context8.n) {
-              case 0:
-                _context8.n = 1;
-                return mapPromise;
-              case 1:
-                results = _context8.v;
-                expect(results.length).toEqual(0);
-              case 2:
-                return _context8.a(2);
-            }
-          }, _callee8);
-        })));
-        it('the mapping function should not have been called', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee9() {
-          var results;
-          return _regenerator().w(function (_context9) {
-            while (1) switch (_context9.n) {
-              case 0:
-                _context9.n = 1;
-                return mapPromise;
-              case 1:
-                results = _context9.v;
-                expect(mapSpy).not.toHaveBeenCalled();
-              case 2:
-                return _context9.a(2);
-            }
-          }, _callee9);
-        })));
-      });
-      describe('and the concurrency level is six', function () {
-        beforeEach(function () {
-          mapPromise = promise.map(mapItems, mapSpy = jasmine.createSpy('mapSpy'), 6);
-        });
         it('the result should be an empty array', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee0() {
           var results;
           return _regenerator().w(function (_context0) {
@@ -57529,19 +57768,50 @@ describe('When using the "promise.map" function', function () {
           }, _callee0);
         })));
         it('the mapping function should not have been called', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee1() {
-          var results;
           return _regenerator().w(function (_context1) {
             while (1) switch (_context1.n) {
               case 0:
                 _context1.n = 1;
                 return mapPromise;
               case 1:
-                results = _context1.v;
                 expect(mapSpy).not.toHaveBeenCalled();
               case 2:
                 return _context1.a(2);
             }
           }, _callee1);
+        })));
+      });
+      describe('and the concurrency level is six', function () {
+        beforeEach(function () {
+          mapPromise = promise.map(mapItems, mapSpy = jasmine.createSpy('mapSpy'), 6);
+        });
+        it('the result should be an empty array', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee10() {
+          var results;
+          return _regenerator().w(function (_context10) {
+            while (1) switch (_context10.n) {
+              case 0:
+                _context10.n = 1;
+                return mapPromise;
+              case 1:
+                results = _context10.v;
+                expect(results.length).toEqual(0);
+              case 2:
+                return _context10.a(2);
+            }
+          }, _callee10);
+        })));
+        it('the mapping function should not have been called', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee11() {
+          return _regenerator().w(function (_context11) {
+            while (1) switch (_context11.n) {
+              case 0:
+                _context11.n = 1;
+                return mapPromise;
+              case 1:
+                expect(mapSpy).not.toHaveBeenCalled();
+              case 2:
+                return _context11.a(2);
+            }
+          }, _callee11);
         })));
       });
     });
@@ -57559,37 +57829,7 @@ describe('When using the "promise.map" function', function () {
         beforeEach(function () {
           mapPromise = promise.map(mapItems, mapSpy = getMapSpy(), 0);
         });
-        it('the maximum concurrency level should be three', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee10() {
-          var results;
-          return _regenerator().w(function (_context10) {
-            while (1) switch (_context10.n) {
-              case 0:
-                _context10.n = 1;
-                return mapPromise;
-              case 1:
-                results = _context10.v;
-                expect(getMaximumConcurrency(results)).toEqual(3);
-              case 2:
-                return _context10.a(2);
-            }
-          }, _callee10);
-        })));
-        it('the actual concurrency for the first item should be three', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee11() {
-          var results;
-          return _regenerator().w(function (_context11) {
-            while (1) switch (_context11.n) {
-              case 0:
-                _context11.n = 1;
-                return mapPromise;
-              case 1:
-                results = _context11.v;
-                expect(getConcurrency(results, 0)).toEqual(3);
-              case 2:
-                return _context11.a(2);
-            }
-          }, _callee11);
-        })));
-        it('the result for the first item should be first', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee12() {
+        it('the maximum concurrency level should be three', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee12() {
           var results;
           return _regenerator().w(function (_context12) {
             while (1) switch (_context12.n) {
@@ -57598,13 +57838,13 @@ describe('When using the "promise.map" function', function () {
                 return mapPromise;
               case 1:
                 results = _context12.v;
-                expect(results[0].item).toBe(first);
+                expect(getMaximumConcurrency(results)).toEqual(3);
               case 2:
                 return _context12.a(2);
             }
           }, _callee12);
         })));
-        it('the result for the second item should be second', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee13() {
+        it('the actual concurrency for the first item should be three', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee13() {
           var results;
           return _regenerator().w(function (_context13) {
             while (1) switch (_context13.n) {
@@ -57613,13 +57853,13 @@ describe('When using the "promise.map" function', function () {
                 return mapPromise;
               case 1:
                 results = _context13.v;
-                expect(results[1].item).toBe(second);
+                expect(getConcurrency(results, 0)).toEqual(3);
               case 2:
                 return _context13.a(2);
             }
           }, _callee13);
         })));
-        it('the result for the third item should be third', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee14() {
+        it('the result for the first item should be first', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee14() {
           var results;
           return _regenerator().w(function (_context14) {
             while (1) switch (_context14.n) {
@@ -57628,18 +57868,13 @@ describe('When using the "promise.map" function', function () {
                 return mapPromise;
               case 1:
                 results = _context14.v;
-                expect(results[2].item).toBe(third);
+                expect(results[0].item).toBe(first);
               case 2:
                 return _context14.a(2);
             }
           }, _callee14);
         })));
-      });
-      describe('and the concurrency level is one', function () {
-        beforeEach(function () {
-          mapPromise = promise.map(mapItems, mapSpy = getMapSpy(), 1);
-        });
-        it('the maximum concurrency level should be one', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee15() {
+        it('the result for the second item should be second', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee15() {
           var results;
           return _regenerator().w(function (_context15) {
             while (1) switch (_context15.n) {
@@ -57648,13 +57883,13 @@ describe('When using the "promise.map" function', function () {
                 return mapPromise;
               case 1:
                 results = _context15.v;
-                expect(getMaximumConcurrency(results)).toEqual(1);
+                expect(results[1].item).toBe(second);
               case 2:
                 return _context15.a(2);
             }
           }, _callee15);
         })));
-        it('the actual concurrency for the first item should be one', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee16() {
+        it('the result for the third item should be third', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee16() {
           var results;
           return _regenerator().w(function (_context16) {
             while (1) switch (_context16.n) {
@@ -57663,13 +57898,18 @@ describe('When using the "promise.map" function', function () {
                 return mapPromise;
               case 1:
                 results = _context16.v;
-                expect(getConcurrency(results, 0)).toEqual(1);
+                expect(results[2].item).toBe(third);
               case 2:
                 return _context16.a(2);
             }
           }, _callee16);
         })));
-        it('the result for the first item should be first', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee17() {
+      });
+      describe('and the concurrency level is one', function () {
+        beforeEach(function () {
+          mapPromise = promise.map(mapItems, mapSpy = getMapSpy(), 1);
+        });
+        it('the maximum concurrency level should be one', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee17() {
           var results;
           return _regenerator().w(function (_context17) {
             while (1) switch (_context17.n) {
@@ -57678,13 +57918,13 @@ describe('When using the "promise.map" function', function () {
                 return mapPromise;
               case 1:
                 results = _context17.v;
-                expect(results[0].item).toBe(first);
+                expect(getMaximumConcurrency(results)).toEqual(1);
               case 2:
                 return _context17.a(2);
             }
           }, _callee17);
         })));
-        it('the result for the second item should be second', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee18() {
+        it('the actual concurrency for the first item should be one', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee18() {
           var results;
           return _regenerator().w(function (_context18) {
             while (1) switch (_context18.n) {
@@ -57693,13 +57933,13 @@ describe('When using the "promise.map" function', function () {
                 return mapPromise;
               case 1:
                 results = _context18.v;
-                expect(results[1].item).toBe(second);
+                expect(getConcurrency(results, 0)).toEqual(1);
               case 2:
                 return _context18.a(2);
             }
           }, _callee18);
         })));
-        it('the result for the third item should be third', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee19() {
+        it('the result for the first item should be first', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee19() {
           var results;
           return _regenerator().w(function (_context19) {
             while (1) switch (_context19.n) {
@@ -57708,18 +57948,13 @@ describe('When using the "promise.map" function', function () {
                 return mapPromise;
               case 1:
                 results = _context19.v;
-                expect(results[2].item).toBe(third);
+                expect(results[0].item).toBe(first);
               case 2:
                 return _context19.a(2);
             }
           }, _callee19);
         })));
-      });
-      describe('and the concurrency level is two', function () {
-        beforeEach(function () {
-          mapPromise = promise.map(mapItems, mapSpy = getMapSpy(), 2);
-        });
-        it('the maximum concurrency level should be two', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee20() {
+        it('the result for the second item should be second', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee20() {
           var results;
           return _regenerator().w(function (_context20) {
             while (1) switch (_context20.n) {
@@ -57728,13 +57963,13 @@ describe('When using the "promise.map" function', function () {
                 return mapPromise;
               case 1:
                 results = _context20.v;
-                expect(getMaximumConcurrency(results)).toEqual(2);
+                expect(results[1].item).toBe(second);
               case 2:
                 return _context20.a(2);
             }
           }, _callee20);
         })));
-        it('the actual concurrency for the first item should be two', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee21() {
+        it('the result for the third item should be third', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee21() {
           var results;
           return _regenerator().w(function (_context21) {
             while (1) switch (_context21.n) {
@@ -57743,13 +57978,18 @@ describe('When using the "promise.map" function', function () {
                 return mapPromise;
               case 1:
                 results = _context21.v;
-                expect(getConcurrency(results, 0)).toEqual(2);
+                expect(results[2].item).toBe(third);
               case 2:
                 return _context21.a(2);
             }
           }, _callee21);
         })));
-        it('the result for the first item should be first', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee22() {
+      });
+      describe('and the concurrency level is two', function () {
+        beforeEach(function () {
+          mapPromise = promise.map(mapItems, mapSpy = getMapSpy(), 2);
+        });
+        it('the maximum concurrency level should be two', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee22() {
           var results;
           return _regenerator().w(function (_context22) {
             while (1) switch (_context22.n) {
@@ -57758,13 +57998,13 @@ describe('When using the "promise.map" function', function () {
                 return mapPromise;
               case 1:
                 results = _context22.v;
-                expect(results[0].item).toBe(first);
+                expect(getMaximumConcurrency(results)).toEqual(2);
               case 2:
                 return _context22.a(2);
             }
           }, _callee22);
         })));
-        it('the result for the second item should be second', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee23() {
+        it('the actual concurrency for the first item should be two', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee23() {
           var results;
           return _regenerator().w(function (_context23) {
             while (1) switch (_context23.n) {
@@ -57773,13 +58013,13 @@ describe('When using the "promise.map" function', function () {
                 return mapPromise;
               case 1:
                 results = _context23.v;
-                expect(results[1].item).toBe(second);
+                expect(getConcurrency(results, 0)).toEqual(2);
               case 2:
                 return _context23.a(2);
             }
           }, _callee23);
         })));
-        it('the result for the third item should be third', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee24() {
+        it('the result for the first item should be first', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee24() {
           var results;
           return _regenerator().w(function (_context24) {
             while (1) switch (_context24.n) {
@@ -57788,18 +58028,13 @@ describe('When using the "promise.map" function', function () {
                 return mapPromise;
               case 1:
                 results = _context24.v;
-                expect(results[2].item).toBe(third);
+                expect(results[0].item).toBe(first);
               case 2:
                 return _context24.a(2);
             }
           }, _callee24);
         })));
-      });
-      describe('and the concurrency level is three', function () {
-        beforeEach(function () {
-          mapPromise = promise.map(mapItems, mapSpy = getMapSpy(), 3);
-        });
-        it('the maximum concurrency level should be three', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee25() {
+        it('the result for the second item should be second', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee25() {
           var results;
           return _regenerator().w(function (_context25) {
             while (1) switch (_context25.n) {
@@ -57808,13 +58043,13 @@ describe('When using the "promise.map" function', function () {
                 return mapPromise;
               case 1:
                 results = _context25.v;
-                expect(getMaximumConcurrency(results)).toEqual(3);
+                expect(results[1].item).toBe(second);
               case 2:
                 return _context25.a(2);
             }
           }, _callee25);
         })));
-        it('the actual concurrency for the first item should be three', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee26() {
+        it('the result for the third item should be third', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee26() {
           var results;
           return _regenerator().w(function (_context26) {
             while (1) switch (_context26.n) {
@@ -57823,13 +58058,18 @@ describe('When using the "promise.map" function', function () {
                 return mapPromise;
               case 1:
                 results = _context26.v;
-                expect(getConcurrency(results, 0)).toEqual(3);
+                expect(results[2].item).toBe(third);
               case 2:
                 return _context26.a(2);
             }
           }, _callee26);
         })));
-        it('the result for the first item should be first', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee27() {
+      });
+      describe('and the concurrency level is three', function () {
+        beforeEach(function () {
+          mapPromise = promise.map(mapItems, mapSpy = getMapSpy(), 3);
+        });
+        it('the maximum concurrency level should be three', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee27() {
           var results;
           return _regenerator().w(function (_context27) {
             while (1) switch (_context27.n) {
@@ -57838,13 +58078,13 @@ describe('When using the "promise.map" function', function () {
                 return mapPromise;
               case 1:
                 results = _context27.v;
-                expect(results[0].item).toBe(first);
+                expect(getMaximumConcurrency(results)).toEqual(3);
               case 2:
                 return _context27.a(2);
             }
           }, _callee27);
         })));
-        it('the result for the second item should be second', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee28() {
+        it('the actual concurrency for the first item should be three', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee28() {
           var results;
           return _regenerator().w(function (_context28) {
             while (1) switch (_context28.n) {
@@ -57853,13 +58093,13 @@ describe('When using the "promise.map" function', function () {
                 return mapPromise;
               case 1:
                 results = _context28.v;
-                expect(results[1].item).toBe(second);
+                expect(getConcurrency(results, 0)).toEqual(3);
               case 2:
                 return _context28.a(2);
             }
           }, _callee28);
         })));
-        it('the result for the third item should be third', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee29() {
+        it('the result for the first item should be first', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee29() {
           var results;
           return _regenerator().w(function (_context29) {
             while (1) switch (_context29.n) {
@@ -57868,18 +58108,13 @@ describe('When using the "promise.map" function', function () {
                 return mapPromise;
               case 1:
                 results = _context29.v;
-                expect(results[2].item).toBe(third);
+                expect(results[0].item).toBe(first);
               case 2:
                 return _context29.a(2);
             }
           }, _callee29);
         })));
-      });
-      describe('and the concurrency level is four', function () {
-        beforeEach(function () {
-          mapPromise = promise.map(mapItems, mapSpy = getMapSpy(), 4);
-        });
-        it('the maximum concurrency level should be three', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee30() {
+        it('the result for the second item should be second', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee30() {
           var results;
           return _regenerator().w(function (_context30) {
             while (1) switch (_context30.n) {
@@ -57888,13 +58123,13 @@ describe('When using the "promise.map" function', function () {
                 return mapPromise;
               case 1:
                 results = _context30.v;
-                expect(getMaximumConcurrency(results)).toEqual(3);
+                expect(results[1].item).toBe(second);
               case 2:
                 return _context30.a(2);
             }
           }, _callee30);
         })));
-        it('the actual concurrency for the first item should be three', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee31() {
+        it('the result for the third item should be third', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee31() {
           var results;
           return _regenerator().w(function (_context31) {
             while (1) switch (_context31.n) {
@@ -57903,13 +58138,18 @@ describe('When using the "promise.map" function', function () {
                 return mapPromise;
               case 1:
                 results = _context31.v;
-                expect(getConcurrency(results, 0)).toEqual(3);
+                expect(results[2].item).toBe(third);
               case 2:
                 return _context31.a(2);
             }
           }, _callee31);
         })));
-        it('the result for the first item should be first', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee32() {
+      });
+      describe('and the concurrency level is four', function () {
+        beforeEach(function () {
+          mapPromise = promise.map(mapItems, mapSpy = getMapSpy(), 4);
+        });
+        it('the maximum concurrency level should be three', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee32() {
           var results;
           return _regenerator().w(function (_context32) {
             while (1) switch (_context32.n) {
@@ -57918,13 +58158,13 @@ describe('When using the "promise.map" function', function () {
                 return mapPromise;
               case 1:
                 results = _context32.v;
-                expect(results[0].item).toBe(first);
+                expect(getMaximumConcurrency(results)).toEqual(3);
               case 2:
                 return _context32.a(2);
             }
           }, _callee32);
         })));
-        it('the result for the second item should be second', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee33() {
+        it('the actual concurrency for the first item should be three', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee33() {
           var results;
           return _regenerator().w(function (_context33) {
             while (1) switch (_context33.n) {
@@ -57933,13 +58173,13 @@ describe('When using the "promise.map" function', function () {
                 return mapPromise;
               case 1:
                 results = _context33.v;
-                expect(results[1].item).toBe(second);
+                expect(getConcurrency(results, 0)).toEqual(3);
               case 2:
                 return _context33.a(2);
             }
           }, _callee33);
         })));
-        it('the result for the third item should be third', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee34() {
+        it('the result for the first item should be first', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee34() {
           var results;
           return _regenerator().w(function (_context34) {
             while (1) switch (_context34.n) {
@@ -57948,11 +58188,41 @@ describe('When using the "promise.map" function', function () {
                 return mapPromise;
               case 1:
                 results = _context34.v;
-                expect(results[2].item).toBe(third);
+                expect(results[0].item).toBe(first);
               case 2:
                 return _context34.a(2);
             }
           }, _callee34);
+        })));
+        it('the result for the second item should be second', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee35() {
+          var results;
+          return _regenerator().w(function (_context35) {
+            while (1) switch (_context35.n) {
+              case 0:
+                _context35.n = 1;
+                return mapPromise;
+              case 1:
+                results = _context35.v;
+                expect(results[1].item).toBe(second);
+              case 2:
+                return _context35.a(2);
+            }
+          }, _callee35);
+        })));
+        it('the result for the third item should be third', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee36() {
+          var results;
+          return _regenerator().w(function (_context36) {
+            while (1) switch (_context36.n) {
+              case 0:
+                _context36.n = 1;
+                return mapPromise;
+              case 1:
+                results = _context36.v;
+                expect(results[2].item).toBe(third);
+              case 2:
+                return _context36.a(2);
+            }
+          }, _callee36);
         })));
       });
     });
@@ -57989,37 +58259,7 @@ describe('When using the "promise.map" function', function () {
             });
           }), 2);
         });
-        it('the result for the first item should be first', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee35() {
-          var results;
-          return _regenerator().w(function (_context35) {
-            while (1) switch (_context35.n) {
-              case 0:
-                _context35.n = 1;
-                return mapPromise;
-              case 1:
-                results = _context35.v;
-                expect(results[0].item).toBe(first);
-              case 2:
-                return _context35.a(2);
-            }
-          }, _callee35);
-        })));
-        it('the result for the second item should be second', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee36() {
-          var results;
-          return _regenerator().w(function (_context36) {
-            while (1) switch (_context36.n) {
-              case 0:
-                _context36.n = 1;
-                return mapPromise;
-              case 1:
-                results = _context36.v;
-                expect(results[1].item).toBe(second);
-              case 2:
-                return _context36.a(2);
-            }
-          }, _callee36);
-        })));
-        it('the result for the third item should be third', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee37() {
+        it('the result for the first item should be first', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee37() {
           var results;
           return _regenerator().w(function (_context37) {
             while (1) switch (_context37.n) {
@@ -58028,13 +58268,13 @@ describe('When using the "promise.map" function', function () {
                 return mapPromise;
               case 1:
                 results = _context37.v;
-                expect(results[2].item).toBe(third);
+                expect(results[0].item).toBe(first);
               case 2:
                 return _context37.a(2);
             }
           }, _callee37);
         })));
-        it('the result for the fourth item should be fourth', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee38() {
+        it('the result for the second item should be second', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee38() {
           var results;
           return _regenerator().w(function (_context38) {
             while (1) switch (_context38.n) {
@@ -58043,11 +58283,41 @@ describe('When using the "promise.map" function', function () {
                 return mapPromise;
               case 1:
                 results = _context38.v;
-                expect(results[3].item).toBe(fourth);
+                expect(results[1].item).toBe(second);
               case 2:
                 return _context38.a(2);
             }
           }, _callee38);
+        })));
+        it('the result for the third item should be third', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee39() {
+          var results;
+          return _regenerator().w(function (_context39) {
+            while (1) switch (_context39.n) {
+              case 0:
+                _context39.n = 1;
+                return mapPromise;
+              case 1:
+                results = _context39.v;
+                expect(results[2].item).toBe(third);
+              case 2:
+                return _context39.a(2);
+            }
+          }, _callee39);
+        })));
+        it('the result for the fourth item should be fourth', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee40() {
+          var results;
+          return _regenerator().w(function (_context40) {
+            while (1) switch (_context40.n) {
+              case 0:
+                _context40.n = 1;
+                return mapPromise;
+              case 1:
+                results = _context40.v;
+                expect(results[3].item).toBe(fourth);
+              case 2:
+                return _context40.a(2);
+            }
+          }, _callee40);
         })));
       });
     });
@@ -58075,37 +58345,7 @@ describe('When using the "promise.map" function', function () {
       beforeEach(function () {
         mapPromise = promise.map(mapItems = [], mapSpy = jasmine.createSpy('mapSpy'));
       });
-      it('the result will be an array', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee39() {
-        var results;
-        return _regenerator().w(function (_context39) {
-          while (1) switch (_context39.n) {
-            case 0:
-              _context39.n = 1;
-              return mapPromise;
-            case 1:
-              results = _context39.v;
-              expect(results instanceof Array).toEqual(true);
-            case 2:
-              return _context39.a(2);
-          }
-        }, _callee39);
-      })));
-      it('the resulting array will be the same size as the input array', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee40() {
-        var results;
-        return _regenerator().w(function (_context40) {
-          while (1) switch (_context40.n) {
-            case 0:
-              _context40.n = 1;
-              return mapPromise;
-            case 1:
-              results = _context40.v;
-              expect(results.length).toEqual(mapItems.length);
-            case 2:
-              return _context40.a(2);
-          }
-        }, _callee40);
-      })));
-      it('the mapper function will be not have been called', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee41() {
+      it('the result will be an array', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee41() {
         var results;
         return _regenerator().w(function (_context41) {
           while (1) switch (_context41.n) {
@@ -58114,11 +58354,39 @@ describe('When using the "promise.map" function', function () {
               return mapPromise;
             case 1:
               results = _context41.v;
-              expect(mapSpy.calls.count()).toEqual(0);
+              expect(results instanceof Array).toEqual(true);
             case 2:
               return _context41.a(2);
           }
         }, _callee41);
+      })));
+      it('the resulting array will be the same size as the input array', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee42() {
+        var results;
+        return _regenerator().w(function (_context42) {
+          while (1) switch (_context42.n) {
+            case 0:
+              _context42.n = 1;
+              return mapPromise;
+            case 1:
+              results = _context42.v;
+              expect(results.length).toEqual(mapItems.length);
+            case 2:
+              return _context42.a(2);
+          }
+        }, _callee42);
+      })));
+      it('the mapper function will be not have been called', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee43() {
+        return _regenerator().w(function (_context43) {
+          while (1) switch (_context43.n) {
+            case 0:
+              _context43.n = 1;
+              return mapPromise;
+            case 1:
+              expect(mapSpy.calls.count()).toEqual(0);
+            case 2:
+              return _context43.a(2);
+          }
+        }, _callee43);
       })));
     });
     describe('and the array has two items (with an infinite concurrency level)', function () {
@@ -58128,37 +58396,7 @@ describe('When using the "promise.map" function', function () {
       beforeEach(function () {
         mapPromise = promise.map(mapItems = ['x', 'y'], mapSpy = jasmine.createSpy('mapSpy'));
       });
-      it('the result will be an array', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee42() {
-        var results;
-        return _regenerator().w(function (_context42) {
-          while (1) switch (_context42.n) {
-            case 0:
-              _context42.n = 1;
-              return mapPromise;
-            case 1:
-              results = _context42.v;
-              expect(results instanceof Array).toEqual(true);
-            case 2:
-              return _context42.a(2);
-          }
-        }, _callee42);
-      })));
-      it('the resulting array have two items', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee43() {
-        var results;
-        return _regenerator().w(function (_context43) {
-          while (1) switch (_context43.n) {
-            case 0:
-              _context43.n = 1;
-              return mapPromise;
-            case 1:
-              results = _context43.v;
-              expect(results.length).toEqual(2);
-            case 2:
-              return _context43.a(2);
-          }
-        }, _callee43);
-      })));
-      it('the mapper function to have been called twice', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee44() {
+      it('the result will be an array', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee44() {
         var results;
         return _regenerator().w(function (_context44) {
           while (1) switch (_context44.n) {
@@ -58167,13 +58405,13 @@ describe('When using the "promise.map" function', function () {
               return mapPromise;
             case 1:
               results = _context44.v;
-              expect(mapSpy.calls.count()).toEqual(2);
+              expect(results instanceof Array).toEqual(true);
             case 2:
               return _context44.a(2);
           }
         }, _callee44);
       })));
-      it('the mapper function will have been called once with the first item', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee45() {
+      it('the resulting array have two items', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee45() {
         var results;
         return _regenerator().w(function (_context45) {
           while (1) switch (_context45.n) {
@@ -58182,26 +58420,50 @@ describe('When using the "promise.map" function', function () {
               return mapPromise;
             case 1:
               results = _context45.v;
-              expect(mapSpy).toHaveBeenCalledWith(mapItems[0]);
+              expect(results.length).toEqual(2);
             case 2:
               return _context45.a(2);
           }
         }, _callee45);
       })));
-      it('the mapper function will have been called once with the second item', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee46() {
-        var results;
+      it('the mapper function to have been called twice', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee46() {
         return _regenerator().w(function (_context46) {
           while (1) switch (_context46.n) {
             case 0:
               _context46.n = 1;
               return mapPromise;
             case 1:
-              results = _context46.v;
-              expect(mapSpy).toHaveBeenCalledWith(mapItems[1]);
+              expect(mapSpy.calls.count()).toEqual(2);
             case 2:
               return _context46.a(2);
           }
         }, _callee46);
+      })));
+      it('the mapper function will have been called once with the first item', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee47() {
+        return _regenerator().w(function (_context47) {
+          while (1) switch (_context47.n) {
+            case 0:
+              _context47.n = 1;
+              return mapPromise;
+            case 1:
+              expect(mapSpy).toHaveBeenCalledWith(mapItems[0]);
+            case 2:
+              return _context47.a(2);
+          }
+        }, _callee47);
+      })));
+      it('the mapper function will have been called once with the second item', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee48() {
+        return _regenerator().w(function (_context48) {
+          while (1) switch (_context48.n) {
+            case 0:
+              _context48.n = 1;
+              return mapPromise;
+            case 1:
+              expect(mapSpy).toHaveBeenCalledWith(mapItems[1]);
+            case 2:
+              return _context48.a(2);
+          }
+        }, _callee48);
       })));
     });
   });
@@ -58233,20 +58495,20 @@ describe('When processing a "pipeline" of promises', function () {
     beforeEach(function () {
       p = promise.pipeline([], input = {});
     });
-    it('should return the original input', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee47() {
+    it('should return the original input', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee49() {
       var result;
-      return _regenerator().w(function (_context47) {
-        while (1) switch (_context47.n) {
+      return _regenerator().w(function (_context49) {
+        while (1) switch (_context49.n) {
           case 0:
-            _context47.n = 1;
+            _context49.n = 1;
             return p;
           case 1:
-            result = _context47.v;
+            result = _context49.v;
             expect(result).toBe(input);
           case 2:
-            return _context47.a(2);
+            return _context49.a(2);
         }
-      }, _callee47);
+      }, _callee49);
     })));
   });
   describe('and one asynchronous executor is specified', function () {
@@ -58264,35 +58526,33 @@ describe('When processing a "pipeline" of promises', function () {
       spyOne = jasmine.createSpy('spyOne').and.callFake(delayedSquare);
       p = promise.pipeline([spyOne], input = 2);
     });
-    it('the first executor should be called with the input', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee48() {
-      var result;
-      return _regenerator().w(function (_context48) {
-        while (1) switch (_context48.n) {
+    it('the first executor should be called with the input', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee50() {
+      return _regenerator().w(function (_context50) {
+        while (1) switch (_context50.n) {
           case 0:
-            _context48.n = 1;
+            _context50.n = 1;
             return p;
           case 1:
-            result = _context48.v;
             expect(spyOne).toHaveBeenCalledWith(2);
           case 2:
-            return _context48.a(2);
+            return _context50.a(2);
         }
-      }, _callee48);
+      }, _callee50);
     })));
-    it('the promise should return the correct result', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee49() {
+    it('the promise should return the correct result', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee51() {
       var result;
-      return _regenerator().w(function (_context49) {
-        while (1) switch (_context49.n) {
+      return _regenerator().w(function (_context51) {
+        while (1) switch (_context51.n) {
           case 0:
-            _context49.n = 1;
+            _context51.n = 1;
             return p;
           case 1:
-            result = _context49.v;
+            result = _context51.v;
             expect(result).toEqual(4);
           case 2:
-            return _context49.a(2);
+            return _context51.a(2);
         }
-      }, _callee49);
+      }, _callee51);
     })));
   });
   describe('and two asynchronous executors are specified', function () {
@@ -58312,73 +58572,27 @@ describe('When processing a "pipeline" of promises', function () {
       spyTwo = jasmine.createSpy('spyTwo').and.callFake(delayedSquare);
       p = promise.pipeline([spyOne, spyTwo], input = 2);
     });
-    it('the first executor should be called with the input', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee50() {
-      var result;
-      return _regenerator().w(function (_context50) {
-        while (1) switch (_context50.n) {
-          case 0:
-            _context50.n = 1;
-            return p;
-          case 1:
-            result = _context50.v;
-            expect(spyOne).toHaveBeenCalledWith(2);
-          case 2:
-            return _context50.a(2);
-        }
-      }, _callee50);
-    })));
-    it('the second executor should be called with the result of the first executor', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee51() {
-      var result;
-      return _regenerator().w(function (_context51) {
-        while (1) switch (_context51.n) {
-          case 0:
-            _context51.n = 1;
-            return p;
-          case 1:
-            result = _context51.v;
-            expect(spyTwo).toHaveBeenCalledWith(4);
-          case 2:
-            return _context51.a(2);
-        }
-      }, _callee51);
-    })));
-    it('the promise should return the correct result', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee52() {
-      var result;
+    it('the first executor should be called with the input', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee52() {
       return _regenerator().w(function (_context52) {
         while (1) switch (_context52.n) {
           case 0:
             _context52.n = 1;
             return p;
           case 1:
-            result = _context52.v;
-            expect(result).toEqual(16);
+            expect(spyOne).toHaveBeenCalledWith(2);
           case 2:
             return _context52.a(2);
         }
       }, _callee52);
     })));
-  });
-  describe('and one synchronous executor is specified', function () {
-    var input;
-    var spyOne;
-    var p;
-    beforeEach(function () {
-      var synchronousSquare = function synchronousSquare(x) {
-        return x * x;
-      };
-      spyOne = jasmine.createSpy('spyOne').and.callFake(synchronousSquare);
-      p = promise.pipeline([spyOne], input = 2);
-    });
-    it('the first executor should be called with the input', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee53() {
-      var result;
+    it('the second executor should be called with the result of the first executor', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee53() {
       return _regenerator().w(function (_context53) {
         while (1) switch (_context53.n) {
           case 0:
             _context53.n = 1;
             return p;
           case 1:
-            result = _context53.v;
-            expect(spyOne).toHaveBeenCalledWith(2);
+            expect(spyTwo).toHaveBeenCalledWith(4);
           case 2:
             return _context53.a(2);
         }
@@ -58393,11 +58607,51 @@ describe('When processing a "pipeline" of promises', function () {
             return p;
           case 1:
             result = _context54.v;
-            expect(result).toEqual(4);
+            expect(result).toEqual(16);
           case 2:
             return _context54.a(2);
         }
       }, _callee54);
+    })));
+  });
+  describe('and one synchronous executor is specified', function () {
+    var input;
+    var spyOne;
+    var p;
+    beforeEach(function () {
+      var synchronousSquare = function synchronousSquare(x) {
+        return x * x;
+      };
+      spyOne = jasmine.createSpy('spyOne').and.callFake(synchronousSquare);
+      p = promise.pipeline([spyOne], input = 2);
+    });
+    it('the first executor should be called with the input', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee55() {
+      return _regenerator().w(function (_context55) {
+        while (1) switch (_context55.n) {
+          case 0:
+            _context55.n = 1;
+            return p;
+          case 1:
+            expect(spyOne).toHaveBeenCalledWith(2);
+          case 2:
+            return _context55.a(2);
+        }
+      }, _callee55);
+    })));
+    it('the promise should return the correct result', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee56() {
+      var result;
+      return _regenerator().w(function (_context56) {
+        while (1) switch (_context56.n) {
+          case 0:
+            _context56.n = 1;
+            return p;
+          case 1:
+            result = _context56.v;
+            expect(result).toEqual(4);
+          case 2:
+            return _context56.a(2);
+        }
+      }, _callee56);
     })));
   });
   describe('and two synchronous executors are specified', function () {
@@ -58413,50 +58667,46 @@ describe('When processing a "pipeline" of promises', function () {
       spyTwo = jasmine.createSpy('spyTwo').and.callFake(synchronousSquare);
       p = promise.pipeline([spyOne, spyTwo], input = 2);
     });
-    it('the first executor should be called with the input', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee55() {
-      var result;
-      return _regenerator().w(function (_context55) {
-        while (1) switch (_context55.n) {
-          case 0:
-            _context55.n = 1;
-            return p;
-          case 1:
-            result = _context55.v;
-            expect(spyOne).toHaveBeenCalledWith(2);
-          case 2:
-            return _context55.a(2);
-        }
-      }, _callee55);
-    })));
-    it('the second executor should be called with the result of the first executor', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee56() {
-      var result;
-      return _regenerator().w(function (_context56) {
-        while (1) switch (_context56.n) {
-          case 0:
-            _context56.n = 1;
-            return p;
-          case 1:
-            result = _context56.v;
-            expect(spyTwo).toHaveBeenCalledWith(4);
-          case 2:
-            return _context56.a(2);
-        }
-      }, _callee56);
-    })));
-    it('the promise should return the correct result', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee57() {
-      var result;
+    it('the first executor should be called with the input', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee57() {
       return _regenerator().w(function (_context57) {
         while (1) switch (_context57.n) {
           case 0:
             _context57.n = 1;
             return p;
           case 1:
-            result = _context57.v;
-            expect(result).toEqual(16);
+            expect(spyOne).toHaveBeenCalledWith(2);
           case 2:
             return _context57.a(2);
         }
       }, _callee57);
+    })));
+    it('the second executor should be called with the result of the first executor', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee58() {
+      return _regenerator().w(function (_context58) {
+        while (1) switch (_context58.n) {
+          case 0:
+            _context58.n = 1;
+            return p;
+          case 1:
+            expect(spyTwo).toHaveBeenCalledWith(4);
+          case 2:
+            return _context58.a(2);
+        }
+      }, _callee58);
+    })));
+    it('the promise should return the correct result', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee59() {
+      var result;
+      return _regenerator().w(function (_context59) {
+        while (1) switch (_context59.n) {
+          case 0:
+            _context59.n = 1;
+            return p;
+          case 1:
+            result = _context59.v;
+            expect(result).toEqual(16);
+          case 2:
+            return _context59.a(2);
+        }
+      }, _callee59);
     })));
   });
   describe('and an executor throws an exception', function () {
@@ -58475,37 +58725,7 @@ describe('When processing a "pipeline" of promises', function () {
       spyTwo = jasmine.createSpy('spyTwo').and.callFake(synchronousSquare);
       p = promise.pipeline([spyOne, spyTwo], input = 2);
     });
-    it('the promise should reject', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee58() {
-      var error;
-      return _regenerator().w(function (_context58) {
-        while (1) switch (_context58.n) {
-          case 0:
-            _context58.n = 1;
-            return getRejected(p);
-          case 1:
-            error = _context58.v;
-            expect(error instanceof Error).toEqual(true);
-          case 2:
-            return _context58.a(2);
-        }
-      }, _callee58);
-    })));
-    it('the first executor should be called with the input', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee59() {
-      var error;
-      return _regenerator().w(function (_context59) {
-        while (1) switch (_context59.n) {
-          case 0:
-            _context59.n = 1;
-            return getRejected(p);
-          case 1:
-            error = _context59.v;
-            expect(spyOne).toHaveBeenCalledWith(2);
-          case 2:
-            return _context59.a(2);
-        }
-      }, _callee59);
-    })));
-    it('the second executor not have should be called with the result of the first executor', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee60() {
+    it('the promise should reject', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee60() {
       var error;
       return _regenerator().w(function (_context60) {
         while (1) switch (_context60.n) {
@@ -58514,29 +58734,55 @@ describe('When processing a "pipeline" of promises', function () {
             return getRejected(p);
           case 1:
             error = _context60.v;
-            expect(spyTwo).not.toHaveBeenCalled();
+            expect(error instanceof Error).toEqual(true);
           case 2:
             return _context60.a(2);
         }
       }, _callee60);
+    })));
+    it('the first executor should be called with the input', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee61() {
+      return _regenerator().w(function (_context61) {
+        while (1) switch (_context61.n) {
+          case 0:
+            _context61.n = 1;
+            return getRejected(p);
+          case 1:
+            expect(spyOne).toHaveBeenCalledWith(2);
+          case 2:
+            return _context61.a(2);
+        }
+      }, _callee61);
+    })));
+    it('the second executor not have should be called with the result of the first executor', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee62() {
+      return _regenerator().w(function (_context62) {
+        while (1) switch (_context62.n) {
+          case 0:
+            _context62.n = 1;
+            return getRejected(p);
+          case 1:
+            expect(spyTwo).not.toHaveBeenCalled();
+          case 2:
+            return _context62.a(2);
+        }
+      }, _callee62);
     })));
   });
 });
 describe('When searching for the "first" valid promise', function () {
   describe('with an empty array', function () {
     var result;
-    beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee61() {
-      return _regenerator().w(function (_context61) {
-        while (1) switch (_context61.n) {
+    beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee63() {
+      return _regenerator().w(function (_context63) {
+        while (1) switch (_context63.n) {
           case 0:
-            _context61.n = 1;
+            _context63.n = 1;
             return promise.first([]);
           case 1:
-            result = _context61.v;
+            result = _context63.v;
           case 2:
-            return _context61.a(2);
+            return _context63.a(2);
         }
-      }, _callee61);
+      }, _callee63);
     })));
     it('the result should be a null value', function () {
       expect(result).toEqual(null);
@@ -58546,34 +58792,34 @@ describe('When searching for the "first" valid promise', function () {
     var one;
     var two;
     var result;
-    beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee64() {
-      return _regenerator().w(function (_context64) {
-        while (1) switch (_context64.n) {
+    beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee66() {
+      return _regenerator().w(function (_context66) {
+        while (1) switch (_context66.n) {
           case 0:
-            one = jasmine.createSpy('one').and.callFake(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee62() {
-              return _regenerator().w(function (_context62) {
-                while (1) switch (_context62.n) {
+            one = jasmine.createSpy('one').and.callFake(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee64() {
+              return _regenerator().w(function (_context64) {
+                while (1) switch (_context64.n) {
                   case 0:
-                    return _context62.a(2, null);
+                    return _context64.a(2, null);
                 }
-              }, _callee62);
+              }, _callee64);
             })));
-            two = jasmine.createSpy('two').and.callFake(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee63() {
-              return _regenerator().w(function (_context63) {
-                while (1) switch (_context63.n) {
+            two = jasmine.createSpy('two').and.callFake(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee65() {
+              return _regenerator().w(function (_context65) {
+                while (1) switch (_context65.n) {
                   case 0:
-                    return _context63.a(2, null);
+                    return _context65.a(2, null);
                 }
-              }, _callee63);
+              }, _callee65);
             })));
-            _context64.n = 1;
+            _context66.n = 1;
             return promise.first([one, two]);
           case 1:
-            result = _context64.v;
+            result = _context66.v;
           case 2:
-            return _context64.a(2);
+            return _context66.a(2);
         }
-      }, _callee64);
+      }, _callee66);
     })));
     it('the result should be a null value', function () {
       expect(result).toEqual(null);
@@ -58591,36 +58837,36 @@ describe('When searching for the "first" valid promise', function () {
     var valueOne;
     var valueTwo;
     var result;
-    beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee67() {
-      return _regenerator().w(function (_context67) {
-        while (1) switch (_context67.n) {
+    beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee69() {
+      return _regenerator().w(function (_context69) {
+        while (1) switch (_context69.n) {
           case 0:
             valueOne = {};
             valueTwo = {};
-            one = jasmine.createSpy('one').and.callFake(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee65() {
-              return _regenerator().w(function (_context65) {
-                while (1) switch (_context65.n) {
+            one = jasmine.createSpy('one').and.callFake(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee67() {
+              return _regenerator().w(function (_context67) {
+                while (1) switch (_context67.n) {
                   case 0:
-                    return _context65.a(2, valueOne);
+                    return _context67.a(2, valueOne);
                 }
-              }, _callee65);
+              }, _callee67);
             })));
-            two = jasmine.createSpy('two').and.callFake(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee66() {
-              return _regenerator().w(function (_context66) {
-                while (1) switch (_context66.n) {
+            two = jasmine.createSpy('two').and.callFake(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee68() {
+              return _regenerator().w(function (_context68) {
+                while (1) switch (_context68.n) {
                   case 0:
-                    return _context66.a(2, valueTwo);
+                    return _context68.a(2, valueTwo);
                 }
-              }, _callee66);
+              }, _callee68);
             })));
-            _context67.n = 1;
+            _context69.n = 1;
             return promise.first([one, two]);
           case 1:
-            result = _context67.v;
+            result = _context69.v;
           case 2:
-            return _context67.a(2);
+            return _context69.a(2);
         }
-      }, _callee67);
+      }, _callee69);
     })));
     it('the result the value from the first executor', function () {
       expect(result).toBe(valueOne);
@@ -58638,36 +58884,36 @@ describe('When searching for the "first" valid promise', function () {
     var valueOne;
     var valueTwo;
     var result;
-    beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee70() {
-      return _regenerator().w(function (_context70) {
-        while (1) switch (_context70.n) {
+    beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee72() {
+      return _regenerator().w(function (_context72) {
+        while (1) switch (_context72.n) {
           case 0:
             valueOne = null;
             valueTwo = {};
-            one = jasmine.createSpy('one').and.callFake(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee68() {
-              return _regenerator().w(function (_context68) {
-                while (1) switch (_context68.n) {
+            one = jasmine.createSpy('one').and.callFake(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee70() {
+              return _regenerator().w(function (_context70) {
+                while (1) switch (_context70.n) {
                   case 0:
-                    return _context68.a(2, valueOne);
+                    return _context70.a(2, valueOne);
                 }
-              }, _callee68);
+              }, _callee70);
             })));
-            two = jasmine.createSpy('two').and.callFake(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee69() {
-              return _regenerator().w(function (_context69) {
-                while (1) switch (_context69.n) {
+            two = jasmine.createSpy('two').and.callFake(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee71() {
+              return _regenerator().w(function (_context71) {
+                while (1) switch (_context71.n) {
                   case 0:
-                    return _context69.a(2, valueTwo);
+                    return _context71.a(2, valueTwo);
                 }
-              }, _callee69);
+              }, _callee71);
             })));
-            _context70.n = 1;
+            _context72.n = 1;
             return promise.first([one, two]);
           case 1:
-            result = _context70.v;
+            result = _context72.v;
           case 2:
-            return _context70.a(2);
+            return _context72.a(2);
         }
-      }, _callee70);
+      }, _callee72);
     })));
     it('the result the value from the second executor', function () {
       expect(result).toBe(valueTwo);
@@ -58684,37 +58930,37 @@ describe('When searching for the "first" valid promise', function () {
     var two;
     var valueTwo;
     var result;
-    beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee73() {
-      return _regenerator().w(function (_context73) {
-        while (1) switch (_context73.n) {
+    beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee75() {
+      return _regenerator().w(function (_context75) {
+        while (1) switch (_context75.n) {
           case 0:
             valueTwo = {};
-            one = jasmine.createSpy('one').and.callFake(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee71() {
-              return _regenerator().w(function (_context71) {
-                while (1) switch (_context71.n) {
+            one = jasmine.createSpy('one').and.callFake(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee73() {
+              return _regenerator().w(function (_context73) {
+                while (1) switch (_context73.n) {
                   case 0:
                     throw 'Oops';
                   case 1:
-                    return _context71.a(2);
+                    return _context73.a(2);
                 }
-              }, _callee71);
+              }, _callee73);
             })));
-            two = jasmine.createSpy('two').and.callFake(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee72() {
-              return _regenerator().w(function (_context72) {
-                while (1) switch (_context72.n) {
+            two = jasmine.createSpy('two').and.callFake(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee74() {
+              return _regenerator().w(function (_context74) {
+                while (1) switch (_context74.n) {
                   case 0:
-                    return _context72.a(2, valueTwo);
+                    return _context74.a(2, valueTwo);
                 }
-              }, _callee72);
+              }, _callee74);
             })));
-            _context73.n = 1;
+            _context75.n = 1;
             return promise.first([one, two]);
           case 1:
-            result = _context73.v;
+            result = _context75.v;
           case 2:
-            return _context73.a(2);
+            return _context75.a(2);
         }
-      }, _callee73);
+      }, _callee75);
     })));
     it('the result the value from the second executor', function () {
       expect(result).toBe(valueTwo);
@@ -58737,20 +58983,20 @@ describe('When "promise.build" is used to create a promise', function () {
         r('ok');
       });
     });
-    it('the promise should be fulfilled', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee74() {
+    it('the promise should be fulfilled', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee76() {
       var result;
-      return _regenerator().w(function (_context74) {
-        while (1) switch (_context74.n) {
+      return _regenerator().w(function (_context76) {
+        while (1) switch (_context76.n) {
           case 0:
-            _context74.n = 1;
+            _context76.n = 1;
             return p;
           case 1:
-            result = _context74.v;
+            result = _context76.v;
             expect(result).toEqual('ok');
           case 2:
-            return _context74.a(2);
+            return _context76.a(2);
         }
-      }, _callee74);
+      }, _callee76);
     })));
   });
   describe('and the executor rejects', function () {
@@ -58760,27 +59006,27 @@ describe('When "promise.build" is used to create a promise', function () {
         x('not ok');
       });
     });
-    it('the promise should be fulfilled', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee75() {
+    it('the promise should be fulfilled', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee77() {
       var result, _t2;
-      return _regenerator().w(function (_context75) {
-        while (1) switch (_context75.p = _context75.n) {
+      return _regenerator().w(function (_context77) {
+        while (1) switch (_context77.p = _context77.n) {
           case 0:
-            _context75.p = 0;
-            _context75.n = 1;
+            _context77.p = 0;
+            _context77.n = 1;
             return p;
           case 1:
-            _context75.n = 3;
+            _context77.n = 3;
             break;
           case 2:
-            _context75.p = 2;
-            _t2 = _context75.v;
+            _context77.p = 2;
+            _t2 = _context77.v;
             result = _t2;
           case 3:
             expect(result).toEqual('not ok');
           case 4:
-            return _context75.a(2);
+            return _context77.a(2);
         }
-      }, _callee75, null, [[0, 2]]);
+      }, _callee77, null, [[0, 2]]);
     })));
   });
   describe('and the executor throws an error', function () {
@@ -58792,27 +59038,27 @@ describe('When "promise.build" is used to create a promise', function () {
         throw e;
       });
     });
-    it('the promise should be rejected', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee76() {
+    it('the promise should be rejected', /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee78() {
       var error, _t3;
-      return _regenerator().w(function (_context76) {
-        while (1) switch (_context76.p = _context76.n) {
+      return _regenerator().w(function (_context78) {
+        while (1) switch (_context78.p = _context78.n) {
           case 0:
-            _context76.p = 0;
-            _context76.n = 1;
+            _context78.p = 0;
+            _context78.n = 1;
             return p;
           case 1:
-            _context76.n = 3;
+            _context78.n = 3;
             break;
           case 2:
-            _context76.p = 2;
-            _t3 = _context76.v;
+            _context78.p = 2;
+            _t3 = _context78.v;
             error = _t3;
           case 3:
             expect(error).toBe(e);
           case 4:
-            return _context76.a(2);
+            return _context78.a(2);
         }
-      }, _callee76, null, [[0, 2]]);
+      }, _callee78, null, [[0, 2]]);
     })));
   });
 });
@@ -58820,59 +59066,29 @@ function getRejected(_x) {
   return _getRejected.apply(this, arguments);
 }
 function _getRejected() {
-  _getRejected = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee77(promiseToReject) {
+  _getRejected = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee79(promiseToReject) {
     var _t4;
-    return _regenerator().w(function (_context77) {
-      while (1) switch (_context77.p = _context77.n) {
+    return _regenerator().w(function (_context79) {
+      while (1) switch (_context79.p = _context79.n) {
         case 0:
-          _context77.p = 0;
-          _context77.n = 1;
+          _context79.p = 0;
+          _context79.n = 1;
           return promiseToReject;
         case 1:
-          _context77.n = 3;
+          _context79.n = 3;
           break;
         case 2:
-          _context77.p = 2;
-          _t4 = _context77.v;
-          return _context77.a(2, _t4);
+          _context79.p = 2;
+          _t4 = _context79.v;
+          return _context79.a(2, _t4);
         case 3:
           throw new Error("Expected promise to reject.");
         case 4:
-          return _context77.a(2);
-      }
-    }, _callee77, null, [[0, 2]]);
-  }));
-  return _getRejected.apply(this, arguments);
-}
-function buildResolved(_x2) {
-  return _buildResolved.apply(this, arguments);
-}
-function _buildResolved() {
-  _buildResolved = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee78(value) {
-    return _regenerator().w(function (_context78) {
-      while (1) switch (_context78.n) {
-        case 0:
-          return _context78.a(2, value);
-      }
-    }, _callee78);
-  }));
-  return _buildResolved.apply(this, arguments);
-}
-function buildRejected(_x3) {
-  return _buildRejected.apply(this, arguments);
-}
-function _buildRejected() {
-  _buildRejected = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee79(value) {
-    return _regenerator().w(function (_context79) {
-      while (1) switch (_context79.n) {
-        case 0:
-          throw value;
-        case 1:
           return _context79.a(2);
       }
-    }, _callee79);
+    }, _callee79, null, [[0, 2]]);
   }));
-  return _buildRejected.apply(this, arguments);
+  return _getRejected.apply(this, arguments);
 }
 
 },{"./../../../lang/promise.js":390}],497:[function(require,module,exports){
@@ -59196,6 +59412,12 @@ describe('When an EventMap is constructed', function () {
   beforeEach(function () {
     eventMap = new _EventMap["default"]();
   });
+  it('should not have keys', function () {
+    expect(eventMap.getKeys()).toEqual([]);
+  });
+  it('should not have an unknown key', function () {
+    expect(eventMap.hasKey('hi')).toEqual(false);
+  });
   describe('and a handler is registered', function () {
     var eventName;
     var eventHandler;
@@ -59204,6 +59426,26 @@ describe('When an EventMap is constructed', function () {
     });
     it('should report the event as not empty', function () {
       expect(eventMap.getIsEmpty(eventName)).toBe(false);
+    });
+    it('should expose the event key', function () {
+      expect({
+        keys: eventMap.getKeys(),
+        hasKey: eventMap.hasKey(eventName)
+      }).toEqual({
+        keys: [eventName],
+        hasKey: true
+      });
+    });
+    describe('and the event is cleared', function () {
+      beforeEach(function () {
+        eventMap.clear(eventName);
+      });
+      it('should report the event as empty', function () {
+        expect(eventMap.getIsEmpty(eventName)).toBe(true);
+      });
+      it('should remove the event key', function () {
+        expect(eventMap.hasKey(eventName)).toEqual(false);
+      });
     });
     describe('and the event fires', function () {
       var eventData;
@@ -59337,6 +59579,9 @@ describe('When an Event is constructed', function () {
   beforeEach(function () {
     event = new _Event["default"](context = {});
   });
+  it('should report a new event as empty', function () {
+    expect(event.getIsEmpty()).toEqual(true);
+  });
   describe('and an event handler is registered', function () {
     var spyOne;
     var bindingOne;
@@ -59346,6 +59591,33 @@ describe('When an Event is constructed', function () {
     it('should return a Disposable instance', function () {
       expect(bindingOne instanceof _Disposable["default"]).toEqual(true);
     });
+    it('should report the event as not empty', function () {
+      expect(event.getIsEmpty()).toEqual(false);
+    });
+    describe('and the event handler is unregistered', function () {
+      beforeEach(function () {
+        event.unregister(spyOne);
+      });
+      it('should report the event as empty', function () {
+        expect(event.getIsEmpty()).toEqual(true);
+      });
+      describe('and the event fires', function () {
+        beforeEach(function () {
+          event.fire('payload');
+        });
+        it('should not notify the observer', function () {
+          expect(spyOne).not.toHaveBeenCalled();
+        });
+      });
+    });
+    describe('and the event is cleared', function () {
+      beforeEach(function () {
+        event.clear();
+      });
+      it('should report the event as empty', function () {
+        expect(event.getIsEmpty()).toEqual(true);
+      });
+    });
     describe('and the event fires', function () {
       var data;
       beforeEach(function () {
@@ -59353,6 +59625,10 @@ describe('When an Event is constructed', function () {
       });
       it('should notify the observer', function () {
         expect(spyOne).toHaveBeenCalledWith(context, data);
+      });
+      it('should pass the event data before the sender', function () {
+        event.fire('payload');
+        expect(spyOne).toHaveBeenCalledWith('payload', context);
       });
     });
     describe('and another event handler is registered', function () {
@@ -59493,11 +59769,61 @@ describe('When an Model is constructed with "firstName" and "lastName" propertie
   beforeEach(function () {
     model = new _Model["default"](['firstName', 'lastName']);
   });
+  it('should return a snapshot of the current model state', function () {
+    model.firstName = 'Bryan';
+    model.lastName = 'Ingle';
+    expect(model.getSnapshot()).toEqual({
+      firstName: 'Bryan',
+      lastName: 'Ingle',
+      sequence: 2
+    });
+  });
   describe('and a transaction observer is registered', function () {
     var spy;
     var binding;
     beforeEach(function () {
       binding = model.onTransactionCommitted(spy = jasmine.createSpy('spy'));
+    });
+    describe('and a manual transaction is completed', function () {
+      beforeEach(function () {
+        model.beginTransaction();
+        model.firstName = 'Bryan';
+        model.lastName = 'Ingle';
+        model.endTransaction();
+      });
+      it('should commit one transaction', function () {
+        expect(spy.calls.count()).toEqual(1);
+      });
+      it('should include both updates in the transaction', function () {
+        expect(spy.calls.argsFor(0)[0]).toEqual({
+          firstName: 'Bryan',
+          lastName: 'Ingle',
+          sequence: 0
+        });
+      });
+    });
+    describe('and tracking is used around a transaction', function () {
+      var trackedData;
+      beforeEach(function () {
+        model.startTracker();
+        model.executeTransaction(function (m) {
+          m.firstName = 'Bryan';
+          m.lastName = 'Ingle';
+        });
+        trackedData = model.resetTracker();
+        model.stopTracking();
+      });
+      it('should return tracked transaction data', function () {
+        expect(trackedData).toEqual({
+          firstName: 'Bryan',
+          lastName: 'Ingle',
+          sequence: 0
+        });
+      });
+      it('should clear tracking when tracking is stopped', function () {
+        model.firstName = 'Luka';
+        expect(model.resetTracker()).toEqual(null);
+      });
     });
     it('should return a Disposable instance', function () {
       expect(binding instanceof _Disposable["default"]).toEqual(true);
@@ -59678,9 +60004,6 @@ describe('When a Component is constructed', function () {
       currency: _Currency["default"].USD
     });
   });
-  it('should have the expected string representation', function () {
-    expect(component.toString()).toEqual('[Component (name=person)]');
-  });
 });
 
 },{"./../../../../lang/Currency.js":362,"./../../../../lang/Decimal.js":366,"./../../../../lang/Money.js":369,"./../../../../serialization/json/Component.js":397,"./../../../../serialization/json/DataType.js":398,"./../../../../serialization/json/Field.js":399}],504:[function(require,module,exports){
@@ -59833,9 +60156,6 @@ describe('When DataType is constructed', function () {
     var value = Symbol('value');
     expect(_DataType["default"].DECIMAL.convert(value)).toBe(value);
   });
-  it('should have the expected string representation', function () {
-    expect(_DataType["default"].STRING.toString()).toEqual('[DataType (description=String)]');
-  });
 });
 
 },{"./../../../../lang/AdHoc.js":361,"./../../../../lang/Day.js":364,"./../../../../lang/Decimal.js":366,"./../../../../lang/Enum.js":368,"./../../../../lang/Timestamp.js":373,"./../../../../serialization/json/DataType.js":398}],505:[function(require,module,exports){
@@ -59880,9 +60200,6 @@ describe('When a Field is constructed', function () {
     }, function () {
       return new _Field["default"]('name', null);
     }].map(_throws)).toEqual([true, true]);
-  });
-  it('should have the expected string representation', function () {
-    expect(field.toString()).toEqual('[Field (name=name)]');
   });
 });
 function _throws(action) {
@@ -60967,9 +61284,6 @@ describe('When a ComponentBuilder is used', function () {
       return builder.withReviver(null);
     }].map(_throws)).toEqual([true, true, true]);
   });
-  it('should have the current string representation', function () {
-    expect(builder.toString()).toEqual('[ComponentBuilder (name=undefined)]');
-  });
 });
 function _throws(action) {
   try {
@@ -61728,9 +62042,6 @@ describe('When a GreaterThan specification is used', function () {
       return specification.evaluate();
     }).toThrow();
   });
-  it('should have the expected string representation', function () {
-    expect(specification.toString()).toEqual('[GreaterThan]');
-  });
 });
 
 },{"./../../../specifications/GreaterThan.js":412}],519:[function(require,module,exports){
@@ -61763,9 +62074,6 @@ describe('When a LessThan specification is used', function () {
     expect(function () {
       return specification.evaluate();
     }).toThrow();
-  });
-  it('should have the expected string representation', function () {
-    expect(specification.toString()).toEqual('[LessThan]');
   });
 });
 
@@ -62273,18 +62581,6 @@ describe('When Specification is used', function () {
       return new _Specification3["default"]().or(null);
     }).toThrow();
   });
-  it('should expose And constructor with correct string representation', function () {
-    expect(new _Specification3["default"].And(new PassingSpecification(), new PassingSpecification()).toString()).toEqual('[And]');
-  });
-  it('should expose Or constructor with correct string representation', function () {
-    expect(new _Specification3["default"].Or(new PassingSpecification(), new FailingSpecification()).toString()).toEqual('[Or]');
-  });
-  it('should expose Not constructor with correct string representation', function () {
-    expect(new _Specification3["default"].Not(new PassingSpecification()).toString()).toEqual('[Not]');
-  });
-  it('should have the expected string representation', function () {
-    expect(new _Specification3["default"]().toString()).toEqual('[Specification]');
-  });
 });
 
 },{"./../../../specifications/Specification.js":420}],527:[function(require,module,exports){
@@ -62747,6 +63043,7 @@ describe('When a RateLimiter is constructed (2 execution per 25 milliseconds)', 
 },{"./../../../timing/RateLimiter.js":540}],537:[function(require,module,exports){
 "use strict";
 
+var _Disposable = _interopRequireDefault(require("./../../../lang/Disposable.js"));
 var _Scheduler = _interopRequireDefault(require("./../../../timing/Scheduler.js"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { "default": e }; }
 function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
@@ -62784,6 +63081,33 @@ describe('When a Scheduler is constructed', function () {
       }, _callee);
     })));
   });
+  describe('and a task is repeated', function () {
+    var binding;
+    var spy;
+    beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2() {
+      return _regenerator().w(function (_context2) {
+        while (1) switch (_context2.n) {
+          case 0:
+            spy = jasmine.createSpy('spy');
+            binding = scheduler.repeat(spy, 5, 'A repeated task');
+            _context2.n = 1;
+            return new Promise(function (resolve) {
+              return setTimeout(resolve, 15);
+            });
+          case 1:
+            binding.dispose();
+          case 2:
+            return _context2.a(2);
+        }
+      }, _callee2);
+    })));
+    it('should return a Disposable instance', function () {
+      expect(binding instanceof _Disposable["default"]).toEqual(true);
+    });
+    it('should execute the task repeatedly', function () {
+      expect(spy.calls.count() > 0).toEqual(true);
+    });
+  });
   describe('and is disposed', function () {
     beforeEach(function () {
       scheduler.dispose();
@@ -62791,26 +63115,26 @@ describe('When a Scheduler is constructed', function () {
     describe('and a task is scheduled', function () {
       var spy;
       var success;
-      beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2() {
+      beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3() {
         var _t;
-        return _regenerator().w(function (_context2) {
-          while (1) switch (_context2.p = _context2.n) {
+        return _regenerator().w(function (_context3) {
+          while (1) switch (_context3.p = _context3.n) {
             case 0:
-              _context2.p = 0;
-              _context2.n = 1;
+              _context3.p = 0;
+              _context3.n = 1;
               return scheduler.schedule(spy = jasmine.createSpy('spy'), 10, 'A scheduled task');
             case 1:
               success = true;
-              _context2.n = 3;
+              _context3.n = 3;
               break;
             case 2:
-              _context2.p = 2;
-              _t = _context2.v;
+              _context3.p = 2;
+              _t = _context3.v;
               success = false;
             case 3:
-              return _context2.a(2);
+              return _context3.a(2);
           }
-        }, _callee2, null, [[0, 2]]);
+        }, _callee3, null, [[0, 2]]);
       })));
       it('should reject the promise', function () {
         expect(success).toEqual(false);
@@ -62833,23 +63157,23 @@ describe('When a backoff is used', function () {
     var spyFailure;
     var actualResult;
     var successfulResult;
-    beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3() {
-      return _regenerator().w(function (_context3) {
-        while (1) switch (_context3.n) {
+    beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee4() {
+      return _regenerator().w(function (_context4) {
+        while (1) switch (_context4.n) {
           case 0:
             spyAction = jasmine.createSpy('spyAction').and.callFake(function () {
               successfulResult = 'ok computer';
               return successfulResult;
             });
             spyFailure = jasmine.createSpy('spyFailure');
-            _context3.n = 1;
+            _context4.n = 1;
             return scheduler.backoff(spyAction, 5, 'succeeds immediately', 1, spyFailure, undefined, 100);
           case 1:
-            actualResult = _context3.v;
+            actualResult = _context4.v;
           case 2:
-            return _context3.a(2);
+            return _context4.a(2);
         }
-      }, _callee3);
+      }, _callee4);
     })));
     it('should call the "backoff" action one time', function () {
       expect(spyAction.calls.count()).toEqual(1);
@@ -62867,9 +63191,9 @@ describe('When a backoff is used', function () {
     var actualResult;
     var successfulResult;
     var x;
-    beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee4() {
-      return _regenerator().w(function (_context4) {
-        while (1) switch (_context4.n) {
+    beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee5() {
+      return _regenerator().w(function (_context5) {
+        while (1) switch (_context5.n) {
           case 0:
             x = 0;
             spyAction = jasmine.createSpy('spyAction').and.callFake(function () {
@@ -62881,14 +63205,14 @@ describe('When a backoff is used', function () {
               }
             });
             spyFailure = jasmine.createSpy('spyFailure');
-            _context4.n = 1;
+            _context5.n = 1;
             return scheduler.backoff(spyAction, 5, 'succeeds immediately', 5, spyFailure, undefined, 100);
           case 1:
-            actualResult = _context4.v;
+            actualResult = _context5.v;
           case 2:
-            return _context4.a(2);
+            return _context5.a(2);
         }
-      }, _callee4);
+      }, _callee5);
     })));
     it('should call the "backoff" action two times', function () {
       expect(spyAction.calls.count()).toEqual(2);
@@ -62906,9 +63230,9 @@ describe('When a backoff is used', function () {
     var actualResult;
     var successfulResult;
     var x;
-    beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee5() {
-      return _regenerator().w(function (_context5) {
-        while (1) switch (_context5.n) {
+    beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee6() {
+      return _regenerator().w(function (_context6) {
+        while (1) switch (_context6.n) {
           case 0:
             x = 0;
             spyAction = jasmine.createSpy('spyAction').and.callFake(function () {
@@ -62920,14 +63244,14 @@ describe('When a backoff is used', function () {
               }
             });
             spyFailure = jasmine.createSpy('spyFailure');
-            _context5.n = 1;
+            _context6.n = 1;
             return scheduler.backoff(spyAction, 5, 'succeeds immediately', 5, spyFailure, [], 100);
           case 1:
-            actualResult = _context5.v;
+            actualResult = _context6.v;
           case 2:
-            return _context5.a(2);
+            return _context6.a(2);
         }
-      }, _callee5);
+      }, _callee6);
     })));
     it('should call the "backoff" action three times', function () {
       expect(spyAction.calls.count()).toEqual(3);
@@ -62943,29 +63267,29 @@ describe('When a backoff is used', function () {
     var spyAction;
     var spyFailure;
     var actualResult;
-    beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee6() {
+    beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee7() {
       var _t2;
-      return _regenerator().w(function (_context6) {
-        while (1) switch (_context6.p = _context6.n) {
+      return _regenerator().w(function (_context7) {
+        while (1) switch (_context7.p = _context7.n) {
           case 0:
             spyAction = jasmine.createSpy('spyAction').and.callFake(function () {
               throw new Error('not gonna happen');
             });
             spyFailure = jasmine.createSpy('spyFailure');
-            _context6.p = 1;
-            _context6.n = 2;
+            _context7.p = 1;
+            _context7.n = 2;
             return scheduler.backoff(spyAction, 5, 'succeeds immediately', 3, spyFailure, [], 100);
           case 2:
-            _context6.n = 4;
+            _context7.n = 4;
             break;
           case 3:
-            _context6.p = 3;
-            _t2 = _context6.v;
+            _context7.p = 3;
+            _t2 = _context7.v;
             actualResult = _t2;
           case 4:
-            return _context6.a(2);
+            return _context7.a(2);
         }
-      }, _callee6, null, [[1, 3]]);
+      }, _callee7, null, [[1, 3]]);
     })));
     it('should call the "backoff" action three times', function () {
       expect(spyAction.calls.count()).toEqual(3);
@@ -62981,29 +63305,29 @@ describe('When a backoff is used', function () {
     var spyAction;
     var spyFailure;
     var actualResult;
-    beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee7() {
+    beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee8() {
       var _t3;
-      return _regenerator().w(function (_context7) {
-        while (1) switch (_context7.p = _context7.n) {
+      return _regenerator().w(function (_context8) {
+        while (1) switch (_context8.p = _context8.n) {
           case 0:
             spyAction = jasmine.createSpy('spyAction').and.callFake(function () {
               return 'boom';
             });
             spyFailure = jasmine.createSpy('spyFailure');
-            _context7.p = 1;
-            _context7.n = 2;
+            _context8.p = 1;
+            _context8.n = 2;
             return scheduler.backoff(spyAction, 5, 'detonate', 3, spyFailure, 'boom', 100);
           case 2:
-            _context7.n = 4;
+            _context8.n = 4;
             break;
           case 3:
-            _context7.p = 3;
-            _t3 = _context7.v;
+            _context8.p = 3;
+            _t3 = _context8.v;
             actualResult = _t3;
           case 4:
-            return _context7.a(2);
+            return _context8.a(2);
         }
-      }, _callee7, null, [[1, 3]]);
+      }, _callee8, null, [[1, 3]]);
     })));
     it('should call the "backoff" action three times', function () {
       expect(spyAction.calls.count()).toEqual(3);
@@ -63019,10 +63343,10 @@ describe('When a backoff is used', function () {
     var spyAction;
     var spyFailure;
     var delays;
-    beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee8() {
+    beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee9() {
       var _t4;
-      return _regenerator().w(function (_context8) {
-        while (1) switch (_context8.p = _context8.n) {
+      return _regenerator().w(function (_context9) {
+        while (1) switch (_context9.p = _context9.n) {
           case 0:
             delays = [];
             spyAction = jasmine.createSpy('spyAction').and.callFake(function () {
@@ -63033,19 +63357,19 @@ describe('When a backoff is used', function () {
               delays.push(delay);
               return action();
             });
-            _context8.p = 1;
-            _context8.n = 2;
+            _context9.p = 1;
+            _context9.n = 2;
             return scheduler.backoff(spyAction, 5, 'test max delay', 5, spyFailure, undefined, 20);
           case 2:
-            _context8.n = 4;
+            _context9.n = 4;
             break;
           case 3:
-            _context8.p = 3;
-            _t4 = _context8.v;
+            _context9.p = 3;
+            _t4 = _context9.v;
           case 4:
-            return _context8.a(2);
+            return _context9.a(2);
         }
-      }, _callee8, null, [[1, 3]]);
+      }, _callee9, null, [[1, 3]]);
     })));
     it('should not exceed the maximum delay', function () {
       expect(delays.every(function (delay) {
@@ -63055,7 +63379,7 @@ describe('When a backoff is used', function () {
   });
 });
 
-},{"./../../../timing/Scheduler.js":541}],538:[function(require,module,exports){
+},{"./../../../lang/Disposable.js":367,"./../../../timing/Scheduler.js":541}],538:[function(require,module,exports){
 "use strict";
 
 var _Serializer = _interopRequireDefault(require("./../../../timing/Serializer.js"));
@@ -63082,6 +63406,19 @@ describe('When a Serializer is used to schedule four tasks', function () {
       promises.push(serializer.enqueue(spy));
     }
   });
+  it('should expose the initial counters', function () {
+    expect({
+      current: serializer.getCurrent(),
+      total: serializer.getTotal(),
+      pending: serializer.getPending(),
+      running: serializer.getRunning()
+    }).toEqual({
+      current: 1,
+      total: 4,
+      pending: 3,
+      running: true
+    });
+  });
   describe('and the tasks complete', function () {
     beforeEach(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
       return _regenerator().w(function (_context) {
@@ -63094,6 +63431,19 @@ describe('When a Serializer is used to schedule four tasks', function () {
         }
       }, _callee);
     })));
+    it('should expose the completed counters', function () {
+      expect({
+        current: serializer.getCurrent(),
+        total: serializer.getTotal(),
+        pending: serializer.getPending(),
+        running: serializer.getRunning()
+      }).toEqual({
+        current: 4,
+        total: 4,
+        pending: 0,
+        running: false
+      });
+    });
     it('the first task should have been executed', function () {
       expect(spies[0]).toHaveBeenCalled();
     });
@@ -63591,9 +63941,7 @@ var Scheduler = exports["default"] = /*#__PURE__*/function (_Disposable) {
       var wrappedAction = function wrappedAction() {
         try {
           actionToRepeat();
-        } catch (_unused) {
-          return;
-        }
+        } catch (_unused) {}
       };
       var token = setInterval(wrappedAction, millisecondInterval);
       _classPrivateFieldGet(_intervalBindings, this)[token] = _Disposable2["default"].fromAction(function () {

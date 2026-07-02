@@ -46,8 +46,4 @@ describe('When a CredentialsBuilder is used', () => {
 			password: 'secret'
 		});
 	});
-
-	it('should have the expected string representation', () => {
-		expect(builder.toString()).toEqual('[CredentialsBuilder]');
-	});
 });

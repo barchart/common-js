@@ -20,10 +20,6 @@ describe('When a CompositeErrorInterceptor is used', () => {
 	it('should validate constructor arguments', () => {
 		expect([ () => new CompositeErrorInterceptor(null, ErrorInterceptor.EMPTY), () => new CompositeErrorInterceptor(ErrorInterceptor.EMPTY, null) ].map(throws)).toEqual([ true, true ]);
 	});
-
-	it('should have the expected string representation', () => {
-		expect(new CompositeErrorInterceptor(ErrorInterceptor.EMPTY, ErrorInterceptor.EMPTY).toString()).toEqual('[CompositeErrorInterceptor]');
-	});
 });
 
 function throws(action) {

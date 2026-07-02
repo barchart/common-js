@@ -25,6 +25,26 @@ describe('When an TimeMap is constructed (with a 10 millisecond time to live)', 
 			expect(map.get(key)).toBe(item);
 		});
 
+		describe('and the item is removed', () => {
+			beforeEach(() => {
+				map.remove(key);
+			});
+
+			it('should not contain the key', () => {
+				expect(map.has(key)).toEqual(false);
+			});
+		});
+
+		describe('and the item is deleted', () => {
+			beforeEach(() => {
+				map.delete(key);
+			});
+
+			it('should not contain the key', () => {
+				expect(map.has(key)).toEqual(false);
+			});
+		});
+
 		describe('and 15 milliseconds elapses', () => {
 			beforeEach((done) => {
 				setTimeout(() => {
@@ -39,6 +59,19 @@ describe('When an TimeMap is constructed (with a 10 millisecond time to live)', 
 			it('should not return the original value', () => {
 				expect(map.get(key)).toEqual(null);
 			});
+		});
+	});
+
+	describe('and an item is put into the map', () => {
+		let key;
+		let item;
+
+		beforeEach(() => {
+			map.put(key = 'a', item = {});
+		});
+
+		it('should return the original value', () => {
+			expect(map.get(key)).toBe(item);
 		});
 	});
 });

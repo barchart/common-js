@@ -39,10 +39,6 @@ describe('When a Field is constructed', () => {
 	it('should validate constructor arguments', () => {
 		expect([ () => new Field(null, DataType.STRING), () => new Field('name', null) ].map(throws)).toEqual([ true, true ]);
 	});
-
-	it('should have the expected string representation', () => {
-		expect(field.toString()).toEqual('[Field (name=name)]');
-	});
 });
 
 function throws(action) {

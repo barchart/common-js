@@ -18,6 +18,26 @@ describe('When extracting the "short" day of week', () => {
 	});
 });
 
+describe('When extracting the "short" month', () => {
+	'use strict';
+
+	const july = 7 - 1;
+
+	it("07/27/2016 should resolve to 'Jul'", () => {
+		expect(utilities.getShortMonth(new Date(2016, july, 27))).toEqual('Jul');
+	});
+});
+
+describe('When extracting the year', () => {
+	'use strict';
+
+	const july = 7 - 1;
+
+	it('07/27/2016 should resolve to 2016', () => {
+		expect(utilities.getYear(new Date(2016, july, 27))).toEqual(2016);
+	});
+});
+
 describe('When determining the ordinal for a date', () => {
 	'use strict';
 

@@ -26,6 +26,12 @@ describe('When a CurrencyTranslator is created with ^AUDUSD and ^CADUSD', () => 
 			]);
 		});
 
+		it('clear should allow rates to be recomputed on the next translation', () => {
+			translator.setRate(Rate.fromPair(0.68, '^AUDUSD'));
+
+			expect(translator.translate(1, Currency.AUD, Currency.USD)).toBeCloseTo(0.68, 4);
+		});
+
 		describe('and translations are performed (on floats)', () => {
 			it('Direct translation of of a float should return a float', () => {
 				expect(typeof translator.translate(123.456, Currency.AUD, Currency.USD)).toEqual('number');
@@ -226,8 +232,3 @@ describe('When a CurrencyTranslator is created with ^AUDUSD and ^USDEUR', () => 
 		});
 	});
 });
-
-
-
-
-

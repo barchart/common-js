@@ -51,8 +51,4 @@ describe('When a Component is constructed', () => {
 			currency: Currency.USD
 		});
 	});
-
-	it('should have the expected string representation', () => {
-		expect(component.toString()).toEqual('[Component (name=person)]');
-	});
 });

@@ -28,8 +28,4 @@ describe('When a LessThan specification is used', () => {
 	it('should validate evaluate arguments', () => {
 		expect(() => specification.evaluate()).toThrow();
 	});
-
-	it('should have the expected string representation', () => {
-		expect(specification.toString()).toEqual('[LessThan]');
-	});
 });

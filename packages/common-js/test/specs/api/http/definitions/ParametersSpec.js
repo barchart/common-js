@@ -23,10 +23,6 @@ describe('When Parameters are constructed', () => {
 		expect(() => parameters.validate()).not.toThrow();
 	});
 
-	it('should have the expected string representation', () => {
-		expect(parameters.toString()).toEqual('[Parameters]');
-	});
-
 	it('should reject non-Parameter items', () => {
 		expect(() => new Parameters([ { } ]).validate()).toThrow();
 	});

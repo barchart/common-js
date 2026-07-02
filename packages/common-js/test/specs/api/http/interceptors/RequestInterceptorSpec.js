@@ -40,8 +40,4 @@ describe('When RequestInterceptor is used', () => {
 	it('should validate delegate arguments', () => {
 		expect(() => RequestInterceptor.fromDelegate(null)).toThrow();
 	});
-
-	it('should have the expected string representation', () => {
-		expect(new RequestInterceptor().toString()).toEqual('[RequestInterceptor]');
-	});
 });

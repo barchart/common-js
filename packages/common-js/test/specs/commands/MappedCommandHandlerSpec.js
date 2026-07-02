@@ -34,6 +34,30 @@ describe('When a MappedCommandHandler is created with two mapped commands', () =
 		})));
 	});
 
+
+	describe('and a default command handler is configured', () => {
+		let defaultResult;
+		let defaultSpy;
+		let commandData;
+		let commandResult;
+
+		beforeEach(() => {
+			defaultResult = 'default';
+
+			commandResult = commandHandler
+				.setDefaultCommandHandler(CommandHandler.fromFunction(defaultSpy = jasmine.createSpy('defaultSpy').and.returnValue(defaultResult)))
+				.process(commandData = { commandType: 'unknown' });
+		});
+
+		it('should invoke the default command handler', () => {
+			expect(defaultSpy).toHaveBeenCalledWith(commandData);
+		});
+
+		it('should return the default command handler result', () => {
+			expect(commandResult).toEqual(defaultResult);
+		});
+	});
+
 	describe('and the command is process with data for the first handler', () => {
 		let commandData;
 		let commandResult;

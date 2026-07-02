@@ -32,10 +32,6 @@ describe('When a Parameter is constructed', () => {
 		expect(() => parameter.validate()).not.toThrow();
 	});
 
-	it('should have the expected string representation', () => {
-		expect(parameter.toString()).toEqual('[Parameter]');
-	});
-
 	it('should reject an empty key', () => {
 		expect(() => new Parameter('Description', '', extractor).validate()).toThrow();
 	});

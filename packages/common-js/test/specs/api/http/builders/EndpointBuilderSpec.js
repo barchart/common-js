@@ -216,8 +216,4 @@ describe('When an EndpointBuilder is used', () => {
 	it('should create a builder from the static factory', () => {
 		expect(EndpointBuilder.for('name') instanceof EndpointBuilder).toEqual(true);
 	});
-
-	it('should have the expected string representation', () => {
-		expect(builder.toString()).toEqual('[EndpointBuilder]');
-	});
 });

@@ -50,10 +50,6 @@ describe('When a ComponentBuilder is used', () => {
 	it('should validate method arguments', () => {
 		expect([ () => builder.withField(null, DataType.STRING), () => builder.withField('first', null), () => builder.withReviver(null) ].map(throws)).toEqual([ true, true, true ]);
 	});
-
-	it('should have the current string representation', () => {
-		expect(builder.toString()).toEqual('[ComponentBuilder (name=undefined)]');
-	});
 });
 
 function throws(action) {

@@ -10,6 +10,10 @@ describe('When accessing static items', () =>  {
 	it('The timezone for New York should return the expected item', () =>  {
 		expect(Timezones.AMERICA_NEW_YORK.code).toEqual('America/New_York');
 	});
+
+	it('The timezone for Denver should return the expected item', () =>  {
+		expect(Timezones.AMERICA_DENVER.code).toEqual('America/Denver');
+	});
 });
 
 describe('When calculating timezone offset on 2019-10-02 UTC', () =>  {
@@ -18,7 +22,7 @@ describe('When calculating timezone offset on 2019-10-02 UTC', () =>  {
 	beforeEach(() => {
 		timestamp = (new Date(2019, 9, 2, 0, 0, 0)).getTime();
 	});
-	
+
 	describe('in minutes', () => {
 		it('The UTC offset should be 0', () =>  {
 			expect(Timezones.UTC.getUtcOffset(timestamp)).toEqual(0);

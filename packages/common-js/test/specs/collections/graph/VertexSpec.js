@@ -17,7 +17,11 @@ describe('When graph vertex (a) is initialized', () => {
 	it('the vertex (a) has no connected edges', () => {
 		expect(vertexA.getEdges().length).toEqual(0);
 	});
-	
+
+	it('the vertex (a) should not have an edge to itself', () => {
+		expect(vertexA.hasEdge(vertexA)).toEqual(false);
+	});
+
 	describe('and vertex (b) is attached', () => {
 		let vertexB;
 		let vertexDataB;
@@ -47,6 +51,10 @@ describe('When graph vertex (a) is initialized', () => {
 
 		it('the vertex (a) has an edge to vertex (b)', () => {
 			expect(vertexA.getEdge(vertexB)).toEqual(edgeAB);
+		});
+
+		it('the vertex (a) should have an edge to vertex (b)', () => {
+			expect(vertexA.hasEdge(vertexB)).toEqual(true);
 		});
 
 		it('the vertex (b) has no edges', () => {

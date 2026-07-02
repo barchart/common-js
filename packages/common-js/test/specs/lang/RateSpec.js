@@ -35,6 +35,38 @@ describe('When parsing an "^EURUSD" rate of 1.2', () => {
 		expect(rate.decimal.getIsEqual(1.2)).toEqual(true);
 	});
 
+	it('the float value should be 1.2', () => {
+		expect(rate.float).toEqual(1.2);
+	});
+
+	it('formatPair should return the numerator and denominator codes', () => {
+		expect({
+			plain: rate.formatPair(),
+			carat: rate.formatPair(true)
+		}).toEqual({
+			plain: 'USDEUR',
+			carat: '^USDEUR'
+		});
+	});
+
+	it('invert should return the inverse rate', () => {
+		const inverted = rate.invert();
+
+		expect({
+			numerator: inverted.numerator,
+			denominator: inverted.denominator,
+			value: inverted.decimal.round(4).toNumber()
+		}).toEqual({
+			numerator: Currency.EUR,
+			denominator: Currency.USD,
+			value: 0.8333
+		});
+	});
+
+	it('getStaticRates should return static Rate instances', () => {
+		expect(Rate.getStaticRates().every(staticRate => staticRate instanceof Rate)).toEqual(true);
+	});
+
 	describe('When converting 10 USD to EUR', () => {
 		it('should be 8.33 EUR', () => {
 			expect(Rate.convert(new Decimal(10), Currency.USD, Currency.EUR, rate).round(2).getIsEqual(8.33)).toEqual(true);

@@ -27,6 +27,88 @@ describe('When adding values that cause floating point problems (e.g. 1.1 + 2.2 
 	});
 });
 
+describe('When using Decimal arithmetic methods', () => {
+	'use strict';
+
+	it('subtract should return the difference', () => {
+		expect(new Decimal(10).subtract(3).toNumber()).toEqual(7);
+	});
+
+	it('multiply should return the product', () => {
+		expect(new Decimal(6).multiply(7).toNumber()).toEqual(42);
+	});
+
+	it('absolute should return a positive value', () => {
+		expect(new Decimal(-5).absolute().toNumber()).toEqual(5);
+	});
+
+	it('opposite should return the opposite sign', () => {
+		expect(new Decimal(5).opposite().toNumber()).toEqual(-5);
+	});
+});
+
+describe('When using Decimal comparison methods', () => {
+	'use strict';
+
+	it('getIsGreaterThan should identify a greater value', () => {
+		expect(new Decimal(10).getIsGreaterThan(9)).toEqual(true);
+	});
+
+	it('getIsGreaterThanOrEqual should identify an equal value', () => {
+		expect(new Decimal(10).getIsGreaterThanOrEqual(10)).toEqual(true);
+	});
+
+	it('getIsLessThan should identify a lesser value', () => {
+		expect(new Decimal(9).getIsLessThan(10)).toEqual(true);
+	});
+
+	it('getIsLessThanOrEqual should identify an equal value', () => {
+		expect(new Decimal(10).getIsLessThanOrEqual(10)).toEqual(true);
+	});
+});
+
+describe('When using Decimal JSON, constants, and static helpers', () => {
+	'use strict';
+
+	it('toJSON should return the fixed string value', () => {
+		expect(new Decimal('1.23').toJSON()).toEqual('1.23');
+	});
+
+	it('ONE should equal one', () => {
+		expect(Decimal.ONE.getIsEqual(1)).toEqual(true);
+	});
+
+	it('NEGATIVE_ONE should equal negative one', () => {
+		expect(Decimal.NEGATIVE_ONE.getIsEqual(-1)).toEqual(true);
+	});
+
+
+	it('getIsNotZero should identify a non-zero value', () => {
+		expect(Decimal.getIsNotZero(new Decimal(1))).toEqual(true);
+	});
+
+	it('getIsNotPositive should identify zero', () => {
+		expect(Decimal.getIsNotPositive(Decimal.ZERO)).toEqual(true);
+	});
+
+	it('getIsNotNegative should identify zero', () => {
+		expect(Decimal.getIsNotNegative(Decimal.ZERO)).toEqual(true);
+	});
+
+	it('compareDecimals should compare two Decimal instances', () => {
+		expect({
+			less: Decimal.compareDecimals(new Decimal(1), new Decimal(2)) < 0,
+			equal: Decimal.compareDecimals(new Decimal(2), new Decimal(2)),
+			greater: Decimal.compareDecimals(new Decimal(3), new Decimal(2)) > 0
+		}).toEqual({
+			less: true,
+			equal: 0,
+			greater: true
+		});
+	});
+
+	});
+
 describe('When working with values that loss of precision occurs with floating point math (e.g. 100 trillion plus one third)', () => {
 	'use strict';
 

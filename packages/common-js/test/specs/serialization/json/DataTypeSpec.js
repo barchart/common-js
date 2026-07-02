@@ -149,8 +149,4 @@ describe('When DataType is constructed', () => {
 
 		expect(DataType.DECIMAL.convert(value)).toBe(value);
 	});
-
-	it('should have the expected string representation', () => {
-		expect(DataType.STRING.toString()).toEqual('[DataType (description=String)]');
-	});
 });

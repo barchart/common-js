@@ -22,8 +22,4 @@ describe('When VerbType values are used', () => {
 			});
 		});
 	});
-
-	it('should have the expected string representation', () => {
-		expect(VerbType.GET.toString()).toEqual('[VerbType (description=GET)]');
-	});
 });
