@@ -41066,7 +41066,7 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
  * @static
  * @public
  * @param {*} candidate
- * @returns {candidate is number}
+ * @returns {boolean}
  */
 function number(candidate) {
   return typeof candidate === 'number' && !isNaN(candidate);
@@ -41078,7 +41078,7 @@ function number(candidate) {
  * @static
  * @public
  * @param {*} candidate
- * @returns {candidate is number}
+ * @returns {boolean}
  */
 function nan(candidate) {
   return typeof candidate === 'number' && isNaN(candidate);
@@ -41090,10 +41090,10 @@ function nan(candidate) {
  * @static
  * @public
  * @param {*} candidate
- * @returns {candidate is number}
+ * @returns {boolean}
  */
 function integer(candidate) {
-  return typeof candidate === 'number' && Number.isInteger(candidate) && candidate >= -2147483648 && candidate <= 2147483647;
+  return typeof candidate === 'number' && !isNaN(candidate) && (candidate | 0) === candidate;
 }
 
 /**
@@ -41103,7 +41103,7 @@ function integer(candidate) {
  * @static
  * @public
  * @param {*} candidate
- * @returns {candidate is number}
+ * @returns {boolean}
  */
 function large(candidate) {
   return typeof candidate === 'number' && !isNaN(candidate) && isFinite(candidate) && Math.floor(candidate) === candidate;
@@ -41115,7 +41115,7 @@ function large(candidate) {
  * @static
  * @public
  * @param {*} candidate
- * @returns {candidate is number}
+ * @returns {boolean}
  */
 function positive(candidate) {
   return number(candidate) && candidate > 0;
@@ -41127,7 +41127,7 @@ function positive(candidate) {
  * @static
  * @public
  * @param {*} candidate
- * @returns {candidate is number}
+ * @returns {boolean}
  */
 function negative(candidate) {
   return number(candidate) && candidate < 0;
@@ -41139,7 +41139,7 @@ function negative(candidate) {
  * @static
  * @public
  * @param {*} candidate
- * @returns {candidate is Iterable<*>}
+ * @returns {boolean}
  */
 function iterable(candidate) {
   return !nil(candidate) && !undef(candidate) && fn(candidate[Symbol.iterator]);
@@ -41151,7 +41151,7 @@ function iterable(candidate) {
  * @static
  * @public
  * @param {*} candidate
- * @returns {candidate is string}
+ * @returns {boolean}
  */
 function string(candidate) {
   return typeof candidate === 'string';
@@ -41163,7 +41163,7 @@ function string(candidate) {
  * @static
  * @public
  * @param {*} candidate
- * @returns {candidate is Date}
+ * @returns {boolean}
  */
 function date(candidate) {
   return candidate instanceof Date;
@@ -41175,7 +41175,7 @@ function date(candidate) {
  * @static
  * @public
  * @param {*} candidate
- * @returns {candidate is RegExp}
+ * @returns {boolean}
  */
 function regexp(candidate) {
   return candidate instanceof RegExp;
@@ -41187,7 +41187,7 @@ function regexp(candidate) {
  * @static
  * @public
  * @param {*} candidate
- * @returns {candidate is Function}
+ * @returns {boolean}
  */
 function fn(candidate) {
   return typeof candidate === 'function';
@@ -41199,7 +41199,7 @@ function fn(candidate) {
  * @static
  * @public
  * @param {*} candidate
- * @returns {candidate is *[]}
+ * @returns {boolean}
  */
 function array(candidate) {
   return Array.isArray(candidate);
@@ -41211,7 +41211,7 @@ function array(candidate) {
  * @static
  * @public
  * @param {*} candidate
- * @returns {candidate is boolean}
+ * @returns {boolean}
  */
 function _boolean(candidate) {
   return typeof candidate === 'boolean';
@@ -41223,7 +41223,7 @@ function _boolean(candidate) {
  * @static
  * @public
  * @param {*} candidate
- * @returns {candidate is object}
+ * @returns {boolean}
  */
 function object(candidate) {
   return _typeof(candidate) === 'object' && candidate !== null;
@@ -41235,7 +41235,7 @@ function object(candidate) {
  * @static
  * @public
  * @param {*} candidate
- * @returns {candidate is null}
+ * @returns {boolean}
  */
 function nil(candidate) {
   return candidate === null;
@@ -41247,7 +41247,7 @@ function nil(candidate) {
  * @static
  * @public
  * @param {*} candidate
- * @returns {candidate is undefined}
+ * @returns {boolean}
  */
 function undef(candidate) {
   return candidate === undefined;
@@ -41259,7 +41259,7 @@ function undef(candidate) {
  * @static
  * @public
  * @param {*} candidate
- * @returns {candidate is string}
+ * @returns {boolean}
  */
 function zeroLengthString(candidate) {
   return string(candidate) && candidate.length === 0;
