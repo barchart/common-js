@@ -46,20 +46,6 @@ export default class UpdateActionType extends Enum {
 	}
 
 	/**
-	 * Given a code, returns the enumeration item.
-	 *
-	 * @public
-	 * @static
-	 * @param {string} code
-	 * @returns {UpdateActionType|null}
-	 */
-	static parse(code) {
-		const value = Enum.fromCode(UpdateActionType, code);
-
-		return value instanceof UpdateActionType ? value : null;
-	}
-
-	/**
 	 * Add.
 	 *
 	 * @public
@@ -101,6 +87,20 @@ export default class UpdateActionType extends Enum {
 	 */
 	static get REMOVE() {
 		return remove;
+	}
+
+	/**
+	 * Given a code, returns the enumeration item.
+	 *
+	 * @public
+	 * @static
+	 * @param {string} code
+	 * @returns {UpdateActionType|null}
+	 */
+	static parse(code) {
+		const value = Enum.fromCode(UpdateActionType, code);
+
+		return value instanceof UpdateActionType ? value : null;
 	}
 
 	/**
