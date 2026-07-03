@@ -11,7 +11,7 @@
  * @static
  * @public
  * @param {*} candidate
- * @returns {candidate is number}
+ * @returns {boolean}
  */
 export function number(candidate) {
 	return typeof candidate === 'number' && !isNaN(candidate);
@@ -23,7 +23,7 @@ export function number(candidate) {
  * @static
  * @public
  * @param {*} candidate
- * @returns {candidate is number}
+ * @returns {boolean}
  */
 export function nan(candidate) {
 	return typeof candidate === 'number' && isNaN(candidate);
@@ -35,10 +35,10 @@ export function nan(candidate) {
  * @static
  * @public
  * @param {*} candidate
- * @returns {candidate is number}
+ * @returns {boolean}
  */
 export function integer(candidate) {
-	return typeof candidate === 'number' && Number.isInteger(candidate) && candidate >= -2147483648 && candidate <= 2147483647;
+	return typeof candidate === 'number' && !isNaN(candidate) && (candidate | 0) === candidate;
 }
 
 /**
@@ -48,7 +48,7 @@ export function integer(candidate) {
  * @static
  * @public
  * @param {*} candidate
- * @returns {candidate is number}
+ * @returns {boolean}
  */
 export function large(candidate) {
 	return typeof candidate === 'number' && !isNaN(candidate) && isFinite(candidate) && Math.floor(candidate) === candidate;
@@ -60,7 +60,7 @@ export function large(candidate) {
  * @static
  * @public
  * @param {*} candidate
- * @returns {candidate is number}
+ * @returns {boolean}
  */
 export function positive(candidate) {
 	return number(candidate) && candidate > 0;
@@ -72,7 +72,7 @@ export function positive(candidate) {
  * @static
  * @public
  * @param {*} candidate
- * @returns {candidate is number}
+ * @returns {boolean}
  */
 export function negative(candidate) {
 	return number(candidate) && candidate < 0;
@@ -84,7 +84,7 @@ export function negative(candidate) {
  * @static
  * @public
  * @param {*} candidate
- * @returns {candidate is Iterable<*>}
+ * @returns {boolean}
  */
 export function iterable(candidate) {
 	return !nil(candidate) && !undef(candidate) && fn(candidate[Symbol.iterator]);
@@ -96,7 +96,7 @@ export function iterable(candidate) {
  * @static
  * @public
  * @param {*} candidate
- * @returns {candidate is string}
+ * @returns {boolean}
  */
 export function string(candidate) {
 	return typeof candidate === 'string';
@@ -108,7 +108,7 @@ export function string(candidate) {
  * @static
  * @public
  * @param {*} candidate
- * @returns {candidate is Date}
+ * @returns {boolean}
  */
 export function date(candidate) {
 	return candidate instanceof Date;
@@ -120,7 +120,7 @@ export function date(candidate) {
  * @static
  * @public
  * @param {*} candidate
- * @returns {candidate is RegExp}
+ * @returns {boolean}
  */
 export function regexp(candidate) {
 	return candidate instanceof RegExp;
@@ -132,7 +132,7 @@ export function regexp(candidate) {
  * @static
  * @public
  * @param {*} candidate
- * @returns {candidate is Function}
+ * @returns {boolean}
  */
 export function fn(candidate) {
 	return typeof candidate === 'function';
@@ -144,7 +144,7 @@ export function fn(candidate) {
  * @static
  * @public
  * @param {*} candidate
- * @returns {candidate is *[]}
+ * @returns {boolean}
  */
 export function array(candidate) {
 	return Array.isArray(candidate);
@@ -156,7 +156,7 @@ export function array(candidate) {
  * @static
  * @public
  * @param {*} candidate
- * @returns {candidate is boolean}
+ * @returns {boolean}
  */
 export function boolean(candidate) {
 	return typeof candidate === 'boolean';
@@ -168,7 +168,7 @@ export function boolean(candidate) {
  * @static
  * @public
  * @param {*} candidate
- * @returns {candidate is object}
+ * @returns {boolean}
  */
 export function object(candidate) {
 	return typeof candidate === 'object' && candidate !== null;
@@ -180,7 +180,7 @@ export function object(candidate) {
  * @static
  * @public
  * @param {*} candidate
- * @returns {candidate is null}
+ * @returns {boolean}
  */
 export function nil(candidate) {
 	return candidate === null;
@@ -192,7 +192,7 @@ export function nil(candidate) {
  * @static
  * @public
  * @param {*} candidate
- * @returns {candidate is undefined}
+ * @returns {boolean}
  */
 export function undef(candidate) {
 	return candidate === undefined;
@@ -204,7 +204,7 @@ export function undef(candidate) {
  * @static
  * @public
  * @param {*} candidate
- * @returns {candidate is string}
+ * @returns {boolean}
  */
 export function zeroLengthString(candidate) {
 	return string(candidate) && candidate.length === 0;
