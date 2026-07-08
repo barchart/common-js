@@ -129,6 +129,7 @@ export default class AwsPublisher extends Publisher {
 			const subscriptionQueueName = this.#getSubscriptionQueue(topic);
 
 			subscriptionStack.push(subscriptionEvent);
+			subscriptionStack.push(subscriptionEvents);
 
 			this.#subscriptionPromises[topic] = (async () => {
 				const resultGroup = await Promise.all([
@@ -240,14 +241,13 @@ export default class AwsPublisher extends Publisher {
 		return '[AwsPublisher]';
 	}
 
-
 	#getSubscriptionQueue(topic) {
 		if (topic.endsWith(this.#publisherId)) {
 			return topic;
-			}
-
-			return `${topic}-${this.#publisherId}`;
 		}
+
+		return `${topic}-${this.#publisherId}`;
+	}
 }
 
 const messageTypeRegex = /(.*)#(.*)$/;
