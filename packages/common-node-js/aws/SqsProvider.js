@@ -574,7 +574,7 @@ export default class SqsProvider extends Disposable {
 	 * @public
 	 * @async
 	 * @param {string} queueName - The name of the queue to purge.
-	 * @returns {Promise<void>}
+	 * @returns {Promise<boolean>}
 	 */
 	async purge(queueName) {
 		assert.argumentIsRequired(queueName, 'queueName', String);
@@ -597,6 +597,8 @@ export default class SqsProvider extends Disposable {
 		}
 
 		logger.info(`Queue purge complete [ ${qualifiedQueueName} ]`);
+
+		return true;
 	}
 
 	/**
