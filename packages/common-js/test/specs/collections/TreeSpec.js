@@ -254,3 +254,27 @@ describe('When Tree traversal helpers are used directly', () => {
 		expect(right.getParent()).toBeNull();
 	});
 });
+
+describe('When Tree is extended', () => {
+	'use strict';
+
+	class SpecializedTree extends Tree {
+		getProtectedState() {
+			return {
+				value: this._value,
+				parent: this._parent,
+				children: this._children
+			};
+		}
+	}
+
+	it('should expose protected state to subclasses', () => {
+		const parent = new SpecializedTree('parent');
+		const child = new SpecializedTree('child', parent);
+		const state = child.getProtectedState();
+
+		expect(state.value).toEqual('child');
+		expect(state.parent).toBe(parent);
+		expect(state.children).toEqual([ ]);
+	});
+});

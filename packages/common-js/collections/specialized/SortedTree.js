@@ -10,8 +10,6 @@ import Tree from './../Tree.js';
  * @extends {Tree}
  */
 export default class SortedTree extends Tree {
-	#comparator;
-
 	/**
 	 * @param {*} value - The value of the node.
 	 * @param {Tree=} parent - The parent node. If not supplied, this will be the root node.
@@ -26,7 +24,7 @@ export default class SortedTree extends Tree {
 			assert.argumentIsRequired(comparator, 'comparator', Function);
 		}
 
-		this.#comparator = comparator || null;
+		this._comparator = comparator || null;
 	}
 
 	/**
@@ -40,13 +38,13 @@ export default class SortedTree extends Tree {
 	addChild(value) {
 		const child = new SortedTree(value, this);
 
-		const comparatorNode = this.findParent((value, node) => node instanceof SortedTree && node.#comparator !== null, true);
+		const comparatorNode = this.findParent((value, node) => node instanceof SortedTree && node._comparator !== null, true);
 
-		if (!(comparatorNode instanceof SortedTree) || comparatorNode.#comparator === null) {
+		if (!(comparatorNode instanceof SortedTree) || comparatorNode._comparator === null) {
 			throw new Error('Unable to find a comparator for the sorted tree.');
 		}
 
-		array.insert(this.getChildren(), child, comparatorNode.#comparator);
+		array.insert(this._children, child, comparatorNode._comparator);
 
 		return child;
 	}

@@ -8,19 +8,15 @@ import * as is from './../lang/is.js';
  * @public
  */
 export default class Tree {
-	#value;
-	#parent;
-	#children;
-
 	/**
 	 * @param {*} value - The value of the node.
 	 * @param {Tree=} parent - The parent node. If not supplied, this will be the root node.
 	 */
 	constructor(value, parent) {
-		this.#value = value;
+		this._value = value;
 
-		this.#parent = parent || null;
-		this.#children = [ ];
+		this._parent = parent || null;
+		this._children = [ ];
 	}
 
 	/**
@@ -33,7 +29,7 @@ export default class Tree {
 		if (this.getIsRoot()) {
 			return this;
 		} else {
-			return this.#parent.getRoot();
+			return this._parent.getRoot();
 		}
 	}
 
@@ -44,7 +40,7 @@ export default class Tree {
 	 * @returns {Tree|null}
 	 */
 	getParent() {
-		return this.#parent;
+		return this._parent;
 	}
 
 	/**
@@ -54,7 +50,7 @@ export default class Tree {
 	 * @returns {Array<Tree>}
 	 */
 	getChildren() {
-		return this.#children;
+		return this._children;
 	}
 
 	/**
@@ -64,7 +60,7 @@ export default class Tree {
 	 * @returns {*}
 	 */
 	getValue() {
-		return this.#value;
+		return this._value;
 	}
 
 	/**
@@ -74,7 +70,7 @@ export default class Tree {
 	 * @returns {boolean}
 	 */
 	getIsLeaf() {
-		return this.#children.length === 0;
+		return this._children.length === 0;
 	}
 
 	/**
@@ -84,7 +80,7 @@ export default class Tree {
 	 * @returns {boolean}
 	 */
 	getIsInner() {
-		return this.#children.length !== 0;
+		return this._children.length !== 0;
 	}
 
 	/**
@@ -94,7 +90,7 @@ export default class Tree {
 	 * @returns {boolean}
 	 */
 	getIsRoot() {
-		return this.#parent === null;
+		return this._parent === null;
 	}
 
 	/**
@@ -108,7 +104,7 @@ export default class Tree {
 	addChild(value) {
 		const returnRef = new Tree(value, this);
 
-		this.#children.push(returnRef);
+		this._children.push(returnRef);
 
 		return returnRef;
 	}
@@ -120,14 +116,14 @@ export default class Tree {
 	 * @param {Tree} node - The child to remove.
 	 */
 	removeChild(node) {
-		for (let i = this.#children.length - 1; !(i < 0); i--) {
-			const child = this.#children[i];
+		for (let i = this._children.length - 1; !(i < 0); i--) {
+			const child = this._children[i];
 
 			if (child === node) {
-				this.#children.splice(i, 1);
+				this._children.splice(i, 1);
 
-				child.#parent = null;
-				child.#children = [ ];
+				child._parent = null;
+				child._children = [ ];
 
 				break;
 			}
@@ -159,8 +155,8 @@ export default class Tree {
 	findChild(predicate) {
 		let returnRef = null;
 
-		for (let i = 0; i < this.#children.length; i++) {
-			let child = this.#children[i];
+		for (let i = 0; i < this._children.length; i++) {
+			let child = this._children[i];
 
 			if (predicate(child.getValue(), child)) {
 				returnRef = child;
@@ -189,8 +185,8 @@ export default class Tree {
 		}
 
 		if (returnRef === null) {
-			for (let i = 0; i < this.#children.length; i++) {
-				const child = this.#children[i];
+			for (let i = 0; i < this._children.length; i++) {
+				const child = this._children[i];
 
 				returnRef = child.search(predicate, parentFirst, true);
 
@@ -252,8 +248,8 @@ export default class Tree {
 			climbAction(this.getValue(), this);
 		}
 
-		if (this.#parent !== null) {
-			this.#parent.climb(climbAction, true);
+		if (this._parent !== null) {
+			this._parent.climb(climbAction, true);
 		}
 	}
 
@@ -272,8 +268,8 @@ export default class Tree {
 
 		if (is.boolean(includeCurrentNode) && includeCurrentNode && predicate(this.getValue(), this)) {
 			returnRef = this;
-		} else if (this.#parent !== null) {
-			returnRef = this.#parent.findParent(predicate, true);
+		} else if (this._parent !== null) {
+			returnRef = this._parent.findParent(predicate, true);
 		} else {
 			returnRef = null;
 		}
@@ -299,11 +295,11 @@ export default class Tree {
 		}
 
 		const converted = {
-			value: valueConverterToUse(this.#value)
+			value: valueConverterToUse(this._value)
 		};
 
-		if (!(is.boolean(omitEmptyChildren) && omitEmptyChildren && this.#children.length === 0)) {
-			converted.children = this.#children.map((child) => child.toJSObj(valueConverter, omitEmptyChildren));
+		if (!(is.boolean(omitEmptyChildren) && omitEmptyChildren && this._children.length === 0)) {
+			converted.children = this._children.map((child) => child.toJSObj(valueConverter, omitEmptyChildren));
 		}
 
 		return converted;
