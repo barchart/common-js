@@ -2,9 +2,7 @@ import * as array from '@barchart/common-js/lang/array.js';
 import * as assert from '@barchart/common-js/lang/assert.js';
 import * as is from '@barchart/common-js/lang/is.js';
 import * as object from '@barchart/common-js/lang/object.js';
-import * as promise from '@barchart/common-js/lang/promise.js';
 
-import Scheduler from '@barchart/common-js/timing/Scheduler.js';
 import Disposable from '@barchart/common-js/lang/Disposable.js';
 
 import { CreateQueueCommand, DeleteMessageBatchCommand, DeleteQueueCommand, GetQueueAttributesCommand, ListQueuesCommand, PurgeQueueCommand, ReceiveMessageCommand, SendMessageBatchCommand, SendMessageCommand, SetQueueAttributesCommand, SQSClient } from '@aws-sdk/client-sqs';
@@ -28,7 +26,6 @@ export default class SqsProvider extends Disposable {
 	#queueArnPromises;
 	#queueObservers;
 	#queueUrlPromises;
-	#scheduler;
 	#sqs;
 	#startPromise;
 	#started;
@@ -37,7 +34,7 @@ export default class SqsProvider extends Disposable {
 	 * @param {object} configuration - The configuration.
 	 * @param {string} configuration.region - The AWS region (e.g. "us-east-1").
 	 * @param {string} configuration.prefix - The prefix that is prepended to any queue name.
-	 * @param {string=} configuration.apiVersion - The SES version (defaults to "2012-11-05").
+	 * @param {string=} configuration.apiVersion - The SQS version (defaults to "2012-11-05").
 	 */
 	constructor(configuration) {
 		super();
@@ -51,13 +48,11 @@ export default class SqsProvider extends Disposable {
 
 		this.#sqs = null;
 
-		this.#scheduler = new Scheduler();
+		this.#queueUrlPromises = { };
+		this.#queueArnPromises = { };
 
-		this.#queueUrlPromises = {};
-		this.#queueArnPromises = {};
-
-		this.#queueObservers = {};
-		this.#knownQueues = {};
+		this.#queueObservers = { };
+		this.#knownQueues = { };
 
 		this.#startPromise = null;
 		this.#started = false;
@@ -75,13 +70,13 @@ export default class SqsProvider extends Disposable {
 	 */
 	async start() {
 		if (this.disposed) {
-			throw 'Unable to start, the SQS provider has been disposed.';
+			throw new Error('Unable to start, the SQS provider has been disposed.');
 		}
 
 		if (this.#startPromise === null) {
 			this.#startPromise = (async () => {
 				try {
-					this.#sqs = new SQSClient({apiVersion: this.#configuration.apiVersion || '2012-11-05', region: this.#configuration.region});
+					this.#sqs = new SQSClient({ apiVersion: this.#configuration.apiVersion || '2012-11-05', region: this.#configuration.region });
 
 					logger.info('The SQS provider has started');
 
@@ -134,19 +129,22 @@ export default class SqsProvider extends Disposable {
 
 		logger.info('Listing queues with name prefix [', queuePrefixToUse, ']');
 
+		let data;
+
 		try {
-			const data = await this.#sqs.send(new ListQueuesCommand({ QueueNamePrefix: queuePrefixToUse }));
-			const queueUrls = data.QueueUrls || [ ];
-
-			logger.debug('Listing of [', queueUrls.length, '] queues with name prefix [', queuePrefixToUse, '] complete');
-
-			return queueUrls;
-		} catch (error) {
+			data = await this.#sqs.send(new ListQueuesCommand({ QueueNamePrefix: queuePrefixToUse }));
+		} catch (e) {
 			logger.error('Listing of queues with name prefix [', queuePrefixToUse, '] failed');
-			logger.error(error);
+			logger.error(e);
 
-			throw 'Failed to list queues.';
+			throw e;
 		}
+
+		const queueUrls = data.QueueUrls || [ ];
+
+		logger.debug('Listing of [', queueUrls.length, '] queues with name prefix [', queuePrefixToUse, '] complete');
+
+		return queueUrls;
 	}
 
 	/**
@@ -166,7 +164,7 @@ export default class SqsProvider extends Disposable {
 
 		const qualifiedQueueName = getQualifiedQueueName(this.#configuration.prefix, queueName);
 
-		if (!this.#queueUrlPromises.hasOwnProperty(qualifiedQueueName)) {
+		if (!Object.prototype.hasOwnProperty.call(this.#queueUrlPromises, qualifiedQueueName)) {
 			logger.debug('The SQS provider has not cached the queue URL. Issuing request to create queue.');
 
 			let retentionTime = null;
@@ -193,7 +191,7 @@ export default class SqsProvider extends Disposable {
 	 * @public
 	 * @async
 	 * @param {string} queueUrl - The url of the queue to find.
-	 * @param {array=} attributes - The names of attributes to return. By default, set to 'All'.
+	 * @param {array=} attributes - The names of attributes to return. By default set to 'All'.
 	 * @returns {Promise<object>}
 	 */
 	async getQueueAttributes(queueUrl, attributes) {
@@ -215,18 +213,20 @@ export default class SqsProvider extends Disposable {
 			payload.AttributeNames = attributes;
 		}
 
+		let data;
+
 		try {
-			const data = await this.#sqs.send(new GetQueueAttributesCommand(payload));
-
-			logger.info('Queue attribute lookup complete [', queueUrl, ']');
-
-			return data.Attributes;
-		} catch (error) {
+			data = await this.#sqs.send(new GetQueueAttributesCommand(payload));
+		} catch (e) {
 			logger.error('Queue attribute lookup failed [', queueUrl, ']');
-			logger.error(error);
+			logger.error(e);
 
-			throw error;
+			throw e;
 		}
+
+		logger.info('Queue attribute lookup complete [', queueUrl, ']');
+
+		return data.Attributes;
 	}
 
 	/**
@@ -246,29 +246,30 @@ export default class SqsProvider extends Disposable {
 
 		const qualifiedQueueName = getQualifiedQueueName(this.#configuration.prefix, queueName);
 
-		if (!this.#queueArnPromises.hasOwnProperty(qualifiedQueueName)) {
-			this.#queueArnPromises[qualifiedQueueName] = (async () => {
-				const queueUrl = await this.getQueueUrl(queueName, createOptions);
-
-				logger.debug('Getting queue attributes [', qualifiedQueueName, ']');
-
-				try {
-					const data = await this.#sqs.send(new GetQueueAttributesCommand({
-						QueueUrl: queueUrl,
-						AttributeNames: ['QueueArn']
-					}));
-
-					logger.info('Queue attribute lookup complete [', qualifiedQueueName, ']');
-
-					return data.Attributes.QueueArn;
-				} catch (error) {
-					logger.error('Queue attribute lookup failed [', qualifiedQueueName, ']');
-					logger.error(error);
-
-					throw 'Failed to lookup ARN for queue.';
-				}
-			})();
+		if (Object.prototype.hasOwnProperty.call(this.#queueArnPromises, qualifiedQueueName)) {
+			return this.#queueArnPromises[qualifiedQueueName];
 		}
+
+		this.#queueArnPromises[qualifiedQueueName] = (async () => {
+			const queueUrl = await this.getQueueUrl(queueName, createOptions);
+
+			logger.debug('Getting queue attributes [', qualifiedQueueName, ']');
+
+			let data;
+
+			try {
+				data = await this.#sqs.send(new GetQueueAttributesCommand({ QueueUrl: queueUrl, AttributeNames: ['QueueArn'] }));
+			} catch (e) {
+				logger.error('Queue attribute lookup failed [', qualifiedQueueName, ']');
+				logger.error(e);
+
+				throw e;
+			}
+
+			logger.info('Queue attribute lookup complete [', qualifiedQueueName, ']');
+
+			return data.Attributes.QueueArn;
+		})();
 
 		return this.#queueArnPromises[qualifiedQueueName];
 	}
@@ -310,26 +311,28 @@ export default class SqsProvider extends Disposable {
 			const keys = object.keys(tags);
 
 			if (keys.length > 0) {
-				payload.tags = tags;
+				payload.Tags = tags;
 			}
 		}
 
+		let data;
+
 		try {
-			const data = await this.#sqs.send(new CreateQueueCommand(payload));
-
-			logger.info('Queue created [', qualifiedQueueName, ']');
-
-			const queueUrl = data.QueueUrl;
-
-			this.#knownQueues[qualifiedQueueName] = queueUrl;
-
-			return queueUrl;
-		} catch (error) {
+			data = await this.#sqs.send(new CreateQueueCommand(payload));
+		} catch (e) {
 			logger.error('Queue creation failed [', qualifiedQueueName, ']');
-			logger.error(error);
+			logger.error(e);
 
-			throw 'Failed to create queue.';
+			throw e;
 		}
+
+		logger.info('Queue created [', qualifiedQueueName, ']');
+
+		const queueUrl = data.QueueUrl;
+
+		this.#knownQueues[qualifiedQueueName] = queueUrl;
+
+		return queueUrl;
 	}
 
 	/**
@@ -347,11 +350,13 @@ export default class SqsProvider extends Disposable {
 
 		const qualifiedQueueName = getQualifiedQueueName(this.#configuration.prefix, queueName);
 
-		if (this.#knownQueues.hasOwnProperty(qualifiedQueueName)) {
-			return this.#executeQueueDelete(qualifiedQueueName, this.#knownQueues[qualifiedQueueName]);
-		}
+		let queueUrl;
 
-		const queueUrl = await this.getQueueUrl(queueName);
+		if (Object.prototype.hasOwnProperty.call(this.#knownQueues, qualifiedQueueName)) {
+			queueUrl = this.#knownQueues[qualifiedQueueName];
+		} else {
+			queueUrl = await this.getQueueUrl(queueName);
+		}
 
 		return this.#executeQueueDelete(qualifiedQueueName, queueUrl);
 	}
@@ -390,8 +395,9 @@ export default class SqsProvider extends Disposable {
 		this.#checkReady();
 
 		const queueUrl = await this.getQueueUrl(queueName, createOptions);
-		const counter = ++this.#counter;
 		const qualifiedQueueName = getQualifiedQueueName(this.#configuration.prefix, queueName);
+
+		const counter = ++this.#counter;
 
 		logger.debug('Sending message [', counter, '] to queue [', qualifiedQueueName, ']');
 		logger.trace(payload);
@@ -407,14 +413,14 @@ export default class SqsProvider extends Disposable {
 
 		try {
 			await this.#sqs.send(new SendMessageCommand(message));
-
-			logger.info('Sent message [', counter, '] to queue [', qualifiedQueueName, ']');
-		} catch (error) {
+		} catch (e) {
 			logger.error('Queue send [', counter, '] failed:', qualifiedQueueName, ']');
-			logger.error(error);
+			logger.error(e);
 
-			throw 'Failed to send message to queue.';
+			throw e;
 		}
+
+		logger.info('Sent message [', counter, '] to queue [', qualifiedQueueName, ']');
 	}
 
 	/**
@@ -439,51 +445,50 @@ export default class SqsProvider extends Disposable {
 		}
 
 		if (batch.length > 10) {
-			throw 'The SQS provider is unable to enqueue more than 10 messages at once.';
+			throw new Error('The SQS provider is unable to enqueue more than 10 messages at once.');
 		}
 
 		const queueUrl = await this.getQueueUrl(queueName, createOptions);
+		const qualifiedQueueName = getQualifiedQueueName(this.#configuration.prefix, queueName);
 
 		this.#counter += batch.length;
 
 		const start = this.#counter - batch.length + 1;
 		const end = this.#counter;
 
-		const qualifiedQueueName = getQualifiedQueueName(this.#configuration.prefix, queueName);
-
 		logger.debug('Sending messages [', start, '] through [', end, '] to queue [', qualifiedQueueName, ']');
 		logger.trace(batch);
 
+		const payload = {
+			QueueUrl: queueUrl,
+			Entries: batch.map((item, i) => {
+				return {
+					Id: i.toString(),
+					MessageBody: JSON.stringify(item)
+				};
+			})
+		};
+
+		let data;
+
 		try {
-			const data = await this.#sqs.send(new SendMessageBatchCommand({
-				QueueUrl: queueUrl,
-				Entries: batch.map((item, i) => {
-					return {
-						Id: i.toString(),
-						MessageBody: JSON.stringify(item)
-					};
-				})
-			}));
-
-			const failed = data.Failed || [ ];
-
-			if (failed.length !== 0) {
-				logger.error('Queue send [', start, '] through [', end, '] failed, [', data.Failed.length, '] messages could not be enqueued [', qualifiedQueueName, ']');
-
-				throw 'Failed to send messages to queue.';
-			}
-
-			logger.info('Sent messages [', start, '] through [', end, '] to queue [', qualifiedQueueName, ']');
-		} catch (error) {
-			if (is.string(error)) {
-				throw error;
-			}
-
+			data = await this.#sqs.send(new SendMessageBatchCommand(payload));
+		} catch (e) {
 			logger.error('Queue send [', start, '] through [', end, '] failed, [', batch.length, '] messages could not be enqueued [', qualifiedQueueName, ']');
-			logger.error(error);
+			logger.error(e);
 
-			throw 'Failed to send messages to queue.';
+			throw e;
 		}
+
+		const failed = data.Failed || [ ];
+
+		if (failed.length !== 0) {
+			logger.error('Queue send [', start, '] through [', end, '] failed, [', failed.length, '] messages could not be enqueued [', qualifiedQueueName, ']');
+
+			throw new Error(`Some [ ${failed.length} ] of [ ${batch.length} ] messages could not be enqueued [ ${qualifiedQueueName} ]`);
+		}
+
+		logger.info('Sent messages [', start, '] through [', end, '] to queue [', qualifiedQueueName, ']');
 	}
 
 	/**
@@ -508,7 +513,7 @@ export default class SqsProvider extends Disposable {
 
 		const qualifiedQueueName = getQualifiedQueueName(this.#configuration.prefix, queueName);
 
-		if (this.#queueObservers.hasOwnProperty(qualifiedQueueName)) {
+		if (Object.prototype.hasOwnProperty.call(this.#queueObservers, qualifiedQueueName)) {
 			throw new Error('The queue is being observed.');
 		}
 
@@ -534,6 +539,7 @@ export default class SqsProvider extends Disposable {
 		assert.argumentIsOptional(maximumMessages, 'maximumMessages', Number);
 
 		const mapperToUse = mapper || (m => m);
+
 		const batches = [ ];
 		const batchSize = 10;
 
@@ -542,12 +548,16 @@ export default class SqsProvider extends Disposable {
 		const executeDrain = async () => {
 			const messages = await this.receive(queueName, 0, batchSize, synchronousDelete);
 
+			if (messages.length === 0) {
+				return;
+			}
+
 			batches.push(messages.map(mapperToUse));
 
 			count = count + messages.length;
 
-			if (messages.length === 0 || (is.positive(maximumMessages) && count >= maximumMessages)) {
-				return batches;
+			if (is.positive(maximumMessages) && count >= maximumMessages) {
+				return;
 			}
 
 			return executeDrain();
@@ -564,7 +574,7 @@ export default class SqsProvider extends Disposable {
 	 * @public
 	 * @async
 	 * @param {string} queueName - The name of the queue to purge.
-	 * @returns {Promise<boolean>}
+	 * @returns {Promise<void>}
 	 */
 	async purge(queueName) {
 		assert.argumentIsRequired(queueName, 'queueName', String);
@@ -572,25 +582,21 @@ export default class SqsProvider extends Disposable {
 		this.#checkReady();
 
 		const queueUrl = await this.getQueueUrl(queueName);
+
 		const qualifiedQueueName = getQualifiedQueueName(this.#configuration.prefix, queueName);
 
 		logger.debug(`Queue purge beginning [ ${qualifiedQueueName} ]`);
 
-		const payload = { };
-		payload.QueueUrl = queueUrl;
-
 		try {
-			await this.#sqs.send(new PurgeQueueCommand(payload));
-
-			logger.info(`Queue purge complete [ ${qualifiedQueueName} ]`);
-
-			return true;
-		} catch (error) {
+			await this.#sqs.send(new PurgeQueueCommand({ QueueUrl: queueUrl }));
+		} catch (e) {
 			logger.error(`Queue purge failed [ ${qualifiedQueueName} ]`);
-			logger.error(error);
+			logger.error(e);
 
-			throw 'Failed to purge queue';
+			throw e;
 		}
+
+		logger.info(`Queue purge complete [ ${qualifiedQueueName} ]`);
 	}
 
 	/**
@@ -617,7 +623,7 @@ export default class SqsProvider extends Disposable {
 
 		const qualifiedQueueName = getQualifiedQueueName(this.#configuration.prefix, queueName);
 
-		if (this.#queueObservers.hasOwnProperty(qualifiedQueueName)) {
+		if (Object.prototype.hasOwnProperty.call(this.#queueObservers, qualifiedQueueName)) {
 			throw new Error('The queue is already being observed.');
 		}
 
@@ -635,50 +641,71 @@ export default class SqsProvider extends Disposable {
 
 		const checkQueue = async () => {
 			if (disposed) {
+				logger.warn(`The queue observer for [ ${qualifiedQueueName} ] has been disposed. Aborting processing.`);
+
+				return;
+			}
+
+			let messages;
+
+			try {
+				messages = await this.#receiveMessages(queueName, pollDuration, batchSize, false, createOptions);
+			} catch (e) {
+				logger.error(`An error occurred while receiving messages from queue [ ${qualifiedQueueName} ]`);
+				logger.error(e);
+
+				messages = null;
+			}
+
+			const executors = (messages || [ ]).map((message, i) => {
+				return async () => {
+					if (disposed) {
+						return;
+					}
+
+					let result;
+
+					try {
+						result = callback(message);
+					} catch (e) {
+						logger.error(`An error occurred while processing message [ ${i} ] from queue [ ${qualifiedQueueName} ]`);
+
+						logger.error(message);
+						logger.error(e);
+
+						return;
+					}
+
+					return result;
+				};
+			});
+
+			try {
+				for (const executor of executors) {
+					await executor();
+				}
+			} catch (e) {
+				logger.error(`An error occurred while processing queue messages in sequence. This should not happen. Continuing.`);
+				logger.error(e);
+			}
+
+			if (disposed) {
+				logger.warn(`The queue observer for [ ${qualifiedQueueName} ] has been disposed. Aborting processing.`);
+
 				return;
 			}
 
 			let delay;
 
-			try {
-				const messages = await this.#receiveMessages(queueName, pollDuration, batchSize, false, createOptions);
-
-				const executors = messages.map((message) => {
-					return async () => {
-						if (disposed) {
-							return;
-						}
-
-						return callback(message);
-					};
-				});
-
-				try {
-					await promise.pipeline(executors);
-				} catch (error) {
-					logger.error('An error occurred while processing message(s) from queue [', qualifiedQueueName, ']');
-					logger.error(error);
-				}
-
-				if (messages.length === 0) {
-					delay = pollInterval || 2000;
-				} else {
-					delay = 0;
-				}
-			} catch (error) {
-				logger.error('An error occurred while receiving message(s) from queue [', qualifiedQueueName, ']');
-				logger.error(error);
+			if (messages === null) {
+				delay = Math.max(pollInterval || 2000, 5000);
+			} else if (messages.length === 0) {
+				delay = pollInterval || 2000;
+			} else {
+				delay = 0;
 			}
 
-			if (disposed) {
-				return;
-			}
-
-			if (!is.number(delay)) {
-				delay = 5000;
-			}
-
-			this.#scheduler.schedule(checkQueue, delay, 'Check queue (' + qualifiedQueueName + ')');
+			setTimeout(checkQueue, delay);
 		};
 
 		checkQueue();
@@ -702,26 +729,22 @@ export default class SqsProvider extends Disposable {
 		this.#checkReady();
 
 		const queueUrl = await this.getQueueUrl(queueName);
+
 		const qualifiedQueueName = getQualifiedQueueName(this.#configuration.prefix, queueName);
 
 		logger.debug('Updating queue policy [', qualifiedQueueName, ']');
 		logger.trace(policy);
 
 		try {
-			await this.#sqs.send(new SetQueueAttributesCommand({
-				QueueUrl: queueUrl,
-				Attributes: {
-					Policy: JSON.stringify(policy)
-				}
-			}));
-
-			logger.info('Queue policy updated for [', qualifiedQueueName, ']');
-		} catch (error) {
+			await this.#sqs.send(new SetQueueAttributesCommand({ QueueUrl: queueUrl, Attributes: { Policy: JSON.stringify(policy) } }));
+		} catch (e) {
 			logger.error('Queue policy update failed [', qualifiedQueueName, ']');
-			logger.error(error);
+			logger.error(e);
 
-			throw 'Failed to update queue policy.';
+			throw e;
 		}
+
+		logger.info('Queue policy updated for [', qualifiedQueueName, ']');
 	}
 
 	/**
@@ -733,9 +756,6 @@ export default class SqsProvider extends Disposable {
 			this.#queueObservers[key].dispose();
 		});
 
-		this.#scheduler.dispose();
-		this.#scheduler = null;
-
 		this.#queueUrlPromises = null;
 		this.#queueArnPromises = null;
 
@@ -743,31 +763,31 @@ export default class SqsProvider extends Disposable {
 	}
 
 	/**
-	 * Returns the policy for sns delivery.
+	 * Returns the policy for SNS delivery.
 	 *
 	 * @public
 	 * @static
-	 * @param {*} queueArn
-	 * @param {*} topicArn
+	 * @param {string} queueArn
+	 * @param {string} topicArn
 	 * @returns {object}
 	 */
 	static getPolicyForSnsDelivery(queueArn, topicArn) {
 		const currentDate = new Date();
 
 		return {
-			Version: "2008-10-17",
-			Id: queueArn + "/SQSDefaultPolicy",
+			Version: '2008-10-17',
+			Id: queueArn + '/SQSDefaultPolicy',
 			Statement: [{
-				Sid: "Sid" + currentDate.getTime(),
-				Effect: "Allow",
+				Sid: 'Sid' + currentDate.getTime(),
+				Effect: 'Allow',
 				Principal: {
-					AWS: "*"
+					AWS: '*'
 				},
-				Action: "SQS:SendMessage",
+				Action: 'SQS:SendMessage',
 				Resource: queueArn,
 				Condition: {
 					ArnEquals: {
-						"aws:SourceArn": topicArn
+						'aws:SourceArn': topicArn
 					}
 				}
 			}]
@@ -784,159 +804,145 @@ export default class SqsProvider extends Disposable {
 		return '[SqsProvider]';
 	}
 
-
 	async #receiveMessages(queueName, waitTime, maximumMessages, synchronousDelete, createOptions) {
 		let waitTimeToUse;
 
 		if (is.number(waitTime)) {
-			if (waitTime === 0) {
-				waitTimeToUse = 0;
-				} else {
-					waitTimeToUse = Math.round(waitTime / 1000);
-				}
-			} else {
-				waitTimeToUse = 20;
-			}
-
-			let maximumMessagesToUse;
-
-			if (is.number(maximumMessages)) {
-				maximumMessagesToUse = Math.max(Math.min(10, maximumMessages), 1);
-			} else {
-				maximumMessagesToUse = 1;
-			}
-
-			const queueUrl = await this.getQueueUrl(queueName, createOptions);
-			const qualifiedQueueName = getQualifiedQueueName(this.#configuration.prefix, queueName);
-
-			logger.debug('Receiving message(s) from queue [', qualifiedQueueName, ']');
-
-			let data;
-
-			try {
-				data = await this.#sqs.send(new ReceiveMessageCommand({
-					QueueUrl: queueUrl,
-					MaxNumberOfMessages: maximumMessagesToUse,
-					WaitTimeSeconds: waitTimeToUse
-				}));
-			} catch (error) {
-				logger.error('SQS receive messages failed [', qualifiedQueueName, ']');
-				logger.error(error);
-
-				throw 'Failed to receive messages from queue.';
-			}
-
-			const messagesExist = is.array(data.Messages) && data.Messages.length !== 0;
-
-			if (messagesExist) {
-				logger.info('Received [', data.Messages.length, '] message(s) from queue [', qualifiedQueueName, ']');
-				logger.trace(data.Messages);
-			} else {
-				logger.debug('Received [ 0 ] message(s) from queue [', qualifiedQueueName, ']');
-			}
-
-			let messages;
-
-			try {
-				messages = (data.Messages || []).map((message) => {
-					return JSON.parse(message.Body);
-				});
-			} catch (parseError) {
-				logger.error('Failed to parse message(s) received from queue.', parseError);
-
-				messages = null;
-			}
-
-			if (messagesExist && synchronousDelete) {
-				try {
-					await this.#deleteMessages(qualifiedQueueName, queueUrl, data.Messages);
-				} catch (e) {
-					try {
-						logger.error('Failed to delete message(s) received from queue [', qualifiedQueueName, '], continuing.', e);
-					} catch (error) {
-
-					}
-				}
-			}
-
-			if (messages) {
-				return messages;
-			}
-
-			throw 'Failed to parse message(s) received from queue.';
+			waitTimeToUse = Math.round(waitTime / 1000);
+		} else {
+			waitTimeToUse = 20;
 		}
+
+		let maximumMessagesToUse;
+
+		if (is.number(maximumMessages)) {
+			maximumMessagesToUse = Math.max(Math.min(10, maximumMessages), 1);
+		} else {
+			maximumMessagesToUse = 1;
+		}
+
+		const queueUrl = await this.getQueueUrl(queueName, createOptions);
+		const qualifiedQueueName = getQualifiedQueueName(this.#configuration.prefix, queueName);
+
+		logger.debug('Receiving message(s) from queue [', qualifiedQueueName, ']');
+
+		let data;
+
+		try {
+			data = await this.#sqs.send(new ReceiveMessageCommand({ QueueUrl: queueUrl, MaxNumberOfMessages: maximumMessagesToUse, WaitTimeSeconds: waitTimeToUse }));
+		} catch (e) {
+			logger.error('SQS receive messages failed [', qualifiedQueueName, ']');
+			logger.error(e);
+
+			throw e;
+		}
+
+		if (is.array(data.Messages) && data.Messages.length !== 0) {
+			logger.info('Received [', data.Messages.length, '] message(s) from queue [', qualifiedQueueName, ']');
+
+			logger.trace(data.Messages);
+		} else {
+			logger.debug('Received [ 0 ] message(s) from queue [', qualifiedQueueName, ']');
+
+			return [ ];
+		}
+
+		let messages;
+
+		try {
+			messages = data.Messages.map(message => JSON.parse(message.Body));
+		} catch (e) {
+			logger.error('Failed to parse message(s) received from queue.', e);
+
+			messages = null;
+		}
+
+		const deletePromise = this.#deleteMessages(qualifiedQueueName, queueUrl, data.Messages).catch((e) => {
+			logger.error('Failed to delete message(s) received from queue [', qualifiedQueueName, '], continuing.', e);
+		});
+
+		if (synchronousDelete) {
+			await deletePromise;
+		}
+
+		if (messages === null) {
+			throw new Error(`Failed to parse message(s) received from queue [ ${qualifiedQueueName} ].`);
+		}
+
+		return messages;
+	}
 
 	async #deleteMessages(qualifiedQueueName, queueUrl, messages) {
 		const messageCount = messages.length;
 
 		if (messageCount === 0) {
 			return;
-			}
-
-			logger.debug('Deleting [', messageCount, '] message(s) from queue [', qualifiedQueueName, ']');
-
-			let data;
-
-			try {
-				data = await this.#sqs.send(new DeleteMessageBatchCommand({
-					QueueUrl: queueUrl,
-					Entries: messages.map((message, index) => {
-						return {
-							Id: index.toString(),
-							ReceiptHandle: message.ReceiptHandle
-						};
-					})
-				}));
-			} catch (error) {
-				logger.error('SQS message delete failed [', qualifiedQueueName, ']');
-				logger.error(error);
-
-				throw 'Failed to delete messages from queue.';
-			}
-
-			let deletedCount;
-
-			if (is.array(data.Failed)) {
-				deletedCount = messageCount - data.Failed.length;
-			} else {
-				deletedCount = messageCount;
-			}
-
-			logger.info('Deleted [', deletedCount, '] message(s) from queue [', qualifiedQueueName, ']');
-
-			if (deletedCount !== messageCount) {
-				logger.warn('Failed to delete [', data.Failed.length, '] message(s) from queue [', qualifiedQueueName, ']');
-
-				throw 'Failed to delete some messages from queue.';
-			}
 		}
+
+		logger.debug('Deleting [', messageCount, '] message(s) from queue [', qualifiedQueueName, ']');
+
+		const payload = {
+			QueueUrl: queueUrl,
+			Entries: messages.map((message, index) => {
+				return {
+					Id: index.toString(),
+					ReceiptHandle: message.ReceiptHandle
+				};
+			})
+		};
+
+		let data;
+
+		try {
+			data = await this.#sqs.send(new DeleteMessageBatchCommand(payload));
+		} catch (e) {
+			logger.error('SQS message delete failed [', qualifiedQueueName, ']');
+			logger.error(e);
+
+			throw e;
+		}
+
+		let deletedCount;
+
+		if (is.array(data.Failed)) {
+			deletedCount = messageCount - data.Failed.length;
+		} else {
+			deletedCount = messageCount;
+		}
+
+		logger.info('Deleted [', deletedCount, '] message(s) from queue [', qualifiedQueueName, ']');
+
+		if (deletedCount !== messageCount) {
+			logger.error(`Failed to delete [ ${data.Failed.length} ] message(s) from queue [ ${qualifiedQueueName} ]`);
+
+			throw new Error(`Failed to delete [ ${data.Failed.length} ] message(s) from queue [ ${qualifiedQueueName} ]`);
+		}
+	}
 
 	async #executeQueueDelete(qualifiedQueueName, queueUrl) {
 		logger.debug('Deleting queue [', qualifiedQueueName, '] at URL [', queueUrl, ']');
 
 		try {
-			await this.#sqs.send(new DeleteQueueCommand({
-				QueueUrl: queueUrl
-				}));
+			await this.#sqs.send(new DeleteQueueCommand({ QueueUrl: queueUrl }));
+		} catch (e) {
+			logger.error('Queue delete failed [', qualifiedQueueName, '] at URL [', queueUrl, ']');
+			logger.error(e);
 
-				logger.info('Queue deleted [', qualifiedQueueName, '] at URL [', queueUrl, ']');
-			} catch (error) {
-				logger.error('Queue delete failed [', qualifiedQueueName, '] at URL [', queueUrl, ']');
-				logger.error(error);
-
-				throw 'Failed to delete queue.';
-			}
+			throw e;
 		}
+
+		logger.info('Queue deleted [', qualifiedQueueName, '] at URL [', queueUrl, ']');
+	}
 
 	#checkReady() {
 		if (this.disposed) {
 			throw new Error('The SQS provider has been disposed.');
-			}
-
-			if (!this.#started) {
-				throw new Error('The SQS provider has not been started.');
-			}
 		}
+
+		if (!this.#started) {
+			throw new Error('The SQS provider has not been started.');
+		}
+	}
 }
 
 const finalStarRegex = new RegExp('(\\*)$');
