@@ -3,9 +3,15 @@
   "version": "4.73.0",
   "type": "module",
   "exports": {
+    "./*": {
+      "types": "./types/*.d.ts",
+      "import": "./*.js",
+      "require": "./*.js"
+    },
     "./*.js": {
       "types": "./types/*.d.ts",
-      "import": "./*.js"
+      "import": "./*.js",
+      "require": "./*.js"
     }
   },
   "description": "Library of common JavaScript utilities",
