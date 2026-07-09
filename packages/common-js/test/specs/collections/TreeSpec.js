@@ -273,8 +273,10 @@ describe('When Tree is extended', () => {
 		const child = new SpecializedTree('child', parent);
 		const state = child.getProtectedState();
 
-		expect(state.value).toEqual('child');
-		expect(state.parent).toBe(parent);
-		expect(state.children).toEqual([ ]);
+		expect(state).toEqual({
+			value: 'child',
+			parent,
+			children: [ ]
+		});
 	});
 });
