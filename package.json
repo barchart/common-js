@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
+    "esbuild": "^0.28.1",
     "eslint": "^9.39.1",
     "lerna": "^9.0.7"
   }

@@ -6,12 +6,12 @@
     "./*": {
       "types": "./types/*.d.ts",
       "import": "./*.js",
-      "require": "./*.js"
+      "require": "./dist/cjs/*.js"
     },
     "./*.js": {
       "types": "./types/*.d.ts",
       "import": "./*.js",
-      "require": "./*.js"
+      "require": "./dist/cjs/*.js"
     }
   },
   "description": "Library of common JavaScript utilities",
@@ -31,10 +31,12 @@
     "node": ">=20.0.0"
   },
   "scripts": {
+    "build:cjs": "node ../../tools/build-cjs.mjs",
+    "build:test-bundle": "node ../../tools/build-test-bundle.mjs",
     "lint": "eslint .",
-    "prepack": "yarn types",
+    "prepack": "yarn types && yarn build:cjs",
     "publish:npm": "npm publish",
-    "test": "jasmine --config=jasmine.json",
+    "test": "yarn build:test-bundle && jasmine --config=jasmine.json",
     "types": "tsc -p tsconfig.types.json"
   },
   "repository": {
@@ -54,21 +56,11 @@
     "date-fns-tz": "^3.2.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.29.7",
-    "@babel/preset-env": "^7.29.0",
-    "babelify": "^10.0.0",
-    "browserify": "^17.0.1",
     "date-fns": "^3.6.0",
-    "git-get-status": "^1.0.2",
-    "glob": "^13.0.6",
+    "esbuild": "^0.28.1",
     "globals": "^14.0.0",
-    "gulp": "^5.0.1",
-    "gulp-git": "^2.11.0",
-    "gulp-prompt": "^1.2.0",
     "jasmine": "^6.2.0",
-    "typescript": "^5.9.3",
-    "vinyl-buffer": "^1.0.1",
-    "vinyl-source-stream": "^2.0.0"
+    "typescript": "^5.9.3"
   },
   "license": "MIT",
   "bugs": {

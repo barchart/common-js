@@ -1,7 +1,9 @@
 .idea
 node_modules
 packages/common-js/types/
+packages/common-js/dist/
 packages/common-node-js/types/
+packages/common-node-js/dist/
 
 .DS_Store
 npm-debug.log
