@@ -1,6 +1,6 @@
 {
   "name": "@barchart/common-js",
-  "version": "4.73.0",
+  "version": "5.0.0",
   "type": "module",
   "exports": {
     "./*": {
