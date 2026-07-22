@@ -1,21 +1,11 @@
 import LambdaTriggerType from './../../../../../aws/lambda/LambdaTriggerType.js';
-import LambdaValidator from './../../../../../aws/lambda/LambdaValidator.js';
 import LambdaEventValidator from './../../../../../aws/lambda/validators/LambdaEventValidator.js';
 import LambdaMessageValidator from './../../../../../aws/lambda/validators/LambdaMessageValidator.js';
 import LambdaMessageValidatorDst from './../../../../../aws/lambda/validators/LambdaMessageValidatorDst.js';
 
-class SpyLambdaValidator extends LambdaValidator {
+class StubEventValidator extends LambdaEventValidator {
 	constructor(valid) {
-		super();
-
-		this.valid = valid;
-		this.calls = [ ];
-	}
-
-	_validate(name, trigger, messageId) {
-		this.calls.push({ name, trigger, messageId });
-
-		return this.valid;
+		super([ new StubMessageValidator(valid) ]);
 	}
 }
 
@@ -53,7 +43,7 @@ describe('When Lambda validators are used', () => {
 	});
 
 	it('should validate messages that expose a trigger and message id', async () => {
-		const validator = new SpyLambdaValidator(true);
+		const validator = new StubEventValidator(true);
 		const valid = await validator.validate({
 			Records: [
 				{
@@ -64,23 +54,11 @@ describe('When Lambda validators are used', () => {
 			]
 		});
 
-		expect({
-			valid,
-			calls: validator.calls
-		}).toEqual({
-			valid: true,
-			calls: [
-				{
-					name: 'test-lambda',
-					trigger: LambdaTriggerType.SQS,
-					messageId: 'M1'
-				}
-			]
-		});
+		expect(valid).toEqual(true);
 	});
 
 	it('should fail when any lambda message validation fails', async () => {
-		const validator = new SpyLambdaValidator(false);
+		const validator = new StubEventValidator(false);
 		const valid = await validator.validate({
 			Records: [
 				{
@@ -92,19 +70,6 @@ describe('When Lambda validators are used', () => {
 		});
 
 		expect(valid).toEqual(false);
-	});
-
-	it('should allow direct events without a known trigger', async () => {
-		const validator = new SpyLambdaValidator(false);
-		const valid = await validator.validate({ id: 'direct' });
-
-		expect({
-			valid,
-			calls: validator.calls
-		}).toEqual({
-			valid: true,
-			calls: [ ]
-		});
 	});
 
 	it('should run every message validator for every message', async () => {

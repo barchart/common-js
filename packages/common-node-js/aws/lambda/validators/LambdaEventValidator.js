@@ -3,15 +3,10 @@ import * as is from '@barchart/common-js/lang/is.js';
 
 import LambdaTriggerType from './../LambdaTriggerType.js';
 import LambdaMessageValidator from './LambdaMessageValidator.js';
-import LambdaValidator from './../LambdaValidator.js';
 
 import log4js from 'log4js';
 
 const logger = log4js.getLogger('common-node/aws/lambda/validators/LambdaEventValidator');
-
-// 2020/11/29, BRI. Inheriting the LambdaValidator is a hack. The LambdaValidator
-// is scheduled for removal in the next major release. For now, the inheritance
-// is only intended to maintain backwards compatibility for type checking purposes.
 
 /**
  * Evaluates the input to a Lambda Function to determine if processing should be
@@ -21,15 +16,13 @@ const logger = log4js.getLogger('common-node/aws/lambda/validators/LambdaEventVa
  *
  * @public
  */
-export default class LambdaEventValidator extends LambdaValidator {
+export default class LambdaEventValidator {
 	#messageValidators;
 
 	/**
-	 * @param {*} messageValidators - The message validators.
+	 * @param {LambdaMessageValidator[]=} messageValidators - The message validators.
 	 */
 	constructor(messageValidators) {
-		super();
-
 		if (messageValidators) {
 			assert.argumentIsArray(messageValidators, 'messageValidators', LambdaMessageValidator, 'LambdaMessageValidator');
 		}

@@ -9,7 +9,7 @@ import LambdaResponder from './LambdaResponder.js';
 import LambdaSecretsManager from './LambdaSecretsManager.js';
 import LambdaStage from './LambdaStage.js';
 import LambdaFailureType from './LambdaFailureType.js';
-import LambdaValidator from './LambdaValidator.js';
+import LambdaEventValidator from './validators/LambdaEventValidator.js';
 
 import log4js from 'log4js';
 
@@ -69,14 +69,14 @@ export default class LambdaHelper {
 	}
 
 	/**
-	 * Builds and returns a new {@link LambdaValidator}.
+	 * Builds and returns a new {@link LambdaEventValidator}.
 	 *
 	 * @public
 	 * @static
-	 * @returns {LambdaValidator}
+	 * @returns {LambdaEventValidator}
 	 */
 	static getValidator() {
-		return new LambdaValidator();
+		return new LambdaEventValidator();
 	}
 
 	/**
