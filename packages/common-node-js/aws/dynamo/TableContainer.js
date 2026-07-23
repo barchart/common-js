@@ -70,6 +70,16 @@ export default class TableContainer extends Disposable {
 	}
 
 	/**
+	 * The DynamoDB provider used by this table.
+	 *
+	 * @public
+	 * @returns {DynamoProvider}
+	 */
+	get provider() {
+		return this.#provider;
+	}
+
+	/**
 	 * Returns a key, suitable as a starting point for queries and scans.
 	 *
 	 * @public
