@@ -4,7 +4,7 @@ import * as timezone from './timezone.js';
 
 import Enum from './Enum.js';
 
-import { getTimezoneOffset } from 'date-fns-tz';
+import { tzOffset } from '@date-fns/tz';
 
 /**
  * An enumeration item that lists timezones, according to the common names
@@ -70,15 +70,15 @@ export default class Timezones extends Enum {
 			timestampToUse = (new Date()).getTime();
 		}
 
-		let divisor;
+		let multiplier;
 
 		if (is.boolean(milliseconds) && milliseconds) {
-			divisor = 1;
+			multiplier = 60 * 1000;
 		} else {
-			divisor = 60 * 1000;
+			multiplier = 1;
 		}
 
-		return getTimezoneOffset(this.code, new Date(timestampToUse)) / divisor;
+		return tzOffset(this.code, new Date(timestampToUse)) * multiplier;
 	}
 
 	/**
