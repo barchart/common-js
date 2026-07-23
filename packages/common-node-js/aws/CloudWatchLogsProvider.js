@@ -11,6 +11,11 @@ import log4js from 'log4js';
 const logger = log4js.getLogger('common-node/aws/CloudWatchLogsProvider');
 
 /**
+ * @typedef {object} CloudWatchLogsProviderOptions
+ * @property {import('@aws-sdk/client-cloudwatch-logs').CloudWatchLogsClientConfig=} clientConfiguration - Configuration passed to the AWS SDK client.
+ */
+
+/**
  * A facade for Amazon's CloudWatchLogs Service. The constructor
  * accepts configuration options. The promise-based instance functions
  * abstract knowledge of the AWS API.
@@ -21,6 +26,7 @@ const logger = log4js.getLogger('common-node/aws/CloudWatchLogsProvider');
 export default class CloudWatchLogsProvider extends Disposable {
 	#cloudWatchLogs;
 	#configuration;
+	#options;
 	#scheduler;
 	#startPromise;
 	#started;
@@ -29,15 +35,22 @@ export default class CloudWatchLogsProvider extends Disposable {
 	 * @param {object} configuration - The configuration.
 	 * @param {string} configuration.region - The AWS region (e.g. "us-east-1").
 	 * @param {string=} configuration.apiVersion - The CloudWatchLogs version (defaults to "2014-03-28").
+	 * @param {CloudWatchLogsProviderOptions=} options - The options.
 	 */
-	constructor(configuration) {
+	constructor(configuration, options) {
 		super();
 
 		assert.argumentIsRequired(configuration, 'configuration');
 		assert.argumentIsRequired(configuration.region, 'configuration.region', String);
 		assert.argumentIsOptional(configuration.apiVersion, 'configuration.apiVersion', String);
+		assert.argumentIsOptional(options, 'options', Object);
+
+		if (options) {
+			assert.argumentIsOptional(options.clientConfiguration, 'options.clientConfiguration', Object);
+		}
 
 		this.#configuration = configuration;
+		this.#options = Object.assign({ clientConfiguration: { } }, options || { });
 
 		this.#scheduler = new Scheduler();
 
@@ -63,7 +76,11 @@ export default class CloudWatchLogsProvider extends Disposable {
 		if (this.#startPromise === null) {
 			this.#startPromise = (async () => {
 				try {
-					this.#cloudWatchLogs = new CloudWatchLogsClient({apiVersion: this.#configuration.apiVersion || '2014-03-28', region: this.#configuration.region});
+					this.#cloudWatchLogs = new CloudWatchLogsClient({
+						...this.#options.clientConfiguration,
+						apiVersion: this.#configuration.apiVersion || '2014-03-28',
+						region: this.#configuration.region
+					});
 
 					logger.info('The CloudWatchLogsProvider has started');
 

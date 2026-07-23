@@ -29,6 +29,12 @@ const READ_MILLISECOND_BACKOFF = 500;
 const WRITE_MILLISECOND_BACKOFF = 500;
 
 /**
+ * @typedef {object} DynamoProviderOptions
+ * @property {boolean=} preferConsistentReads
+ * @property {import('@aws-sdk/client-dynamodb').DynamoDBClientConfig=} clientConfiguration - Configuration passed to the AWS SDK client.
+ */
+
+/**
  * A facade for Amazon's DynamoDB service. The constructor accepts
  * configuration options. The promise-based instance functions
  * abstract knowledge of the AWS API.
@@ -50,8 +56,7 @@ export default class DynamoProvider extends Disposable {
      * @param {string} configuration.region - The AWS region (e.g. "us-east-1").
      * @param {string} configuration.prefix - The prefix to automatically append to table names.
      * @param {string=} configuration.apiVersion - The DynamoDB API version (defaults to "2012-08-10").
-     * @param {object=} options - The options.
-     * @param {boolean=} options.preferConsistentReads
+     * @param {DynamoProviderOptions=} options - The options.
      */
     constructor(configuration, options) {
         super();
@@ -60,10 +65,15 @@ export default class DynamoProvider extends Disposable {
         assert.argumentIsRequired(configuration.region, 'configuration.region', String);
         assert.argumentIsRequired(configuration.prefix, 'configuration.prefix', String);
         assert.argumentIsOptional(configuration.apiVersion, 'configuration.apiVersion', String);
+        assert.argumentIsOptional(options, 'options', Object);
+
+        if (options) {
+            assert.argumentIsOptional(options.clientConfiguration, 'options.clientConfiguration', Object);
+        }
 
         this.#configuration = configuration;
 
-        this.#options = Object.assign({ preferConsistentReads: false }, options || { });
+        this.#options = Object.assign({ clientConfiguration: { }, preferConsistentReads: false }, options || { });
 
         this.#startPromise = null;
         this.#started = false;
@@ -92,6 +102,7 @@ export default class DynamoProvider extends Disposable {
                     this.#scheduler = new Scheduler();
 
                     this.#dynamo = new DynamoDBClient({
+                        ...this.#options.clientConfiguration,
                         apiVersion: this.#configuration.apiVersion || '2012-08-10',
                         region: this.#configuration.region
                     });

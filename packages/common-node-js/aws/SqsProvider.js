@@ -12,6 +12,11 @@ import log4js from 'log4js';
 const logger = log4js.getLogger('common-node/aws/SqsProvider');
 
 /**
+ * @typedef {object} SqsProviderOptions
+ * @property {import('@aws-sdk/client-sqs').SQSClientConfig=} clientConfiguration - Configuration passed to the AWS SDK client.
+ */
+
+/**
  * A facade for Amazon's Simple Queue Service (SQS). The constructor
  * accepts configuration options. The promise-based instance functions
  * abstract knowledge of the AWS API.
@@ -23,6 +28,7 @@ export default class SqsProvider extends Disposable {
 	#configuration;
 	#counter;
 	#knownQueues;
+	#options;
 	#queueArnPromises;
 	#queueObservers;
 	#queueUrlPromises;
@@ -35,16 +41,23 @@ export default class SqsProvider extends Disposable {
 	 * @param {string} configuration.region - The AWS region (e.g. "us-east-1").
 	 * @param {string} configuration.prefix - The prefix that is prepended to any queue name.
 	 * @param {string=} configuration.apiVersion - The SQS version (defaults to "2012-11-05").
+	 * @param {SqsProviderOptions=} options - The options.
 	 */
-	constructor(configuration) {
+	constructor(configuration, options) {
 		super();
 
 		assert.argumentIsRequired(configuration, 'configuration', Object);
 		assert.argumentIsRequired(configuration.region, 'configuration.region', String);
 		assert.argumentIsRequired(configuration.prefix, 'configuration.prefix', String);
 		assert.argumentIsOptional(configuration.apiVersion, 'configuration.apiVersion', String);
+		assert.argumentIsOptional(options, 'options', Object);
+
+		if (options) {
+			assert.argumentIsOptional(options.clientConfiguration, 'options.clientConfiguration', Object);
+		}
 
 		this.#configuration = configuration;
+		this.#options = Object.assign({ clientConfiguration: { } }, options || { });
 
 		this.#sqs = null;
 
@@ -76,7 +89,11 @@ export default class SqsProvider extends Disposable {
 		if (this.#startPromise === null) {
 			this.#startPromise = (async () => {
 				try {
-					this.#sqs = new SQSClient({ apiVersion: this.#configuration.apiVersion || '2012-11-05', region: this.#configuration.region });
+					this.#sqs = new SQSClient({
+						...this.#options.clientConfiguration,
+						apiVersion: this.#configuration.apiVersion || '2012-11-05',
+						region: this.#configuration.region
+					});
 
 					logger.info('The SQS provider has started');
 
@@ -110,7 +127,7 @@ export default class SqsProvider extends Disposable {
 	}
 
 	/**
-	 * Returns a list of queue URL's where the queue names start with a
+	 * Returns a list of queue URLs where the queue names start with a
 	 * given prefix.
 	 *
 	 * @public

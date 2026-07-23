@@ -18,6 +18,11 @@ const logger = log4js.getLogger('common-node/aws/SesProvider');
 */
 
 /**
+ * @typedef {object} SesProviderOptions
+ * @property {import('@aws-sdk/client-sesv2').SESv2ClientConfig=} clientConfiguration - Configuration passed to the AWS SDK client.
+ */
+
+/**
  * A facade for Amazon's Simple Email Service (SES). The constructor
  * accepts configuration options. The promise-based instance functions
  * abstract knowledge of the AWS API.
@@ -27,6 +32,7 @@ const logger = log4js.getLogger('common-node/aws/SesProvider');
  */
 export default class SesProvider extends Disposable {
 	#configuration;
+	#options;
 	#rateLimiters;
 	#sesv2;
 	#started;
@@ -37,8 +43,9 @@ export default class SesProvider extends Disposable {
 	 * @param {string=} configuration.apiVersion - The SES version (defaults to "2010-12-01").
 	 * @param {string=} configuration.recipientOverride - If specified, all emails sent will be redirected to this email address, ignoring the specified recipient.
 	 * @param {number=} configuration.rateLimitPerSecond - The number of emails which will be sent to the AWS SDK within one second (defaults to 10).
+	 * @param {SesProviderOptions=} options - The options.
 	 */
-	constructor(configuration) {
+	constructor(configuration, options) {
 		super();
 
 		assert.argumentIsRequired(configuration, 'configuration');
@@ -52,8 +59,14 @@ export default class SesProvider extends Disposable {
 		}
 
 		assert.argumentIsOptional(configuration.rateLimitPerSecond, 'configuration.rateLimitPerSecond', Number);
+		assert.argumentIsOptional(options, 'options', Object);
+
+		if (options) {
+			assert.argumentIsOptional(options.clientConfiguration, 'options.clientConfiguration', Object);
+		}
 
 		this.#configuration = configuration;
+		this.#options = Object.assign({ clientConfiguration: { } }, options || { });
 
 		this.#sesv2 = null;
 
@@ -81,6 +94,7 @@ export default class SesProvider extends Disposable {
 		if (!this.#started) {
 			try {
 				const clientConfiguration = {
+					...this.#options.clientConfiguration,
 					region: this.#configuration.region
 				};
 

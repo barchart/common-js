@@ -11,6 +11,11 @@ import log4js from 'log4js';
 const logger = log4js.getLogger('common-node/aws/SnsProvider');
 
 /**
+ * @typedef {object} SnsProviderOptions
+ * @property {import('@aws-sdk/client-sns').SNSClientConfig=} clientConfiguration - Configuration passed to the AWS SDK client.
+ */
+
+/**
  * A facade for Amazon's Notification Service (SNS). The constructor
  * accepts configuration options. The promise-based instance functions
  * abstract knowledge of the AWS API.
@@ -20,6 +25,7 @@ const logger = log4js.getLogger('common-node/aws/SnsProvider');
  */
 export default class SnsProvider extends Disposable {
 	#configuration;
+	#options;
 	#sns;
 	#startPromise;
 	#started;
@@ -31,16 +37,23 @@ export default class SnsProvider extends Disposable {
 	 * @param {string} configuration.region - The AWS region (e.g. "us-east-1").
 	 * @param {string} configuration.prefix - The prefix that is prepended to any topic name.
 	 * @param {string=} configuration.apiVersion - The SES version (defaults to "2010-03-31").
+	 * @param {SnsProviderOptions=} options - The options.
 	 */
-	constructor(configuration) {
+	constructor(configuration, options) {
 		super();
 
 		assert.argumentIsRequired(configuration, 'configuration', Object);
 		assert.argumentIsRequired(configuration.region, 'configuration.region', String);
 		assert.argumentIsRequired(configuration.prefix, 'configuration.prefix', String);
 		assert.argumentIsOptional(configuration.apiVersion, 'configuration.apiVersion', String);
+		assert.argumentIsOptional(options, 'options', Object);
+
+		if (options) {
+			assert.argumentIsOptional(options.clientConfiguration, 'options.clientConfiguration', Object);
+		}
 
 		this.#configuration = configuration;
+		this.#options = Object.assign({ clientConfiguration: { } }, options || { });
 
 		this.#sns = null;
 
@@ -67,7 +80,11 @@ export default class SnsProvider extends Disposable {
 		if (this.#startPromise === null) {
 			this.#startPromise = (async () => {
 				try {
-					this.#sns = new SNSClient({apiVersion: this.#configuration.apiVersion || '2010-03-31', region: this.#configuration.region});
+					this.#sns = new SNSClient({
+						...this.#options.clientConfiguration,
+						apiVersion: this.#configuration.apiVersion || '2010-03-31',
+						region: this.#configuration.region
+					});
 
 					logger.info('The SNS provider has started');
 

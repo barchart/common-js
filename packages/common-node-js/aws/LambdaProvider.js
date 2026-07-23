@@ -10,6 +10,11 @@ import log4js from 'log4js';
 const logger = log4js.getLogger('common-node/aws/LambdaProvider');
 
 /**
+ * @typedef {object} LambdaProviderOptions
+ * @property {import('@aws-sdk/client-lambda').LambdaClientConfig=} clientConfiguration - Configuration passed to the AWS SDK client.
+ */
+
+/**
  * Wrapper for Amazon's Lambda SDK.
  *
  * @public
@@ -18,6 +23,7 @@ const logger = log4js.getLogger('common-node/aws/LambdaProvider');
 export default class LambdaProvider extends Disposable {
 	#configuration;
 	#lambda;
+	#options;
 	#startPromise;
 	#started;
 
@@ -27,15 +33,22 @@ export default class LambdaProvider extends Disposable {
 	 * @param {string=} configuration.apiVersion
 	 * @param {string=} configuration.bucket
 	 * @param {string=} configuration.folder
+	 * @param {LambdaProviderOptions=} options - The options.
 	 */
-	constructor(configuration) {
+	constructor(configuration, options) {
 		super();
 
 		assert.argumentIsRequired(configuration, 'configuration');
 		assert.argumentIsRequired(configuration.region, 'configuration.region', String);
 		assert.argumentIsOptional(configuration.apiVersion, 'configuration.apiVersion', String);
+		assert.argumentIsOptional(options, 'options', Object);
+
+		if (options) {
+			assert.argumentIsOptional(options.clientConfiguration, 'options.clientConfiguration', Object);
+		}
 
 		this.#configuration = configuration;
+		this.#options = Object.assign({ clientConfiguration: { } }, options || { });
 
 		this.#lambda = null;
 
@@ -59,7 +72,11 @@ export default class LambdaProvider extends Disposable {
 		if (this.#startPromise === null) {
 			this.#startPromise = (async () => {
 				try {
-					this.#lambda = new LambdaClient({ apiVersion: this.#configuration.apiVersion || '2015-03-31', region: this.#configuration.region });
+					this.#lambda = new LambdaClient({
+						...this.#options.clientConfiguration,
+						apiVersion: this.#configuration.apiVersion || '2015-03-31',
+						region: this.#configuration.region
+					});
 
 					logger.info('The Lambda provider has started');
 

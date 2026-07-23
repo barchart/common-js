@@ -28,6 +28,11 @@ const encodingTypes = {
  */
 
 /**
+ * @typedef {object} S3ProviderOptions
+ * @property {import('@aws-sdk/client-s3').S3ClientConfig=} clientConfiguration - Configuration passed to the AWS SDK client.
+ */
+
+/**
  * Wrapper for Amazon's S3 SDK.
  *
  * @public
@@ -35,6 +40,7 @@ const encodingTypes = {
  */
 export default class S3Provider extends Disposable {
 	#configuration;
+	#options;
 	#s3;
 	#startPromise;
 	#started;
@@ -45,8 +51,9 @@ export default class S3Provider extends Disposable {
 	 * @param {string=} configuration.apiVersion
 	 * @param {string=} configuration.bucket
 	 * @param {string=} configuration.folder
+	 * @param {S3ProviderOptions=} options - The options.
 	 */
-	constructor(configuration) {
+	constructor(configuration, options) {
 		super();
 
 		assert.argumentIsRequired(configuration, 'configuration');
@@ -54,8 +61,14 @@ export default class S3Provider extends Disposable {
 		assert.argumentIsOptional(configuration.apiVersion, 'configuration.apiVersion', String);
 		assert.argumentIsOptional(configuration.bucket, 'configuration.bucket', String);
 		assert.argumentIsOptional(configuration.folder, 'configuration.folder', String);
+		assert.argumentIsOptional(options, 'options', Object);
+
+		if (options) {
+			assert.argumentIsOptional(options.clientConfiguration, 'options.clientConfiguration', Object);
+		}
 
 		this.#configuration = configuration;
+		this.#options = Object.assign({ clientConfiguration: { } }, options || { });
 
 		this.#s3 = null;
 
@@ -79,7 +92,11 @@ export default class S3Provider extends Disposable {
 		if (this.#startPromise === null) {
 			this.#startPromise = (async () => {
 				try {
-					this.#s3 = new S3Client({ apiVersion: this.#configuration.apiVersion || '2006-03-01', region: this.#configuration.region });
+					this.#s3 = new S3Client({
+						...this.#options.clientConfiguration,
+						apiVersion: this.#configuration.apiVersion || '2006-03-01',
+						region: this.#configuration.region
+					});
 
 					logger.info('The S3 provider has started');
 

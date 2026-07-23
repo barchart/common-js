@@ -9,6 +9,11 @@ import log4js from 'log4js';
 const logger = log4js.getLogger('common-node/aws/ApiGatewayManagementProvider');
 
 /**
+ * @typedef {object} ApiGatewayManagementProviderOptions
+ * @property {import('@aws-sdk/client-apigatewaymanagementapi').ApiGatewayManagementApiClientConfig=} clientConfiguration - Configuration passed to the AWS SDK client.
+ */
+
+/**
  * A facade for Amazon's Api Gateway Management. The constructor
  * accepts configuration options. The promise-based instance functions
  * abstract knowledge of the AWS API.
@@ -19,6 +24,7 @@ const logger = log4js.getLogger('common-node/aws/ApiGatewayManagementProvider');
 export default class ApiGatewayManagementProvider extends Disposable {
 	#agm;
 	#configuration;
+	#options;
 	#startPromise;
 	#started;
 
@@ -27,16 +33,23 @@ export default class ApiGatewayManagementProvider extends Disposable {
 	 * @param {string} configuration.region - The AWS region (e.g. "us-east-1").
 	 * @param {string} configuration.endpoint - The endpoint url.
 	 * @param {string=} configuration.apiVersion - The Api Gateway Management Api version (defaults to "2018-11-29").
+	 * @param {ApiGatewayManagementProviderOptions=} options - The options.
 	 */
-	constructor(configuration) {
+	constructor(configuration, options) {
 		super();
 
 		assert.argumentIsRequired(configuration, 'configuration', Object);
 		assert.argumentIsRequired(configuration.endpoint, 'configuration.endpoint', String);
 		assert.argumentIsRequired(configuration.region, 'configuration.region', String);
 		assert.argumentIsOptional(configuration.apiVersion, 'configuration.apiVersion', String);
+		assert.argumentIsOptional(options, 'options', Object);
+
+		if (options) {
+			assert.argumentIsOptional(options.clientConfiguration, 'options.clientConfiguration', Object);
+		}
 
 		this.#configuration = configuration;
+		this.#options = Object.assign({ clientConfiguration: { } }, options || { });
 
 		this.#agm = null;
 
@@ -61,6 +74,7 @@ export default class ApiGatewayManagementProvider extends Disposable {
 			this.#startPromise = (async () => {
 				try {
 					this.#agm = new ApiGatewayManagementApiClient({
+						...this.#options.clientConfiguration,
 						apiVersion: this.#configuration.apiVersion || '2018-11-29',
 						endpoint: this.#configuration.endpoint,
 						region: this.#configuration.region,
