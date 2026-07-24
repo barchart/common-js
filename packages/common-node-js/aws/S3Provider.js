@@ -49,7 +49,7 @@ export default class S3Provider extends Disposable {
 	#started;
 
 	/**
-	 * @param {object} configuration - The configuration.
+	 * @param {object=} configuration - The configuration.
 	 * @param {string=} configuration.bucket
 	 * @param {string=} configuration.folder
 	 * @param {S3ProviderOptions=} options - The AWS SDK client configuration.
@@ -57,12 +57,16 @@ export default class S3Provider extends Disposable {
 	constructor(configuration, options) {
 		super();
 
-		assert.argumentIsRequired(configuration, 'configuration');
-		assert.argumentIsOptional(configuration.bucket, 'configuration.bucket', String);
-		assert.argumentIsOptional(configuration.folder, 'configuration.folder', String);
+		assert.argumentIsOptional(configuration, 'configuration', Object);
+
+		if (configuration) {
+			assert.argumentIsOptional(configuration.bucket, 'configuration.bucket', String);
+			assert.argumentIsOptional(configuration.folder, 'configuration.folder', String);
+		}
+
 		assert.argumentIsOptional(options, 'options', Object);
 
-		this.#configuration = configuration;
+		this.#configuration = configuration || { };
 		this.#options = {
 			...AwsOptions.instance.options,
 			...options

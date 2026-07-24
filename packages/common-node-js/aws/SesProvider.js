@@ -40,7 +40,7 @@ export default class SesProvider extends Disposable {
 	#started;
 
 	/**
-	 * @param {object} configuration - The configuration.
+	 * @param {object=} configuration - The configuration.
 	 * @param {(string|string[])=} configuration.recipientOverride - If specified, all emails sent will be redirected to these email addresses, ignoring the specified recipient.
 	 * @param {number=} configuration.rateLimitPerSecond - The number of emails which will be sent to the AWS SDK within one second (defaults to 10).
 	 * @param {SesProviderOptions=} options - The AWS SDK client configuration.
@@ -48,18 +48,21 @@ export default class SesProvider extends Disposable {
 	constructor(configuration, options) {
 		super();
 
-		assert.argumentIsRequired(configuration, 'configuration');
+		assert.argumentIsOptional(configuration, 'configuration', Object);
 
-		if (is.array(configuration.recipientOverride)) {
-			assert.argumentIsArray(configuration.recipientOverride, 'configuration.recipientOverride', String);
-		} else {
-			assert.argumentIsOptional(configuration.recipientOverride, 'configuration.recipientOverride', String);
+		if (configuration) {
+			if (is.array(configuration.recipientOverride)) {
+				assert.argumentIsArray(configuration.recipientOverride, 'configuration.recipientOverride', String);
+			} else {
+				assert.argumentIsOptional(configuration.recipientOverride, 'configuration.recipientOverride', String);
+			}
+
+			assert.argumentIsOptional(configuration.rateLimitPerSecond, 'configuration.rateLimitPerSecond', Number);
 		}
 
-		assert.argumentIsOptional(configuration.rateLimitPerSecond, 'configuration.rateLimitPerSecond', Number);
 		assert.argumentIsOptional(options, 'options', Object);
 
-		this.#configuration = configuration;
+		this.#configuration = configuration || { };
 		this.#options = {
 			...AwsOptions.instance.options,
 			...options
@@ -71,8 +74,8 @@ export default class SesProvider extends Disposable {
 
 		this.#rateLimiters = { };
 
-		this.#rateLimiters.send = new RateLimiter(configuration.rateLimitPerSecond || 10, 1000);
-		this.#rateLimiters.suppressed = new RateLimiter(configuration.rateLimitPerSecond || 1, 4000);
+		this.#rateLimiters.send = new RateLimiter(this.#configuration.rateLimitPerSecond || 10, 1000);
+		this.#rateLimiters.suppressed = new RateLimiter(this.#configuration.rateLimitPerSecond || 1, 4000);
 	}
 
 	/**
