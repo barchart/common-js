@@ -1,6 +1,6 @@
 {
   "name": "@barchart/common-node-js",
-  "version": "5.1.1",
+  "version": "5.2.0",
   "type": "module",
   "exports": {
     "./*": {
@@ -60,7 +60,7 @@
     "@aws-sdk/client-sqs": "^3.1065.0",
     "@aws-sdk/lib-storage": "^3.1065.0",
     "@aws-sdk/s3-request-presigner": "^3.1065.0",
-    "@barchart/common-js": "^5.1.1",
+    "@barchart/common-js": "^5.2.0",
     "body-parser": "^2.2.2",
     "client-sessions": "^0.8.0",
     "express": "^5.2.1",
