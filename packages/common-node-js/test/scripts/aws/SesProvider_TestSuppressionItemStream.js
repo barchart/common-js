@@ -4,11 +4,11 @@ import DelegateWriteStream from './../../../stream/DelegateWriteStream.js';
 import ObjectTransformer from './../../../stream/ObjectTransformer.js';
 
 async function main() {
-	const configuration = {
+	const options = {
 		region: 'us-east-1'
 	};
 
-	const sesProvider = new SesProvider(configuration);
+	const sesProvider = new SesProvider({ }, options);
 	await sesProvider.start();
 
 	return new Promise((resolve, reject) => {

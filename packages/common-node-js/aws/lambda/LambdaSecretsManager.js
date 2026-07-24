@@ -55,11 +55,9 @@ let secretsManagerProviderPromise = null;
 function getSecretsManagerProvider() {
 	if (secretsManagerProviderPromise === null) {
 		secretsManagerProviderPromise = (async () => {
-			const configuration = { };
-
-			configuration.region = process.env.SECRETS_MANAGER_REGION || 'us-east-1';
-
-			const provider = new SecretsManagerProvider(configuration);
+			const provider = new SecretsManagerProvider({
+				region: process.env.SECRETS_MANAGER_REGION || 'us-east-1'
+			});
 
 			await provider.start();
 

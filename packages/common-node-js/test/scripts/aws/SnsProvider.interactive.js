@@ -13,8 +13,8 @@ utils.run('SnsProvider interactive test', async () => {
 	const queueName = 'sns-subscription-target';
 	const qualifiedQueueName = `${prefix}-${queueName}`;
 
-	const provider = new SnsProvider({ region, prefix });
-	const sqsProvider = new SqsProvider({ region, prefix });
+	const provider = new SnsProvider({ prefix }, { region });
+	const sqsProvider = new SqsProvider({ prefix }, { region });
 
 	let queueUrl = null;
 	let subscription = null;

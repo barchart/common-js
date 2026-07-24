@@ -1,13 +1,13 @@
 import SesProvider from './../../../aws/SesProvider.js';
 
 async function main() {
-    const configuration = {
+    const options = {
         region: 'us-east-1'
     };
 
     const emailToAdd = 'luka.sotra@barchart.com';
 
-    const sesProvider = new SesProvider(configuration);
+    const sesProvider = new SesProvider({ }, options);
     await sesProvider.start();
 
     const suppressedEmails = await sesProvider.getSuppressedItems();
@@ -30,4 +30,3 @@ async function main() {
         console.error('Error:', error);
     }
 })()
-

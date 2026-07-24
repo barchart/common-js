@@ -8,13 +8,13 @@ utils.run('SesProvider interactive test', async () => {
 	const recipientAddress = utils.requireEnv('SES_TEST_RECIPIENT');
 	const suppressionEmail = utils.env('SES_TEST_SUPPRESSION_EMAIL', recipientAddress);
 
-	const provider = new SesProvider({ region: utils.region(), rateLimitPerSecond: 2 });
+	const provider = new SesProvider({ rateLimitPerSecond: 2 }, { region: utils.region() });
 	let suppressionAdded = false;
 
 	await utils.step('start', () => provider.start());
 
 	console.log('Configuration:', provider.getConfiguration());
-	assert.areEqual(provider.getConfiguration().region, utils.region(), 'getConfiguration should return configured region');
+	assert.areEqual(provider.getConfiguration().rateLimitPerSecond, 2, 'getConfiguration should return configured rate limit');
 
 	try {
 		await utils.step('sendEmail', () => provider.sendEmail(senderAddress, recipientAddress, 'SesProvider interactive sendEmail', '<b>Hello</b>', 'Hello', [

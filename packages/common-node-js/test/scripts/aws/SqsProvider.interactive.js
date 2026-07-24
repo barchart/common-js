@@ -11,7 +11,7 @@ utils.run('SqsProvider interactive test', async () => {
 	const queueNameByUrl = 'interactive-queue-url';
 	const observeQueueName = 'interactive-observe-queue';
 
-	const provider = new SqsProvider({ region, prefix });
+	const provider = new SqsProvider({ prefix }, { region });
 
 	let queueUrl = null;
 	let queueUrlByUrl = null;

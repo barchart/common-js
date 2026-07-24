@@ -437,7 +437,12 @@ class ExpressServer {
 					app.use(serverPath, express.static(staticPathItem.filePath));
 					} else if (staticPathItem.type === 's3') {
 						startPromises.push((async () => {
-							const s3 = new S3Provider(staticPathItem.s3);
+							const s3 = new S3Provider({
+								bucket: staticPathItem.s3.bucket,
+								folder: staticPathItem.s3.folder
+							}, staticPathItem.s3.region ? {
+								region: staticPathItem.s3.region
+							} : undefined);
 
 							await s3.start();
 

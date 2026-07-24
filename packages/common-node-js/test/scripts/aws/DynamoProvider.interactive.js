@@ -16,7 +16,7 @@ utils.run('DynamoProvider interactive test', async () => {
 	const prefix = utils.prefix();
 
 	const tableName = 'interactive-table';
-	const provider = new DynamoProvider({ region: utils.region(), prefix });
+	const provider = new DynamoProvider({ prefix }, { region: utils.region() });
 
 	let table = null;
 	let backupArn = null;

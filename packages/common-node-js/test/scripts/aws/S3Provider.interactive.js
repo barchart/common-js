@@ -9,7 +9,7 @@ utils.run('S3Provider interactive test', async () => {
 	const bucket = utils.requireEnv('S3_TEST_BUCKET');
 	const folder = utils.env('S3_TEST_FOLDER', 'common-node-js-interactive');
 
-	const provider = new S3Provider({ region: utils.region(), bucket, folder });
+	const provider = new S3Provider({ bucket, folder }, { region: utils.region() });
 	const keyPrefix = S3Provider.getQualifiedFilename(folder, `interactive-${Date.now()}`);
 
 	const key = `${keyPrefix}/object.json`;
