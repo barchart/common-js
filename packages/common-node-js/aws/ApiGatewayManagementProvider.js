@@ -17,7 +17,7 @@ const logger = log4js.getLogger('common-node/aws/ApiGatewayManagementProvider');
  */
 
 /**
- * A facade for Amazon's Api Gateway Management. The constructor
+ * A facade for Amazon's API Gateway Management. The constructor
  * accepts configuration options. The promise-based instance functions
  * abstract knowledge of the AWS API.
  *
