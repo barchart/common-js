@@ -4,6 +4,8 @@ import * as object from '@barchart/common-js/lang/object.js';
 
 import Disposable from '@barchart/common-js/lang/Disposable.js';
 
+import AwsOptions from './AwsOptions.js';
+
 import { CreateTopicCommand, DeleteTopicCommand, ListSubscriptionsCommand, ListTopicsCommand, PublishCommand, SNSClient, SubscribeCommand, UnsubscribeCommand } from '@aws-sdk/client-sns';
 
 import log4js from 'log4js';
@@ -11,8 +13,9 @@ import log4js from 'log4js';
 const logger = log4js.getLogger('common-node/aws/SnsProvider');
 
 /**
- * @typedef {object} SnsProviderOptions
- * @property {import('@aws-sdk/client-sns').SNSClientConfig=} clientConfiguration - Configuration passed to the AWS SDK client.
+ * AWS SDK client configuration for the SNS provider.
+ *
+ * @typedef {import('@aws-sdk/client-sns').SNSClientConfig} SnsProviderOptions
  */
 
 /**
@@ -34,26 +37,21 @@ export default class SnsProvider extends Disposable {
 
 	/**
 	 * @param {object} configuration - The configuration.
-	 * @param {string} configuration.region - The AWS region (e.g. "us-east-1").
 	 * @param {string} configuration.prefix - The prefix that is prepended to any topic name.
-	 * @param {string=} configuration.apiVersion - The SES version (defaults to "2010-03-31").
-	 * @param {SnsProviderOptions=} options - The options.
+	 * @param {SnsProviderOptions=} options - The AWS SDK client configuration.
 	 */
 	constructor(configuration, options) {
 		super();
 
 		assert.argumentIsRequired(configuration, 'configuration', Object);
-		assert.argumentIsRequired(configuration.region, 'configuration.region', String);
 		assert.argumentIsRequired(configuration.prefix, 'configuration.prefix', String);
-		assert.argumentIsOptional(configuration.apiVersion, 'configuration.apiVersion', String);
 		assert.argumentIsOptional(options, 'options', Object);
 
-		if (options) {
-			assert.argumentIsOptional(options.clientConfiguration, 'options.clientConfiguration', Object);
-		}
-
 		this.#configuration = configuration;
-		this.#options = Object.assign({ clientConfiguration: { } }, options || { });
+		this.#options = {
+			...AwsOptions.instance.options,
+			...options
+		};
 
 		this.#sns = null;
 
@@ -80,11 +78,7 @@ export default class SnsProvider extends Disposable {
 		if (this.#startPromise === null) {
 			this.#startPromise = (async () => {
 				try {
-					this.#sns = new SNSClient({
-						...this.#options.clientConfiguration,
-						apiVersion: this.#configuration.apiVersion || '2010-03-31',
-						region: this.#configuration.region
-					});
+					this.#sns = new SNSClient(this.#options);
 
 					logger.info('The SNS provider has started');
 
@@ -382,7 +376,8 @@ export default class SnsProvider extends Disposable {
 		counts.total = 0;
 		counts.matches = 0;
 
-		const topicArnRegex = new RegExp(`^(arn:aws:sns):(${this.#configuration.region}):(.*):(${this.#configuration.prefix})-(.*)$`);
+		const region = await this.#sns.config.region();
+		const topicArnRegex = new RegExp(`^(arn:aws:sns):(${region}):(.*):(${this.#configuration.prefix})-(.*)$`);
 
 		const listSubscriptionsRecursive = async (nextToken) => {
 			const payload = { };

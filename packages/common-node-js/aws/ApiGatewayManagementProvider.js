@@ -2,6 +2,8 @@ import * as assert from '@barchart/common-js/lang/assert.js';
 
 import Disposable from '@barchart/common-js/lang/Disposable.js';
 
+import AwsOptions from './AwsOptions.js';
+
 import { ApiGatewayManagementApiClient, PostToConnectionCommand } from '@aws-sdk/client-apigatewaymanagementapi';
 
 import log4js from 'log4js';
@@ -9,8 +11,9 @@ import log4js from 'log4js';
 const logger = log4js.getLogger('common-node/aws/ApiGatewayManagementProvider');
 
 /**
- * @typedef {object} ApiGatewayManagementProviderOptions
- * @property {import('@aws-sdk/client-apigatewaymanagementapi').ApiGatewayManagementApiClientConfig=} clientConfiguration - Configuration passed to the AWS SDK client.
+ * AWS SDK client configuration for the API Gateway Management provider.
+ *
+ * @typedef {import('@aws-sdk/client-apigatewaymanagementapi').ApiGatewayManagementApiClientConfig & {endpoint: string}} ApiGatewayManagementProviderOptions
  */
 
 /**
@@ -23,33 +26,23 @@ const logger = log4js.getLogger('common-node/aws/ApiGatewayManagementProvider');
  */
 export default class ApiGatewayManagementProvider extends Disposable {
 	#agm;
-	#configuration;
 	#options;
 	#startPromise;
 	#started;
 
 	/**
-	 * @param {object} configuration - The configuration.
-	 * @param {string} configuration.region - The AWS region (e.g. "us-east-1").
-	 * @param {string} configuration.endpoint - The endpoint url.
-	 * @param {string=} configuration.apiVersion - The Api Gateway Management Api version (defaults to "2018-11-29").
-	 * @param {ApiGatewayManagementProviderOptions=} options - The options.
+	 * @param {ApiGatewayManagementProviderOptions} options - The AWS SDK client configuration.
 	 */
-	constructor(configuration, options) {
+	constructor(options) {
 		super();
 
-		assert.argumentIsRequired(configuration, 'configuration', Object);
-		assert.argumentIsRequired(configuration.endpoint, 'configuration.endpoint', String);
-		assert.argumentIsRequired(configuration.region, 'configuration.region', String);
-		assert.argumentIsOptional(configuration.apiVersion, 'configuration.apiVersion', String);
-		assert.argumentIsOptional(options, 'options', Object);
+		assert.argumentIsRequired(options, 'options', Object);
+		assert.argumentIsRequired(options.endpoint, 'options.endpoint', String);
 
-		if (options) {
-			assert.argumentIsOptional(options.clientConfiguration, 'options.clientConfiguration', Object);
-		}
-
-		this.#configuration = configuration;
-		this.#options = Object.assign({ clientConfiguration: { } }, options || { });
+		this.#options = {
+			...AwsOptions.instance.options,
+			...options
+		};
 
 		this.#agm = null;
 
@@ -73,12 +66,7 @@ export default class ApiGatewayManagementProvider extends Disposable {
 		if (this.#startPromise === null) {
 			this.#startPromise = (async () => {
 				try {
-					this.#agm = new ApiGatewayManagementApiClient({
-						...this.#options.clientConfiguration,
-						apiVersion: this.#configuration.apiVersion || '2018-11-29',
-						endpoint: this.#configuration.endpoint,
-						region: this.#configuration.region,
-					});
+					this.#agm = new ApiGatewayManagementApiClient(this.#options);
 
 					logger.info('The API Gateway provider has started');
 

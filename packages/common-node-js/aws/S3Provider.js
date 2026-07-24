@@ -4,6 +4,8 @@ import * as object from '@barchart/common-js/lang/object.js';
 
 import Disposable from '@barchart/common-js/lang/Disposable.js';
 
+import AwsOptions from './AwsOptions.js';
+
 import { DeleteObjectCommand, GetObjectCommand, HeadObjectCommand, ListObjectsV2Command, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { Upload } from '@aws-sdk/lib-storage';
 import { getSignedUrl as getS3SignedUrl } from '@aws-sdk/s3-request-presigner';
@@ -28,8 +30,9 @@ const encodingTypes = {
  */
 
 /**
- * @typedef {object} S3ProviderOptions
- * @property {import('@aws-sdk/client-s3').S3ClientConfig=} clientConfiguration - Configuration passed to the AWS SDK client.
+ * AWS SDK client configuration for the S3 provider.
+ *
+ * @typedef {import('@aws-sdk/client-s3').S3ClientConfig} S3ProviderOptions
  */
 
 /**
@@ -47,28 +50,23 @@ export default class S3Provider extends Disposable {
 
 	/**
 	 * @param {object} configuration - The configuration.
-	 * @param {string} configuration.region
-	 * @param {string=} configuration.apiVersion
 	 * @param {string=} configuration.bucket
 	 * @param {string=} configuration.folder
-	 * @param {S3ProviderOptions=} options - The options.
+	 * @param {S3ProviderOptions=} options - The AWS SDK client configuration.
 	 */
 	constructor(configuration, options) {
 		super();
 
 		assert.argumentIsRequired(configuration, 'configuration');
-		assert.argumentIsRequired(configuration.region, 'configuration.region', String);
-		assert.argumentIsOptional(configuration.apiVersion, 'configuration.apiVersion', String);
 		assert.argumentIsOptional(configuration.bucket, 'configuration.bucket', String);
 		assert.argumentIsOptional(configuration.folder, 'configuration.folder', String);
 		assert.argumentIsOptional(options, 'options', Object);
 
-		if (options) {
-			assert.argumentIsOptional(options.clientConfiguration, 'options.clientConfiguration', Object);
-		}
-
 		this.#configuration = configuration;
-		this.#options = Object.assign({ clientConfiguration: { } }, options || { });
+		this.#options = {
+			...AwsOptions.instance.options,
+			...options
+		};
 
 		this.#s3 = null;
 
@@ -92,11 +90,7 @@ export default class S3Provider extends Disposable {
 		if (this.#startPromise === null) {
 			this.#startPromise = (async () => {
 				try {
-					this.#s3 = new S3Client({
-						...this.#options.clientConfiguration,
-						apiVersion: this.#configuration.apiVersion || '2006-03-01',
-						region: this.#configuration.region
-					});
+					this.#s3 = new S3Client(this.#options);
 
 					logger.info('The S3 provider has started');
 

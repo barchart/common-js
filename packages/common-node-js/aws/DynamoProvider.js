@@ -9,6 +9,7 @@ import Enum from '@barchart/common-js/lang/Enum.js';
 import WorkQueue from '@barchart/common-js/timing/Serializer.js';
 import Scheduler from '@barchart/common-js/timing/Scheduler.js';
 
+import AwsOptions from './AwsOptions.js';
 import ConditionalBuilder from './dynamo/query/builders/ConditionalBuilder.js';
 import KeyType from './dynamo/schema/definitions/KeyType.js';
 import OperatorType from './dynamo/query/definitions/OperatorType.js';
@@ -29,9 +30,9 @@ const READ_MILLISECOND_BACKOFF = 500;
 const WRITE_MILLISECOND_BACKOFF = 500;
 
 /**
- * @typedef {object} DynamoProviderOptions
- * @property {boolean=} preferConsistentReads
- * @property {import('@aws-sdk/client-dynamodb').DynamoDBClientConfig=} clientConfiguration - Configuration passed to the AWS SDK client.
+ * AWS SDK client configuration for the DynamoDB provider.
+ *
+ * @typedef {import('@aws-sdk/client-dynamodb').DynamoDBClientConfig} DynamoProviderOptions
  */
 
 /**
@@ -53,27 +54,24 @@ export default class DynamoProvider extends Disposable {
 
     /**
      * @param {object} configuration - The configuration.
-     * @param {string} configuration.region - The AWS region (e.g. "us-east-1").
      * @param {string} configuration.prefix - The prefix to automatically append to table names.
-     * @param {string=} configuration.apiVersion - The DynamoDB API version (defaults to "2012-08-10").
-     * @param {DynamoProviderOptions=} options - The options.
+     * @param {boolean=} configuration.preferConsistentReads - Whether reads should be consistent by default.
+     * @param {DynamoProviderOptions=} options - The AWS SDK client configuration.
      */
     constructor(configuration, options) {
         super();
 
         assert.argumentIsRequired(configuration, 'configuration');
-        assert.argumentIsRequired(configuration.region, 'configuration.region', String);
         assert.argumentIsRequired(configuration.prefix, 'configuration.prefix', String);
-        assert.argumentIsOptional(configuration.apiVersion, 'configuration.apiVersion', String);
+        assert.argumentIsOptional(configuration.preferConsistentReads, 'configuration.preferConsistentReads', Boolean);
         assert.argumentIsOptional(options, 'options', Object);
-
-        if (options) {
-            assert.argumentIsOptional(options.clientConfiguration, 'options.clientConfiguration', Object);
-        }
 
         this.#configuration = configuration;
 
-        this.#options = Object.assign({ clientConfiguration: { }, preferConsistentReads: false }, options || { });
+        this.#options = {
+            ...AwsOptions.instance.options,
+            ...options
+        };
 
         this.#startPromise = null;
         this.#started = false;
@@ -101,11 +99,7 @@ export default class DynamoProvider extends Disposable {
                 try {
                     this.#scheduler = new Scheduler();
 
-                    this.#dynamo = new DynamoDBClient({
-                        ...this.#options.clientConfiguration,
-                        apiVersion: this.#configuration.apiVersion || '2012-08-10',
-                        region: this.#configuration.region
-                    });
+                    this.#dynamo = new DynamoDBClient(this.#options);
 
                     logger.debug('The Dynamo provider has started');
 
@@ -632,7 +626,7 @@ export default class DynamoProvider extends Disposable {
 
         const options = scan.toScanSchema();
 
-        if (!scan.consistentRead && scan.index === null && this.#options.preferConsistentReads) {
+        if (!scan.consistentRead && scan.index === null && this.#configuration.preferConsistentReads) {
             logger.debug('Overriding scan definition, setting consistent reads to true for [', (scan.description || 'unnamed scan'), '] on [', scan.table.name, ']');
 
             options.ConsistentRead = true;
@@ -822,7 +816,7 @@ export default class DynamoProvider extends Disposable {
 
         const options = scan.toScanSchema();
 
-        if (!scan.consistentRead && scan.index === null && this.#options.preferConsistentReads) {
+        if (!scan.consistentRead && scan.index === null && this.#configuration.preferConsistentReads) {
             logger.debug('Overriding scan definition, setting consistent reads to true for [', (scan.description || 'unnamed scan'), '] on [', scan.table.name, ']');
 
             options.ConsistentRead = true;
@@ -918,7 +912,7 @@ export default class DynamoProvider extends Disposable {
 
         const options = query.toQuerySchema();
 
-        if (!query.consistentRead && query.index === null && this.#options.preferConsistentReads) {
+        if (!query.consistentRead && query.index === null && this.#configuration.preferConsistentReads) {
             logger.debug('Overriding query definition, setting consistent reads to true for [', (query.description || 'unnamed query'), '] on [', query.table.name, ']');
 
             options.ConsistentRead = true;
@@ -1124,7 +1118,7 @@ export default class DynamoProvider extends Disposable {
 
         const options = query.toQuerySchema();
 
-        if (!query.consistentRead && query.index === null && this.#options.preferConsistentReads) {
+        if (!query.consistentRead && query.index === null && this.#configuration.preferConsistentReads) {
             logger.debug('Overriding query definition, setting consistent reads to true for [', (query.description || 'unnamed query'), '] on [', query.table.name, ']');
 
             options.ConsistentRead = true;

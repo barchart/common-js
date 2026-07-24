@@ -2,6 +2,8 @@ import * as assert from '@barchart/common-js/lang/assert.js';
 
 import Disposable from '@barchart/common-js/lang/Disposable.js';
 
+import AwsOptions from './AwsOptions.js';
+
 import { GetSecretValueCommand, SecretsManagerClient } from '@aws-sdk/client-secrets-manager';
 
 import log4js from 'log4js';
@@ -9,8 +11,9 @@ import log4js from 'log4js';
 const logger = log4js.getLogger('common-node/aws/SecretsManagerProvider');
 
 /**
- * @typedef {object} SecretsManagerProviderOptions
- * @property {import('@aws-sdk/client-secrets-manager').SecretsManagerClientConfig=} clientConfiguration - Configuration passed to the AWS SDK client.
+ * AWS SDK client configuration for the Secrets Manager provider.
+ *
+ * @typedef {import('@aws-sdk/client-secrets-manager').SecretsManagerClientConfig} SecretsManagerProviderOptions
  */
 
 /**
@@ -21,32 +24,23 @@ const logger = log4js.getLogger('common-node/aws/SecretsManagerProvider');
  * @extends {Disposable}
  */
 export default class SecretsManagerProvider extends Disposable {
-	#configuration;
 	#options;
 	#secretsManager;
 	#startPromise;
 	#started;
 
 	/**
-	 * @param {object} configuration - The configuration.
-	 * @param {string} configuration.region - The AWS region (e.g. "us-east-1").
-	 * @param {string=} configuration.apiVersion - The Secrets Manager version (defaults to "2017-10-17").
-	 * @param {SecretsManagerProviderOptions=} options - The options.
+	 * @param {SecretsManagerProviderOptions=} options - The AWS SDK client configuration.
 	 */
-	constructor(configuration, options) {
+	constructor(options) {
 		super();
 
-		assert.argumentIsRequired(configuration, 'configuration', Object);
-		assert.argumentIsRequired(configuration.region, 'configuration.region', String);
-		assert.argumentIsOptional(configuration.apiVersion, 'configuration.apiVersion', String);
 		assert.argumentIsOptional(options, 'options', Object);
 
-		if (options) {
-			assert.argumentIsOptional(options.clientConfiguration, 'options.clientConfiguration', Object);
-		}
-
-		this.#configuration = configuration;
-		this.#options = Object.assign({ clientConfiguration: { } }, options || { });
+		this.#options = {
+			...AwsOptions.instance.options,
+			...options
+		};
 
 		this.#secretsManager = null;
 
@@ -70,11 +64,7 @@ export default class SecretsManagerProvider extends Disposable {
 		if (this.#startPromise === null) {
 			this.#startPromise = (async () => {
 				try {
-					this.#secretsManager = new SecretsManagerClient({
-						...this.#options.clientConfiguration,
-						apiVersion: this.#configuration.apiVersion || '2017-10-17',
-						region: this.#configuration.region
-					});
+					this.#secretsManager = new SecretsManagerClient(this.#options);
 
 					logger.info('The Secrets Manager provider has started');
 

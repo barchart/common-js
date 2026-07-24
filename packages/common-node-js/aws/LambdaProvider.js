@@ -3,6 +3,8 @@ import * as is from '@barchart/common-js/lang/is.js';
 
 import Disposable from '@barchart/common-js/lang/Disposable.js';
 
+import AwsOptions from './AwsOptions.js';
+
 import { InvokeCommand, LambdaClient } from '@aws-sdk/client-lambda';
 
 import log4js from 'log4js';
@@ -10,8 +12,9 @@ import log4js from 'log4js';
 const logger = log4js.getLogger('common-node/aws/LambdaProvider');
 
 /**
- * @typedef {object} LambdaProviderOptions
- * @property {import('@aws-sdk/client-lambda').LambdaClientConfig=} clientConfiguration - Configuration passed to the AWS SDK client.
+ * AWS SDK client configuration for the Lambda provider.
+ *
+ * @typedef {import('@aws-sdk/client-lambda').LambdaClientConfig} LambdaProviderOptions
  */
 
 /**
@@ -21,34 +24,23 @@ const logger = log4js.getLogger('common-node/aws/LambdaProvider');
  * @extends Disposable
  */
 export default class LambdaProvider extends Disposable {
-	#configuration;
 	#lambda;
 	#options;
 	#startPromise;
 	#started;
 
 	/**
-	 * @param {object} configuration - The configuration.
-	 * @param {string} configuration.region
-	 * @param {string=} configuration.apiVersion
-	 * @param {string=} configuration.bucket
-	 * @param {string=} configuration.folder
-	 * @param {LambdaProviderOptions=} options - The options.
+	 * @param {LambdaProviderOptions=} options - The AWS SDK client configuration.
 	 */
-	constructor(configuration, options) {
+	constructor(options) {
 		super();
 
-		assert.argumentIsRequired(configuration, 'configuration');
-		assert.argumentIsRequired(configuration.region, 'configuration.region', String);
-		assert.argumentIsOptional(configuration.apiVersion, 'configuration.apiVersion', String);
 		assert.argumentIsOptional(options, 'options', Object);
 
-		if (options) {
-			assert.argumentIsOptional(options.clientConfiguration, 'options.clientConfiguration', Object);
-		}
-
-		this.#configuration = configuration;
-		this.#options = Object.assign({ clientConfiguration: { } }, options || { });
+		this.#options = {
+			...AwsOptions.instance.options,
+			...options
+		};
 
 		this.#lambda = null;
 
@@ -72,11 +64,7 @@ export default class LambdaProvider extends Disposable {
 		if (this.#startPromise === null) {
 			this.#startPromise = (async () => {
 				try {
-					this.#lambda = new LambdaClient({
-						...this.#options.clientConfiguration,
-						apiVersion: this.#configuration.apiVersion || '2015-03-31',
-						region: this.#configuration.region
-					});
+					this.#lambda = new LambdaClient(this.#options);
 
 					logger.info('The Lambda provider has started');
 

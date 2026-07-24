@@ -5,6 +5,7 @@ import * as object from '@barchart/common-js/lang/object.js';
 import Disposable from '@barchart/common-js/lang/Disposable.js';
 import RateLimiter from '@barchart/common-js/timing/RateLimiter.js';
 
+import AwsOptions from './AwsOptions.js';
 import DelegateReadStream from './../stream/DelegateReadStream.js';
 
 import { DeleteSuppressedDestinationCommand, GetSuppressedDestinationCommand, ListSuppressedDestinationsCommand, PutSuppressedDestinationCommand, SendEmailCommand, SESv2Client } from '@aws-sdk/client-sesv2';
@@ -18,8 +19,9 @@ const logger = log4js.getLogger('common-node/aws/SesProvider');
 */
 
 /**
- * @typedef {object} SesProviderOptions
- * @property {import('@aws-sdk/client-sesv2').SESv2ClientConfig=} clientConfiguration - Configuration passed to the AWS SDK client.
+ * AWS SDK client configuration for the SES provider.
+ *
+ * @typedef {import('@aws-sdk/client-sesv2').SESv2ClientConfig} SesProviderOptions
  */
 
 /**
@@ -39,18 +41,14 @@ export default class SesProvider extends Disposable {
 
 	/**
 	 * @param {object} configuration - The configuration.
-	 * @param {string} configuration.region - The AWS region (e.g. "us-east-1").
-	 * @param {string=} configuration.apiVersion - The SES version (defaults to "2010-12-01").
-	 * @param {string=} configuration.recipientOverride - If specified, all emails sent will be redirected to this email address, ignoring the specified recipient.
+	 * @param {(string|string[])=} configuration.recipientOverride - If specified, all emails sent will be redirected to these email addresses, ignoring the specified recipient.
 	 * @param {number=} configuration.rateLimitPerSecond - The number of emails which will be sent to the AWS SDK within one second (defaults to 10).
-	 * @param {SesProviderOptions=} options - The options.
+	 * @param {SesProviderOptions=} options - The AWS SDK client configuration.
 	 */
 	constructor(configuration, options) {
 		super();
 
 		assert.argumentIsRequired(configuration, 'configuration');
-		assert.argumentIsRequired(configuration.region, 'configuration.region', String);
-		assert.argumentIsOptional(configuration.apiVersion, 'configuration.apiVersion', String);
 
 		if (is.array(configuration.recipientOverride)) {
 			assert.argumentIsArray(configuration.recipientOverride, 'configuration.recipientOverride', String);
@@ -61,12 +59,11 @@ export default class SesProvider extends Disposable {
 		assert.argumentIsOptional(configuration.rateLimitPerSecond, 'configuration.rateLimitPerSecond', Number);
 		assert.argumentIsOptional(options, 'options', Object);
 
-		if (options) {
-			assert.argumentIsOptional(options.clientConfiguration, 'options.clientConfiguration', Object);
-		}
-
 		this.#configuration = configuration;
-		this.#options = Object.assign({ clientConfiguration: { } }, options || { });
+		this.#options = {
+			...AwsOptions.instance.options,
+			...options
+		};
 
 		this.#sesv2 = null;
 
@@ -93,16 +90,7 @@ export default class SesProvider extends Disposable {
 
 		if (!this.#started) {
 			try {
-				const clientConfiguration = {
-					...this.#options.clientConfiguration,
-					region: this.#configuration.region
-				};
-
-				if (this.#configuration.apiVersion) {
-					clientConfiguration.apiVersion = this.#configuration.apiVersion;
-				}
-
-				this.#sesv2 = new SESv2Client(clientConfiguration);
+				this.#sesv2 = new SESv2Client(this.#options);
 
 				logger.info('The SES provider has started');
 

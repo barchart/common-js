@@ -4,6 +4,8 @@ import * as is from '@barchart/common-js/lang/is.js';
 import Disposable from '@barchart/common-js/lang/Disposable.js';
 import Scheduler from '@barchart/common-js/timing/Scheduler.js';
 
+import AwsOptions from './AwsOptions.js';
+
 import { CloudWatchLogsClient, DeleteLogGroupCommand, DeleteLogStreamCommand, DeleteRetentionPolicyCommand, DescribeLogGroupsCommand, DescribeLogStreamsCommand, GetQueryResultsCommand, PutRetentionPolicyCommand, StartQueryCommand, TagResourceCommand, UntagResourceCommand } from '@aws-sdk/client-cloudwatch-logs';
 
 import log4js from 'log4js';
@@ -11,8 +13,9 @@ import log4js from 'log4js';
 const logger = log4js.getLogger('common-node/aws/CloudWatchLogsProvider');
 
 /**
- * @typedef {object} CloudWatchLogsProviderOptions
- * @property {import('@aws-sdk/client-cloudwatch-logs').CloudWatchLogsClientConfig=} clientConfiguration - Configuration passed to the AWS SDK client.
+ * AWS SDK client configuration for the CloudWatch Logs provider.
+ *
+ * @typedef {import('@aws-sdk/client-cloudwatch-logs').CloudWatchLogsClientConfig} CloudWatchLogsProviderOptions
  */
 
 /**
@@ -25,32 +28,23 @@ const logger = log4js.getLogger('common-node/aws/CloudWatchLogsProvider');
  */
 export default class CloudWatchLogsProvider extends Disposable {
 	#cloudWatchLogs;
-	#configuration;
 	#options;
 	#scheduler;
 	#startPromise;
 	#started;
 
 	/**
-	 * @param {object} configuration - The configuration.
-	 * @param {string} configuration.region - The AWS region (e.g. "us-east-1").
-	 * @param {string=} configuration.apiVersion - The CloudWatchLogs version (defaults to "2014-03-28").
-	 * @param {CloudWatchLogsProviderOptions=} options - The options.
+	 * @param {CloudWatchLogsProviderOptions=} options - The AWS SDK client configuration.
 	 */
-	constructor(configuration, options) {
+	constructor(options) {
 		super();
 
-		assert.argumentIsRequired(configuration, 'configuration');
-		assert.argumentIsRequired(configuration.region, 'configuration.region', String);
-		assert.argumentIsOptional(configuration.apiVersion, 'configuration.apiVersion', String);
 		assert.argumentIsOptional(options, 'options', Object);
 
-		if (options) {
-			assert.argumentIsOptional(options.clientConfiguration, 'options.clientConfiguration', Object);
-		}
-
-		this.#configuration = configuration;
-		this.#options = Object.assign({ clientConfiguration: { } }, options || { });
+		this.#options = {
+			...AwsOptions.instance.options,
+			...options
+		};
 
 		this.#scheduler = new Scheduler();
 
@@ -76,11 +70,7 @@ export default class CloudWatchLogsProvider extends Disposable {
 		if (this.#startPromise === null) {
 			this.#startPromise = (async () => {
 				try {
-					this.#cloudWatchLogs = new CloudWatchLogsClient({
-						...this.#options.clientConfiguration,
-						apiVersion: this.#configuration.apiVersion || '2014-03-28',
-						region: this.#configuration.region
-					});
+					this.#cloudWatchLogs = new CloudWatchLogsClient(this.#options);
 
 					logger.info('The CloudWatchLogsProvider has started');
 
