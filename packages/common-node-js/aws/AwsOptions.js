@@ -84,4 +84,14 @@ export default class AwsOptions {
 	get options() {
 		return this.#options;
 	}
+
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
+	toString() {
+		return '[AwsOptions]';
+	}
 }
