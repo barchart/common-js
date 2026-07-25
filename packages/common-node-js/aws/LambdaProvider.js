@@ -28,7 +28,6 @@ export default class LambdaProvider extends Disposable {
 
 	#options;
 
-	#startPromise;
 	#started;
 
 	/**
@@ -43,7 +42,6 @@ export default class LambdaProvider extends Disposable {
 
 		this.#options = { ...AwsOptions.instance.options, ...options };
 
-		this.#startPromise = null;
 		this.#started = false;
 	}
 
@@ -60,25 +58,21 @@ export default class LambdaProvider extends Disposable {
 			throw 'Unable to start, the Lambda provider has been disposed.';
 		}
 
-		if (this.#startPromise === null) {
-			this.#startPromise = (async () => {
-				try {
-					this.#lambda = new LambdaClient(this.#options);
+		if (!this.#started) {
+			try {
+				this.#lambda = new LambdaClient(this.#options);
 
-					logger.info('The Lambda provider has started');
+				logger.info('The Lambda provider has started');
 
-					this.#started = true;
+				this.#started = true;
+			} catch (e) {
+				logger.error('The Lambda provider failed to start', e);
 
-					return this.#started;
-				} catch (e) {
-					logger.error('The Lambda provider failed to start', e);
-
-					throw e;
-				}
-			})();
+				throw e;
+			}
 		}
 
-		return this.#startPromise;
+		return this.#started;
 	}
 
 	/**
@@ -123,10 +117,10 @@ export default class LambdaProvider extends Disposable {
 	#checkReady() {
 		if (this.disposed) {
 			throw new Error('The Lambda provider has been disposed.');
-			}
-
-			if (!this.#started) {
-				throw new Error('The Lambda provider has not been started.');
-			}
 		}
+
+		if (!this.#started) {
+			throw new Error('The Lambda provider has not been started.');
+		}
+	}
 }

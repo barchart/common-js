@@ -33,7 +33,6 @@ export default class CloudWatchLogsProvider extends Disposable {
 
 	#scheduler;
 
-	#startPromise;
 	#started;
 
 	/**
@@ -50,7 +49,6 @@ export default class CloudWatchLogsProvider extends Disposable {
 
 		this.#scheduler = new Scheduler();
 
-		this.#startPromise = null;
 		this.#started = false;
 	}
 
@@ -67,25 +65,21 @@ export default class CloudWatchLogsProvider extends Disposable {
 			throw 'Unable to start, the CloudWatchLogsProvider has been disposed.';
 		}
 
-		if (this.#startPromise === null) {
-			this.#startPromise = (async () => {
-				try {
-					this.#cloudWatchLogs = new CloudWatchLogsClient(this.#options);
+		if (!this.#started) {
+			try {
+				this.#cloudWatchLogs = new CloudWatchLogsClient(this.#options);
 
-					logger.info('The CloudWatchLogsProvider has started');
+				logger.info('The CloudWatchLogsProvider has started');
 
-					this.#started = true;
+				this.#started = true;
+			} catch (e) {
+				logger.error('The CloudWatchLogsProvider failed to start', e);
 
-					return this.#started;
-				} catch (e) {
-					logger.error('The CloudWatchLogsProvider failed to start', e);
-
-					throw e;
-				}
-			})();
+				throw e;
+			}
 		}
 
-		return this.#startPromise;
+		return this.#started;
 	}
 
 	/**
@@ -472,12 +466,12 @@ export default class CloudWatchLogsProvider extends Disposable {
 	#checkReady() {
 		if (this.disposed) {
 			throw new Error('The CloudWatchLogsProvider has been disposed.');
-			}
-
-			if (!this.#started) {
-				throw new Error('The CloudWatchLogsProvider has not been started.');
-			}
 		}
+
+		if (!this.#started) {
+			throw new Error('The CloudWatchLogsProvider has not been started.');
+		}
+	}
 
 	async #describeLogStreams(logGroupName, limit) {
 		const payload = { };

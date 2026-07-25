@@ -29,7 +29,6 @@ export default class ApiGatewayManagementProvider extends Disposable {
 
 	#options;
 
-	#startPromise;
 	#started;
 
 	/**
@@ -45,7 +44,6 @@ export default class ApiGatewayManagementProvider extends Disposable {
 
 		this.#options = { ...AwsOptions.instance.options, ...options };
 
-		this.#startPromise = null;
 		this.#started = false;
 	}
 
@@ -62,25 +60,21 @@ export default class ApiGatewayManagementProvider extends Disposable {
 			throw 'Unable to start, the API Gateway provider has been disposed';
 		}
 
-		if (this.#startPromise === null) {
-			this.#startPromise = (async () => {
-				try {
-					this.#agm = new ApiGatewayManagementApiClient(this.#options);
+		if (!this.#started) {
+			try {
+				this.#agm = new ApiGatewayManagementApiClient(this.#options);
 
-					logger.info('The API Gateway provider has started');
+				logger.info('The API Gateway provider has started');
 
-					this.#started = true;
+				this.#started = true;
+			} catch (e) {
+				logger.error('The API Gateway provider failed to start', e);
 
-					return this.#started;
-				} catch (e) {
-					logger.error('The API Gateway provider failed to start', e);
-
-					throw e;
-				}
-			})();
+				throw e;
+			}
 		}
 
-		return this.#startPromise;
+		return this.#started;
 	}
 
 	/**
@@ -113,10 +107,10 @@ export default class ApiGatewayManagementProvider extends Disposable {
 	#checkReady() {
 		if (this.disposed) {
 			throw new Error('The API Gateway provider has been disposed.');
-			}
-
-			if (!this.#started) {
-				throw new Error('The API Gateway provider has not been started.');
-			}
 		}
+
+		if (!this.#started) {
+			throw new Error('The API Gateway provider has not been started.');
+		}
+	}
 }

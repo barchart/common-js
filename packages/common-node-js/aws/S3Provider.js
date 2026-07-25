@@ -47,7 +47,6 @@ export default class S3Provider extends Disposable {
 	#configuration;
 	#options;
 
-	#startPromise;
 	#started;
 
 	/**
@@ -70,7 +69,6 @@ export default class S3Provider extends Disposable {
 		this.#configuration = configuration;
 		this.#options = { ...AwsOptions.instance.options, ...options };
 
-		this.#startPromise = null;
 		this.#started = false;
 	}
 
@@ -87,25 +85,21 @@ export default class S3Provider extends Disposable {
 			throw 'Unable to start, the S3 provider has been disposed.';
 		}
 
-		if (this.#startPromise === null) {
-			this.#startPromise = (async () => {
-				try {
-					this.#s3 = new S3Client(this.#options);
+		if (!this.#started) {
+			try {
+				this.#s3 = new S3Client(this.#options);
 
-					logger.info('The S3 provider has started');
+				logger.info('The S3 provider has started');
 
-					this.#started = true;
+				this.#started = true;
+			} catch (e) {
+				logger.error('The S3 provider failed to start', e);
 
-					return this.#started;
-				} catch (e) {
-					logger.error('The S3 provider failed to start', e);
-
-					throw e;
-				}
-			})();
+				throw e;
+			}
 		}
 
-		return this.#startPromise;
+		return this.#started;
 	}
 
 	/**
@@ -491,12 +485,12 @@ export default class S3Provider extends Disposable {
 	#checkReady() {
 		if (this.disposed) {
 			throw new Error('The S3 provider has been disposed.');
-			}
-
-			if (!this.#started) {
-				throw new Error('The S3 provider has not been started.');
-			}
 		}
+
+		if (!this.#started) {
+			throw new Error('The S3 provider has not been started.');
+		}
+	}
 }
 
 function getParameters(bucket, filename, additional) {

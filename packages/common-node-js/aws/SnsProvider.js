@@ -35,7 +35,6 @@ export default class SnsProvider extends Disposable {
 	#subscriptionPromises;
 	#topicPromises;
 
-	#startPromise;
 	#started;
 
 	/**
@@ -58,7 +57,6 @@ export default class SnsProvider extends Disposable {
 		this.#topicPromises = { };
 		this.#subscriptionPromises = { };
 
-		this.#startPromise = null;
 		this.#started = false;
 	}
 
@@ -75,25 +73,21 @@ export default class SnsProvider extends Disposable {
 			throw 'Unable to start, the SNS provider has been disposed.';
 		}
 
-		if (this.#startPromise === null) {
-			this.#startPromise = (async () => {
-				try {
-					this.#sns = new SNSClient(this.#options);
+		if (!this.#started) {
+			try {
+				this.#sns = new SNSClient(this.#options);
 
-					logger.info('The SNS provider has started');
+				logger.info('The SNS provider has started');
 
-					this.#started = true;
+				this.#started = true;
+			} catch (e) {
+				logger.error('The SNS provider failed to start', e);
 
-					return this.#started;
-				} catch (e) {
-					logger.error('The SNS provider failed to start', e);
-
-					throw e;
-				}
-			})();
+				throw e;
+			}
 		}
 
-		return this.#startPromise;
+		return this.#started;
 	}
 
 	/**
@@ -551,12 +545,12 @@ export default class SnsProvider extends Disposable {
 	#checkReady() {
 		if (this.disposed) {
 			throw new Error('The SNS provider has been disposed.');
-			}
-
-			if (!this.#started) {
-				throw new Error('The SNS provider has not been started.');
-			}
 		}
+
+		if (!this.#started) {
+			throw new Error('The SNS provider has not been started.');
+		}
+	}
 }
 
 function getQualifiedTopicName(prefix, topicName) {

@@ -82,7 +82,7 @@ export default class SesProvider extends Disposable {
 	 *
 	 * @public
 	 * @async
-	 * @returns {Promise<void>}
+	 * @returns {Promise<boolean>}
 	 */
 	async start() {
 		if (this.disposed) {
@@ -102,6 +102,8 @@ export default class SesProvider extends Disposable {
 				throw e;
 			}
 		}
+
+		return this.#started;
 	}
 
 	/**
@@ -395,12 +397,12 @@ export default class SesProvider extends Disposable {
 	#checkReady() {
 		if (this.disposed) {
 			throw new Error('The SES provider has been disposed.');
-			}
-
-			if (!this.#started) {
-				throw new Error('The SES provider has not been started.');
-			}
 		}
+
+		if (!this.#started) {
+			throw new Error('The SES provider has not been started.');
+		}
+	}
 }
 
 function transformSuppressionListItem(data) {

@@ -52,7 +52,6 @@ export default class DynamoProvider extends Disposable {
     #batches;
     #scheduler;
 
-    #startPromise;
     #started;
 
     /**
@@ -77,7 +76,6 @@ export default class DynamoProvider extends Disposable {
         this.#scheduler = null;
         this.#batches = new Map();
 
-        this.#startPromise = null;
         this.#started = false;
     }
 
@@ -94,27 +92,23 @@ export default class DynamoProvider extends Disposable {
             throw 'Unable to start, the Dynamo provider has been disposed';
         }
 
-        if (this.#startPromise === null) {
-            this.#startPromise = (async () => {
-                try {
-                    this.#scheduler = new Scheduler();
+        if (!this.#started) {
+            try {
+                this.#scheduler = new Scheduler();
 
-                    this.#dynamo = new DynamoDBClient(this.#options);
+                this.#dynamo = new DynamoDBClient(this.#options);
 
-                    logger.debug('The Dynamo provider has started');
+                logger.debug('The Dynamo provider has started');
 
-                    this.#started = true;
+                this.#started = true;
+            } catch (e) {
+                logger.error('The Dynamo provider failed to start', e);
 
-                    return this.#started;
-                } catch (e) {
-                    logger.error('The Dynamo provider failed to start', e);
-
-                    throw e;
-                }
-            })();
+                throw e;
+            }
         }
 
-        return this.#startPromise;
+        return this.#started;
     }
 
     /**
@@ -1241,12 +1235,12 @@ export default class DynamoProvider extends Disposable {
     #checkReady() {
         if (this.disposed) {
             throw new Error('The Dynamo provider has been disposed');
-            }
-
-            if (!this.#started) {
-                throw new Error('The Dynamo provider has not been started');
-            }
         }
+
+        if (!this.#started) {
+            throw new Error('The Dynamo provider has not been started');
+        }
+    }
 
     async #getTable(qualifiedTableName) {
         let data;

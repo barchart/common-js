@@ -28,7 +28,6 @@ export default class SecretsManagerProvider extends Disposable {
 
 	#options;
 
-	#startPromise;
 	#started;
 
 	/**
@@ -43,7 +42,6 @@ export default class SecretsManagerProvider extends Disposable {
 
 		this.#options = { ...AwsOptions.instance.options, ...options };
 
-		this.#startPromise = null;
 		this.#started = false;
 	}
 
@@ -60,25 +58,21 @@ export default class SecretsManagerProvider extends Disposable {
 			throw 'Unable to start, the Secrets Manager provider has been disposed';
 		}
 
-		if (this.#startPromise === null) {
-			this.#startPromise = (async () => {
-				try {
-					this.#secretsManager = new SecretsManagerClient(this.#options);
+		if (!this.#started) {
+			try {
+				this.#secretsManager = new SecretsManagerClient(this.#options);
 
-					logger.info('The Secrets Manager provider has started');
+				logger.info('The Secrets Manager provider has started');
 
-					this.#started = true;
+				this.#started = true;
+			} catch (e) {
+				logger.error('The Secrets Manager provider failed to start', e);
 
-					return this.#started;
-				} catch (e) {
-					logger.error('The Secrets Manager provider failed to start', e);
-
-					throw e;
-				}
-			})();
+				throw e;
+			}
 		}
 
-		return this.#startPromise;
+		return this.#started;
 	}
 
 	/**
@@ -126,10 +120,10 @@ export default class SecretsManagerProvider extends Disposable {
 	#checkReady() {
 		if (this.disposed) {
 			throw new Error('The Secrets Manager provider has been disposed');
-			}
-
-			if (!this.#started) {
-				throw new Error('The Secrets Manager provider has not been started');
-			}
 		}
+
+		if (!this.#started) {
+			throw new Error('The Secrets Manager provider has not been started');
+		}
+	}
 }
