@@ -44,11 +44,14 @@ const WRITE_MILLISECOND_BACKOFF = 500;
  * @extends Disposable
  */
 export default class DynamoProvider extends Disposable {
-    #batches;
-    #configuration;
     #dynamo;
+
+    #configuration;
     #options;
+
+    #batches;
     #scheduler;
+
     #startPromise;
     #started;
 
@@ -66,19 +69,16 @@ export default class DynamoProvider extends Disposable {
         assert.argumentIsOptional(configuration.preferConsistentReads, 'configuration.preferConsistentReads', Boolean);
         assert.argumentIsOptional(options, 'options', Object);
 
-        this.#configuration = configuration;
+        this.#dynamo = null;
 
-        this.#options = {
-            ...AwsOptions.instance.options,
-            ...options
-        };
+        this.#configuration = configuration;
+        this.#options = { ...AwsOptions.instance.options, ...options };
+
+        this.#scheduler = null;
+        this.#batches = new Map();
 
         this.#startPromise = null;
         this.#started = false;
-
-        this.#dynamo = null;
-        this.#scheduler = null;
-        this.#batches = new Map();
     }
 
     /**
@@ -1237,7 +1237,6 @@ export default class DynamoProvider extends Disposable {
     toString() {
         return '[DynamoProvider]';
     }
-
 
     #checkReady() {
         if (this.disposed) {

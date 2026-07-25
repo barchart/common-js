@@ -28,14 +28,19 @@ const logger = log4js.getLogger('common-node/aws/SqsProvider');
  * @extends Disposable
  */
 export default class SqsProvider extends Disposable {
-	#configuration;
-	#counter;
-	#knownQueues;
-	#options;
-	#queueArnPromises;
-	#queueObservers;
-	#queueUrlPromises;
 	#sqs;
+
+	#configuration;
+	#options;
+
+	#queueUrlPromises;
+	#queueArnPromises;
+
+	#queueObservers;
+	#knownQueues;
+
+	#counter;
+
 	#startPromise;
 	#started;
 
@@ -51,13 +56,10 @@ export default class SqsProvider extends Disposable {
 		assert.argumentIsRequired(configuration.prefix, 'configuration.prefix', String);
 		assert.argumentIsOptional(options, 'options', Object);
 
-		this.#configuration = configuration;
-		this.#options = {
-			...AwsOptions.instance.options,
-			...options
-		};
-
 		this.#sqs = null;
+
+		this.#configuration = configuration;
+		this.#options = { ...AwsOptions.instance.options, ...options };
 
 		this.#queueUrlPromises = { };
 		this.#queueArnPromises = { };
@@ -65,10 +67,10 @@ export default class SqsProvider extends Disposable {
 		this.#queueObservers = { };
 		this.#knownQueues = { };
 
+		this.#counter = 0;
+
 		this.#startPromise = null;
 		this.#started = false;
-
-		this.#counter = 0;
 	}
 
 	/**

@@ -28,8 +28,11 @@ const logger = log4js.getLogger('common-node/aws/CloudWatchLogsProvider');
  */
 export default class CloudWatchLogsProvider extends Disposable {
 	#cloudWatchLogs;
+
 	#options;
+
 	#scheduler;
+
 	#startPromise;
 	#started;
 
@@ -41,14 +44,11 @@ export default class CloudWatchLogsProvider extends Disposable {
 
 		assert.argumentIsOptional(options, 'options', Object);
 
-		this.#options = {
-			...AwsOptions.instance.options,
-			...options
-		};
+		this.#cloudWatchLogs = null;
+
+		this.#options = { ...AwsOptions.instance.options, ...options };
 
 		this.#scheduler = new Scheduler();
-
-		this.#cloudWatchLogs = null;
 
 		this.#startPromise = null;
 		this.#started = false;
@@ -468,7 +468,6 @@ export default class CloudWatchLogsProvider extends Disposable {
 	toString() {
 		return '[CloudWatchLogsProvider]';
 	}
-
 
 	#checkReady() {
 		if (this.disposed) {

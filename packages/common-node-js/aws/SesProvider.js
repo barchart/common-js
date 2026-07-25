@@ -33,10 +33,13 @@ const logger = log4js.getLogger('common-node/aws/SesProvider');
  * @extends Disposable
  */
 export default class SesProvider extends Disposable {
+	#sesv2;
+
 	#configuration;
 	#options;
+
 	#rateLimiters;
-	#sesv2;
+
 	#started;
 
 	/**
@@ -45,37 +48,32 @@ export default class SesProvider extends Disposable {
 	 * @param {number=} configuration.rateLimitPerSecond - The number of emails which will be sent to the AWS SDK within one second (defaults to 10).
 	 * @param {SesProviderOptions=} options - The AWS SDK client configuration.
 	 */
-	constructor(configuration, options) {
+	constructor(configuration = { }, options) {
 		super();
 
-		assert.argumentIsOptional(configuration, 'configuration', Object);
+		assert.argumentIsRequired(configuration, 'configuration', Object);
 
-		if (configuration) {
-			if (is.array(configuration.recipientOverride)) {
-				assert.argumentIsArray(configuration.recipientOverride, 'configuration.recipientOverride', String);
-			} else {
-				assert.argumentIsOptional(configuration.recipientOverride, 'configuration.recipientOverride', String);
-			}
-
-			assert.argumentIsOptional(configuration.rateLimitPerSecond, 'configuration.rateLimitPerSecond', Number);
+		if (is.array(configuration.recipientOverride)) {
+			assert.argumentIsArray(configuration.recipientOverride, 'configuration.recipientOverride', String);
+		} else {
+			assert.argumentIsOptional(configuration.recipientOverride, 'configuration.recipientOverride', String);
 		}
+
+		assert.argumentIsOptional(configuration.rateLimitPerSecond, 'configuration.rateLimitPerSecond', Number);
 
 		assert.argumentIsOptional(options, 'options', Object);
 
-		this.#configuration = configuration || { };
-		this.#options = {
-			...AwsOptions.instance.options,
-			...options
-		};
-
 		this.#sesv2 = null;
 
-		this.#started = false;
+		this.#configuration = configuration;
+		this.#options = { ...AwsOptions.instance.options, ...options };
 
 		this.#rateLimiters = { };
 
 		this.#rateLimiters.send = new RateLimiter(this.#configuration.rateLimitPerSecond || 10, 1000);
 		this.#rateLimiters.suppressed = new RateLimiter(this.#configuration.rateLimitPerSecond || 1, 4000);
+
+		this.#started = false;
 	}
 
 	/**
@@ -393,7 +391,6 @@ export default class SesProvider extends Disposable {
 	toString() {
 		return '[SesProvider]';
 	}
-
 
 	#checkReady() {
 		if (this.disposed) {

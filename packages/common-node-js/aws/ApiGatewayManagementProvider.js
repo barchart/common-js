@@ -26,7 +26,9 @@ const logger = log4js.getLogger('common-node/aws/ApiGatewayManagementProvider');
  */
 export default class ApiGatewayManagementProvider extends Disposable {
 	#agm;
+
 	#options;
+
 	#startPromise;
 	#started;
 
@@ -39,12 +41,9 @@ export default class ApiGatewayManagementProvider extends Disposable {
 		assert.argumentIsRequired(options, 'options', Object);
 		assert.argumentIsRequired(options.endpoint, 'options.endpoint', String);
 
-		this.#options = {
-			...AwsOptions.instance.options,
-			...options
-		};
-
 		this.#agm = null;
+
+		this.#options = { ...AwsOptions.instance.options, ...options };
 
 		this.#startPromise = null;
 		this.#started = false;
@@ -110,7 +109,6 @@ export default class ApiGatewayManagementProvider extends Disposable {
 	toString() {
 		return '[ApiGatewayManagementProvider]';
 	}
-
 
 	#checkReady() {
 		if (this.disposed) {

@@ -42,9 +42,11 @@ const encodingTypes = {
  * @extends Disposable
  */
 export default class S3Provider extends Disposable {
+	#s3;
+
 	#configuration;
 	#options;
-	#s3;
+
 	#startPromise;
 	#started;
 
@@ -54,25 +56,19 @@ export default class S3Provider extends Disposable {
 	 * @param {string=} configuration.folder
 	 * @param {S3ProviderOptions=} options - The AWS SDK client configuration.
 	 */
-	constructor(configuration, options) {
+	constructor(configuration = { }, options) {
 		super();
 
-		assert.argumentIsOptional(configuration, 'configuration', Object);
-
-		if (configuration) {
-			assert.argumentIsOptional(configuration.bucket, 'configuration.bucket', String);
-			assert.argumentIsOptional(configuration.folder, 'configuration.folder', String);
-		}
+		assert.argumentIsRequired(configuration, 'configuration', Object);
+		assert.argumentIsOptional(configuration.bucket, 'configuration.bucket', String);
+		assert.argumentIsOptional(configuration.folder, 'configuration.folder', String);
 
 		assert.argumentIsOptional(options, 'options', Object);
 
-		this.#configuration = configuration || { };
-		this.#options = {
-			...AwsOptions.instance.options,
-			...options
-		};
-
 		this.#s3 = null;
+
+		this.#configuration = configuration;
+		this.#options = { ...AwsOptions.instance.options, ...options };
 
 		this.#startPromise = null;
 		this.#started = false;
@@ -491,7 +487,6 @@ export default class S3Provider extends Disposable {
 	toString() {
 		return '[S3Provider]';
 	}
-
 
 	#checkReady() {
 		if (this.disposed) {

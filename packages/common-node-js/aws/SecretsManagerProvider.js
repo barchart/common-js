@@ -24,8 +24,10 @@ const logger = log4js.getLogger('common-node/aws/SecretsManagerProvider');
  * @extends {Disposable}
  */
 export default class SecretsManagerProvider extends Disposable {
-	#options;
 	#secretsManager;
+
+	#options;
+
 	#startPromise;
 	#started;
 
@@ -37,12 +39,9 @@ export default class SecretsManagerProvider extends Disposable {
 
 		assert.argumentIsOptional(options, 'options', Object);
 
-		this.#options = {
-			...AwsOptions.instance.options,
-			...options
-		};
-
 		this.#secretsManager = null;
+
+		this.#options = { ...AwsOptions.instance.options, ...options };
 
 		this.#startPromise = null;
 		this.#started = false;
@@ -123,7 +122,6 @@ export default class SecretsManagerProvider extends Disposable {
 	toString() {
 		return '[SecretsManagerProvider]';
 	}
-
 
 	#checkReady() {
 		if (this.disposed) {

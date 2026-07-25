@@ -25,7 +25,9 @@ const logger = log4js.getLogger('common-node/aws/LambdaProvider');
  */
 export default class LambdaProvider extends Disposable {
 	#lambda;
+
 	#options;
+
 	#startPromise;
 	#started;
 
@@ -37,12 +39,9 @@ export default class LambdaProvider extends Disposable {
 
 		assert.argumentIsOptional(options, 'options', Object);
 
-		this.#options = {
-			...AwsOptions.instance.options,
-			...options
-		};
-
 		this.#lambda = null;
+
+		this.#options = { ...AwsOptions.instance.options, ...options };
 
 		this.#startPromise = null;
 		this.#started = false;
@@ -120,7 +119,6 @@ export default class LambdaProvider extends Disposable {
 	toString() {
 		return '[LambdaProvider]';
 	}
-
 
 	#checkReady() {
 		if (this.disposed) {

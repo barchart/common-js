@@ -27,13 +27,16 @@ const logger = log4js.getLogger('common-node/aws/SnsProvider');
  * @extends Disposable
  */
 export default class SnsProvider extends Disposable {
+	#sns;
+
 	#configuration;
 	#options;
-	#sns;
-	#startPromise;
-	#started;
+
 	#subscriptionPromises;
 	#topicPromises;
+
+	#startPromise;
+	#started;
 
 	/**
 	 * @param {object} configuration - The configuration.
@@ -47,19 +50,16 @@ export default class SnsProvider extends Disposable {
 		assert.argumentIsRequired(configuration.prefix, 'configuration.prefix', String);
 		assert.argumentIsOptional(options, 'options', Object);
 
-		this.#configuration = configuration;
-		this.#options = {
-			...AwsOptions.instance.options,
-			...options
-		};
-
 		this.#sns = null;
+
+		this.#configuration = configuration;
+		this.#options = { ...AwsOptions.instance.options, ...options };
+
+		this.#topicPromises = { };
+		this.#subscriptionPromises = { };
 
 		this.#startPromise = null;
 		this.#started = false;
-
-		this.#topicPromises = {};
-		this.#subscriptionPromises = {};
 	}
 
 	/**
@@ -547,7 +547,6 @@ export default class SnsProvider extends Disposable {
 	toString() {
 		return '[SnsProvider]';
 	}
-
 
 	#checkReady() {
 		if (this.disposed) {
