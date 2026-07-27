@@ -11,6 +11,7 @@ test
 buildspec.yml
 gulpfile.js
 jasmine.json
+lerna-debug.log
 npm-debug.log
 package-lock.json
 yarn.lock
