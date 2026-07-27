@@ -18,8 +18,7 @@
   "typings": ".common-js.d.ts",
   "scripts": {
     "lint": "gulp lint",
-    "test": "jasmine --config=jasmine.json",
-    "publish": "npm publish --tag legacy"
+    "test": "jasmine --config=jasmine.json"
   },
   "publishConfig": {
     "tag": "legacy"
