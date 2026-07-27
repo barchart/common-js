@@ -21,6 +21,9 @@
     "test": "jasmine --config=jasmine.json",
     "publish": "npm publish --tag legacy"
   },
+  "publishConfig": {
+    "tag": "legacy"
+  },
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/barchart/barchart-common-js.git"
