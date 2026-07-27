@@ -1,8 +1,9 @@
 .idea
 .releases
 example
-test
 node_modules
+packages
+test
 
 .DS_Store
 .gitignore
@@ -11,3 +12,5 @@ buildspec.yml
 gulpfile.js
 jasmine.json
 npm-debug.log
+package-lock.json
+yarn.lock
