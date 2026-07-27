@@ -67,6 +67,35 @@ module.exports = (() => {
 		}
 
 		/**
+		 * Indicates if a translation from one currency to another is supported. That said,
+		 * even if a translation is supported, it may still fail if the required rates have
+		 * not been set.
+		 *
+		 * @public
+		 * @param {Currency} current
+		 * @param {Currency} desired
+		 * @returns {boolean}
+		 */
+		supportsTranslation(current, desired) {
+			assert.argumentIsRequired(current, 'current', Currency, 'Currency');
+			assert.argumentIsRequired(desired, 'desired', Currency, 'Currency');
+
+			if (current === desired) {
+				return true;
+			}
+
+			const first = this._maps.translation.get(current) || null;
+
+			if (first === null) {
+				return false;
+			}
+
+			const second = first.get(desired) || null;
+
+			return second !== null;
+		}
+
+		/**
 		 * Updates the calculator with new rates.
 		 *
 		 * @public
