@@ -12,6 +12,32 @@ describe('When a CurrencyTranslator is created with ^AUDUSD and ^CADUSD', () => 
 		translator = new CurrencyTranslator([ '^AUDUSD', '^CADUSD' ]);
 	});
 
+	describe('and checking whether a translation is supported', () => {
+		it('should support translation from AUD to AUD', () => {
+			expect(translator.supportsTranslation(Currency.AUD, Currency.AUD)).toEqual(true);
+		});
+
+		it('should support translation from AUD to USD', () => {
+			expect(translator.supportsTranslation(Currency.AUD, Currency.USD)).toEqual(true);
+		});
+
+		it('should support translation from USD to AUD', () => {
+			expect(translator.supportsTranslation(Currency.USD, Currency.AUD)).toEqual(true);
+		});
+
+		it('should support translation from AUD to CAD', () => {
+			expect(translator.supportsTranslation(Currency.AUD, Currency.CAD)).toEqual(true);
+		});
+
+		it('should support translation from CAD to USD', () => {
+			expect(translator.supportsTranslation(Currency.CAD, Currency.AUD)).toEqual(true);
+		});
+
+		it('should not support translation from CAD to JPY', () => {
+			expect(translator.supportsTranslation(Currency.CAD, Currency.JPY)).toEqual(false);
+		});
+	});
+
 	describe('and translations are performed before rates are initialized', () => {
 		it('Direct translation of 0 AUD to USD should yield 0 USD', () => {
 			expect(() => translator.translate(0, Currency.AUD, Currency.USD)).toThrow();
