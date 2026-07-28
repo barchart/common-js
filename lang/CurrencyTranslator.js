@@ -116,8 +116,9 @@ module.exports = (() => {
 		setRate(rate) {
 			assert.argumentIsRequired(rate, 'rate', Rate, 'Rate');
 
-			updateRate.call(this, rate);
-			updateRate.call(this, rate.invert());
+			if (updateRate.call(this, rate)) {
+				updateRate.call(this, rate.invert());
+			}
 		}
 
 		/**
@@ -230,12 +231,14 @@ module.exports = (() => {
 		const current = data.edge.data.rate;
 
 		if (current !== null && current === rate.float) {
-			return;
+			return false;
 		}
 
 		data.edge.data.rate = rate.float;
 
 		data.translators.forEach(t => t.clear());
+
+		return true;
 	}
 
 	/**
