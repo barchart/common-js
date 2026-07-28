@@ -30,7 +30,7 @@ module.exports = (() => {
 
 			this._configuration = { };
 			this._configuration.symbols = symbols;
-
+			
 			this._maps = { };
 
 			this._maps.rates = new Map();
@@ -253,9 +253,9 @@ module.exports = (() => {
 		this._maps.rates = new Map();
 		this._maps.translation = new Map();
 
-		this._translators = solve(this._configuration.symbols);
+		const translators = solve(this._configuration.symbols);
 
-		this._translators.forEach((translator) => {
+		translators.forEach((translator) => {
 			const path = translator.path;
 
 			path.forEach((edge) => {
@@ -274,7 +274,7 @@ module.exports = (() => {
 			});
 		});
 
-		this._translators.forEach((translator) => {
+		translators.forEach((translator) => {
 			const from = translator.from;
 			const to = translator.to;
 
