@@ -3059,35 +3059,45 @@ module.exports = (() => {
   class CurrencyTranslator {
     constructor(symbols) {
       assert.argumentIsArray(symbols, 'symbols', String);
-      this._translators = solve(symbols);
+      this._configuration = {};
+      this._configuration.symbols = symbols;
       this._maps = {};
       this._maps.rates = new Map();
       this._maps.translation = new Map();
-      this._translators.forEach(translator => {
-        const path = translator.path;
-        path.forEach(edge => {
-          const from = edge.from.data;
-          const to = edge.to.data;
-          if (!this._maps.rates.has(from)) {
-            this._maps.rates.set(from, new Map());
-          }
-          if (!this._maps.rates.get(from).has(to)) {
-            this._maps.rates.get(from).set(to, {
-              edge: edge,
-              translators: []
-            });
-          }
-          this._maps.rates.get(from).get(to).translators.push(translator);
-        });
-      });
-      this._translators.forEach(translator => {
-        const from = translator.from;
-        const to = translator.to;
-        if (!this._maps.translation.has(from)) {
-          this._maps.translation.set(from, new Map());
-        }
-        this._maps.translation.get(from).set(to, translator);
-      });
+      reset.call(this);
+    }
+
+    /**
+     * Adds the ability to use forex symbol (rates) during translation.
+     *
+     * This is an expensive operation and should not be used frequently
+     * since it causes internal data structures which control which forex
+     * rates will be for translation to be regenerated. Whenever possible,
+     * supply all forex symbols when the instance is constructed.
+     *
+     * @public
+     * @param {string} symbol
+     */
+    addSymbol(symbol) {
+      assert.argumentIsRequired(symbol, 'symbol', String);
+      this.addSymbols([symbol]);
+    }
+
+    /**
+     * Adds the ability to use forex symbols (rates) during translation.
+     *
+     * This is an expensive operation and should not be used frequently
+     * since it causes internal data structures which control which forex
+     * rates will be for translation to be regenerated. Whenever possible,
+     * supply all forex symbols when the instance is constructed.
+     *
+     * @public
+     * @param {string[]} symbols
+     */
+    addSymbols(symbols) {
+      assert.argumentIsArray(symbols, 'symbols', String);
+      this._configuration.symbols = array.unique([...this._configuration.symbols, ...symbols]);
+      reset.call(this);
     }
 
     /**
@@ -3134,8 +3144,9 @@ module.exports = (() => {
      */
     setRate(rate) {
       assert.argumentIsRequired(rate, 'rate', Rate, 'Rate');
-      updateRate.call(this, rate);
-      updateRate.call(this, rate.invert());
+      if (updateRate.call(this, rate, true)) {
+        updateRate.call(this, rate.invert(), false);
+      }
     }
 
     /**
@@ -3171,7 +3182,7 @@ module.exports = (() => {
       base: Currency.parse(match[2])
     };
   });
-  const solve = symbols => {
+  function solve(symbols) {
     const vertices = new Map();
     const getVertex = (currency, create) => {
       if (create && !vertices.has(currency)) {
@@ -3214,17 +3225,63 @@ module.exports = (() => {
       });
     });
     return translators;
-  };
-  function updateRate(rate) {
+  }
+  function reset() {
+    const existing = [];
+    for (const first of this._maps.rates) {
+      const base = first[0];
+      const map = first[1];
+      for (const second of map) {
+        const quote = second[0];
+        const data = second[1];
+        if (data.edge.data.original) {
+          existing.push(new Rate(data.edge.data.rate, quote, base));
+        }
+      }
+    }
+    this._maps = {};
+    this._maps.rates = new Map();
+    this._maps.translation = new Map();
+    this._translators = solve(this._configuration.symbols);
+    this._translators.forEach(translator => {
+      const path = translator.path;
+      path.forEach(edge => {
+        const from = edge.from.data;
+        const to = edge.to.data;
+        if (!this._maps.rates.has(from)) {
+          this._maps.rates.set(from, new Map());
+        }
+        if (!this._maps.rates.get(from).has(to)) {
+          this._maps.rates.get(from).set(to, {
+            edge: edge,
+            translators: []
+          });
+        }
+        this._maps.rates.get(from).get(to).translators.push(translator);
+      });
+    });
+    this._translators.forEach(translator => {
+      const from = translator.from;
+      const to = translator.to;
+      if (!this._maps.translation.has(from)) {
+        this._maps.translation.set(from, new Map());
+      }
+      this._maps.translation.get(from).set(to, translator);
+    });
+    this.setRates(existing);
+  }
+  function updateRate(rate, original) {
     const from = rate.base;
     const to = rate.quote;
     const data = this._maps.rates.get(from).get(to);
     const current = data.edge.data.rate;
     if (current !== null && current === rate.float) {
-      return;
+      return false;
     }
     data.edge.data.rate = rate.float;
+    data.edge.data.original = original;
     data.translators.forEach(t => t.clear());
+    return true;
   }
 
   /**
@@ -5070,6 +5127,8 @@ module.exports = (() => {
     /**
      * Given a {@link Decimal} value in a known currency, output
      * a {@link Decimal} converted to an alternate currency.
+     *
+     * For repeated currency translations, use the CurrencyTranslator class.
      *
      * @public
      * @static
@@ -21172,6 +21231,29 @@ describe('When a CurrencyTranslator is created with ^AUDUSD and ^CADUSD', () => 
       });
       it('Indirect translation of 1 CAD to AUD should yield 1.0862 AUD', () => {
         expect(translator.translate(new Decimal(1), Currency.CAD, Currency.AUD).toNumber()).toBeCloseTo(1.0862, 4);
+      });
+    });
+    describe('and support for new ^USDJPY is added', () => {
+      beforeEach(() => {
+        translator.addSymbol('^USDJPY');
+      });
+      describe('existing translations should still be possible', () => {
+        it('should support translation from CAD to USD', () => {
+          expect(translator.supportsTranslation(Currency.CAD, Currency.AUD)).toEqual(true);
+        });
+      });
+      describe('new translations using ^USDJPY should now be possible', () => {
+        it('should not support translation from CAD to JPY', () => {
+          expect(translator.supportsTranslation(Currency.CAD, Currency.JPY)).toEqual(true);
+        });
+      });
+      describe('existing translations should return the same result', () => {
+        it('Direct translation of 1 CAD to USD should yield 0.7230 USD', () => {
+          expect(translator.translate(1, Currency.CAD, Currency.USD)).toBeCloseTo(0.7230, 4);
+        });
+        it('Indirect translation of 1 CAD to AUD should yield 1.0862 AUD', () => {
+          expect(translator.translate(1, Currency.CAD, Currency.AUD)).toBeCloseTo(1.0862, 4);
+        });
       });
     });
     describe('and one rate changes (^AUDUSD to 0.6800)', () => {
