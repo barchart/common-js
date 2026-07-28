@@ -28,42 +28,51 @@ module.exports = (() => {
 		constructor(symbols) {
 			assert.argumentIsArray(symbols, 'symbols', String);
 
-			this._translators = solve(symbols);
+			this._configuration = { };
+			this._configuration.symbols = symbols;
 
 			this._maps = { };
 
 			this._maps.rates = new Map();
 			this._maps.translation = new Map();
 
-			this._translators.forEach((translator) => {
-				const path = translator.path;
+			reset.call(this);
+		}
 
-				path.forEach((edge) => {
-					const from = edge.from.data;
-					const to = edge.to.data;
+		/**
+		 * Adds the ability to use forex symbol (rates) during translation.
+		 *
+		 * This is an expensive operation and should not be used frequently
+		 * since it causes internal data structures which control which forex
+		 * rates will be for translation to be regenerated. Whenever possible,
+		 * supply all forex symbols when the instance is constructed.
+		 *
+		 * @public
+		 * @param {string} symbol
+		 */
+		addSymbol(symbol) {
+			assert.argumentIsRequired(symbol, 'symbol', String);
 
-					if (!this._maps.rates.has(from)) {
-						this._maps.rates.set(from, new Map());
-					}
+			this.addSymbols([ symbol ]);
+		}
 
-					if (!this._maps.rates.get(from).has(to)) {
-						this._maps.rates.get(from).set(to, { edge: edge, translators: [ ] });
-					}
+		/**
+		 * Adds the ability to use forex symbols (rates) during translation.
+		 *
+		 * This is an expensive operation and should not be used frequently
+		 * since it causes internal data structures which control which forex
+		 * rates will be for translation to be regenerated. Whenever possible,
+		 * supply all forex symbols when the instance is constructed.
+		 *
+		 * @public
+		 * @param {string[]} symbols
+		 */
+		addSymbols(symbols) {
+			assert.argumentIsArray(symbols, 'symbols', String);
 
-					this._maps.rates.get(from).get(to).translators.push(translator);
-				});
-			});
+			this._configuration.symbols = array.unique([ ...this._configuration.symbols, ...symbols ]);
 
-			this._translators.forEach((translator) => {
-				const from = translator.from;
-				const to = translator.to;
-
-				if (!this._maps.translation.has(from)) {
-					this._maps.translation.set(from, new Map());
-				}
-
-				this._maps.translation.get(from).set(to, translator);
-			});
+			reset.call(this);
 		}
 
 		/**
@@ -116,8 +125,8 @@ module.exports = (() => {
 		setRate(rate) {
 			assert.argumentIsRequired(rate, 'rate', Rate, 'Rate');
 
-			if (updateRate.call(this, rate)) {
-				updateRate.call(this, rate.invert());
+			if (updateRate.call(this, rate, true)) {
+				updateRate.call(this, rate.invert(), false);
 			}
 		}
 
@@ -162,7 +171,7 @@ module.exports = (() => {
 		};
 	});
 
-	const solve = (symbols) => {
+	function solve(symbols) {
 		const vertices = new Map();
 
 		const getVertex = (currency, create) => {
@@ -220,9 +229,66 @@ module.exports = (() => {
 		});
 
 		return translators;
-	};
+	}
 
-	function updateRate(rate) {
+	function reset() {
+		const existing = [ ];
+
+		for (const first of this._maps.rates) {
+			const base = first[0];
+			const map = first[1];
+
+			for (const second of map) {
+				const quote = second[0];
+				const data = second[1];
+
+				if (data.edge.data.original) {
+					existing.push(new Rate(data.edge.data.rate, quote, base));
+				}
+			}
+		}
+
+		this._maps = { };
+
+		this._maps.rates = new Map();
+		this._maps.translation = new Map();
+
+		this._translators = solve(this._configuration.symbols);
+
+		this._translators.forEach((translator) => {
+			const path = translator.path;
+
+			path.forEach((edge) => {
+				const from = edge.from.data;
+				const to = edge.to.data;
+
+				if (!this._maps.rates.has(from)) {
+					this._maps.rates.set(from, new Map());
+				}
+
+				if (!this._maps.rates.get(from).has(to)) {
+					this._maps.rates.get(from).set(to, { edge: edge, translators: [ ] });
+				}
+
+				this._maps.rates.get(from).get(to).translators.push(translator);
+			});
+		});
+
+		this._translators.forEach((translator) => {
+			const from = translator.from;
+			const to = translator.to;
+
+			if (!this._maps.translation.has(from)) {
+				this._maps.translation.set(from, new Map());
+			}
+
+			this._maps.translation.get(from).set(to, translator);
+		});
+
+		this.setRates(existing);
+	}
+
+	function updateRate(rate, original) {
 		const from = rate.base;
 		const to = rate.quote;
 
@@ -235,6 +301,7 @@ module.exports = (() => {
 		}
 
 		data.edge.data.rate = rate.float;
+		data.edge.data.original = original;
 
 		data.translators.forEach(t => t.clear());
 

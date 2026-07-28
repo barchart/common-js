@@ -181,6 +181,8 @@ module.exports = (() => {
 		 * Given a {@link Decimal} value in a known currency, output
 		 * a {@link Decimal} converted to an alternate currency.
 		 *
+		 * For repeated currency translations, use the CurrencyTranslator class.
+		 *
 		 * @public
 		 * @static
 		 * @param {Decimal} amount - The amount to convert.

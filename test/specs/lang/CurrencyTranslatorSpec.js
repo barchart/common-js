@@ -125,6 +125,34 @@ describe('When a CurrencyTranslator is created with ^AUDUSD and ^CADUSD', () => 
 			});
 		});
 
+		describe('and support for new ^USDJPY is added', () => {
+			beforeEach(() => {
+				translator.addSymbol('^USDJPY');
+			});
+
+			describe('existing translations should still be possible', () => {
+				it('should support translation from CAD to USD', () => {
+					expect(translator.supportsTranslation(Currency.CAD, Currency.AUD)).toEqual(true);
+				});
+			});
+
+			describe('new translations using ^USDJPY should now be possible', () => {
+				it('should not support translation from CAD to JPY', () => {
+					expect(translator.supportsTranslation(Currency.CAD, Currency.JPY)).toEqual(true);
+				});
+			});
+
+			describe('existing translations should return the same result', () => {
+				it('Direct translation of 1 CAD to USD should yield 0.7230 USD', () => {
+					expect(translator.translate(1, Currency.CAD, Currency.USD)).toBeCloseTo(0.7230, 4);
+				});
+
+				it('Indirect translation of 1 CAD to AUD should yield 1.0862 AUD', () => {
+					expect(translator.translate(1, Currency.CAD, Currency.AUD)).toBeCloseTo(1.0862, 4);
+				});
+			});
+		});
+
 		describe('and one rate changes (^AUDUSD to 0.6800)', () => {
 			beforeEach(() => {
 				translator.setRates([
