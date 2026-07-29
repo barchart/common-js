@@ -6,11 +6,7 @@ import CurrencyTranslator from './../../../lang/CurrencyTranslator.js';
 describe('When a CurrencyTranslator is created with ^AUDUSD and ^CADUSD', () => {
 	'use strict';
 
-	let translator;
-
-	beforeEach(() => {
-		translator = new CurrencyTranslator([ '^AUDUSD', '^CADUSD' ]);
-	});
+	let translator = new CurrencyTranslator([ '^AUDUSD', '^CADUSD' ]);
 
 	describe('and checking whether a translation is supported', () => {
 		it('should support translation from AUD to AUD', () => {
@@ -50,12 +46,6 @@ describe('When a CurrencyTranslator is created with ^AUDUSD and ^CADUSD', () => 
 				Rate.fromPair(0.6656, '^AUDUSD'),
 				Rate.fromPair(0.7230, '^CADUSD')
 			]);
-		});
-
-		it('clear should allow rates to be recomputed on the next translation', () => {
-			translator.setRate(Rate.fromPair(0.68, '^AUDUSD'));
-
-			expect(translator.translate(1, Currency.AUD, Currency.USD)).toBeCloseTo(0.68, 4);
 		});
 
 		describe('and translations are performed (on floats)', () => {
@@ -131,6 +121,34 @@ describe('When a CurrencyTranslator is created with ^AUDUSD and ^CADUSD', () => 
 
 			it('Indirect translation of 1 CAD to AUD should yield 1.0862 AUD', () => {
 				expect(translator.translate(new Decimal(1), Currency.CAD, Currency.AUD).toNumber()).toBeCloseTo(1.0862, 4);
+			});
+		});
+
+		describe('and support for new ^USDJPY is added', () => {
+			beforeEach(() => {
+				translator.addSymbol('^USDJPY');
+			});
+
+			describe('existing translations should still be possible', () => {
+				it('should support translation from CAD to USD', () => {
+					expect(translator.supportsTranslation(Currency.CAD, Currency.AUD)).toEqual(true);
+				});
+			});
+
+			describe('new translations using ^USDJPY should now be possible', () => {
+				it('should not support translation from CAD to JPY', () => {
+					expect(translator.supportsTranslation(Currency.CAD, Currency.JPY)).toEqual(true);
+				});
+			});
+
+			describe('existing translations should return the same result', () => {
+				it('Direct translation of 1 CAD to USD should yield 0.7230 USD', () => {
+					expect(translator.translate(1, Currency.CAD, Currency.USD)).toBeCloseTo(0.7230, 4);
+				});
+
+				it('Indirect translation of 1 CAD to AUD should yield 1.0862 AUD', () => {
+					expect(translator.translate(1, Currency.CAD, Currency.AUD)).toBeCloseTo(1.0862, 4);
+				});
 			});
 		});
 
@@ -215,11 +233,7 @@ describe('When a CurrencyTranslator is created with ^AUDUSD and ^CADUSD', () => 
 describe('When a CurrencyTranslator is created with ^AUDUSD and ^USDEUR', () => {
 	'use strict';
 
-	let translator;
-
-	beforeEach(() => {
-		translator = new CurrencyTranslator([ '^AUDUSD', '^USDEUR' ]);
-	});
+	let translator = new CurrencyTranslator([ '^AUDUSD', '^USDEUR' ]);
 
 	describe('and rates are initialized (^AUDUSD to 0.6 and ^USDEUR to 0.9)', () => {
 		beforeEach(() => {
@@ -258,3 +272,4 @@ describe('When a CurrencyTranslator is created with ^AUDUSD and ^USDEUR', () => 
 		});
 	});
 });
+

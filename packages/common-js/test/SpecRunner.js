@@ -14706,39 +14706,73 @@
 
   // lang/CurrencyTranslator.js
   var CurrencyTranslator = class {
-    #translators;
+    #configuration;
     #maps;
     /**
      * @param {string[]} symbols - Forex symbols which will be used for translations.
      */
     constructor(symbols) {
       argumentIsArray(symbols, "symbols", String);
-      this.#translators = solve(symbols);
+      this.#configuration = {};
+      this.#configuration.symbols = symbols;
       this.#maps = {};
       this.#maps.rates = /* @__PURE__ */ new Map();
       this.#maps.translation = /* @__PURE__ */ new Map();
-      this.#translators.forEach((translator) => {
-        const path = translator.path;
-        path.forEach((edge) => {
-          const from = edge.from.data;
-          const to = edge.to.data;
-          if (!this.#maps.rates.has(from)) {
-            this.#maps.rates.set(from, /* @__PURE__ */ new Map());
-          }
-          if (!this.#maps.rates.get(from).has(to)) {
-            this.#maps.rates.get(from).set(to, { edge, translators: [] });
-          }
-          this.#maps.rates.get(from).get(to).translators.push(translator);
-        });
-      });
-      this.#translators.forEach((translator) => {
-        const from = translator.from;
-        const to = translator.to;
-        if (!this.#maps.translation.has(from)) {
-          this.#maps.translation.set(from, /* @__PURE__ */ new Map());
-        }
-        this.#maps.translation.get(from).set(to, translator);
-      });
+      this.#reset();
+    }
+    /**
+     * Adds the ability to use forex symbol (rates) during translation.
+     *
+     * This is an expensive operation and should not be used frequently
+     * since it causes internal data structures which control which forex
+     * rates will be for translation to be regenerated. Whenever possible,
+     * supply all forex symbols when the instance is constructed.
+     *
+     * @public
+     * @param {string} symbol
+     */
+    addSymbol(symbol) {
+      argumentIsRequired(symbol, "symbol", String);
+      this.addSymbols([symbol]);
+    }
+    /**
+     * Adds the ability to use forex symbols (rates) during translation.
+     *
+     * This is an expensive operation and should not be used frequently
+     * since it causes internal data structures which control which forex
+     * rates will be for translation to be regenerated. Whenever possible,
+     * supply all forex symbols when the instance is constructed.
+     *
+     * @public
+     * @param {string[]} symbols
+     */
+    addSymbols(symbols) {
+      argumentIsArray(symbols, "symbols", String);
+      this.#configuration.symbols = unique([...this.#configuration.symbols, ...symbols]);
+      this.#reset();
+    }
+    /**
+     * Indicates if a translation from one currency to another is supported. That said,
+     * even if a translation is supported, it may still fail if the required rates have
+     * not been set.
+     *
+     * @public
+     * @param {Currency} current
+     * @param {Currency} desired
+     * @returns {boolean}
+     */
+    supportsTranslation(current, desired) {
+      argumentIsRequired(current, "current", Currency, "Currency");
+      argumentIsRequired(desired, "desired", Currency, "Currency");
+      if (current === desired) {
+        return true;
+      }
+      const first3 = this.#maps.translation.get(current) || null;
+      if (first3 === null) {
+        return false;
+      }
+      const second = first3.get(desired) || null;
+      return second !== null;
     }
     /**
      * Updates the calculator with new rates.
@@ -14759,8 +14793,9 @@
      */
     setRate(rate) {
       argumentIsRequired(rate, "rate", Rate, "Rate");
-      this.#updateRate(rate);
-      this.#updateRate(rate.invert());
+      if (this.#updateRate(rate, true)) {
+        this.#updateRate(rate.invert(), false);
+      }
     }
     /**
      * Performs a currency translation, using the rates previously supplied to
@@ -14780,6 +14815,103 @@
       }
       return this.#maps.translation.get(current).get(desired).translate(amount);
     }
+    #solve(symbols) {
+      const vertices = /* @__PURE__ */ new Map();
+      const getVertex = (currency, create2) => {
+        if (create2 && !vertices.has(currency)) {
+          vertices.set(currency, new Vertex(currency));
+        }
+        return vertices.get(currency) || null;
+      };
+      const graph = (currencyA, currencyB) => {
+        const vertexA = getVertex(currencyA, true);
+        const vertexB = getVertex(currencyB, true);
+        if (!vertexA.hasEdge(vertexB)) {
+          vertexA.addEdge(vertexB, { rate: null });
+        }
+      };
+      const currencies = /* @__PURE__ */ new Set();
+      symbols.forEach((symbol) => {
+        const pair = parsePair2(symbol);
+        currencies.add(pair.quote);
+        currencies.add(pair.base);
+        graph(pair.quote, pair.base);
+        graph(pair.base, pair.quote);
+      });
+      const translators = [];
+      currencies.forEach((currencyA) => {
+        currencies.forEach((currencyB) => {
+          if (currencyA === currencyB) {
+            return;
+          }
+          const vertexA = getVertex(currencyA, false);
+          const vertexB = getVertex(currencyB, false);
+          const candidates = vertexA.getPaths(vertexB);
+          if (candidates.length === 0) {
+            console.warn(`Unable to find path for [ ${currencyA.code} ] to [ ${currencyB.code} ]`);
+            return;
+          }
+          candidates.sort(pathComparator);
+          translators.push(new Translator(candidates[0]));
+        });
+      });
+      return translators;
+    }
+    #reset() {
+      const existing = [];
+      for (const first3 of this.#maps.rates) {
+        const base = first3[0];
+        const map2 = first3[1];
+        for (const second of map2) {
+          const quote = second[0];
+          const data = second[1];
+          if (data.edge.data.original) {
+            existing.push(new Rate(data.edge.data.rate, quote, base));
+          }
+        }
+      }
+      this.#maps = {};
+      ``;
+      this.#maps.rates = /* @__PURE__ */ new Map();
+      this.#maps.translation = /* @__PURE__ */ new Map();
+      const translators = this.#solve(this.#configuration.symbols);
+      translators.forEach((translator) => {
+        const path = translator.path;
+        path.forEach((edge) => {
+          const from = edge.from.data;
+          const to = edge.to.data;
+          if (!this.#maps.rates.has(from)) {
+            this.#maps.rates.set(from, /* @__PURE__ */ new Map());
+          }
+          if (!this.#maps.rates.get(from).has(to)) {
+            this.#maps.rates.get(from).set(to, { edge, translators: [] });
+          }
+          this.#maps.rates.get(from).get(to).translators.push(translator);
+        });
+      });
+      translators.forEach((translator) => {
+        const from = translator.from;
+        const to = translator.to;
+        if (!this.#maps.translation.has(from)) {
+          this.#maps.translation.set(from, /* @__PURE__ */ new Map());
+        }
+        this.#maps.translation.get(from).set(to, translator);
+      });
+      this.setRates(existing);
+    }
+    #updateRate(rate, original) {
+      const from = rate.base;
+      const to = rate.quote;
+      const data = this.#maps.rates.get(from).get(to);
+      const current = data.edge.data.rate;
+      if (current !== null && current === rate.float) {
+        return false;
+      }
+      data.edge.data.rate = rate.float;
+      data.edge.data.original = original;
+      data.translators.forEach((t) => t.clear());
+      return true;
+    }
     /**
      * Returns a string representation.
      *
@@ -14788,17 +14920,6 @@
      */
     toString() {
       return `[CurrencyTranslator]`;
-    }
-    #updateRate(rate) {
-      const from = rate.base;
-      const to = rate.quote;
-      const data = this.#maps.rates.get(from).get(to);
-      const current = data.edge.data.rate;
-      if (current !== null && current === rate.float) {
-        return;
-      }
-      data.edge.data.rate = rate.float;
-      data.translators.forEach((t) => t.clear());
     }
   };
   var pairExpression2 = /^\^?([A-Z]{3})([A-Z]{3})$/;
@@ -14812,48 +14933,6 @@
       base: Currency.parse(match[2])
     };
   });
-  var solve = (symbols) => {
-    const vertices = /* @__PURE__ */ new Map();
-    const getVertex = (currency, create2) => {
-      if (create2 && !vertices.has(currency)) {
-        vertices.set(currency, new Vertex(currency));
-      }
-      return vertices.get(currency) || null;
-    };
-    const graph = (currencyA, currencyB) => {
-      const vertexA = getVertex(currencyA, true);
-      const vertexB = getVertex(currencyB, true);
-      if (!vertexA.hasEdge(vertexB)) {
-        vertexA.addEdge(vertexB, { rate: null });
-      }
-    };
-    const currencies = /* @__PURE__ */ new Set();
-    symbols.forEach((symbol) => {
-      const pair = parsePair2(symbol);
-      currencies.add(pair.quote);
-      currencies.add(pair.base);
-      graph(pair.quote, pair.base);
-      graph(pair.base, pair.quote);
-    });
-    const translators = [];
-    currencies.forEach((currencyA) => {
-      currencies.forEach((currencyB) => {
-        if (currencyA === currencyB) {
-          return;
-        }
-        const vertexA = getVertex(currencyA, false);
-        const vertexB = getVertex(currencyB, false);
-        const candidates = vertexA.getPaths(vertexB);
-        if (candidates.length === 0) {
-          console.warn(`Unable to find path for [ ${currencyA.code} ] to [ ${currencyB.code} ]`);
-          return;
-        }
-        candidates.sort(pathComparator);
-        translators.push(new Translator(candidates[0]));
-      });
-    });
-    return translators;
-  };
   var Translator = class {
     #path;
     #factors;
@@ -14944,9 +15023,26 @@
   // test/specs/lang/CurrencyTranslatorSpec.js
   describe("When a CurrencyTranslator is created with ^AUDUSD and ^CADUSD", () => {
     "use strict";
-    let translator;
-    beforeEach(() => {
-      translator = new CurrencyTranslator(["^AUDUSD", "^CADUSD"]);
+    let translator = new CurrencyTranslator(["^AUDUSD", "^CADUSD"]);
+    describe("and checking whether a translation is supported", () => {
+      it("should support translation from AUD to AUD", () => {
+        expect(translator.supportsTranslation(Currency.AUD, Currency.AUD)).toEqual(true);
+      });
+      it("should support translation from AUD to USD", () => {
+        expect(translator.supportsTranslation(Currency.AUD, Currency.USD)).toEqual(true);
+      });
+      it("should support translation from USD to AUD", () => {
+        expect(translator.supportsTranslation(Currency.USD, Currency.AUD)).toEqual(true);
+      });
+      it("should support translation from AUD to CAD", () => {
+        expect(translator.supportsTranslation(Currency.AUD, Currency.CAD)).toEqual(true);
+      });
+      it("should support translation from CAD to USD", () => {
+        expect(translator.supportsTranslation(Currency.CAD, Currency.AUD)).toEqual(true);
+      });
+      it("should not support translation from CAD to JPY", () => {
+        expect(translator.supportsTranslation(Currency.CAD, Currency.JPY)).toEqual(false);
+      });
     });
     describe("and translations are performed before rates are initialized", () => {
       it("Direct translation of 0 AUD to USD should yield 0 USD", () => {
@@ -14959,10 +15055,6 @@
           Rate.fromPair(0.6656, "^AUDUSD"),
           Rate.fromPair(0.723, "^CADUSD")
         ]);
-      });
-      it("clear should allow rates to be recomputed on the next translation", () => {
-        translator.setRate(Rate.fromPair(0.68, "^AUDUSD"));
-        expect(translator.translate(1, Currency.AUD, Currency.USD)).toBeCloseTo(0.68, 4);
       });
       describe("and translations are performed (on floats)", () => {
         it("Direct translation of of a float should return a float", () => {
@@ -15020,6 +15112,29 @@
         });
         it("Indirect translation of 1 CAD to AUD should yield 1.0862 AUD", () => {
           expect(translator.translate(new Decimal(1), Currency.CAD, Currency.AUD).toNumber()).toBeCloseTo(1.0862, 4);
+        });
+      });
+      describe("and support for new ^USDJPY is added", () => {
+        beforeEach(() => {
+          translator.addSymbol("^USDJPY");
+        });
+        describe("existing translations should still be possible", () => {
+          it("should support translation from CAD to USD", () => {
+            expect(translator.supportsTranslation(Currency.CAD, Currency.AUD)).toEqual(true);
+          });
+        });
+        describe("new translations using ^USDJPY should now be possible", () => {
+          it("should not support translation from CAD to JPY", () => {
+            expect(translator.supportsTranslation(Currency.CAD, Currency.JPY)).toEqual(true);
+          });
+        });
+        describe("existing translations should return the same result", () => {
+          it("Direct translation of 1 CAD to USD should yield 0.7230 USD", () => {
+            expect(translator.translate(1, Currency.CAD, Currency.USD)).toBeCloseTo(0.723, 4);
+          });
+          it("Indirect translation of 1 CAD to AUD should yield 1.0862 AUD", () => {
+            expect(translator.translate(1, Currency.CAD, Currency.AUD)).toBeCloseTo(1.0862, 4);
+          });
         });
       });
       describe("and one rate changes (^AUDUSD to 0.6800)", () => {
@@ -15085,10 +15200,7 @@
   });
   describe("When a CurrencyTranslator is created with ^AUDUSD and ^USDEUR", () => {
     "use strict";
-    let translator;
-    beforeEach(() => {
-      translator = new CurrencyTranslator(["^AUDUSD", "^USDEUR"]);
-    });
+    let translator = new CurrencyTranslator(["^AUDUSD", "^USDEUR"]);
     describe("and rates are initialized (^AUDUSD to 0.6 and ^USDEUR to 0.9)", () => {
       beforeEach(() => {
         translator.setRates([

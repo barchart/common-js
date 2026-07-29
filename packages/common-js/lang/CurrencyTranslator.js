@@ -20,7 +20,8 @@ import Vertex from './../collections/graph/Vertex.js';
  * @public
  */
 export default class CurrencyTranslator {
-	#translators;
+	#configuration;
+
 	#maps;
 
 	/**
@@ -29,42 +30,51 @@ export default class CurrencyTranslator {
 	constructor(symbols) {
 		assert.argumentIsArray(symbols, 'symbols', String);
 
-		this.#translators = solve(symbols);
+		this.#configuration = { };
+		this.#configuration.symbols = symbols;
 
 		this.#maps = { };
 
 		this.#maps.rates = new Map();
 		this.#maps.translation = new Map();
 
-		this.#translators.forEach((translator) => {
-			const path = translator.path;
+		this.#reset();
+	}
 
-			path.forEach((edge) => {
-				const from = edge.from.data;
-				const to = edge.to.data;
+	/**
+	 * Adds the ability to use forex symbol (rates) during translation.
+	 *
+	 * This is an expensive operation and should not be used frequently
+	 * since it causes internal data structures which control which forex
+	 * rates will be for translation to be regenerated. Whenever possible,
+	 * supply all forex symbols when the instance is constructed.
+	 *
+	 * @public
+	 * @param {string} symbol
+	 */
+	addSymbol(symbol) {
+		assert.argumentIsRequired(symbol, 'symbol', String);
 
-				if (!this.#maps.rates.has(from)) {
-					this.#maps.rates.set(from, new Map());
-				}
+		this.addSymbols([ symbol ]);
+	}
 
-				if (!this.#maps.rates.get(from).has(to)) {
-					this.#maps.rates.get(from).set(to, { edge: edge, translators: [ ] });
-				}
+	/**
+	 * Adds the ability to use forex symbols (rates) during translation.
+	 *
+	 * This is an expensive operation and should not be used frequently
+	 * since it causes internal data structures which control which forex
+	 * rates will be for translation to be regenerated. Whenever possible,
+	 * supply all forex symbols when the instance is constructed.
+	 *
+	 * @public
+	 * @param {string[]} symbols
+	 */
+	addSymbols(symbols) {
+		assert.argumentIsArray(symbols, 'symbols', String);
 
-				this.#maps.rates.get(from).get(to).translators.push(translator);
-			});
-		});
+		this.#configuration.symbols = array.unique([ ...this.#configuration.symbols, ...symbols ]);
 
-		this.#translators.forEach((translator) => {
-			const from = translator.from;
-			const to = translator.to;
-
-			if (!this.#maps.translation.has(from)) {
-				this.#maps.translation.set(from, new Map());
-			}
-
-			this.#maps.translation.get(from).set(to, translator);
-		});
+		this.#reset();
 	}
 
 	/**
@@ -117,8 +127,9 @@ export default class CurrencyTranslator {
 	setRate(rate) {
 		assert.argumentIsRequired(rate, 'rate', Rate, 'Rate');
 
-		this.#updateRate(rate);
-		this.#updateRate(rate.invert());
+		if (this.#updateRate(rate, true)) {
+			this.#updateRate(rate.invert(), false);
+		}
 	}
 
 	/**
@@ -142,17 +153,124 @@ export default class CurrencyTranslator {
 		return this.#maps.translation.get(current).get(desired).translate(amount);
 	}
 
-	/**
-	 * Returns a string representation.
-	 *
-	 * @public
-	 * @returns {string}
-	 */
-	toString() {
-		return `[CurrencyTranslator]`;
+	#solve(symbols) {
+		const vertices = new Map();
+
+		const getVertex = (currency, create) => {
+			if (create && !vertices.has(currency)) {
+				vertices.set(currency, new Vertex(currency));
+			}
+
+			return vertices.get(currency) || null;
+		};
+
+		const graph = (currencyA, currencyB) => {
+			const vertexA = getVertex(currencyA, true);
+			const vertexB = getVertex(currencyB, true);
+
+			if (!vertexA.hasEdge(vertexB)) {
+				vertexA.addEdge(vertexB, { rate: null });
+			}
+		};
+
+		const currencies = new Set();
+
+		symbols.forEach((symbol) => {
+			const pair = parsePair(symbol);
+
+			currencies.add(pair.quote);
+			currencies.add(pair.base);
+
+			graph(pair.quote, pair.base);
+			graph(pair.base, pair.quote);
+		});
+
+		const translators = [ ];
+
+		currencies.forEach((currencyA) => {
+			currencies.forEach((currencyB) => {
+				if (currencyA === currencyB) {
+					return;
+				}
+
+				const vertexA = getVertex(currencyA, false);
+				const vertexB = getVertex(currencyB, false);
+
+				const candidates = vertexA.getPaths(vertexB);
+
+				if (candidates.length === 0) {
+					console.warn(`Unable to find path for [ ${currencyA.code} ] to [ ${currencyB.code} ]`);
+
+					return;
+				}
+
+				candidates.sort(pathComparator);
+
+				translators.push(new Translator(candidates[0]));
+			});
+		});
+
+		return translators;
 	}
 
-	#updateRate(rate) {
+	#reset() {
+		const existing = [ ];
+
+		for (const first of this.#maps.rates) {
+			const base = first[0];
+			const map = first[1];
+
+			for (const second of map) {
+				const quote = second[0];
+				const data = second[1];
+
+				if (data.edge.data.original) {
+					existing.push(new Rate(data.edge.data.rate, quote, base));
+				}
+			}
+		}
+
+		this.#maps = { };
+		``
+		this.#maps.rates = new Map();
+		this.#maps.translation = new Map();
+
+		const translators = this.#solve(this.#configuration.symbols);
+
+		translators.forEach((translator) => {
+			const path = translator.path;
+
+			path.forEach((edge) => {
+				const from = edge.from.data;
+				const to = edge.to.data;
+
+				if (!this.#maps.rates.has(from)) {
+					this.#maps.rates.set(from, new Map());
+				}
+
+				if (!this.#maps.rates.get(from).has(to)) {
+					this.#maps.rates.get(from).set(to, { edge: edge, translators: [ ] });
+				}
+
+				this.#maps.rates.get(from).get(to).translators.push(translator);
+			});
+		});
+
+		translators.forEach((translator) => {
+			const from = translator.from;
+			const to = translator.to;
+
+			if (!this.#maps.translation.has(from)) {
+				this.#maps.translation.set(from, new Map());
+			}
+
+			this.#maps.translation.get(from).set(to, translator);
+		});
+
+		this.setRates(existing);
+	}
+
+	#updateRate(rate, original) {
 		const from = rate.base;
 		const to = rate.quote;
 
@@ -161,12 +279,25 @@ export default class CurrencyTranslator {
 		const current = data.edge.data.rate;
 
 		if (current !== null && current === rate.float) {
-			return;
+			return false;
 		}
 
 		data.edge.data.rate = rate.float;
+		data.edge.data.original = original;
 
 		data.translators.forEach(t => t.clear());
+
+		return true;
+	}
+
+	/**
+	 * Returns a string representation.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
+	toString() {
+		return `[CurrencyTranslator]`;
 	}
 }
 
@@ -184,66 +315,6 @@ const parsePair = memoize.simple((symbol) => {
 		base: Currency.parse(match[2])
 	};
 });
-
-const solve = (symbols) => {
-	const vertices = new Map();
-
-	const getVertex = (currency, create) => {
-		if (create && !vertices.has(currency)) {
-			vertices.set(currency, new Vertex(currency));
-		}
-
-		return vertices.get(currency) || null;
-	};
-
-	const graph = (currencyA, currencyB) => {
-		const vertexA = getVertex(currencyA, true);
-		const vertexB = getVertex(currencyB, true);
-
-		if (!vertexA.hasEdge(vertexB)) {
-			vertexA.addEdge(vertexB, { rate: null });
-		}
-	};
-
-	const currencies = new Set();
-
-	symbols.forEach((symbol) => {
-		const pair = parsePair(symbol);
-
-		currencies.add(pair.quote);
-		currencies.add(pair.base);
-
-		graph(pair.quote, pair.base);
-		graph(pair.base, pair.quote);
-	});
-
-	const translators = [ ];
-
-	currencies.forEach((currencyA) => {
-		currencies.forEach((currencyB) => {
-			if (currencyA === currencyB) {
-				return;
-			}
-
-			const vertexA = getVertex(currencyA, false);
-			const vertexB = getVertex(currencyB, false);
-
-			const candidates = vertexA.getPaths(vertexB);
-
-			if (candidates.length === 0) {
-				console.warn(`Unable to find path for [ ${currencyA.code} ] to [ ${currencyB.code} ]`);
-
-				return;
-			}
-
-			candidates.sort(pathComparator);
-
-			translators.push(new Translator(candidates[0]));
-		});
-	});
-
-	return translators;
-};
 
 /**
  * Translates values from a source currency to values in another currency.
