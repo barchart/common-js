@@ -1,0 +1,14 @@
+.idea
+.releases
+example
+test
+node_modules
+
+.DS_Store
+.gitignore
+eslint.config.js
+jasmine.json
+npm-debug.log
+tsconfig.editor.json
+tsconfig.types.json
+types/eslint.config.d.ts

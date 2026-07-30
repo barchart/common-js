@@ -4209,6 +4209,7 @@
   var isReactNative = (formData) => formData && typeof formData.getParts !== "undefined";
   var isBlob = kindOfTest("Blob");
   var isFileList = kindOfTest("FileList");
+  var isSet = kindOfTest("Set");
   var isStream = (val) => isObject(val) && isFunction(val.pipe);
   function getGlobal() {
     if (typeof globalThis !== "undefined") return globalThis;
@@ -4504,11 +4505,20 @@
         }
         if (!("toJSON" in source)) {
           visited.add(source);
-          const target = isArray(source) ? [] : {};
-          forEach(source, (value, key) => {
-            const reducedValue = visit(value);
-            !isUndefined(reducedValue) && (target[key] = reducedValue);
-          });
+          let target;
+          if (isSet(source)) {
+            target = [];
+            for (const value of source) {
+              const reducedValue = visit(value);
+              !isUndefined(reducedValue) && target.push(reducedValue);
+            }
+          } else {
+            target = isArray(source) ? [] : {};
+            forEach(source, (value, key) => {
+              const reducedValue = visit(value);
+              !isUndefined(reducedValue) && (target[key] = reducedValue);
+            });
+          }
           visited.delete(source);
           return target;
         }
@@ -4637,17 +4647,18 @@
       i = line.indexOf(":");
       key = line.substring(0, i).trim().toLowerCase();
       val = line.substring(i + 1).trim();
-      if (!key || parsed[key] && ignoreDuplicateOf[key]) {
+      const hasKey = utils_default.hasOwnProp(parsed, key);
+      if (!key || hasKey && utils_default.hasOwnProp(ignoreDuplicateOf, key)) {
         return;
       }
       if (key === "set-cookie") {
-        if (parsed[key]) {
+        if (hasKey) {
           parsed[key].push(val);
         } else {
           parsed[key] = [val];
         }
       } else {
-        parsed[key] = parsed[key] ? parsed[key] + ", " + val : val;
+        parsed[key] = hasKey ? parsed[key] + ", " + val : val;
       }
     });
     return parsed;
@@ -4710,6 +4721,90 @@
       tokens[match[1]] = match[2];
     }
     return tokens;
+  }
+  var parameterNameRE = /^[!#$%&'*+\-.^_`|~0-9A-Za-z]+$/;
+  function trimOWS(value) {
+    let start = 0;
+    let end = value.length;
+    while (start < end) {
+      const code = value.charCodeAt(start);
+      if (code !== 9 && code !== 32) {
+        break;
+      }
+      start += 1;
+    }
+    while (end > start) {
+      const code = value.charCodeAt(end - 1);
+      if (code !== 9 && code !== 32) {
+        break;
+      }
+      end -= 1;
+    }
+    return start === 0 && end === value.length ? value : value.slice(start, end);
+  }
+  function decodeQuotedString(value) {
+    const last3 = value.length - 1;
+    if (last3 < 1 || value.charCodeAt(0) !== 34 || value.charCodeAt(last3) !== 34) {
+      return value;
+    }
+    let decoded = "";
+    for (let i = 1; i < last3; i++) {
+      const code = value.charCodeAt(i);
+      if (code === 34) {
+        return value;
+      }
+      if (code === 92) {
+        i += 1;
+        if (i >= last3) {
+          return value;
+        }
+      }
+      decoded += value[i];
+    }
+    return decoded;
+  }
+  function parseParameters(value) {
+    const parameters = /* @__PURE__ */ Object.create(null);
+    const str = String(value);
+    let start = 0;
+    let quoted = false;
+    let escaped = false;
+    function parseParameter(end) {
+      const part = trimOWS(str.slice(start, end));
+      const equals2 = part.indexOf("=");
+      if (equals2 < 1) {
+        return;
+      }
+      const name = trimOWS(part.slice(0, equals2));
+      if (!parameterNameRE.test(name)) {
+        return;
+      }
+      const normalizedName = name.toLowerCase();
+      if (normalizedName === "__proto__" || normalizedName === "constructor" || normalizedName === "prototype") {
+        return;
+      }
+      const parameterValue = trimOWS(part.slice(equals2 + 1));
+      parameters[normalizedName] = decodeQuotedString(parameterValue);
+    }
+    for (let i = 0; i < str.length; i++) {
+      const code = str.charCodeAt(i);
+      if (quoted) {
+        if (escaped) {
+          escaped = false;
+        } else if (code === 92) {
+          escaped = true;
+        } else if (code === 34) {
+          quoted = false;
+        }
+      } else if (code === 34) {
+        quoted = true;
+      } else if (code === 44 || code === 59) {
+        parseParameter(i);
+        start = i + 1;
+      }
+    }
+    parseParameter(str.length);
+    return parameters;
   }
   var isValidHeaderName = (str) => /^[-_a-zA-Z0-9^`|~,!#$%&'*+.]+$/.test(str.trim());
   function matchHeaderValue(context, value, header, filter2, isHeaderNameFilter) {
@@ -4886,13 +4981,17 @@
       return Object.entries(this.toJSON()).map(([header, value]) => header + ": " + value).join("\n");
     }
     getSetCookie() {
-      return this.get("set-cookie") || [];
+      const value = this.get("set-cookie");
+      return utils_default.isArray(value) ? value : value == null || value === false ? [] : [value];
     }
     get [Symbol.toStringTag]() {
       return "AxiosHeaders";
     }
     static from(thing) {
       return thing instanceof this ? thing : new this(thing);
+    }
+    static parseParameters(value) {
+      return parseParameters(value);
     }
     static concat(first3, ...targets) {
       const computed = new this(first3);
@@ -4989,9 +5088,30 @@
     };
     return visit(config);
   }
+  function stringifySafely(value) {
+    try {
+      return String(value);
+    } catch (err) {
+      return "";
+    }
+  }
+  function aggregateErrorMessage(error) {
+    const message = error.errors.map((entry) => {
+      try {
+        return entry && entry.message ? stringifySafely(entry.message) : stringifySafely(entry);
+      } catch (err) {
+        return "";
+      }
+    }).filter(Boolean).join("; ");
+    return message || error.name || "AggregateError";
+  }
   var AxiosError = class _AxiosError extends Error {
     static from(error, code, config, request, response, customProps) {
-      const axiosError = new _AxiosError(error.message, code || error.code, config, request, response);
+      let message = error.message;
+      if (!message && utils_default.isArray(error.errors) && error.errors.length) {
+        message = aggregateErrorMessage(error);
+      }
+      const axiosError = new _AxiosError(message, code || error.code, config, request, response);
       Object.defineProperty(axiosError, "cause", {
         __proto__: null,
         value: error,
@@ -5144,8 +5264,8 @@
         if (useBlob && typeof _Blob === "function") {
           return new _Blob([value]);
         }
-        if (typeof Buffer !== "undefined") {
-          return Buffer.from(value);
+        if (null_default && null_default.isBufferAvailable()) {
+          return null_default.from(value);
         }
         throw new AxiosError_default("Blob is not supported. Use a Buffer instead.", AxiosError_default.ERR_NOT_SUPPORT);
       }
@@ -5437,7 +5557,7 @@
   }
   function parsePropPath(name) {
     const path = [];
-    const pattern = /\w+|\[(\w*)]/g;
+    const pattern = /[^.[\]]+|\[([^.[\]]*)]/g;
     let match;
     while ((match = pattern.exec(name)) !== null) {
       throwIfDepthExceeded(path.length);
@@ -5495,7 +5615,7 @@
 
   // ../../node_modules/axios/lib/defaults/index.js
   var own = (obj, key) => obj != null && utils_default.hasOwnProp(obj, key) ? obj[key] : void 0;
-  function stringifySafely(rawValue, parser, encoder) {
+  function stringifySafely2(rawValue, parser, encoder) {
     if (utils_default.isString(rawValue)) {
       try {
         (parser || JSON.parse)(rawValue);
@@ -5551,7 +5671,7 @@
         }
         if (isObjectPayload || hasJSONContentType) {
           headers.setContentType("application/json", false);
-          return stringifySafely(data);
+          return stringifySafely2(data);
         }
         return data;
       }
@@ -5750,7 +5870,7 @@
       }
       const rawLoaded = e.loaded;
       const total = e.lengthComputable ? e.total : void 0;
-      const loaded = total != null ? Math.min(rawLoaded, total) : rawLoaded;
+      const loaded = Math.max(0, total != null ? Math.min(rawLoaded, total) : rawLoaded);
       const progressBytes = Math.max(0, loaded - bytesNotified);
       const rate = _speedometer(progressBytes);
       bytesNotified = Math.max(bytesNotified, loaded);
@@ -5779,7 +5899,7 @@
       throttled[1]
     ];
   };
-  var asyncDecorator = (fn2) => (...args) => utils_default.asap(() => fn2(...args));
+  var asyncDecorator = (fn2, scheduler = utils_default.asap) => (...args) => scheduler(() => fn2(...args));
 
   // ../../node_modules/axios/lib/helpers/isURLSameOrigin.js
   var isURLSameOrigin_default = platform_default.hasStandardBrowserEnv ? /* @__PURE__ */ ((origin2, isMSIE) => (url) => {
@@ -5857,7 +5977,14 @@
 
   // ../../node_modules/axios/lib/helpers/combineURLs.js
   function combineURLs(baseURL, relativeURL) {
-    return relativeURL ? baseURL.replace(/\/?\/$/, "") + "/" + relativeURL.replace(/^\/+/, "") : baseURL;
+    if (!relativeURL) {
+      return baseURL;
+    }
+    let end = baseURL.length;
+    while (end > 0 && baseURL.charCodeAt(end - 1) === 47) {
+      end--;
+    }
+    return baseURL.slice(0, end) + "/" + relativeURL.replace(/^\/+/, "");
   }
 
   // ../../node_modules/axios/lib/core/buildFullPath.js
@@ -5873,13 +6000,37 @@
   function normalizeURLForProtocolCheck(url) {
     return stripLeadingC0ControlOrSpace(url).replace(httpProtocolControlCharacters, "");
   }
+  function redactFragment(fragment) {
+    if (!fragment) {
+      return fragment;
+    }
+    return fragment.replace(/(^|&)([^=&]*=)?[^&]+/g, (match, separator, parameterName = "") => {
+      return `${separator}${parameterName}${REDACTED}`;
+    });
+  }
+  function redactSensitiveURLParts(url) {
+    const redactedURL = url.replace(/^(https?:\/{0,2})[^/?#]*@/i, `$1${REDACTED}@`);
+    const fragmentIndex = redactedURL.indexOf("#");
+    const urlWithoutFragment = fragmentIndex === -1 ? redactedURL : redactedURL.slice(0, fragmentIndex);
+    const redactedURLWithoutFragment = urlWithoutFragment.replace(
+      /([?&][^=&#]*=)[^&#]*/g,
+      `$1${REDACTED}`
+    );
+    if (fragmentIndex === -1) {
+      return redactedURLWithoutFragment;
+    }
+    return `${redactedURLWithoutFragment}#${redactFragment(redactedURL.slice(fragmentIndex + 1))}`;
+  }
   function assertValidHttpProtocolURL(url, config) {
-    if (typeof url === "string" && malformedHttpProtocol.test(normalizeURLForProtocolCheck(url))) {
-      throw new AxiosError_default(
-        'Invalid URL: missing "//" after protocol',
-        AxiosError_default.ERR_INVALID_URL,
-        config
-      );
+    if (typeof url === "string") {
+      const normalizedURL = normalizeURLForProtocolCheck(url);
+      if (malformedHttpProtocol.test(normalizedURL)) {
+        throw new AxiosError_default(
+          `Invalid URL ${JSON.stringify(redactSensitiveURLParts(normalizedURL))}: missing "//" after protocol`,
+          AxiosError_default.ERR_INVALID_URL,
+          config
+        );
+      }
     }
   }
   function buildFullPath(baseURL, requestedURL, allowAbsoluteUrls, config) {
@@ -5894,6 +6045,16 @@
 
   // ../../node_modules/axios/lib/core/mergeConfig.js
   var headersToObject = (thing) => thing instanceof AxiosHeaders_default ? { ...thing } : thing;
+  var ownEnumerableKeys = (thing) => {
+    if (Object.getOwnPropertySymbols && Object.getOwnPropertyDescriptor) {
+      return Object.keys(thing).concat(
+        Object.getOwnPropertySymbols(thing).filter(
+          (symbol) => Object.getOwnPropertyDescriptor(thing, symbol).enumerable
+        )
+      );
+    }
+    return Object.keys(thing);
+  };
   function mergeConfig(config1, config2) {
     config1 = config1 || {};
     config2 = config2 || {};
@@ -5992,7 +6153,7 @@
       validateStatus: mergeDirectKeys,
       headers: (a, b, prop) => mergeDeepProperties(headersToObject(a), headersToObject(b), prop, true)
     };
-    utils_default.forEach(Object.keys({ ...config1, ...config2 }), function computeConfigValue(prop) {
+    utils_default.forEach(ownEnumerableKeys({ ...config1, ...config2 }), function computeConfigValue(prop) {
       if (prop === "__proto__" || prop === "constructor" || prop === "prototype") return;
       const merge3 = utils_default.hasOwnProp(mergeMap, prop) ? mergeMap[prop] : mergeDeepProperties;
       const a = utils_default.hasOwnProp(config1, prop) ? config1[prop] : void 0;
@@ -6010,7 +6171,7 @@
     return config;
   }
 
-  // ../../node_modules/axios/lib/helpers/resolveConfig.js
+  // ../../node_modules/axios/lib/core/setFormDataHeaders.js
   var FORM_DATA_CONTENT_HEADERS = ["content-type", "content-length"];
   function setFormDataHeaders(headers, formHeaders, policy) {
     if (policy !== "content-only") {
@@ -6023,6 +6184,8 @@
       }
     });
   }
+
+  // ../../node_modules/axios/lib/helpers/resolveConfig.js
   var encodeUTF8 = (str) => encodeURIComponent(str).replace(
     /%([0-9A-F]{2})/gi,
     (_, hex) => String.fromCharCode(parseInt(hex, 16))
@@ -6260,7 +6423,16 @@
       });
       signals = null;
     };
-    signals.forEach((signal2) => signal2.addEventListener("abort", onabort, { once: true }));
+    signals.forEach((signal2) => {
+      if (aborted) {
+        return;
+      }
+      if (signal2.aborted) {
+        onabort.call(signal2);
+        return;
+      }
+      signal2.addEventListener("abort", onabort, { once: true });
+    });
     const { signal } = controller;
     signal.unsubscribe = () => utils_default.asap(unsubscribe);
     return signal;
@@ -6350,7 +6522,61 @@
   // ../../node_modules/axios/lib/helpers/estimateDataURLDecodedBytes.js
   var isHexDigit = (charCode) => charCode >= 48 && charCode <= 57 || charCode >= 65 && charCode <= 70 || charCode >= 97 && charCode <= 102;
   var isPercentEncodedByte = (str, i, len) => i + 2 < len && isHexDigit(str.charCodeAt(i + 1)) && isHexDigit(str.charCodeAt(i + 2));
-  function estimateDataURLDecodedBytes(url) {
+  var hexValue = (charCode) => charCode <= 57 ? charCode - 48 : (charCode & 223) - 55;
+  var isBase64Char = (charCode) => charCode >= 65 && charCode <= 90 || // A-Z
+  charCode >= 97 && charCode <= 122 || // a-z
+  charCode >= 48 && charCode <= 57 || // 0-9
+  charCode === 43 || // +
+  charCode === 47 || // /
+  charCode === 45 || // - (base64url)
+  charCode === 95;
+  var isBase64Whitespace = (charCode) => charCode === 9 || charCode === 10 || charCode === 12 || charCode === 13 || charCode === 32;
+  var base64Bytes = (significant) => {
+    const groups = Math.floor(significant / 4);
+    const remainder = significant % 4;
+    return groups * 3 + (remainder === 2 ? 1 : remainder === 3 ? 2 : 0);
+  };
+  var estimateBase64BufferAllocation = (body) => {
+    const len = body.length;
+    let padding = 0;
+    if (len > 0 && body.charCodeAt(len - 1) === 61) {
+      padding++;
+      if (len > 1 && body.charCodeAt(len - 2) === 61) {
+        padding++;
+      }
+    }
+    return Math.floor((len - padding) * 3 / 4);
+  };
+  var estimatePercentDecodedBase64Bytes = (body) => {
+    const len = body.length;
+    let significant = 0;
+    let padding = 0;
+    let invalid = false;
+    for (let i = 0; i < len; i++) {
+      let code = body.charCodeAt(i);
+      if (code === 37 && isPercentEncodedByte(body, i, len)) {
+        code = hexValue(body.charCodeAt(i + 1)) * 16 + hexValue(body.charCodeAt(i + 2));
+        i += 2;
+      }
+      if (isBase64Whitespace(code)) {
+        continue;
+      }
+      if (code === 61) {
+        padding++;
+        continue;
+      }
+      if (!isBase64Char(code) || padding > 0) {
+        invalid = true;
+        continue;
+      }
+      significant++;
+    }
+    if (invalid || padding > 2 || padding > 0 && (significant + padding) % 4 !== 0 || significant % 4 === 1) {
+      return estimateBase64BufferAllocation(body);
+    }
+    return base64Bytes(significant);
+  };
+  var estimateDataURLBytes = (url, estimateBase64) => {
     if (!url || typeof url !== "string") return 0;
     if (!url.startsWith("data:")) return 0;
     const comma = url.indexOf(",");
@@ -6359,43 +6585,7 @@
     const body = url.slice(comma + 1);
     const isBase64 = /;base64/i.test(meta);
     if (isBase64) {
-      let effectiveLen = body.length;
-      const len = body.length;
-      for (let i = 0; i < len; i++) {
-        if (body.charCodeAt(i) === 37 && i + 2 < len) {
-          const a = body.charCodeAt(i + 1);
-          const b = body.charCodeAt(i + 2);
-          const isHex = isHexDigit(a) && isHexDigit(b);
-          if (isHex) {
-            effectiveLen -= 2;
-            i += 2;
-          }
-        }
-      }
-      let pad = 0;
-      let idx = len - 1;
-      const tailIsPct3D = (j) => j >= 2 && body.charCodeAt(j - 2) === 37 && // '%'
-      body.charCodeAt(j - 1) === 51 && // '3'
-      (body.charCodeAt(j) === 68 || body.charCodeAt(j) === 100);
-      if (idx >= 0) {
-        if (body.charCodeAt(idx) === 61) {
-          pad++;
-          idx--;
-        } else if (tailIsPct3D(idx)) {
-          pad++;
-          idx -= 3;
-        }
-      }
-      if (pad === 1 && idx >= 0) {
-        if (body.charCodeAt(idx) === 61) {
-          pad++;
-        } else if (tailIsPct3D(idx)) {
-          pad++;
-        }
-      }
-      const groups = Math.floor(effectiveLen / 4);
-      const bytes2 = groups * 3 - (pad || 0);
-      return bytes2 > 0 ? bytes2 : 0;
+      return estimateBase64(body);
     }
     let bytes = 0;
     for (let i = 0, len = body.length; i < len; i++) {
@@ -6420,10 +6610,17 @@
       }
     }
     return bytes;
+  };
+  function estimateDataURLDecodedBytes(url) {
+    const fragmentIndex = typeof url === "string" ? url.indexOf("#") : -1;
+    return estimateDataURLBytes(
+      fragmentIndex === -1 ? url : url.slice(0, fragmentIndex),
+      estimatePercentDecodedBase64Bytes
+    );
   }
 
   // ../../node_modules/axios/lib/env/data.js
-  var VERSION = "1.18.1";
+  var VERSION = "1.19.0";
 
   // ../../node_modules/axios/lib/adapters/fetch.js
   var DEFAULT_CHUNK_SIZE = 64 * 1024;
@@ -7172,16 +7369,31 @@
         const onFulfilled = requestInterceptorChain[i++];
         const onRejected = requestInterceptorChain[i++];
         try {
-          newConfig = onFulfilled(newConfig);
+          newConfig = onFulfilled ? onFulfilled(newConfig) : newConfig;
         } catch (error) {
-          onRejected.call(this, error);
+          if (!onRejected) {
+            promise = Promise.reject(error);
+            break;
+          }
+          try {
+            const rejectedResult = onRejected.call(this, error);
+            if (utils_default.isThenable(rejectedResult)) {
+              promise = Promise.resolve(rejectedResult).then(
+                () => dispatchRequest.call(this, newConfig)
+              );
+            }
+          } catch (rejectedError) {
+            promise = Promise.reject(rejectedError);
+          }
           break;
         }
       }
-      try {
-        promise = dispatchRequest.call(this, newConfig);
-      } catch (error) {
-        return Promise.reject(error);
+      if (!promise) {
+        try {
+          promise = dispatchRequest.call(this, newConfig);
+        } catch (error) {
+          promise = Promise.reject(error);
+        }
       }
       i = 0;
       len = responseInterceptorChain.length;
@@ -7404,6 +7616,7 @@
     LoopDetected: 508,
     NotExtended: 510,
     NetworkAuthenticationRequired: 511,
+    WebServerReturnsAnUnknownError: 520,
     WebServerIsDown: 521,
     ConnectionTimedOut: 522,
     OriginIsUnreachable: 523,

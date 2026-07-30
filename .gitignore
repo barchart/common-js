@@ -2,6 +2,8 @@
 node_modules
 packages/common-js/types/
 packages/common-js/dist/
+packages/common-market-js/types/
+packages/common-market-js/dist/
 packages/common-node-js/types/
 packages/common-node-js/dist/
 

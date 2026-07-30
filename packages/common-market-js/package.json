@@ -1,0 +1,72 @@
+{
+  "name": "@barchart/common-market-js",
+  "version": "5.3.0",
+  "type": "module",
+  "exports": {
+    "./*": {
+      "types": "./types/*.d.ts",
+      "import": "./*.js",
+      "require": "./dist/cjs/*.js"
+    },
+    "./*.js": {
+      "types": "./types/*.d.ts",
+      "import": "./*.js",
+      "require": "./dist/cjs/*.js"
+    }
+  },
+  "description": "Common classes, utilities, and functions for working with market data",
+  "author": {
+    "name": "Bryan Ingle",
+    "email": "bryan.ingle@barchart.com",
+    "url": "https://www.barchart.com"
+  },
+  "contributors": [
+    {
+      "name": "Luka Sotra",
+      "email": "luka.sotra@barchart.com",
+      "url": "https://www.barchart.com"
+    }
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "build:cjs": "node ../../tools/build-cjs.mjs",
+    "build:test-bundle": "node ../../tools/build-test-bundle.mjs",
+    "lint": "eslint .",
+    "prepack": "yarn types && yarn build:cjs",
+    "publish:npm": "npm publish",
+    "test": "yarn build:test-bundle && jasmine --config=jasmine.json",
+    "types": "tsc -p tsconfig.types.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/barchart/barchart-common-js.git"
+  },
+  "keywords": [
+    "Barchart",
+    "Market Data",
+    "Symbols",
+    "Utilities",
+    "JavaScript",
+    "Node.js",
+    "Browser"
+  ],
+  "dependencies": {
+    "@barchart/common-js": "^5.3.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.1",
+    "globals": "^14.0.0",
+    "jasmine": "^6.2.0",
+    "typescript": "^5.9.3"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/barchart/barchart-common-js/issues"
+  },
+  "homepage": "https://github.com/barchart/barchart-common-js#readme",
+  "directories": {
+    "test": "test"
+  }
+}
