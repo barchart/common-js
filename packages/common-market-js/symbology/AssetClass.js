@@ -46,7 +46,7 @@ export default class AssetClass extends Enum {
 	 * @returns {AssetClass|null}
 	 */
 	static parse(code) {
-		return /** @type {AssetClass|null} */ (Enum.fromCode(AssetClass, code));
+		return Enum.fromCode(AssetClass, code);
 	}
 
 	/**
@@ -58,35 +58,71 @@ export default class AssetClass extends Enum {
 	 * @returns {AssetClass|null}
 	 */
 	static fromId(id) {
-		return /** @type {AssetClass|null} */ (Enum.getItems(AssetClass).find(x => x.id === id) || null);
+		return Enum.getItems(AssetClass).find(x => x.id === id) || null;
 	}
 
-	/** @returns {AssetClass} */
+	/**
+	 * A stock.
+	 *
+	 * @public
+	 * @static
+	 * @returns {AssetClass}
+	 */
 	static get STOCK() {
 		return STOCK;
 	}
 
-	/** @returns {AssetClass} */
+	/**
+	 * A stock option.
+	 *
+	 * @public
+	 * @static
+	 * @returns {AssetClass}
+	 */
 	static get STOCK_OPTION() {
 		return STOCK_OPTION;
 	}
 
-	/** @returns {AssetClass} */
+	/**
+	 * A future.
+	 *
+	 * @public
+	 * @static
+	 * @returns {AssetClass}
+	 */
 	static get FUTURE() {
 		return FUTURE;
 	}
 
-	/** @returns {AssetClass} */
+	/**
+	 * A future option.
+	 *
+	 * @public
+	 * @static
+	 * @returns {AssetClass}
+	 */
 	static get FUTURE_OPTION() {
 		return FUTURE_OPTION;
 	}
 
-	/** @returns {AssetClass} */
+	/**
+	 * A foreign exchange instrument.
+	 *
+	 * @public
+	 * @static
+	 * @returns {AssetClass}
+	 */
 	static get FOREX() {
 		return FOREX;
 	}
 
-	/** @returns {AssetClass} */
+	/**
+	 * A cmdtyStats instrument.
+	 *
+	 * @public
+	 * @static
+	 * @returns {AssetClass}
+	 */
 	static get CMDTY_STATS() {
 		return CMDTY_STATS;
 	}
