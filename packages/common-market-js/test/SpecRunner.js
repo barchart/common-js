@@ -963,7 +963,7 @@
     },
     (symbol) => {
       if (SymbolParser.getIsFuture(symbol) && SymbolParser.getIsConcrete(symbol)) {
-        return symbol.replace(/(.{1,3})([A-Z]{1})([0-9]{3}|[0-9]{1})?([0-9]{1})$/i, "$1$2$4") || null;
+        return symbol.replace(/(.{1,4})([A-Z]{1})([0-9]{3}|[0-9]{1})?([0-9]{1})$/i, "$1$2$4") || null;
       }
       return null;
     },
@@ -1154,6 +1154,9 @@
       });
       it("normalizes producer symbols", () => {
         expect(SymbolParser.getProducerSymbol("ESZ2029")).toEqual("ESZ9");
+        expect(SymbolParser.getProducerSymbol("SAAPU2026")).toEqual("SAAPU6");
+        expect(SymbolParser.getProducerSymbol("SAAPU26")).toEqual("SAAPU6");
+        expect(SymbolParser.getProducerSymbol("SAAPU6")).toEqual("SAAPU6");
         expect(SymbolParser.getProducerSymbol("C3:AL79MRM1")).toEqual("AL79MRM1.C3");
         expect(SymbolParser.getProducerSymbol("PLATTS:AAVSV00")).toEqual("AAVSV00.PT");
         expect(SymbolParser.getProducerSymbol("IBM")).toEqual("IBM");

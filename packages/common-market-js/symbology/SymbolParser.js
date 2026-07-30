@@ -735,7 +735,7 @@ const converters = [
 	},
 	(symbol) => {
 		if (SymbolParser.getIsFuture(symbol) && SymbolParser.getIsConcrete(symbol)) {
-			return symbol.replace(/(.{1,3})([A-Z]{1})([0-9]{3}|[0-9]{1})?([0-9]{1})$/i, '$1$2$4') || null;
+			return symbol.replace(/(.{1,4})([A-Z]{1})([0-9]{3}|[0-9]{1})?([0-9]{1})$/i, '$1$2$4') || null;
 		}
 
 		return null;
