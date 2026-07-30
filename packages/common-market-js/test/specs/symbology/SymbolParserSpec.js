@@ -24,6 +24,18 @@ describe('SymbolParser', () => {
 			});
 		});
 
+		it('parses futures with four-character roots', () => {
+			expect(SymbolParser.parseInstrumentType('SAAPU26')).toEqual({
+				symbol: 'SAAPU26',
+				type: 'future',
+				asset: AssetClass.FUTURE,
+				dynamic: false,
+				root: 'SAAP',
+				month: 'U',
+				year: 2026
+			});
+		});
+
 		it('parses cash futures', () => {
 			expect(SymbolParser.parseInstrumentType('SPY00')).toEqual({
 				symbol: 'SPY00',

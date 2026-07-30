@@ -420,7 +420,7 @@
     },
     futures: {
       alias: /^([A-Z][A-Z0-9$!.-]{0,2})(\*{1})([0-9]{1,2})$/i,
-      concrete: /^([A-Z][A-Z0-9$!.-]{0,2})([A-Z]{1})([0-9]{4}|[0-9]{1,2})$/i,
+      concrete: /^([A-Z][A-Z0-9$!.-]{0,3})([A-Z]{1})([0-9]{4}|[0-9]{1,2})$/i,
       spread: /^_S_/i,
       cash: /(.*)(Y00)$/,
       options: {
@@ -1004,6 +1004,17 @@
           dynamic: true,
           root: "NG",
           dynamicCode: "13"
+        });
+      });
+      it("parses futures with four-character roots", () => {
+        expect(SymbolParser.parseInstrumentType("SAAPU26")).toEqual({
+          symbol: "SAAPU26",
+          type: "future",
+          asset: AssetClass.FUTURE,
+          dynamic: false,
+          root: "SAAP",
+          month: "U",
+          year: 2026
         });
       });
       it("parses cash futures", () => {
