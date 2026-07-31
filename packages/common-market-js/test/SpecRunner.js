@@ -258,10 +258,7 @@
      * @returns {AssetClass|null}
      */
     static parse(code) {
-      return (
-        /** @type {AssetClass|null} */
-        Enum.fromCode(_AssetClass, code)
-      );
+      return Enum.fromCode(_AssetClass, code);
     }
     /**
      * Converts a numeric identifier into an enumeration item.
@@ -272,32 +269,65 @@
      * @returns {AssetClass|null}
      */
     static fromId(id) {
-      return (
-        /** @type {AssetClass|null} */
-        Enum.getItems(_AssetClass).find((x) => x.id === id) || null
-      );
+      return Enum.getItems(_AssetClass).find((x) => x.id === id) || null;
     }
-    /** @returns {AssetClass} */
+    /**
+     * A stock.
+     *
+     * @public
+     * @static
+     * @returns {AssetClass}
+     */
     static get STOCK() {
       return STOCK;
     }
-    /** @returns {AssetClass} */
+    /**
+     * A stock option.
+     *
+     * @public
+     * @static
+     * @returns {AssetClass}
+     */
     static get STOCK_OPTION() {
       return STOCK_OPTION;
     }
-    /** @returns {AssetClass} */
+    /**
+     * A future.
+     *
+     * @public
+     * @static
+     * @returns {AssetClass}
+     */
     static get FUTURE() {
       return FUTURE;
     }
-    /** @returns {AssetClass} */
+    /**
+     * A future option.
+     *
+     * @public
+     * @static
+     * @returns {AssetClass}
+     */
     static get FUTURE_OPTION() {
       return FUTURE_OPTION;
     }
-    /** @returns {AssetClass} */
+    /**
+     * A foreign exchange instrument.
+     *
+     * @public
+     * @static
+     * @returns {AssetClass}
+     */
     static get FOREX() {
       return FOREX;
     }
-    /** @returns {AssetClass} */
+    /**
+     * A cmdtyStats instrument.
+     *
+     * @public
+     * @static
+     * @returns {AssetClass}
+     */
     static get CMDTY_STATS() {
       return CMDTY_STATS;
     }
@@ -317,22 +347,40 @@
 
   // test/specs/symbology/AssetClassSpec.js
   describe("AssetClass", () => {
-    it("exposes the asset classes used by parsed symbols", () => {
+    it("exposes the stock asset class", () => {
       expect(AssetClass.STOCK.code).toEqual("STK");
+    });
+    it("exposes the stock option asset class", () => {
       expect(AssetClass.STOCK_OPTION.code).toEqual("STKOPT");
+    });
+    it("exposes the future asset class", () => {
       expect(AssetClass.FUTURE.code).toEqual("FUT");
+    });
+    it("exposes the future option asset class", () => {
       expect(AssetClass.FUTURE_OPTION.code).toEqual("FUTOPT");
+    });
+    it("exposes the foreign exchange asset class", () => {
       expect(AssetClass.FOREX.code).toEqual("FOREX");
+    });
+    it("exposes the cmdtyStats asset class", () => {
       expect(AssetClass.CMDTY_STATS.code).toEqual("CMDTY");
     });
-    it("looks up asset classes by code and id", () => {
+    it("looks up an asset class by code", () => {
       expect(AssetClass.parse("FUT")).toBe(AssetClass.FUTURE);
+    });
+    it("looks up an asset class by id", () => {
       expect(AssetClass.fromId(12)).toBe(AssetClass.FUTURE_OPTION);
+    });
+    it("returns null for an unknown code", () => {
       expect(AssetClass.parse("UNKNOWN")).toBeNull();
+    });
+    it("returns null for an unknown id", () => {
       expect(AssetClass.fromId(-1)).toBeNull();
     });
-    it("serializes to the Barchart numeric id", () => {
+    it("exposes the Barchart numeric id", () => {
       expect(AssetClass.STOCK_OPTION.id).toEqual(34);
+    });
+    it("serializes to the Barchart numeric id", () => {
       expect(AssetClass.STOCK_OPTION.toJSON()).toEqual(34);
     });
   });
@@ -987,7 +1035,7 @@
   // test/specs/symbology/SymbolParserSpec.js
   describe("SymbolParser", () => {
     describe("parseInstrumentType", () => {
-      it("parses concrete and reference futures", () => {
+      it("parses concrete futures", () => {
         expect(SymbolParser.parseInstrumentType("ESM08")).toEqual({
           symbol: "ESM08",
           type: "future",
@@ -997,6 +1045,8 @@
           month: "M",
           year: 2008
         });
+      });
+      it("parses reference futures", () => {
         expect(SymbolParser.parseInstrumentType("NG*13")).toEqual({
           symbol: "NG*13",
           type: "future",
@@ -1035,21 +1085,25 @@
           asset: AssetClass.FOREX
         });
       });
-      it("parses indexes, sectors, and futures spreads", () => {
+      it("parses indexes", () => {
         expect(SymbolParser.parseInstrumentType("$DOWI")).toEqual({
           symbol: "$DOWI",
           type: "index"
         });
+      });
+      it("parses sectors", () => {
         expect(SymbolParser.parseInstrumentType("-001A")).toEqual({
           symbol: "-001A",
           type: "sector"
         });
+      });
+      it("parses futures spreads", () => {
         expect(SymbolParser.parseInstrumentType("_S_SP_ZCH7_ZCK7")).toEqual({
           symbol: "_S_SP_ZCH7_ZCK7",
           type: "future_spread"
         });
       });
-      it("parses futures options in database and pipeline formats", () => {
+      it("parses futures options in database format", () => {
         expect(SymbolParser.parseInstrumentType("ESZ2660Q")).toEqual(jasmine.objectContaining({
           symbol: "ESZ2660Q",
           type: "future_option",
@@ -1059,6 +1113,8 @@
           root: "ES",
           month: "Z"
         }));
+      });
+      it("parses futures options in pipeline format", () => {
         expect(SymbolParser.parseInstrumentType("ZWH9|470C")).toEqual(jasmine.objectContaining({
           symbol: "ZWH9|470C",
           type: "future_option",
@@ -1083,6 +1139,8 @@
           year: 2020,
           adjusted: false
         });
+      });
+      it("parses adjusted equity options", () => {
         expect(SymbolParser.parseInstrumentType("HBM2.TO|20220121|1.00C")).toEqual(jasmine.objectContaining({
           type: "equity_option",
           root: "HBM.TO",
@@ -1096,79 +1154,152 @@
           asset: AssetClass.CMDTY_STATS
         });
       });
-      it("returns null when the symbol type cannot be inferred", () => {
+      it("returns null when a symbol type cannot be inferred", () => {
         expect(SymbolParser.parseInstrumentType("IBM")).toBeNull();
+      });
+      it("returns null for a non-string symbol", () => {
         expect(SymbolParser.parseInstrumentType(null)).toBeNull();
       });
     });
     describe("type predicates", () => {
-      const cases = [
-        ["getIsConcrete", "ESZ6", true],
-        ["getIsConcrete", "ES*1", false],
-        ["getIsReference", "ES*1", true],
-        ["getIsFuture", "O!H2017", true],
-        ["getIsFuture", "IBM", false],
-        ["getIsCash", "ESY00", true],
-        ["getIsFutureSpread", "_S_SP_ZCH7_ZCK7", true],
-        ["getIsFutureOption", "ZWH9|470C", true],
-        ["getIsForex", "^EURUSD", true],
-        ["getIsCrypto", "^BTCUSDT", true],
-        ["getIsIndex", "$DOWI", true],
-        ["getIsSector", "-001A", true],
-        ["getIsCanadianFund", "VIC400.CF", true],
-        ["getIsCmdty", "ZCPAUS.CM", true],
-        ["getIsCmdty", "SCB001.CP", true],
-        ["getIsCmdtyStats", "AE030UBX.CS", true],
-        ["getIsBats", "AAPL.BZ", true],
-        ["getIsEquityOption", "AAPL|20200515|250.00P", true],
-        ["getIsC3", "C3:AL79MRM1", true],
-        ["getIsC3", "AL79MRM1.C3", true],
-        ["getIsPlatts", "PLATTS:AAVSV00", true],
-        ["getIsPlatts", "AAVSV00.PT", true],
-        ["getIsGrainBid", "USBCORN-123-456.CM", true]
-      ];
-      cases.forEach(([method, symbol, expected]) => {
-        it(`${method} identifies ${symbol}`, () => {
-          expect(SymbolParser[method](symbol)).toEqual(expected);
-        });
+      it("identifies concrete symbols", () => {
+        expect(SymbolParser.getIsConcrete("ESZ6")).toEqual(true);
+      });
+      it("rejects reference symbols as concrete", () => {
+        expect(SymbolParser.getIsConcrete("ES*1")).toEqual(false);
+      });
+      it("identifies reference symbols", () => {
+        expect(SymbolParser.getIsReference("ES*1")).toEqual(true);
+      });
+      it("identifies futures", () => {
+        expect(SymbolParser.getIsFuture("O!H2017")).toEqual(true);
+      });
+      it("rejects non-futures", () => {
+        expect(SymbolParser.getIsFuture("IBM")).toEqual(false);
+      });
+      it("identifies cash futures", () => {
+        expect(SymbolParser.getIsCash("ESY00")).toEqual(true);
+      });
+      it("identifies futures spreads", () => {
+        expect(SymbolParser.getIsFutureSpread("_S_SP_ZCH7_ZCK7")).toEqual(true);
+      });
+      it("identifies futures options", () => {
+        expect(SymbolParser.getIsFutureOption("ZWH9|470C")).toEqual(true);
+      });
+      it("identifies foreign exchange symbols", () => {
+        expect(SymbolParser.getIsForex("^EURUSD")).toEqual(true);
+      });
+      it("identifies cryptocurrency symbols", () => {
+        expect(SymbolParser.getIsCrypto("^BTCUSDT")).toEqual(true);
+      });
+      it("identifies indexes", () => {
+        expect(SymbolParser.getIsIndex("$DOWI")).toEqual(true);
+      });
+      it("identifies sectors", () => {
+        expect(SymbolParser.getIsSector("-001A")).toEqual(true);
+      });
+      it("identifies Canadian funds", () => {
+        expect(SymbolParser.getIsCanadianFund("VIC400.CF")).toEqual(true);
+      });
+      it("identifies internal cmdty symbols", () => {
+        expect(SymbolParser.getIsCmdty("ZCPAUS.CM")).toEqual(true);
+      });
+      it("identifies external cmdty symbols", () => {
+        expect(SymbolParser.getIsCmdty("SCB001.CP")).toEqual(true);
+      });
+      it("identifies cmdtyStats symbols", () => {
+        expect(SymbolParser.getIsCmdtyStats("AE030UBX.CS")).toEqual(true);
+      });
+      it("identifies BATS symbols", () => {
+        expect(SymbolParser.getIsBats("AAPL.BZ")).toEqual(true);
+      });
+      it("identifies equity options", () => {
+        expect(SymbolParser.getIsEquityOption("AAPL|20200515|250.00P")).toEqual(true);
+      });
+      it("identifies Commodity3 aliases", () => {
+        expect(SymbolParser.getIsC3("C3:AL79MRM1")).toEqual(true);
+      });
+      it("identifies concrete Commodity3 symbols", () => {
+        expect(SymbolParser.getIsC3("AL79MRM1.C3")).toEqual(true);
+      });
+      it("identifies Platts aliases", () => {
+        expect(SymbolParser.getIsPlatts("PLATTS:AAVSV00")).toEqual(true);
+      });
+      it("identifies concrete Platts symbols", () => {
+        expect(SymbolParser.getIsPlatts("AAVSV00.PT")).toEqual(true);
+      });
+      it("identifies grain bid symbols", () => {
+        expect(SymbolParser.getIsGrainBid("USBCORN-123-456.CM")).toEqual(true);
       });
       it("identifies pit instruments using their names", () => {
         expect(SymbolParser.getIsPit("ZCZ6", "Corn (Pit)")).toEqual(true);
+      });
+      it("rejects non-pit instruments using their names", () => {
         expect(SymbolParser.getIsPit("ZCZ6", "Corn")).toEqual(false);
       });
       it("identifies percentage symbols", () => {
         expect(SymbolParser.displayUsingPercent("US10Y.RT")).toEqual(true);
+      });
+      it("rejects non-percentage symbols", () => {
         expect(SymbolParser.displayUsingPercent("US10Y")).toEqual(false);
       });
       it("identifies expired symbols", () => {
         expect(SymbolParser.getIsExpired("ESM08")).toEqual(true);
+      });
+      it("identifies unexpired symbols", () => {
         expect(SymbolParser.getIsExpired("ESZ47")).toEqual(false);
+      });
+      it("does not identify undated symbols as expired", () => {
         expect(SymbolParser.getIsExpired("IBM")).toEqual(false);
       });
     });
     describe("normalization", () => {
-      it("expands futures symbols to two-digit years", () => {
+      it("converts futures to explicit format", () => {
         expect(SymbolParser.getFuturesExplicitFormat("ESZ9")).toEqual("ESZ29");
+      });
+      it("does not convert reference futures to explicit format", () => {
         expect(SymbolParser.getFuturesExplicitFormat("ES*1")).toBeNull();
+      });
+      it("does not convert non-futures to explicit format", () => {
         expect(SymbolParser.getFuturesExplicitFormat("IBM")).toBeNull();
       });
-      it("normalizes producer symbols", () => {
+      it("normalizes producer symbols with four-digit years", () => {
         expect(SymbolParser.getProducerSymbol("ESZ2029")).toEqual("ESZ9");
+      });
+      it("normalizes four-character producer symbols with four-digit years", () => {
         expect(SymbolParser.getProducerSymbol("SAAPU2026")).toEqual("SAAPU6");
+      });
+      it("normalizes four-character producer symbols with two-digit years", () => {
         expect(SymbolParser.getProducerSymbol("SAAPU26")).toEqual("SAAPU6");
+      });
+      it("preserves normalized producer symbols", () => {
         expect(SymbolParser.getProducerSymbol("SAAPU6")).toEqual("SAAPU6");
+      });
+      it("normalizes Commodity3 aliases", () => {
         expect(SymbolParser.getProducerSymbol("C3:AL79MRM1")).toEqual("AL79MRM1.C3");
+      });
+      it("normalizes Platts aliases", () => {
         expect(SymbolParser.getProducerSymbol("PLATTS:AAVSV00")).toEqual("AAVSV00.PT");
+      });
+      it("preserves symbols without a specialized producer format", () => {
         expect(SymbolParser.getProducerSymbol("IBM")).toEqual("IBM");
+      });
+      it("returns null when normalizing a non-string producer symbol", () => {
         expect(SymbolParser.getProducerSymbol(null)).toBeNull();
       });
       it("converts futures options to pipeline format", () => {
         expect(SymbolParser.getFuturesOptionPipelineFormat("ZWH29|470C")).toEqual("ZWH9|470C");
       });
-      it("calculates full futures years", () => {
+      it("calculates a future year from a two-digit year", () => {
         spyOn(Date.prototype, "getFullYear").and.returnValue(2022);
         expect(SymbolParser.getFuturesYear("29", "Z")).toEqual(2029);
+      });
+      it("calculates a past year from a two-digit year", () => {
+        spyOn(Date.prototype, "getFullYear").and.returnValue(2022);
         expect(SymbolParser.getFuturesYear("48", "Z")).toEqual(1948);
+      });
+      it("preserves a four-digit futures year", () => {
+        spyOn(Date.prototype, "getFullYear").and.returnValue(2022);
         expect(SymbolParser.getFuturesYear("2032", "Z")).toEqual(2032);
       });
     });
