@@ -572,152 +572,91 @@ function getPutCallCharacter(optionType) {
 
 const parsers = [
 	(symbol) => {
-		if (types.futures.spread.test(symbol)) {
-			return {
-				symbol,
-				type: 'future_spread'
-			};
+		if (!types.futures.spread.test(symbol)) {
+			return null;
 		}
 
-		return null;
+		return { symbol, type: 'future_spread' };
 	},
 	(symbol) => {
 		const match = symbol.match(types.futures.concrete);
 
-		if (match !== null) {
-			return {
-				symbol,
-				type: 'future',
-				asset: AssetClass.FUTURE,
-				dynamic: false,
-				root: match[1],
-				month: match[2],
-				year: getFuturesYear(match[3], match[2])
-			};
+		if (match === null) {
+			return null;
 		}
 
-		return null;
+		return { symbol, type: 'future', asset: AssetClass.FUTURE, dynamic: false, root: match[1], month: match[2], year: getFuturesYear(match[3], match[2]) };
 	},
 	(symbol) => {
 		const match = symbol.match(types.futures.alias);
 
-		if (match !== null) {
-			return {
-				symbol,
-				type: 'future',
-				asset: AssetClass.FUTURE,
-				dynamic: true,
-				root: match[1],
-				dynamicCode: match[3]
-			};
+		if (match === null) {
+			return null;
 		}
 
-		return null;
+		return { symbol, type: 'future', asset: AssetClass.FUTURE, dynamic: true, root: match[1], dynamicCode: match[3] };
 	},
 	(symbol) => {
-		if (types.forex.test(symbol)) {
-			return {
-				symbol,
-				type: 'forex',
-				asset: AssetClass.FOREX
-			};
+		if (!types.forex.test(symbol)) {
+			return null;
 		}
 
-		return null;
+		return { symbol, type: 'forex', asset: AssetClass.FOREX };
 	},
 	(symbol) => {
 		const match = symbol.match(types.equities.options);
 
-		if (match !== null) {
-			const suffix = typeof match[4] !== 'undefined' ? match[4] : '';
-
-			return {
-				symbol,
-				type: 'equity_option',
-				asset: AssetClass.STOCK_OPTION,
-				option_type: match[9] === 'C' ? 'call' : 'put',
-				strike: parseFloat(match[8]),
-				root: `${match[1]}${suffix}`,
-				month: parseInt(match[6]),
-				day: parseInt(match[7]),
-				year: parseInt(match[5]),
-				adjusted: match[3] !== ''
-			};
+		if (match === null) {
+			return null;
 		}
 
-		return null;
+		const suffix = typeof match[4] !== 'undefined' ? match[4] : '';
+
+		return { symbol, type: 'equity_option', asset: AssetClass.STOCK_OPTION, option_type: match[9] === 'C' ? 'call' : 'put', strike: parseFloat(match[8]), root: `${match[1]}${suffix}`, month: parseInt(match[6]), 	day: parseInt(match[7]), year: parseInt(match[5]), adjusted: match[3] !== '' };
 	},
 	(symbol) => {
-		if (types.indicies.external.test(symbol)) {
-			return {
-				symbol,
-				type: 'index'
-			};
+		if (!types.indicies.external.test(symbol)) {
+			return null;
 		}
 
-		return null;
+		return { symbol, type: 'index' };
 	},
 	(symbol) => {
-		if (types.indicies.sector.test(symbol)) {
-			return {
-				symbol,
-				type: 'sector'
-			};
+		if (!types.indicies.sector.test(symbol)) {
+			return null;
 		}
 
-		return null;
+		return { symbol, type: 'sector' };
 	},
 	(symbol) => {
 		const match = symbol.match(types.futures.options.short);
 
-		if (match !== null) {
-			const putCallCharacterCode = match[4].charCodeAt(0);
-			const putCharacterCode = 80;
-			const callCharacterCode = 67;
-			const call = putCallCharacterCode < putCharacterCode;
-
-			return {
-				symbol,
-				type: 'future_option',
-				asset: AssetClass.FUTURE_OPTION,
-				option_type: call ? 'call' : 'put',
-				strike: parseInt(match[3]),
-				root: match[1],
-				month: match[2],
-				year: getCurrentYear() + putCallCharacterCode - (call ? callCharacterCode : putCharacterCode)
-			};
+		if (match === null) {
+			return null;
 		}
 
-		return null;
+		const putCallCharacterCode = match[4].charCodeAt(0);
+		const putCharacterCode = 80;
+		const callCharacterCode = 67;
+		const call = putCallCharacterCode < putCharacterCode;
+
+		return { symbol, type: 'future_option', asset: AssetClass.FUTURE_OPTION, option_type: call ? 'call' : 'put', strike: parseInt(match[3]), root: match[1], month: match[2], year: getCurrentYear() + putCallCharacterCode - (call ? callCharacterCode : putCharacterCode) };
 	},
 	(symbol) => {
 		const match = symbol.match(types.futures.options.long) || symbol.match(types.futures.options.historical);
 
-		if (match !== null) {
-			return {
-				symbol,
-				type: 'future_option',
-				asset: AssetClass.FUTURE_OPTION,
-				option_type: match[5] === 'C' ? 'call' : 'put',
-				strike: parseInt(match[4]),
-				root: match[1],
-				month: getFuturesMonth(match[2]),
-				year: getFuturesYear(match[3])
-			};
+		if (match === null) {
+			return null;
 		}
 
-		return null;
+		return { symbol, type: 'future_option', asset: AssetClass.FUTURE_OPTION, option_type: match[5] === 'C' ? 'call' : 'put', strike: parseInt(match[4]), root: match[1], month: getFuturesMonth(match[2]), year: getFuturesYear(match[3]) };
 	},
 	(symbol) => {
-		if (types.cmdty.stats.test(symbol)) {
-			return {
-				symbol,
-				type: 'cmdtyStats',
-				asset: AssetClass.CMDTY_STATS
-			};
+		if (!types.cmdty.stats.test(symbol)) {
+			return null;
 		}
 
-		return null;
+		return { symbol, type: 'cmdtyStats', asset: AssetClass.CMDTY_STATS };
 	}
 ];
 
