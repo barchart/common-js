@@ -1,4 +1,4 @@
-import AssetClass from './../../../symbology/AssetClass.js';
+import AssetClass from './../../../data/AssetClass.js';
 
 describe('AssetClass', () => {
 	it('exposes the stock asset class', () => {

@@ -1,4 +1,4 @@
-import AssetClass from './../../../symbology/AssetClass.js';
+import AssetClass from './../../../data/AssetClass.js';
 import SymbolParser from './../../../symbology/SymbolParser.js';
 
 describe('SymbolParser', () => {

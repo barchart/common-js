@@ -222,7 +222,7 @@
     }
   };
 
-  // symbology/AssetClass.js
+  // data/AssetClass.js
   var AssetClass = class _AssetClass extends Enum {
     #id;
     /**
@@ -345,7 +345,7 @@
   var FOREX = new AssetClass("FOREX", "FOREX", 10);
   var CMDTY_STATS = new AssetClass("CMDTY", "cmdtyStats", 24);
 
-  // test/specs/symbology/AssetClassSpec.js
+  // test/specs/data/AssetClassSpec.js
   describe("AssetClass", () => {
     it("exposes the stock asset class", () => {
       expect(AssetClass.STOCK.code).toEqual("STK");

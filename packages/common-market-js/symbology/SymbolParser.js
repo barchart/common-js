@@ -1,7 +1,7 @@
 import * as is from '@barchart/common-js/lang/is.js';
 import * as string from '@barchart/common-js/lang/string.js';
 
-import AssetClass from './AssetClass.js';
+import AssetClass from './../data/AssetClass.js';
 
 const distantFuturesMonths = {
 	F: 'A',
