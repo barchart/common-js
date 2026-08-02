@@ -4,7 +4,7 @@ import * as string from '@barchart/common-js/lang/string.js';
 import AssetClass from './../data/AssetClass.js';
 
 /**
- * Static utilities for identifying, parsing, and normalizing market symbols.
+ * Static utilities for identifying, parsing, and normalizing instrument symbols.
  *
  * @public
  */
@@ -244,20 +244,20 @@ class SymbolParser {
 	 * @returns {boolean}
 	 */
 	static getIsExpired(symbol) {
-		const definition = SymbolParser.parseInstrumentType(symbol);
+		const parsed = SymbolParser.parseInstrumentType(symbol);
 
-		if (!(definition !== null && definition.year && definition.month)) {
+		if (parsed === null || !parsed.year || !parsed.month) {
 			return false;
 		}
 
 		const currentYear = getCurrentYear();
 
-		if (definition.year < currentYear) {
+		if (parsed.year < currentYear) {
 			return true;
 		}
 
-		if (definition.year === currentYear && Object.hasOwn(futuresMonthNumbers, definition.month)) {
-			return getCurrentMonth() > futuresMonthNumbers[definition.month];
+		if (parsed.year === currentYear && Object.hasOwn(futuresMonthNumbers, parsed.month)) {
+			return getCurrentMonth() > futuresMonthNumbers[parsed.month];
 		}
 
 		return false;
@@ -292,10 +292,10 @@ class SymbolParser {
 		}
 
 		for (const parser of parsers) {
-			const definition = parser(symbol);
+			const parsed = parser(symbol);
 
-			if (definition !== null) {
-				return definition;
+			if (parsed !== null) {
+				return parsed;
 			}
 		}
 
@@ -343,6 +343,10 @@ class SymbolParser {
 
 		const parsed = SymbolParser.parseInstrumentType(symbol);
 
+		if (parsed === null) {
+			return null;
+		}
+
 		return `${parsed.root}${parsed.month}${string.padLeft(Math.floor(parsed.year % 100).toString(), 2, '0')}`;
 	}
 
@@ -355,15 +359,15 @@ class SymbolParser {
 	 * @returns {string|null}
 	 */
 	static getFuturesOptionPipelineFormat(symbol) {
-		const definition = SymbolParser.parseInstrumentType(symbol);
+		const parsed = SymbolParser.parseInstrumentType(symbol);
 
-		if (definition.type !== 'future_option') {
+		if (parsed === null || parsed.type !== 'future_option') {
 			return null;
 		}
 
-		const putCallCharacter = getPutCallCharacter(definition.option_type);
+		const putCallCharacter = getPutCallCharacter(parsed.option_type);
 
-		return `${definition.root}${definition.month}${getYearDigits(definition.year, 1)}|${definition.strike}${putCallCharacter}`;
+		return `${parsed.root}${parsed.month}${getYearDigits(parsed.year, 1)}|${parsed.strike}${putCallCharacter}`;
 	}
 
 	/**
@@ -748,16 +752,21 @@ const converters = [
 	},
 	(symbol) => {
 		if (SymbolParser.getIsFutureOption(symbol)) {
-			const definition = SymbolParser.parseInstrumentType(symbol);
-			const putCallCharacter = getPutCallCharacter(definition.option_type);
+			const parsed = SymbolParser.parseInstrumentType(symbol);
 
-			if (definition.root.length < 3) {
-				const putCallCharacterCode = putCallCharacter.charCodeAt(0);
-
-				return `${definition.root}${definition.month}${definition.strike}${String.fromCharCode(putCallCharacterCode + definition.year - getCurrentYear())}`;
+			if (parsed === null) {
+				return null;
 			}
 
-			return `${definition.root}${definition.month}${getYearDigits(definition.year, 1)}|${definition.strike}${putCallCharacter}`;
+			const putCallCharacter = getPutCallCharacter(parsed.option_type);
+
+			if (parsed.root.length < 3) {
+				const putCallCharacterCode = putCallCharacter.charCodeAt(0);
+
+				return `${parsed.root}${parsed.month}${parsed.strike}${String.fromCharCode(putCallCharacterCode + parsed.year - getCurrentYear())}`;
+			}
+
+			return `${parsed.root}${parsed.month}${getYearDigits(parsed.year, 1)}|${parsed.strike}${putCallCharacter}`;
 		}
 
 		return null;
