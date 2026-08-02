@@ -3,173 +3,6 @@ import * as string from '@barchart/common-js/lang/string.js';
 
 import AssetClass from './../data/AssetClass.js';
 
-const distantFuturesMonths = {
-	F: 'A',
-	G: 'B',
-	H: 'C',
-	J: 'D',
-	K: 'E',
-	M: 'I',
-	N: 'L',
-	Q: 'O',
-	U: 'P',
-	V: 'R',
-	X: 'S',
-	Z: 'T'
-};
-
-const alternateFuturesMonths = {
-	A: 'F',
-	B: 'G',
-	C: 'H',
-	D: 'J',
-	E: 'K',
-	I: 'M',
-	L: 'N',
-	O: 'Q',
-	P: 'U',
-	R: 'V',
-	S: 'X',
-	T: 'Z'
-};
-
-const futuresMonthNumbers = {
-	F: 1,
-	G: 2,
-	H: 3,
-	J: 4,
-	K: 5,
-	M: 6,
-	N: 7,
-	Q: 8,
-	U: 9,
-	V: 10,
-	X: 11,
-	Z: 12
-};
-
-const predicates = {
-	bats: /^(.*)\.BZ$/i,
-	percent: /(\.RT)$/,
-	pit: /\(P(it)?\)/
-};
-
-const types = {
-	bids: /^([A-Z]{2})([B|P])([A-Z\d]{3,4})-(\d+)-(\d+)(\.CM)$/i,
-	c3: {
-		alias: /^(C3:)(.*)$/i,
-		concrete: /(\.C3)$/i
-	},
-	cmdty: {
-		stats: /(\.CS)$/i,
-		internal: /(\.CM)$/i,
-		external: /(\.CP)$/i
-	},
-	crypto: /^\^([A-Z]{3})([A-Z]{3,4})$/i,
-	equities: {
-		options: /^([A-Z$][A-Z-]{0,}(\.[A-Z]{1})?)([0-9]?)(\.[A-Z]{2})?\|([0-9]{4})([0-9]{2})([0-9]{2})\|([0-9]+\.[0-9]+)[P|W]?(C|P)/i
-	},
-	forex: /^\^([A-Z]{3})([A-Z]{3})$/i,
-	funds: {
-		canadian: /(.*)(\.CF)$/i
-	},
-	futures: {
-		alias: /^([A-Z][A-Z0-9$!.-]{0,2})(\*{1})([0-9]{1,2})$/i,
-		concrete: /^([A-Z][A-Z0-9$!.-]{0,3})([A-Z]{1})([0-9]{4}|[0-9]{1,2})$/i,
-		spread: /^_S_/i,
-		cash: /(.*)(Y00)$/,
-		options: {
-			historical: /^([A-Z][A-Z0-9$!.-]{0,2})([A-Z])([0-9]{2})([0-9]{1,5})(C|P)$/i,
-			long: /^([A-Z][A-Z0-9$!.-]{0,2})([A-Z])([0-9]{1,4})\|(-?[0-9]{1,5})(C|P)$/i,
-			short: /^([A-Z][A-Z0-9$!.-]?)([A-Z])([0-9]{1,4})([A-Z])$/i
-		}
-	},
-	indicies: {
-		external: /^\$(.*)$/i,
-		sector: /^-(.*)$/i
-	},
-	platts: {
-		alias: /^(PLATTS:)(.*)$/i,
-		concrete: /^(.*)(\.PT)$/i
-	}
-};
-
-/**
- * @returns {number}
- */
-function getCurrentMonth() {
-	return new Date().getMonth() + 1;
-}
-
-/**
- * @returns {number}
- */
-function getCurrentYear() {
-	return new Date().getFullYear();
-}
-
-/**
- * @param {number} year
- * @param {number} digits
- * @returns {string}
- */
-function getYearDigits(year, digits) {
-	const yearString = year.toString();
-
-	return yearString.substring(yearString.length - digits, yearString.length);
-}
-
-/**
- * @param {string} monthString
- * @returns {string}
- */
-function getFuturesMonth(monthString) {
-	return alternateFuturesMonths[monthString] || monthString;
-}
-
-/**
- * Determines the four-digit futures year represented by a symbol year.
- *
- * @param {string} yearString
- * @param {string=} monthCode
- * @returns {number}
- */
-function getFuturesYear(yearString, monthCode) {
-	const currentYear = getCurrentYear();
-
-	let year = parseInt(yearString);
-
-	if (year === 0 && monthCode === 'Y') {
-		year = Math.floor(currentYear / 100) * 100 + 100;
-	} else if (year < 10 && yearString.length === 1) {
-		const bump = year < currentYear % 10 ? 1 : 0;
-
-		year = Math.floor(currentYear / 10) * 10 + year + (bump * 10);
-	} else if (year < 100) {
-		year = Math.floor(currentYear / 100) * 100 + year;
-
-		if (currentYear + 25 < year) {
-			year = year - 100;
-		}
-	}
-
-	return year;
-}
-
-/**
- * @param {string} optionType
- * @returns {string|null}
- */
-function getPutCallCharacter(optionType) {
-	if (optionType === 'call') {
-		return 'C';
-	} else if (optionType === 'put') {
-		return 'P';
-	}
-
-	return null;
-}
-
 /**
  * Static utilities for identifying, parsing, and normalizing market symbols.
  *
@@ -559,6 +392,174 @@ export default class SymbolParser {
 		return '[SymbolParser]';
 	}
 }
+
+const distantFuturesMonths = {
+	F: 'A',
+	G: 'B',
+	H: 'C',
+	J: 'D',
+	K: 'E',
+	M: 'I',
+	N: 'L',
+	Q: 'O',
+	U: 'P',
+	V: 'R',
+	X: 'S',
+	Z: 'T'
+};
+
+const alternateFuturesMonths = {
+	A: 'F',
+	B: 'G',
+	C: 'H',
+	D: 'J',
+	E: 'K',
+	I: 'M',
+	L: 'N',
+	O: 'Q',
+	P: 'U',
+	R: 'V',
+	S: 'X',
+	T: 'Z'
+};
+
+const futuresMonthNumbers = {
+	F: 1,
+	G: 2,
+	H: 3,
+	J: 4,
+	K: 5,
+	M: 6,
+	N: 7,
+	Q: 8,
+	U: 9,
+	V: 10,
+	X: 11,
+	Z: 12
+};
+
+const predicates = {
+	bats: /^(.*)\.BZ$/i,
+	percent: /(\.RT)$/,
+	pit: /\(P(it)?\)/
+};
+
+const types = {
+	bids: /^([A-Z]{2})([B|P])([A-Z\d]{3,4})-(\d+)-(\d+)(\.CM)$/i,
+	c3: {
+		alias: /^(C3:)(.*)$/i,
+		concrete: /(\.C3)$/i
+	},
+	cmdty: {
+		stats: /(\.CS)$/i,
+		internal: /(\.CM)$/i,
+		external: /(\.CP)$/i
+	},
+	crypto: /^\^([A-Z]{3})([A-Z]{3,4})$/i,
+	equities: {
+		options: /^([A-Z$][A-Z-]{0,}(\.[A-Z]{1})?)([0-9]?)(\.[A-Z]{2})?\|([0-9]{4})([0-9]{2})([0-9]{2})\|([0-9]+\.[0-9]+)[P|W]?(C|P)/i
+	},
+	forex: /^\^([A-Z]{3})([A-Z]{3})$/i,
+	funds: {
+		canadian: /(.*)(\.CF)$/i
+	},
+	futures: {
+		alias: /^([A-Z][A-Z0-9$!.-]{0,2})(\*{1})([0-9]{1,2})$/i,
+		concrete: /^([A-Z][A-Z0-9$!.-]{0,3})([A-Z]{1})([0-9]{4}|[0-9]{1,2})$/i,
+		spread: /^_S_/i,
+		cash: /(.*)(Y00)$/,
+		options: {
+			historical: /^([A-Z][A-Z0-9$!.-]{0,2})([A-Z])([0-9]{2})([0-9]{1,5})(C|P)$/i,
+			long: /^([A-Z][A-Z0-9$!.-]{0,2})([A-Z])([0-9]{1,4})\|(-?[0-9]{1,5})(C|P)$/i,
+			short: /^([A-Z][A-Z0-9$!.-]?)([A-Z])([0-9]{1,4})([A-Z])$/i
+		}
+	},
+	indicies: {
+		external: /^\$(.*)$/i,
+		sector: /^-(.*)$/i
+	},
+	platts: {
+		alias: /^(PLATTS:)(.*)$/i,
+		concrete: /^(.*)(\.PT)$/i
+	}
+};
+
+/**
+ * @returns {number}
+ */
+function getCurrentMonth() {
+	return new Date().getMonth() + 1;
+}
+
+/**
+ * @returns {number}
+ */
+function getCurrentYear() {
+	return new Date().getFullYear();
+}
+
+/**
+ * @param {number} year
+ * @param {number} digits
+ * @returns {string}
+ */
+function getYearDigits(year, digits) {
+	const yearString = year.toString();
+
+	return yearString.substring(yearString.length - digits, yearString.length);
+}
+
+/**
+ * @param {string} monthString
+ * @returns {string}
+ */
+function getFuturesMonth(monthString) {
+	return alternateFuturesMonths[monthString] || monthString;
+}
+
+/**
+ * Determines the four-digit futures year represented by a symbol year.
+ *
+ * @param {string} yearString
+ * @param {string=} monthCode
+ * @returns {number}
+ */
+function getFuturesYear(yearString, monthCode) {
+	const currentYear = getCurrentYear();
+
+	let year = parseInt(yearString);
+
+	if (year === 0 && monthCode === 'Y') {
+		year = Math.floor(currentYear / 100) * 100 + 100;
+	} else if (year < 10 && yearString.length === 1) {
+		const bump = year < currentYear % 10 ? 1 : 0;
+
+		year = Math.floor(currentYear / 10) * 10 + year + (bump * 10);
+	} else if (year < 100) {
+		year = Math.floor(currentYear / 100) * 100 + year;
+
+		if (currentYear + 25 < year) {
+			year = year - 100;
+		}
+	}
+
+	return year;
+}
+
+/**
+ * @param {string} optionType
+ * @returns {string|null}
+ */
+function getPutCallCharacter(optionType) {
+	if (optionType === 'call') {
+		return 'C';
+	} else if (optionType === 'put') {
+		return 'P';
+	}
+
+	return null;
+}
+
 
 const parsers = [
 	(symbol) => {
