@@ -400,129 +400,6 @@
   }
 
   // symbology/SymbolParser.js
-  var distantFuturesMonths = {
-    F: "A",
-    G: "B",
-    H: "C",
-    J: "D",
-    K: "E",
-    M: "I",
-    N: "L",
-    Q: "O",
-    U: "P",
-    V: "R",
-    X: "S",
-    Z: "T"
-  };
-  var alternateFuturesMonths = {
-    A: "F",
-    B: "G",
-    C: "H",
-    D: "J",
-    E: "K",
-    I: "M",
-    L: "N",
-    O: "Q",
-    P: "U",
-    R: "V",
-    S: "X",
-    T: "Z"
-  };
-  var futuresMonthNumbers = {
-    F: 1,
-    G: 2,
-    H: 3,
-    J: 4,
-    K: 5,
-    M: 6,
-    N: 7,
-    Q: 8,
-    U: 9,
-    V: 10,
-    X: 11,
-    Z: 12
-  };
-  var predicates = {
-    bats: /^(.*)\.BZ$/i,
-    percent: /(\.RT)$/,
-    pit: /\(P(it)?\)/
-  };
-  var types2 = {
-    bids: /^([A-Z]{2})([B|P])([A-Z\d]{3,4})-(\d+)-(\d+)(\.CM)$/i,
-    c3: {
-      alias: /^(C3:)(.*)$/i,
-      concrete: /(\.C3)$/i
-    },
-    cmdty: {
-      stats: /(\.CS)$/i,
-      internal: /(\.CM)$/i,
-      external: /(\.CP)$/i
-    },
-    crypto: /^\^([A-Z]{3})([A-Z]{3,4})$/i,
-    equities: {
-      options: /^([A-Z$][A-Z-]{0,}(\.[A-Z]{1})?)([0-9]?)(\.[A-Z]{2})?\|([0-9]{4})([0-9]{2})([0-9]{2})\|([0-9]+\.[0-9]+)[P|W]?(C|P)/i
-    },
-    forex: /^\^([A-Z]{3})([A-Z]{3})$/i,
-    funds: {
-      canadian: /(.*)(\.CF)$/i
-    },
-    futures: {
-      alias: /^([A-Z][A-Z0-9$!.-]{0,2})(\*{1})([0-9]{1,2})$/i,
-      concrete: /^([A-Z][A-Z0-9$!.-]{0,3})([A-Z]{1})([0-9]{4}|[0-9]{1,2})$/i,
-      spread: /^_S_/i,
-      cash: /(.*)(Y00)$/,
-      options: {
-        historical: /^([A-Z][A-Z0-9$!.-]{0,2})([A-Z])([0-9]{2})([0-9]{1,5})(C|P)$/i,
-        long: /^([A-Z][A-Z0-9$!.-]{0,2})([A-Z])([0-9]{1,4})\|(-?[0-9]{1,5})(C|P)$/i,
-        short: /^([A-Z][A-Z0-9$!.-]?)([A-Z])([0-9]{1,4})([A-Z])$/i
-      }
-    },
-    indicies: {
-      external: /^\$(.*)$/i,
-      sector: /^-(.*)$/i
-    },
-    platts: {
-      alias: /^(PLATTS:)(.*)$/i,
-      concrete: /^(.*)(\.PT)$/i
-    }
-  };
-  function getCurrentMonth() {
-    return (/* @__PURE__ */ new Date()).getMonth() + 1;
-  }
-  function getCurrentYear() {
-    return (/* @__PURE__ */ new Date()).getFullYear();
-  }
-  function getYearDigits(year, digits) {
-    const yearString = year.toString();
-    return yearString.substring(yearString.length - digits, yearString.length);
-  }
-  function getFuturesMonth(monthString) {
-    return alternateFuturesMonths[monthString] || monthString;
-  }
-  function getFuturesYear(yearString, monthCode) {
-    const currentYear = getCurrentYear();
-    let year = parseInt(yearString);
-    if (year === 0 && monthCode === "Y") {
-      year = Math.floor(currentYear / 100) * 100 + 100;
-    } else if (year < 10 && yearString.length === 1) {
-      const bump = year < currentYear % 10 ? 1 : 0;
-      year = Math.floor(currentYear / 10) * 10 + year + bump * 10;
-    } else if (year < 100) {
-      year = Math.floor(currentYear / 100) * 100 + year;
-      if (currentYear + 25 < year) {
-        year = year - 100;
-      }
-    }
-    return year;
-  }
-  function getPutCallCharacter(optionType) {
-    if (optionType === "call") {
-      return "C";
-    } else if (optionType === "put") {
-      return "P";
-    }
-    return null;
-  }
   var SymbolParser = class _SymbolParser {
     /**
      * Returns true when a symbol is not an alias.
@@ -858,6 +735,129 @@
       return "[SymbolParser]";
     }
   };
+  var distantFuturesMonths = {
+    F: "A",
+    G: "B",
+    H: "C",
+    J: "D",
+    K: "E",
+    M: "I",
+    N: "L",
+    Q: "O",
+    U: "P",
+    V: "R",
+    X: "S",
+    Z: "T"
+  };
+  var alternateFuturesMonths = {
+    A: "F",
+    B: "G",
+    C: "H",
+    D: "J",
+    E: "K",
+    I: "M",
+    L: "N",
+    O: "Q",
+    P: "U",
+    R: "V",
+    S: "X",
+    T: "Z"
+  };
+  var futuresMonthNumbers = {
+    F: 1,
+    G: 2,
+    H: 3,
+    J: 4,
+    K: 5,
+    M: 6,
+    N: 7,
+    Q: 8,
+    U: 9,
+    V: 10,
+    X: 11,
+    Z: 12
+  };
+  var predicates = {
+    bats: /^(.*)\.BZ$/i,
+    percent: /(\.RT)$/,
+    pit: /\(P(it)?\)/
+  };
+  var types2 = {
+    bids: /^([A-Z]{2})([B|P])([A-Z\d]{3,4})-(\d+)-(\d+)(\.CM)$/i,
+    c3: {
+      alias: /^(C3:)(.*)$/i,
+      concrete: /(\.C3)$/i
+    },
+    cmdty: {
+      stats: /(\.CS)$/i,
+      internal: /(\.CM)$/i,
+      external: /(\.CP)$/i
+    },
+    crypto: /^\^([A-Z]{3})([A-Z]{3,4})$/i,
+    equities: {
+      options: /^([A-Z$][A-Z-]{0,}(\.[A-Z]{1})?)([0-9]?)(\.[A-Z]{2})?\|([0-9]{4})([0-9]{2})([0-9]{2})\|([0-9]+\.[0-9]+)[P|W]?(C|P)/i
+    },
+    forex: /^\^([A-Z]{3})([A-Z]{3})$/i,
+    funds: {
+      canadian: /(.*)(\.CF)$/i
+    },
+    futures: {
+      alias: /^([A-Z][A-Z0-9$!.-]{0,2})(\*{1})([0-9]{1,2})$/i,
+      concrete: /^([A-Z][A-Z0-9$!.-]{0,3})([A-Z]{1})([0-9]{4}|[0-9]{1,2})$/i,
+      spread: /^_S_/i,
+      cash: /(.*)(Y00)$/,
+      options: {
+        historical: /^([A-Z][A-Z0-9$!.-]{0,2})([A-Z])([0-9]{2})([0-9]{1,5})(C|P)$/i,
+        long: /^([A-Z][A-Z0-9$!.-]{0,2})([A-Z])([0-9]{1,4})\|(-?[0-9]{1,5})(C|P)$/i,
+        short: /^([A-Z][A-Z0-9$!.-]?)([A-Z])([0-9]{1,4})([A-Z])$/i
+      }
+    },
+    indicies: {
+      external: /^\$(.*)$/i,
+      sector: /^-(.*)$/i
+    },
+    platts: {
+      alias: /^(PLATTS:)(.*)$/i,
+      concrete: /^(.*)(\.PT)$/i
+    }
+  };
+  function getCurrentMonth() {
+    return (/* @__PURE__ */ new Date()).getMonth() + 1;
+  }
+  function getCurrentYear() {
+    return (/* @__PURE__ */ new Date()).getFullYear();
+  }
+  function getYearDigits(year, digits) {
+    const yearString = year.toString();
+    return yearString.substring(yearString.length - digits, yearString.length);
+  }
+  function getFuturesMonth(monthString) {
+    return alternateFuturesMonths[monthString] || monthString;
+  }
+  function getFuturesYear(yearString, monthCode) {
+    const currentYear = getCurrentYear();
+    let year = parseInt(yearString);
+    if (year === 0 && monthCode === "Y") {
+      year = Math.floor(currentYear / 100) * 100 + 100;
+    } else if (year < 10 && yearString.length === 1) {
+      const bump = year < currentYear % 10 ? 1 : 0;
+      year = Math.floor(currentYear / 10) * 10 + year + bump * 10;
+    } else if (year < 100) {
+      year = Math.floor(currentYear / 100) * 100 + year;
+      if (currentYear + 25 < year) {
+        year = year - 100;
+      }
+    }
+    return year;
+  }
+  function getPutCallCharacter(optionType) {
+    if (optionType === "call") {
+      return "C";
+    } else if (optionType === "put") {
+      return "P";
+    }
+    return null;
+  }
   var parsers = [
     (symbol) => {
       if (types2.futures.spread.test(symbol)) {
@@ -1031,12 +1031,13 @@
     (symbol) => types2.platts.alias.test(symbol) ? symbol.replace(types2.platts.alias, "$2.PT") : null,
     (symbol) => symbol
   ];
+  var SymbolParser_default = SymbolParser;
 
   // test/specs/symbology/SymbolParserSpec.js
   describe("SymbolParser", () => {
     describe("parseInstrumentType", () => {
       it("parses concrete futures", () => {
-        expect(SymbolParser.parseInstrumentType("ESM08")).toEqual({
+        expect(SymbolParser_default.parseInstrumentType("ESM08")).toEqual({
           symbol: "ESM08",
           type: "future",
           asset: AssetClass.FUTURE,
@@ -1047,7 +1048,7 @@
         });
       });
       it("parses reference futures", () => {
-        expect(SymbolParser.parseInstrumentType("NG*13")).toEqual({
+        expect(SymbolParser_default.parseInstrumentType("NG*13")).toEqual({
           symbol: "NG*13",
           type: "future",
           asset: AssetClass.FUTURE,
@@ -1057,7 +1058,7 @@
         });
       });
       it("parses futures with four-character roots", () => {
-        expect(SymbolParser.parseInstrumentType("SAAPU26")).toEqual({
+        expect(SymbolParser_default.parseInstrumentType("SAAPU26")).toEqual({
           symbol: "SAAPU26",
           type: "future",
           asset: AssetClass.FUTURE,
@@ -1068,7 +1069,7 @@
         });
       });
       it("parses cash futures", () => {
-        expect(SymbolParser.parseInstrumentType("SPY00")).toEqual({
+        expect(SymbolParser_default.parseInstrumentType("SPY00")).toEqual({
           symbol: "SPY00",
           type: "future",
           asset: AssetClass.FUTURE,
@@ -1079,32 +1080,32 @@
         });
       });
       it("parses foreign exchange symbols", () => {
-        expect(SymbolParser.parseInstrumentType("^EURUSD")).toEqual({
+        expect(SymbolParser_default.parseInstrumentType("^EURUSD")).toEqual({
           symbol: "^EURUSD",
           type: "forex",
           asset: AssetClass.FOREX
         });
       });
       it("parses indexes", () => {
-        expect(SymbolParser.parseInstrumentType("$DOWI")).toEqual({
+        expect(SymbolParser_default.parseInstrumentType("$DOWI")).toEqual({
           symbol: "$DOWI",
           type: "index"
         });
       });
       it("parses sectors", () => {
-        expect(SymbolParser.parseInstrumentType("-001A")).toEqual({
+        expect(SymbolParser_default.parseInstrumentType("-001A")).toEqual({
           symbol: "-001A",
           type: "sector"
         });
       });
       it("parses futures spreads", () => {
-        expect(SymbolParser.parseInstrumentType("_S_SP_ZCH7_ZCK7")).toEqual({
+        expect(SymbolParser_default.parseInstrumentType("_S_SP_ZCH7_ZCK7")).toEqual({
           symbol: "_S_SP_ZCH7_ZCK7",
           type: "future_spread"
         });
       });
       it("parses futures options in database format", () => {
-        expect(SymbolParser.parseInstrumentType("ESZ2660Q")).toEqual(jasmine.objectContaining({
+        expect(SymbolParser_default.parseInstrumentType("ESZ2660Q")).toEqual(jasmine.objectContaining({
           symbol: "ESZ2660Q",
           type: "future_option",
           asset: AssetClass.FUTURE_OPTION,
@@ -1115,7 +1116,7 @@
         }));
       });
       it("parses futures options in pipeline format", () => {
-        expect(SymbolParser.parseInstrumentType("ZWH9|470C")).toEqual(jasmine.objectContaining({
+        expect(SymbolParser_default.parseInstrumentType("ZWH9|470C")).toEqual(jasmine.objectContaining({
           symbol: "ZWH9|470C",
           type: "future_option",
           asset: AssetClass.FUTURE_OPTION,
@@ -1127,7 +1128,7 @@
         }));
       });
       it("parses equity options", () => {
-        expect(SymbolParser.parseInstrumentType("AAPL|20200515|250.00P")).toEqual({
+        expect(SymbolParser_default.parseInstrumentType("AAPL|20200515|250.00P")).toEqual({
           symbol: "AAPL|20200515|250.00P",
           type: "equity_option",
           asset: AssetClass.STOCK_OPTION,
@@ -1141,170 +1142,170 @@
         });
       });
       it("parses adjusted equity options", () => {
-        expect(SymbolParser.parseInstrumentType("HBM2.TO|20220121|1.00C")).toEqual(jasmine.objectContaining({
+        expect(SymbolParser_default.parseInstrumentType("HBM2.TO|20220121|1.00C")).toEqual(jasmine.objectContaining({
           type: "equity_option",
           root: "HBM.TO",
           adjusted: true
         }));
       });
       it("parses cmdtyStats instruments", () => {
-        expect(SymbolParser.parseInstrumentType("AE030UBX.CS")).toEqual({
+        expect(SymbolParser_default.parseInstrumentType("AE030UBX.CS")).toEqual({
           symbol: "AE030UBX.CS",
           type: "cmdtyStats",
           asset: AssetClass.CMDTY_STATS
         });
       });
       it("returns null when a symbol type cannot be inferred", () => {
-        expect(SymbolParser.parseInstrumentType("IBM")).toBeNull();
+        expect(SymbolParser_default.parseInstrumentType("IBM")).toBeNull();
       });
       it("returns null for a non-string symbol", () => {
-        expect(SymbolParser.parseInstrumentType(null)).toBeNull();
+        expect(SymbolParser_default.parseInstrumentType(null)).toBeNull();
       });
     });
     describe("type predicates", () => {
       it("identifies concrete symbols", () => {
-        expect(SymbolParser.getIsConcrete("ESZ6")).toEqual(true);
+        expect(SymbolParser_default.getIsConcrete("ESZ6")).toEqual(true);
       });
       it("rejects reference symbols as concrete", () => {
-        expect(SymbolParser.getIsConcrete("ES*1")).toEqual(false);
+        expect(SymbolParser_default.getIsConcrete("ES*1")).toEqual(false);
       });
       it("identifies reference symbols", () => {
-        expect(SymbolParser.getIsReference("ES*1")).toEqual(true);
+        expect(SymbolParser_default.getIsReference("ES*1")).toEqual(true);
       });
       it("identifies futures", () => {
-        expect(SymbolParser.getIsFuture("O!H2017")).toEqual(true);
+        expect(SymbolParser_default.getIsFuture("O!H2017")).toEqual(true);
       });
       it("rejects non-futures", () => {
-        expect(SymbolParser.getIsFuture("IBM")).toEqual(false);
+        expect(SymbolParser_default.getIsFuture("IBM")).toEqual(false);
       });
       it("identifies cash futures", () => {
-        expect(SymbolParser.getIsCash("ESY00")).toEqual(true);
+        expect(SymbolParser_default.getIsCash("ESY00")).toEqual(true);
       });
       it("identifies futures spreads", () => {
-        expect(SymbolParser.getIsFutureSpread("_S_SP_ZCH7_ZCK7")).toEqual(true);
+        expect(SymbolParser_default.getIsFutureSpread("_S_SP_ZCH7_ZCK7")).toEqual(true);
       });
       it("identifies futures options", () => {
-        expect(SymbolParser.getIsFutureOption("ZWH9|470C")).toEqual(true);
+        expect(SymbolParser_default.getIsFutureOption("ZWH9|470C")).toEqual(true);
       });
       it("identifies foreign exchange symbols", () => {
-        expect(SymbolParser.getIsForex("^EURUSD")).toEqual(true);
+        expect(SymbolParser_default.getIsForex("^EURUSD")).toEqual(true);
       });
       it("identifies cryptocurrency symbols", () => {
-        expect(SymbolParser.getIsCrypto("^BTCUSDT")).toEqual(true);
+        expect(SymbolParser_default.getIsCrypto("^BTCUSDT")).toEqual(true);
       });
       it("identifies indexes", () => {
-        expect(SymbolParser.getIsIndex("$DOWI")).toEqual(true);
+        expect(SymbolParser_default.getIsIndex("$DOWI")).toEqual(true);
       });
       it("identifies sectors", () => {
-        expect(SymbolParser.getIsSector("-001A")).toEqual(true);
+        expect(SymbolParser_default.getIsSector("-001A")).toEqual(true);
       });
       it("identifies Canadian funds", () => {
-        expect(SymbolParser.getIsCanadianFund("VIC400.CF")).toEqual(true);
+        expect(SymbolParser_default.getIsCanadianFund("VIC400.CF")).toEqual(true);
       });
       it("identifies internal cmdty symbols", () => {
-        expect(SymbolParser.getIsCmdty("ZCPAUS.CM")).toEqual(true);
+        expect(SymbolParser_default.getIsCmdty("ZCPAUS.CM")).toEqual(true);
       });
       it("identifies external cmdty symbols", () => {
-        expect(SymbolParser.getIsCmdty("SCB001.CP")).toEqual(true);
+        expect(SymbolParser_default.getIsCmdty("SCB001.CP")).toEqual(true);
       });
       it("identifies cmdtyStats symbols", () => {
-        expect(SymbolParser.getIsCmdtyStats("AE030UBX.CS")).toEqual(true);
+        expect(SymbolParser_default.getIsCmdtyStats("AE030UBX.CS")).toEqual(true);
       });
       it("identifies BATS symbols", () => {
-        expect(SymbolParser.getIsBats("AAPL.BZ")).toEqual(true);
+        expect(SymbolParser_default.getIsBats("AAPL.BZ")).toEqual(true);
       });
       it("identifies equity options", () => {
-        expect(SymbolParser.getIsEquityOption("AAPL|20200515|250.00P")).toEqual(true);
+        expect(SymbolParser_default.getIsEquityOption("AAPL|20200515|250.00P")).toEqual(true);
       });
       it("identifies Commodity3 aliases", () => {
-        expect(SymbolParser.getIsC3("C3:AL79MRM1")).toEqual(true);
+        expect(SymbolParser_default.getIsC3("C3:AL79MRM1")).toEqual(true);
       });
       it("identifies concrete Commodity3 symbols", () => {
-        expect(SymbolParser.getIsC3("AL79MRM1.C3")).toEqual(true);
+        expect(SymbolParser_default.getIsC3("AL79MRM1.C3")).toEqual(true);
       });
       it("identifies Platts aliases", () => {
-        expect(SymbolParser.getIsPlatts("PLATTS:AAVSV00")).toEqual(true);
+        expect(SymbolParser_default.getIsPlatts("PLATTS:AAVSV00")).toEqual(true);
       });
       it("identifies concrete Platts symbols", () => {
-        expect(SymbolParser.getIsPlatts("AAVSV00.PT")).toEqual(true);
+        expect(SymbolParser_default.getIsPlatts("AAVSV00.PT")).toEqual(true);
       });
       it("identifies grain bid symbols", () => {
-        expect(SymbolParser.getIsGrainBid("USBCORN-123-456.CM")).toEqual(true);
+        expect(SymbolParser_default.getIsGrainBid("USBCORN-123-456.CM")).toEqual(true);
       });
       it("identifies pit instruments using their names", () => {
-        expect(SymbolParser.getIsPit("ZCZ6", "Corn (Pit)")).toEqual(true);
+        expect(SymbolParser_default.getIsPit("ZCZ6", "Corn (Pit)")).toEqual(true);
       });
       it("rejects non-pit instruments using their names", () => {
-        expect(SymbolParser.getIsPit("ZCZ6", "Corn")).toEqual(false);
+        expect(SymbolParser_default.getIsPit("ZCZ6", "Corn")).toEqual(false);
       });
       it("identifies percentage symbols", () => {
-        expect(SymbolParser.displayUsingPercent("US10Y.RT")).toEqual(true);
+        expect(SymbolParser_default.displayUsingPercent("US10Y.RT")).toEqual(true);
       });
       it("rejects non-percentage symbols", () => {
-        expect(SymbolParser.displayUsingPercent("US10Y")).toEqual(false);
+        expect(SymbolParser_default.displayUsingPercent("US10Y")).toEqual(false);
       });
       it("identifies expired symbols", () => {
-        expect(SymbolParser.getIsExpired("ESM08")).toEqual(true);
+        expect(SymbolParser_default.getIsExpired("ESM08")).toEqual(true);
       });
       it("identifies unexpired symbols", () => {
-        expect(SymbolParser.getIsExpired("ESZ47")).toEqual(false);
+        expect(SymbolParser_default.getIsExpired("ESZ47")).toEqual(false);
       });
       it("does not identify undated symbols as expired", () => {
-        expect(SymbolParser.getIsExpired("IBM")).toEqual(false);
+        expect(SymbolParser_default.getIsExpired("IBM")).toEqual(false);
       });
     });
     describe("normalization", () => {
       it("converts futures to explicit format", () => {
-        expect(SymbolParser.getFuturesExplicitFormat("ESZ9")).toEqual("ESZ29");
+        expect(SymbolParser_default.getFuturesExplicitFormat("ESZ9")).toEqual("ESZ29");
       });
       it("does not convert reference futures to explicit format", () => {
-        expect(SymbolParser.getFuturesExplicitFormat("ES*1")).toBeNull();
+        expect(SymbolParser_default.getFuturesExplicitFormat("ES*1")).toBeNull();
       });
       it("does not convert non-futures to explicit format", () => {
-        expect(SymbolParser.getFuturesExplicitFormat("IBM")).toBeNull();
+        expect(SymbolParser_default.getFuturesExplicitFormat("IBM")).toBeNull();
       });
       it("normalizes producer symbols with four-digit years", () => {
-        expect(SymbolParser.getProducerSymbol("ESZ2029")).toEqual("ESZ9");
+        expect(SymbolParser_default.getProducerSymbol("ESZ2029")).toEqual("ESZ9");
       });
       it("normalizes four-character producer symbols with four-digit years", () => {
-        expect(SymbolParser.getProducerSymbol("SAAPU2026")).toEqual("SAAPU6");
+        expect(SymbolParser_default.getProducerSymbol("SAAPU2026")).toEqual("SAAPU6");
       });
       it("normalizes four-character producer symbols with two-digit years", () => {
-        expect(SymbolParser.getProducerSymbol("SAAPU26")).toEqual("SAAPU6");
+        expect(SymbolParser_default.getProducerSymbol("SAAPU26")).toEqual("SAAPU6");
       });
       it("preserves normalized producer symbols", () => {
-        expect(SymbolParser.getProducerSymbol("SAAPU6")).toEqual("SAAPU6");
+        expect(SymbolParser_default.getProducerSymbol("SAAPU6")).toEqual("SAAPU6");
       });
       it("normalizes Commodity3 aliases", () => {
-        expect(SymbolParser.getProducerSymbol("C3:AL79MRM1")).toEqual("AL79MRM1.C3");
+        expect(SymbolParser_default.getProducerSymbol("C3:AL79MRM1")).toEqual("AL79MRM1.C3");
       });
       it("normalizes Platts aliases", () => {
-        expect(SymbolParser.getProducerSymbol("PLATTS:AAVSV00")).toEqual("AAVSV00.PT");
+        expect(SymbolParser_default.getProducerSymbol("PLATTS:AAVSV00")).toEqual("AAVSV00.PT");
       });
       it("preserves symbols without a specialized producer format", () => {
-        expect(SymbolParser.getProducerSymbol("IBM")).toEqual("IBM");
+        expect(SymbolParser_default.getProducerSymbol("IBM")).toEqual("IBM");
       });
       it("returns null when normalizing a non-string producer symbol", () => {
-        expect(SymbolParser.getProducerSymbol(null)).toBeNull();
+        expect(SymbolParser_default.getProducerSymbol(null)).toBeNull();
       });
       it("converts futures options to pipeline format", () => {
-        expect(SymbolParser.getFuturesOptionPipelineFormat("ZWH29|470C")).toEqual("ZWH9|470C");
+        expect(SymbolParser_default.getFuturesOptionPipelineFormat("ZWH29|470C")).toEqual("ZWH9|470C");
       });
       it("calculates a future year from a two-digit year", () => {
         spyOn(Date.prototype, "getFullYear").and.returnValue(2022);
-        expect(SymbolParser.getFuturesYear("29", "Z")).toEqual(2029);
+        expect(SymbolParser_default.getFuturesYear("29", "Z")).toEqual(2029);
       });
       it("calculates a past year from a two-digit year", () => {
         spyOn(Date.prototype, "getFullYear").and.returnValue(2022);
-        expect(SymbolParser.getFuturesYear("48", "Z")).toEqual(1948);
+        expect(SymbolParser_default.getFuturesYear("48", "Z")).toEqual(1948);
       });
       it("preserves a four-digit futures year", () => {
         spyOn(Date.prototype, "getFullYear").and.returnValue(2022);
-        expect(SymbolParser.getFuturesYear("2032", "Z")).toEqual(2032);
+        expect(SymbolParser_default.getFuturesYear("2032", "Z")).toEqual(2032);
       });
     });
     it("has a useful string representation", () => {
-      expect(new SymbolParser().toString()).toEqual("[SymbolParser]");
+      expect(new SymbolParser_default().toString()).toEqual("[SymbolParser]");
     });
   });
 })();

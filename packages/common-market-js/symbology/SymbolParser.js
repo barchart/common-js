@@ -8,7 +8,7 @@ import AssetClass from './../data/AssetClass.js';
  *
  * @public
  */
-export default class SymbolParser {
+class SymbolParser {
 	/**
 	 * Returns true when a symbol is not an alias.
 	 *
@@ -560,7 +560,6 @@ function getPutCallCharacter(optionType) {
 	return null;
 }
 
-
 const parsers = [
 	(symbol) => {
 		if (types.futures.spread.test(symbol)) {
@@ -761,3 +760,5 @@ const converters = [
 	(symbol) => types.platts.alias.test(symbol) ? symbol.replace(types.platts.alias, '$2.PT') : null,
 	(symbol) => symbol
 ];
+
+export default SymbolParser;
