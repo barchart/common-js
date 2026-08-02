@@ -614,15 +614,16 @@
      * @returns {boolean}
      */
     static getIsExpired(symbol) {
-      const definition = _SymbolParser.parseInstrumentType(symbol);
-      if (definition !== null && definition.year && definition.month) {
-        const currentYear = getCurrentYear();
-        if (definition.year < currentYear) {
-          return true;
-        }
-        if (definition.year === currentYear && Object.hasOwn(futuresMonthNumbers, definition.month)) {
-          return getCurrentMonth() > futuresMonthNumbers[definition.month];
-        }
+      const parsed = _SymbolParser.parseInstrumentType(symbol);
+      if (parsed === null || !parsed.year || !parsed.month) {
+        return false;
+      }
+      const currentYear = getCurrentYear();
+      if (parsed.year < currentYear) {
+        return true;
+      }
+      if (parsed.year === currentYear && Object.hasOwn(futuresMonthNumbers, parsed.month)) {
+        return getCurrentMonth() > futuresMonthNumbers[parsed.month];
       }
       return false;
     }
@@ -652,9 +653,9 @@
         return null;
       }
       for (const parser of parsers) {
-        const definition = parser(symbol);
-        if (definition !== null) {
-          return definition;
+        const parsed = parser(symbol);
+        if (parsed !== null) {
+          return parsed;
         }
       }
       return null;
@@ -689,11 +690,14 @@
      * @returns {string|null}
      */
     static getFuturesExplicitFormat(symbol) {
-      if (_SymbolParser.getIsFuture(symbol) && _SymbolParser.getIsConcrete(symbol)) {
-        const parsed = _SymbolParser.parseInstrumentType(symbol);
-        return `${parsed.root}${parsed.month}${padLeft(Math.floor(parsed.year % 100).toString(), 2, "0")}`;
+      if (!(_SymbolParser.getIsFuture(symbol) && _SymbolParser.getIsConcrete(symbol))) {
+        return null;
       }
-      return null;
+      const parsed = _SymbolParser.parseInstrumentType(symbol);
+      if (parsed === null) {
+        return null;
+      }
+      return `${parsed.root}${parsed.month}${padLeft(Math.floor(parsed.year % 100).toString(), 2, "0")}`;
     }
     /**
      * Converts a futures option symbol from database format to pipeline format.
@@ -704,12 +708,12 @@
      * @returns {string|null}
      */
     static getFuturesOptionPipelineFormat(symbol) {
-      const definition = _SymbolParser.parseInstrumentType(symbol);
-      if (definition.type === "future_option") {
-        const putCallCharacter = getPutCallCharacter(definition.option_type);
-        return `${definition.root}${definition.month}${getYearDigits(definition.year, 1)}|${definition.strike}${putCallCharacter}`;
+      const parsed = _SymbolParser.parseInstrumentType(symbol);
+      if (parsed === null || parsed.type !== "future_option") {
+        return null;
       }
-      return null;
+      const putCallCharacter = getPutCallCharacter(parsed.option_type);
+      return `${parsed.root}${parsed.month}${getYearDigits(parsed.year, 1)}|${parsed.strike}${putCallCharacter}`;
     }
     /**
      * Determines the expiration year represented by a futures year and month code.
@@ -866,135 +870,74 @@
   }
   var parsers = [
     (symbol) => {
-      if (types2.futures.spread.test(symbol)) {
-        return {
-          symbol,
-          type: "future_spread"
-        };
+      if (!types2.futures.spread.test(symbol)) {
+        return null;
       }
-      return null;
+      return { symbol, type: "future_spread" };
     },
     (symbol) => {
       const match = symbol.match(types2.futures.concrete);
-      if (match !== null) {
-        return {
-          symbol,
-          type: "future",
-          asset: AssetClass.FUTURE,
-          dynamic: false,
-          root: match[1],
-          month: match[2],
-          year: getFuturesYear(match[3], match[2])
-        };
+      if (match === null) {
+        return null;
       }
-      return null;
+      return { symbol, type: "future", asset: AssetClass.FUTURE, dynamic: false, root: match[1], month: match[2], year: getFuturesYear(match[3], match[2]) };
     },
     (symbol) => {
       const match = symbol.match(types2.futures.alias);
-      if (match !== null) {
-        return {
-          symbol,
-          type: "future",
-          asset: AssetClass.FUTURE,
-          dynamic: true,
-          root: match[1],
-          dynamicCode: match[3]
-        };
+      if (match === null) {
+        return null;
       }
-      return null;
-    },
-    (symbol) => {
-      if (types2.forex.test(symbol)) {
-        return {
-          symbol,
-          type: "forex",
-          asset: AssetClass.FOREX
-        };
-      }
-      return null;
-    },
-    (symbol) => {
-      const match = symbol.match(types2.equities.options);
-      if (match !== null) {
-        const suffix = typeof match[4] !== "undefined" ? match[4] : "";
-        return {
-          symbol,
-          type: "equity_option",
-          asset: AssetClass.STOCK_OPTION,
-          option_type: match[9] === "C" ? "call" : "put",
-          strike: parseFloat(match[8]),
-          root: `${match[1]}${suffix}`,
-          month: parseInt(match[6]),
-          day: parseInt(match[7]),
-          year: parseInt(match[5]),
-          adjusted: match[3] !== ""
-        };
-      }
-      return null;
-    },
-    (symbol) => {
-      if (types2.indicies.external.test(symbol)) {
-        return {
-          symbol,
-          type: "index"
-        };
-      }
-      return null;
-    },
-    (symbol) => {
-      if (types2.indicies.sector.test(symbol)) {
-        return {
-          symbol,
-          type: "sector"
-        };
-      }
-      return null;
+      return { symbol, type: "future", asset: AssetClass.FUTURE, dynamic: true, root: match[1], dynamicCode: match[3] };
     },
     (symbol) => {
       const match = symbol.match(types2.futures.options.short);
-      if (match !== null) {
-        const putCallCharacterCode = match[4].charCodeAt(0);
-        const putCharacterCode = 80;
-        const callCharacterCode = 67;
-        const call = putCallCharacterCode < putCharacterCode;
-        return {
-          symbol,
-          type: "future_option",
-          asset: AssetClass.FUTURE_OPTION,
-          option_type: call ? "call" : "put",
-          strike: parseInt(match[3]),
-          root: match[1],
-          month: match[2],
-          year: getCurrentYear() + putCallCharacterCode - (call ? callCharacterCode : putCharacterCode)
-        };
+      if (match === null) {
+        return null;
       }
-      return null;
+      const putCallCharacterCode = match[4].charCodeAt(0);
+      const putCharacterCode = 80;
+      const callCharacterCode = 67;
+      const call = putCallCharacterCode < putCharacterCode;
+      return { symbol, type: "future_option", asset: AssetClass.FUTURE_OPTION, option_type: call ? "call" : "put", strike: parseInt(match[3]), root: match[1], month: match[2], year: getCurrentYear() + putCallCharacterCode - (call ? callCharacterCode : putCharacterCode) };
     },
     (symbol) => {
       const match = symbol.match(types2.futures.options.long) || symbol.match(types2.futures.options.historical);
-      if (match !== null) {
-        return {
-          symbol,
-          type: "future_option",
-          asset: AssetClass.FUTURE_OPTION,
-          option_type: match[5] === "C" ? "call" : "put",
-          strike: parseInt(match[4]),
-          root: match[1],
-          month: getFuturesMonth(match[2]),
-          year: getFuturesYear(match[3])
-        };
+      if (match === null) {
+        return null;
       }
-      return null;
+      return { symbol, type: "future_option", asset: AssetClass.FUTURE_OPTION, option_type: match[5] === "C" ? "call" : "put", strike: parseInt(match[4]), root: match[1], month: getFuturesMonth(match[2]), year: getFuturesYear(match[3]) };
     },
     (symbol) => {
-      if (types2.cmdty.stats.test(symbol)) {
-        return {
-          symbol,
-          type: "cmdtyStats",
-          asset: AssetClass.CMDTY_STATS
-        };
+      if (!types2.forex.test(symbol)) {
+        return null;
       }
-      return null;
+      return { symbol, type: "forex", asset: AssetClass.FOREX };
+    },
+    (symbol) => {
+      const match = symbol.match(types2.equities.options);
+      if (match === null) {
+        return null;
+      }
+      const suffix = typeof match[4] !== "undefined" ? match[4] : "";
+      return { symbol, type: "equity_option", asset: AssetClass.STOCK_OPTION, option_type: match[9] === "C" ? "call" : "put", strike: parseFloat(match[8]), root: `${match[1]}${suffix}`, month: parseInt(match[6]), day: parseInt(match[7]), year: parseInt(match[5]), adjusted: match[3] !== "" };
+    },
+    (symbol) => {
+      if (!types2.indicies.external.test(symbol)) {
+        return null;
+      }
+      return { symbol, type: "index" };
+    },
+    (symbol) => {
+      if (!types2.indicies.sector.test(symbol)) {
+        return null;
+      }
+      return { symbol, type: "sector" };
+    },
+    (symbol) => {
+      if (!types2.cmdty.stats.test(symbol)) {
+        return null;
+      }
+      return { symbol, type: "cmdtyStats", asset: AssetClass.CMDTY_STATS };
     }
   ];
   var converters = [
@@ -1023,13 +966,16 @@
     },
     (symbol) => {
       if (SymbolParser.getIsFutureOption(symbol)) {
-        const definition = SymbolParser.parseInstrumentType(symbol);
-        const putCallCharacter = getPutCallCharacter(definition.option_type);
-        if (definition.root.length < 3) {
-          const putCallCharacterCode = putCallCharacter.charCodeAt(0);
-          return `${definition.root}${definition.month}${definition.strike}${String.fromCharCode(putCallCharacterCode + definition.year - getCurrentYear())}`;
+        const parsed = SymbolParser.parseInstrumentType(symbol);
+        if (parsed === null) {
+          return null;
         }
-        return `${definition.root}${definition.month}${getYearDigits(definition.year, 1)}|${definition.strike}${putCallCharacter}`;
+        const putCallCharacter = getPutCallCharacter(parsed.option_type);
+        if (parsed.root.length < 3) {
+          const putCallCharacterCode = putCallCharacter.charCodeAt(0);
+          return `${parsed.root}${parsed.month}${parsed.strike}${String.fromCharCode(putCallCharacterCode + parsed.year - getCurrentYear())}`;
+        }
+        return `${parsed.root}${parsed.month}${getYearDigits(parsed.year, 1)}|${parsed.strike}${putCallCharacter}`;
       }
       return null;
     },

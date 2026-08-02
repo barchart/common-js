@@ -597,6 +597,29 @@ const parsers = [
 		return { symbol, type: 'future', asset: AssetClass.FUTURE, dynamic: true, root: match[1], dynamicCode: match[3] };
 	},
 	(symbol) => {
+		const match = symbol.match(types.futures.options.short);
+
+		if (match === null) {
+			return null;
+		}
+
+		const putCallCharacterCode = match[4].charCodeAt(0);
+		const putCharacterCode = 80;
+		const callCharacterCode = 67;
+		const call = putCallCharacterCode < putCharacterCode;
+
+		return { symbol, type: 'future_option', asset: AssetClass.FUTURE_OPTION, option_type: call ? 'call' : 'put', strike: parseInt(match[3]), root: match[1], month: match[2], year: getCurrentYear() + putCallCharacterCode - (call ? callCharacterCode : putCharacterCode) };
+	},
+	(symbol) => {
+		const match = symbol.match(types.futures.options.long) || symbol.match(types.futures.options.historical);
+
+		if (match === null) {
+			return null;
+		}
+
+		return { symbol, type: 'future_option', asset: AssetClass.FUTURE_OPTION, option_type: match[5] === 'C' ? 'call' : 'put', strike: parseInt(match[4]), root: match[1], month: getFuturesMonth(match[2]), year: getFuturesYear(match[3]) };
+	},
+	(symbol) => {
 		if (!types.forex.test(symbol)) {
 			return null;
 		}
@@ -627,29 +650,6 @@ const parsers = [
 		}
 
 		return { symbol, type: 'sector' };
-	},
-	(symbol) => {
-		const match = symbol.match(types.futures.options.short);
-
-		if (match === null) {
-			return null;
-		}
-
-		const putCallCharacterCode = match[4].charCodeAt(0);
-		const putCharacterCode = 80;
-		const callCharacterCode = 67;
-		const call = putCallCharacterCode < putCharacterCode;
-
-		return { symbol, type: 'future_option', asset: AssetClass.FUTURE_OPTION, option_type: call ? 'call' : 'put', strike: parseInt(match[3]), root: match[1], month: match[2], year: getCurrentYear() + putCallCharacterCode - (call ? callCharacterCode : putCharacterCode) };
-	},
-	(symbol) => {
-		const match = symbol.match(types.futures.options.long) || symbol.match(types.futures.options.historical);
-
-		if (match === null) {
-			return null;
-		}
-
-		return { symbol, type: 'future_option', asset: AssetClass.FUTURE_OPTION, option_type: match[5] === 'C' ? 'call' : 'put', strike: parseInt(match[4]), root: match[1], month: getFuturesMonth(match[2]), year: getFuturesYear(match[3]) };
 	},
 	(symbol) => {
 		if (!types.cmdty.stats.test(symbol)) {
