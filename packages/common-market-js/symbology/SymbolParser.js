@@ -357,13 +357,13 @@ class SymbolParser {
 	static getFuturesOptionPipelineFormat(symbol) {
 		const definition = SymbolParser.parseInstrumentType(symbol);
 
-		if (definition.type === 'future_option') {
-			const putCallCharacter = getPutCallCharacter(definition.option_type);
-
-			return `${definition.root}${definition.month}${getYearDigits(definition.year, 1)}|${definition.strike}${putCallCharacter}`;
+		if (definition.type !== 'future_option') {
+			return null;
 		}
 
-		return null;
+		const putCallCharacter = getPutCallCharacter(definition.option_type);
+
+		return `${definition.root}${definition.month}${getYearDigits(definition.year, 1)}|${definition.strike}${putCallCharacter}`;
 	}
 
 	/**
