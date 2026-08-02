@@ -166,7 +166,7 @@ describe('SymbolParser', () => {
 		});
 
 		it('identifies cash futures', () => {
-			expect(SymbolParser.getIsCash('ESY00')).toEqual(true);
+			expect(SymbolParser.getIsFutureCash('ESY00')).toEqual(true);
 		});
 
 		it('identifies futures spreads', () => {

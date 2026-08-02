@@ -9,126 +9,34 @@ import AssetClass from './../data/AssetClass.js';
  * @public
  */
 class SymbolParser {
+	constructor() {
+
+	}
+
+	// PREDICATES THAT IDENTIFY A SYMBOL AS A SPECIFIC ASSET CLASS.
+
 	/**
-	 * Returns true when a symbol is not an alias.
+	 * Returns true when a symbol is listed on the BATS/BZX exchange.
 	 *
 	 * @public
 	 * @static
 	 * @param {string} symbol
 	 * @returns {boolean}
 	 */
-	static getIsConcrete(symbol) {
-		return is.string(symbol) && !SymbolParser.getIsReference(symbol);
+	static getIsBats(symbol) {
+		return is.string(symbol) && predicates.bats.test(symbol);
 	}
 
 	/**
-	 * Returns true when a symbol is an alias.
+	 * Returns true when a symbol represents a Commodity3 instrument.
 	 *
 	 * @public
 	 * @static
 	 * @param {string} symbol
 	 * @returns {boolean}
 	 */
-	static getIsReference(symbol) {
-		return is.string(symbol) && types.futures.alias.test(symbol);
-	}
-
-	/**
-	 * Returns true when a symbol represents a futures contract.
-	 *
-	 * @public
-	 * @static
-	 * @param {string} symbol
-	 * @returns {boolean}
-	 */
-	static getIsFuture(symbol) {
-		return is.string(symbol) && (types.futures.concrete.test(symbol) || types.futures.alias.test(symbol));
-	}
-
-	/**
-	 * Returns true when a symbol represents a cash futures contract.
-	 *
-	 * @public
-	 * @static
-	 * @param {string} symbol
-	 * @returns {boolean}
-	 */
-	static getIsCash(symbol) {
-		return SymbolParser.getIsFuture(symbol) && types.futures.cash.test(symbol);
-	}
-
-	/**
-	 * Returns true when a symbol represents a futures spread.
-	 *
-	 * @public
-	 * @static
-	 * @param {string} symbol
-	 * @returns {boolean}
-	 */
-	static getIsFutureSpread(symbol) {
-		return is.string(symbol) && types.futures.spread.test(symbol);
-	}
-
-	/**
-	 * Returns true when a symbol represents an option on a futures contract.
-	 *
-	 * @public
-	 * @static
-	 * @param {string} symbol
-	 * @returns {boolean}
-	 */
-	static getIsFutureOption(symbol) {
-		return is.string(symbol) && (types.futures.options.short.test(symbol) || types.futures.options.long.test(symbol) || types.futures.options.historical.test(symbol));
-	}
-
-	/**
-	 * Returns true when a symbol represents a foreign exchange currency pair.
-	 * Cryptocurrency symbols can use the same pattern.
-	 *
-	 * @public
-	 * @static
-	 * @param {string} symbol
-	 * @returns {boolean}
-	 */
-	static getIsForex(symbol) {
-		return is.string(symbol) && types.forex.test(symbol);
-	}
-
-	/**
-	 * Returns true when a symbol represents a cryptocurrency.
-	 * Foreign exchange symbols can use the same pattern.
-	 *
-	 * @public
-	 * @static
-	 * @param {string} symbol
-	 * @returns {boolean}
-	 */
-	static getIsCrypto(symbol) {
-		return is.string(symbol) && types.crypto.test(symbol);
-	}
-
-	/**
-	 * Returns true when a symbol represents an external index.
-	 *
-	 * @public
-	 * @static
-	 * @param {string} symbol
-	 * @returns {boolean}
-	 */
-	static getIsIndex(symbol) {
-		return is.string(symbol) && types.indicies.external.test(symbol);
-	}
-
-	/**
-	 * Returns true when a symbol represents a Barchart sector.
-	 *
-	 * @public
-	 * @static
-	 * @param {string} symbol
-	 * @returns {boolean}
-	 */
-	static getIsSector(symbol) {
-		return is.string(symbol) && types.indicies.sector.test(symbol);
+	static getIsC3(symbol) {
+		return is.string(symbol) && (types.c3.concrete.test(symbol) || types.c3.alias.test(symbol));
 	}
 
 	/**
@@ -152,11 +60,7 @@ class SymbolParser {
 	 * @returns {boolean}
 	 */
 	static getIsCmdty(symbol) {
-		return is.string(symbol) && (
-			types.cmdty.stats.test(symbol) ||
-			types.cmdty.internal.test(symbol) ||
-			types.cmdty.external.test(symbol)
-		);
+		return is.string(symbol) && (types.cmdty.stats.test(symbol) || types.cmdty.internal.test(symbol) || types.cmdty.external.test(symbol));
 	}
 
 	/**
@@ -172,15 +76,16 @@ class SymbolParser {
 	}
 
 	/**
-	 * Returns true when a symbol is listed on the BATS exchange.
+	 * Returns true when a symbol represents a cryptocurrency.
+	 * Foreign exchange symbols can use the same pattern.
 	 *
 	 * @public
 	 * @static
 	 * @param {string} symbol
 	 * @returns {boolean}
 	 */
-	static getIsBats(symbol) {
-		return is.string(symbol) && predicates.bats.test(symbol);
+	static getIsCrypto(symbol) {
+		return is.string(symbol) && types.crypto.test(symbol);
 	}
 
 	/**
@@ -196,7 +101,142 @@ class SymbolParser {
 	}
 
 	/**
-	 * Returns true when a dated symbol appears to be expired.
+	 * Returns true when a symbol represents a futures contract.
+	 *
+	 * @public
+	 * @static
+	 * @param {string} symbol
+	 * @returns {boolean}
+	 */
+	static getIsFuture(symbol) {
+		return is.string(symbol) && (types.futures.concrete.test(symbol) || types.futures.alias.test(symbol));
+	}
+
+	/**
+	 * Returns true when a symbol represents a cash futures contract.
+	 *
+	 * @public
+	 * @static
+	 * @param {string} symbol
+	 * @returns {boolean}
+	 */
+	static getIsFutureCash(symbol) {
+		return SymbolParser.getIsFuture(symbol) && types.futures.cash.test(symbol);
+	}
+
+	/**
+	 * Returns true when a symbol represents an option on a futures contract.
+	 *
+	 * @public
+	 * @static
+	 * @param {string} symbol
+	 * @returns {boolean}
+	 */
+	static getIsFutureOption(symbol) {
+		return is.string(symbol) && (types.futures.options.short.test(symbol) || types.futures.options.long.test(symbol) || types.futures.options.historical.test(symbol));
+	}
+
+	/**
+	 * Returns true when a symbol represents a futures spread.
+	 *
+	 * @public
+	 * @static
+	 * @param {string} symbol
+	 * @returns {boolean}
+	 */
+	static getIsFutureSpread(symbol) {
+		return is.string(symbol) && types.futures.spread.test(symbol);
+	}
+
+	/**
+	 * Returns true when a symbol represents a foreign exchange currency pair.
+	 * Cryptocurrency symbols can use the same pattern.
+	 *
+	 * @public
+	 * @static
+	 * @param {string} symbol
+	 * @returns {boolean}
+	 */
+	static getIsForex(symbol) {
+		return is.string(symbol) && types.forex.test(symbol);
+	}
+
+	/**
+	 * Returns true when a symbol represents a grain bid instrument.
+	 *
+	 * @public
+	 * @static
+	 * @param {string} symbol
+	 * @returns {boolean}
+	 */
+	static getIsGrainBid(symbol) {
+		return is.string(symbol) && types.bids.test(symbol);
+	}
+
+	/**
+	 * Returns true when a symbol represents an external index.
+	 *
+	 * @public
+	 * @static
+	 * @param {string} symbol
+	 * @returns {boolean}
+	 */
+	static getIsIndex(symbol) {
+		return is.string(symbol) && types.indicies.external.test(symbol);
+	}
+
+	/**
+	 * Returns true when a symbol represents a Platts instrument.
+	 *
+	 * @public
+	 * @static
+	 * @param {string} symbol
+	 * @returns {boolean}
+	 */
+	static getIsPlatts(symbol) {
+		return is.string(symbol) && (types.platts.concrete.test(symbol) || types.platts.alias.test(symbol));
+	}
+
+	/**
+	 * Returns true when a symbol represents a Barchart sector.
+	 *
+	 * @public
+	 * @static
+	 * @param {string} symbol
+	 * @returns {boolean}
+	 */
+	static getIsSector(symbol) {
+		return is.string(symbol) && types.indicies.sector.test(symbol);
+	}
+
+	// PREDICATES THAT IDENTIFY A SYMBOL AS HAVING AN ATTRIBUTE (BUT NOT NECESSARILY A SPECIFIC ASSET CLASS).
+
+	/**
+	 * Returns true when a symbol is not an alias.
+	 *
+	 * @public
+	 * @static
+	 * @param {string} symbol
+	 * @returns {boolean}
+	 */
+	static getIsConcrete(symbol) {
+		return is.string(symbol) && !SymbolParser.getIsReference(symbol);
+	}
+
+	/**
+	 * Returns true when a symbol is an alias (e.g. ZC*1).
+	 *
+	 * @public
+	 * @static
+	 * @param {string} symbol
+	 * @returns {boolean}
+	 */
+	static getIsReference(symbol) {
+		return is.string(symbol) && types.futures.alias.test(symbol);
+	}
+
+	/**
+	 * Returns true when a symbol appears to be expired (e.g. ZCZ6 or IBM).
 	 *
 	 * @public
 	 * @static
@@ -222,30 +262,6 @@ class SymbolParser {
 	}
 
 	/**
-	 * Returns true when a symbol represents a Commodity3 instrument.
-	 *
-	 * @public
-	 * @static
-	 * @param {string} symbol
-	 * @returns {boolean}
-	 */
-	static getIsC3(symbol) {
-		return is.string(symbol) && (types.c3.concrete.test(symbol) || types.c3.alias.test(symbol));
-	}
-
-	/**
-	 * Returns true when a symbol represents a Platts instrument.
-	 *
-	 * @public
-	 * @static
-	 * @param {string} symbol
-	 * @returns {boolean}
-	 */
-	static getIsPlatts(symbol) {
-		return is.string(symbol) && (types.platts.concrete.test(symbol) || types.platts.alias.test(symbol));
-	}
-
-	/**
 	 * Returns true when the name identifies a pit-traded instrument.
 	 *
 	 * @public
@@ -258,17 +274,7 @@ class SymbolParser {
 		return is.string(symbol) && is.string(name) && predicates.pit.test(name);
 	}
 
-	/**
-	 * Returns true when a symbol represents a grain bid instrument.
-	 *
-	 * @public
-	 * @static
-	 * @param {string} symbol
-	 * @returns {boolean}
-	 */
-	static getIsGrainBid(symbol) {
-		return is.string(symbol) && types.bids.test(symbol);
-	}
+	// OTHER NON-PREDICATE UTILITY FUNCTIONS.
 
 	/**
 	 * Returns a definition containing information inferred from the symbol.
@@ -293,6 +299,8 @@ class SymbolParser {
 
 		return null;
 	}
+
+	// SYMBOL CONVERSION FUNCTIONS.
 
 	/**
 	 * Returns the equivalent symbol recognized by internal quote producers.
@@ -319,6 +327,24 @@ class SymbolParser {
 	}
 
 	/**
+	 * Converts a concrete futures symbol to a two-digit-year format.
+	 *
+	 * @public
+	 * @static
+	 * @param {string} symbol
+	 * @returns {string|null}
+	 */
+	static getFuturesExplicitFormat(symbol) {
+		if (SymbolParser.getIsFuture(symbol) && SymbolParser.getIsConcrete(symbol)) {
+			const parsed = SymbolParser.parseInstrumentType(symbol);
+
+			return `${parsed.root}${parsed.month}${string.padLeft(Math.floor(parsed.year % 100).toString(), 2, '0')}`;
+		}
+
+		return null;
+	}
+
+	/**
 	 * Converts a futures option symbol from database format to pipeline format.
 	 *
 	 * @public
@@ -333,24 +359,6 @@ class SymbolParser {
 			const putCallCharacter = getPutCallCharacter(definition.option_type);
 
 			return `${definition.root}${definition.month}${getYearDigits(definition.year, 1)}|${definition.strike}${putCallCharacter}`;
-		}
-
-		return null;
-	}
-
-	/**
-	 * Converts a concrete futures symbol to a two-digit-year format.
-	 *
-	 * @public
-	 * @static
-	 * @param {string} symbol
-	 * @returns {string|null}
-	 */
-	static getFuturesExplicitFormat(symbol) {
-		if (SymbolParser.getIsFuture(symbol) && SymbolParser.getIsConcrete(symbol)) {
-			const parsed = SymbolParser.parseInstrumentType(symbol);
-
-			return `${parsed.root}${parsed.month}${string.padLeft(Math.floor(parsed.year % 100).toString(), 2, '0')}`;
 		}
 
 		return null;
