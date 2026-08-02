@@ -78,11 +78,7 @@ class SymbolParser {
 	 * @returns {boolean}
 	 */
 	static getIsFutureOption(symbol) {
-		return is.string(symbol) && (
-			types.futures.options.short.test(symbol) ||
-			types.futures.options.long.test(symbol) ||
-			types.futures.options.historical.test(symbol)
-		);
+		return is.string(symbol) && (types.futures.options.short.test(symbol) || types.futures.options.long.test(symbol) || types.futures.options.historical.test(symbol));
 	}
 
 	/**
