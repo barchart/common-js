@@ -448,51 +448,56 @@ const futuresMonthNumbers = {
 	Z: 12
 };
 
-const predicates = {
-	bats: /^(.*)\.BZ$/i,
-	percent: /(\.RT)$/,
-	pit: /\(P(it)?\)/
-};
+const predicates = { };
 
-const types = {
-	bids: /^([A-Z]{2})([B|P])([A-Z\d]{3,4})-(\d+)-(\d+)(\.CM)$/i,
-	c3: {
-		alias: /^(C3:)(.*)$/i,
-		concrete: /(\.C3)$/i
-	},
-	cmdty: {
-		stats: /(\.CS)$/i,
-		internal: /(\.CM)$/i,
-		external: /(\.CP)$/i
-	},
-	crypto: /^\^([A-Z]{3})([A-Z]{3,4})$/i,
-	equities: {
-		options: /^([A-Z$][A-Z-]{0,}(\.[A-Z]{1})?)([0-9]?)(\.[A-Z]{2})?\|([0-9]{4})([0-9]{2})([0-9]{2})\|([0-9]+\.[0-9]+)[P|W]?(C|P)/i
-	},
-	forex: /^\^([A-Z]{3})([A-Z]{3})$/i,
-	funds: {
-		canadian: /(.*)(\.CF)$/i
-	},
-	futures: {
-		alias: /^([A-Z][A-Z0-9$!.-]{0,2})(\*{1})([0-9]{1,2})$/i,
-		concrete: /^([A-Z][A-Z0-9$!.-]{0,3})([A-Z]{1})([0-9]{4}|[0-9]{1,2})$/i,
-		spread: /^_S_/i,
-		cash: /(.*)(Y00)$/,
-		options: {
-			historical: /^([A-Z][A-Z0-9$!.-]{0,2})([A-Z])([0-9]{2})([0-9]{1,5})(C|P)$/i,
-			long: /^([A-Z][A-Z0-9$!.-]{0,2})([A-Z])([0-9]{1,4})\|(-?[0-9]{1,5})(C|P)$/i,
-			short: /^([A-Z][A-Z0-9$!.-]?)([A-Z])([0-9]{1,4})([A-Z])$/i
-		}
-	},
-	indicies: {
-		external: /^\$(.*)$/i,
-		sector: /^-(.*)$/i
-	},
-	platts: {
-		alias: /^(PLATTS:)(.*)$/i,
-		concrete: /^(.*)(\.PT)$/i
-	}
-};
+predicates.bats = /^(.*)\.BZ$/i;
+predicates.percent = /(\.RT)$/;
+predicates.pit = /\(P(it)?\)/;
+
+const types = { };
+
+types.bids = /^([A-Z]{2})([B|P])([A-Z\d]{3,4})-(\d+)-(\d+)(\.CM)$/i;
+
+types.c3 = { }
+types.c3.alias = /^(C3:)(.*)$/i;
+types.c3.concrete = /(\.C3)$/i;
+
+types.cmdty = { };
+types.cmdty.stats = /(\.CS)$/i;
+types.cmdty.internal = /(\.CM)$/i;
+types.cmdty.external = /(\.CP)$/i;
+
+types.crypto = /^\^([A-Z]{3})([A-Z]{3,4})$/i;
+
+types.equities = { };
+types.equities.options = /^([A-Z$][A-Z-]{0,}(\.[A-Z]{1})?)([0-9]?)(\.[A-Z]{2})?\|([0-9]{4})([0-9]{2})([0-9]{2})\|([0-9]+\.[0-9]+)[P|W]?(C|P)/i;
+
+types.forex = /^\^([A-Z]{3})([A-Z]{3})$/i;
+
+types.funds = { };
+types.funds.canadian = /(.*)(\.CF)$/i;
+
+
+types.futures = { };
+types.futures.alias = /^([A-Z][A-Z0-9$!.-]{0,2})(\*{1})([0-9]{1,2})$/i;
+types.futures.concrete = /^([A-Z][A-Z0-9$!.-]{0,3})([A-Z]{1})([0-9]{4}|[0-9]{1,2})$/i;
+types.futures.spread = /^_S_/i;
+types.futures.cash = /(.*)(Y00)$/;
+
+types.futures.options = { };
+
+types.futures.options.historical = /^([A-Z][A-Z0-9$!.-]{0,2})([A-Z])([0-9]{2})([0-9]{1,5})(C|P)$/i;
+types.futures.options.long = /^([A-Z][A-Z0-9$!.-]{0,2})([A-Z])([0-9]{1,4})\|(-?[0-9]{1,5})(C|P)$/i;
+types.futures.options.short = /^([A-Z][A-Z0-9$!.-]?)([A-Z])([0-9]{1,4})([A-Z])$/i;
+
+types.indicies = { };
+types.indicies.external = /^\$(.*)$/i;
+types.indicies.sector = /^-(.*)$/i;
+
+types.platts = { };
+
+types.platts.alias = /^(PLATTS:)(.*)$/i;
+types.platts.concrete = /^(.*)(\.PT)$/i;
 
 /**
  * @returns {number}
