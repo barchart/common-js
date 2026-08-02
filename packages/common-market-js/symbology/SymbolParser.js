@@ -337,13 +337,13 @@ class SymbolParser {
 	 * @returns {string|null}
 	 */
 	static getFuturesExplicitFormat(symbol) {
-		if (SymbolParser.getIsFuture(symbol) && SymbolParser.getIsConcrete(symbol)) {
-			const parsed = SymbolParser.parseInstrumentType(symbol);
-
-			return `${parsed.root}${parsed.month}${string.padLeft(Math.floor(parsed.year % 100).toString(), 2, '0')}`;
+		if (!(SymbolParser.getIsFuture(symbol) && SymbolParser.getIsConcrete(symbol))) {
+			return null;
 		}
 
-		return null;
+		const parsed = SymbolParser.parseInstrumentType(symbol);
+
+		return `${parsed.root}${parsed.month}${string.padLeft(Math.floor(parsed.year % 100).toString(), 2, '0')}`;
 	}
 
 	/**
