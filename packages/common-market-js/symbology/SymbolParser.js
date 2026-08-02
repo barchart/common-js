@@ -246,16 +246,18 @@ class SymbolParser {
 	static getIsExpired(symbol) {
 		const definition = SymbolParser.parseInstrumentType(symbol);
 
-		if (definition !== null && definition.year && definition.month) {
-			const currentYear = getCurrentYear();
+		if (!(definition !== null && definition.year && definition.month)) {
+			return false;
+		}
 
-			if (definition.year < currentYear) {
-				return true;
-			}
+		const currentYear = getCurrentYear();
 
-			if (definition.year === currentYear && Object.hasOwn(futuresMonthNumbers, definition.month)) {
-				return getCurrentMonth() > futuresMonthNumbers[definition.month];
-			}
+		if (definition.year < currentYear) {
+			return true;
+		}
+
+		if (definition.year === currentYear && Object.hasOwn(futuresMonthNumbers, definition.month)) {
+			return getCurrentMonth() > futuresMonthNumbers[definition.month];
 		}
 
 		return false;
