@@ -942,46 +942,55 @@
   ];
   var converters = [
     (symbol) => {
-      if (SymbolParser.getIsFuture(symbol) && SymbolParser.getIsConcrete(symbol)) {
-        const matches = symbol.match(types2.futures.concrete);
-        if (matches !== null) {
-          const root = matches[1];
-          const month = matches[2];
-          const year = getFuturesYear(matches[3], month);
-          if (year > getCurrentYear() + 9) {
-            const distant = distantFuturesMonths[month];
-            if (distant) {
-              return `${root}${distant}${getYearDigits(year, 1)}`;
-            }
-          }
+      if (!(SymbolParser.getIsFuture(symbol) && SymbolParser.getIsConcrete(symbol))) {
+        return null;
+      }
+      const matches = symbol.match(types2.futures.concrete);
+      if (matches === null) {
+        return null;
+      }
+      const root = matches[1];
+      const month = matches[2];
+      const year = getFuturesYear(matches[3], month);
+      if (year > getCurrentYear() + 9) {
+        const distant = distantFuturesMonths[month];
+        if (distant) {
+          return `${root}${distant}${getYearDigits(year, 1)}`;
         }
       }
       return null;
     },
     (symbol) => {
-      if (SymbolParser.getIsFuture(symbol) && SymbolParser.getIsConcrete(symbol)) {
-        return symbol.replace(/(.{1,4})([A-Z]{1})([0-9]{3}|[0-9]{1})?([0-9]{1})$/i, "$1$2$4") || null;
+      if (!(SymbolParser.getIsFuture(symbol) && SymbolParser.getIsConcrete(symbol))) {
+        return null;
       }
-      return null;
+      return symbol.replace(/(.{1,4})([A-Z]{1})([0-9]{3}|[0-9]{1})?([0-9]{1})$/i, "$1$2$4") || null;
+      ;
     },
     (symbol) => {
-      if (SymbolParser.getIsFutureOption(symbol)) {
-        const parsed = SymbolParser.parseInstrumentType(symbol);
-        if (parsed === null) {
-          return null;
-        }
-        const putCallCharacter = getPutCallCharacter(parsed.option_type);
-        if (parsed.root.length < 3) {
-          const putCallCharacterCode = putCallCharacter.charCodeAt(0);
-          return `${parsed.root}${parsed.month}${parsed.strike}${String.fromCharCode(putCallCharacterCode + parsed.year - getCurrentYear())}`;
-        }
-        return `${parsed.root}${parsed.month}${getYearDigits(parsed.year, 1)}|${parsed.strike}${putCallCharacter}`;
+      if (!SymbolParser.getIsFutureOption(symbol)) {
+        return null;
       }
-      return null;
+      const parsed = SymbolParser.parseInstrumentType(symbol);
+      if (parsed === null) {
+        return null;
+      }
+      const putCallCharacter = getPutCallCharacter(parsed.option_type);
+      if (parsed.root.length < 3) {
+        const putCallCharacterCode = putCallCharacter.charCodeAt(0);
+        return `${parsed.root}${parsed.month}${parsed.strike}${String.fromCharCode(putCallCharacterCode + parsed.year - getCurrentYear())}`;
+      }
+      return `${parsed.root}${parsed.month}${getYearDigits(parsed.year, 1)}|${parsed.strike}${putCallCharacter}`;
     },
-    (symbol) => types2.c3.alias.test(symbol) ? symbol.replace(types2.c3.alias, "$2.C3") : null,
-    (symbol) => types2.platts.alias.test(symbol) ? symbol.replace(types2.platts.alias, "$2.PT") : null,
-    (symbol) => symbol
+    (symbol) => {
+      return types2.c3.alias.test(symbol) ? symbol.replace(types2.c3.alias, "$2.C3") : null;
+    },
+    (symbol) => {
+      return types2.platts.alias.test(symbol) ? symbol.replace(types2.platts.alias, "$2.PT") : null;
+    },
+    (symbol) => {
+      return symbol;
+    }
   ];
   var SymbolParser_default = SymbolParser;
 
