@@ -477,7 +477,6 @@ types.forex = /^\^([A-Z]{3})([A-Z]{3})$/i;
 types.funds = { };
 types.funds.canadian = /(.*)(\.CF)$/i;
 
-
 types.futures = { };
 types.futures.alias = /^([A-Z][A-Z0-9$!.-]{0,2})(\*{1})([0-9]{1,2})$/i;
 types.futures.concrete = /^([A-Z][A-Z0-9$!.-]{0,3})([A-Z]{1})([0-9]{4}|[0-9]{1,2})$/i;
