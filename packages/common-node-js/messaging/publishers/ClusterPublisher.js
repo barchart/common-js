@@ -73,7 +73,7 @@ export default class ClusterPublisher extends Publisher {
 				const subscriptionId = payload.id;
 				const messageType = payload.t;
 
-				if (!this.#subscriptions.hasOwnProperty(messageType)) {
+				if (!Object.hasOwn(this.#subscriptions, messageType)) {
 					this.#subscriptions[messageType] = new SubscriptionData(messageType);
 				}
 
@@ -88,7 +88,7 @@ export default class ClusterPublisher extends Publisher {
 				const subscriptionId = payload.id;
 				const messageType = payload.t;
 
-				if (this.#subscriptions.hasOwnProperty(messageType)) {
+				if (Object.hasOwn(this.#subscriptions, messageType)) {
 					const subscriptionData = this.#subscriptions[messageType];
 
 					subscriptionData.removeSubscriber(subscriptionId);
@@ -104,7 +104,7 @@ export default class ClusterPublisher extends Publisher {
 			this.#messageProvider.handle(PUBLISH, (source, type, payload) => {
 				const messageType = payload.t;
 
-				if (this.#subscribers.hasOwnProperty(messageType)) {
+				if (Object.hasOwn(this.#subscribers, messageType)) {
 					this.#subscribers[messageType].publish(payload.p);
 				}
 			})
@@ -122,7 +122,7 @@ export default class ClusterPublisher extends Publisher {
 	 * @returns {Promise}
 	 */
 	async _publish(messageType, payload) {
-		if (this.#subscriptions.hasOwnProperty(messageType)) {
+		if (Object.hasOwn(this.#subscriptions, messageType)) {
 			const envelope = getPublishEnvelope(messageType, payload);
 			const sources = this.#subscriptions[messageType].getSources();
 
@@ -141,7 +141,7 @@ export default class ClusterPublisher extends Publisher {
 	 * @returns {Promise<Disposable>}
 	 */
 	async _subscribe(messageType, handler) {
-		if (!this.#subscribers.hasOwnProperty(messageType)) {
+		if (!Object.hasOwn(this.#subscribers, messageType)) {
 			this.#subscribers[messageType] = new SubscriberData(messageType);
 		}
 
@@ -228,7 +228,7 @@ class SubscriberData extends Disposable {
 		sender.broadcast(SUBSCRIBE, getSubscriptionEnvelope(handlerId, this.#messageType));
 
 		return Disposable.fromAction(() => {
-			if (this.#handlers.hasOwnProperty(handlerId)) {
+			if (Object.hasOwn(this.#handlers, handlerId)) {
 				sender.broadcast(UNSUBSCRIBE, getSubscriptionEnvelope(handlerId, this.#messageType));
 
 				this.#handlers[handlerId].dispose();
@@ -325,7 +325,7 @@ class SubscriptionData {
 	 * @returns {*}
 	 */
 	removeSubscriber(id) {
-		if (this.#subscribers.hasOwnProperty(id)) {
+		if (Object.hasOwn(this.#subscribers, id)) {
 			const source = this.#subscribers[id];
 
 			delete this.#subscribers[id];

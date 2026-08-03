@@ -179,7 +179,7 @@ class ExpressServer {
 
 		this.#useSessions = this.#useSessions || useSession;
 
-		if (!this.#pageMap.hasOwnProperty(basePath)) {
+		if (!Object.hasOwn(this.#pageMap, basePath)) {
 			this.#pageMap[basePath] = {
 				path: basePath,
 				handlers: []
@@ -218,7 +218,7 @@ class ExpressServer {
 		assert.argumentIsRequired(headerOverrides, 'headerOverrides', Object);
 		assert.argumentIsRequired(parameterOverrides, 'parameterOverrides', Object);
 
-		if (!this.#relayMap.hasOwnProperty(basePath)) {
+		if (!Object.hasOwn(this.#relayMap, basePath)) {
 			this.#relayMap[basePath] = {
 				path: basePath,
 				relays: [ ]
@@ -256,7 +256,7 @@ class ExpressServer {
 			throw new Error('Unable to add route, the server has already been started.');
 		}
 
-		if (!this.#serviceMap.hasOwnProperty(basePath)) {
+		if (!Object.hasOwn(this.#serviceMap, basePath)) {
 			this.#serviceMap[basePath] = {
 				path: basePath,
 				handlers: []
@@ -294,7 +294,7 @@ class ExpressServer {
 
 		const completePath = 'request' + path + channel;
 
-		if (this.#socketRequestMap.hasOwnProperty(completePath)) {
+		if (Object.hasOwn(this.#socketRequestMap, completePath)) {
 			throw new Error('Unable to add handler for socket.io channel, another handler is already using this channel.');
 		}
 
@@ -364,7 +364,7 @@ class ExpressServer {
 
 		const completePath = 'subscribe' + path + channel;
 
-		if (this.#socketSubscriptionMap.hasOwnProperty(completePath)) {
+		if (Object.hasOwn(this.#socketSubscriptionMap, completePath)) {
 			throw new Error('Unable to add subscription handler for socket.io channel, another handler is already using this channel.');
 		}
 
@@ -692,7 +692,7 @@ class ExpressServerContainer {
 			throw new Error('Unable to manipulate servers, the server container has already started.');
 		}
 
-		if (!this.#serverMap.hasOwnProperty(port)) {
+		if (!Object.hasOwn(this.#serverMap, port)) {
 			this.#serverMap[port] = new ExpressServer(port, secure, this.#staticPaths, this.#templatePath);
 		}
 

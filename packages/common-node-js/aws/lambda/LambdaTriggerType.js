@@ -180,5 +180,5 @@ const sqs = new LambdaTriggerType('SQS', m => m.eventSource === 'aws:sqs', m => 
 const barchartScheduler = new LambdaTriggerType('BARCHART_SCHEDULER', m => m.source === 'barchart:scheduler', m => m.guid, m => m.data);
 const barchartRecursive = new LambdaTriggerType('BARCHART_RECURSIVE', m => m.source === 'barchart:recursive', m => m.guid, m => m.data);
 
-const apiGatewayRest = new LambdaTriggerType('API_GATEWAY_REST', m => is.object(m.requestContext) && !m.hasOwnProperty('version'), m => m.requestContext.requestId || null, m => m);
-const apiGatewayHttp = new LambdaTriggerType('API_GATEWAY_HTTP', m => is.object(m.requestContext) && m.hasOwnProperty('version') && m.version === '2.0', m => m.requestContext.requestId || null, m => m);
+const apiGatewayRest = new LambdaTriggerType('API_GATEWAY_REST', m => is.object(m.requestContext) && !Object.hasOwn(m, 'version'), m => m.requestContext.requestId || null, m => m);
+const apiGatewayHttp = new LambdaTriggerType('API_GATEWAY_HTTP', m => is.object(m.requestContext) && Object.hasOwn(m, 'version') && m.version === '2.0', m => m.requestContext.requestId || null, m => m);

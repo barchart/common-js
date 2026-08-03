@@ -120,7 +120,7 @@ export default class AwsPublisher extends Publisher {
 
 		logger.debug('Subscribing to AWS messages [', topic, ']');
 
-		if (!this.#subscriptionPromises.hasOwnProperty(topic)) {
+		if (!Object.hasOwn(this.#subscriptionPromises, topic)) {
 			const subscriptionStack = new DisposableStack();
 
 			const subscriptionEvent = new Event(this);

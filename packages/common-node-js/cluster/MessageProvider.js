@@ -174,7 +174,7 @@ class Receiver {
 		assert.argumentIsRequired(type, 'type', String);
 		assert.argumentIsRequired(handler, 'handler', Function);
 
-		if (this.#handlers.hasOwnProperty(type)) {
+		if (Object.hasOwn(this.#handlers, type)) {
 			throw new Error('Unable to add new handler for ' + type + ' to cluster receiver, a handler for that type already exists.');
 		}
 

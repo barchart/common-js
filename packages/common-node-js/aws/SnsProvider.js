@@ -122,7 +122,7 @@ export default class SnsProvider extends Disposable {
 
 		const qualifiedTopicName = getQualifiedTopicName(this.#configuration.prefix, topicName);
 
-		if (!this.#topicPromises.hasOwnProperty(qualifiedTopicName)) {
+		if (!Object.hasOwn(this.#topicPromises, qualifiedTopicName)) {
 			logger.debug('The SNS provider has not cached the topic. Issuing request to create topic.');
 
 			let tags = null;
@@ -302,7 +302,7 @@ export default class SnsProvider extends Disposable {
 
 		const qualifiedTopicName = getQualifiedTopicName(this.#configuration.prefix, topicName);
 
-		if (!this.#subscriptionPromises.hasOwnProperty(qualifiedTopicName)) {
+		if (!Object.hasOwn(this.#subscriptionPromises, qualifiedTopicName)) {
 			this.#subscriptionPromises[qualifiedTopicName] = (async () => {
 				const topicArn = await this.getTopicArn(topicName);
 

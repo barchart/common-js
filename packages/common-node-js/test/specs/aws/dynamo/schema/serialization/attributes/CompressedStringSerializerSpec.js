@@ -23,7 +23,7 @@ describe('When a CompressedStringSerializer is instantiated using the Deflate al
 		});
 
 		it('should produce an object with a binary (i.e. "B") property', () => {
-			expect(serialized.hasOwnProperty("B")).toEqual(true);
+			expect(Object.hasOwn(serialized, "B")).toEqual(true);
 		});
 
 		it('should produce an object with a binary (i.e. buffer) value', () => {
@@ -64,7 +64,7 @@ describe('When a CompressedStringSerializer is instantiated using the Zip algori
 		});
 
 		it('should produce an object with a binary (i.e. "B") property', () => {
-			expect(serialized.hasOwnProperty("B")).toEqual(true);
+			expect(Object.hasOwn(serialized,"B")).toEqual(true);
 		});
 
 		it('should produce an object with a binary (i.e. buffer) value', () => {

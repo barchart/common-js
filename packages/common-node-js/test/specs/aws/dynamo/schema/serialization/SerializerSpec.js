@@ -85,7 +85,7 @@ describe('When a Serializer with a table that has "person.name" and "person.age"
 		});
 
 		it('the result should have a "person" property', () => {
-			expect(deserialized.hasOwnProperty('person')).toEqual(true);
+			expect(Object.hasOwn(deserialized, 'person')).toEqual(true);
 		});
 
 		it('the result "person.firstName" property with a value of "Imogen"', () => {

@@ -71,7 +71,7 @@ export default class AwsRouter extends Router {
 		const responseQueueName = getResponseChannel(this.#routerId);
 
 		const responseObserver = this.#sqsProvider.observe(responseQueueName, (message) => {
-			if (is.string(message.id) && this.#pendingRequests.hasOwnProperty(message.id)) {
+			if (is.string(message.id) && Object.hasOwn(this.#pendingRequests, message.id)) {
 				const callbacks = this.#pendingRequests[message.id];
 
 				if (is.boolean(message.success) && !message.success) {

@@ -30,7 +30,7 @@ export default class LocalPublisher extends Publisher {
 	 * @param {*} payload
 	 */
 	async _publish(messageType, payload) {
-		if (this.#subscriptions.hasOwnProperty(messageType)) {
+		if (Object.hasOwn(this.#subscriptions, messageType)) {
 			this.#subscriptions[messageType].fire(payload);
 		}
 	}
@@ -44,7 +44,7 @@ export default class LocalPublisher extends Publisher {
 	 * @returns {Promise<Disposable>}
 	 */
 	async _subscribe(messageType, handler) {
-		if (!this.#subscriptions.hasOwnProperty(messageType)) {
+		if (!Object.hasOwn(this.#subscriptions, messageType)) {
 			this.#subscriptions[messageType] = new Event(this);
 		}
 

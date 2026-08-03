@@ -73,7 +73,7 @@ export default class Client extends Disposable {
 			if (is.string(name)) {
 				queryObject.name = name;
 
-				if (!this.#preparedStatementMap.hasOwnProperty(name)) {
+				if (!Object.hasOwn(this.#preparedStatementMap, name)) {
 					this.#preparedStatementMap[name] = query;
 				}
 

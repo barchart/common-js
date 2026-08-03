@@ -58,7 +58,7 @@ export default class ComponentSerializationWriter extends Writer {
 	 * @returns {boolean}
 	 */
 	_canWrite(source, target) {
-		return this.#serializer !== null && is.object(source) && source.hasOwnProperty(this.#component.name);
+		return this.#serializer !== null && is.object(source) && Object.hasOwn(source, this.#component.name);
 	}
 
 	/**

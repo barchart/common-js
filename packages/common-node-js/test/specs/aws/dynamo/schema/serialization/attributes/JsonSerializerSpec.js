@@ -18,6 +18,6 @@ describe('When a JsonSerializer is instantiated', () => {
 	it('it deserializes { "S": "{\"cat\":\"black\" } as { cat: "black" }', () => {
 		let deserialized = serializer.deserialize({ S: '{"cat":"black"}' });
 
-		expect(deserialized && deserialized.hasOwnProperty('cat') && deserialized.cat).toEqual('black');
+		expect(deserialized && Object.hasOwn(deserialized,'cat') && deserialized.cat).toEqual('black');
 	});
 });

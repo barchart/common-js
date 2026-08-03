@@ -77,7 +77,7 @@ export default class ClusterRouter extends Router {
 
 				logger.debug('Processing registration to', messageType, 'from IPC peer', source);
 
-				if (!this.#requestRegistrations.hasOwnProperty(messageType)) {
+				if (!Object.hasOwn(this.#requestRegistrations, messageType)) {
 					this.#requestRegistrations[messageType] = [ ];
 				}
 
@@ -97,7 +97,7 @@ export default class ClusterRouter extends Router {
 
 				logger.debug('Processing registration cancel to', messageType, 'from IPC peer', source);
 
-				if (this.#requestRegistrations.hasOwnProperty(messageType)) {
+				if (Object.hasOwn(this.#requestRegistrations, messageType)) {
 					this.#requestRegistrations[messageType] = this.#requestRegistrations[messageType].filter((item) => {
 						return item !== source;
 					});
@@ -163,7 +163,7 @@ export default class ClusterRouter extends Router {
 	 * @returns {boolean}
 	 */
 	_canRoute(messageType) {
-		return this.#requestRegistrations.hasOwnProperty(messageType);
+		return Object.hasOwn(this.#requestRegistrations, messageType);
 	}
 
 	/**

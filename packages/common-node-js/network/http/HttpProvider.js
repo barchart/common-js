@@ -142,7 +142,7 @@ export default class HttpProvider extends Disposable {
 
 		const headersToUse = Object.assign({ }, headers || { });
 
-		if (!headersToUse.hasOwnProperty('Context-Type')) {
+		if (!Object.hasOwn(headersToUse, 'Context-Type')) {
 			headersToUse['Content-Type'] = 'application/json';
 		}
 

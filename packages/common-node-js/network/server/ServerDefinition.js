@@ -56,7 +56,7 @@ export default class ServerDefinition {
 
 		this.#staticPaths = this.#staticPaths || {};
 
-		if (this.#staticPaths.hasOwnProperty(staticServerPath)) {
+		if (Object.hasOwn(this.#staticPaths, staticServerPath)) {
 			throw new Error('The path for serving static files has already been defined.');
 		}
 

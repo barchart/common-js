@@ -32,7 +32,7 @@ export default class LocalRouter extends Router {
 	 * @returns {boolean}
 	 */
 	_canRoute(messageType) {
-		return this.#requestHandlers.hasOwnProperty(messageType);
+		return Object.hasOwn(this.#requestHandlers, messageType);
 	}
 
 	/**

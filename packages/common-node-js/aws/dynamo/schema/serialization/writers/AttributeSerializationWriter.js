@@ -101,7 +101,7 @@ function getDelegatesForAttribute(attribute, optional) {
 	} else {
 		const name = attribute.name;
 
-		existsDelegate = source => source.hasOwnProperty(name);
+		existsDelegate = source => Object.hasOwn(source, name);
 		extractDelegate = source => source[name];
 	}
 

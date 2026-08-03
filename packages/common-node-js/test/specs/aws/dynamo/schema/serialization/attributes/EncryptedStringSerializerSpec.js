@@ -24,7 +24,7 @@ describe('When a EncryptedStringSerializer is instantiated using the AES-192 alg
 		});
 
 		it('should produce an object with a binary (i.e. "B") property', () => {
-			expect(serialized.hasOwnProperty("B")).toEqual(true);
+			expect(Object.hasOwn(serialized, "B")).toEqual(true);
 		});
 
 		it('should produce an object with a binary (i.e. buffer) value', () => {
@@ -65,7 +65,7 @@ describe('When a EncryptedStringSerializer is instantiated using the AES-256 alg
 		});
 
 		it('should produce an object with a binary (i.e. "B") property', () => {
-			expect(serialized.hasOwnProperty("B")).toEqual(true);
+			expect(Object.hasOwn(serialized, "B")).toEqual(true);
 		});
 
 		it('should produce an object with a binary (i.e. buffer) value', () => {

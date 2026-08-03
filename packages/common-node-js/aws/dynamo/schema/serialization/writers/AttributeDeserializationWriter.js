@@ -65,7 +65,7 @@ export default class AttributeDeserializationWriter extends Writer {
 	 * @returns {boolean}
 	 */
 	_canWrite(source, target) {
-		return this.#serializer !== null && is.object(source) && source.hasOwnProperty(this.#attribute.name);
+		return this.#serializer !== null && is.object(source) && Object.hasOwn(source, this.#attribute.name);
 	}
 
 	/**
