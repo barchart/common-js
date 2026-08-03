@@ -6,10 +6,7 @@ A public library of common JavaScript utilities for working with market data.
 
 #### Features
 
-* Identify common Barchart symbol types
-* Parse futures, futures options, equity options, foreign exchange, and other market symbols
-* Normalize producer and futures symbol formats
-* Classify parsed instruments by asset class
+* Functions for working with Barchart symbology.
 
 #### Companion Library
 
