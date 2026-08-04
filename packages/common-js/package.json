@@ -58,7 +58,6 @@
   "devDependencies": {
     "date-fns": "^4.4.0",
     "esbuild": "^0.28.1",
-    "globals": "^14.0.0",
     "jasmine": "^6.2.0",
     "typescript": "^5.9.3"
   },

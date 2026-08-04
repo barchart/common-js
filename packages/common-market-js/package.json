@@ -57,7 +57,6 @@
   },
   "devDependencies": {
     "esbuild": "^0.28.1",
-    "globals": "^14.0.0",
     "jasmine": "^6.2.0",
     "typescript": "^5.9.3"
   },
