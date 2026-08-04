@@ -1,7 +1,7 @@
 {
   "name": "@barchart/common-js-monorepo",
   "private": true,
-  "description": "Packages which compose the Barchart Engagement Service",
+  "description": "Public JavaScript packages containing shared utilities for browser, market data, and Node.js applications",
   "author": {
     "name": "Bryan Ingle",
     "email": "bryan.ingle@barchart.com",
