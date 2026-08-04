@@ -464,7 +464,7 @@ export default class S3Provider extends Disposable {
 			return components.concat(
 				next
 					.join('/')
-					.split(/[\\\/]/g)
+					.split(/[\\/]/g)
 					.filter((component) => {
 						return is.string(component) && component.length > 0;
 					})

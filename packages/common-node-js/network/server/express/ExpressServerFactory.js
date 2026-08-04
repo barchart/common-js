@@ -450,7 +450,7 @@ class ExpressServer {
 
 							const router = express.Router();
 
-							router.get(new RegExp('^[\\/\]*' + serverPath + '(.*)$'), async (request, response) => {
+							router.get(new RegExp('^[\\/]*' + serverPath + '(.*)$'), async (request, response) => {
 								const requestPath = request.params[0];
 
 								if (is.string(requestPath) && requestPath.length > 0) {

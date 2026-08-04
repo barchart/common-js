@@ -238,7 +238,7 @@ export default class HttpProvider extends Disposable {
 	}
 }
 
-const uriRegex = /^(http|https):\/\/([^\/:]*)(:([0-9]*))?([^?]*)?(\?(.*))?/i;
+const uriRegex = /^(http|https):\/\/([^/:]*)(:([0-9]*))?([^?]*)?(\?(.*))?/i;
 
 function parseUri(uri) {
 	return uri.match(uriRegex);
