@@ -1,6 +1,6 @@
 {
   "name": "@barchart/common-market-js",
-  "version": "5.4.1",
+  "version": "5.5.0",
   "type": "module",
   "exports": {
     "./*": {
@@ -53,7 +53,7 @@
     "Browser"
   ],
   "dependencies": {
-    "@barchart/common-js": "^5.4.1"
+    "@barchart/common-js": "^5.5.0"
   },
   "devDependencies": {
     "esbuild": "^0.28.1",
