@@ -53,6 +53,16 @@ export default class CloudWatchLogsProvider extends Disposable {
 	}
 
 	/**
+	 * The AWS region the provider is configured to use.
+	 *
+	 * @public
+	 * @returns {string}
+	 */
+	get region() {
+		return this.#options.region || 'us-east-1';
+	}
+
+	/**
 	 * Connects to Amazon. Must be called once before using other instance
 	 * functions.
 	 *
