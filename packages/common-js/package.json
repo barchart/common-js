@@ -38,7 +38,8 @@
     "prepack": "yarn types && yarn build:cjs",
     "publish:npm": "npm publish",
     "test": "yarn build:test-bundle && jasmine --config=jasmine.json",
-    "types": "tsc -p tsconfig.types.json"
+    "types": "tsc -p tsconfig.types.json",
+    "version": "yarn build:test-bundle && git add test/SpecRunner.js"
   },
   "repository": {
     "type": "git",
