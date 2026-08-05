@@ -72,6 +72,41 @@ describe('When Lambda event parser utilities are used', () => {
 		expect(parser.getContext('userId')).toEqual('U1');
 	});
 
+	it('should return all URL-decoded path parameters', () => {
+		const parser = new LambdaEventParser({
+			pathParameters: {
+				proxy: 'orders/A%201/items',
+				name: 'Luka%20Sotra',
+				orderId: '42'
+			}
+		});
+
+		expect(parser.getPathParameters()).toEqual({
+			proxy: 'orders/A 1/items',
+			name: 'Luka Sotra',
+			orderId: '42'
+		});
+	});
+
+	it('should return an empty object when path parameters are missing', () => {
+		const parser = new LambdaEventParser({ });
+
+		expect(parser.getPathParameters()).toEqual({ });
+	});
+
+	it('should not modify encoded path parameters', () => {
+		const pathParameters = {
+			name: 'Luka%20Sotra'
+		};
+		const parser = new LambdaEventParser({ pathParameters });
+
+		parser.getPathParameters();
+
+		expect(pathParameters).toEqual({
+			name: 'Luka%20Sotra'
+		});
+	});
+
 	it('should return null when parser callbacks fail', () => {
 		const parser = new LambdaEventParser({
 			pathParameters: {
