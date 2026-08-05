@@ -787,50 +787,40 @@
     X: 11,
     Z: 12
   };
-  var predicates = {
-    bats: /^(.*)\.BZ$/i,
-    percent: /(\.RT)$/,
-    pit: /\(P(it)?\)/
-  };
-  var types2 = {
-    bids: /^([A-Z]{2})([B|P])([A-Z\d]{3,4})-(\d+)-(\d+)(\.CM)$/i,
-    c3: {
-      alias: /^(C3:)(.*)$/i,
-      concrete: /(\.C3)$/i
-    },
-    cmdty: {
-      stats: /(\.CS)$/i,
-      internal: /(\.CM)$/i,
-      external: /(\.CP)$/i
-    },
-    crypto: /^\^([A-Z]{3})([A-Z]{3,4})$/i,
-    equities: {
-      options: /^([A-Z$][A-Z-]{0,}(\.[A-Z]{1})?)([0-9]?)(\.[A-Z]{2})?\|([0-9]{4})([0-9]{2})([0-9]{2})\|([0-9]+\.[0-9]+)[P|W]?(C|P)/i
-    },
-    forex: /^\^([A-Z]{3})([A-Z]{3})$/i,
-    funds: {
-      canadian: /(.*)(\.CF)$/i
-    },
-    futures: {
-      alias: /^([A-Z][A-Z0-9$!.-]{0,2})(\*{1})([0-9]{1,2})$/i,
-      concrete: /^([A-Z][A-Z0-9$!.-]{0,3})([A-Z]{1})([0-9]{4}|[0-9]{1,2})$/i,
-      spread: /^_S_/i,
-      cash: /(.*)(Y00)$/,
-      options: {
-        historical: /^([A-Z][A-Z0-9$!.-]{0,2})([A-Z])([0-9]{2})([0-9]{1,5})(C|P)$/i,
-        long: /^([A-Z][A-Z0-9$!.-]{0,2})([A-Z])([0-9]{1,4})\|(-?[0-9]{1,5})(C|P)$/i,
-        short: /^([A-Z][A-Z0-9$!.-]?)([A-Z])([0-9]{1,4})([A-Z])$/i
-      }
-    },
-    indicies: {
-      external: /^\$(.*)$/i,
-      sector: /^-(.*)$/i
-    },
-    platts: {
-      alias: /^(PLATTS:)(.*)$/i,
-      concrete: /^(.*)(\.PT)$/i
-    }
-  };
+  var predicates = {};
+  predicates.bats = /^(.*)\.BZ$/i;
+  predicates.percent = /(\.RT)$/;
+  predicates.pit = /\(P(it)?\)/;
+  var types2 = {};
+  types2.bids = /^([A-Z]{2})([B|P])([A-Z\d]{3,4})-(\d+)-(\d+)(\.CM)$/i;
+  types2.c3 = {};
+  types2.c3.alias = /^(C3:)(.*)$/i;
+  types2.c3.concrete = /(\.C3)$/i;
+  types2.cmdty = {};
+  types2.cmdty.stats = /(\.CS)$/i;
+  types2.cmdty.internal = /(\.CM)$/i;
+  types2.cmdty.external = /(\.CP)$/i;
+  types2.crypto = /^\^([A-Z]{3})([A-Z]{3,4})$/i;
+  types2.equities = {};
+  types2.equities.options = /^([A-Z$][A-Z-]{0,}(\.[A-Z]{1})?)([0-9]?)(\.[A-Z]{2})?\|([0-9]{4})([0-9]{2})([0-9]{2})\|([0-9]+\.[0-9]+)[P|W]?(C|P)/i;
+  types2.forex = /^\^([A-Z]{3})([A-Z]{3})$/i;
+  types2.funds = {};
+  types2.funds.canadian = /(.*)(\.CF)$/i;
+  types2.futures = {};
+  types2.futures.alias = /^([A-Z][A-Z0-9$!.-]{0,2})(\*{1})([0-9]{1,2})$/i;
+  types2.futures.concrete = /^([A-Z][A-Z0-9$!.-]{0,3})([A-Z]{1})([0-9]{4}|[0-9]{1,2})$/i;
+  types2.futures.spread = /^_S_/i;
+  types2.futures.cash = /(.*)(Y00)$/;
+  types2.futures.options = {};
+  types2.futures.options.historical = /^([A-Z][A-Z0-9$!.-]{0,2})([A-Z])([0-9]{2})([0-9]{1,5})(C|P)$/i;
+  types2.futures.options.long = /^([A-Z][A-Z0-9$!.-]{0,2})([A-Z])([0-9]{1,4})\|(-?[0-9]{1,5})(C|P)$/i;
+  types2.futures.options.short = /^([A-Z][A-Z0-9$!.-]?)([A-Z])([0-9]{1,4})([A-Z])$/i;
+  types2.indicies = {};
+  types2.indicies.external = /^\$(.*)$/i;
+  types2.indicies.sector = /^-(.*)$/i;
+  types2.platts = {};
+  types2.platts.alias = /^(PLATTS:)(.*)$/i;
+  types2.platts.concrete = /^(.*)(\.PT)$/i;
   function getCurrentMonth() {
     return (/* @__PURE__ */ new Date()).getMonth() + 1;
   }
@@ -965,7 +955,6 @@
         return null;
       }
       return symbol.replace(/(.{1,4})([A-Z]{1})([0-9]{3}|[0-9]{1})?([0-9]{1})$/i, "$1$2$4") || null;
-      ;
     },
     (symbol) => {
       if (!SymbolParser.getIsFutureOption(symbol)) {
