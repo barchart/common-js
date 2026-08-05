@@ -81,6 +81,26 @@ export default class LambdaEventParser {
 	}
 
 	/**
+	 * Returns all URL-decoded path parameters.
+	 *
+	 * @public
+	 * @returns {Object}
+	 */
+	getPathParameters() {
+		const parameters = this.#event.pathParameters;
+
+		if (!is.object(parameters)) {
+			return { };
+		}
+
+		return Object.keys(parameters).reduce((decoded, key) => {
+			decoded[key] = this.getPath(key);
+
+			return decoded;
+		}, { });
+	}
+
+	/**
 	 * If "proxy" mode is being used, all path parameters are returned
 	 * as an array.
 	 *
