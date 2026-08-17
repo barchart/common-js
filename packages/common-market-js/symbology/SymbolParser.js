@@ -470,7 +470,7 @@ types.cmdty.external = /(\.CP)$/i;
 types.crypto = /^\^([A-Z]{3})([A-Z]{3,4})$/i;
 
 types.equities = { };
-types.equities.options = /^([A-Z$][A-Z-]{0,}(\.[A-Z]{1})?)([0-9]?)(\.[A-Z]{2})?\|([0-9]{4})([0-9]{2})([0-9]{2})\|([0-9]+\.[0-9]+)[P|W]?(C|P)/i;
+types.equities.options = /^([A-Z$][A-Z-]{0,}(\.[A-Z]{1})?)([0-9]?)(\.[A-Z]{2})?\|([0-9]{4})([0-9]{2})([0-9]{2})\|([0-9]+\.[0-9]+)[P|W]?([CP])/i;
 
 types.forex = /^\^([A-Z]{3})([A-Z]{3})$/i;
 
@@ -485,8 +485,8 @@ types.futures.cash = /(.*)(Y00)$/;
 
 types.futures.options = { };
 
-types.futures.options.historical = /^([A-Z][A-Z0-9$!.-]{0,3})([A-Z])([0-9]{2})([0-9]{1,5})(C|P)$/i;
-types.futures.options.long = /^([A-Z][A-Z0-9$!.-]{0,3})([A-Z])([0-9]{1,4})\|(-?[0-9]{1,5})(C|P)$/i;
+types.futures.options.historical = /^([A-Z][A-Z0-9$!.-]{0,3})([A-Z])([0-9]{2})([0-9]{1,5})([CP])$/i;
+types.futures.options.long = /^([A-Z][A-Z0-9$!.-]{0,3})([A-Z])([0-9]{1,4})\|(-?[0-9]{1,5})([CP])$/i;
 types.futures.options.short = /^([A-Z][A-Z0-9$!.-]?)([A-Z])([0-9]{1,4})([A-Z])$/i;
 
 types.indicies = { };
