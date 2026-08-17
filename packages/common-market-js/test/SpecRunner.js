@@ -807,22 +807,13 @@
   types2.funds = {};
   types2.funds.canadian = /(.*)(\.CF)$/i;
   types2.futures = {};
-<<<<<<< HEAD
-  types2.futures.alias = /^([A-Z][A-Z0-9$!.-]{0,2})(\*{1})([0-9]{1,2})$/i;
-=======
   types2.futures.alias = /^([A-Z][A-Z0-9$!.-]{0,3})(\*{1})([0-9]{1,2})$/i;
->>>>>>> edd73cf (chore: update regular expressions to all four character roots for futures and futures options)
   types2.futures.concrete = /^([A-Z][A-Z0-9$!.-]{0,3})([A-Z]{1})([0-9]{4}|[0-9]{1,2})$/i;
   types2.futures.spread = /^_S_/i;
   types2.futures.cash = /(.*)(Y00)$/;
   types2.futures.options = {};
-<<<<<<< HEAD
-  types2.futures.options.historical = /^([A-Z][A-Z0-9$!.-]{0,2})([A-Z])([0-9]{2})([0-9]{1,5})(C|P)$/i;
-  types2.futures.options.long = /^([A-Z][A-Z0-9$!.-]{0,2})([A-Z])([0-9]{1,4})\|(-?[0-9]{1,5})(C|P)$/i;
-=======
   types2.futures.options.historical = /^([A-Z][A-Z0-9$!.-]{0,3})([A-Z])([0-9]{2})([0-9]{1,5})(C|P)$/i;
   types2.futures.options.long = /^([A-Z][A-Z0-9$!.-]{0,3})([A-Z])([0-9]{1,4})\|(-?[0-9]{1,5})(C|P)$/i;
->>>>>>> edd73cf (chore: update regular expressions to all four character roots for futures and futures options)
   types2.futures.options.short = /^([A-Z][A-Z0-9$!.-]?)([A-Z])([0-9]{1,4})([A-Z])$/i;
   types2.indicies = {};
   types2.indicies.external = /^\$(.*)$/i;
