@@ -478,15 +478,15 @@ types.funds = { };
 types.funds.canadian = /(.*)(\.CF)$/i;
 
 types.futures = { };
-types.futures.alias = /^([A-Z][A-Z0-9$!.-]{0,2})(\*{1})([0-9]{1,2})$/i;
+types.futures.alias = /^([A-Z][A-Z0-9$!.-]{0,3})(\*{1})([0-9]{1,2})$/i;
 types.futures.concrete = /^([A-Z][A-Z0-9$!.-]{0,3})([A-Z]{1})([0-9]{4}|[0-9]{1,2})$/i;
 types.futures.spread = /^_S_/i;
 types.futures.cash = /(.*)(Y00)$/;
 
 types.futures.options = { };
 
-types.futures.options.historical = /^([A-Z][A-Z0-9$!.-]{0,2})([A-Z])([0-9]{2})([0-9]{1,5})(C|P)$/i;
-types.futures.options.long = /^([A-Z][A-Z0-9$!.-]{0,2})([A-Z])([0-9]{1,4})\|(-?[0-9]{1,5})(C|P)$/i;
+types.futures.options.historical = /^([A-Z][A-Z0-9$!.-]{0,3})([A-Z])([0-9]{2})([0-9]{1,5})(C|P)$/i;
+types.futures.options.long = /^([A-Z][A-Z0-9$!.-]{0,3})([A-Z])([0-9]{1,4})\|(-?[0-9]{1,5})(C|P)$/i;
 types.futures.options.short = /^([A-Z][A-Z0-9$!.-]?)([A-Z])([0-9]{1,4})([A-Z])$/i;
 
 types.indicies = { };
