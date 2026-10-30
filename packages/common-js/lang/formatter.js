@@ -21,7 +21,8 @@ export function numberToString(value, digits, thousandsSeparator, useParenthesis
 
 	let returnRef = value.toFixed(digits);
 
-	if (thousandsSeparator && !(value > -1000 && value < 1000)) {
+	// Group the rounded value: 999.999 with two digits displays as 1,000.00.
+	if (thousandsSeparator && Math.abs(Number(returnRef)) >= 1000) {
 		const length = returnRef.length;
 		const negative = value < 0;
 

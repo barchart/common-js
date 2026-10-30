@@ -8,7 +8,7 @@ Public JavaScript packages containing shared utilities for browser, market data,
 ### Packages
 
 * [@barchart/common-js](./packages/common-js) — general-purpose utilities and data structures suitable for browser and Node.js environments — published to [NPM](https://www.npmjs.com/package/@barchart/common-js).
-* [@barchart/common-market-js](./packages/common-market-js) — utilities for identifying, parsing, classifying, and normalizing market symbols — published to [NPM](https://www.npmjs.com/package/@barchart/common-market-js).
+* [@barchart/common-market-js](./packages/common-market-js) — utilities for identifying, parsing, classifying, and normalizing market symbols, and for formatting prices — published to [NPM](https://www.npmjs.com/package/@barchart/common-market-js).
 * [@barchart/common-node-js](./packages/common-node-js) — server-side utilities for AWS services, databases, streams, messaging, and HTTP applications — published to [NPM](https://www.npmjs.com/package/@barchart/common-node-js).
 
 All packages support Node.js 20 or newer and publish generated TypeScript declarations and CommonJS builds alongside their ES modules.

@@ -21596,7 +21596,7 @@
       value = 0 - value;
     }
     let returnRef = value.toFixed(digits);
-    if (thousandsSeparator && !(value > -1e3 && value < 1e3)) {
+    if (thousandsSeparator && Math.abs(Number(returnRef)) >= 1e3) {
       const length = returnRef.length;
       const negative2 = value < 0;
       let found = digits === 0;
@@ -21631,6 +21631,18 @@
     "use strict";
     it("formatting 123 with six digits (no separator, no parenthesis)", () => {
       expect(numberToString(123, 6)).toEqual("123.000000");
+    });
+  });
+  describe("When rounding across the thousands boundary", () => {
+    it("groups positive and negative rounded numbers", () => {
+      expect(numberToString(999.999, 2, ",")).toEqual("1,000.00");
+      expect(numberToString(-999.999, 2, ",")).toEqual("-1,000.00");
+      expect(numberToString(-999.999, 2, ",", true)).toEqual("(1,000.00)");
+      expect(numberToString(999.5, 0, ",")).toEqual("1,000");
+    });
+    it("leaves values below the rounded boundary and omitted separators alone", () => {
+      expect(numberToString(999.994, 2, ",")).toEqual("999.99");
+      expect(numberToString(999.999, 2)).toEqual("1000.00");
     });
   });
 
