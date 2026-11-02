@@ -1247,32 +1247,32 @@ export default class DynamoProvider extends Disposable {
 
         try {
             data = await this.#dynamo.send(new DescribeTableCommand({ TableName: qualifiedTableName }));
-            } catch (error) {
-                logger.error(error);
+        } catch (error) {
+            logger.error(error);
 
-                throw 'Failed to retrieve DynamoDB table';
-            }
-
-            if (!is.object(data.Table)) {
-                throw 'Unexpected response from DynamoDB SDK.';
-            }
-
-            if (logger.isTraceEnabled()) {
-                logger.trace(JSON.stringify(data, null, 2));
-            }
-
-            return data.Table;
+            throw 'Failed to retrieve DynamoDB table';
         }
+
+        if (!is.object(data.Table)) {
+            throw 'Unexpected response from DynamoDB SDK.';
+        }
+
+        if (logger.isTraceEnabled()) {
+            logger.trace(JSON.stringify(data, null, 2));
+        }
+
+        return data.Table;
+    }
 
     async #getTimeToLiveSettings(qualifiedTableName) {
         try {
             return await this.#dynamo.send(new DescribeTimeToLiveCommand({ TableName: qualifiedTableName }));
-            } catch (error) {
-                logger.error(error);
+        } catch (error) {
+            logger.error(error);
 
-                throw error;
-            }
+            throw error;
         }
+    }
 
     #processBatch(table, type, items, explicit) {
         assert.argumentIsRequired(table, 'table', Table, 'Table');
@@ -1284,82 +1284,82 @@ export default class DynamoProvider extends Disposable {
 
         if (items.length === 0) {
             return;
-            }
+        }
 
-            const qualifiedTableName = table.name;
+        const qualifiedTableName = table.name;
 
-            if (!this.#batches.has(qualifiedTableName)) {
-                this.#batches.set(qualifiedTableName, new WorkQueue());
-            }
+        if (!this.#batches.has(qualifiedTableName)) {
+            this.#batches.set(qualifiedTableName, new WorkQueue());
+        }
 
-            const workQueue = this.#batches.get(qualifiedTableName);
+        const workQueue = this.#batches.get(qualifiedTableName);
 
-            return workQueue.enqueue(async () => {
-                const batchNumber = workQueue.getCurrent();
+        return workQueue.enqueue(async () => {
+            const batchNumber = workQueue.getCurrent();
 
-                logger.debug('Starting batch', type.description, 'on [', qualifiedTableName, '] for batch number [', batchNumber, '] with [', items.length, '] items');
+            logger.debug('Starting batch', type.description, 'on [', qualifiedTableName, '] for batch number [', batchNumber, '] with [', items.length, '] items');
 
-                const writeBatch = async (currentPayload) => {
-                    let data;
+            const writeBatch = async (currentPayload) => {
+                let data;
 
-                    try {
-                        data = await this.#dynamo.send(new BatchWriteItemCommand(currentPayload));
-                    } catch (error) {
-                        const dynamoError = Enum.fromCode(DynamoError, error.name);
+                try {
+                    data = await this.#dynamo.send(new BatchWriteItemCommand(currentPayload));
+                } catch (error) {
+                    const dynamoError = Enum.fromCode(DynamoError, error.name);
 
-                        if (dynamoError !== null && dynamoError.getRetryable(error)) {
-                            logger.debug('Encountered retryable error [', error.name, '] while running batch', type.description, 'on [', qualifiedTableName, ']');
+                    if (dynamoError !== null && dynamoError.getRetryable(error)) {
+                        logger.debug('Encountered retryable error [', error.name, '] while running batch', type.description, 'on [', qualifiedTableName, ']');
 
-                            throw error;
-                        }
-
-                        return { code: DYNAMO_RESULT.FAILURE, error: error };
+                        throw error;
                     }
 
-                    let unprocessedItems;
-
-                    if (is.object(data.UnprocessedItems) && is.array(data.UnprocessedItems[qualifiedTableName])) {
-                        unprocessedItems = data.UnprocessedItems[qualifiedTableName];
-                    } else {
-                        unprocessedItems = [ ];
-                    }
-
-                    if (unprocessedItems.length === 0) {
-                        return { code: DYNAMO_RESULT.SUCCESS };
-                    }
-
-                    logger.debug('Continuing batch [', type.description, '] on [', qualifiedTableName, '] for batch number [', batchNumber,'] with [', unprocessedItems.length, '] unprocessed items');
-
-                    const continuePayload = getBatchPayload(qualifiedTableName, unprocessedItems);
-
-                    return this.#scheduler.backoff(() => writeBatch(continuePayload), WRITE_MILLISECOND_BACKOFF);
-                };
-
-                const originalPayload = getBatchPayload(qualifiedTableName,
-                    items.map((item) => {
-                        const request = { };
-                        const wrapper = { };
-
-                        wrapper[type.requestItemName] = Serializer.serialize(item, table, type.keysOnly, explicit);
-                        request[type.requestTypeName] = wrapper;
-
-                        return request;
-                    })
-                );
-
-                const result = await this.#scheduler.backoff(() => writeBatch(originalPayload), WRITE_MILLISECOND_BACKOFF);
-
-                if (result.code === DYNAMO_RESULT.FAILURE) {
-                    logger.error('Failed batch [', type.description, '] on [', qualifiedTableName, '] for batch number [', batchNumber,'] with [', items.length, '] items');
-
-                    throw result.error;
+                    return { code: DYNAMO_RESULT.FAILURE, error: error };
                 }
 
-                logger.debug('Finished batch [', type.description, '] on [', qualifiedTableName, '] for batch number [', batchNumber,'] with [', items.length, '] items');
+                let unprocessedItems;
 
-                return true;
-            });
-        }
+                if (is.object(data.UnprocessedItems) && is.array(data.UnprocessedItems[qualifiedTableName])) {
+                    unprocessedItems = data.UnprocessedItems[qualifiedTableName];
+                } else {
+                    unprocessedItems = [ ];
+                }
+
+                if (unprocessedItems.length === 0) {
+                    return { code: DYNAMO_RESULT.SUCCESS };
+                }
+
+                logger.debug('Continuing batch [', type.description, '] on [', qualifiedTableName, '] for batch number [', batchNumber,'] with [', unprocessedItems.length, '] unprocessed items');
+
+                const continuePayload = getBatchPayload(qualifiedTableName, unprocessedItems);
+
+                return this.#scheduler.backoff(() => writeBatch(continuePayload), WRITE_MILLISECOND_BACKOFF);
+            };
+
+            const originalPayload = getBatchPayload(qualifiedTableName,
+                items.map((item) => {
+                    const request = { };
+                    const wrapper = { };
+
+                    wrapper[type.requestItemName] = Serializer.serialize(item, table, type.keysOnly, explicit);
+                    request[type.requestTypeName] = wrapper;
+
+                    return request;
+                })
+            );
+
+            const result = await this.#scheduler.backoff(() => writeBatch(originalPayload), WRITE_MILLISECOND_BACKOFF);
+
+            if (result.code === DYNAMO_RESULT.FAILURE) {
+                logger.error('Failed batch [', type.description, '] on [', qualifiedTableName, '] for batch number [', batchNumber,'] with [', items.length, '] items');
+
+                throw result.error;
+            }
+
+            logger.debug('Finished batch [', type.description, '] on [', qualifiedTableName, '] for batch number [', batchNumber,'] with [', items.length, '] items');
+
+            return true;
+        });
+    }
 }
 
 // 2010/01/18, BRI. Using "setImmediate" causes the deserialization step to be deferred
