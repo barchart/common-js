@@ -341,7 +341,10 @@ function getReviverItems(fields, components) {
 
 function formatField(target, field, data) {
 	if (attributes.has(data, field.name)) {
-		attributes.write(target, field.name, field.dataType.convert(attributes.read(data, field.name)));
+		const value = attributes.read(data, field.name);
+		const formatted = field.array && is.array(value) ? value.map(item => field.dataType.convert(item)) : field.dataType.convert(value);
+
+		attributes.write(target, field.name, formatted);
 	}
 }
 
