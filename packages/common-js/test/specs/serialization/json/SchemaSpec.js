@@ -1037,6 +1037,50 @@ describe('When a schema is created with an array (that contains an enumeration)'
 		]);
 	});
 
+	describe('and array values are formatted', () => {
+		it('should convert each enumeration code', () => {
+			expect(schema.format({ letters: [ 'A', 'B' ] }).letters).toEqual([ LETTER_A, LETTER_B ]);
+		});
+
+		it('should preserve an existing enumeration instance', () => {
+			expect(schema.format({ letters: [ LETTER_A ] }).letters[0]).toBe(LETTER_A);
+		});
+
+		it('should convert codes mixed with enumeration instances', () => {
+			expect(schema.format({ letters: [ LETTER_A, 'B' ] }).letters).toEqual([ LETTER_A, LETTER_B ]);
+		});
+
+		it('should leave the original array unchanged', () => {
+			const original = { letters: [ 'A', 'B' ] };
+
+			schema.format(original);
+
+			expect(original.letters).toEqual([ 'A', 'B' ]);
+		});
+
+		it('should preserve an empty array', () => {
+			expect(schema.format({ letters: [ ] }).letters).toEqual([ ]);
+		});
+
+		it('should omit a missing optional array', () => {
+			expect(schema.format({ })).toEqual({ });
+		});
+
+		[
+			{ name: 'null', value: null },
+			{ name: 'undefined', value: undefined },
+			{ name: 'an invalid non-array value', value: 42 }
+		].forEach(({ name, value }) => {
+			it(`should preserve ${name}`, () => {
+				expect(schema.format({ letters: value }).letters).toBe(value);
+			});
+		});
+
+		it('should preserve the existing conversion of a scalar enumeration code', () => {
+			expect(schema.format({ letters: 'A' }).letters).toBe(LETTER_A);
+		});
+	});
+
 	describe('and a schema-compliant object is created (where both arrays are empty)', () => {
 		let object;
 
@@ -1128,6 +1172,12 @@ describe('When a schema is created with two nested arrays', () => {
 			new Field('arr.a', DataType.forEnum(Letter, 'Letter'), true, true),
 			new Field('arr.b', DataType.NUMBER, true, true)
 		]);
+	});
+
+	it('should format each value in nested typed arrays', () => {
+		expect(schema.format({ arr: { a: [ 'A', 'B' ], b: [ 1, 2 ] } })).toEqual({
+			arr: { a: [ LETTER_A, LETTER_B ], b: [ 1, 2 ] }
+		});
 	});
 
 	describe('and a schema-compliant object is created (where both arrays are empty)', () => {
@@ -1251,5 +1301,27 @@ describe('When Schema accessors and factories are used', () => {
 		const deserialized = JSON.parse('{"name":"Luka"}', reviver);
 
 		expect(deserialized.name).toEqual('Luka');
+	});
+});
+
+describe('When formatting other array fields', () => {
+	'use strict';
+
+	it('should convert each day in a typed array', () => {
+		const schema = new Schema('day-array', [
+			new Field('days', DataType.DAY, false, true)
+		]);
+		const formatted = schema.format({ days: [ '2026-11-11', '2026-11-12' ] });
+
+		expect(formatted.days.map(day => day.format())).toEqual([ '2026-11-11', '2026-11-12' ]);
+	});
+
+	it('should leave an untyped array field unchanged', () => {
+		const schema = new Schema('untyped-array', [
+			new Field('context', DataType.ARRAY)
+		]);
+		const context = [ 'A', 'B' ];
+
+		expect(schema.format({ context }).context).toBe(context);
 	});
 });
