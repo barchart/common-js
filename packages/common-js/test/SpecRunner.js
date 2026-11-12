@@ -1102,8 +1102,7 @@
     }
     /**
      * Accepts data and returns a new object which (should) conform to
-     * the schema. Converts each item of typed array fields using the field's
-     * data type.
+     * the schema.
      *
      * @public
      * @param {object} data
