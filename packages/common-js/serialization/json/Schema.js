@@ -80,7 +80,7 @@ export default class Schema {
 	 * @returns {Array<Field>}
 	 */
 	get fields() {
-		return [...this.#fields];
+		return [ ...this.#fields ];
 	}
 
 	/**
