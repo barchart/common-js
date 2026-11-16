@@ -108,7 +108,7 @@ export default class DataSessionFactory {
 		} catch (e) {
 			if (is.object(options) && is.fn(options.handleError)) {
 				try {
-					return options.handleError(e, logger);
+					return await options.handleError(e, logger);
 				} catch (e2) {
 					logger.error('User-defined error handler threw an error', e2);
 
