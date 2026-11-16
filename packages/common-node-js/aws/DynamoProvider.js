@@ -626,8 +626,7 @@ export default class DynamoProvider extends Disposable {
             options.ConsistentRead = true;
         }
 
-        let maximum = options.Limit || 0;
-        let count = 0;
+        const maximum = options.Limit || 0;
 
         let run = 0;
         let runs = logger.isTraceEnabled() ? [ ] : null;
@@ -636,7 +635,7 @@ export default class DynamoProvider extends Disposable {
 
         const getEmptyResult = () => scan.countOnly ? 0 : [ ];
 
-        const runScanRecursive = async (previous) => {
+        const runScanRecursive = async (startKey = null, count = 0) => {
             const executeScan = async () => {
                 const r = run++;
 
@@ -648,16 +647,18 @@ export default class DynamoProvider extends Disposable {
                     logger.trace(`Scan [ ${scan.table.name} ], run [ ${r} ] started at [ ${runs[r].scanStart} ]`);
                 }
 
-                if (previous) {
-                    options.ExclusiveStartKey = previous;
+                const request = { ...options };
+
+                if (startKey) {
+                    request.ExclusiveStartKey = startKey;
                 } else if (is.object(scan.exclusiveStartKey)) {
-                    options.ExclusiveStartKey = Serializer.serialize(scan.exclusiveStartKey, scan.table, true, false);
+                    request.ExclusiveStartKey = Serializer.serialize(scan.exclusiveStartKey, scan.table, true, false);
                 }
 
                 if (maximum !== 0) {
-                    options.Limit = maximum - count;
+                    request.Limit = maximum - count;
 
-                    if (options.Limit === 0) {
+                    if (request.Limit === 0) {
                         return getEmptyResult();
                     }
                 }
@@ -665,7 +666,7 @@ export default class DynamoProvider extends Disposable {
                 let data;
 
                 try {
-                    data = await this.#dynamo.send(new ScanCommand(options));
+                    data = await this.#dynamo.send(new ScanCommand(request));
                 } catch (error) {
                     const dynamoError = Enum.fromCode(DynamoError, error.name);
 
@@ -735,13 +736,15 @@ export default class DynamoProvider extends Disposable {
                         return getEmptyResult();
                     }
 
+                    let next = count;
+
                     if (data.Items && data.Items.length !== 0) {
-                        count += data.Items.length;
+                        next += data.Items.length;
                     }
 
-                    if (data.LastEvaluatedKey && (maximum === 0 || count < maximum)) {
+                    if (data.LastEvaluatedKey && (maximum === 0 || next < maximum)) {
                         try {
-                            return await runScanRecursive(data.LastEvaluatedKey);
+                            return await runScanRecursive(data.LastEvaluatedKey, next);
                         } catch (e) {
                             return { code: DYNAMO_RESULT.FAILURE, error: e };
                         }
@@ -916,8 +919,7 @@ export default class DynamoProvider extends Disposable {
             options.ConsistentRead = true;
         }
 
-        let maximum = options.Limit || 0;
-        let count = 0;
+        const maximum = options.Limit || 0;
 
         let run = 0;
         let runs = logger.isTraceEnabled() ? [ ] : null;
@@ -926,7 +928,7 @@ export default class DynamoProvider extends Disposable {
 
         const getEmptyResult = () => query.countOnly ? 0 : [ ];
 
-        const runQueryRecursive = async (previous) => {
+        const runQueryRecursive = async (startKey = null, count = 0) => {
             const executeQuery = async () => {
                 const r = run++;
 
@@ -938,16 +940,18 @@ export default class DynamoProvider extends Disposable {
                     logger.trace(`Query [ ${query.table.name} ], run [ ${r} ] started at [ ${runs[r].queryStart} ]`);
                 }
 
-                if (previous) {
-                    options.ExclusiveStartKey = previous;
+                const request = { ...options };
+
+                if (startKey) {
+                    request.ExclusiveStartKey = startKey;
                 } else if (is.object(query.exclusiveStartKey)) {
-                    options.ExclusiveStartKey = Serializer.serialize(query.exclusiveStartKey, query.table, true, false);
+                    request.ExclusiveStartKey = Serializer.serialize(query.exclusiveStartKey, query.table, true, false);
                 }
 
                 if (maximum !== 0) {
-                    options.Limit = maximum - count;
+                    request.Limit = maximum - count;
 
-                    if (options.Limit === 0) {
+                    if (request.Limit === 0) {
                         return getEmptyResult();
                     }
                 }
@@ -955,7 +959,7 @@ export default class DynamoProvider extends Disposable {
                 let data;
 
                 try {
-                    data = await this.#dynamo.send(new QueryCommand(options));
+                    data = await this.#dynamo.send(new QueryCommand(request));
                 } catch (error) {
                     const dynamoError = Enum.fromCode(DynamoError, error.name);
 
@@ -1025,13 +1029,15 @@ export default class DynamoProvider extends Disposable {
                         return getEmptyResult();
                     }
 
+                    let next = count;
+
                     if (data.Items && data.Items.length !== 0) {
-                        count += data.Items.length;
+                        next += data.Items.length;
                     }
 
-                    if (data.LastEvaluatedKey && (maximum === 0 || count < maximum)) {
+                    if (data.LastEvaluatedKey && (maximum === 0 || next < maximum)) {
                         try {
-                            return await runQueryRecursive(data.LastEvaluatedKey);
+                            return await runQueryRecursive(data.LastEvaluatedKey, next);
                         } catch (e) {
                             return { code: DYNAMO_RESULT.FAILURE, error: e };
                         }
