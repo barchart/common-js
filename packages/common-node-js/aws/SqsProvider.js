@@ -675,7 +675,7 @@ export default class SqsProvider extends Disposable {
 					let result;
 
 					try {
-						result = callback(message);
+						result = await callback(message);
 					} catch (e) {
 						logger.error(`An error occurred while processing message [ ${i} ] from queue [ ${qualifiedQueueName} ]`);
 
