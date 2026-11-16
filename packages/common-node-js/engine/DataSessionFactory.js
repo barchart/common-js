@@ -103,7 +103,7 @@ export default class DataSessionFactory {
 			if (completedSession) {
 				const dataProvider = await this.getDataProvider(options);
 
-				return completedSession.flush(dataProvider);
+				return await completedSession.flush(dataProvider);
 			}
 		} catch (e) {
 			if (is.object(options) && is.fn(options.handleError)) {

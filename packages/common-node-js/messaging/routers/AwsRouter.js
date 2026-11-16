@@ -191,7 +191,7 @@ export default class AwsRouter extends Router {
 			}
 
 			if (message.sender !== null) {
-				const respond = (success, response) => {
+				const respond = async (success, response) => {
 					const responseQueueName = getResponseChannel(message.sender);
 
 					const envelope = {
@@ -206,11 +206,11 @@ export default class AwsRouter extends Router {
 				try {
 					const response = await handler(message.payload);
 
-					return respond(true, response);
+					return await respond(true, response);
 				} catch (e) {
 					logger.error('Request processing failed. Responding with failure message.', e);
 
-					return respond(false);
+					return await respond(false);
 				}
 			}
 
