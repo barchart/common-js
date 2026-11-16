@@ -156,7 +156,7 @@ export async function map(items, mapper, concurrency) {
 export async function pipeline(functions, input) {
 	assert.argumentIsArray(functions, 'functions', Function);
 
-	let result = input;
+	let result = await input;
 
 	for (let i = 0; i < functions.length; i++) {
 		result = await functions[i](result);
