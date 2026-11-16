@@ -90,11 +90,15 @@ let s3ProviderPromise = null;
 function getS3Provider() {
 	if (s3ProviderPromise === null) {
 		s3ProviderPromise = (async () => {
-			const provider = new S3Provider({
-				bucket: process.env.S3_LARGE_HTTP_RESPONSE_BUCKET || 'barchart-aws-lambda-responses'
-			}, {
-				region: process.env.S3_LARGE_HTTP_RESPONSE_REGION || 'us-east-1'
-			});
+			let options;
+
+			if (process.env.S3_LARGE_HTTP_RESPONSE_REGION) {
+				options = { region: process.env.S3_LARGE_HTTP_RESPONSE_REGION };
+			} else {
+				options = { };
+			}
+
+			const provider = new S3Provider({ bucket: process.env.S3_LARGE_HTTP_RESPONSE_BUCKET || 'barchart-aws-lambda-responses' }, options);
 
 			await provider.start();
 
