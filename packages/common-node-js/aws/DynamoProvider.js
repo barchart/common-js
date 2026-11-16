@@ -740,7 +740,11 @@ export default class DynamoProvider extends Disposable {
                     }
 
                     if (data.LastEvaluatedKey && (maximum === 0 || count < maximum)) {
-                        return runScanRecursive(data.LastEvaluatedKey);
+                        try {
+                            return await runScanRecursive(data.LastEvaluatedKey);
+                        } catch (e) {
+                            return { code: DYNAMO_RESULT.FAILURE, error: e };
+                        }
                     }
 
                     return getEmptyResult();
@@ -1026,7 +1030,11 @@ export default class DynamoProvider extends Disposable {
                     }
 
                     if (data.LastEvaluatedKey && (maximum === 0 || count < maximum)) {
-                        return runQueryRecursive(data.LastEvaluatedKey);
+                        try {
+                            return await runQueryRecursive(data.LastEvaluatedKey);
+                        } catch (e) {
+                            return { code: DYNAMO_RESULT.FAILURE, error: e };
+                        }
                     }
 
                     return getEmptyResult();
@@ -1367,6 +1375,7 @@ export default class DynamoProvider extends Disposable {
 // required to retrieve the full result set). This allows the deserialization step to
 // run while waiting on the network (for the next query segment), thereby improving
 // overall response time.
+
 function defer(callback) {
     return new Promise((resolve) => {
         setImmediate(() => {
