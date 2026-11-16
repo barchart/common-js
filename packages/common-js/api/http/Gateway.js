@@ -176,13 +176,13 @@ export default class Gateway {
 			const response = await axios.request(request);
 
 			if (endpoint.responseInterceptor) {
-				return endpoint.responseInterceptor.process(response, endpoint);
+				return await endpoint.responseInterceptor.process(response, endpoint);
 			}
 
 			return response;
 		} catch (error) {
 			if (endpoint.errorInterceptor) {
-				return endpoint.errorInterceptor.process(error, endpoint);
+				return await endpoint.errorInterceptor.process(error, endpoint);
 			}
 
 			throw error;
