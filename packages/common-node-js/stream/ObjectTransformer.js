@@ -126,55 +126,55 @@ export default class ObjectTransformer extends Stream.Transform {
 		this.#transformations.every((t) => {
 			try {
 				transformed = t.transform(transformed);
-				} catch (e) {
-					error = e;
-				}
-
-				return error === null;
-			});
-
-			if (error === null) {
-				callback(null, transformed);
-			} else {
-				if (this.#silent) {
-					logger.warn(`Transformation [ ${this.#counter} ] for [ ${this.#description} ] failed.`);
-
-					if (logger.isTraceEnabled() && chunk) {
-						logger.trace(chunk);
-					}
-
-					error = null;
-				} else {
-					logger.error(error);
-				}
-
-				callback(error, null);
-			}
-		}
-
-		async #processAsynchronous(chunk, callback) {
-			try {
-				const transformed = await promise.pipeline(this.#transformations.map(t => t.transform.bind(t)), chunk);
-
-				callback(null, transformed);
 			} catch (e) {
-				let error;
+				error = e;
+			}
 
-				if (this.#silent) {
-					logger.warn(`Transformation [ ${this.#counter} ] for [ ${this.#description} ] failed.`);
+			return error === null;
+		});
 
-					if (logger.isTraceEnabled() && chunk) {
-						logger.trace(chunk);
-					}
+		if (error === null) {
+			callback(null, transformed);
+		} else {
+			if (this.#silent) {
+				logger.warn(`Transformation [ ${this.#counter} ] for [ ${this.#description} ] failed.`);
 
-					error = null;
-				} else {
-					logger.error(e);
-
-					error = e;
+				if (logger.isTraceEnabled() && chunk) {
+					logger.trace(chunk);
 				}
 
-				callback(error, null);
+				error = null;
+			} else {
+				logger.error(error);
 			}
+
+			callback(error, null);
 		}
 	}
+
+	async #processAsynchronous(chunk, callback) {
+		try {
+			const transformed = await promise.pipeline(this.#transformations.map(t => t.transform.bind(t)), chunk);
+
+			callback(null, transformed);
+		} catch (e) {
+			let error;
+
+			if (this.#silent) {
+				logger.warn(`Transformation [ ${this.#counter} ] for [ ${this.#description} ] failed.`);
+
+				if (logger.isTraceEnabled() && chunk) {
+					logger.trace(chunk);
+				}
+
+				error = null;
+			} else {
+				logger.error(e);
+
+				error = e;
+			}
+
+			callback(error, null);
+		}
+	}
+}
