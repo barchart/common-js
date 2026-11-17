@@ -24,6 +24,10 @@ const logger = log4js.getLogger('common-node/aws/SesProvider');
  * @typedef {import('@aws-sdk/client-sesv2').SESv2ClientConfig} SesProviderOptions
  */
 
+// 2026/11/17, BRI. Some aspects of sending emails have regressions when
+// compared to previous versions which used the node-mailer package. Check
+// character sets for the headers, attachments, etc. Review as time permits.
+
 /**
  * A facade for Amazon's Simple Email Service (SES). The constructor
  * accepts configuration options. The promise-based instance functions
