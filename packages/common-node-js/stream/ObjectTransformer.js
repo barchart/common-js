@@ -153,10 +153,12 @@ export default class ObjectTransformer extends Stream.Transform {
 	}
 
 	async #processAsynchronous(chunk, callback) {
-		try {
-			const transformed = await promise.pipeline(this.#transformations.map(t => t.transform.bind(t)), chunk);
+		this.#counter = this.#counter + 1;
 
-			callback(null, transformed);
+		let transformed;
+
+		try {
+			transformed = await promise.pipeline(this.#transformations.map(t => t.transform.bind(t)), chunk);
 		} catch (e) {
 			let error;
 
@@ -175,6 +177,10 @@ export default class ObjectTransformer extends Stream.Transform {
 			}
 
 			callback(error, null);
+
+			return;
 		}
+
+		callback(null, transformed);
 	}
 }
