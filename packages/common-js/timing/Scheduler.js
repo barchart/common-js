@@ -1,7 +1,6 @@
 import * as assert from './../lang/assert.js';
 import * as is from './../lang/is.js';
 import * as object from './../lang/object.js';
-import * as promise from './../lang/promise.js';
 
 import Disposable from './../lang/Disposable.js';
 
@@ -33,21 +32,30 @@ export default class Scheduler extends Disposable {
 	 * @returns {Promise}
 	 */
 	async schedule(actionToSchedule, millisecondDelay, actionDescription) {
-		assert.argumentIsRequired(actionToSchedule, 'actionToSchedule', Function);
-		assert.argumentIsRequired(millisecondDelay, 'millisecondDelay', Number);
-		assert.argumentIsOptional(actionDescription, 'actionDescription', String);
+		return new Promise((resolve, reject) => {
+			assert.argumentIsRequired(actionToSchedule, 'actionToSchedule', Function);
+			assert.argumentIsRequired(millisecondDelay, 'millisecondDelay', Number);
+			assert.argumentIsOptional(actionDescription, 'actionDescription', String);
 
-		if (this.disposed) {
-			throw new Error('The Scheduler has been disposed.');
-		}
+			if (this.disposed) {
+				reject(new Error('The Scheduler has been disposed.'));
 
-		let token;
+				return;
+			}
 
-		const schedulePromise = promise.build((resolveCallback, rejectCallback) => {
-			const wrappedAction = () => {
-				const disposable = this.#timeoutBindings[token];
+			let timeoutToken;
+			let timeoutComplete = false;
 
-				// 2021/05/18, BRI. Invoking dispose cases the clearTimeout function to run.
+			const timeoutAction = () => {
+				if (this.disposed) {
+					return;
+				}
+
+				timeoutComplete = true;
+
+				const disposable = this.#timeoutBindings[timeoutToken];
+
+				// 2021/05/18, BRI. Invoking dispose causes the clearTimeout function to run.
 				// Running clearTimeout should not be necessary because the timer has elapsed
 				// and the callback is being invoked. However, failing to call clearTimeout in
 				// a Node.js environment (after version 10) leads to a memory leak. Notice that
@@ -62,22 +70,24 @@ export default class Scheduler extends Disposable {
 				}
 
 				try {
-					resolveCallback(actionToSchedule());
+					resolve(actionToSchedule());
 				} catch (e) {
-					rejectCallback(e);
+					reject(e);
 				}
 			};
 
-			token = setTimeout(wrappedAction, millisecondDelay);
+			timeoutToken = setTimeout(timeoutAction, millisecondDelay);
 
-			this.#timeoutBindings[token] = Disposable.fromAction(() => {
-				clearTimeout(token);
+			this.#timeoutBindings[timeoutToken] = Disposable.fromAction(() => {
+				clearTimeout(timeoutToken);
 
-				delete this.#timeoutBindings[token];
+				if (!timeoutComplete) {
+					reject(new Error(`Failed to complete [ ${actionDescription || 'unnamed action'} ], the scheduler was disposed before the timer elapsed.`));
+				}
+
+				delete this.#timeoutBindings[timeoutToken];
 			});
 		});
-
-		return schedulePromise;
 	}
 
 	/**
@@ -180,25 +190,35 @@ export default class Scheduler extends Disposable {
 		let attempts = 0;
 
 		const processActionRecursive = async () => {
+			let result;
+
 			try {
-				const result = await processAction(attempts++);
-
-				return result;
+				result = await processAction(attempts++);
 			} catch (e) {
-				if (maximumAttempts > 0 && attempts === maximumAttempts) {
-					const message = `Maximum failures reached for ${(actionDescription || 'unnamed action')}`;
+				let message = null;
 
-					if (is.object(e)) {
-						e.backoff = message;
-
-						throw e;
-					}
-
-					throw message;
+				if (this.disposed) {
+					message = `Stopping attempts for [ ${(actionDescription || 'unnamed action')} ] due to scheduler disposal`;
 				}
 
-				return processActionRecursive();
+				if (maximumAttempts > 0 && attempts === maximumAttempts) {
+					message = `Maximum failures reached for [ ${(actionDescription || 'unnamed action')} ]`;
+				}
+
+				if (message === null) {
+					return processActionRecursive();
+				}
+
+				if (is.object(e)) {
+					e.backoff = message;
+
+					throw e;
+				}
+
+				throw message;
 			}
+
+			return result;
 		};
 
 		return processActionRecursive();

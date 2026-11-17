@@ -265,7 +265,7 @@ describe('When a backoff is used', () => {
 		});
 
 		it('the promise should be rejected', () => {
-			expect(actualResult).toEqual('Maximum failures reached for detonate');
+			expect(actualResult).toEqual('Maximum failures reached for [ detonate ]');
 		});
 	});
 
