@@ -23,6 +23,7 @@ const logger = log4js.getLogger('http/HttpProvider');
 export default class HttpProvider extends Disposable {
 	#counter;
 	#scheduler;
+
 	#startPromise;
 	#started;
 
@@ -34,12 +35,11 @@ export default class HttpProvider extends Disposable {
 
 		assert.argumentIsOptional(configuration, 'configuration', Object);
 
+		this.#counter = 0;
+		this.#scheduler = new Scheduler();
+
 		this.#startPromise = null;
 		this.#started = false;
-
-		this.#counter = 0;
-
-		this.#scheduler = new Scheduler();
 	}
 
 	/**
@@ -142,7 +142,7 @@ export default class HttpProvider extends Disposable {
 
 		const headersToUse = Object.assign({ }, headers || { });
 
-		if (!Object.hasOwn(headersToUse, 'Context-Type')) {
+		if (Object.keys(headersToUse).every(k => k.toLowerCase() !== 'content-type')) {
 			headersToUse['Content-Type'] = 'application/json';
 		}
 
@@ -150,7 +150,7 @@ export default class HttpProvider extends Disposable {
 
 		const counter = this.#counter = this.#counter + 1;
 
-		logger.info('Beginning HTTP request', counter);
+		logger.info('Beginning HTTP request [', counter, ']');
 
 		return this.#scheduler.backoff(() => {
 			return promise.build((resolveCallback, rejectCallback) => {
@@ -160,7 +160,7 @@ export default class HttpProvider extends Disposable {
 					let responseText = '';
 
 					response.on('error', (error) => {
-						logger.info('HTTP request', counter, 'failed');
+						logger.warn('HTTP request [', counter, '] failed');
 
 						rejectCallback(error);
 					});
@@ -170,10 +170,16 @@ export default class HttpProvider extends Disposable {
 					});
 
 					response.on('end', () => {
-						logger.info('HTTP request', counter, 'completed');
+						logger.info('HTTP request [', counter, '] completed');
 
 						resolveCallback(responseText || 'OK');
 					});
+				});
+
+				request.on('error', (error) => {
+					logger.warn('HTTP request [', counter, '] failed');
+
+					rejectCallback(error);
 				});
 
 				if (data && method !== 'GET') {
@@ -182,7 +188,7 @@ export default class HttpProvider extends Disposable {
 
 				request.end();
 
-				logger.info('HTTP request', counter, 'in flight');
+				logger.info('HTTP request [', counter, '] in flight');
 			});
 		}, 100, 'Call HTTP endpoint', 3);
 	}
