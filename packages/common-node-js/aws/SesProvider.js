@@ -411,16 +411,15 @@ function transformSuppressionListItem(data) {
 
 function buildEmailMessage(subject, htmlBody, textBody, attachments, headers) {
 	const message = {
-		Subject: { Data: subject || '' },
-		Body: { }
+		Subject: { Data: subject || '', Charset: 'UTF-8' }, Body: { }
 	};
 
 	if (is.string(textBody) && textBody.length > 0) {
-		message.Body.Text = { Data: textBody };
+		message.Body.Text = { Data: textBody, Charset: 'UTF-8' };
 	}
 
 	if (is.string(htmlBody) && htmlBody.length > 0) {
-		message.Body.Html = { Data: htmlBody };
+		message.Body.Html = { Data: htmlBody, Charset: 'UTF-8' };
 	}
 
 	if (headers) {
