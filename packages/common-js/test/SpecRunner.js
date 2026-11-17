@@ -8667,7 +8667,7 @@
   }
   async function pipeline(functions, input) {
     argumentIsArray(functions, "functions", Function);
-    let result = input;
+    let result = await input;
     for (let i = 0; i < functions.length; i++) {
       result = await functions[i](result);
     }
@@ -29625,32 +29625,40 @@
      * @returns {Promise}
      */
     async schedule(actionToSchedule, millisecondDelay, actionDescription) {
-      argumentIsRequired(actionToSchedule, "actionToSchedule", Function);
-      argumentIsRequired(millisecondDelay, "millisecondDelay", Number);
-      argumentIsOptional(actionDescription, "actionDescription", String);
-      if (this.disposed) {
-        throw new Error("The Scheduler has been disposed.");
-      }
-      let token;
-      const schedulePromise = build((resolveCallback, rejectCallback) => {
-        const wrappedAction = () => {
-          const disposable = this.#timeoutBindings[token];
+      return new Promise((resolve, reject) => {
+        argumentIsRequired(actionToSchedule, "actionToSchedule", Function);
+        argumentIsRequired(millisecondDelay, "millisecondDelay", Number);
+        argumentIsOptional(actionDescription, "actionDescription", String);
+        if (this.disposed) {
+          reject(new Error("The Scheduler has been disposed."));
+          return;
+        }
+        let timeoutToken;
+        let timeoutComplete = false;
+        const timeoutAction = () => {
+          if (this.disposed) {
+            return;
+          }
+          timeoutComplete = true;
+          const disposable = this.#timeoutBindings[timeoutToken];
           if (disposable) {
             disposable.dispose();
           }
           try {
-            resolveCallback(actionToSchedule());
+            resolve(actionToSchedule());
           } catch (e) {
-            rejectCallback(e);
+            reject(e);
           }
         };
-        token = setTimeout(wrappedAction, millisecondDelay);
-        this.#timeoutBindings[token] = Disposable.fromAction(() => {
-          clearTimeout(token);
-          delete this.#timeoutBindings[token];
+        timeoutToken = setTimeout(timeoutAction, millisecondDelay);
+        this.#timeoutBindings[timeoutToken] = Disposable.fromAction(() => {
+          clearTimeout(timeoutToken);
+          if (!timeoutComplete) {
+            reject(new Error(`Failed to complete [ ${actionDescription || "unnamed action"} ], the scheduler was disposed before the timer elapsed.`));
+          }
+          delete this.#timeoutBindings[timeoutToken];
         });
       });
-      return schedulePromise;
     }
     /**
      * @public
@@ -29684,12 +29692,12 @@
      *
      * @public
      * @async
-     * @param {Function} actionToBackoff - The action to attempt. If it fails -- because an error is thrown, a promise is rejected, or the function returns a falsey value -- the action will be invoked again.
+     * @param {Function} actionToBackoff - The action to attempt. If it fails -- because an error is thrown, a promise is rejected, or the result matches the failureValue (if provided) -- the action will be invoked again.
      * @param {number=} millisecondDelay - The amount of time to wait to execute the action. Subsequent failures are multiply this value by 2 ^ [number of failures]. So, a 1000 millisecond backoff would schedule attempts using the following delays: 0, 1000, 2000, 4000, 8000, etc. If not specified, the first attempt will execute immediately, then a value of 1000 will be used.
      * @param {string=} actionDescription - Description of the action to attempt, used for logging purposes.
-     * @param {number=} maximumAttempts - The number of attempts to before giving up.
+     * @param {number=} maximumAttempts - The number of attempts before giving up. If not provided (or not a positive number), the action will be retried indefinitely.
      * @param {Function=} failureCallback - If provided, will be invoked if a function is considered to be failing.
-     * @param {object=} failureValue - If provided, will consider the result to have failed, if this value is returned (a deep equality check is used). If not provided, an undefined value will trigger a retry.
+     * @param {object=} failureValue - If provided, will consider the result to have failed, if this value is returned (a deep equality check is used). If not provided, any result is considered successful.
      * @param {number=} maximumDelay - The maximum delay that can be used for the backoff. If not provided, the delay will continue to double until the maximum number of attempts is reached.
      * @returns {Promise}
      */
@@ -29733,20 +29741,27 @@
       };
       let attempts = 0;
       const processActionRecursive = async () => {
+        let result;
         try {
-          const result = await processAction(attempts++);
-          return result;
+          result = await processAction(attempts++);
         } catch (e) {
-          if (maximumAttempts > 0 && attempts === maximumAttempts) {
-            const message = `Maximum failures reached for ${actionDescription || "unnamed action"}`;
-            if (object(e)) {
-              e.backoff = message;
-              throw e;
-            }
-            throw message;
+          let message = null;
+          if (this.disposed) {
+            message = `Stopping attempts for [ ${actionDescription || "unnamed action"} ] due to scheduler disposal`;
           }
-          return processActionRecursive();
+          if (maximumAttempts > 0 && attempts === maximumAttempts) {
+            message = `Maximum failures reached for [ ${actionDescription || "unnamed action"} ]`;
+          }
+          if (message === null) {
+            return processActionRecursive();
+          }
+          if (object(e)) {
+            e.backoff = message;
+            throw e;
+          }
+          throw message;
         }
+        return result;
       };
       return processActionRecursive();
     }
@@ -30224,7 +30239,7 @@
         expect(spyFailure.calls.count()).toEqual(3);
       });
       it("the promise should be rejected", () => {
-        expect(actualResult).toEqual("Maximum failures reached for detonate");
+        expect(actualResult).toEqual("Maximum failures reached for [ detonate ]");
       });
     });
     describe("that respects the maximum delay", () => {
