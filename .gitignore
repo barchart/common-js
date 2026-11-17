@@ -12,3 +12,5 @@ npm-debug.log
 
 yarn.lock
 package-lock.json
+
+.mcp.json
