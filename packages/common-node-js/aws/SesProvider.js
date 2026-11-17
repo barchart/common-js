@@ -350,7 +350,7 @@ export default class SesProvider extends Disposable {
 		assert.argumentIsRequired(email, 'email', String);
 		assert.argumentIsOptional(reason, 'reason', String);
 
-		assert.argumentIsValid(reason, 'reason', r => r.toUpperCase() === 'BOUNCE' || r.toUpperCase() === 'COMPLAINT', 'must be one of [ BOUNCE, COMPLIANT ]');
+		assert.argumentIsValid(reason, 'reason', r => r.toUpperCase() === 'BOUNCE' || r.toUpperCase() === 'COMPLAINT', 'must be one of [ BOUNCE, COMPLAINT ]');
 
 		await this.#sesv2.send(new PutSuppressedDestinationCommand({ EmailAddress: email, Reason: reason.toUpperCase() }));
 
