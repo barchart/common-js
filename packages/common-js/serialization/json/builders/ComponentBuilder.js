@@ -11,7 +11,6 @@ import Field from './../Field.js';
  */
 export default class ComponentBuilder {
 	#component;
-	#name;
 
 	/**
 	 * @param {string} name - The name of the schema
@@ -71,6 +70,6 @@ export default class ComponentBuilder {
 	 * @returns {string}
 	 */
 	toString() {
-		return `[ComponentBuilder (name=${this.#name})]`;
+		return `[ComponentBuilder]`;
 	}
 }
