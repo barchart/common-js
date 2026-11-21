@@ -1,3 +1,7 @@
+import * as is from './is.js';
+
+const FOUR_INTEGER_DIGITS = /^-?\d{4}/;
+
 /**
  * Formats a number into a string for display purposes.
  *
@@ -9,7 +13,7 @@
  * @param {boolean=} useParenthesis
  */
 export function numberToString(value, digits, thousandsSeparator, useParenthesis) {
-	if (value === undefined || value === null || Number.isNaN(value)) {
+	if (!is.number(value)) {
 		return '';
 	}
 
@@ -19,45 +23,28 @@ export function numberToString(value, digits, thousandsSeparator, useParenthesis
 		value = 0 - value;
 	}
 
-	let returnRef = value.toFixed(digits);
+	let fixed = value.toFixed(digits);
 
-	// Group the rounded value: 999.999 with two digits displays as 1,000.00.
-	if (thousandsSeparator && Math.abs(Number(returnRef)) >= 1000) {
-		const length = returnRef.length;
-		const negative = value < 0;
+	if (thousandsSeparator && FOUR_INTEGER_DIGITS.test(fixed)) {
+		const start = fixed.charCodeAt(0) === 45 ? 1 : 0;
+		const dot = fixed.indexOf('.', start);
+		const end = dot === -1 ? fixed.length : dot;
 
-		let found = digits === 0;
-		let counter = 0;
+		let i = start + ((end - start) % 3 || 3);
+		let grouped = fixed.slice(0, i);
 
-		const buffer = [];
+		while (i < end) {
+			grouped += thousandsSeparator + fixed.slice(i, i + 3);
 
-		for (let i = (length - 1); !(i < 0); i--) {
-			if (counter === 3 && !(negative && i === 0)) {
-				buffer.unshift(thousandsSeparator);
-
-				counter = 0;
-			}
-
-			const character = returnRef.charAt(i);
-
-			buffer.unshift(character);
-
-			if (found) {
-				counter = counter + 1;
-			} else if (character === '.') {
-				found = true;
-			}
+			i += 3;
 		}
 
-		if (applyParenthesis) {
-			buffer.unshift('(');
-			buffer.push(')');
-		}
-
-		returnRef = buffer.join('');
-	} else if (applyParenthesis) {
-		returnRef = '(' + returnRef + ')';
+		fixed = grouped + fixed.slice(end);
 	}
 
-	return returnRef;
+	if (applyParenthesis) {
+		return `(${fixed})`;
+	}
+
+	return fixed;
 }

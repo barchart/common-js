@@ -9600,9 +9600,7 @@
           accumulator[parameter.key] = value;
           return accumulator;
         }), {});
-        if (headers.length !== 0) {
-          options.headers = headers;
-        }
+        options.headers = headers;
       }
       if (queryParameters.length !== 0) {
         const query = await pipeline(queryValues.map((value, i) => (accumulator) => {
@@ -9610,9 +9608,7 @@
           accumulator[parameter.key] = value;
           return accumulator;
         }), {});
-        if (query.length !== 0) {
-          options.params = query;
-        }
+        options.params = query;
       }
       if (bodyParameters.length !== 0) {
         const body = await pipeline(bodyValues.map((value, i) => (accumulator) => {
@@ -15762,7 +15758,6 @@
         }
       }
       this.#maps = {};
-      ``;
       this.#maps.rates = /* @__PURE__ */ new Map();
       this.#maps.translation = /* @__PURE__ */ new Map();
       const translators = this.#solve(this.#configuration.symbols);
@@ -22265,43 +22260,32 @@
   });
 
   // lang/formatter.js
+  var FOUR_INTEGER_DIGITS = /^-?\d{4}/;
   function numberToString(value, digits, thousandsSeparator, useParenthesis) {
-    if (value === void 0 || value === null || Number.isNaN(value)) {
+    if (!number(value)) {
       return "";
     }
     const applyParenthesis = value < 0 && useParenthesis === true;
     if (applyParenthesis) {
       value = 0 - value;
     }
-    let returnRef = value.toFixed(digits);
-    if (thousandsSeparator && Math.abs(Number(returnRef)) >= 1e3) {
-      const length = returnRef.length;
-      const negative2 = value < 0;
-      let found = digits === 0;
-      let counter = 0;
-      const buffer = [];
-      for (let i = length - 1; !(i < 0); i--) {
-        if (counter === 3 && !(negative2 && i === 0)) {
-          buffer.unshift(thousandsSeparator);
-          counter = 0;
-        }
-        const character = returnRef.charAt(i);
-        buffer.unshift(character);
-        if (found) {
-          counter = counter + 1;
-        } else if (character === ".") {
-          found = true;
-        }
+    let fixed = value.toFixed(digits);
+    if (thousandsSeparator && FOUR_INTEGER_DIGITS.test(fixed)) {
+      const start = fixed.charCodeAt(0) === 45 ? 1 : 0;
+      const dot = fixed.indexOf(".", start);
+      const end = dot === -1 ? fixed.length : dot;
+      let i = start + ((end - start) % 3 || 3);
+      let grouped = fixed.slice(0, i);
+      while (i < end) {
+        grouped += thousandsSeparator + fixed.slice(i, i + 3);
+        i += 3;
       }
-      if (applyParenthesis) {
-        buffer.unshift("(");
-        buffer.push(")");
-      }
-      returnRef = buffer.join("");
-    } else if (applyParenthesis) {
-      returnRef = "(" + returnRef + ")";
+      fixed = grouped + fixed.slice(end);
     }
-    return returnRef;
+    if (applyParenthesis) {
+      return `(${fixed})`;
+    }
+    return fixed;
   }
 
   // test/specs/lang/formatterSpec.js
@@ -27313,7 +27297,6 @@
   // serialization/json/builders/ComponentBuilder.js
   var ComponentBuilder = class {
     #component;
-    #name;
     /**
      * @param {string} name - The name of the schema
      */
@@ -27363,7 +27346,7 @@
      * @returns {string}
      */
     toString() {
-      return `[ComponentBuilder (name=${this.#name})]`;
+      return `[ComponentBuilder (name=${this.#component.name})]`;
     }
   };
 
@@ -29867,9 +29850,13 @@
       return build((resolveCallback, rejectCallback) => {
         argumentIsRequired(actionToEnqueue, "actionToEnqueue", Function);
         if (this.disposed) {
-          throw new Error("Unable to enqueue action, the rate limiter has been disposed.");
+          throw new Error("Unable to enqueue action, the [ RateLimiter ] has been disposed.");
         }
         this.#workQueue.enqueue(async () => {
+          if (this.disposed) {
+            rejectCallback(new Error("Unable to process pending action, the [ RateLimiter ] has been disposed."));
+            return;
+          }
           try {
             const result = await actionToEnqueue();
             resolveCallback(result);
@@ -29888,6 +29875,7 @@
      */
     _onDispose() {
       this.#scheduler.dispose();
+      this.#workQueue.scan((actionToReject) => actionToReject());
       this.#workQueue = null;
     }
     /**
@@ -29915,7 +29903,8 @@
           this.#windowCounter = 0;
           this.#checkStart();
         };
-        this.#scheduler.schedule(resetWindow, this.#windowDurationMilliseconds, "Rate Limiter Window Reset");
+        this.#scheduler.schedule(resetWindow, this.#windowDurationMilliseconds, "Rate Limiter Window Reset").catch(() => {
+        });
       }
       if (this.#windowCounter < this.#windowMaximumCount) {
         this.#windowCounter = this.#windowCounter + 1;
