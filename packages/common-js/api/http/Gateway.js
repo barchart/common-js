@@ -127,9 +127,7 @@ export default class Gateway {
 				return accumulator;
 			}), { });
 
-			if (headers.length !== 0) {
-				options.headers = headers;
-			}
+			options.headers = headers;
 		}
 
 		if (queryParameters.length !== 0) {
@@ -141,9 +139,7 @@ export default class Gateway {
 				return accumulator;
 			}), { });
 
-			if (query.length !== 0) {
-				options.params = query;
-			}
+			options.params = query;
 		}
 
 		if (bodyParameters.length !== 0) {
