@@ -1,28 +1,40 @@
 import * as assert from './../lang/assert.js';
+import * as date from './../lang/date.js';
 
+/**
+ * Counts occurrences within a specific duration (i.e. a window) and stores a configurable
+ * number of windows.
+ *
+ * @public
+ */
 export default class WindowCounter {
-	#duration;
 	#windows;
+
+	#duration;
 	#maximum;
+
 	#previousCount;
 
 	/**
-	 * @param {number} duration
-	 * @param {number} windows
+	 * @param {number} duration - The window length, in milliseconds.
+	 * @param {number} windows - The maximum number of windows to track, including the current window.
 	 */
 	constructor(duration, windows) {
 		assert.argumentIsRequired(duration, 'duration', Number);
 		assert.argumentIsRequired(windows, 'windows', Number);
+		assert.argumentIsValid(duration, 'duration', d => d !== 0, 'must not be zero');
 
-		this.#duration = duration;
+		this.#duration = Math.ceil(Math.abs(duration));
 
-		this.#windows = [ new Window(getTime(), this.#duration) ];
-		this.#maximum = Math.max(windows, 2);
+		this.#windows = [ new Window(date.getTimestamp(), this.#duration) ];
+		this.#maximum = Math.max(Math.ceil(windows), 2);
 
 		this.#previousCount = 0;
 	}
 
 	/**
+	 * Increments the counter for the current window.
+	 *
 	 * @public
 	 * @param {number} count
 	 */
@@ -33,83 +45,108 @@ export default class WindowCounter {
 	}
 
 	/**
+	 * Gets the count for the current window.
+	 *
 	 * @public
 	 * @returns {number}
 	 */
 	getCurrent() {
-		return this.#advance().getCount();
+		return this.#advance().count;
 	}
 
 	/**
+	 * Gets the count from the previous window.
+	 *
 	 * @public
 	 * @returns {number}
 	 */
 	getPrevious() {
 		this.#advance();
 
-		let returnVal;
-
 		if (this.#windows.length > 1) {
-			returnVal = this.#windows[1].getCount();
-		} else {
-			returnVal = 0;
+			return this.#windows[1].count;
 		}
 
-		return returnVal;
+		return 0;
 	}
 
 	/**
+	 * Gets the average (window) count excluding the current window.
+	 *
 	 * @public
 	 * @returns {number}
 	 */
 	getAverage() {
+		this.#advance();
+
 		const previousWindows = this.#windows.length - 1;
 
-		let returnVal;
-
 		if (previousWindows > 0) {
-			returnVal = this.#previousCount / previousWindows;
-		} else {
-			returnVal = 0;
+			return this.#previousCount / previousWindows;
 		}
 
-		return returnVal;
+		return 0;
 	}
 
 	/**
-	 * Returns a string representation.
+	 * Returns the current window, adding new window(s) as necessary and removing
+	 * windows that exceed the instance's capacity.
 	 *
+	 * @private
+	 * @returns {Window}
+	 */
+	#advance() {
+		const now = date.getTimestamp();
+
+		let current = this.#windows[0];
+
+		if (current.contains(now)) {
+			return current;
+		}
+
+		const gap = now - current.end;
+		const missing = Math.ceil(gap / this.#duration);
+
+		if (missing > this.#maximum) {
+			current = new Window((current.end + (missing - 1) * this.#duration), this.#duration);
+
+			this.#windows = [ current ];
+
+			this.#previousCount = 0;
+
+			return current;
+		}
+
+		while (true) {
+			const previous = current;
+
+			current = new Window(previous.end, this.#duration);
+
+			this.#windows.unshift(current);
+
+			this.#previousCount = this.#previousCount + previous.count;
+
+			if (this.#windows.length > this.#maximum) {
+				const removed = this.#windows.pop();
+
+				this.#previousCount = this.#previousCount - removed.count;
+			}
+
+			if (current.contains(now)) {
+				break;
+			}
+		}
+
+		return current;
+	}
+
+	/**
 	 * @public
 	 * @returns {string}
 	 */
 	toString() {
 		return '[WindowCounter]';
 	}
-
-	#advance() {
-		const now = getTime();
-
-		while (!this.#windows[0].contains(now)) {
-			const previous = this.#windows[0];
-			const current = new Window(previous.getEnd(), this.#duration);
-
-			this.#windows.unshift(current);
-
-			this.#previousCount = this.#previousCount + previous.getCount();
-
-			if (this.#windows.length > this.#maximum) {
-				const removed = this.#windows.pop();
-
-				this.#previousCount = this.#previousCount - removed.getCount();
-			}
-		}
-
-		return this.#windows[0];
-	}
-}
-
-function getTime() {
-	return (new Date()).getTime();
 }
 
 class Window {
@@ -132,15 +169,19 @@ class Window {
 		this.#count = this.#count + count;
 	}
 
-	getStart() {
+	get start() {
 		return this.#start;
 	}
 
-	getEnd() {
+	get end() {
 		return this.#end;
 	}
 
-	getCount() {
+	get count() {
 		return this.#count;
+	}
+
+	toString() {
+		return `[Window (start=${this.#start}, end=${this.#end})]`;
 	}
 }
