@@ -231,7 +231,6 @@ export default class CurrencyTranslator {
 		}
 
 		this.#maps = { };
-		``
 		this.#maps.rates = new Map();
 		this.#maps.translation = new Map();
 
