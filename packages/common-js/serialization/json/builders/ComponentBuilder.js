@@ -70,6 +70,6 @@ export default class ComponentBuilder {
 	 * @returns {string}
 	 */
 	toString() {
-		return `[ComponentBuilder]`;
+		return `[ComponentBuilder (name=${this.#component.name})]`;
 	}
 }
