@@ -14,6 +14,7 @@ export default class WindowCounter {
 	#maximum;
 
 	#previousCount;
+	#previousWindows;
 
 	/**
 	 * @param {number} duration - The window length, in milliseconds.
@@ -30,6 +31,7 @@ export default class WindowCounter {
 		this.#maximum = Math.max(Math.ceil(windows), 2);
 
 		this.#previousCount = 0;
+		this.#previousWindows = 0;
 	}
 
 	/**
@@ -79,10 +81,8 @@ export default class WindowCounter {
 	getAverage() {
 		this.#advance();
 
-		const previousWindows = this.#windows.length - 1;
-
-		if (previousWindows > 0) {
-			return this.#previousCount / previousWindows;
+		if (this.#previousWindows > 0) {
+			return this.#previousCount / this.#previousWindows;
 		}
 
 		return 0;
@@ -113,6 +113,7 @@ export default class WindowCounter {
 			this.#windows = [ current ];
 
 			this.#previousCount = 0;
+			this.#previousWindows = this.#maximum - 1;
 
 			return current;
 		}
@@ -125,6 +126,7 @@ export default class WindowCounter {
 			this.#windows.unshift(current);
 
 			this.#previousCount = this.#previousCount + previous.count;
+			this.#previousWindows = Math.min(this.#previousWindows + 1, this.#maximum - 1);
 
 			if (this.#windows.length > this.#maximum) {
 				const removed = this.#windows.pop();
