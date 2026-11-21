@@ -55,10 +55,16 @@ export default class RateLimiter extends Disposable {
 			assert.argumentIsRequired(actionToEnqueue, 'actionToEnqueue', Function);
 
 			if (this.disposed) {
-				throw new Error('Unable to enqueue action, the rate limiter has been disposed.');
+				throw new Error('Unable to enqueue action, the [ RateLimiter ] has been disposed.');
 			}
 
 			this.#workQueue.enqueue(async () => {
+				if (this.disposed) {
+					rejectCallback(new Error('Unable to process pending action, the [ RateLimiter ] has been disposed.'));
+
+					return;
+				}
+
 				try {
 					const result = await actionToEnqueue();
 
@@ -80,6 +86,8 @@ export default class RateLimiter extends Disposable {
 	 */
 	_onDispose() {
 		this.#scheduler.dispose();
+
+		this.#workQueue.scan((actionToReject) => actionToReject());
 
 		this.#workQueue = null;
 	}
