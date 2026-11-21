@@ -124,7 +124,7 @@ export default class RateLimiter extends Disposable {
 				this.#checkStart();
 			};
 
-			this.#scheduler.schedule(resetWindow, this.#windowDurationMilliseconds, 'Rate Limiter Window Reset');
+			this.#scheduler.schedule(resetWindow, this.#windowDurationMilliseconds, 'Rate Limiter Window Reset').catch(() => { });
 		}
 
 		if (this.#windowCounter < this.#windowMaximumCount) {
