@@ -83,6 +83,7 @@ export async function map(items, mapper, concurrency) {
 		mapPromise = Promise.all(items.map((item) => mapper(item)));
 	} else {
 		const total = items.length;
+
 		let active = 0;
 		let complete = 0;
 		let failure = false;
