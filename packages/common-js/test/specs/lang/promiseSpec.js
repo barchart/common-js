@@ -473,19 +473,29 @@ describe('When using the "promise.map" function', () => {
 			});
 		});
 
+		/**
+		 * Returns a mapper spy which tracks concurrency by counting in-flight calls (instead
+		 * of comparing timestamps, which is unreliable when timers fire a millisecond late).
+		 * Each result's "concurrency" is the largest number of calls that were in-flight at
+		 * any moment during that call (including the call itself).
+		 */
 		let getMapSpy = () => {
+			const active = new Set();
+
 			return jasmine.createSpy('mapSpy').and.callFake((item) => {
-				let startDate = new Date();
+				const result = { item: item, concurrency: 0 };
 
-				return new Promise((resolveCallback, rejectCallback) => {
+				active.add(result);
+
+				active.forEach((r) => {
+					r.concurrency = Math.max(r.concurrency, active.size);
+				});
+
+				return new Promise((resolveCallback) => {
 					setTimeout(() => {
-						let endDate = new Date();
+						active.delete(result);
 
-						resolveCallback({
-							item: item,
-							start: startDate.getTime(),
-							end: endDate.getTime()
-						});
+						resolveCallback(result);
 					}, 5);
 				});
 			});
@@ -564,31 +574,9 @@ describe('When using the "promise.map" function', () => {
 		});
 	});
 
-	let getConcurrency = (results, index) => {
-		let current = results[index];
+	let getConcurrency = (results, index) => results[index].concurrency;
 
-		let concurrency = 0;
-
-		for (let i = 0; i < results.length; i++) {
-			let other = results[i];
-
-			if (!(other.end <= current.start || other.start >= current.end)) {
-				concurrency = concurrency + 1;
-			}
-		}
-
-		return concurrency;
-	};
-
-	let getMaximumConcurrency = (results) => {
-		let maximum = 0;
-
-		for (let i = 0; i < results.length; i++) {
-			maximum = Math.max(getConcurrency(results, i), maximum);
-		}
-
-		return maximum;
-	};
+	let getMaximumConcurrency = (results) => Math.max(...results.map((r) => r.concurrency));
 });
 
 describe('When processing a "pipeline" of promises', () => {
