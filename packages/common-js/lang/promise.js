@@ -87,7 +87,7 @@ export async function map(items, mapper, concurrency) {
 		let complete = 0;
 		let failure = false;
 
-		const results = Array.of(total);
+		const results = new Array(total);
 
 		const executors = items.map((item, index) => {
 			return async () => {
