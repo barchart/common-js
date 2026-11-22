@@ -16,6 +16,7 @@ let queryCounter = 0;
  *
  * @public
  * @abstract
+ * @sealed
  */
 export default class Client extends Disposable {
 	#id;
@@ -24,9 +25,9 @@ export default class Client extends Disposable {
 
 	/**
 	 * @param {*} pgClient - The pg client.
-	 * @param {*} preparedStatementMap - The prepared statement map.
+	 * @param {Object=} preparedStatementMap - The prepared statement map (statement name to query text).
 	 */
-	constructor(pgClient, preparedStatementMap) {
+	constructor(pgClient, preparedStatementMap = {}) {
 		super();
 
 		assert.argumentIsRequired(pgClient, 'pgClient');
@@ -101,6 +102,14 @@ export default class Client extends Disposable {
 				}
 			});
 		});
+	}
+
+	/**
+	 * @protected
+	 * @override
+	 */
+	_onDispose() {
+		this.#pgClient = null;
 	}
 
 	/**

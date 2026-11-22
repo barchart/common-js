@@ -96,7 +96,7 @@ class PooledClient extends Client {
 
 	/**
 	 * @param {*} pgClient - The pg client.
-	 * @param {Map} preparedStatementMap - The prepared statement map.
+	 * @param {Object} preparedStatementMap - The prepared statement map.
 	 * @param {Function} releaseCallback - The release callback.
 	 */
 	constructor(pgClient, preparedStatementMap, releaseCallback) {
@@ -111,8 +111,9 @@ class PooledClient extends Client {
 	 */
 	_onDispose() {
 		this.#releaseCallback();
-
 		this.#releaseCallback = null;
+
+		super._onDispose();
 
 		logger.info('Disposed [PooledClient] [', this.id, ']');
 	}

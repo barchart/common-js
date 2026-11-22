@@ -91,7 +91,9 @@ class DirectClient extends Client {
 	 * @param {*} pgClient - The pg client.
 	 */
 	constructor(pgClient) {
-		super(pgClient, {});
+		super(pgClient);
+
+		this.#pgClient = pgClient;
 	}
 
 	/**
@@ -101,6 +103,8 @@ class DirectClient extends Client {
 	_onDispose() {
 		this.#pgClient.end();
 		this.#pgClient = null;
+
+		super._onDispose();
 
 		logger.info('Disposed [DirectClientSimple] [', this.id, ']');
 	}
