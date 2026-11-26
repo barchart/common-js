@@ -490,14 +490,14 @@ export default class CloudWatchLogsProvider extends Disposable {
 
 		if (is.integer(limit)) {
 			payload.limit = limit;
-			}
-
-			try {
-				return await this.#cloudWatchLogs.send(new DescribeLogStreamsCommand(payload));
-			} catch (e) {
-				logger.error(e);
-
-				throw e;
-			}
 		}
+
+		try {
+			return await this.#cloudWatchLogs.send(new DescribeLogStreamsCommand(payload));
+		} catch (e) {
+			logger.error(e);
+
+			throw e;
+		}
+	}
 }
