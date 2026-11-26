@@ -61,7 +61,7 @@ export default class SnsProvider extends Disposable {
 	}
 
 	/**
-	 * Initializes the Amazon SDK. Call this before invoking any other instance
+	 * Initializes the Amazon SNS. Call this before invoking any other instance
 	 * functions.
 	 *
 	 * @public
