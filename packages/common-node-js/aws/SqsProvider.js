@@ -72,8 +72,7 @@ export default class SqsProvider extends Disposable {
 	}
 
 	/**
-	 * Initializes the Amazon SDK. Call this before invoking any other instance
-	 * functions.
+	 * Connects to Amazon. Must be called once before using other instance
 	 *
 	 * @public
 	 * @async

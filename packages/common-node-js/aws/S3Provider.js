@@ -36,7 +36,7 @@ const encodingTypes = {
  */
 
 /**
- * Wrapper for Amazon's S3 SDK.
+ * Wrapper for Amazon S3 SDK.
  *
  * @public
  * @extends Disposable

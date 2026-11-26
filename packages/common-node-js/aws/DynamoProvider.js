@@ -80,7 +80,7 @@ export default class DynamoProvider extends Disposable {
     }
 
     /**
-     * Initializes the Amazon SDK. Call this before invoking any other instance
+     * Connects to Amazon. Must be called once before using other instance
      * functions.
      *
      * @public
