@@ -22,7 +22,7 @@
     "clean": "lerna clean --yes && rm -rf node_modules",
     "lint": "eslint eslint.config.js packages",
     "test": "lerna run test --stream",
-    "publish": "lerna run publish:npm --stream --concurrency 1",
+    "publish": "lerna exec --concurrency 1 --no-private -- npm publish --registry=https://registry.npmjs.org/",
     "preversion": "git diff --exit-code",
     "release": "lerna version -m 'Release. Bump version number %v' --tag-version-prefix='' --force-publish --sign-git-tag --sign-git-commit"
   },

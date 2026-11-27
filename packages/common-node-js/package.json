@@ -35,7 +35,6 @@
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "prepack": "yarn types && yarn build:cjs",
-    "publish:npm": "npm publish",
     "test": "jasmine --config=jasmine.json",
     "types": "tsc -p tsconfig.types.json"
   },
