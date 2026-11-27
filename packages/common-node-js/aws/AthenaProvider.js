@@ -32,8 +32,10 @@ const logger = log4js.getLogger('common-node/aws/AthenaProvider');
  */
 export default class AthenaProvider extends Disposable {
 	#athena;
+
 	#configuration;
 	#options;
+
 	#started;
 
 	/**
@@ -66,7 +68,6 @@ export default class AthenaProvider extends Disposable {
 			maxRows: 10000,
 			...configuration
 		};
-
 		this.#options = { ...AwsOptions.instance.options, ...options };
 
 		this.#started = false;
@@ -86,10 +87,17 @@ export default class AthenaProvider extends Disposable {
 		}
 
 		if (!this.#started) {
-			this.#athena = new AthenaClient(this.#options);
-			this.#started = true;
+			try {
+				this.#athena = new AthenaClient(this.#options);
 
-			logger.info('The Athena provider has started');
+				logger.info('The Athena provider has started');
+
+				this.#started = true;
+			} catch (e) {
+				logger.error('The Athena provider failed to start', e);
+
+				throw e;
+			}
 		}
 
 		return this.#started;
