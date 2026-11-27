@@ -23,7 +23,9 @@ const logger = log4js.getLogger('common-node/aws/AthenaProvider');
  */
 
 /**
- * A facade for Athena SQL execution and bounded SELECT results.
+ * A facade for Amazon's Athena service. The constructor accepts
+ * configuration options. The promise-based instance functions
+ * abstract knowledge of the AWS API.
  *
  * @public
  * @extends Disposable
@@ -499,7 +501,7 @@ export default class AthenaProvider extends Disposable {
 	}
 
 	#validateWaitOptions(options) {
-		for (const key of ['pollIntervalMs', 'timeoutMs']) {
+		for (const key of [ 'pollIntervalMs', 'timeoutMs' ]) {
 			if (!is.positive(options[key])) {
 				throw new Error(`The "${key}" option must be positive`);
 			}
