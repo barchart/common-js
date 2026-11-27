@@ -72,7 +72,7 @@ export default class CloudWatchLogsProvider extends Disposable {
 	 */
 	async start() {
 		if (this.disposed) {
-			throw 'Unable to start, the CloudWatchLogsProvider has been disposed.';
+			throw new Error('Unable to start, the CloudWatchLogsProvider has been disposed.');
 		}
 
 		if (!this.#started) {

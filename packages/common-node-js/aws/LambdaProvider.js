@@ -55,7 +55,7 @@ export default class LambdaProvider extends Disposable {
 	 */
 	async start() {
 		if (this.disposed) {
-			throw 'Unable to start, the Lambda provider has been disposed.';
+			throw new Error('Unable to start, the Lambda provider has been disposed.');
 		}
 
 		if (!this.#started) {

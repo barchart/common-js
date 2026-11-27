@@ -57,7 +57,7 @@ export default class ApiGatewayManagementProvider extends Disposable {
 	 */
 	async start() {
 		if (this.disposed) {
-			throw 'Unable to start, the API Gateway provider has been disposed';
+			throw new Error('Unable to start, the API Gateway provider has been disposed');
 		}
 
 		if (!this.#started) {

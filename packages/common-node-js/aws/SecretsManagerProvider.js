@@ -55,7 +55,7 @@ export default class SecretsManagerProvider extends Disposable {
 	 */
 	async start() {
 		if (this.disposed) {
-			throw 'Unable to start, the Secrets Manager provider has been disposed';
+			throw new Error('Unable to start, the Secrets Manager provider has been disposed');
 		}
 
 		if (!this.#started) {

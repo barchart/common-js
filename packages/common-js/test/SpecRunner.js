@@ -8626,7 +8626,7 @@
       let active = 0;
       let complete = 0;
       let failure = false;
-      const results = Array.of(total);
+      const results = new Array(total);
       const executors = items.map((item, index) => {
         return async () => {
           const result = await mapper(item);
@@ -24270,16 +24270,17 @@
         });
       });
       let getMapSpy = () => {
+        const active = /* @__PURE__ */ new Set();
         return jasmine.createSpy("mapSpy").and.callFake((item) => {
-          let startDate = /* @__PURE__ */ new Date();
-          return new Promise((resolveCallback, rejectCallback) => {
+          const result = { item, concurrency: 0 };
+          active.add(result);
+          active.forEach((r) => {
+            r.concurrency = Math.max(r.concurrency, active.size);
+          });
+          return new Promise((resolveCallback) => {
             setTimeout(() => {
-              let endDate = /* @__PURE__ */ new Date();
-              resolveCallback({
-                item,
-                start: startDate.getTime(),
-                end: endDate.getTime()
-              });
+              active.delete(result);
+              resolveCallback(result);
             }, 5);
           });
         });
@@ -24335,24 +24336,8 @@
         });
       });
     });
-    let getConcurrency = (results, index) => {
-      let current = results[index];
-      let concurrency = 0;
-      for (let i = 0; i < results.length; i++) {
-        let other = results[i];
-        if (!(other.end <= current.start || other.start >= current.end)) {
-          concurrency = concurrency + 1;
-        }
-      }
-      return concurrency;
-    };
-    let getMaximumConcurrency = (results) => {
-      let maximum = 0;
-      for (let i = 0; i < results.length; i++) {
-        maximum = Math.max(getConcurrency(results, i), maximum);
-      }
-      return maximum;
-    };
+    let getConcurrency = (results, index) => results[index].concurrency;
+    let getMaximumConcurrency = (results) => Math.max(...results.map((r) => r.concurrency));
   });
   describe('When processing a "pipeline" of promises', () => {
     "use strict";
@@ -30498,23 +30483,28 @@
 
   // timing/WindowCounter.js
   var WindowCounter = class {
-    #duration;
     #windows;
+    #duration;
     #maximum;
     #previousCount;
+    #previousWindows;
     /**
-     * @param {number} duration
-     * @param {number} windows
+     * @param {number} duration - The window length, in milliseconds.
+     * @param {number} windows - The maximum number of windows to track, including the current window.
      */
     constructor(duration, windows) {
       argumentIsRequired(duration, "duration", Number);
       argumentIsRequired(windows, "windows", Number);
-      this.#duration = duration;
-      this.#windows = [new Window(getTime(), this.#duration)];
-      this.#maximum = Math.max(windows, 2);
+      argumentIsValid(duration, "duration", (d) => d !== 0, "must not be zero");
+      this.#duration = Math.ceil(Math.abs(duration));
+      this.#windows = [new Window(getTimestamp(), this.#duration)];
+      this.#maximum = Math.max(Math.ceil(windows), 2);
       this.#previousCount = 0;
+      this.#previousWindows = 0;
     }
     /**
+     * Increments the counter for the current window.
+     *
      * @public
      * @param {number} count
      */
@@ -30523,67 +30513,86 @@
       this.#advance().increment(count);
     }
     /**
+     * Gets the count for the current window.
+     *
      * @public
      * @returns {number}
      */
     getCurrent() {
-      return this.#advance().getCount();
+      return this.#advance().count;
     }
     /**
+     * Gets the count from the previous window.
+     *
      * @public
      * @returns {number}
      */
     getPrevious() {
       this.#advance();
-      let returnVal;
       if (this.#windows.length > 1) {
-        returnVal = this.#windows[1].getCount();
-      } else {
-        returnVal = 0;
+        return this.#windows[1].count;
       }
-      return returnVal;
+      return 0;
     }
     /**
+     * Gets the average (window) count excluding the current window.
+     *
      * @public
      * @returns {number}
      */
     getAverage() {
-      const previousWindows = this.#windows.length - 1;
-      let returnVal;
-      if (previousWindows > 0) {
-        returnVal = this.#previousCount / previousWindows;
-      } else {
-        returnVal = 0;
+      this.#advance();
+      if (this.#previousWindows > 0) {
+        return this.#previousCount / this.#previousWindows;
       }
-      return returnVal;
+      return 0;
     }
     /**
-     * Returns a string representation.
+     * Returns the current window, adding new window(s) as necessary and removing
+     * windows that exceed the instance's capacity.
      *
+     * @private
+     * @returns {Window}
+     */
+    #advance() {
+      const now = getTimestamp();
+      let current = this.#windows[0];
+      if (current.contains(now)) {
+        return current;
+      }
+      const gap = now - current.end;
+      const missing = Math.ceil(gap / this.#duration);
+      if (missing > this.#maximum) {
+        current = new Window(current.end + (missing - 1) * this.#duration, this.#duration);
+        this.#windows = [current];
+        this.#previousCount = 0;
+        this.#previousWindows = this.#maximum - 1;
+        return current;
+      }
+      while (true) {
+        const previous = current;
+        current = new Window(previous.end, this.#duration);
+        this.#windows.unshift(current);
+        this.#previousCount = this.#previousCount + previous.count;
+        this.#previousWindows = Math.min(this.#previousWindows + 1, this.#maximum - 1);
+        if (this.#windows.length > this.#maximum) {
+          const removed = this.#windows.pop();
+          this.#previousCount = this.#previousCount - removed.count;
+        }
+        if (current.contains(now)) {
+          break;
+        }
+      }
+      return current;
+    }
+    /**
      * @public
      * @returns {string}
      */
     toString() {
       return "[WindowCounter]";
     }
-    #advance() {
-      const now = getTime();
-      while (!this.#windows[0].contains(now)) {
-        const previous = this.#windows[0];
-        const current = new Window(previous.getEnd(), this.#duration);
-        this.#windows.unshift(current);
-        this.#previousCount = this.#previousCount + previous.getCount();
-        if (this.#windows.length > this.#maximum) {
-          const removed = this.#windows.pop();
-          this.#previousCount = this.#previousCount - removed.getCount();
-        }
-      }
-      return this.#windows[0];
-    }
   };
-  function getTime() {
-    return (/* @__PURE__ */ new Date()).getTime();
-  }
   var Window = class {
     #start;
     #end;
@@ -30599,14 +30608,17 @@
     increment(count) {
       this.#count = this.#count + count;
     }
-    getStart() {
+    get start() {
       return this.#start;
     }
-    getEnd() {
+    get end() {
       return this.#end;
     }
-    getCount() {
+    get count() {
       return this.#count;
+    }
+    toString() {
+      return `[Window (start=${this.#start}, end=${this.#end})]`;
     }
   };
 
